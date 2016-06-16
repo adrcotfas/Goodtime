@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:auto="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory
+        android:title="General">
+        <ListPreference
+            android:defaultValue="25"
+            android:entries="@array/pref_work_titles"
+            android:entryValues="@array/pref_work_values"
+            android:dialogTitle="Work session duration"
+            android:inputType="number"
+            android:key="pref_workTime"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="Work session duration" />
+        <ListPreference
+            android:defaultValue="5"
+            android:entries="@array/pref_break_titles"
+            android:entryValues="@array/pref_break_values"
+            android:dialogTitle="Break duration"
+            android:inputType="number"
+            android:key="pref_breakTime"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="Break duration" />
+        <ListPreference
+            android:defaultValue="15"
+            android:entries="@array/pref_long_break_titles"
+            android:entryValues="@array/pref_long_break_values"
+            android:dialogTitle="Long break duration"
+            android:inputType="number"
+            android:key="pref_longBreakDuration"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="Long break duration" />
+
+        <ListPreference
+            android:defaultValue="4"
+            android:entries="@array/pref_sessions_before_long_break_titles"
+            android:entryValues="@array/pref_sessions_before_long_break_values"
+            android:dialogTitle="Sessions before long break"
+            android:inputType="number"
+            android:key="pref_sessionsBeforeLongBreak"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="Sessions before long break" />
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Notification">
+
+    <SwitchPreference
+        android:key="pref_notification"
+        android:title="Sound"
+        android:defaultValue="true">
+    </SwitchPreference>
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="pref_vibrate"
+        android:title="Vibration" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="During work sessions">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_disableSoundAndVibration"
+            android:title="Disable sound and vibration" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_disableWifi"
+            android:title="Disable Wi-Fi" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_keepScreenOn"
+            android:title="Keep the screen on" />
+    </PreferenceCategory>
+
+
+</PreferenceScreen>
+

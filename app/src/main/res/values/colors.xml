@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="color_material_purple">#6A1B9A</color>
+    <color name="color_dark_material_purple">#4A148C</color>
+    <color name="black">#000000</color>
+    <color name="gray">#212121</color>
+    <color name="red">#dd2c00</color>
+    <color name="redDark">#b71c1c</color>
+    <color name="white">#f5f5f5</color>
+
+    <color name="indigo">#304ffe</color>
+    <color name="indigoDark">#1a237e</color>
+
+    <color name="purble">#651fff</color>
+    <color name="purpleDark">#311b92</color>
+
+    <color name="transparent">#28ffffff</color>
+
+    <color name="intro01">#00897B</color>
+    <color name="intro02">#38A4DD</color>
+    <color name="intro03">#212121</color>
+
+
+    <color name="color_material_metaphor">#039BE5</color>
+    <color name="color_material_bold">#EC407A</color>
+    <color name="color_material_shadow">#E0E0E0</color>
+    <color name="color_permissions">#FFEB3B</color>
+    <color name="color_custom_fragment_1">#E64A19</color>
+    <color name="color_custom_fragment_2">#3F51B5</color>
+
+    <color name="color_dark_material_metaphor">#0277BD</color>
+    <color name="color_dark_material_bold">#D81B60</color>
+    <color name="color_dark_material_shadow">#BDBDBD</color>
+    <color name="color_dark_permissions">#FBC02D</color>
+    <color name="color_dark_custom_fragment_1">#BF360C</color>
+    <color name="color_dark_custom_fragment_2">#303F9F</color>
+
+
+</resources>
