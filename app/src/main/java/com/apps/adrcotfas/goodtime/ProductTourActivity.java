@@ -1,5 +1,4 @@
 package com.apps.adrcotfas.goodtime;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import com.heinrichreimersoftware.materialintro.app.IntroActivity;

@@ -1,14 +1,17 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.0"
     defaultConfig {
         applicationId 'com.apps.adrcotfas.goodtime'
         minSdkVersion 17
-        targetSdkVersion 23
-        versionCode 5
-        versionName "1"
+        targetSdkVersion 24
+        versionCode 7
+        versionName "1.0.1"
+        jackOptions {
+            enabled true
+        }
     }
     buildTypes {
         release {
@@ -19,6 +22,10 @@ android {
     }
     productFlavors {
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 allprojects {
     repositories {
@@ -28,7 +35,7 @@ allprojects {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:design:23.3.0'
+    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile 'com.android.support:design:24.0.0'
     compile 'com.heinrichreimersoftware:material-intro:1.5.4'
 }

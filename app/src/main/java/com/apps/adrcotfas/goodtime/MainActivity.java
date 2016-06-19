@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private Button mPauseButton;
     private Button mStopButton;
     private TextView mTimeLabel;
-    private Button mSessionCounterButton;
     private View mHorizontalSeparator;
     private NotificationManager mNotificationManager;
     private SharedPreferences mPref = null;
@@ -99,14 +98,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mPrivatePref = getSharedPreferences("preferences_private", Context.MODE_PRIVATE);
         mPrivatePref.registerOnSharedPreferenceChangeListener(this);
 
-        mSessionCounterButton = (Button)findViewById(R.id.totalSessionsButton);
-        mSessionCounterButton.setOnClickListener(new View.OnClickListener(){
+        Button sessionCounterButton = (Button) findViewById(R.id.totalSessionsButton);
+        sessionCounterButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 showSessionCounterDialog();
             }
         });
-        mSessionCounterButton.setText(String.valueOf(mPrivatePref.getInt("pref_totalSessions", 0)));
+        sessionCounterButton.setText(String.valueOf(mPrivatePref.getInt("pref_totalSessions", 0)));
 
         Typeface robotoThin = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
         final RelativeLayout buttons = (RelativeLayout)findViewById(R.id.buttons);

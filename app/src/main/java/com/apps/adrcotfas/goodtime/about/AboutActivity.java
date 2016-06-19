@@ -26,10 +26,8 @@ public class AboutActivity extends AppCompatActivity {
 
     // SKUs for the donations
     static final String SKU_1_DOLLAR = "1_dollar";
+    static final String SKU_3_DOLLARS = "3_dollars";
     static final String SKU_5_DOLLARS = "5_dollars";
-    static final String SKU_10_DOLLARS = "10_dollars";
-    static final String SKU_25_DOLLARS = "25_dollars";
-    static final String SKU_50_DOLLARS = "50_dollars";
 
     IabHelper mHelper;
 
@@ -51,7 +49,6 @@ public class AboutActivity extends AppCompatActivity {
                 mHelper.consumeAsync(purchase, mConsumeFinishedListener);
             } catch (IabHelper.IabAsyncInProgressException e) {
                 Log.e(TAG, "Error consuming the purchase. Another async operation in progress.");
-                return;
             }
         }
     };
@@ -91,38 +88,22 @@ public class AboutActivity extends AppCompatActivity {
                     Log.e(TAG, "Error consuming the purchase.");
                 }
             }
+
+            Purchase purchase3 = inventory.getPurchase(SKU_3_DOLLARS);
+            if (purchase3 != null) {
+                Log.d(TAG, "We have gas. Consuming it.");
+                try {
+                    mHelper.consumeAsync(inventory.getPurchase(SKU_3_DOLLARS), mConsumeFinishedListener);
+                } catch (IabHelper.IabAsyncInProgressException e) {
+                    Log.e(TAG, "Error consuming the purchase.");
+                }
+            }
+
             Purchase purchase5 = inventory.getPurchase(SKU_5_DOLLARS);
             if (purchase5 != null) {
                 Log.d(TAG, "We have gas. Consuming it.");
                 try {
                     mHelper.consumeAsync(inventory.getPurchase(SKU_5_DOLLARS), mConsumeFinishedListener);
-                } catch (IabHelper.IabAsyncInProgressException e) {
-                    Log.e(TAG, "Error consuming the purchase.");
-                }
-            }
-            Purchase purchase10 = inventory.getPurchase(SKU_10_DOLLARS);
-            if (purchase10 != null) {
-                Log.d(TAG, "We have gas. Consuming it.");
-                try {
-                    mHelper.consumeAsync(inventory.getPurchase(SKU_10_DOLLARS), mConsumeFinishedListener);
-                } catch (IabHelper.IabAsyncInProgressException e) {
-                    Log.e(TAG, "Error consuming the purchase.");
-                }
-            }
-            Purchase purchase25 = inventory.getPurchase(SKU_25_DOLLARS);
-            if (purchase25 != null) {
-                Log.d(TAG, "We have gas. Consuming it.");
-                try {
-                    mHelper.consumeAsync(inventory.getPurchase(SKU_25_DOLLARS), mConsumeFinishedListener);
-                } catch (IabHelper.IabAsyncInProgressException e) {
-                    Log.e(TAG, "Error consuming the purchase.");
-                }
-            }
-            Purchase purchase50 = inventory.getPurchase(SKU_50_DOLLARS);
-            if (purchase50 != null) {
-                Log.d(TAG, "We have gas. Consuming it.");
-                try {
-                    mHelper.consumeAsync(inventory.getPurchase(SKU_50_DOLLARS), mConsumeFinishedListener);
                 } catch (IabHelper.IabAsyncInProgressException e) {
                     Log.e(TAG, "Error consuming the purchase.");
                 }
@@ -236,32 +217,16 @@ public class AboutActivity extends AppCompatActivity {
                                 } catch (IabHelper.IabAsyncInProgressException e) {
                                     e.printStackTrace();
                                 }
+                            } else if (items[item].equals("$3")) {
+                                try {
+                                    ((AboutActivity)getActivity()).getIabHelper().launchPurchaseFlow(getActivity(), SKU_3_DOLLARS, 667,
+                                            ((AboutActivity)getActivity()).getPurchaseListener(), "");
+                                } catch (IabHelper.IabAsyncInProgressException e) {
+                                    e.printStackTrace();
+                                }
                             } else if (items[item].equals("$5")) {
                                 try {
                                     ((AboutActivity)getActivity()).getIabHelper().launchPurchaseFlow(getActivity(), SKU_5_DOLLARS, 667,
-                                            ((AboutActivity)getActivity()).getPurchaseListener(), "");
-                                } catch (IabHelper.IabAsyncInProgressException e) {
-                                    e.printStackTrace();
-                                }
-                            } else if (items[item].equals("$10")) {
-                                try {
-                                    ((AboutActivity)getActivity()).getIabHelper().launchPurchaseFlow(getActivity(), SKU_10_DOLLARS, 667,
-                                            ((AboutActivity)getActivity()).getPurchaseListener(), "");
-                                } catch (IabHelper.IabAsyncInProgressException e) {
-                                    e.printStackTrace();
-                                }
-
-                            } else if (items[item].equals("$25")) {
-                                try {
-                                    ((AboutActivity)getActivity()).getIabHelper().launchPurchaseFlow(getActivity(), SKU_25_DOLLARS, 667,
-                                            ((AboutActivity)getActivity()).getPurchaseListener(), "");
-                                } catch (IabHelper.IabAsyncInProgressException e) {
-                                    e.printStackTrace();
-                                }
-
-                            } else if (items[item].equals("$50")) {
-                                try {
-                                    ((AboutActivity)getActivity()).getIabHelper().launchPurchaseFlow(getActivity(), SKU_50_DOLLARS, 667,
                                             ((AboutActivity)getActivity()).getPurchaseListener(), "");
                                 } catch (IabHelper.IabAsyncInProgressException e) {
                                     e.printStackTrace();

@@ -39,11 +39,6 @@
             android:label="Contributors and licences"
             android:parentActivityName=".about.AboutActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity
-            android:name=".about.SupportTheDeveloperActivity"
-            android:label="Support the developer"
-            android:parentActivityName=".about.AboutActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ProductTourActivity"
             android:theme="@style/Theme.Intro"/>
     </application>
