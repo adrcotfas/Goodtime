@@ -99,18 +99,24 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mPrivatePref.registerOnSharedPreferenceChangeListener(this);
 
         Button sessionCounterButton = (Button) findViewById(R.id.totalSessionsButton);
-        sessionCounterButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                showSessionCounterDialog();
-            }
-        });
-        sessionCounterButton.setText(String.valueOf(mPrivatePref.getInt("pref_totalSessions", 0)));
+        if (sessionCounterButton != null) {
+            sessionCounterButton.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    showSessionCounterDialog();
+                }
+            });
+        }
+        if (sessionCounterButton != null) {
+            sessionCounterButton.setText(String.valueOf(mPrivatePref.getInt("pref_totalSessions", 0)));
+        }
 
         Typeface robotoThin = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
         final RelativeLayout buttons = (RelativeLayout)findViewById(R.id.buttons);
         mTimeLabel   = (TextView)findViewById(R.id.textView);
-        mTimeLabel.setTypeface(robotoThin);
+        if (mTimeLabel != null) {
+            mTimeLabel.setTypeface(robotoThin);
+        }
         mStartButton = (FloatingActionButton) findViewById(R.id.startButton);
         mPauseButton = (Button) findViewById(R.id.pauseButton);
         mStopButton  = (Button) findViewById(R.id.stopButton);
@@ -119,7 +125,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             @Override
             public void onClick(View view) {
                 mStartButton.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.implode));
-                buttons.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade));
+                if (buttons != null) {
+                    buttons.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade));
+                }
                 mRemainingTime = mSessionTime * 60;
                 mTimerState = TimerState.ACTIVE_WORK;
                 mPauseButton.setEnabled(true);
@@ -144,7 +152,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             @Override
             public void onClick(View view) {
                 Animation fadeReversed = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_reverse);
-                buttons.startAnimation(fadeReversed );
+                if (buttons != null) {
+                    buttons.startAnimation(fadeReversed );
+                }
                 mPauseButton.clearAnimation();
                 Animation implodeReversed = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.implode_reverse);
                 mStartButton.startAnimation(implodeReversed);
@@ -152,10 +162,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             }
         });
 
-        mSessionTime = Integer.parseInt(mPref.getString("pref_workTime", "25"));
-        mBreakTime = Integer.parseInt(mPref.getString("pref_breakTime", "5"));
-        mLongBreakTime = Integer.parseInt(mPref.getString("pref_longBreakDuration", "15"));
-        mSessionsBeforeLongBreak = Integer.parseInt(mPref.getString("pref_sessionsBeforeLongBreak", "4"));
+        mSessionTime = mPref.getInt("pref_workTime", 25);
+        mBreakTime = mPref.getInt("pref_breakTime", 5);
+        mLongBreakTime = mPref.getInt("pref_longBreakDuration", 15);
+        mSessionsBeforeLongBreak = mPref.getInt("pref_sessionsBeforeLongBreak", 4);
         mDisableSoundAndVibration = mPref.getBoolean("pref_disableSoundAndVibration", false);
         AudioManager aManager=(AudioManager)getSystemService(AUDIO_SERVICE);
         mRingerMode = aManager.getRingerMode();
@@ -259,12 +269,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        mSessionTime = Integer.parseInt(mPref.getString("pref_workTime", "25"));
-        mBreakTime = Integer.parseInt(mPref.getString("pref_breakTime", "5"));
-        mLongBreakTime = Integer.parseInt(mPref.getString("pref_longBreakDuration", "15"));
-        mSessionsBeforeLongBreak = Integer.parseInt(mPref.getString("pref_sessionsBeforeLongBreak", "4"));
+        mSessionTime = mPref.getInt("pref_workTime", 25);
+        mBreakTime = mPref.getInt("pref_breakTime", 5);
+        mLongBreakTime = mPref.getInt("pref_longBreakDuration", 15);
+        mSessionsBeforeLongBreak = mPref.getInt("pref_sessionsBeforeLongBreak", 4);
         Button button = (Button)findViewById(R.id.totalSessionsButton);
-        button.setText(String.valueOf(mPrivatePref.getInt("pref_totalSessions", 0)));
+        if (button != null) {
+            button.setText(String.valueOf(mPrivatePref.getInt("pref_totalSessions", 0)));
+        }
         mDisableSoundAndVibration = mPref.getBoolean("pref_disableSoundAndVibration", false);
         mDisableWifi = mPref.getBoolean("pref_disableWifi", false);
         mKeepScreenOn = mPref.getBoolean("pref_keepScreenOn", false);
@@ -390,11 +402,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             case ACTIVE_WORK:
                 if (mDisableSoundAndVibration){
                     AudioManager aManager=(AudioManager)getSystemService(AUDIO_SERVICE);
-                    aManager.setRingerMode(aManager.RINGER_MODE_SILENT);
+                    aManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                 }
 
                 if(mDisableWifi){
-                    WifiManager wifiManager  = (WifiManager)this.getSystemService(this.WIFI_SERVICE);
+                    WifiManager wifiManager  = (WifiManager)this.getSystemService(WIFI_SERVICE);
                     wifiManager.setWifiEnabled(false);
                 }
                 createNotification("Work session in progress.");

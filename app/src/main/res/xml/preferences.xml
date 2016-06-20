@@ -1,49 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
         android:title="General">
-        <ListPreference
+        <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
             android:defaultValue="25"
-            android:entries="@array/pref_work_titles"
-            android:entryValues="@array/pref_work_values"
-            android:dialogTitle="Work session duration"
-            android:inputType="number"
             android:key="pref_workTime"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="Work session duration" />
-        <ListPreference
-            android:defaultValue="5"
-            android:entries="@array/pref_break_titles"
-            android:entryValues="@array/pref_break_values"
-            android:dialogTitle="Break duration"
-            android:inputType="number"
-            android:key="pref_breakTime"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="Break duration" />
-        <ListPreference
-            android:defaultValue="15"
-            android:entries="@array/pref_long_break_titles"
-            android:entryValues="@array/pref_long_break_values"
-            android:dialogTitle="Long break duration"
-            android:inputType="number"
-            android:key="pref_longBreakDuration"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="Long break duration" />
+            android:title="Work session duration"
+            app:vnt_maxValue="100"
+            app:vnt_minValue="1" />
 
-        <ListPreference
+        <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
+            android:defaultValue="5"
+            android:key="pref_breakTime"
+            android:title="Break duration"
+            app:vnt_maxValue="30"
+            app:vnt_minValue="1" />
+
+        <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
+            android:defaultValue="15"
+            android:key="pref_longBreakDuration"
+            android:title="Long break duration"
+            app:vnt_maxValue="30"
+            app:vnt_minValue="1" />
+
+        <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
             android:defaultValue="4"
-            android:entries="@array/pref_sessions_before_long_break_titles"
-            android:entryValues="@array/pref_sessions_before_long_break_values"
-            android:dialogTitle="Sessions before long break"
-            android:inputType="number"
             android:key="pref_sessionsBeforeLongBreak"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="Sessions before long break" />
+            android:title="Sessions before long break"
+            app:vnt_maxValue="8"
+            app:vnt_minValue="2" />
 
     </PreferenceCategory>
     <PreferenceCategory

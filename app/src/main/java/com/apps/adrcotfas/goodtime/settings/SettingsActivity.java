@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.DialogPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -13,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.apps.adrcotfas.goodtime.R;
+
+import java.util.Objects;
 
 public class SettingsActivity extends AppCompatActivity {
     /**
@@ -24,19 +27,15 @@ public class SettingsActivity extends AppCompatActivity {
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
 
-            if (preference instanceof ListPreference) {
-                // For list preferences, look up the correct display value in
-                // the preference's 'entries' list.
-                ListPreference listPreference = (ListPreference) preference;
-                int index = listPreference.findIndexOfValue(stringValue);
-
-                // Set the summary to reflect the new value.
-                preference.setSummary(
-                        index >= 0
-                                ? listPreference.getEntries()[index]
-                                : null);
-
-            } else {
+            if (preference.getTitle().toString().contains("duration"))
+            {
+                preference.setSummary(stringValue + " minutes");
+            }
+            else if (preference.getKey().equals("pref_sessionsBeforeLongBreak"))
+            {
+                preference.setSummary(stringValue + " sessions");
+            }
+            else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
                 preference.setSummary(stringValue);
@@ -60,6 +59,14 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Trigger the listener immediately with the preference's
         // current value.
+        if (preference instanceof com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference)
+        {
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.getContext())
+                            .getInt(preference.getKey(), 1));
+        }
+        else
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())
