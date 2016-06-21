@@ -67,6 +67,19 @@ public class LicencesActivity extends AppCompatActivity {
                     return true;
                 }
             });
+
+            Preference numberPicker = findPreference("number-picker");
+            materialIntro.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Uri uri = Uri.parse("https://github.com/vanniktech/VNTNumberPickerPreference");
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                    return true;
+                }
+            });
+
+
             Preference arthurShlain = findPreference("arthur_shlain");
             arthurShlain.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override

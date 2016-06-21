@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="default_work_duration">25</integer>
+    <integer name="default_break_duration">5</integer>
+    <integer name="default_long_break_duration">15</integer>
+    <integer name="default_sessions">4</integer>
+</resources>

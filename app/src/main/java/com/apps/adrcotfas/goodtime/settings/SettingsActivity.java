@@ -4,18 +4,14 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.DialogPreference;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-
 import com.apps.adrcotfas.goodtime.R;
 
-import java.util.Objects;
 
 public class SettingsActivity extends AppCompatActivity {
     /**
@@ -59,12 +55,31 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Trigger the listener immediately with the preference's
         // current value.
-        if (preference instanceof com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference)
+        if (preference.getKey().equals("pref_workTime"))
         {
+            int defaultValue = preference.getContext().getResources().getInteger(R.integer.default_work_duration);
             sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                     PreferenceManager
                             .getDefaultSharedPreferences(preference.getContext())
-                            .getInt(preference.getKey(), 1));
+                            .getInt(preference.getKey(), defaultValue));
+        } else if(preference.getKey().equals("pref_breakTime")) {
+            int defaultValue = preference.getContext().getResources().getInteger(R.integer.default_break_duration);
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.getContext())
+                            .getInt(preference.getKey(), defaultValue));
+        } else if(preference.getKey().equals("pref_longBreakDuration")) {
+            int defaultValue = preference.getContext().getResources().getInteger(R.integer.default_long_break_duration);
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.getContext())
+                            .getInt(preference.getKey(), defaultValue));
+        } else if(preference.getKey().equals("pref_sessionsBeforeLongBreak")) {
+            int defaultValue = preference.getContext().getResources().getInteger(R.integer.default_sessions);
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.getContext())
+                            .getInt(preference.getKey(), defaultValue));
         }
         else
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,

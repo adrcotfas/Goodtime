@@ -7,8 +7,8 @@ android {
         applicationId 'com.apps.adrcotfas.goodtime'
         minSdkVersion 17
         targetSdkVersion 23
-        versionCode 9
-        versionName "1.0.1"
+        versionCode 10
+        versionName "1.0.2"
     }
     buildTypes {
         release {
@@ -18,16 +18,22 @@ android {
         }
     }
 }
+
 allprojects {
     repositories {
+        jcenter()
+        flatDir {
+            dirs 'libs'
+        }
         maven { url 'https://jitpack.io' }
     }
 }
+
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.android.support:design:23.3.0'
     compile 'com.heinrichreimersoftware:material-intro:1.5.4'
-    compile 'com.vanniktech:vntnumberpickerpreference:1.0.0'
+    compile(name:'VNTNumberPickerPreference', ext:'aar')
 }

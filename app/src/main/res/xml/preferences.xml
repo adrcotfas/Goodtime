@@ -7,7 +7,7 @@
             android:defaultValue="25"
             android:key="pref_workTime"
             android:title="Work session duration"
-            app:vnt_maxValue="100"
+            app:vnt_maxValue="120"
             app:vnt_minValue="1" />
 
         <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
@@ -21,14 +21,14 @@
             android:defaultValue="15"
             android:key="pref_longBreakDuration"
             android:title="Long break duration"
-            app:vnt_maxValue="30"
+            app:vnt_maxValue="60"
             app:vnt_minValue="1" />
 
         <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
             android:defaultValue="4"
             android:key="pref_sessionsBeforeLongBreak"
             android:title="Sessions before long break"
-            app:vnt_maxValue="8"
+            app:vnt_maxValue="10"
             app:vnt_minValue="2" />
 
     </PreferenceCategory>

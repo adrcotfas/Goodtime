@@ -22,6 +22,11 @@
                     android:summary="Licensed under the Apache License, Version 2.0">
                 </Preference>
                 <Preference
+                    android:key="number-picker"
+                    android:title="NumberPickerPreference / Vanniktech - Niklas Baudy"
+                    android:summary="Licensed under the Apache License, Version 2.0">
+                </Preference>
+                <Preference
                     android:key="arthur_shlain"
                     android:title="attachment icon / Arthur Shlain / Noun Project"
                     android:summary="Licensed under the CC BY 3.0 US">
