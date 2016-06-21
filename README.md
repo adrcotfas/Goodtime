@@ -8,6 +8,7 @@ Goodtime will help you use the Pomodoro™ technique:
   
 **Features:**
 - ad-free and open-source
+- battery friendly
 - configurable work and break duration
 - pausable timer
 - sound and vibration notifications
