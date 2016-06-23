@@ -22,6 +22,7 @@ public class LicencesActivity extends AppCompatActivity {
                 .commit();
 
     }
+
     public static class ContributorsFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -114,6 +115,7 @@ public class LicencesActivity extends AppCompatActivity {
 
 
         }
+
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();

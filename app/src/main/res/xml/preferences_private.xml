@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <Preference
+        android:defaultValue="true"
         android:key="pref_firstRun"
-        android:shouldDisableView="true"
-        android:defaultValue="true" />
-
+        android:shouldDisableView="true" />
     <Preference
-        android:key="pref_totalSessions"
+        android:defaultValue="0"
         android:enabled="false"
-        android:shouldDisableView="true"
-        android:defaultValue="0" />
+        android:key="pref_totalSessions"
+        android:shouldDisableView="true" />
 </PreferenceScreen>

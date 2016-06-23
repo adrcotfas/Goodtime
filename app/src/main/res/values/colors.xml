@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <color name="black">#000000</color>
     <color name="transparent">#28ffffff</color>
     <color name="intro01">#00897B</color>
     <color name="intro02">#38A4DD</color>
     <color name="intro03">#212121</color>
-
-
 </resources>

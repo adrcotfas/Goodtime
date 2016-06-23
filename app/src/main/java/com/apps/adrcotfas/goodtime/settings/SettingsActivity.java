@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
+
 import com.apps.adrcotfas.goodtime.R;
 
 

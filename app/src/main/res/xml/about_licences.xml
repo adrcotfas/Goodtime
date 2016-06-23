@@ -4,8 +4,8 @@
             android:title="Thanks to">
                 <Preference
                     android:key="patrick_ford"
-                    android:title="Patrick Ford"
-                    android:summary="for the notification chime.">
+                    android:summary="for the notification chime."
+                    android:title="Patrick Ford">
                 </Preference>
         </PreferenceCategory>
 
@@ -13,33 +13,33 @@
             android:title="Licences">
                 <Preference
                     android:key="app_rater"
-                    android:title="AppRater / delight.im"
-                    android:summary="Licensed under the Apache License, Version 2.0">
+                    android:summary="Licensed under the Apache License, Version 2.0"
+                    android:title="AppRater / delight.im">
                 </Preference>
                 <Preference
                     android:key="material-intro"
-                    android:title="material-intro / Heinrich Reimer"
-                    android:summary="Licensed under the Apache License, Version 2.0">
+                    android:summary="Licensed under the Apache License, Version 2.0"
+                    android:title="material-intro / Heinrich Reimer">
                 </Preference>
                 <Preference
                     android:key="seekbar-pref"
-                    android:title="MaterialSeekBarPreference / Pavel Sikun"
-                    android:summary="Licensed under the Apache License, Version 2.0">
+                    android:summary="Licensed under the Apache License, Version 2.0"
+                    android:title="MaterialSeekBarPreference / Pavel Sikun">
                 </Preference>
                 <Preference
                     android:key="arthur_shlain"
-                    android:title="attachment icon / Arthur Shlain / Noun Project"
-                    android:summary="Licensed under the CC BY 3.0 US">
+                    android:summary="Licensed under the CC BY 3.0 US"
+                    android:title="attachment icon / Arthur Shlain / Noun Project">
                 </Preference>
                 <Preference
                     android:key="dominic_whittle"
-                    android:title="video icon / Dominic Whittle / Noun Project "
-                    android:summary="Licensed under the CC BY 3.0 US">
+                    android:summary="Licensed under the CC BY 3.0 US"
+                    android:title="video icon / Dominic Whittle / Noun Project ">
                 </Preference>
                 <Preference
                     android:key="michal-kucera"
-                    android:title="messaging icon / Michal Kučera / Noun Project"
-                    android:summary="Licensed under the CC BY 3.0 US">
+                    android:summary="Licensed under the CC BY 3.0 US"
+                    android:title="messaging icon / Michal Kučera / Noun Project">
                 </Preference>
         </PreferenceCategory>
 </PreferenceScreen>

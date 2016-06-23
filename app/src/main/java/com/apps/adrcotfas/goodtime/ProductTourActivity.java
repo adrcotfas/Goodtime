@@ -1,4 +1,5 @@
 package com.apps.adrcotfas.goodtime;
+
 import android.os.Bundle;
 
 import com.heinrichreimersoftware.materialintro.app.IntroActivity;
@@ -6,20 +7,17 @@ import com.heinrichreimersoftware.materialintro.slide.SimpleSlide;
 
 public class ProductTourActivity extends IntroActivity {
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setFullscreen(true);
 
-        //setButtonNextVisible(false);
-        //setButtonBackVisible(false);
         /**
          * Standard fade (like Google's intros)
          */
         addSlide(new SimpleSlide.Builder()
                 .title("Avoid distractions")
                 .description("Keep your work on track using timed sessions handled by the app.")
-                // image symbols: disable sound / wifi / counter / barrier for distractions
                 .image(R.drawable.intro01)
                 .background(R.color.intro01)
                 .backgroundDark(R.color.intro01)

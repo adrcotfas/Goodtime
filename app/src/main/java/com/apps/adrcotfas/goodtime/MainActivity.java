@@ -1,7 +1,5 @@
 package com.apps.adrcotfas.goodtime;
 
-import android.media.MediaPlayer;
-import android.support.v7.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +18,7 @@ import android.os.PowerManager;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
@@ -43,12 +43,12 @@ import java.util.TimerTask;
 
 import im.delight.apprater.AppRater;
 
-public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final int GOODTIME_NOTIFICATION_ID = 1;
     private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
-    private long mBackPressed;
     PowerManager.WakeLock mWakeLock;
+    private long mBackPressed;
     private int mSessionTime;
     private int mBreakTime;
     private int mRemainingTime;
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         Button sessionCounterButton = (Button) findViewById(R.id.totalSessionsButton);
         if (sessionCounterButton != null) {
-            sessionCounterButton.setOnClickListener(new View.OnClickListener(){
+            sessionCounterButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     showSessionCounterDialog();
@@ -114,14 +114,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
 
         Typeface robotoThin = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        final RelativeLayout buttons = (RelativeLayout)findViewById(R.id.buttons);
-        mTimeLabel   = (TextView)findViewById(R.id.textView);
+        final RelativeLayout buttons = (RelativeLayout) findViewById(R.id.buttons);
+        mTimeLabel = (TextView) findViewById(R.id.textView);
         if (mTimeLabel != null) {
             mTimeLabel.setTypeface(robotoThin);
         }
         mStartButton = (FloatingActionButton) findViewById(R.id.startButton);
         mPauseButton = (Button) findViewById(R.id.pauseButton);
-        mStopButton  = (Button) findViewById(R.id.stopButton);
+        mStopButton = (Button) findViewById(R.id.stopButton);
         mHorizontalSeparator = findViewById(R.id.horizontalSeparator);
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             public void onClick(View view) {
                 Animation fadeReversed = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_reverse);
                 if (buttons != null) {
-                    buttons.startAnimation(fadeReversed );
+                    buttons.startAnimation(fadeReversed);
                 }
                 mPauseButton.clearAnimation();
                 Animation implodeReversed = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.implode_reverse);
@@ -169,11 +169,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mLongBreakTime = mPref.getInt("pref_longBreakDuration", 15);
         mSessionsBeforeLongBreak = mPref.getInt("pref_sessionsBeforeLongBreak", 4);
         mDisableSoundAndVibration = mPref.getBoolean("pref_disableSoundAndVibration", false);
-        AudioManager aManager=(AudioManager)getSystemService(AUDIO_SERVICE);
+        AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         mRingerMode = aManager.getRingerMode();
 
         mDisableWifi = mPref.getBoolean("pref_disableWifi", false);
-        WifiManager wifiManager  = (WifiManager)this.getSystemService(WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
         mWifiMode = wifiManager.isWifiEnabled();
         mKeepScreenOn = mPref.getBoolean("pref_keepScreenOn", false);
 
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mDisableWifi = savedInstanceState.getBoolean("disableWifi");
             mKeepScreenOn = savedInstanceState.getBoolean("keepScreenOn");
 
-            switch (mTimerState){
+            switch (mTimerState) {
                 case ACTIVE_WORK:
                     mPauseButton.setEnabled(true);
                     mPauseButton.setTextColor(Color.parseColor("#ffd180"));
@@ -218,8 +218,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     showDialog();
                     break;
             }
-        }
-        else {
+        } else {
             loadInitialState();
         }
     }
@@ -240,13 +239,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     protected void onDestroy() {
-        if (mTimer != null){
+        if (mTimer != null) {
             mTimer.cancel();
             mTimer.purge();
         }
         if (mNotificationManager != null)
             mNotificationManager.cancelAll();
-        if (mAlertDialog != null){
+        if (mAlertDialog != null) {
             mAlertDialog.dismiss();
         }
         if (mWakeLock != null) {
@@ -289,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mBreakTime = mPref.getInt("pref_breakTime", 5);
         mLongBreakTime = mPref.getInt("pref_longBreakDuration", 15);
         mSessionsBeforeLongBreak = mPref.getInt("pref_sessionsBeforeLongBreak", 4);
-        Button button = (Button)findViewById(R.id.totalSessionsButton);
+        Button button = (Button) findViewById(R.id.totalSessionsButton);
         if (button != null) {
             button.setText(String.valueOf(mPrivatePref.getInt("pref_totalSessions", 0)));
         }
@@ -297,9 +296,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mDisableWifi = mPref.getBoolean("pref_disableWifi", false);
         mKeepScreenOn = mPref.getBoolean("pref_keepScreenOn", false);
 
-        if(mTimerState != null)
-        {
-            switch (mTimerState){
+        if (mTimerState != null) {
+            switch (mTimerState) {
                 case INACTIVE:
                     String currentTick = String.format(Locale.US, "%d.00", mSessionTime);
                     SpannableString currentFormattedTick = new SpannableString(currentTick);
@@ -327,16 +325,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         Toast exitToast = Toast.makeText(getBaseContext(), "Press the back button again to exit", Toast.LENGTH_SHORT);
-        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
-        {
+        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis()) {
             exitToast.cancel();
             super.onBackPressed();
             return;
-        }
-        else {
+        } else {
             try {
                 exitToast.show();
             } catch (Throwable th) {
@@ -348,7 +343,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     public void loadInitialState() {
-        mTimerState  = TimerState.INACTIVE;
+        mTimerState = TimerState.INACTIVE;
         mRemainingTime = mSessionTime * 60;
         String currentTick = String.format(Locale.US, "%d." + (mRemainingTime % 60 < 10 ? "0%d" : "%d"),
                 mRemainingTime / 60,
@@ -363,7 +358,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mPauseButton.setText("PAUSE");
         mStopButton.setVisibility(View.INVISIBLE);
         mHorizontalSeparator.setVisibility(View.INVISIBLE);
-        if (mTimer != null){
+        if (mTimer != null) {
             mTimer.cancel();
             mTimer.purge();
         }
@@ -380,12 +375,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (mKeepScreenOn) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-        if (mDisableSoundAndVibration){
-            AudioManager aManager=(AudioManager)getSystemService(AUDIO_SERVICE);
+        if (mDisableSoundAndVibration) {
+            AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
             aManager.setRingerMode(mRingerMode);
         }
-        if(mDisableWifi){
-            WifiManager wifiManager = (WifiManager)this.getSystemService(WIFI_SERVICE);
+        if (mDisableWifi) {
+            WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
             wifiManager.setWifiEnabled(mWifiMode);
         }
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -400,8 +395,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     mRemainingTime % 60);
             currentFormattedTick = new SpannableString(currentTick);
             currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
-        }
-        else{
+        } else {
             currentTick = String.format(Locale.US, " ." + (mRemainingTime % 60 < 10 ? "0%d" : "%d"),
                     mRemainingTime % 60);
             currentFormattedTick = new SpannableString(currentTick);
@@ -418,15 +412,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public void startTimer(long delay) {
 
         mTimeLabel.setTextColor(Color.WHITE);
-        switch (mTimerState){
+        switch (mTimerState) {
             case ACTIVE_WORK:
-                if (mDisableSoundAndVibration){
-                    AudioManager aManager=(AudioManager)getSystemService(AUDIO_SERVICE);
+                if (mDisableSoundAndVibration) {
+                    AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
                     aManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                 }
 
-                if(mDisableWifi){
-                    WifiManager wifiManager  = (WifiManager)this.getSystemService(WIFI_SERVICE);
+                if (mDisableWifi) {
+                    WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
                     wifiManager.setWifiEnabled(false);
                 }
                 createNotification("Work session in progress.");
@@ -460,7 +454,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 // ignoring this exception, probably wakeLock was already released
             }
         }
-        switch (mTimerState){
+        switch (mTimerState) {
             case ACTIVE_WORK:
                 mTimerState = TimerState.PAUSED_WORK;
                 mPauseButton.setText("RESUME");
@@ -496,17 +490,17 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (mKeepScreenOn) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-        if (mDisableSoundAndVibration){
-            AudioManager aManager=(AudioManager)getSystemService(AUDIO_SERVICE);
+        if (mDisableSoundAndVibration) {
+            AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
             aManager.setRingerMode(mRingerMode);
         }
-        if(mDisableWifi){
-            WifiManager wifiManager = (WifiManager)this.getSystemService(WIFI_SERVICE);
+        if (mDisableWifi) {
+            WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
             wifiManager.setWifiEnabled(mWifiMode);
         }
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        if (mTimer != null){
+        if (mTimer != null) {
             mTimer.cancel();
             mTimer.purge();
             mTimer = null;
@@ -517,12 +511,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             int totalSessions = mPrivatePref.getInt("pref_totalSessions", 0);
             mPrivatePref.edit().putInt("pref_totalSessions", ++totalSessions).apply();
         }
-        if(mPref.getBoolean("pref_vibrate", true)) {
+        if (mPref.getBoolean("pref_vibrate", true)) {
             final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             long[] pattern = {0, 300, 700, 300};
             vibrator.vibrate(pattern, -1);
         }
-        if (mPref.getBoolean("pref_notification", true)){
+        if (mPref.getBoolean("pref_notification", true)) {
             MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.goodtime_notif);
             mediaPlayer.start();
         }
@@ -548,7 +542,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     public void onClick(DialogInterface dialog, int which) {
                         mPauseButton.setEnabled(false);
                         mPauseButton.setTextColor(Color.parseColor("#FF9E9E9E"));
-                        mRemainingTime = (mCompletedSessions >= mSessionsBeforeLongBreak) ?  mLongBreakTime * 60 : mBreakTime * 60;
+                        mRemainingTime = (mCompletedSessions >= mSessionsBeforeLongBreak) ? mLongBreakTime * 60 : mBreakTime * 60;
                         mTimerState = TimerState.ACTIVE_BREAK;
                         startTimer(0);
                     }
@@ -609,8 +603,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     public void runTimer() {
-        if (mTimerState != TimerState.INACTIVE){
-            if(mRemainingTime == 0){
+        if (mTimerState != TimerState.INACTIVE) {
+            if (mRemainingTime == 0) {
                 onCountdownFinished();
             } else
                 --mRemainingTime;
@@ -623,8 +617,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                         mRemainingTime % 60);
                 currentFormattedTick = new SpannableString(currentTick);
                 currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
-            }
-            else{
+            } else {
                 currentTick = String.format(Locale.US, " ." + (mRemainingTime % 60 < 10 ? "0%d" : "%d"),
                         mRemainingTime % 60);
                 currentFormattedTick = new SpannableString(currentTick);
@@ -651,41 +644,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mNotificationManager.notify(GOODTIME_NOTIFICATION_ID, notificationBuilder.build());
     }
 
-    private void bringApplicationToFront()
-    {
+    private void bringApplicationToFront() {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-        try
-        {
+        try {
             pendingIntent.send();
-        }
-        catch (PendingIntent.CanceledException e)
-        {
+        } catch (PendingIntent.CanceledException e) {
             e.printStackTrace();
-        }
-    }
-
-    private enum TimerState {INACTIVE, ACTIVE_WORK, PAUSED_WORK, ACTIVE_BREAK, FINISHED_WORK, FINISHED_BREAK}
-
-    private class UpdateTask extends TimerTask {
-        Handler handler;
-        MainActivity ref;
-
-        public UpdateTask(Handler handler, MainActivity ref){
-            super();
-            this.handler = handler;
-            this.ref = ref;
-        }
-
-        @Override
-        public void run() {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    ref.runTimer();
-                }
-            });
         }
     }
 
@@ -712,5 +678,28 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         AppRater appRater = new AppRater(this);
         appRater.setPhrases("Rate this app", "If you found this app useful please rate it on Google Play. Thanks for your support!", "Rate now", "Later", "No, thanks");
         appRater.show();
+    }
+
+    private enum TimerState {INACTIVE, ACTIVE_WORK, PAUSED_WORK, ACTIVE_BREAK, FINISHED_WORK, FINISHED_BREAK}
+
+    private class UpdateTask extends TimerTask {
+        Handler handler;
+        MainActivity ref;
+
+        public UpdateTask(Handler handler, MainActivity ref) {
+            super();
+            this.handler = handler;
+            this.ref = ref;
+        }
+
+        @Override
+        public void run() {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    ref.runTimer();
+                }
+            });
+        }
     }
 }

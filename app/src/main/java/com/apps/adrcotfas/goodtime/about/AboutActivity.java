@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
+
 import com.apps.adrcotfas.goodtime.ProductTourActivity;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.util.DeviceInfo;
@@ -22,15 +23,26 @@ import com.apps.adrcotfas.goodtime.util.Purchase;
 
 public class AboutActivity extends AppCompatActivity {
 
-    String TAG = "[AboutActivity]";
-
     // SKUs for the donations
     static final String SKU_1_DOLLAR = "1_dollar";
     static final String SKU_3_DOLLARS = "3_dollars";
     static final String SKU_5_DOLLARS = "5_dollars";
-
+    String TAG = "[AboutActivity]";
     IabHelper mHelper;
-
+    // Called when consumption is complete
+    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
+        public void onConsumeFinished(Purchase purchase, IabResult result) {
+            Log.d(TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
+            // if we were disposed of in the meantime, quit.
+            if (mHelper == null) return;
+            if (result.isSuccess()) {
+                Log.d(TAG, "Consumption successful. Provisioning.");
+            } else {
+                Log.e(TAG, "Error while consuming: " + result);
+            }
+            Log.d(TAG, "End consumption flow.");
+        }
+    };
     // Callback for when a purchase is finished
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
@@ -52,23 +64,6 @@ public class AboutActivity extends AppCompatActivity {
             }
         }
     };
-
-    // Called when consumption is complete
-    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
-        public void onConsumeFinished(Purchase purchase, IabResult result) {
-            Log.d(TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
-            // if we were disposed of in the meantime, quit.
-            if (mHelper == null) return;
-            if (result.isSuccess()) {
-                Log.d(TAG, "Consumption successful. Provisioning.");
-            }
-            else {
-                Log.e(TAG, "Error while consuming: " + result);
-            }
-            Log.d(TAG, "End consumption flow.");
-        }
-    };
-
     IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
         public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
 
@@ -117,19 +112,19 @@ public class AboutActivity extends AppCompatActivity {
         // Pass on the activity result to the helper for handling
         if (!mHelper.handleActivityResult(requestCode, resultCode, data)) {
             super.onActivityResult(requestCode, resultCode, data);
-        }
-        else {
+        } else {
             Log.d(TAG, "onActivityResult handled by IABUtil.");
         }
     }
 
-    protected IabHelper getIabHelper(){
+    protected IabHelper getIabHelper() {
         return mHelper;
     }
 
-    protected IabHelper.OnIabPurchaseFinishedListener getPurchaseListener(){
+    protected IabHelper.OnIabPurchaseFinishedListener getPurchaseListener() {
         return mPurchaseFinishedListener;
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -173,11 +168,11 @@ public class AboutActivity extends AppCompatActivity {
             addPreferencesFromResource(R.xml.about);
 
             Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.aboutToolbar);
-            if (toolbar != null){
-                ((AboutActivity)getActivity()).setSupportActionBar(toolbar);
+            if (toolbar != null) {
+                ((AboutActivity) getActivity()).setSupportActionBar(toolbar);
 
-                ((AboutActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-                ((AboutActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                ((AboutActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+                ((AboutActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
 
             Preference appVersion = findPreference("about_version");
@@ -212,22 +207,22 @@ public class AboutActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int item) {
                             if (items[item].equals("$1")) {
                                 try {
-                                    ((AboutActivity)getActivity()).getIabHelper().launchPurchaseFlow(getActivity(), SKU_1_DOLLAR, 667,
-                                            ((AboutActivity)getActivity()).getPurchaseListener(), "");
+                                    ((AboutActivity) getActivity()).getIabHelper().launchPurchaseFlow(getActivity(), SKU_1_DOLLAR, 667,
+                                            ((AboutActivity) getActivity()).getPurchaseListener(), "");
                                 } catch (IabHelper.IabAsyncInProgressException e) {
                                     e.printStackTrace();
                                 }
                             } else if (items[item].equals("$3")) {
                                 try {
-                                    ((AboutActivity)getActivity()).getIabHelper().launchPurchaseFlow(getActivity(), SKU_3_DOLLARS, 667,
-                                            ((AboutActivity)getActivity()).getPurchaseListener(), "");
+                                    ((AboutActivity) getActivity()).getIabHelper().launchPurchaseFlow(getActivity(), SKU_3_DOLLARS, 667,
+                                            ((AboutActivity) getActivity()).getPurchaseListener(), "");
                                 } catch (IabHelper.IabAsyncInProgressException e) {
                                     e.printStackTrace();
                                 }
                             } else if (items[item].equals("$5")) {
                                 try {
-                                    ((AboutActivity)getActivity()).getIabHelper().launchPurchaseFlow(getActivity(), SKU_5_DOLLARS, 667,
-                                            ((AboutActivity)getActivity()).getPurchaseListener(), "");
+                                    ((AboutActivity) getActivity()).getIabHelper().launchPurchaseFlow(getActivity(), SKU_5_DOLLARS, 667,
+                                            ((AboutActivity) getActivity()).getPurchaseListener(), "");
                                 } catch (IabHelper.IabAsyncInProgressException e) {
                                     e.printStackTrace();
                                 }
@@ -260,7 +255,7 @@ public class AboutActivity extends AppCompatActivity {
 
                     Intent email = new Intent(Intent.ACTION_SENDTO);
                     email.setData(new Uri.Builder().scheme("mailto").build());
-                    email.putExtra(Intent.EXTRA_EMAIL, new String[] { "adrcotfas@gmail.com" });
+                    email.putExtra(Intent.EXTRA_EMAIL, new String[]{"adrcotfas@gmail.com"});
                     email.putExtra(Intent.EXTRA_SUBJECT, "[Goodtime] Feedback");
                     email.putExtra(Intent.EXTRA_TEXT, "\nMy device info: \n" + DeviceInfo.getDeviceInfo() + "\nFeedback:" + "\n");
                     try {

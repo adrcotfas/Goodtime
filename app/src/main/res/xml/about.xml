@@ -2,8 +2,8 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <Preference
         android:key="about_version"
-        android:title="Version"
-        android:summary="1.0.3">
+        android:summary="1.0.3"
+        android:title="Version">
     </Preference>
     <Preference
         android:key="about_pro"

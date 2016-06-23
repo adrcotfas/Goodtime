@@ -1,67 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory
-        android:title="General">
+    <PreferenceCategory android:title="General">
         <com.pavelsikun.seekbarpreference.SeekBarPreference
+            android:defaultValue="25"
             android:key="pref_workTime"
             android:title="Work session duration"
-            android:defaultValue="25"
-            app:msbp_minValue="1"
-            app:msbp_maxValue="60"
+            app:msbp_dialogEnabled="false"
             app:msbp_interval="1"
+            app:msbp_maxValue="60"
             app:msbp_measurementUnit="minutes"
-            app:msbp_dialogEnabled="false"/>
+            app:msbp_minValue="1" />
 
         <com.pavelsikun.seekbarpreference.SeekBarPreference
+            android:defaultValue="5"
             android:key="pref_breakTime"
             android:title="Break duration"
-            android:defaultValue="5"
-            app:msbp_minValue="1"
-            app:msbp_maxValue="30"
+            app:msbp_dialogEnabled="false"
             app:msbp_interval="1"
+            app:msbp_maxValue="30"
             app:msbp_measurementUnit="minutes"
-            app:msbp_dialogEnabled="false"/>
+            app:msbp_minValue="1" />
 
         <com.pavelsikun.seekbarpreference.SeekBarPreference
+            android:defaultValue="15"
             android:key="pref_longBreakDuration"
             android:title="Long break duration"
-            android:defaultValue="15"
-            app:msbp_minValue="1"
-            app:msbp_maxValue="30"
+            app:msbp_dialogEnabled="false"
             app:msbp_interval="1"
+            app:msbp_maxValue="30"
             app:msbp_measurementUnit="minutes"
-            app:msbp_dialogEnabled="false" />
+            app:msbp_minValue="1" />
 
         <com.pavelsikun.seekbarpreference.SeekBarPreference
 
+            android:defaultValue="4"
             android:key="pref_sessionsBeforeLongBreak"
             android:title="Sessions before long break"
-            android:defaultValue="4"
-            app:msbp_minValue="2"
-            app:msbp_maxValue="8"
+            app:msbp_dialogEnabled="false"
             app:msbp_interval="1"
+            app:msbp_maxValue="8"
             app:msbp_measurementUnit="sessions"
-            app:msbp_dialogEnabled="false" />
+            app:msbp_minValue="2" />
 
     </PreferenceCategory>
-    <PreferenceCategory
-        android:title="Notification">
+    <PreferenceCategory android:title="Notification">
 
-    <SwitchPreference
-        android:key="pref_notification"
-        android:title="Sound"
-        android:defaultValue="true">
-    </SwitchPreference>
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_notification"
+            android:title="Sound"></SwitchPreference>
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="pref_vibrate"
-        android:title="Vibration" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_vibrate"
+            android:title="Vibration" />
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="During work sessions">
+    <PreferenceCategory android:title="During work sessions">
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="pref_disableSoundAndVibration"
