@@ -8,7 +8,7 @@
             android:title="Work session duration"
             android:defaultValue="25"
             app:msbp_minValue="1"
-            app:msbp_maxValue="100"
+            app:msbp_maxValue="60"
             app:msbp_interval="1"
             app:msbp_measurementUnit="minutes"
             app:msbp_dialogEnabled="false"/>
@@ -18,7 +18,7 @@
             android:title="Break duration"
             android:defaultValue="5"
             app:msbp_minValue="1"
-            app:msbp_maxValue="15"
+            app:msbp_maxValue="30"
             app:msbp_interval="1"
             app:msbp_measurementUnit="minutes"
             app:msbp_dialogEnabled="false"/>
@@ -58,7 +58,6 @@
         android:defaultValue="true"
         android:key="pref_vibrate"
         android:title="Vibration" />
-
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -76,7 +75,5 @@
             android:key="pref_keepScreenOn"
             android:title="Keep the screen on" />
     </PreferenceCategory>
-
-
 </PreferenceScreen>
 
