@@ -209,22 +209,25 @@ public class AboutActivity extends AppCompatActivity {
                                 try {
                                     ((AboutActivity) getActivity()).getIabHelper().launchPurchaseFlow(getActivity(), SKU_1_DOLLAR, 667,
                                             ((AboutActivity) getActivity()).getPurchaseListener(), "");
-                                } catch (IabHelper.IabAsyncInProgressException e) {
+                                } catch (IabHelper.IabAsyncInProgressException | IllegalStateException e) {
                                     e.printStackTrace();
+                                    Toast.makeText((getActivity()), "Something went wrong.", Toast.LENGTH_SHORT).show();
                                 }
                             } else if (items[item].equals("$3")) {
                                 try {
                                     ((AboutActivity) getActivity()).getIabHelper().launchPurchaseFlow(getActivity(), SKU_3_DOLLARS, 667,
                                             ((AboutActivity) getActivity()).getPurchaseListener(), "");
-                                } catch (IabHelper.IabAsyncInProgressException e) {
+                                } catch (IabHelper.IabAsyncInProgressException | IllegalStateException e) {
                                     e.printStackTrace();
+                                    Toast.makeText((getActivity()), "Something went wrong.", Toast.LENGTH_SHORT).show();
                                 }
                             } else if (items[item].equals("$5")) {
                                 try {
                                     ((AboutActivity) getActivity()).getIabHelper().launchPurchaseFlow(getActivity(), SKU_5_DOLLARS, 667,
                                             ((AboutActivity) getActivity()).getPurchaseListener(), "");
-                                } catch (IabHelper.IabAsyncInProgressException e) {
+                                } catch (IabHelper.IabAsyncInProgressException | IllegalStateException e) {
                                     e.printStackTrace();
+                                    Toast.makeText((getActivity()), "Something went wrong.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }
