@@ -49,7 +49,8 @@
         <SwitchPreference
             android:defaultValue="true"
             android:key="pref_notification"
-            android:title="Sound"></SwitchPreference>
+            android:title="Sound">
+        </SwitchPreference>
 
         <SwitchPreference
             android:defaultValue="true"

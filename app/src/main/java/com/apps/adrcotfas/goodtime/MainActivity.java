@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 mRemainingTime = mSessionTime * 60;
                 mTimerState = TimerState.ACTIVE_WORK;
                 mPauseButton.setEnabled(true);
-                mPauseButton.setTextColor(Color.parseColor("#ffd180"));
+                mPauseButton.setTextColor(getResources().getColor(R.color.yellow));
                 startTimer(300);
                 mStartButton.setEnabled(false); // avoid double-click
                 mStartButton.postDelayed(new Runnable() {
@@ -191,12 +191,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             switch (mTimerState) {
                 case ACTIVE_WORK:
                     mPauseButton.setEnabled(true);
-                    mPauseButton.setTextColor(Color.parseColor("#ffd180"));
+                    mPauseButton.setTextColor(getResources().getColor(R.color.yellow));
                     startTimer(0);
                     break;
                 case ACTIVE_BREAK:
                     mPauseButton.setEnabled(false);
-                    mPauseButton.setTextColor(Color.parseColor("#FF9E9E9E"));
+                    mPauseButton.setTextColor(getResources().getColor(R.color.gray));
                     startTimer(0);
                     break;
                 case PAUSED_WORK:
@@ -351,11 +351,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         SpannableString currentFormattedTick = new SpannableString(currentTick);
         currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
         mTimeLabel.setText(currentFormattedTick);
-        mTimeLabel.setTextColor(0xFFBDBDBD);
+        mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
 
         mStartButton.setVisibility(View.VISIBLE);
         mPauseButton.setVisibility(View.INVISIBLE);
-        mPauseButton.setText("PAUSE");
+        mPauseButton.setText(getString(R.string.pause));
         mStopButton.setVisibility(View.INVISIBLE);
         mHorizontalSeparator.setVisibility(View.INVISIBLE);
         if (mTimer != null) {
@@ -445,7 +445,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     public void pauseTimer() {
 
-        mTimeLabel.setTextColor(0xFFBDBDBD);
+        mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
         long timeOfButtonPress = System.currentTimeMillis();
         if (mWakeLock != null) {
             try {
@@ -457,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         switch (mTimerState) {
             case ACTIVE_WORK:
                 mTimerState = TimerState.PAUSED_WORK;
-                mPauseButton.setText("RESUME");
+                mPauseButton.setText(getString(R.string.resume));
                 mPauseButton.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink));
                 if (mTimer != null) {
                     mTimer.cancel();
@@ -467,7 +467,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 break;
             case PAUSED_WORK:
                 mTimerState = TimerState.ACTIVE_WORK;
-                mPauseButton.setText("PAUSE");
+                mPauseButton.setText(getString(R.string.pause));
                 mPauseButton.clearAnimation();
                 startTimer(System.currentTimeMillis() - timeOfButtonPress > 1000 ? 0 : 1000 - (System.currentTimeMillis() - timeOfButtonPress));
                 break;
@@ -541,7 +541,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mPauseButton.setEnabled(false);
-                        mPauseButton.setTextColor(Color.parseColor("#FF9E9E9E"));
+                        mPauseButton.setTextColor(getResources().getColor(R.color.gray));
                         mRemainingTime = (mCompletedSessions >= mSessionsBeforeLongBreak) ? mLongBreakTime * 60 : mBreakTime * 60;
                         mTimerState = TimerState.ACTIVE_BREAK;
                         startTimer(0);
@@ -571,7 +571,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             case FINISHED_BREAK:
                 loadInitialState();
                 mPauseButton.setEnabled(true);
-                mPauseButton.setTextColor(Color.parseColor("#ffd180"));
+                mPauseButton.setTextColor(getResources().getColor(R.color.yellow));
                 mTimerState = TimerState.FINISHED_BREAK;
                 if (mCompletedSessions >= mSessionsBeforeLongBreak)
                     mCompletedSessions = 0;
@@ -683,8 +683,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private enum TimerState {INACTIVE, ACTIVE_WORK, PAUSED_WORK, ACTIVE_BREAK, FINISHED_WORK, FINISHED_BREAK}
 
     private class UpdateTask extends TimerTask {
-        Handler handler;
-        MainActivity ref;
+        final Handler handler;
+        final MainActivity ref;
 
         public UpdateTask(Handler handler, MainActivity ref) {
             super();

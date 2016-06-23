@@ -7,35 +7,32 @@
     android:fitsSystemWindows="true"
     tools:context="com.apps.adrcotfas.goodtime.MainActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:elevation="0dp">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:elevation="0dp">
+        <Button
+            android:id="@+id/totalSessionsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@color/transparent"
+            android:minWidth="50sp"
+            android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/totalSessionsButton"
-                android:layout_width="wrap_content"
-                android:minWidth="50sp"
-                android:background="@color/transparent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="end"
-                />
-
-        </android.support.v7.widget.Toolbar>
+    </android.support.v7.widget.Toolbar>
 
 
     <include layout="@layout/content_main" />
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/startButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_margin="@dimen/fab_margin"
-        android:id="@+id/startButton"
-        android:src="@drawable/ic_status_goodtime"
-        />
+        android:src="@drawable/ic_status_goodtime" />
 
 </android.support.design.widget.CoordinatorLayout>

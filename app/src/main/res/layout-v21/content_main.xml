@@ -4,71 +4,74 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.apps.adrcotfas.goodtime.MainActivity"
     tools:showIn="@layout/activity_main">
 
     <TextView
         android:id="@+id/textView"
-        android:text=""
-        android:clickable="true"
-        android:textSize="60sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_centerHorizontal="true"
         android:layout_centerInParent="true"
-        android:layout_centerHorizontal="true" />
+        android:clickable="true"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="60sp" />
 
     <RelativeLayout
         android:id="@+id/buttons"
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:layout_alignParentBottom="true">
+
         <View
             android:id="@+id/horizontalSeparator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_alignParentTop="true"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:background="@color/transparent"
-            android:layout_alignParentTop="true"/>
+            android:background="@color/transparent" />
+
         <View
             android:id="@+id/verticalSeparator"
             android:layout_width="1dip"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="4dp"
-            android:layout_marginTop="4dp"
-            android:layout_centerHorizontal="true"/>
+            android:layout_marginTop="4dp" />
 
         <Button
             android:id="@+id/stopButton"
-            android:textColor="#ff8a80"
-            android:text="STOP"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_toStartOf="@id/verticalSeparator"
             android:background="@null"
-            android:layout_alignParentBottom="true"/>
+            android:text="STOP"
+            android:textColor="@color/red" />
+
         <Button
             android:id="@+id/pauseButton"
-            android:textColor="#ffd180"
-            android:text="PAUSE"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
+            android:layout_toEndOf="@id/verticalSeparator"
             android:background="@null"
-            android:layout_alignParentBottom="true"
-            android:layout_toEndOf="@id/verticalSeparator"/>
+            android:text="@string/pause"
+            android:textColor="@color/yellow" />
     </RelativeLayout>
 
 </RelativeLayout>

@@ -27,10 +27,10 @@ public class AboutActivity extends AppCompatActivity {
     static final String SKU_1_DOLLAR = "1_dollar";
     static final String SKU_3_DOLLARS = "3_dollars";
     static final String SKU_5_DOLLARS = "5_dollars";
-    String TAG = "[AboutActivity]";
+    final String TAG = "[AboutActivity]";
     IabHelper mHelper;
     // Called when consumption is complete
-    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
+    final IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
         public void onConsumeFinished(Purchase purchase, IabResult result) {
             Log.d(TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
             // if we were disposed of in the meantime, quit.
@@ -44,7 +44,7 @@ public class AboutActivity extends AppCompatActivity {
         }
     };
     // Callback for when a purchase is finished
-    IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
+    final IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
 
             Log.d(TAG, "Purchase finished: " + result + ", purchase: " + purchase);
@@ -64,7 +64,7 @@ public class AboutActivity extends AppCompatActivity {
             }
         }
     };
-    IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+    final IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
         public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
 
             // Have we been disposed of in the meantime? If so, quit.
