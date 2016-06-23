@@ -48,13 +48,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private static final int GOODTIME_NOTIFICATION_ID = 1;
     private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
     private long mBackPressed;
-    Toast mExitToast;
     PowerManager.WakeLock mWakeLock;
     private int mSessionTime;
     private int mBreakTime;
     private int mRemainingTime;
     private int mLongBreakTime;
-    private int mCompletedSessions = 0;
+    private int mCompletedSessions;
     private int mSessionsBeforeLongBreak;
     private Timer mTimer;
     private TimerState mTimerState;
@@ -64,8 +63,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private TextView mTimeLabel;
     private View mHorizontalSeparator;
     private NotificationManager mNotificationManager;
-    private SharedPreferences mPref = null;
-    private SharedPreferences mPrivatePref = null;
+    private SharedPreferences mPref;
+    private SharedPreferences mPrivatePref;
     private AlertDialog mAlertDialog;
     private int mRingerMode;
     private boolean mWifiMode;
@@ -91,12 +90,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
 
-        PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preferences, true);
         mPref = PreferenceManager.getDefaultSharedPreferences(this);
         mPref.registerOnSharedPreferenceChangeListener(this);
 
+        resetPreferencesIfNeeded();
+
         mPrivatePref = getSharedPreferences("preferences_private", Context.MODE_PRIVATE);
         mPrivatePref.registerOnSharedPreferenceChangeListener(this);
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
 
         Button sessionCounterButton = (Button) findViewById(R.id.totalSessionsButton);
         if (sessionCounterButton != null) {
@@ -222,6 +224,20 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
 
+    // This function is needed to avoid crashes when updating to a newer version
+    // which contains different types of Preferences
+    private void resetPreferencesIfNeeded() {
+        String string = "invalid";
+        try {
+            string = mPref.getString("pref_workTime", "invalid");
+        } catch (Throwable throwable) {
+
+        }
+        if (!string.equals("invalid")) {
+            mPref.edit().clear().commit();
+        }
+    }
+
     @Override
     protected void onDestroy() {
         if (mTimer != null){
@@ -281,15 +297,19 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mDisableWifi = mPref.getBoolean("pref_disableWifi", false);
         mKeepScreenOn = mPref.getBoolean("pref_keepScreenOn", false);
 
-        switch (mTimerState){
-            case INACTIVE:
-                String currentTick = String.format(Locale.US, "%d.00", mSessionTime);
-                SpannableString currentFormattedTick = new SpannableString(currentTick);
-                currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
-                mTimeLabel.setText(currentFormattedTick);
-            break;
-            case ACTIVE_WORK:
-                break;
+        if(mTimerState != null)
+        {
+            switch (mTimerState){
+                case INACTIVE:
+                    String currentTick = String.format(Locale.US, "%d.00", mSessionTime);
+                    SpannableString currentFormattedTick = new SpannableString(currentTick);
+                    currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
+                    if (mTimeLabel != null)
+                        mTimeLabel.setText(currentFormattedTick);
+                    break;
+                case ACTIVE_WORK:
+                    break;
+            }
         }
     }
 
@@ -309,16 +329,16 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     public void onBackPressed()
     {
+        Toast exitToast = Toast.makeText(getBaseContext(), "Press the back button again to exit", Toast.LENGTH_SHORT);
         if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
         {
-            mExitToast.cancel();
+            exitToast.cancel();
             super.onBackPressed();
             return;
         }
         else {
             try {
-                mExitToast = Toast.makeText(getBaseContext(), "Press the back button again to exit", Toast.LENGTH_SHORT);
-                mExitToast.show();
+                exitToast.show();
             } catch (Throwable th) {
                 // ignoring this exception
             }

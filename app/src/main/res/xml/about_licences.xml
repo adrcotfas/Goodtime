@@ -22,8 +22,8 @@
                     android:summary="Licensed under the Apache License, Version 2.0">
                 </Preference>
                 <Preference
-                    android:key="number-picker"
-                    android:title="NumberPickerPreference / Vanniktech - Niklas Baudy"
+                    android:key="seekbar-pref"
+                    android:title="MaterialSeekBarPreference / Pavel Sikun"
                     android:summary="Licensed under the Apache License, Version 2.0">
                 </Preference>
                 <Preference

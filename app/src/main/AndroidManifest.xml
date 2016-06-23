@@ -28,7 +28,7 @@
             android:name=".settings.SettingsActivity"
             android:label="Settings"
             android:parentActivityName="com.apps.adrcotfas.goodtime.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".about.AboutActivity"
             android:label="About"

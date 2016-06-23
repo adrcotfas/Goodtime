@@ -3,7 +3,7 @@
     <Preference
         android:key="about_version"
         android:title="Version"
-        android:summary="1.0.2">
+        android:summary="1.0.3">
     </Preference>
     <Preference
         android:key="about_pro"

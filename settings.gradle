@@ -1,1 +1,1 @@
-include ':app', ':vnt-numberpickerpreference'
+include ':app'

@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Goodtime.iml" filepath="$PROJECT_DIR$/Goodtime.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SecondGoodtime.iml" filepath="$PROJECT_DIR$/SecondGoodtime.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/vnt-numberpickerpreference/vnt-numberpickerpreference.iml" filepath="$PROJECT_DIR$/vnt-numberpickerpreference/vnt-numberpickerpreference.iml" />
     </modules>
   </component>
 </project>

@@ -68,11 +68,11 @@ public class LicencesActivity extends AppCompatActivity {
                 }
             });
 
-            Preference numberPicker = findPreference("number-picker");
-            materialIntro.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            Preference seekbar = findPreference("seekbar-pref");
+            seekbar.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    Uri uri = Uri.parse("https://github.com/vanniktech/VNTNumberPickerPreference");
+                    Uri uri = Uri.parse("https://github.com/MrBIMC/MaterialSeekBarPreference");
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(intent);
                     return true;

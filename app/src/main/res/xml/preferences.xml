@@ -3,33 +3,46 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
         android:title="General">
-        <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
-            android:defaultValue="25"
+        <com.pavelsikun.seekbarpreference.SeekBarPreference
             android:key="pref_workTime"
             android:title="Work session duration"
-            app:vnt_maxValue="120"
-            app:vnt_minValue="1" />
+            android:defaultValue="25"
+            app:msbp_minValue="1"
+            app:msbp_maxValue="100"
+            app:msbp_interval="1"
+            app:msbp_measurementUnit="minutes"
+            app:msbp_dialogEnabled="false"/>
 
-        <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
-            android:defaultValue="5"
+        <com.pavelsikun.seekbarpreference.SeekBarPreference
             android:key="pref_breakTime"
             android:title="Break duration"
-            app:vnt_maxValue="30"
-            app:vnt_minValue="1" />
+            android:defaultValue="5"
+            app:msbp_minValue="1"
+            app:msbp_maxValue="15"
+            app:msbp_interval="1"
+            app:msbp_measurementUnit="minutes"
+            app:msbp_dialogEnabled="false"/>
 
-        <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
-            android:defaultValue="15"
+        <com.pavelsikun.seekbarpreference.SeekBarPreference
             android:key="pref_longBreakDuration"
             android:title="Long break duration"
-            app:vnt_maxValue="60"
-            app:vnt_minValue="1" />
+            android:defaultValue="15"
+            app:msbp_minValue="1"
+            app:msbp_maxValue="30"
+            app:msbp_interval="1"
+            app:msbp_measurementUnit="minutes"
+            app:msbp_dialogEnabled="false" />
 
-        <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
-            android:defaultValue="4"
+        <com.pavelsikun.seekbarpreference.SeekBarPreference
+
             android:key="pref_sessionsBeforeLongBreak"
             android:title="Sessions before long break"
-            app:vnt_maxValue="10"
-            app:vnt_minValue="2" />
+            android:defaultValue="4"
+            app:msbp_minValue="2"
+            app:msbp_maxValue="8"
+            app:msbp_interval="1"
+            app:msbp_measurementUnit="sessions"
+            app:msbp_dialogEnabled="false" />
 
     </PreferenceCategory>
     <PreferenceCategory
