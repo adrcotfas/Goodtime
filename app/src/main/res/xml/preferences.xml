@@ -71,6 +71,10 @@
             android:defaultValue="false"
             android:key="pref_keepScreenOn"
             android:title="Keep the screen on" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_continuousMode"
+            android:title="Continuous mode" />
     </PreferenceCategory>
 </PreferenceScreen>
 

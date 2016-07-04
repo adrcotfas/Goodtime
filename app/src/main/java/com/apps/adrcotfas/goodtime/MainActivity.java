@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private boolean mDisableSoundAndVibration;
     private boolean mDisableWifi;
     private boolean mKeepScreenOn;
+    private boolean mContinuousMode;
 
     @Override
     protected void onResume() {
@@ -176,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
         mWifiMode = wifiManager.isWifiEnabled();
         mKeepScreenOn = mPref.getBoolean("pref_keepScreenOn", false);
+        mContinuousMode = mPref.getBoolean("pref_continuousMode", false);
 
         setupAppRater();
         if (savedInstanceState != null) {
@@ -187,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mDisableSoundAndVibration = savedInstanceState.getBoolean("disableSoundAndVibration");
             mDisableWifi = savedInstanceState.getBoolean("disableWifi");
             mKeepScreenOn = savedInstanceState.getBoolean("keepScreenOn");
+            mContinuousMode = savedInstanceState.getBoolean("continuousMode");
 
             switch (mTimerState) {
                 case ACTIVE_WORK:
@@ -295,6 +298,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mDisableSoundAndVibration = mPref.getBoolean("pref_disableSoundAndVibration", false);
         mDisableWifi = mPref.getBoolean("pref_disableWifi", false);
         mKeepScreenOn = mPref.getBoolean("pref_keepScreenOn", false);
+        mContinuousMode = mPref.getBoolean("pref_continuousMode", false);
 
         if (mTimerState != null) {
             switch (mTimerState) {
@@ -322,6 +326,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         outState.putBoolean("disableWifi", mDisableWifi);
         outState.putBoolean("wifiMode", mWifiMode);
         outState.putBoolean("keepScreenOn", mKeepScreenOn);
+        outState.putBoolean("continuousMode", mContinuousMode);
     }
 
     @Override
@@ -521,14 +526,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mediaPlayer.start();
         }
         bringApplicationToFront();
-        showDialog();
+        if (mContinuousMode) {
+            goOnContinuousMode();
+        }
+        else
+            showDialog();
     }
 
     public void showDialog() {
-        PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = pm.newWakeLock((PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK), "TAG");
-        wakeLock.acquire();
-        wakeLock.release();
+        wakeScreen();
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         switch (mTimerState) {
@@ -595,6 +601,44 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 mAlertDialog.setCanceledOnTouchOutside(false);
                 mAlertDialog.show();
                 createNotification("Break complete. Resume work?");
+                break;
+            default:
+                mTimerState = TimerState.INACTIVE;
+                break;
+        }
+    }
+
+    private void wakeScreen() {
+        PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = pm.newWakeLock((PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK), "TAG");
+        wakeLock.acquire();
+        wakeLock.release();
+    }
+
+    private void goOnContinuousMode() {
+        switch (mTimerState) {
+            case ACTIVE_WORK:
+            case FINISHED_WORK:
+                loadInitialState();
+                mTimerState = TimerState.FINISHED_WORK;
+                mPauseButton.setEnabled(false);
+                mPauseButton.setTextColor(getResources().getColor(R.color.gray));
+                mRemainingTime = (mCompletedSessions >= mSessionsBeforeLongBreak) ? mLongBreakTime * 60 : mBreakTime * 60;
+                mTimerState = TimerState.ACTIVE_BREAK;
+                startTimer(0);
+            break;
+            case ACTIVE_BREAK:
+            case FINISHED_BREAK:
+                loadInitialState();
+                mPauseButton.setEnabled(true);
+                mPauseButton.setTextColor(getResources().getColor(R.color.yellow));
+                mTimerState = TimerState.FINISHED_BREAK;
+                if (mCompletedSessions >= mSessionsBeforeLongBreak)
+                    mCompletedSessions = 0;
+
+                    mRemainingTime = mSessionTime * 60;
+                    mTimerState = TimerState.ACTIVE_WORK;
+                    startTimer(0);
                 break;
             default:
                 mTimerState = TimerState.INACTIVE;
