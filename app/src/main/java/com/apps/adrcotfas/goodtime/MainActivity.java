@@ -331,20 +331,25 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     public void onBackPressed() {
-        Toast exitToast = Toast.makeText(getBaseContext(), "Press the back button again to exit", Toast.LENGTH_SHORT);
-        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis()) {
-            exitToast.cancel();
-            super.onBackPressed();
-            return;
-        } else {
-            try {
-                exitToast.show();
-            } catch (Throwable th) {
-                // ignoring this exception
-            }
+        if (mTimerState != TimerState.INACTIVE) {
+            /// move app to background
+            moveTaskToBack(true);
         }
-
-        mBackPressed = System.currentTimeMillis();
+        else {
+            Toast exitToast = Toast.makeText(getBaseContext(), "Press the back button again to exit", Toast.LENGTH_SHORT);
+            if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis()) {
+                exitToast.cancel();
+                super.onBackPressed();
+                return;
+            } else {
+                try {
+                    exitToast.show();
+                } catch (Throwable th) {
+                    // ignoring this exception
+                }
+            }
+            mBackPressed = System.currentTimeMillis();
+        }
     }
 
     public void loadInitialState() {
