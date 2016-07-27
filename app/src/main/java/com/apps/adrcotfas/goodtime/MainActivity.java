@@ -711,6 +711,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                mCompletedSessions = 0;
                 mPrivatePref.edit().putInt("pref_totalSessions", 0).apply();
             }
         });
