@@ -11,6 +11,9 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -238,6 +241,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (!string.equals("invalid")) {
             mPref.edit().clear().commit();
         }
+
     }
 
     @Override
@@ -526,9 +530,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             long[] pattern = {0, 300, 700, 300};
             vibrator.vibrate(pattern, -1);
         }
-        if (mPref.getBoolean("pref_notification", true)) {
-            MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.goodtime_notif);
-            mediaPlayer.start();
+
+        String notificationSound = mPref.getString("pref_ringtone", "");
+        if (!notificationSound.equals("")) {
+            Uri uri = Uri.parse(notificationSound);
+            Ringtone r = RingtoneManager.getRingtone(this, uri);
+            r.play();
         }
         bringApplicationToFront();
         if (mContinuousMode) {

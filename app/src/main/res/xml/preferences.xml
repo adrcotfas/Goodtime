@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <PreferenceCategory android:title="General">
         <com.pavelsikun.seekbarpreference.SeekBarPreference
             android:defaultValue="25"
@@ -46,11 +47,16 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="Notification">
 
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="pref_notification"
-            android:title="Sound">
-        </SwitchPreference>
+        <com.apps.adrcotfas.goodtime.settings.ExtraRingtonePreference
+            android:key="pref_ringtone"
+            android:title="@string/ringtoneTitle"
+            android:summary="@string/ringtoneSummary"
+            android:defaultValue="goodtime_notif"
+            app:ringtoneType="notification"
+            app:showSilent="true"
+            app:showDefault="false"
+            app:extraRingtones="@array/extraRingtones"
+            app:extraRingtoneTitles="@array/extraRingtoneTitles"/>
 
         <SwitchPreference
             android:defaultValue="true"
