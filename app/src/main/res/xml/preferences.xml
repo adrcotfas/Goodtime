@@ -47,16 +47,15 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="Notification">
 
-        <com.apps.adrcotfas.goodtime.settings.ExtraRingtonePreference
-            android:key="pref_ringtone"
+        <RingtonePreference
+            android:key="pref_notificationSound"
             android:title="@string/ringtoneTitle"
-            android:summary="@string/ringtoneSummary"
-            android:defaultValue="goodtime_notif"
-            app:ringtoneType="notification"
-            app:showSilent="true"
-            app:showDefault="false"
-            app:extraRingtones="@array/extraRingtones"
-            app:extraRingtoneTitles="@array/extraRingtoneTitles"/>
+            android:defaultValue="content://settings/system/notification_sound"
+            android:summary="Set the notification sound"
+            android:ringtoneType="notification"
+            android:showSilent="true"
+            android:showDefault="false"
+            />
 
         <SwitchPreference
             android:defaultValue="true"

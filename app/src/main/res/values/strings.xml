@@ -6,25 +6,14 @@
     <string name="stop">STOP</string>
     <string name="pause">PAUSE</string>
     <string name="resume">RESUME</string>
+    <string name="goodtime_notification_title">Goodtime notification sound</string>
+    <string name="default_ringtone_path">content://settings/system/notification_sound</string>
+    <string name="ringtoneTitle">Notification sound</string>
 
     <string-array name="donations">
         <item>$1</item>
         <item>$3</item>
         <item>$5</item>
-    </string-array>
-
-    <string name="silent">Silent</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
-    <string name="ringtoneTitle">Notification sound</string>
-    <string name="ringtoneSummary">%s</string>
-
-    <string-array name="extraRingtones">
-        <item>goodtime_notif</item>
-    </string-array>
-
-    <string-array name="extraRingtoneTitles">
-        <item>Goodtime notification sound</item>
     </string-array>
 
 </resources>

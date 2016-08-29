@@ -192,8 +192,7 @@ public class AboutActivity extends AppCompatActivity {
 
                     final CharSequence[] items = getResources().getStringArray(R.array.donations);
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-                    builder.setTitle("Select the amount. VAT is not included.");
+                    builder.setTitle("Donate to support updates and more quality apps.");
                     builder.setNegativeButton(
                             "Cancel",
                             new DialogInterface.OnClickListener() {

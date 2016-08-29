@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -38,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.about.AboutActivity;
+import com.apps.adrcotfas.goodtime.settings.CustomNotification;
 import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
 
 import java.util.Locale;
@@ -94,10 +94,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
 
+
         mPref = PreferenceManager.getDefaultSharedPreferences(this);
         mPref.registerOnSharedPreferenceChangeListener(this);
 
         resetPreferencesIfNeeded();
+        installCustomRingtones();
 
         mPrivatePref = getSharedPreferences("preferences_private", Context.MODE_PRIVATE);
         mPrivatePref.registerOnSharedPreferenceChangeListener(this);
@@ -227,6 +229,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         } else {
             loadInitialState();
         }
+    }
+
+    // Copies custom ringtones to the device storage
+    private void installCustomRingtones() {
+        // Add the custom alarm tones to the phone's storage, if they weren't copied yet.
+        // Works on a separate thread.
+        if (!mPref.getBoolean(CustomNotification.PREF_KEY_RINGTONES_COPIED, false))
+            CustomNotification.installToStorage(this);
     }
 
     // This function is needed to avoid crashes when updating to a newer version
@@ -531,7 +541,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             vibrator.vibrate(pattern, -1);
         }
 
-        String notificationSound = mPref.getString("pref_ringtone", "");
+        String notificationSound = mPref.getString("pref_notificationSound", "");
         if (!notificationSound.equals("")) {
             Uri uri = Uri.parse(notificationSound);
             Ringtone r = RingtoneManager.getRingtone(this, uri);

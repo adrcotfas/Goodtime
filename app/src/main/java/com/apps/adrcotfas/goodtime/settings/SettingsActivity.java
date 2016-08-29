@@ -31,6 +31,7 @@ public class SettingsActivity extends AppCompatActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class SettingsFragment extends PreferenceFragment {
 
+        public static final String KEY_RINGTONE = "pref_notificationSound";
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
