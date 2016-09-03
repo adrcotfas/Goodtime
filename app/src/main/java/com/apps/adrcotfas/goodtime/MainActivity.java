@@ -369,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public void loadInitialState() {
         mTimerState = TimerState.INACTIVE;
         mRemainingTime = mSessionTime * 60;
-        String currentTick = String.format(Locale.US, "%d." + (mRemainingTime % 60 < 10 ? "0%d" : "%d"),
+        String currentTick = String.format(Locale.US, "%d.%02d",
                 mRemainingTime / 60,
                 mRemainingTime % 60);
         SpannableString currentFormattedTick = new SpannableString(currentTick);
@@ -414,13 +414,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         String currentTick;
         SpannableString currentFormattedTick;
         if (mRemainingTime >= 60) {
-            currentTick = String.format(Locale.US, "%d." + (mRemainingTime % 60 < 10 ? "0%d" : "%d"),
+            currentTick = String.format(Locale.US, "%d.%02d",
                     mRemainingTime / 60,
                     mRemainingTime % 60);
             currentFormattedTick = new SpannableString(currentTick);
             currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
         } else {
-            currentTick = String.format(Locale.US, " ." + (mRemainingTime % 60 < 10 ? "0%d" : "%d"),
+            currentTick = String.format(Locale.US, " .%02d",
                     mRemainingTime % 60);
             currentFormattedTick = new SpannableString(currentTick);
             currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
