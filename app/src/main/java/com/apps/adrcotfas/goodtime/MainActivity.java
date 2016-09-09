@@ -447,10 +447,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
                     wifiManager.setWifiEnabled(false);
                 }
-                createNotification("Work session in progress.");
+                createNotification("Work session in progress.", true);
                 break;
             case ACTIVE_BREAK:
-                createNotification("Break session in progress.");
+                createNotification("Break session in progress.", true);
         }
         loadRunningTimerUIState();
 
@@ -487,7 +487,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     mTimer.cancel();
                     mTimer.purge();
                 }
-                createNotification("Work session is paused. Resume?");
+                createNotification("Work session is paused. Resume?", false);
                 break;
             case PAUSED_WORK:
                 mTimerState = TimerState.ACTIVE_WORK;
@@ -593,7 +593,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 mAlertDialog = alertDialogBuilder.create();
                 mAlertDialog.setCanceledOnTouchOutside(false);
                 mAlertDialog.show();
-                createNotification("Session complete. Continue?");
+                createNotification("Session complete. Continue?", false);
                 break;
             case ACTIVE_BREAK:
             case FINISHED_BREAK:
@@ -622,7 +622,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 mAlertDialog = alertDialogBuilder.create();
                 mAlertDialog.setCanceledOnTouchOutside(false);
                 mAlertDialog.show();
-                createNotification("Break complete. Resume work?");
+                createNotification("Break complete. Resume work?", false);
                 break;
             default:
                 mTimerState = TimerState.INACTIVE;
@@ -694,7 +694,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
 
-    private void createNotification(CharSequence contentText) {
+    private void createNotification(CharSequence contentText, boolean ongoing) {
 
         Notification.Builder notificationBuilder = new Notification.Builder(
                 getApplicationContext())
@@ -702,7 +702,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 .setAutoCancel(false)
                 .setContentTitle("Goodtime")
                 .setContentText(contentText)
-                .setOngoing(true)
+                .setOngoing(ongoing)
                 .setShowWhen(false);
         notificationBuilder.setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0,
                 new Intent(getApplicationContext(), MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
