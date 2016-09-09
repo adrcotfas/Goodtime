@@ -42,7 +42,6 @@ import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
 
 import java.util.Locale;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import im.delight.apprater.AppRater;
 
@@ -745,28 +744,5 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         AppRater appRater = new AppRater(this);
         appRater.setPhrases("Rate this app", "If you found this app useful please rate it on Google Play. Thanks for your support!", "Rate now", "Later", "No, thanks");
         appRater.show();
-    }
-
-    private enum TimerState {INACTIVE, ACTIVE_WORK, PAUSED_WORK, ACTIVE_BREAK, FINISHED_WORK, FINISHED_BREAK}
-
-    private class UpdateTask extends TimerTask {
-        final Handler handler;
-        final MainActivity ref;
-
-        public UpdateTask(Handler handler, MainActivity ref) {
-            super();
-            this.handler = handler;
-            this.ref = ref;
-        }
-
-        @Override
-        public void run() {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    ref.runTimer();
-                }
-            });
-        }
     }
 }
