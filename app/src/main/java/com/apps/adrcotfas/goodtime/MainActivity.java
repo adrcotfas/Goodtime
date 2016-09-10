@@ -246,8 +246,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void installCustomRingtones() {
         // Add the custom alarm tones to the phone's storage, if they weren't copied yet.
         // Works on a separate thread.
-        if (!mPref.getBoolean(CustomNotification.PREF_KEY_RINGTONES_COPIED, false))
+        if (!mPref.getBoolean(CustomNotification.PREF_KEY_RINGTONES_COPIED, false)) {
             CustomNotification.installToStorage(this);
+        }
     }
 
     // This function is needed to avoid crashes when updating to a newer version
@@ -271,8 +272,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mTimer.cancel();
             mTimer.purge();
         }
-        if (mNotificationManager != null)
+        if (mNotificationManager != null) {
             mNotificationManager.cancelAll();
+        }
         if (mAlertDialog != null) {
             mAlertDialog.dismiss();
         }
@@ -328,12 +330,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (mTimerState != null) {
             switch (mTimerState) {
                 case INACTIVE:
-                    String currentTick = String.format(Locale.US, "%d.00", mSessionTime);
-                    SpannableString currentFormattedTick = new SpannableString(currentTick);
-                    currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
-                    if (mTimeLabel != null)
-                        mTimeLabel.setText(currentFormattedTick);
-                    break;
+                    updateTimerLabel(mSessionTime * 60);
                 case ACTIVE_WORK:
                     break;
             }
@@ -359,8 +356,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (mTimerState != TimerState.INACTIVE) {
             /// move app to background
             moveTaskToBack(true);
-        }
-        else {
+        } else {
             Toast exitToast = Toast.makeText(getBaseContext(), "Press the back button again to exit", Toast.LENGTH_SHORT);
             if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis()) {
                 exitToast.cancel();
@@ -380,12 +376,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public void loadInitialState() {
         mTimerState = TimerState.INACTIVE;
         mRemainingTime = mSessionTime * 60;
-        String currentTick = String.format(Locale.US, "%d.%02d",
-                mRemainingTime / 60,
-                mRemainingTime % 60);
-        SpannableString currentFormattedTick = new SpannableString(currentTick);
-        currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
-        mTimeLabel.setText(currentFormattedTick);
+        updateTimerLabel(mRemainingTime);
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
 
         mStartButton.setVisibility(View.VISIBLE);
@@ -397,8 +388,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mTimer.cancel();
             mTimer.purge();
         }
-        if (mNotificationManager != null)
+        if (mNotificationManager != null) {
             mNotificationManager.cancelAll();
+        }
 
         if (mWakeLock != null) {
             try {
@@ -422,22 +414,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     public void loadRunningTimerUIState() {
-        String currentTick;
-        SpannableString currentFormattedTick;
-        if (mRemainingTime >= 60) {
-            currentTick = String.format(Locale.US, "%d.%02d",
-                    mRemainingTime / 60,
-                    mRemainingTime % 60);
-            currentFormattedTick = new SpannableString(currentTick);
-            currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
-        } else {
-            currentTick = String.format(Locale.US, " .%02d",
-                    mRemainingTime % 60);
-            currentFormattedTick = new SpannableString(currentTick);
-            currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
-        }
+        updateTimerLabel(mRemainingTime);
 
-        mTimeLabel.setText(currentFormattedTick);
         mStartButton.setVisibility(View.INVISIBLE);
         mPauseButton.setVisibility(View.VISIBLE);
         mStopButton.setVisibility(View.VISIBLE);
@@ -519,8 +497,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         screenWakeLock.acquire();
         screenWakeLock.release();
 
-        if (mWakeLock != null)
+        if (mWakeLock != null) {
             mWakeLock.release();
+        }
 
         if (mKeepScreenOn) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -561,9 +540,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         bringApplicationToFront();
         if (mContinuousMode) {
             goOnContinuousMode();
-        }
-        else
+        } else {
             showDialog();
+        }
     }
 
     public void showDialog() {
@@ -597,8 +576,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 alertDialogBuilder.setNeutralButton("Close", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (mNotificationManager != null)
+                        if (mNotificationManager != null) {
                             mNotificationManager.cancelAll();
+                        }
                     }
                 });
                 mAlertDialog = alertDialogBuilder.create();
@@ -612,8 +592,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 mPauseButton.setEnabled(true);
                 mPauseButton.setTextColor(getResources().getColor(R.color.yellow));
                 mTimerState = TimerState.FINISHED_BREAK;
-                if (mCompletedSessions >= mSessionsBeforeLongBreak)
+                if (mCompletedSessions >= mSessionsBeforeLongBreak) {
                     mCompletedSessions = 0;
+                }
                 alertDialogBuilder.setTitle("Break complete");
                 alertDialogBuilder.setPositiveButton("Begin session", new DialogInterface.OnClickListener() {
                     @Override
@@ -626,8 +607,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (mNotificationManager != null)
+                        if (mNotificationManager != null) {
                             mNotificationManager.cancelAll();
+                        }
                     }
                 });
                 mAlertDialog = alertDialogBuilder.create();
@@ -659,19 +641,20 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 mRemainingTime = (mCompletedSessions >= mSessionsBeforeLongBreak) ? mLongBreakTime * 60 : mBreakTime * 60;
                 mTimerState = TimerState.ACTIVE_BREAK;
                 startTimer(0);
-            break;
+                break;
             case ACTIVE_BREAK:
             case FINISHED_BREAK:
                 loadInitialState();
                 mPauseButton.setEnabled(true);
                 mPauseButton.setTextColor(getResources().getColor(R.color.yellow));
                 mTimerState = TimerState.FINISHED_BREAK;
-                if (mCompletedSessions >= mSessionsBeforeLongBreak)
+                if (mCompletedSessions >= mSessionsBeforeLongBreak) {
                     mCompletedSessions = 0;
+                }
 
-                    mRemainingTime = mSessionTime * 60;
-                    mTimerState = TimerState.ACTIVE_WORK;
-                    startTimer(0);
+                mRemainingTime = mSessionTime * 60;
+                mTimerState = TimerState.ACTIVE_WORK;
+                startTimer(0);
                 break;
             default:
                 mTimerState = TimerState.INACTIVE;
@@ -683,26 +666,30 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (mTimerState != TimerState.INACTIVE) {
             if (mRemainingTime == 0) {
                 onCountdownFinished();
-            } else
-                --mRemainingTime;
-
-            String currentTick;
-            SpannableString currentFormattedTick;
-            if (mRemainingTime >= 60) {
-                currentTick = String.format(Locale.US, "%d." + (mRemainingTime % 60 < 10 ? "0%d" : "%d"),
-                        mRemainingTime / 60,
-                        mRemainingTime % 60);
-                currentFormattedTick = new SpannableString(currentTick);
-                currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
             } else {
-                currentTick = String.format(Locale.US, " ." + (mRemainingTime % 60 < 10 ? "0%d" : "%d"),
-                        mRemainingTime % 60);
-                currentFormattedTick = new SpannableString(currentTick);
-                currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
+                --mRemainingTime;
             }
 
-            mTimeLabel.setText(currentFormattedTick);
+            updateTimerLabel(mRemainingTime);
         }
+    }
+
+    private void updateTimerLabel(
+            final int remainingTime
+    ) {
+        int minutes = remainingTime / 60;
+        int seconds = remainingTime % 60;
+
+        String currentTick = String.format(
+                Locale.US,
+                (minutes > 0
+                 ? minutes
+                 : "") + ".%02d",
+                seconds
+        );
+        SpannableString currentFormattedTick = new SpannableString(currentTick);
+        currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
+        mTimeLabel.setText(currentFormattedTick);
     }
 
     private void createNotification(CharSequence contentText, boolean ongoing) {
