@@ -45,6 +45,18 @@ import java.util.Timer;
 
 import im.delight.apprater.AppRater;
 
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.BREAK_DURATION;
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.CONTINUOUS_MODE;
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.DISABLE_SOUND_AND_VIBRATION;
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.DISABLE_WIFI;
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.FIRST_RUN;
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.KEEP_SCREEN_ON;
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.LONG_BREAK_DURATION;
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.SESSIONS_BEFORE_LONG_BREAK;
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.SESSION_DURATION;
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.NOTIFICATION_SOUND;
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.NOTIFICATION_VIBRATE;
+
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final int GOODTIME_NOTIFICATION_ID = 1;
@@ -78,10 +90,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onResume() {
         super.onResume();
-        if (mPrivatePref.getBoolean("pref_firstRun", true)) {
+        if (mPrivatePref.getBoolean(FIRST_RUN, true)) {
             Intent introIntent = new Intent(this, ProductTourActivity.class);
             startActivity(introIntent);
-            mPrivatePref.edit().putBoolean("pref_firstRun", false).apply();
+            mPrivatePref.edit().putBoolean(FIRST_RUN, false).apply();
         }
     }
 
@@ -169,19 +181,19 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             }
         });
 
-        mSessionTime = mPref.getInt("pref_workTime", 25);
-        mBreakTime = mPref.getInt("pref_breakTime", 5);
-        mLongBreakTime = mPref.getInt("pref_longBreakDuration", 15);
-        mSessionsBeforeLongBreak = mPref.getInt("pref_sessionsBeforeLongBreak", 4);
-        mDisableSoundAndVibration = mPref.getBoolean("pref_disableSoundAndVibration", false);
+        mSessionTime = mPref.getInt(SESSION_DURATION, 25);
+        mBreakTime = mPref.getInt(BREAK_DURATION, 5);
+        mLongBreakTime = mPref.getInt(LONG_BREAK_DURATION, 15);
+        mSessionsBeforeLongBreak = mPref.getInt(SESSIONS_BEFORE_LONG_BREAK, 4);
+        mDisableSoundAndVibration = mPref.getBoolean(DISABLE_SOUND_AND_VIBRATION, false);
         AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         mRingerMode = aManager.getRingerMode();
 
-        mDisableWifi = mPref.getBoolean("pref_disableWifi", false);
+        mDisableWifi = mPref.getBoolean(DISABLE_WIFI, false);
         WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
         mWifiMode = wifiManager.isWifiEnabled();
-        mKeepScreenOn = mPref.getBoolean("pref_keepScreenOn", false);
-        mContinuousMode = mPref.getBoolean("pref_continuousMode", false);
+        mKeepScreenOn = mPref.getBoolean(KEEP_SCREEN_ON, false);
+        mContinuousMode = mPref.getBoolean(CONTINUOUS_MODE, false);
 
         setupAppRater();
         if (savedInstanceState != null) {
@@ -243,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void resetPreferencesIfNeeded() {
         String string = "invalid";
         try {
-            string = mPref.getString("pref_workTime", "invalid");
+            string = mPref.getString(SESSION_DURATION, "invalid");
         } catch (Throwable throwable) {
 
         }
@@ -300,18 +312,18 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        mSessionTime = mPref.getInt("pref_workTime", 25);
-        mBreakTime = mPref.getInt("pref_breakTime", 5);
-        mLongBreakTime = mPref.getInt("pref_longBreakDuration", 15);
-        mSessionsBeforeLongBreak = mPref.getInt("pref_sessionsBeforeLongBreak", 4);
+        mSessionTime = mPref.getInt(SESSION_DURATION, 25);
+        mBreakTime = mPref.getInt(BREAK_DURATION, 5);
+        mLongBreakTime = mPref.getInt(LONG_BREAK_DURATION, 15);
+        mSessionsBeforeLongBreak = mPref.getInt(SESSIONS_BEFORE_LONG_BREAK, 4);
         Button button = (Button) findViewById(R.id.totalSessionsButton);
         if (button != null) {
             button.setText(String.valueOf(mPrivatePref.getInt("pref_totalSessions", 0)));
         }
-        mDisableSoundAndVibration = mPref.getBoolean("pref_disableSoundAndVibration", false);
-        mDisableWifi = mPref.getBoolean("pref_disableWifi", false);
-        mKeepScreenOn = mPref.getBoolean("pref_keepScreenOn", false);
-        mContinuousMode = mPref.getBoolean("pref_continuousMode", false);
+        mDisableSoundAndVibration = mPref.getBoolean(DISABLE_SOUND_AND_VIBRATION, false);
+        mDisableWifi = mPref.getBoolean(DISABLE_WIFI, false);
+        mKeepScreenOn = mPref.getBoolean(KEEP_SCREEN_ON, false);
+        mContinuousMode = mPref.getBoolean(CONTINUOUS_MODE, false);
 
         if (mTimerState != null) {
             switch (mTimerState) {
@@ -534,13 +546,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             int totalSessions = mPrivatePref.getInt("pref_totalSessions", 0);
             mPrivatePref.edit().putInt("pref_totalSessions", ++totalSessions).apply();
         }
-        if (mPref.getBoolean("pref_vibrate", true)) {
+        if (mPref.getBoolean(NOTIFICATION_VIBRATE, true)) {
             final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             long[] pattern = {0, 300, 700, 300};
             vibrator.vibrate(pattern, -1);
         }
 
-        String notificationSound = mPref.getString("pref_notificationSound", "");
+        String notificationSound = mPref.getString(NOTIFICATION_SOUND, "");
         if (!notificationSound.equals("")) {
             Uri uri = Uri.parse(notificationSound);
             Ringtone r = RingtoneManager.getRingtone(this, uri);
