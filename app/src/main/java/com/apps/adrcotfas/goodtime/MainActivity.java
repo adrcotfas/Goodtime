@@ -60,7 +60,8 @@ import static com.apps.adrcotfas.goodtime.PreferenceKeys.NOTIFICATION_VIBRATE;
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final int GOODTIME_NOTIFICATION_ID = 1;
-    private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
+    private static final int MAXIMUM_MILLISECONDS_BETWEEN_BACK_PRESSES = 2000;
+
     private PowerManager.WakeLock mWakeLock;
     private long mBackPressed;
     private int mSessionTime;
@@ -358,7 +359,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             moveTaskToBack(true);
         } else {
             Toast exitToast = Toast.makeText(getBaseContext(), "Press the back button again to exit", Toast.LENGTH_SHORT);
-            if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis()) {
+            if (mBackPressed + MAXIMUM_MILLISECONDS_BETWEEN_BACK_PRESSES > System.currentTimeMillis()) {
                 exitToast.cancel();
                 super.onBackPressed();
                 return;
