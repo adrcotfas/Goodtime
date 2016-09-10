@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private static final int GOODTIME_NOTIFICATION_ID = 1;
     private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
-    PowerManager.WakeLock mWakeLock;
+    private PowerManager.WakeLock mWakeLock;
     private long mBackPressed;
     private int mSessionTime;
     private int mBreakTime;
@@ -373,7 +373,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
 
-    public void loadInitialState() {
+    private void loadInitialState() {
         mTimerState = TimerState.INACTIVE;
         mRemainingTime = mSessionTime * 60;
         updateTimerLabel(mRemainingTime);
@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
-    public void loadRunningTimerUIState() {
+    private void loadRunningTimerUIState() {
         updateTimerLabel(mRemainingTime);
 
         mStartButton.setVisibility(View.INVISIBLE);
@@ -422,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mHorizontalSeparator.setVisibility(View.VISIBLE);
     }
 
-    public void startTimer(long delay) {
+    private void startTimer(long delay) {
 
         mTimeLabel.setTextColor(Color.WHITE);
         switch (mTimerState) {
@@ -456,7 +456,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mTimer.schedule(new UpdateTask(new Handler(), MainActivity.this), delay, 1000);
     }
 
-    public void pauseTimer() {
+    private void pauseTimer() {
 
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
         long timeOfButtonPress = System.currentTimeMillis();
@@ -487,7 +487,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
 
-    public void onCountdownFinished() {
+    private void onCountdownFinished() {
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock screenWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
@@ -545,7 +545,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
 
-    public void showDialog() {
+    private void showDialog() {
         wakeScreen();
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -719,7 +719,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
 
-    void showSessionCounterDialog() {
+    private void showSessionCounterDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle("Reset sessions counter?");
         alertDialogBuilder.setMessage("The completed sessions counter will be reset.");
@@ -739,7 +739,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mAlertDialog.show();
     }
 
-    void setupAppRater() {
+    private void setupAppRater() {
         AppRater appRater = new AppRater(this);
         appRater.setPhrases("Rate this app", "If you found this app useful please rate it on Google Play. Thanks for your support!", "Rate now", "Later", "No, thanks");
         appRater.show();
