@@ -1,6 +1,10 @@
 package com.apps.adrcotfas.goodtime;
 
 public class PreferenceKeys {
+
+    private PreferenceKeys() {
+    }
+
     public static final String FIRST_RUN = "pref_firstRun";
     public static final String SESSION_DURATION = "pref_workTime";
     public static final String BREAK_DURATION = "pref_breakTime";
