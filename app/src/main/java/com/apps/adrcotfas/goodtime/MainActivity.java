@@ -25,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private static final int GOODTIME_NOTIFICATION_ID = 1;
     private static final int MAXIMUM_MILLISECONDS_BETWEEN_BACK_PRESSES = 2000;
+
+    private static final String TAG = "MainActivity";
 
     private PowerManager.WakeLock mWakeLock;
     private long mBackPressed;
@@ -295,6 +298,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Log.d(TAG, "A preference has changed");
+
         if (key.equals(TOTAL_SESSION_COUNT)) {
             Button button = (Button) findViewById(R.id.totalSessionsButton);
             if (button != null) {
@@ -309,6 +314,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        Log.d(TAG, "Saving instance state");
+
         super.onSaveInstanceState(outState);
         outState.putSerializable("timerState", mTimerState);
         outState.putInt("remainingTime", mRemainingTime);
@@ -386,6 +393,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void startTimer(long delay) {
+        Log.i(TAG, "Timer has been started");
 
         mTimeLabel.setTextColor(Color.WHITE);
         switch (mTimerState) {
@@ -420,6 +428,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void pauseTimer() {
+        Log.i(TAG, "Timer has been paused");
 
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
         long timeOfButtonPress = System.currentTimeMillis();
@@ -451,6 +460,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void onCountdownFinished() {
+        Log.i(TAG, "Countdown has finished");
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock screenWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
@@ -591,7 +601,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void wakeScreen() {
         PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = pm.newWakeLock((PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK), "TAG");
+        PowerManager.WakeLock wakeLock = pm.newWakeLock((PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK), TAG);
         wakeLock.acquire();
         wakeLock.release();
     }
@@ -631,6 +641,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     public void runTimer() {
+        Log.d(TAG, "Updating timer");
+
         if (mTimerState != TimerState.INACTIVE) {
             if (mRemainingTime == 0) {
                 onCountdownFinished();
