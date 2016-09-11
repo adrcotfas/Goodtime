@@ -201,13 +201,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (savedInstanceState != null) {
             mTimerState = (TimerState) savedInstanceState.getSerializable("timerState");
             mRemainingTime = savedInstanceState.getInt("remainingTime");
-            mSessionsBeforeLongBreak = savedInstanceState.getInt("sessionsBeforeLongBreak");
             mRingerMode = savedInstanceState.getInt("ringerMode");
-            mWifiMode = savedInstanceState.getBoolean("wifiMode");
-            mDisableSoundAndVibration = savedInstanceState.getBoolean("disableSoundAndVibration");
-            mDisableWifi = savedInstanceState.getBoolean("disableWifi");
-            mKeepScreenOn = savedInstanceState.getBoolean("keepScreenOn");
-            mContinuousMode = savedInstanceState.getBoolean("continuousMode");
 
             switch (mTimerState) {
                 case ACTIVE_WORK:
@@ -339,13 +333,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onSaveInstanceState(outState);
         outState.putSerializable("timerState", mTimerState);
         outState.putInt("remainingTime", mRemainingTime);
-        outState.putInt("sessionsBeforeLongBreak", mSessionsBeforeLongBreak);
-        outState.putBoolean("disableSoundAndVibration", mDisableSoundAndVibration);
         outState.putInt("ringerMode", mRingerMode);
-        outState.putBoolean("disableWifi", mDisableWifi);
-        outState.putBoolean("wifiMode", mWifiMode);
-        outState.putBoolean("keepScreenOn", mKeepScreenOn);
-        outState.putBoolean("continuousMode", mContinuousMode);
     }
 
     @Override
