@@ -12,4 +12,5 @@ public class PreferenceKeys {
     public static final String CONTINUOUS_MODE = "pref_continuousMode";
     public static final String NOTIFICATION_VIBRATE = "pref_vibrate";
     public static final String NOTIFICATION_SOUND = "pref_notificationSound";
+    public static final String TOTAL_SESSION_COUNT = "pref_totalSessions";
 }
