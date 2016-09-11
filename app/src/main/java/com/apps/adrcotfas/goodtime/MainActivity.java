@@ -58,6 +58,7 @@ import static com.apps.adrcotfas.goodtime.PreferenceKeys.NOTIFICATION_VIBRATE;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.SESSIONS_BEFORE_LONG_BREAK;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.SESSION_DURATION;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.TOTAL_SESSION_COUNT;
+import static java.lang.String.format;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -647,13 +648,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         int minutes = remainingTime / 60;
         int seconds = remainingTime % 60;
 
-        String currentTick = String.format(
-                Locale.US,
-                (minutes > 0
-                 ? minutes
-                 : "") + ".%02d",
-                seconds
-        );
+        String currentTick = (minutes > 0 ? minutes : "") +
+                "." +
+                format(Locale.US, "%02d", seconds);
+
         SpannableString currentFormattedTick = new SpannableString(currentTick);
         currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
         mTimeLabel.setText(currentFormattedTick);
