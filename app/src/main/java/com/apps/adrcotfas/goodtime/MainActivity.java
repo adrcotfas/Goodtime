@@ -83,8 +83,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private SharedPreferences mPref;
     private SharedPreferences mPrivatePref;
     private AlertDialog mAlertDialog;
-    private int mRingerMode;
-    private boolean mWifiMode;
+    private int previousRingerMode;
+    private boolean previousWifiMode;
 
     @Override
     protected void onResume() {
@@ -180,16 +180,17 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         });
 
         AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        mRingerMode = aManager.getRingerMode();
+        previousRingerMode = aManager.getRingerMode();
 
         WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-        mWifiMode = wifiManager.isWifiEnabled();
+        previousWifiMode = wifiManager.isWifiEnabled();
 
         setupAppRater();
         if (savedInstanceState != null) {
             mTimerState = (TimerState) savedInstanceState.getSerializable("timerState");
             mRemainingTime = savedInstanceState.getInt("remainingTime");
-            mRingerMode = savedInstanceState.getInt("ringerMode");
+            previousRingerMode = savedInstanceState.getInt("ringerMode");
+            previousWifiMode = savedInstanceState.getBoolean("wifiMode");
 
             switch (mTimerState) {
                 case ACTIVE_WORK:
@@ -319,7 +320,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onSaveInstanceState(outState);
         outState.putSerializable("timerState", mTimerState);
         outState.putInt("remainingTime", mRemainingTime);
-        outState.putInt("ringerMode", mRingerMode);
+        outState.putInt("ringerMode", previousRingerMode);
+        outState.putBoolean("wifiMode", previousWifiMode);
     }
 
     @Override
@@ -344,6 +346,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void loadInitialState() {
+        Log.d(TAG, "Loading initial state");
+
         mTimerState = TimerState.INACTIVE;
         mRemainingTime = mPref.getInt(SESSION_DURATION, 25) * 60;
         updateTimerLabel(mRemainingTime);
@@ -373,12 +377,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
         if (mPref.getBoolean(DISABLE_SOUND_AND_VIBRATION, false)) {
+            Log.d(TAG, "Restoring sound mode");
             AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-            aManager.setRingerMode(mRingerMode);
+            aManager.setRingerMode(previousRingerMode);
         }
         if (mPref.getBoolean(DISABLE_WIFI, false)) {
             WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-            wifiManager.setWifiEnabled(mWifiMode);
+            wifiManager.setWifiEnabled(previousWifiMode);
         }
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
@@ -479,11 +484,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
         if (mPref.getBoolean(DISABLE_SOUND_AND_VIBRATION, false)) {
             AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-            aManager.setRingerMode(mRingerMode);
+            aManager.setRingerMode(previousRingerMode);
         }
         if (mPref.getBoolean(DISABLE_WIFI, false)) {
             WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-            wifiManager.setWifiEnabled(mWifiMode);
+            wifiManager.setWifiEnabled(previousWifiMode);
         }
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
