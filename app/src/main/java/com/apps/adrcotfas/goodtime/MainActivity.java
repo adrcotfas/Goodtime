@@ -298,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (key.equals(TOTAL_SESSION_COUNT)) {
             Button button = (Button) findViewById(R.id.totalSessionsButton);
             if (button != null) {
-                button.setText(mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0));
+                button.setText(String.valueOf(mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0)));
             }
         } else if (key.equals(SESSION_DURATION)) {
             if (mTimerState == TimerState.INACTIVE) {
