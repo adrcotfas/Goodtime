@@ -53,10 +53,10 @@ import static com.apps.adrcotfas.goodtime.PreferenceKeys.DISABLE_WIFI;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.FIRST_RUN;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.KEEP_SCREEN_ON;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.LONG_BREAK_DURATION;
-import static com.apps.adrcotfas.goodtime.PreferenceKeys.SESSIONS_BEFORE_LONG_BREAK;
-import static com.apps.adrcotfas.goodtime.PreferenceKeys.SESSION_DURATION;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.NOTIFICATION_SOUND;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.NOTIFICATION_VIBRATE;
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.SESSIONS_BEFORE_LONG_BREAK;
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.SESSION_DURATION;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.TOTAL_SESSION_COUNT;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -293,14 +293,16 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        Button button = (Button) findViewById(R.id.totalSessionsButton);
-        if (button != null) {
-            button.setText(String.valueOf(mPrivatePref.getInt("pref_totalSessions", 0)));
-        }
-
-        if (mTimerState == TimerState.INACTIVE) {
-            updateTimerLabel(mPref.getInt(SESSION_DURATION, 25) * 60);
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(TOTAL_SESSION_COUNT)) {
+            Button button = (Button) findViewById(R.id.totalSessionsButton);
+            if (button != null) {
+                button.setText(mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0));
+            }
+        } else if (key.equals(SESSION_DURATION)) {
+            if (mTimerState == TimerState.INACTIVE) {
+                updateTimerLabel(mPref.getInt(SESSION_DURATION, 25) * 60);
+            }
         }
     }
 
