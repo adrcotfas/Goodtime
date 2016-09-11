@@ -45,6 +45,7 @@ import java.util.Timer;
 
 import im.delight.apprater.AppRater;
 
+import static android.widget.Toast.LENGTH_SHORT;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.BREAK_DURATION;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.CONTINUOUS_MODE;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.DISABLE_SOUND_AND_VIBRATION;
@@ -353,14 +354,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             /// move app to background
             moveTaskToBack(true);
         } else {
-            Toast exitToast = Toast.makeText(getBaseContext(), "Press the back button again to exit", Toast.LENGTH_SHORT);
             if (mBackPressed + MAXIMUM_MILLISECONDS_BETWEEN_BACK_PRESSES > System.currentTimeMillis()) {
-                exitToast.cancel();
                 super.onBackPressed();
                 return;
             } else {
                 try {
-                    exitToast.show();
+                    Toast.makeText(getBaseContext(), "Press the back button again to exit", LENGTH_SHORT)
+                         .show();
                 } catch (Throwable th) {
                     // ignoring this exception
                 }
