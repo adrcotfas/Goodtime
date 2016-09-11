@@ -328,13 +328,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mKeepScreenOn = mPref.getBoolean(KEEP_SCREEN_ON, false);
         mContinuousMode = mPref.getBoolean(CONTINUOUS_MODE, false);
 
-        if (mTimerState != null) {
-            switch (mTimerState) {
-                case INACTIVE:
-                    updateTimerLabel(mSessionTime * 60);
-                case ACTIVE_WORK:
-                    break;
-            }
+        if (mTimerState == TimerState.INACTIVE) {
+            updateTimerLabel(mSessionTime * 60);
         }
     }
 
