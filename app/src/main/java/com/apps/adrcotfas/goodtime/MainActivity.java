@@ -385,7 +385,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
             wifiManager.setWifiEnabled(previousWifiMode);
         }
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     private void loadRunningTimerUIState() {
