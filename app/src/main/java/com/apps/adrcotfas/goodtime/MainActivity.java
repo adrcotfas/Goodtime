@@ -29,7 +29,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -46,6 +45,15 @@ import java.util.Timer;
 
 import im.delight.apprater.AppRater;
 
+import static android.media.AudioManager.RINGER_MODE_SILENT;
+import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
+import static android.os.PowerManager.FULL_WAKE_LOCK;
+import static android.os.PowerManager.ON_AFTER_RELEASE;
+import static android.os.PowerManager.PARTIAL_WAKE_LOCK;
+import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 import static android.widget.Toast.LENGTH_SHORT;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.BREAK_DURATION;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.CONTINUOUS_MODE;
@@ -263,13 +271,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (mAlertDialog != null) {
             mAlertDialog.dismiss();
         }
-        if (mWakeLock != null) {
-            try {
-                mWakeLock.release();
-            } catch (Throwable th) {
-                // ignoring this exception, probably wakeLock was already released
-            }
-        }
+        releaseWakelock();
         super.onDestroy();
     }
 
@@ -353,11 +355,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         updateTimerLabel(mRemainingTime);
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
 
-        mStartButton.setVisibility(View.VISIBLE);
-        mPauseButton.setVisibility(View.INVISIBLE);
+        mStartButton.setVisibility(VISIBLE);
+        mPauseButton.setVisibility(INVISIBLE);
         mPauseButton.setText(getString(R.string.pause));
-        mStopButton.setVisibility(View.INVISIBLE);
-        mHorizontalSeparator.setVisibility(View.INVISIBLE);
+        mStopButton.setVisibility(INVISIBLE);
+        mHorizontalSeparator.setVisibility(INVISIBLE);
         if (mTimer != null) {
             mTimer.cancel();
             mTimer.purge();
@@ -366,6 +368,20 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mNotificationManager.cancelAll();
         }
 
+        releaseWakelock();
+
+        shutScreenOffIfPreferred();
+
+        restoreSoundAndWifiIfPreferred();
+    }
+
+    private void shutScreenOffIfPreferred() {
+        if (mPref.getBoolean(KEEP_SCREEN_ON, false)) {
+            getWindow().clearFlags(FLAG_KEEP_SCREEN_ON);
+        }
+    }
+
+    private void releaseWakelock() {
         if (mWakeLock != null) {
             try {
                 mWakeLock.release();
@@ -373,15 +389,16 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 // ignoring this exception, probably wakeLock was already released
             }
         }
-        if (mPref.getBoolean(KEEP_SCREEN_ON, false)) {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
+    }
+
+    private void restoreSoundAndWifiIfPreferred() {
         if (mPref.getBoolean(DISABLE_SOUND_AND_VIBRATION, false)) {
             Log.d(TAG, "Restoring sound mode");
             AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
             aManager.setRingerMode(previousRingerMode);
         }
         if (mPref.getBoolean(DISABLE_WIFI, false)) {
+            Log.d(TAG, "Restoring Wifi mode");
             WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
             wifiManager.setWifiEnabled(previousWifiMode);
         }
@@ -390,45 +407,59 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void loadRunningTimerUIState() {
         updateTimerLabel(mRemainingTime);
 
-        mStartButton.setVisibility(View.INVISIBLE);
-        mPauseButton.setVisibility(View.VISIBLE);
-        mStopButton.setVisibility(View.VISIBLE);
-        mHorizontalSeparator.setVisibility(View.VISIBLE);
+        mStartButton.setVisibility(INVISIBLE);
+        mPauseButton.setVisibility(VISIBLE);
+        mStopButton.setVisibility(VISIBLE);
+        mHorizontalSeparator.setVisibility(VISIBLE);
     }
 
     private void startTimer(long delay) {
         Log.i(TAG, "Timer has been started");
 
         mTimeLabel.setTextColor(Color.WHITE);
+        loadRunningTimerUIState();
+
         switch (mTimerState) {
             case ACTIVE_WORK:
-                if (mPref.getBoolean(DISABLE_SOUND_AND_VIBRATION, false)) {
-                    AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-                    aManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-                }
-
-                if (mPref.getBoolean(DISABLE_WIFI, false)) {
-                    WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-                    wifiManager.setWifiEnabled(false);
-                }
+                disableSoundAndWifiIfPreferred();
                 createNotification("Work session in progress.", true);
                 break;
             case ACTIVE_BREAK:
                 createNotification("Break session in progress.", true);
         }
-        loadRunningTimerUIState();
 
-        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        if (mPref.getBoolean(KEEP_SCREEN_ON, false)) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
-        mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK
-                | PowerManager.ON_AFTER_RELEASE
-                | PowerManager.ACQUIRE_CAUSES_WAKEUP, "starting partial wake lock");
-        mWakeLock.acquire();
+        keepScreenOnIfPreferred();
+
+        acquirePartialWakelock();
 
         mTimer = new Timer();
         mTimer.schedule(new UpdateTask(new Handler(), MainActivity.this), delay, 1000);
+    }
+
+    private void disableSoundAndWifiIfPreferred() {
+        if (mPref.getBoolean(DISABLE_SOUND_AND_VIBRATION, false)) {
+            AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+            aManager.setRingerMode(RINGER_MODE_SILENT);
+        }
+
+        if (mPref.getBoolean(DISABLE_WIFI, false)) {
+            WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+            wifiManager.setWifiEnabled(false);
+        }
+    }
+
+    private void keepScreenOnIfPreferred() {
+        if (mPref.getBoolean(KEEP_SCREEN_ON, false)) {
+            getWindow().addFlags(FLAG_KEEP_SCREEN_ON);
+        }
+    }
+
+    private void acquirePartialWakelock() {
+        mWakeLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(
+                PARTIAL_WAKE_LOCK | ON_AFTER_RELEASE | ACQUIRE_CAUSES_WAKEUP,
+                "starting partial wake lock"
+        );
+        mWakeLock.acquire();
     }
 
     private void pauseTimer() {
@@ -436,13 +467,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
         long timeOfButtonPress = System.currentTimeMillis();
-        if (mWakeLock != null) {
-            try {
-                mWakeLock.release();
-            } catch (Throwable th) {
-                // ignoring this exception, probably wakeLock was already released
-            }
-        }
+        releaseWakelock();
         switch (mTimerState) {
             case ACTIVE_WORK:
                 mTimerState = TimerState.PAUSED_WORK;
@@ -466,30 +491,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void onCountdownFinished() {
         Log.i(TAG, "Countdown has finished");
 
-        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock screenWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
-                | PowerManager.ON_AFTER_RELEASE
-                | PowerManager.ACQUIRE_CAUSES_WAKEUP, "wake screen lock");
-
-        screenWakeLock.acquire();
-        screenWakeLock.release();
-
-        if (mWakeLock != null) {
-            mWakeLock.release();
-        }
-
-        if (mPref.getBoolean(KEEP_SCREEN_ON, false)) {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
-        if (mPref.getBoolean(DISABLE_SOUND_AND_VIBRATION, false)) {
-            AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-            aManager.setRingerMode(previousRingerMode);
-        }
-        if (mPref.getBoolean(DISABLE_WIFI, false)) {
-            WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-            wifiManager.setWifiEnabled(previousWifiMode);
-        }
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        acquireScreenWakelock();
+        releaseWakelock();
+        shutScreenOffIfPreferred();
+        restoreSoundAndWifiIfPreferred();
 
         if (mTimer != null) {
             mTimer.cancel();
@@ -497,30 +502,54 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mTimer = null;
         }
 
-        if (mTimerState == TimerState.ACTIVE_WORK) {
-            int totalSessions = mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0);
-            mPrivatePref.edit()
-                        .putInt(TOTAL_SESSION_COUNT, ++totalSessions)
-                        .apply();
-        }
-        if (mPref.getBoolean(NOTIFICATION_VIBRATE, true)) {
-            final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            long[] pattern = {0, 300, 700, 300};
-            vibrator.vibrate(pattern, -1);
-        }
+        increaseTotalSessions();
 
-        String notificationSound = mPref.getString(NOTIFICATION_SOUND, "");
-        if (!notificationSound.equals("")) {
-            Uri uri = Uri.parse(notificationSound);
-            Ringtone r = RingtoneManager.getRingtone(this, uri);
-            r.play();
-        }
+        notifyViaVibration();
+        notifyViaSound();
+
         bringApplicationToFront();
         if (mPref.getBoolean(CONTINUOUS_MODE, false)) {
             goOnContinuousMode();
         } else {
             showDialog();
         }
+    }
+
+    private void increaseTotalSessions() {
+        if (mTimerState == TimerState.ACTIVE_WORK) {
+            int totalSessions = mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0);
+            mPrivatePref.edit()
+                        .putInt(TOTAL_SESSION_COUNT, ++totalSessions)
+                        .apply();
+        }
+    }
+
+    private void notifyViaVibration() {
+        if (mPref.getBoolean(NOTIFICATION_VIBRATE, true)) {
+            final Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+            long[] pattern = {0, 300, 700, 300};
+            vibrator.vibrate(pattern, -1);
+        }
+    }
+
+    private void notifyViaSound() {
+        String notificationSound = mPref.getString(NOTIFICATION_SOUND, "");
+        if (!notificationSound.equals("")) {
+            Uri uri = Uri.parse(notificationSound);
+            Ringtone r = RingtoneManager.getRingtone(this, uri);
+            r.play();
+        }
+    }
+
+    private void acquireScreenWakelock() {
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        PowerManager.WakeLock screenWakeLock = powerManager.newWakeLock(
+                SCREEN_BRIGHT_WAKE_LOCK | ON_AFTER_RELEASE | ACQUIRE_CAUSES_WAKEUP,
+                "wake screen lock"
+        );
+
+        screenWakeLock.acquire();
+        screenWakeLock.release();
     }
 
     private void showDialog() {
@@ -604,8 +633,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void wakeScreen() {
-        PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = pm.newWakeLock((PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK), TAG);
+        PowerManager pm = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = pm.newWakeLock(
+                SCREEN_BRIGHT_WAKE_LOCK | FULL_WAKE_LOCK,
+                "waking screen up"
+        );
         wakeLock.acquire();
         wakeLock.release();
     }
