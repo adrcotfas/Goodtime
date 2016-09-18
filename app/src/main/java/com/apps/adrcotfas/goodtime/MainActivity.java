@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -29,8 +28,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -47,6 +44,7 @@ import im.delight.apprater.AppRater;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static android.app.PendingIntent.getActivity;
+import static android.graphics.Typeface.createFromAsset;
 import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
 import static android.os.PowerManager.FULL_WAKE_LOCK;
@@ -56,6 +54,7 @@ import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+import static android.view.animation.AnimationUtils.loadAnimation;
 import static android.widget.Toast.LENGTH_SHORT;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.BREAK_DURATION;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.CONTINUOUS_MODE;
@@ -109,140 +108,24 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(null);
 
+        setUpPreferences();
+        installCustomRingtones();
+        saveCurrentStateOfSoundAndWifi();
+        setUpUi();
+        setupAppRater();
+        setUpState(savedInstanceState);
+    }
+
+    private void setUpPreferences() {
         mPref = PreferenceManager.getDefaultSharedPreferences(this);
         mPref.registerOnSharedPreferenceChangeListener(this);
-
-        resetPreferencesIfNeeded();
-        installCustomRingtones();
-
         mPrivatePref = getSharedPreferences("preferences_private", Context.MODE_PRIVATE);
         mPrivatePref.registerOnSharedPreferenceChangeListener(this);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
 
-        Button sessionCounterButton = (Button) findViewById(R.id.totalSessionsButton);
-        if (sessionCounterButton != null) {
-            sessionCounterButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    showSessionCounterDialog();
-                }
-            });
-        }
-        if (sessionCounterButton != null) {
-            sessionCounterButton.setText(String.valueOf(mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0)));
-        }
-
-        Typeface robotoThin = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        final RelativeLayout buttons = (RelativeLayout) findViewById(R.id.buttons);
-        mTimeLabel = (TextView) findViewById(R.id.textView);
-        if (mTimeLabel != null) {
-            mTimeLabel.setTypeface(robotoThin);
-        }
-        mStartButton = (FloatingActionButton) findViewById(R.id.startButton);
-        mPauseButton = (Button) findViewById(R.id.pauseButton);
-        mStopButton = (Button) findViewById(R.id.stopButton);
-        mHorizontalSeparator = findViewById(R.id.horizontalSeparator);
-        mStartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mStartButton.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.implode));
-                if (buttons != null) {
-                    buttons.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade));
-                }
-                mRemainingTime = mPref.getInt(SESSION_DURATION, 25) * 60;
-                mTimerState = TimerState.ACTIVE_WORK;
-                enablePauseButton();
-                startTimer(300);
-                mStartButton.setEnabled(false); // avoid double-click
-                mStartButton.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mStartButton.setEnabled(true);
-                    }
-                }, 300);
-            }
-        });
-        mPauseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                pauseTimer();
-            }
-        });
-        mStopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Animation fadeReversed = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_reverse);
-                if (buttons != null) {
-                    buttons.startAnimation(fadeReversed);
-                }
-                mPauseButton.clearAnimation();
-                Animation implodeReversed = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.implode_reverse);
-                mStartButton.startAnimation(implodeReversed);
-                loadInitialState();
-            }
-        });
-
-        AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        previousRingerMode = aManager.getRingerMode();
-
-        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-        previousWifiMode = wifiManager.isWifiEnabled();
-
-        setupAppRater();
-        if (savedInstanceState != null) {
-            mTimerState = (TimerState) savedInstanceState.getSerializable("timerState");
-            mRemainingTime = savedInstanceState.getInt("remainingTime");
-            previousRingerMode = savedInstanceState.getInt("ringerMode");
-            previousWifiMode = savedInstanceState.getBoolean("wifiMode");
-
-            switch (mTimerState) {
-                case ACTIVE_WORK:
-                    enablePauseButton();
-                    startTimer(0);
-                    break;
-                case ACTIVE_BREAK:
-                    disablePauseButton();
-                    startTimer(0);
-                    break;
-                case PAUSED_WORK:
-                    mTimerState = TimerState.ACTIVE_WORK;
-                    loadRunningTimerUIState();
-                    pauseTimer();
-                    break;
-                case INACTIVE:
-                    loadInitialState();
-                    break;
-                case FINISHED_BREAK:
-                    mTimerState = TimerState.ACTIVE_BREAK;
-                    loadRunningTimerUIState();
-                    showDialog();
-                    break;
-                case FINISHED_WORK:
-                    mTimerState = TimerState.ACTIVE_WORK;
-                    loadRunningTimerUIState();
-                    showDialog();
-                    break;
-            }
-        } else {
-            loadInitialState();
-        }
-    }
-
-    private void disablePauseButton() {
-        mPauseButton.setEnabled(false);
-        mPauseButton.setTextColor(getResources().getColor(R.color.gray));
-    }
-
-    private void installCustomRingtones() {
-        if (!mPref.getBoolean(CustomNotification.PREF_KEY_RINGTONES_COPIED, false)) {
-            CustomNotification.installToStorage(this);
-        }
+        resetPreferencesIfNeeded();
     }
 
     // This function is needed to avoid crashes when updating to a newer version
@@ -258,6 +141,165 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mPref.edit().clear().commit();
         }
 
+    }
+
+    private void installCustomRingtones() {
+        if (!mPref.getBoolean(CustomNotification.PREF_KEY_RINGTONES_COPIED, false)) {
+            CustomNotification.installToStorage(this);
+        }
+    }
+
+    private void saveCurrentStateOfSoundAndWifi() {
+        AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        previousRingerMode = aManager.getRingerMode();
+
+        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+        previousWifiMode = wifiManager.isWifiEnabled();
+    }
+
+    private void setUpUi() {
+        setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setUpToolbar(toolbar);
+
+        setUpSessionCounter();
+
+        mStartButton = (FloatingActionButton) findViewById(R.id.startButton);
+        setUpStartButton();
+
+        mPauseButton = (Button) findViewById(R.id.pauseButton);
+        setUpPauseButton();
+
+        mStopButton = (Button) findViewById(R.id.stopButton);
+        setUpStopButton();
+
+        mHorizontalSeparator = findViewById(R.id.horizontalSeparator);
+
+        mTimeLabel = (TextView) findViewById(R.id.textView);
+        setUpTimerLabel();
+    }
+
+    private void setUpToolbar(Toolbar toolbar) {
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(null);
+    }
+
+    private void setUpSessionCounter() {
+        Button sessionCounterButton = (Button) findViewById(R.id.totalSessionsButton);
+        if (sessionCounterButton != null) {
+            sessionCounterButton.setText(String.valueOf(mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0)));
+            sessionCounterButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showSessionCounterDialog();
+                }
+            });
+        }
+    }
+
+    private void setUpStartButton() {
+        final RelativeLayout buttons = (RelativeLayout) findViewById(R.id.buttons);
+        mStartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mStartButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.implode));
+                if (buttons != null) {
+                    buttons.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade));
+                }
+
+                startSession(300);
+                enablePauseButton();
+                mStartButton.setEnabled(false);
+                mStartButton.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mStartButton.setEnabled(true);
+                    }
+                }, 300);
+            }
+        });
+    }
+
+    private void setUpPauseButton() {
+        mPauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pauseTimer();
+            }
+        });
+    }
+
+    private void setUpStopButton() {
+        final RelativeLayout buttons = (RelativeLayout) findViewById(R.id.buttons);
+        mStopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPauseButton.clearAnimation();
+                if (buttons != null) {
+                    buttons.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade_reverse));
+                }
+
+                mStartButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.implode_reverse));
+
+                loadInitialState();
+            }
+        });
+    }
+
+    private void setUpTimerLabel() {
+        if (mTimeLabel != null) {
+            mTimeLabel.setTypeface(createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf"));
+        }
+    }
+
+    private void setUpState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            loadFromSaveState(savedInstanceState);
+        } else {
+            loadInitialState();
+        }
+    }
+
+    private void loadFromSaveState(Bundle savedInstanceState) {
+        mTimerState = (TimerState) savedInstanceState.getSerializable("timerState");
+        mRemainingTime = savedInstanceState.getInt("remainingTime");
+        previousRingerMode = savedInstanceState.getInt("ringerMode");
+        previousWifiMode = savedInstanceState.getBoolean("wifiMode");
+
+        switch (mTimerState) {
+            case ACTIVE_WORK:
+                enablePauseButton();
+                startTimer(0);
+                break;
+            case ACTIVE_BREAK:
+                disablePauseButton();
+                startTimer(0);
+                break;
+            case PAUSED_WORK:
+                mTimerState = TimerState.ACTIVE_WORK;
+                loadRunningTimerUiState();
+                pauseTimer();
+                break;
+            case INACTIVE:
+                loadInitialState();
+                break;
+            case FINISHED_BREAK:
+                mTimerState = TimerState.ACTIVE_BREAK;
+                loadRunningTimerUiState();
+                showDialog();
+                break;
+            case FINISHED_WORK:
+                mTimerState = TimerState.ACTIVE_WORK;
+                loadRunningTimerUiState();
+                showDialog();
+                break;
+        }
+    }
+
+    private void disablePauseButton() {
+        mPauseButton.setEnabled(false);
+        mPauseButton.setTextColor(getResources().getColor(R.color.gray));
     }
 
     @Override
@@ -401,7 +443,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
 
-    private void loadRunningTimerUIState() {
+    private void loadRunningTimerUiState() {
         updateTimerLabel(mRemainingTime);
 
         mStartButton.setVisibility(INVISIBLE);
@@ -414,7 +456,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         Log.i(TAG, "Timer has been started");
 
         mTimeLabel.setTextColor(Color.WHITE);
-        loadRunningTimerUIState();
+        loadRunningTimerUiState();
 
         switch (mTimerState) {
             case ACTIVE_WORK:
@@ -468,7 +510,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             case ACTIVE_WORK:
                 mTimerState = TimerState.PAUSED_WORK;
                 mPauseButton.setText(getString(R.string.resume));
-                mPauseButton.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink));
+                mPauseButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
                 removeTimer();
                 showNotification("Work session is paused. Resume?", false);
                 break;
@@ -585,7 +627,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 .setPositiveButton("Begin session", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        startSession();
+                        startSession(0);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -620,7 +662,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                                     DialogInterface dialog,
                                     int which
                             ) {
-                                startSession();
+                                startSession(0);
                             }
                         }
                 )
@@ -639,10 +681,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
 
-    private void startSession() {
+    private void startSession(int delay) {
         mRemainingTime = mPref.getInt(SESSION_DURATION, 25) * 60;
         mTimerState = TimerState.ACTIVE_WORK;
-        startTimer(0);
+        startTimer(delay);
     }
 
     private void startBreak() {
@@ -681,7 +723,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     currentSessionStreak = 0;
                 }
 
-                startSession();
+                startSession(0);
                 break;
             default:
                 mTimerState = TimerState.INACTIVE;
