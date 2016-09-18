@@ -45,6 +45,8 @@ import java.util.Timer;
 
 import im.delight.apprater.AppRater;
 
+import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
+import static android.app.PendingIntent.getActivity;
 import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
 import static android.os.PowerManager.FULL_WAKE_LOCK;
@@ -155,8 +157,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 }
                 mRemainingTime = mPref.getInt(SESSION_DURATION, 25) * 60;
                 mTimerState = TimerState.ACTIVE_WORK;
-                mPauseButton.setEnabled(true);
-                mPauseButton.setTextColor(getResources().getColor(R.color.yellow));
+                enablePauseButton();
                 startTimer(300);
                 mStartButton.setEnabled(false); // avoid double-click
                 mStartButton.postDelayed(new Runnable() {
@@ -202,13 +203,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
             switch (mTimerState) {
                 case ACTIVE_WORK:
-                    mPauseButton.setEnabled(true);
-                    mPauseButton.setTextColor(getResources().getColor(R.color.yellow));
+                    enablePauseButton();
                     startTimer(0);
                     break;
                 case ACTIVE_BREAK:
-                    mPauseButton.setEnabled(false);
-                    mPauseButton.setTextColor(getResources().getColor(R.color.gray));
+                    disablePauseButton();
                     startTimer(0);
                     break;
                 case PAUSED_WORK:
@@ -233,6 +232,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         } else {
             loadInitialState();
         }
+    }
+
+    private void disablePauseButton() {
+        mPauseButton.setEnabled(false);
+        mPauseButton.setTextColor(getResources().getColor(R.color.gray));
     }
 
     // Copies custom ringtones to the device storage
@@ -261,13 +265,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     protected void onDestroy() {
-        if (mTimer != null) {
-            mTimer.cancel();
-            mTimer.purge();
-        }
-        if (mNotificationManager != null) {
-            mNotificationManager.cancelAll();
-        }
+        removeTimer();
+        removeNotifications();
         if (mAlertDialog != null) {
             mAlertDialog.dismiss();
         }
@@ -360,19 +359,20 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mPauseButton.setText(getString(R.string.pause));
         mStopButton.setVisibility(INVISIBLE);
         mHorizontalSeparator.setVisibility(INVISIBLE);
+        removeTimer();
+
+        removeNotifications();
+        releaseWakelock();
+        shutScreenOffIfPreferred();
+        restoreSoundAndWifiIfPreferred();
+    }
+
+    private void removeTimer() {
         if (mTimer != null) {
             mTimer.cancel();
             mTimer.purge();
+            mTimer = null;
         }
-        if (mNotificationManager != null) {
-            mNotificationManager.cancelAll();
-        }
-
-        releaseWakelock();
-
-        shutScreenOffIfPreferred();
-
-        restoreSoundAndWifiIfPreferred();
     }
 
     private void shutScreenOffIfPreferred() {
@@ -422,14 +422,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         switch (mTimerState) {
             case ACTIVE_WORK:
                 disableSoundAndWifiIfPreferred();
-                createNotification("Work session in progress.", true);
+                showNotification("Work session in progress.", true);
                 break;
             case ACTIVE_BREAK:
-                createNotification("Break session in progress.", true);
+                showNotification("Break session in progress.", true);
         }
 
         keepScreenOnIfPreferred();
-
         acquirePartialWakelock();
 
         mTimer = new Timer();
@@ -473,11 +472,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 mTimerState = TimerState.PAUSED_WORK;
                 mPauseButton.setText(getString(R.string.resume));
                 mPauseButton.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink));
-                if (mTimer != null) {
-                    mTimer.cancel();
-                    mTimer.purge();
-                }
-                createNotification("Work session is paused. Resume?", false);
+                removeTimer();
+                showNotification("Work session is paused. Resume?", false);
                 break;
             case PAUSED_WORK:
                 mTimerState = TimerState.ACTIVE_WORK;
@@ -496,11 +492,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         shutScreenOffIfPreferred();
         restoreSoundAndWifiIfPreferred();
 
-        if (mTimer != null) {
-            mTimer.cancel();
-            mTimer.purge();
-            mTimer = null;
-        }
+        removeTimer();
 
         increaseTotalSessions();
 
@@ -555,81 +547,114 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void showDialog() {
         wakeScreen();
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         switch (mTimerState) {
             case ACTIVE_WORK:
             case FINISHED_WORK:
                 loadInitialState();
+
                 mTimerState = TimerState.FINISHED_WORK;
-                alertDialogBuilder.setTitle("Session complete");
-                alertDialogBuilder.setPositiveButton("Start break", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mPauseButton.setEnabled(false);
-                        mPauseButton.setTextColor(getResources().getColor(R.color.gray));
-                        mRemainingTime = (currentSessionStreak >= mPref.getInt(SESSIONS_BEFORE_LONG_BREAK, 4)) ?
-                                         mPref.getInt(LONG_BREAK_DURATION, 15) * 60 :
-                                         mPref.getInt(BREAK_DURATION, 5) * 60;
-                        mTimerState = TimerState.ACTIVE_BREAK;
-                        startTimer(0);
-                    }
-                });
-                alertDialogBuilder.setNegativeButton("Skip break", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mRemainingTime = mPref.getInt(SESSION_DURATION, 25) * 60;
-                        mTimerState = TimerState.ACTIVE_WORK;
-                        startTimer(0);
-                    }
-                });
-                alertDialogBuilder.setNeutralButton("Close", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (mNotificationManager != null) {
-                            mNotificationManager.cancelAll();
-                        }
-                    }
-                });
-                mAlertDialog = alertDialogBuilder.create();
+
+                mAlertDialog = buildStartBreakDialog();
                 mAlertDialog.setCanceledOnTouchOutside(false);
                 mAlertDialog.show();
-                createNotification("Session complete. Continue?", false);
+
+                showNotification("Session complete. Continue?", false);
                 break;
             case ACTIVE_BREAK:
             case FINISHED_BREAK:
                 loadInitialState();
-                mPauseButton.setEnabled(true);
-                mPauseButton.setTextColor(getResources().getColor(R.color.yellow));
+
+                enablePauseButton();
                 mTimerState = TimerState.FINISHED_BREAK;
+
                 if (currentSessionStreak >= mPref.getInt(SESSIONS_BEFORE_LONG_BREAK, 4)) {
                     currentSessionStreak = 0;
                 }
-                alertDialogBuilder.setTitle("Break complete");
-                alertDialogBuilder.setPositiveButton("Begin session", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mRemainingTime = mPref.getInt(SESSION_DURATION, 25) * 60;
-                        mTimerState = TimerState.ACTIVE_WORK;
-                        startTimer(0);
-                    }
-                });
-                alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (mNotificationManager != null) {
-                            mNotificationManager.cancelAll();
-                        }
-                    }
-                });
-                mAlertDialog = alertDialogBuilder.create();
+                mAlertDialog = buildStartSessionDialog();
                 mAlertDialog.setCanceledOnTouchOutside(false);
                 mAlertDialog.show();
-                createNotification("Break complete. Resume work?", false);
+
+                showNotification("Break complete. Resume work?", false);
                 break;
             default:
                 mTimerState = TimerState.INACTIVE;
                 break;
         }
+    }
+
+    private AlertDialog buildStartSessionDialog() {
+        return new AlertDialog.Builder(this)
+                .setTitle("Break complete")
+                .setPositiveButton("Begin session", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startSession();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeNotifications();
+                    }
+                })
+                .create();
+    }
+
+    private AlertDialog buildStartBreakDialog() {
+        return new AlertDialog.Builder(this)
+                .setTitle("Session complete")
+                .setPositiveButton(
+                        "Start break",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(
+                                    DialogInterface dialog,
+                                    int which
+                            ) {
+                                startBreak();
+                            }
+                        }
+                )
+                .setNegativeButton(
+                        "Skip break",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(
+                                    DialogInterface dialog,
+                                    int which
+                            ) {
+                                startSession();
+                            }
+                        }
+                )
+                .setNeutralButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeNotifications();
+                    }
+                })
+                .create();
+    }
+
+    private void removeNotifications() {
+        if (mNotificationManager != null) {
+            mNotificationManager.cancelAll();
+        }
+    }
+
+    private void startSession() {
+        mRemainingTime = mPref.getInt(SESSION_DURATION, 25) * 60;
+        mTimerState = TimerState.ACTIVE_WORK;
+        startTimer(0);
+    }
+
+    private void startBreak() {
+        disablePauseButton();
+        mRemainingTime = (currentSessionStreak >= mPref.getInt(SESSIONS_BEFORE_LONG_BREAK, 4))
+                         ? mPref.getInt(LONG_BREAK_DURATION, 15) * 60
+                         : mPref.getInt(BREAK_DURATION, 5) * 60;
+        mTimerState = TimerState.ACTIVE_BREAK;
+        startTimer(0);
     }
 
     private void wakeScreen() {
@@ -648,32 +673,28 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             case FINISHED_WORK:
                 loadInitialState();
                 mTimerState = TimerState.FINISHED_WORK;
-                mPauseButton.setEnabled(false);
-                mPauseButton.setTextColor(getResources().getColor(R.color.gray));
-                mRemainingTime = (currentSessionStreak >= mPref.getInt(SESSIONS_BEFORE_LONG_BREAK, 4)) ?
-                                 mPref.getInt(LONG_BREAK_DURATION, 15) * 60 :
-                                 mPref.getInt(BREAK_DURATION, 5) * 60;
-                mTimerState = TimerState.ACTIVE_BREAK;
-                startTimer(0);
+                startBreak();
                 break;
             case ACTIVE_BREAK:
             case FINISHED_BREAK:
                 loadInitialState();
-                mPauseButton.setEnabled(true);
-                mPauseButton.setTextColor(getResources().getColor(R.color.yellow));
+                enablePauseButton();
                 mTimerState = TimerState.FINISHED_BREAK;
                 if (currentSessionStreak >= mPref.getInt(SESSIONS_BEFORE_LONG_BREAK, 4)) {
                     currentSessionStreak = 0;
                 }
 
-                mRemainingTime = mPref.getInt(SESSION_DURATION, 25) * 60;
-                mTimerState = TimerState.ACTIVE_WORK;
-                startTimer(0);
+                startSession();
                 break;
             default:
                 mTimerState = TimerState.INACTIVE;
                 break;
         }
+    }
+
+    private void enablePauseButton() {
+        mPauseButton.setEnabled(true);
+        mPauseButton.setTextColor(getResources().getColor(R.color.yellow));
     }
 
     public void runTimer() {
@@ -705,26 +726,33 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mTimeLabel.setText(currentFormattedTick);
     }
 
-    private void createNotification(CharSequence contentText, boolean ongoing) {
-
-        Notification.Builder notificationBuilder = new Notification.Builder(
+    private void showNotification(CharSequence contentText, boolean ongoing) {
+        Notification notification = new Notification.Builder(
                 getApplicationContext())
                 .setSmallIcon(R.drawable.ic_status_goodtime)
                 .setAutoCancel(false)
                 .setContentTitle("Goodtime")
                 .setContentText(contentText)
                 .setOngoing(ongoing)
-                .setShowWhen(false);
-        notificationBuilder.setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0,
-                new Intent(getApplicationContext(), MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
-        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(GOODTIME_NOTIFICATION_ID, notificationBuilder.build());
+                .setShowWhen(false)
+                .setContentIntent(
+                        getActivity(
+                                getApplicationContext(),
+                                0,
+                                new Intent(getApplicationContext(), MainActivity.class),
+                                FLAG_UPDATE_CURRENT
+                        )
+                )
+                .build();
+
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mNotificationManager.notify(GOODTIME_NOTIFICATION_ID, notification);
     }
 
     private void bringApplicationToFront() {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        PendingIntent pendingIntent = getActivity(this, 0, notificationIntent, 0);
         try {
             pendingIntent.send();
         } catch (PendingIntent.CanceledException e) {
@@ -733,30 +761,36 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void showSessionCounterDialog() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("Reset sessions counter?");
-        alertDialogBuilder.setMessage("The completed sessions counter will be reset.");
-        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                currentSessionStreak = 0;
-                mPrivatePref.edit()
-                            .putInt(TOTAL_SESSION_COUNT, 0)
-                            .apply();
-            }
-        });
-        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-        mAlertDialog = alertDialogBuilder.create();
+        mAlertDialog = new AlertDialog.Builder(this)
+                .setTitle("Reset sessions counter?")
+                .setMessage("The completed sessions counter will be reset.")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        currentSessionStreak = 0;
+                        mPrivatePref.edit()
+                                    .putInt(TOTAL_SESSION_COUNT, 0)
+                                    .apply();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .create();
         mAlertDialog.show();
     }
 
     private void setupAppRater() {
         AppRater appRater = new AppRater(this);
-        appRater.setPhrases("Rate this app", "If you found this app useful please rate it on Google Play. Thanks for your support!", "Rate now", "Later", "No, thanks");
+        appRater.setPhrases(
+                "Rate this app",
+                "If you found this app useful please rate it on Google Play. Thanks for your support!",
+                "Rate now",
+                "Later",
+                "No, thanks"
+        );
         appRater.show();
     }
 }
