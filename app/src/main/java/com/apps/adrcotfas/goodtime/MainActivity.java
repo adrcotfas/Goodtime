@@ -128,8 +128,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         resetPreferencesIfNeeded();
     }
 
-    // This function is needed to avoid crashes when updating to a newer version
-    // which contains different types of Preferences
     private void resetPreferencesIfNeeded() {
         String string = "invalid";
         try {
@@ -287,12 +285,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             case FINISHED_BREAK:
                 mTimerState = TimerState.ACTIVE_BREAK;
                 loadRunningTimerUiState();
-                showDialog();
+                showContinueDialog();
                 break;
             case FINISHED_WORK:
                 mTimerState = TimerState.ACTIVE_WORK;
                 loadRunningTimerUiState();
-                showDialog();
+                showContinueDialog();
                 break;
         }
     }
@@ -542,7 +540,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (mPref.getBoolean(CONTINUOUS_MODE, false)) {
             goOnContinuousMode();
         } else {
-            showDialog();
+            showContinueDialog();
         }
     }
 
@@ -583,7 +581,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         screenWakeLock.release();
     }
 
-    private void showDialog() {
+    private void showContinueDialog() {
         wakeScreen();
 
         switch (mTimerState) {
@@ -609,6 +607,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 if (currentSessionStreak >= mPref.getInt(SESSIONS_BEFORE_LONG_BREAK, 4)) {
                     currentSessionStreak = 0;
                 }
+
                 mAlertDialog = buildStartSessionDialog();
                 mAlertDialog.setCanceledOnTouchOutside(false);
                 mAlertDialog.show();
