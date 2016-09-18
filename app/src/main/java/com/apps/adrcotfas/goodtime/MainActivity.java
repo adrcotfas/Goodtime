@@ -239,10 +239,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mPauseButton.setTextColor(getResources().getColor(R.color.gray));
     }
 
-    // Copies custom ringtones to the device storage
     private void installCustomRingtones() {
-        // Add the custom alarm tones to the phone's storage, if they weren't copied yet.
-        // Works on a separate thread.
         if (!mPref.getBoolean(CustomNotification.PREF_KEY_RINGTONES_COPIED, false)) {
             CustomNotification.installToStorage(this);
         }
