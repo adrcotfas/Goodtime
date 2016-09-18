@@ -7,8 +7,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.hardware.Camera;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -25,6 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,6 +51,7 @@ import im.delight.apprater.AppRater;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
+    public static final String APP_ID="com.adrcotfas.goodtime";
     private static final int GOODTIME_NOTIFICATION_ID = 1;
     private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
     PowerManager.WakeLock mWakeLock;
@@ -348,8 +352,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (mTimerState != TimerState.INACTIVE) {
             /// move app to background
             moveTaskToBack(true);
-        }
-        else {
+        } else {
             Toast exitToast = Toast.makeText(getBaseContext(), "Press the back button again to exit", Toast.LENGTH_SHORT);
             if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis()) {
                 exitToast.cancel();
@@ -547,12 +550,49 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             Ringtone r = RingtoneManager.getRingtone(this, uri);
             r.play();
         }
+        blinkLed();
+
         bringApplicationToFront();
-        if (mContinuousMode) {
+
+        if (mContinuousMode)
+
+        {
             goOnContinuousMode();
-        }
-        else
+        } else
+
             showDialog();
+    }
+
+    /**
+     * blink the LED for 1/10 of a second, if flash is available
+     */
+    private void blinkLed() {
+        //does this device support camera flash?
+        if (this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
+            final Camera cam = Camera.open();
+            Camera.Parameters p = cam.getParameters();
+            p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            cam.setParameters(p);
+            cam.startPreview();
+            Log.i(APP_ID,"Flash has been turned on");
+            Thread stopFlashThread = new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        //not a big problem, flash just gets closed sooner
+                    }
+                    Camera.Parameters p = cam.getParameters();
+                    p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                    cam.setParameters(p);
+                    cam.stopPreview();
+                    cam.release();
+                    Log.i(APP_ID,"Flash has been turned off");
+
+                }
+            });
+            stopFlashThread.start();
+        }
     }
 
     public void showDialog() {
@@ -648,7 +688,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 mRemainingTime = (mCompletedSessions >= mSessionsBeforeLongBreak) ? mLongBreakTime * 60 : mBreakTime * 60;
                 mTimerState = TimerState.ACTIVE_BREAK;
                 startTimer(0);
-            break;
+                break;
             case ACTIVE_BREAK:
             case FINISHED_BREAK:
                 loadInitialState();
@@ -658,9 +698,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 if (mCompletedSessions >= mSessionsBeforeLongBreak)
                     mCompletedSessions = 0;
 
-                    mRemainingTime = mSessionTime * 60;
-                    mTimerState = TimerState.ACTIVE_WORK;
-                    startTimer(0);
+                mRemainingTime = mSessionTime * 60;
+                mTimerState = TimerState.ACTIVE_WORK;
+                startTimer(0);
                 break;
             default:
                 mTimerState = TimerState.INACTIVE;
