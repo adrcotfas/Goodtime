@@ -129,16 +129,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void resetPreferencesIfNeeded() {
-        String string = "invalid";
-        try {
-            string = mPref.getString(SESSION_DURATION, "invalid");
-        } catch (Throwable throwable) {
-
-        }
-        if (!string.equals("invalid")) {
+        if (mPref.getInt(SESSION_DURATION, -1) == -1 ) {
+            Log.i(TAG, "Resetting preferences");
             mPref.edit().clear().commit();
         }
-
     }
 
     private void installCustomRingtones() {
