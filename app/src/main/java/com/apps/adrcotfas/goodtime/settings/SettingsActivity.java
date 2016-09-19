@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.apps.adrcotfas.goodtime.R;
 
-import static com.apps.adrcotfas.goodtime.PreferenceKeys.NOTIFICATION_SOUND;
+import static com.apps.adrcotfas.goodtime.Preferences.NOTIFICATION_SOUND;
 
 
 public class SettingsActivity extends AppCompatActivity {
