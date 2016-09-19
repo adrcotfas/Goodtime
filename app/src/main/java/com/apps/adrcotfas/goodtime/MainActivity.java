@@ -65,9 +65,11 @@ import static com.apps.adrcotfas.goodtime.PreferenceKeys.KEEP_SCREEN_ON;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.LONG_BREAK_DURATION;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.NOTIFICATION_SOUND;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.NOTIFICATION_VIBRATE;
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.PREFERENCES_VERSION;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.SESSIONS_BEFORE_LONG_BREAK;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.SESSION_DURATION;
 import static com.apps.adrcotfas.goodtime.PreferenceKeys.TOTAL_SESSION_COUNT;
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.VERSION;
 import static java.lang.String.format;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -125,13 +127,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
 
-        resetPreferencesIfNeeded();
+        migratePreferencesIfNeeded();
     }
 
-    private void resetPreferencesIfNeeded() {
-        if (mPref.getInt(SESSION_DURATION, -1) == -1 ) {
-            Log.i(TAG, "Resetting preferences");
+    private void migratePreferencesIfNeeded() {
+        if (mPref.getInt(PREFERENCES_VERSION, 0) < VERSION ) {
+            Log.i(TAG, "Preferences are too old and need to be migrated");
             mPref.edit().clear().commit();
+            mPref.edit().putInt(PREFERENCES_VERSION, VERSION);
         }
     }
 

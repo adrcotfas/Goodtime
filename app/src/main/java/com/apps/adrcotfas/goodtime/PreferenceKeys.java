@@ -5,6 +5,9 @@ public class PreferenceKeys {
     private PreferenceKeys() {
     }
 
+    public static final int VERSION = 1;
+
+    public static final String PREFERENCES_VERSION = "pref_version";
     public static final String FIRST_RUN = "pref_firstRun";
     public static final String SESSION_DURATION = "pref_workTime";
     public static final String BREAK_DURATION = "pref_breakTime";
