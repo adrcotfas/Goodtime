@@ -83,8 +83,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private Preferences mPref;
     private SharedPreferences mPrivatePref;
     private AlertDialog mAlertDialog;
-    private int previousRingerMode;
-    private boolean previousWifiMode;
+    private int mPreviousRingerMode;
+    private boolean mPreviousWifiMode;
 
     @Override
     protected void onResume() {
@@ -129,10 +129,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void saveCurrentStateOfSoundAndWifi() {
         AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        previousRingerMode = aManager.getRingerMode();
+        mPreviousRingerMode = aManager.getRingerMode();
 
         WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-        previousWifiMode = wifiManager.isWifiEnabled();
+        mPreviousWifiMode = wifiManager.isWifiEnabled();
     }
 
     private void setUpUi() {
@@ -242,8 +242,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void loadFromSaveState(Bundle savedInstanceState) {
         mTimerState = (TimerState) savedInstanceState.getSerializable("timerState");
         mRemainingTime = savedInstanceState.getInt("remainingTime");
-        previousRingerMode = savedInstanceState.getInt("ringerMode");
-        previousWifiMode = savedInstanceState.getBoolean("wifiMode");
+        mPreviousRingerMode = savedInstanceState.getInt("ringerMode");
+        mPreviousWifiMode = savedInstanceState.getBoolean("wifiMode");
 
         switch (mTimerState) {
             case ACTIVE_WORK:
@@ -338,8 +338,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onSaveInstanceState(outState);
         outState.putSerializable("timerState", mTimerState);
         outState.putInt("remainingTime", mRemainingTime);
-        outState.putInt("ringerMode", previousRingerMode);
-        outState.putBoolean("wifiMode", previousWifiMode);
+        outState.putInt("ringerMode", mPreviousRingerMode);
+        outState.putBoolean("wifiMode", mPreviousWifiMode);
     }
 
     @Override
@@ -412,12 +412,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (mPref.getDisableSoundAndVibration()) {
             Log.d(TAG, "Restoring sound mode");
             AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-            aManager.setRingerMode(previousRingerMode);
+            aManager.setRingerMode(mPreviousRingerMode);
         }
         if (mPref.getDisableWifi()) {
             Log.d(TAG, "Restoring Wifi mode");
             WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-            wifiManager.setWifiEnabled(previousWifiMode);
+            wifiManager.setWifiEnabled(mPreviousWifiMode);
         }
     }
 
