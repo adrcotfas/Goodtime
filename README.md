@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/adrcotfas/Goodtime.svg?branch=master)](https://travis-ci.org/adrcotfas/Goodtime)
+
 # Goodtime
 
 A productivity timer designed to keep you on track and free of distractions.  
