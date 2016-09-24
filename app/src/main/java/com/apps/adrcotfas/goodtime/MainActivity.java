@@ -363,7 +363,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 return;
             } else {
                 try {
-                    Toast.makeText(getBaseContext(), "Press the back button again to exit", LENGTH_SHORT)
+                    Toast.makeText(getBaseContext(), R.string.toast_back_press, LENGTH_SHORT)
                          .show();
                 } catch (Throwable th) {
                     // ignoring this exception
@@ -449,10 +449,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         switch (mTimerState) {
             case ACTIVE_WORK:
                 disableSoundAndWifiIfPreferred();
-                showNotification("Work session in progress.", true);
+                showNotification(getString(R.string.notification_session), true);
                 break;
             case ACTIVE_BREAK:
-                showNotification("Break session in progress.", true);
+                showNotification(getString(R.string.notification_break), true);
         }
 
         keepScreenOnIfPreferred();
@@ -500,7 +500,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 mPauseButton.setText(getString(R.string.resume));
                 mPauseButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
                 removeTimer();
-                showNotification("Work session is paused. Resume?", false);
+                showNotification(getString(R.string.notification_pause), false);
                 break;
             case PAUSED_WORK:
                 mTimerState = TimerState.ACTIVE_WORK;
@@ -613,14 +613,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private AlertDialog buildStartSessionDialog() {
         return new AlertDialog.Builder(this)
-                .setTitle("Break complete")
-                .setPositiveButton("Begin session", new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.dialog_break_message))
+                .setPositiveButton(getString(R.string.dialog_break_session), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         startSession(0);
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.dialog_session_cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         removeNotifications();
@@ -631,9 +631,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private AlertDialog buildStartBreakDialog() {
         return new AlertDialog.Builder(this)
-                .setTitle("Session complete")
+                .setTitle(getString(R.string.dialog_session_message))
                 .setPositiveButton(
-                        "Start break",
+                        getString(R.string.dialog_session_break),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(
@@ -645,7 +645,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                         }
                 )
                 .setNegativeButton(
-                        "Skip break",
+                        getString(R.string.dialog_session_skip),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(
@@ -656,7 +656,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                             }
                         }
                 )
-                .setNeutralButton("Close", new DialogInterface.OnClickListener() {
+                .setNeutralButton(getString(R.string.dialog_session_close), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         removeNotifications();
@@ -791,9 +791,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void showSessionCounterDialog() {
         mAlertDialog = new AlertDialog.Builder(this)
-                .setTitle("Reset sessions counter?")
-                .setMessage("The completed sessions counter will be reset.")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.dialog_reset_title))
+                .setMessage(getString(R.string.dialog_reset_message))
+                .setPositiveButton(getString(R.string.dialog_reset_ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mCurrentSessionStreak = 0;
@@ -802,7 +802,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                                     .apply();
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.dialog_reset_cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
