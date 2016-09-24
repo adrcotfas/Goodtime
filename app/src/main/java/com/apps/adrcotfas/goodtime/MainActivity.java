@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mPref = setUpPreferences();
+        setUpPreferences();
         installCustomRingtones();
         saveCurrentStateOfSoundAndWifi();
         setUpUi();
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         setUpState(savedInstanceState);
     }
 
-    private Preferences setUpPreferences() {
+    private void setUpPreferences() {
         SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
         mPref.registerOnSharedPreferenceChangeListener(this);
         mPrivatePref = getSharedPreferences("preferences_private", Context.MODE_PRIVATE);
@@ -116,9 +116,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
 
+        this.mPref = new Preferences(mPref);
         this.mPref.migratePreferencesIfNeeded();
-
-        return new Preferences(mPref);
     }
 
     private void installCustomRingtones() {
