@@ -1,8 +1,6 @@
 package com.apps.adrcotfas.goodtime;
 
 import android.content.SharedPreferences;
-import android.util.Log;
-
 import com.apps.adrcotfas.goodtime.settings.CustomNotification;
 
 public class Preferences {
@@ -12,17 +10,6 @@ public class Preferences {
         mPref = pref;
     }
 
-    public static final int VERSION = 1;
-
-    public void migratePreferencesIfNeeded() {
-        if (mPref.getInt(PREFERENCES_VERSION, 0) < VERSION ) {
-            Log.i("Preferences", "Preferences are too old and need to be migrated");
-            mPref.edit().clear().commit();
-            mPref.edit().putInt(PREFERENCES_VERSION, VERSION);
-        }
-    }
-
-    public static final String PREFERENCES_VERSION = "pref_version";
     public static final String FIRST_RUN = "pref_firstRun";
     public static final String SESSION_DURATION = "pref_workTime";
     public static final String BREAK_DURATION = "pref_breakTime";

@@ -114,8 +114,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mPrivatePref = getSharedPreferences("preferences_private", Context.MODE_PRIVATE);
         mPrivatePref.registerOnSharedPreferenceChangeListener(this);
 
-        this.mPref.migratePreferencesIfNeeded();
-
         PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
 
         return new Preferences(mPref);
