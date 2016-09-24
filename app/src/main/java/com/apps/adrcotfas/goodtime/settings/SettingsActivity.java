@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.apps.adrcotfas.goodtime.R;
 
+import static com.apps.adrcotfas.goodtime.PreferenceKeys.NOTIFICATION_SOUND;
+
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -31,7 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class SettingsFragment extends PreferenceFragment {
 
-        public static final String KEY_RINGTONE = "pref_notificationSound";
+        public static final String KEY_RINGTONE = NOTIFICATION_SOUND;
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
