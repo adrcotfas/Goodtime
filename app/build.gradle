@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
     defaultConfig {
         applicationId 'com.apps.adrcotfas.goodtime'
         minSdkVersion 17
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode 25
         versionName "1.0.12"
     }
@@ -32,8 +32,8 @@ allprojects {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:design:23.3.0'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:design:24.2.1'
     compile 'com.heinrichreimersoftware:material-intro:1.5.4'
     compile 'com.pavelsikun:material-seekbar-preference:2.3.0'
 }
