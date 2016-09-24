@@ -40,6 +40,12 @@ public class ContributorsFragment
         findPreference("patrick_ford").setOnPreferenceClickListener(
                 createPreferenceClickListener("https://www.freesound.org/people/hykenfreak")
         );
+        findPreference("fdw").setOnPreferenceClickListener(
+                createPreferenceClickListener("https://github.com/fdw")
+        );
+        findPreference("wolfgang42").setOnPreferenceClickListener(
+                createPreferenceClickListener("https://github.com/wolfgang42")
+        );
         findPreference("app_rater").setOnPreferenceClickListener(
                 createPreferenceClickListener("https://github.com/delight-im/AppRater")
         );
