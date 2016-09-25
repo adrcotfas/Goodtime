@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Goodtime</string>
+  <string name="action_about">Über</string>
+  <string name="action_settings">Einstellungen</string>
+  <string name="dialog_break_message">Genug pausiert!</string>
+  <string name="dialog_break_session">Starte Sitzung</string>
+  <string name="dialog_reset_cancel">Nein</string>
+  <string name="dialog_reset_message">Soll die Zahl der vollständigen Sitzungen gelöscht werden?</string>
+  <string name="dialog_reset_ok">Ja</string>
+  <string name="dialog_reset_title">Sitzungszähler zurücksetzen?</string>
+  <string name="dialog_session_break">Starte Pause</string>
+  <string name="dialog_session_cancel">Abbrechen</string>
+  <string name="dialog_session_close">Schließen</string>
+  <string name="dialog_session_message">Genug gearbeitet!</string>
+  <string name="dialog_session_skip">Pause überspringen</string>
+  <string name="notification_break">Du pausierst gerade</string>
+  <string name="notification_pause">Sitzung ist unterbrochen</string>
+  <string name="notification_session">Du arbeitest gerade. Oder?</string>
+  <string name="pause">UNTERBRECHEN</string>
+  <string name="rater_later">Später</string>
+  <string name="rater_message">Wenn du diese App magst, bewerte sie doch bitte auf Google Play!</string>
+  <string name="rater_never">Nein, danke</string>
+  <string name="rater_now">Zu Google Play</string>
+  <string name="rater_title">App bewerten?</string>
+  <string name="resume">WEITER</string>
+  <string name="stop">STOP</string>
+  <string name="toast_back_press">Nochmal drücken, um zu beenden</string>
+  <string name="ringtoneTitle">Benachrichtigungston</string>
+  <string name="goodtime_notification_title">Goodtime Benachrichtigungston</string>
+</resources>
