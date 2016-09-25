@@ -15,7 +15,7 @@
                 <Preference
                     android:key="wolfgang42"
                     android:summary="for the contributions."
-                    android:title="Wolfgang">
+                    android:title="Wolfgang Faust">
                 </Preference>
         </PreferenceCategory>
 
