@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private PowerManager.WakeLock mWakeLock;
     private long mBackPressed;
     private int mRemainingTime;
-    private int currentSessionStreak;
+    private int mCurrentSessionStreak;
     private Timer mTimer;
     private TimerState mTimerState;
     private FloatingActionButton mStartButton;
@@ -240,6 +240,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void loadFromSaveState(Bundle savedInstanceState) {
         mTimerState = (TimerState) savedInstanceState.getSerializable("timerState");
         mRemainingTime = savedInstanceState.getInt("remainingTime");
+        mCurrentSessionStreak = savedInstanceState.getInt("currentSessionStreak");
         mPreviousRingerMode = savedInstanceState.getInt("ringerMode");
         mPreviousWifiMode = savedInstanceState.getBoolean("wifiMode");
 
@@ -336,6 +337,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onSaveInstanceState(outState);
         outState.putSerializable("timerState", mTimerState);
         outState.putInt("remainingTime", mRemainingTime);
+        outState.putInt("currentSessionStreak", mCurrentSessionStreak);
         outState.putInt("ringerMode", mPreviousRingerMode);
         outState.putBoolean("wifiMode", mPreviousWifiMode);
     }
@@ -524,6 +526,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void increaseTotalSessions() {
         if (mTimerState == TimerState.ACTIVE_WORK) {
+            ++mCurrentSessionStreak;
             int totalSessions = mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0);
             mPrivatePref.edit()
                         .putInt(TOTAL_SESSION_COUNT, ++totalSessions)
@@ -582,8 +585,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 enablePauseButton();
                 mTimerState = TimerState.FINISHED_BREAK;
 
-                if (currentSessionStreak >= mPref.getSessionsBeforeLongBreak()) {
-                    currentSessionStreak = 0;
+                if (mCurrentSessionStreak >= mPref.getSessionsBeforeLongBreak()) {
+                    mCurrentSessionStreak = 0;
                 }
 
                 mAlertDialog = buildStartSessionDialog();
@@ -666,7 +669,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void startBreak() {
         disablePauseButton();
-        mRemainingTime = (currentSessionStreak >= mPref.getSessionsBeforeLongBreak())
+        mRemainingTime = (mCurrentSessionStreak >= mPref.getSessionsBeforeLongBreak())
                          ? mPref.getLongBreakDuration() * 60
                          : mPref.getBreakDuration() * 60;
         mTimerState = TimerState.ACTIVE_BREAK;
@@ -696,8 +699,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 loadInitialState();
                 enablePauseButton();
                 mTimerState = TimerState.FINISHED_BREAK;
-                if (currentSessionStreak >= mPref.getSessionsBeforeLongBreak()) {
-                    currentSessionStreak = 0;
+                if (mCurrentSessionStreak >= mPref.getSessionsBeforeLongBreak()) {
+                    mCurrentSessionStreak = 0;
                 }
 
                 startSession(0);
@@ -783,7 +786,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        currentSessionStreak = 0;
+                        mCurrentSessionStreak = 0;
                         mPrivatePref.edit()
                                     .putInt(TOTAL_SESSION_COUNT, 0)
                                     .apply();
