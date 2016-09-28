@@ -65,9 +65,10 @@
 
     <PreferenceCategory android:title="During work sessions">
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="pref_disableSoundAndVibration"
-            android:title="Disable sound and vibration" />
+            android:title="Disable sound and vibration"
+            android:summary="Click to grant permission"/>
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="pref_disableWifi"

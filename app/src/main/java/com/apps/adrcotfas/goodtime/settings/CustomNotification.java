@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
+import static com.apps.adrcotfas.goodtime.Preferences.NOTIFICATION_SOUND;
 
 public class CustomNotification {
     public static final String PREF_KEY_RINGTONE_DEFAULT = "pref_key_ringtone_default";
@@ -130,10 +130,10 @@ public class CustomNotification {
                     editor.putString(PREF_KEY_RINGTONE_DEFAULT, newUri.toString());
 
                     // Check if the ringtone preference is currently set to "default"
-                    if (sharedPrefs.getString(SettingsActivity.SettingsFragment.KEY_RINGTONE, "")
+                    if (sharedPrefs.getString(NOTIFICATION_SOUND, "")
                             .equals(mContext.getString(R.string.default_ringtone_path))) {
                         // Set this as the ringtone, since it's the new default
-                        editor.putString(SettingsActivity.SettingsFragment.KEY_RINGTONE, newUri.toString());
+                        editor.putString(NOTIFICATION_SOUND, newUri.toString());
                     }
 
                     editor.apply();
