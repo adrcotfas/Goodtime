@@ -2,10 +2,8 @@ package com.apps.adrcotfas.goodtime.settings;
 
 import android.annotation.TargetApi;
 import android.app.NotificationManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,48 +16,16 @@ import static com.apps.adrcotfas.goodtime.Preferences.DISABLE_SOUND_AND_VIBRATIO
 
 public class SettingsFragment extends PreferenceFragment {
 
-    private BroadcastReceiver mNotificationPolicyReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                updateDisableSoundCheckBoxState(isNotificationPolicyAccessGranted());
-            }
-        }
-    };
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
-        setupDisableSoundCheckBox();
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        registerNotificationPolicyReceiver();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        unregisterNotificationPolicyReceiver();
-    }
-
-    private void registerNotificationPolicyReceiver() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            getActivity().registerReceiver(this.mNotificationPolicyReceiver,
-                    new IntentFilter(NotificationManager.ACTION_NOTIFICATION_POLICY_ACCESS_GRANTED_CHANGED));
-        }
-    }
-
-    private void unregisterNotificationPolicyReceiver() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            getActivity().unregisterReceiver(this.mNotificationPolicyReceiver);
-        }
+        setupDisableSoundCheckBox();
     }
 
     private void updateDisableSoundCheckBoxState(boolean notificationPolicyAccessGranted) {
@@ -84,9 +50,9 @@ public class SettingsFragment extends PreferenceFragment {
         }
     }
     private void setupDisableSoundCheckBox() {
+        final CheckBoxPreference disableSoundCheckbox = (CheckBoxPreference)
+                findPreference(DISABLE_SOUND_AND_VIBRATION);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !isNotificationPolicyAccessGranted()) {
-            final CheckBoxPreference disableSoundCheckbox = (CheckBoxPreference)
-                    findPreference(DISABLE_SOUND_AND_VIBRATION);
             disableSoundCheckbox.setOnPreferenceClickListener(
                     new Preference.OnPreferenceClickListener() {
                         @Override
@@ -99,9 +65,8 @@ public class SettingsFragment extends PreferenceFragment {
                         }
                     }
             );
-        } else {
-            updateDisableSoundCheckBoxSummary(true);
         }
+        updateDisableSoundCheckBoxSummary(isNotificationPolicyAccessGranted());
     }
 
     private void requestNotificationPolicyAccess() {
