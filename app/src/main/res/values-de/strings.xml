@@ -18,11 +18,6 @@
   <string name="notification_pause">Sitzung ist unterbrochen</string>
   <string name="notification_session">Du arbeitest gerade. Oder?</string>
   <string name="pause">UNTERBRECHEN</string>
-  <string name="rater_later">Später</string>
-  <string name="rater_message">Wenn du diese App magst, bewerte sie doch bitte auf Google Play!</string>
-  <string name="rater_never">Nein, danke</string>
-  <string name="rater_now">Zu Google Play</string>
-  <string name="rater_title">App bewerten?</string>
   <string name="resume">WEITER</string>
   <string name="stop">STOP</string>
   <string name="toast_back_press">Nochmal drücken, um zu beenden</string>
@@ -43,4 +38,8 @@
   <string name="pref_header_modes">Während einer Sitzung</string>
   <string name="pref_unit_minutes" >Minuten</string>
   <string name="pref_unit_sessions" >Sitzungen</string>
+  <string name="donation_1_dollar">$1</string>
+  <string name="donation_3_dollars">$3</string>
+  <string name="donation_5_dollars">$5</string>
+  <string name="pref_grant_permission">Antippen zum Erlauben</string>
 </resources>

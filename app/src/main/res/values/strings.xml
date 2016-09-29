@@ -23,11 +23,6 @@
   <string name="dialog_reset_ok">OK</string>
   <string name="dialog_reset_cancel">Cancel</string>
   <string name="toast_back_press">Press the back button again to exit</string>
-  <string name="rater_title">Rate this app</string>
-  <string name="rater_message">If you found this app useful please rate it on Google Play. Thanks for your support!</string>
-  <string name="rater_now">Rate now</string>
-  <string name="rater_later">Later</string>
-  <string name="rater_never">No, thanks</string>
 
   <string name="pref_header_general">Sessions</string>
   <string name="pref_session_duration">Work session duration</string>
@@ -43,13 +38,18 @@
   <string name="pref_disable_wifi">Disable Wi-Fi</string>
   <string name="pref_keep_screen_on">Keep the screen on</string>
   <string name="pref_continuous_mode">Continuous mode</string>
+  <string name="pref_grant_permission">Click to grant permission</string>
   <string name="pref_unit_minutes">minutes</string>
   <string name="pref_unit_sessions">sessions</string>
 
+  <string name="donation_1_dollar">$1</string>
+  <string name="donation_3_dollars">$3</string>
+  <string name="donation_5_dollars">$5</string>
+
   <string-array name="donations">
-    <item>$1</item>
-    <item>$3</item>
-    <item>$5</item>
+    <item>@string/donation_1_dollar</item>
+    <item>@string/donation_3_dollars</item>
+    <item>@string/donation_5_dollars</item>
   </string-array>
 
 </resources>
