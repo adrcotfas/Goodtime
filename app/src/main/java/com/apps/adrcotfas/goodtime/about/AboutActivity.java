@@ -259,7 +259,9 @@ public class AboutActivity extends AppCompatActivity {
                     email.setData(new Uri.Builder().scheme("mailto").build());
                     email.putExtra(Intent.EXTRA_EMAIL, new String[]{"adrcotfas@gmail.com"});
                     email.putExtra(Intent.EXTRA_SUBJECT, "[Goodtime] Feedback");
-                    email.putExtra(Intent.EXTRA_TEXT, "\nMy device info: \n" + DeviceInfo.getDeviceInfo() + "\nFeedback:" + "\n");
+                    email.putExtra(Intent.EXTRA_TEXT, "\nMy device info: \n" + DeviceInfo.getDeviceInfo()
+                            + "\nApp version: " + getString(R.string.versionName)
+                            + "\nFeedback:" + "\n");
                     try {
                         startActivity(Intent.createChooser(email, "Send feedback"));
                     } catch (android.content.ActivityNotFoundException ex) {
