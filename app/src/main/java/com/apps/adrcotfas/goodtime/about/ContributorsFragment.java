@@ -46,9 +46,6 @@ public class ContributorsFragment
         findPreference("wolfgang42").setOnPreferenceClickListener(
                 createPreferenceClickListener("https://github.com/wolfgang42")
         );
-        findPreference("app_rater").setOnPreferenceClickListener(
-                createPreferenceClickListener("https://github.com/delight-im/AppRater")
-        );
         findPreference("material-intro").setOnPreferenceClickListener(
                 createPreferenceClickListener("https://github.com/HeinrichReimer/material-intro")
         );

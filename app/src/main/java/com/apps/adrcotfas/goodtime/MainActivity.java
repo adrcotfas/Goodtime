@@ -40,7 +40,6 @@ import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
 import java.util.Locale;
 import java.util.Timer;
 
-import im.delight.apprater.AppRater;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static android.app.PendingIntent.getActivity;
@@ -104,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         installCustomRingtones();
         saveCurrentStateOfSoundAndWifi();
         setUpUi();
-        setupAppRater();
         setUpState(savedInstanceState);
     }
 
@@ -799,17 +797,5 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 })
                 .create();
         mAlertDialog.show();
-    }
-
-    private void setupAppRater() {
-        AppRater appRater = new AppRater(this);
-        appRater.setPhrases(
-                "Rate this app",
-                "If you found this app useful please rate it on Google Play. Thanks for your support!",
-                "Rate now",
-                "Later",
-                "No, thanks"
-        );
-        appRater.show();
     }
 }
