@@ -65,8 +65,9 @@ public class SettingsFragment extends PreferenceFragment {
                         }
                     }
             );
+        } else {
+            updateDisableSoundCheckBoxSummary(true);
         }
-        updateDisableSoundCheckBoxSummary(isNotificationPolicyAccessGranted());
     }
 
     private void requestNotificationPolicyAccess() {

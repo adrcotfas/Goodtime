@@ -13,6 +13,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         saveCurrentStateOfSoundAndWifi();
         setUpUi();
         setUpState(savedInstanceState);
+        setUpAndroidNougatSettings();
     }
 
     private Preferences setUpPreferences() {
@@ -115,6 +117,16 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
 
         return new Preferences(mPref);
+    }
+
+    private void setUpAndroidNougatSettings() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            NotificationManager notificationManager = (NotificationManager)
+                    getSystemService(Context.NOTIFICATION_SERVICE);
+            if (!notificationManager.isNotificationPolicyAccessGranted()) {
+                mPref.setDisableSoundAndVibration(false);
+            }
+        }
     }
 
     private void installCustomRingtones() {

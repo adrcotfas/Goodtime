@@ -66,4 +66,8 @@ public class Preferences {
     public String getNotificationSound() {
         return mPref.getString(NOTIFICATION_SOUND, "");
     }
+
+    public void setDisableSoundAndVibration(boolean disableSoundAndVibration) {
+        mPref.edit().putBoolean(DISABLE_SOUND_AND_VIBRATION, disableSoundAndVibration).apply();
+    }
 }
