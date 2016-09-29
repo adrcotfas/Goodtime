@@ -26,6 +26,21 @@
   <string name="resume">WEITER</string>
   <string name="stop">STOP</string>
   <string name="toast_back_press">Nochmal drücken, um zu beenden</string>
-  <string name="ringtoneTitle">Benachrichtigungston</string>
   <string name="goodtime_notification_title">Goodtime Benachrichtigungston</string>
+  <string name="pref_break_duration">Dauer einer Pause</string>
+  <string name="pref_continuous_mode">Ohne Pause</string>
+  <string name="pref_disable_sound">Ton und Vibration ausschalten</string>
+  <string name="pref_disable_wifi">WiFi ausschalten</string>
+  <string name="pref_header_general">Sitzungen</string>
+  <string name="pref_keep_screen_on">Bildschirm anlassen</string>
+  <string name="pref_long_break_duration">Dauer einer langen Pause</string>
+  <string name="pref_ringtone">Benachrichtigungston</string>
+  <string name="pref_ringtone_summary">Ton zur Benachrichtigung festlegen</string>
+  <string name="pref_session_duration">Dauer einer Sitzung</string>
+  <string name="pref_sessions_for_long_break">Sitzungen vor einer langen Pause</string>
+  <string name="pref_vibrate">Vibration</string>
+  <string name="pref_header_notification">Benachrichtigungen</string>
+  <string name="pref_header_modes">Während einer Sitzung</string>
+  <string name="pref_unit_minutes" >Minuten</string>
+  <string name="pref_unit_sessions" >Sitzungen</string>
 </resources>
