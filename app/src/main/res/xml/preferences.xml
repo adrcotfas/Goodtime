@@ -2,56 +2,56 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="General">
+    <PreferenceCategory android:title="@string/pref_header_general">
         <com.pavelsikun.seekbarpreference.SeekBarPreference
             android:defaultValue="25"
             android:key="pref_workTime"
-            android:title="Work session duration"
+            android:title="@string/pref_session_duration"
             app:msbp_dialogEnabled="false"
             app:msbp_interval="1"
             app:msbp_maxValue="60"
-            app:msbp_measurementUnit="minutes"
+            app:msbp_measurementUnit="@string/pref_unit_minutes"
             app:msbp_minValue="1" />
 
         <com.pavelsikun.seekbarpreference.SeekBarPreference
             android:defaultValue="5"
             android:key="pref_breakTime"
-            android:title="Break duration"
+            android:title="@string/pref_break_duration"
             app:msbp_dialogEnabled="false"
             app:msbp_interval="1"
             app:msbp_maxValue="30"
-            app:msbp_measurementUnit="minutes"
+            app:msbp_measurementUnit="@string/pref_unit_minutes"
             app:msbp_minValue="1" />
 
         <com.pavelsikun.seekbarpreference.SeekBarPreference
             android:defaultValue="15"
             android:key="pref_longBreakDuration"
-            android:title="Long break duration"
+            android:title="@string/pref_long_break_duration"
             app:msbp_dialogEnabled="false"
             app:msbp_interval="1"
             app:msbp_maxValue="30"
-            app:msbp_measurementUnit="minutes"
+            app:msbp_measurementUnit="@string/pref_unit_minutes"
             app:msbp_minValue="1" />
 
         <com.pavelsikun.seekbarpreference.SeekBarPreference
 
             android:defaultValue="4"
             android:key="pref_sessionsBeforeLongBreak"
-            android:title="Sessions before long break"
+            android:title="@string/pref_sessions_for_long_break"
             app:msbp_dialogEnabled="false"
             app:msbp_interval="1"
             app:msbp_maxValue="8"
-            app:msbp_measurementUnit="sessions"
+            app:msbp_measurementUnit="@string/pref_unit_sessions"
             app:msbp_minValue="2" />
 
     </PreferenceCategory>
-    <PreferenceCategory android:title="Notification">
+    <PreferenceCategory android:title="@string/pref_header_notification">
 
         <RingtonePreference
             android:key="pref_notificationSound"
-            android:title="@string/ringtoneTitle"
+            android:title="@string/pref_ringtone"
             android:defaultValue="content://settings/system/notification_sound"
-            android:summary="Set the notification sound"
+            android:summary="@string/pref_ringtone_summary"
             android:ringtoneType="notification"
             android:showSilent="true"
             android:showDefault="false"
@@ -60,27 +60,27 @@
         <SwitchPreference
             android:defaultValue="true"
             android:key="pref_vibrate"
-            android:title="Vibration" />
+            android:title="@string/pref_vibrate" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="During work sessions">
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_disableSoundAndVibration"
-            android:title="Disable sound and vibration"
-            android:summary="Click to grant permission"/>
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref_disableWifi"
-            android:title="Disable Wi-Fi" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_keepScreenOn"
-            android:title="Keep the screen on" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_continuousMode"
-            android:title="Continuous mode" />
-    </PreferenceCategory>
+  <PreferenceCategory android:title="@string/pref_header_modes">
+    <CheckBoxPreference
+      android:defaultValue="false"
+      android:key="pref_disableSoundAndVibration"
+      android:title="@string/pref_disable_sound"
+      android:summary="Click to grant permission"/>
+    <CheckBoxPreference
+      android:defaultValue="true"
+      android:key="pref_disableWifi"
+      android:title="@string/pref_disable_wifi" />
+    <CheckBoxPreference
+      android:defaultValue="false"
+      android:key="pref_keepScreenOn"
+      android:title="@string/pref_keep_screen_on" />
+    <CheckBoxPreference
+      android:defaultValue="false"
+      android:key="pref_continuousMode"
+      android:title="@string/pref_continuous_mode" />
+  </PreferenceCategory>
 </PreferenceScreen>
 

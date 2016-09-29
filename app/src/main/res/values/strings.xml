@@ -8,7 +8,6 @@
   <string name="resume">RESUME</string>
   <string name="goodtime_notification_title">Goodtime notification sound</string>
   <string name="default_ringtone_path" translatable="false">content://settings/system/notification_sound</string>
-  <string name="ringtoneTitle">Notification sound</string>
   <string name="dialog_break_message">Break complete</string>
   <string name="dialog_break_session">Begin session</string>
   <string name="dialog_session_message">Session complete</string>
@@ -29,6 +28,23 @@
   <string name="rater_now">Rate now</string>
   <string name="rater_later">Later</string>
   <string name="rater_never">No, thanks</string>
+
+  <string name="pref_header_general">Sessions</string>
+  <string name="pref_session_duration">Work session duration</string>
+  <string name="pref_break_duration">Break duration</string>
+  <string name="pref_long_break_duration">Long break duration</string>
+  <string name="pref_sessions_for_long_break">Number of sessions before a long break</string>
+  <string name="pref_header_notification">General</string>
+  <string name="pref_ringtone">Notification sound</string>
+  <string name="pref_ringtone_summary">Set the notification sound</string>
+  <string name="pref_vibrate">Vibration</string>
+  <string name="pref_header_modes">During work sessions</string>
+  <string name="pref_disable_sound">Disable sound and vibration</string>
+  <string name="pref_disable_wifi">Disable Wi-Fi</string>
+  <string name="pref_keep_screen_on">Keep the screen on</string>
+  <string name="pref_continuous_mode">Continuous mode</string>
+  <string name="pref_unit_minutes">minutes</string>
+  <string name="pref_unit_sessions">sessions</string>
 
   <string-array name="donations">
     <item>$1</item>
