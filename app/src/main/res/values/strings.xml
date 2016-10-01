@@ -1,5 +1,4 @@
 <resources>
-  <string name="versionName" translatable="false">1.0.14</string>
   <string name="app_name">Goodtime</string>
   <string name="action_settings">Settings</string>
   <string name="action_about">About</string>

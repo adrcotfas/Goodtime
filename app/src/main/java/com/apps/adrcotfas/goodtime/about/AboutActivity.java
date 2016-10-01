@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.apps.adrcotfas.goodtime.BuildConfig;
 import com.apps.adrcotfas.goodtime.ProductTourActivity;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.util.DeviceInfo;
@@ -260,7 +261,7 @@ public class AboutActivity extends AppCompatActivity {
                     email.putExtra(Intent.EXTRA_EMAIL, new String[]{"adrcotfas@gmail.com"});
                     email.putExtra(Intent.EXTRA_SUBJECT, "[Goodtime] Feedback");
                     email.putExtra(Intent.EXTRA_TEXT, "\nMy device info: \n" + DeviceInfo.getDeviceInfo()
-                            + "\nApp version: " + getString(R.string.versionName)
+                            + "\nApp version: " + BuildConfig.VERSION_NAME
                             + "\nFeedback:" + "\n");
                     try {
                         startActivity(Intent.createChooser(email, "Send feedback"));
