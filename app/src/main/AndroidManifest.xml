@@ -41,8 +41,12 @@
             android:label="Contributors and licences"
             android:parentActivityName=".about.AboutActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".ProductTourActivity"
+        <activity
+            android:name=".ProductTourActivity"
             android:theme="@style/Theme.Intro"/>
+        <service
+            android:name=".TimerService">
+        </service>
     </application>
 
 </manifest>
