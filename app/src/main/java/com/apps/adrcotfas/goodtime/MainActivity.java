@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -603,6 +604,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (!notificationSound.equals("")) {
             Uri uri = Uri.parse(notificationSound);
             Ringtone r = RingtoneManager.getRingtone(this, uri);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                r.setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build());
+            } else {
+                r.setStreamType(AudioManager.STREAM_ALARM);
+            }
             r.play();
         }
     }
