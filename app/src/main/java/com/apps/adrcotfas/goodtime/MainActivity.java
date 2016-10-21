@@ -46,7 +46,6 @@ import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
 
 import java.util.Locale;
 
-
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static android.app.PendingIntent.getActivity;
 import static android.graphics.Typeface.createFromAsset;

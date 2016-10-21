@@ -24,7 +24,6 @@ public class TimerService extends Service {
     public final static String REMAINING_TIME = "remainingTime";
     public final static String SESSION_FINISHED = "sessionFinished";
     private final IBinder mBinder = new TimerBinder();
-    private final Handler mHandler = new Handler();
     private LocalBroadcastManager mBroadcastManager;
 
     @Override
@@ -32,26 +31,6 @@ public class TimerService extends Service {
         super.onCreate();
         mBroadcastManager = LocalBroadcastManager.getInstance(this);
     }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        mHandler.removeCallbacks(sendUpdatesToUI);
-        mHandler.postDelayed(sendUpdatesToUI, 1000);
-        return START_STICKY;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mHandler.removeCallbacks(sendUpdatesToUI);
-    }
-
-    private Runnable sendUpdatesToUI = new Runnable() {
-        @Override
-        public void run() {
-            mHandler.postDelayed(this, 1000);
-        }
-    };
 
     public void scheduleTimer(long delay){
 
