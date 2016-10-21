@@ -41,6 +41,13 @@
   <string name="pref_unit_minutes">minutes</string>
   <string name="pref_unit_sessions">sessions</string>
 
+  <string name="intro_avoid_distractions">Avoid distractions</string>
+  <string name="intro_avoid_distractions_description">Keep your work on track using timed sessions handled by the app.</string>
+  <string name="intro_clear_mind">Clear your mind</string>
+  <string name="intro_clear_mind_description">Reward yourself with short breaks and get refreshed.</string>
+  <string name="intro_get_started">Get started</string>
+  <string name="intro_get_started_description">Stay focused, get rid of procrastination and improve your productivity.</string>
+
   <string name="donation_1_dollar">$1</string>
   <string name="donation_3_dollars">$3</string>
   <string name="donation_5_dollars">$5</string>
