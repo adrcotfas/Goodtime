@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private Bundle mSavedInstanceState;
     private PowerManager.WakeLock mWakeLock;
-    private long mBackPressed;
+    private long mBackPressedAt;
     private FloatingActionButton mStartButton;
     private Button mPauseButton;
     private Button mStopButton;
@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             /// move app to background
             moveTaskToBack(true);
         } else {
-            if (mBackPressed + MAXIMUM_MILLISECONDS_BETWEEN_BACK_PRESSES > System.currentTimeMillis()) {
+            if (mBackPressedAt + MAXIMUM_MILLISECONDS_BETWEEN_BACK_PRESSES > System.currentTimeMillis()) {
                 super.onBackPressed();
                 return;
             } else {
@@ -424,7 +424,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     // ignoring this exception
                 }
             }
-            mBackPressed = System.currentTimeMillis();
+            mBackPressedAt = System.currentTimeMillis();
         }
     }
 
