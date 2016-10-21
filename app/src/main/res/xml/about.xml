@@ -3,26 +3,26 @@
     <Preference
         android:key="about_version"
         android:summary="@string/versionName"
-        android:title="Version">
+        android:title="@string/about_version">
     </Preference>
     <Preference
         android:key="about_pro"
-        android:title="Support the developer">
+        android:title="@string/about_support">
     </Preference>
     <Preference
         android:key="about_rate"
-        android:title="Rate this app">
+        android:title="@string/about_rate">
     </Preference>
     <Preference
         android:key="about_feedback"
-        android:title="Send feedback">
+        android:title="@string/about_feedback">
     </Preference>
     <Preference
         android:key="about_licences"
-        android:title="Contributors and licences">
+        android:title="@string/about_contributors">
     </Preference>
     <Preference
         android:key="about_product_tour"
-        android:title="Product tour">
+        android:title="@string/about_tour">
     </Preference>
 </PreferenceScreen>
