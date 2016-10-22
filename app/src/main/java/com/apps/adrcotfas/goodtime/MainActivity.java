@@ -142,14 +142,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     int remainingTime = intent.getIntExtra(TimerService.REMAINING_TIME, 0);
                     updateTimerLabel(remainingTime);
 
-                    if (intent.getBooleanExtra(TimerService.SESSION_FINISHED, false)) {
+                    if (remainingTime == 0) {
                         onCountdownFinished();
                     }
                 }
             }
         };
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver((mBroadcastReceiver),
-                new IntentFilter(TimerService.TIMERSERVICE_ACTION)
+                new IntentFilter(TimerService.ACTION_TIMERSERVICE)
         );
     }
 

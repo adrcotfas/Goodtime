@@ -7,22 +7,18 @@ import java.util.Timer;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 public class TimerService extends Service {
 
     private static final String TAG = "TimerService";
+    public final static String ACTION_TIMERSERVICE = "com.apps.adrcotfas.goodtime.TIMERSERVICE";
+    public final static String REMAINING_TIME = "com.apps.adrcotfas.goodtime.REMAINING_TIME";
     private int mRemainingTime;
     private int mCurrentSessionStreak;
-
     private Timer mTimer;
     private TimerState mTimerState;
-
-    public final static String TIMERSERVICE_ACTION = "TimerService";
-    public final static String REMAINING_TIME = "remainingTime";
-    public final static String SESSION_FINISHED = "sessionFinished";
     private final IBinder mBinder = new TimerBinder();
     private LocalBroadcastManager mBroadcastManager;
 
@@ -42,18 +38,12 @@ public class TimerService extends Service {
         Log.d(TAG, "Updating timer");
 
         if (mTimerState != TimerState.INACTIVE) {
-            Intent remainingTimeIntent = new Intent(TIMERSERVICE_ACTION);
-            remainingTimeIntent.putExtra(REMAINING_TIME, getRemainingTime());
-
-            mBroadcastManager.sendBroadcast(remainingTimeIntent);
-
-            if (mRemainingTime == 0) {
-                Intent countdownFinishedIntent = new Intent(TIMERSERVICE_ACTION);
-                countdownFinishedIntent.putExtra(SESSION_FINISHED, true);
-                mBroadcastManager.sendBroadcast(countdownFinishedIntent);
-            } else {
+            if (mRemainingTime != 0) {
                 --mRemainingTime;
             }
+            Intent remainingTimeIntent = new Intent(ACTION_TIMERSERVICE);
+            remainingTimeIntent.putExtra(REMAINING_TIME, getRemainingTime());
+            mBroadcastManager.sendBroadcast(remainingTimeIntent);
         }
     }
 
@@ -71,7 +61,6 @@ public class TimerService extends Service {
         }
     }
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
