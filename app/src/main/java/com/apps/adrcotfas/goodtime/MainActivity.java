@@ -17,7 +17,6 @@ import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -49,7 +48,6 @@ import java.util.Locale;
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static android.app.PendingIntent.getActivity;
 import static android.graphics.Typeface.createFromAsset;
-import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
 import static android.os.PowerManager.FULL_WAKE_LOCK;
 import static android.os.PowerManager.ON_AFTER_RELEASE;
@@ -84,8 +82,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private Preferences mPref;
     private SharedPreferences mPrivatePref;
     private AlertDialog mAlertDialog;
-    private int mPreviousRingerMode;
-    private boolean mPreviousWifiMode;
 
     private TimerService mTimerService;
     private BroadcastReceiver mBroadcastReceiver;
@@ -99,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mTimerService = binder.getService();
             mIsBoundToTimerService = true;
 
-            saveCurrentStateOfSoundAndWifi();
             setUpUi();
             setUpState(mSavedInstanceState);
             setUpAndroidNougatSettings();
@@ -183,14 +178,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (!mPref.getRingtonesCopied()) {
             CustomNotification.installToStorage(this);
         }
-    }
-
-    private void saveCurrentStateOfSoundAndWifi() {
-        AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        mPreviousRingerMode = aManager.getRingerMode();
-
-        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-        mPreviousWifiMode = wifiManager.isWifiEnabled();
     }
 
     private void setUpUi() {
@@ -301,8 +288,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mTimerService.setTimerState((TimerState) savedInstanceState.getSerializable("timerState"));
         mTimerService.setRemainingTime(savedInstanceState.getInt("remainingTime"));
         mTimerService.setCurrentSessionStreak(savedInstanceState.getInt("currentSessionStreak"));
-        mPreviousRingerMode = savedInstanceState.getInt("ringerMode");
-        mPreviousWifiMode = savedInstanceState.getBoolean("wifiMode");
+        mTimerService.setPreviousRingerMode(savedInstanceState.getInt("ringerMode"));
+        mTimerService.setPreviousWifiMode(savedInstanceState.getBoolean("wifiMode"));
 
         switch (mTimerService.getTimerState()) {
             case ACTIVE_WORK:
@@ -402,8 +389,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             outState.putSerializable("timerState", mTimerService.getTimerState());
             outState.putInt("remainingTime", mTimerService.getRemainingTime());
             outState.putInt("currentSessionStreak", mTimerService.getCurrentSessionStreak());
-            outState.putInt("ringerMode", mPreviousRingerMode);
-            outState.putBoolean("wifiMode", mPreviousWifiMode);
+            outState.putInt("ringerMode", mTimerService.getPreviousRingerMode());
+            outState.putBoolean("wifiMode", mTimerService.getPreviousWifiMode());
         }
     }
 
@@ -446,7 +433,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         removeNotifications();
         releaseWakelock();
         shutScreenOffIfPreferred();
-        restoreSoundAndWifiIfPreferred();
+        restoreSoundIfPreferred();
+        restoreWifiIfPreferred();
     }
 
     private void shutScreenOffIfPreferred() {
@@ -462,19 +450,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             } catch (Throwable th) {
                 // ignoring this exception, probably wakeLock was already released
             }
-        }
-    }
-
-    private void restoreSoundAndWifiIfPreferred() {
-        if (mPref.getDisableSoundAndVibration()) {
-            Log.d(TAG, "Restoring sound mode");
-            AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-            aManager.setRingerMode(mPreviousRingerMode);
-        }
-        if (mPref.getDisableWifi()) {
-            Log.d(TAG, "Restoring Wifi mode");
-            WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-            wifiManager.setWifiEnabled(mPreviousWifiMode);
         }
     }
 
@@ -495,7 +470,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         switch (mTimerService.getTimerState()) {
             case ACTIVE_WORK:
-                disableSoundAndWifiIfPreferred();
+                disableSoundIfPreferred();
+                disableWifiIfPreferred();
                 showNotification(getString(R.string.notification_session), true);
                 break;
             case ACTIVE_BREAK:
@@ -508,15 +484,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mTimerService.scheduleTimer(delay);
     }
 
-    private void disableSoundAndWifiIfPreferred() {
+    private void disableSoundIfPreferred() {
         if (mPref.getDisableSoundAndVibration()) {
-            AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-            aManager.setRingerMode(RINGER_MODE_SILENT);
+            mTimerService.disableSound();
         }
+    }
 
+    private void disableWifiIfPreferred() {
         if (mPref.getDisableWifi()) {
-            WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-            wifiManager.setWifiEnabled(false);
+            mTimerService.disableWifi();
         }
     }
 
@@ -563,7 +539,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         acquireScreenWakelock();
         releaseWakelock();
         shutScreenOffIfPreferred();
-        restoreSoundAndWifiIfPreferred();
+        restoreSoundIfPreferred();
+        restoreWifiIfPreferred();
 
         mTimerService.removeTimer();
 
@@ -577,6 +554,18 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             goOnContinuousMode();
         } else {
             showContinueDialog();
+        }
+    }
+
+    private void restoreSoundIfPreferred() {
+        if (mPref.getDisableSoundAndVibration()) {
+            mTimerService.restoreSound();
+        }
+    }
+
+    private void restoreWifiIfPreferred() {
+        if (mPref.getDisableWifi()) {
+            mTimerService.restoreWifi();
         }
     }
 

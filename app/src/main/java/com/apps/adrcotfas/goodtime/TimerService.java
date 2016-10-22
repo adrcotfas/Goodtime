@@ -3,12 +3,14 @@ package com.apps.adrcotfas.goodtime;
 import android.app.Service;
 import android.content.Intent;
 import java.util.Timer;
-
+import android.media.AudioManager;
+import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import static android.media.AudioManager.RINGER_MODE_SILENT;
 
 public class TimerService extends Service {
 
@@ -21,10 +23,14 @@ public class TimerService extends Service {
     private TimerState mTimerState;
     private final IBinder mBinder = new TimerBinder();
     private LocalBroadcastManager mBroadcastManager;
+    private int mPreviousRingerMode;
+    private boolean mPreviousWifiMode;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        saveCurrentStateOfSound();
+        saveCurrentStateOfWifi();
         mBroadcastManager = LocalBroadcastManager.getInstance(this);
     }
 
@@ -78,15 +84,62 @@ public class TimerService extends Service {
         return mCurrentSessionStreak;
     }
 
-    public void setTimerState(TimerState mTimerState) {
+    public int getPreviousRingerMode() {
+        return mPreviousRingerMode;
+    }
+
+    public boolean getPreviousWifiMode() {
+        return mPreviousWifiMode;
+    }
+
+    protected void setTimerState(TimerState mTimerState) {
         this.mTimerState = mTimerState;
     }
 
-    public void setCurrentSessionStreak(int mCurrentSessionStreak) {
+    protected void setCurrentSessionStreak(int mCurrentSessionStreak) {
         this.mCurrentSessionStreak = mCurrentSessionStreak;
     }
 
-    public void setRemainingTime(int mRemainingTime) {
+    protected void setRemainingTime(int mRemainingTime) {
         this.mRemainingTime = mRemainingTime;
+    }
+
+    protected void setPreviousRingerMode(int previousRingerMode) {
+        this.mPreviousRingerMode = previousRingerMode;
+    }
+
+    protected void setPreviousWifiMode(boolean previousWifiMode) {
+        this.mPreviousWifiMode = previousWifiMode;
+    }
+
+    protected void restoreSound() {
+        Log.d(TAG, "Restoring sound mode");
+        AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        aManager.setRingerMode(mPreviousRingerMode);
+    }
+
+    protected void restoreWifi() {
+        Log.d(TAG, "Restoring Wifi mode");
+        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+        wifiManager.setWifiEnabled(mPreviousWifiMode);
+    }
+
+    protected void disableSound() {
+        AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        aManager.setRingerMode(RINGER_MODE_SILENT);
+    }
+
+    protected void disableWifi() {
+        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+        wifiManager.setWifiEnabled(false);
+    }
+
+    private void saveCurrentStateOfSound() {
+        AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        mPreviousRingerMode = aManager.getRingerMode();
+    }
+    private void saveCurrentStateOfWifi() {
+        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+        mPreviousWifiMode = wifiManager.isWifiEnabled();
     }
 }
