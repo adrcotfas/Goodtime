@@ -17,6 +17,8 @@
   <string name="notification_session">Work session in progress.</string>
   <string name="notification_break">Break session in progress.</string>
   <string name="notification_pause">Work session is paused. Resume?</string>
+  <string name="notification_break_complete">Break complete. Resume work?</string>
+  <string name="notification_work_complete">Session complete. Continue?</string>
   <string name="dialog_reset_title">Reset sessions counter?</string>
   <string name="dialog_reset_message">The completed sessions counter will be reset.</string>
   <string name="dialog_reset_ok">OK</string>

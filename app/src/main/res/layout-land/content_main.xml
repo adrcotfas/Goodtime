@@ -35,7 +35,8 @@
             android:layout_alignParentTop="true"
             android:layout_marginLeft="4dip"
             android:layout_marginRight="4dip"
-            android:background="@color/transparent" />
+            android:background="@color/transparent"
+            android:visibility="invisible"/>
 
         <View
             android:id="@+id/verticalSeparator"
@@ -45,7 +46,8 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="4dp"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="4dp"
+            android:visibility="invisible"/>
 
         <Button
             android:id="@+id/stopButton"
@@ -59,7 +61,8 @@
             android:background="@null"
             android:text="@string/stop"
             android:textColor="@color/red"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="invisible"/>
 
         <Button
             android:id="@+id/pauseButton"
@@ -73,7 +76,8 @@
             android:background="@null"
             android:text="@string/pause"
             android:textColor="@color/yellow"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="invisible"/>
     </RelativeLayout>
 
 </RelativeLayout>
