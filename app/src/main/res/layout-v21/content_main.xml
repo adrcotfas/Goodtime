@@ -20,7 +20,8 @@
         android:clickable="true"
         android:text=""
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="60sp" />
+        android:textSize="60sp"
+        android:adjustViewBounds="true"/>
 
     <RelativeLayout
         android:id="@+id/buttons"
@@ -59,7 +60,7 @@
             android:layout_alignParentTop="true"
             android:layout_toStartOf="@id/verticalSeparator"
             android:background="@null"
-            android:text="STOP"
+            android:text="@string/stop"
             android:textColor="@color/red"
             android:visibility="invisible"/>
 

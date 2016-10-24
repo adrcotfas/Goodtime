@@ -20,7 +20,8 @@
         android:clickable="true"
         android:text=""
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="72sp" />
+        android:textSize="72sp"
+        android:adjustViewBounds="true"/>
 
     <RelativeLayout
         android:id="@+id/buttons"

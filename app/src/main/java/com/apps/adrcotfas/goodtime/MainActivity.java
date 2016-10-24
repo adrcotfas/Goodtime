@@ -32,7 +32,10 @@ import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.OrientationEventListener;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -76,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private Preferences mPref;
     private SharedPreferences mPrivatePref;
     private AlertDialog mAlertDialog;
+    private OrientationListener mOrientationListener;
 
     private TimerService mTimerService;
     private BroadcastReceiver mBroadcastReceiver;
@@ -97,6 +101,30 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     };
 
+    private class OrientationListener extends OrientationEventListener{
+        final int ROTATION_O    = 1;
+        final int ROTATION_90   = 2;
+        final int ROTATION_270  = 4;
+
+        private int rotation = ROTATION_O;
+        public OrientationListener(Context context) { super(context); }
+
+        @Override public void onOrientationChanged(int orientation) {
+            if( (orientation < 35 || orientation > 325) && rotation!= ROTATION_O){
+                rotation = ROTATION_O;
+                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.to_portrait));
+            }
+            else if(orientation > 55 && orientation < 125 && rotation!=ROTATION_270){
+                rotation = ROTATION_270;
+                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.to_reverse_landscape));
+            }
+            else if(orientation > 235 && orientation < 305 && rotation!=ROTATION_90){
+                rotation = ROTATION_90;
+                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.to_landscape));
+            }
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mPref = setUpPreferences();
         installCustomRingtones();
         setUpUi();
-        setUpState(savedInstanceState);
+        loadInitialState();
         setUpAndroidNougatSettings();
         setupBroadcastReceiver();
     }
@@ -115,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         Intent intent = new Intent(this, TimerService.class);
         startService(intent);
         bindService(intent, mTimerServiceConnection, Context.BIND_AUTO_CREATE);
+        mOrientationListener.enable();
     }
 
     @Override
@@ -135,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (mIsBoundToTimerService && mTimerService.getTimerState() != TimerState.INACTIVE) {
             mTimerService.bringToForegroundAndUpdateNotification();
         }
+        mOrientationListener.disable();
         super.onStop();
     }
 
@@ -222,6 +252,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         mTimeLabel = (TextView) findViewById(R.id.textView);
         setUpTimerLabel();
+
+        mOrientationListener = new OrientationListener(this);
     }
 
     private void setUpToolbar(Toolbar toolbar) {
@@ -298,53 +330,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
 
-    private void setUpState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            if (mIsBoundToTimerService) {
-                loadFromSaveState(savedInstanceState);
-            }
-        } else {
-            loadInitialState();
-        }
-    }
-
-    private void loadFromSaveState(Bundle savedInstanceState) {
-        mTimerService.setTimerState((TimerState) savedInstanceState.getSerializable("timerState"));
-        mTimerService.setRemainingTime(savedInstanceState.getInt("remainingTime"));
-        mTimerService.setCurrentSessionStreak(savedInstanceState.getInt("currentSessionStreak"));
-        mTimerService.setPreviousRingerMode(savedInstanceState.getInt("ringerMode"));
-        mTimerService.setPreviousWifiMode(savedInstanceState.getBoolean("wifiMode"));
-
-        switch (mTimerService.getTimerState()) {
-            case ACTIVE_WORK:
-                enablePauseButton();
-                startTimer(0);
-                break;
-            case ACTIVE_BREAK:
-                disablePauseButton();
-                startTimer(0);
-                break;
-            case PAUSED_WORK:
-                mTimerService.setTimerState(TimerState.ACTIVE_WORK);
-                loadRunningTimerUiState();
-                pauseTimer();
-                break;
-            case INACTIVE:
-                loadInitialState();
-                break;
-            case FINISHED_BREAK:
-                mTimerService.setTimerState(TimerState.ACTIVE_BREAK);
-                loadRunningTimerUiState();
-                showContinueDialog();
-                break;
-            case FINISHED_WORK:
-                mTimerService.setTimerState(TimerState.ACTIVE_WORK);
-                loadRunningTimerUiState();
-                showContinueDialog();
-                break;
-        }
-    }
-
     private void disablePauseButton() {
         mPauseButton.setEnabled(false);
         mPauseButton.setTextColor(getResources().getColor(R.color.gray));
@@ -387,19 +372,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             if (mTimerService.getTimerState() == TimerState.INACTIVE) {
                 updateTimerLabel(mPref.getSessionDuration() * 60);
             }
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (mIsBoundToTimerService) {
-            Log.d(TAG, "Saving instance state");
-            outState.putSerializable("timerState", mTimerService.getTimerState());
-            outState.putInt("remainingTime", mTimerService.getRemainingTime());
-            outState.putInt("currentSessionStreak", mTimerService.getCurrentSessionStreak());
-            outState.putInt("ringerMode", mTimerService.getPreviousRingerMode());
-            outState.putBoolean("wifiMode", mTimerService.getPreviousWifiMode());
         }
     }
 

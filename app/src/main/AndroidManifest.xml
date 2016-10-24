@@ -20,7 +20,8 @@
             android:name="com.apps.adrcotfas.goodtime.MainActivity"
             android:label="Goodtime"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -30,20 +31,24 @@
             android:name=".settings.SettingsActivity"
             android:label="Settings"
             android:parentActivityName="com.apps.adrcotfas.goodtime.MainActivity"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".about.AboutActivity"
             android:label="About"
             android:parentActivityName="com.apps.adrcotfas.goodtime.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".about.LicencesActivity"
             android:label="Contributors and licences"
             android:parentActivityName=".about.AboutActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ProductTourActivity"
-            android:theme="@style/Theme.Intro"/>
+            android:theme="@style/Theme.Intro"
+            android:screenOrientation="portrait"/>
         <service
             android:name=".TimerService">
         </service>
