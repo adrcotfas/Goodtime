@@ -599,19 +599,16 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             case ACTIVE_WORK:
             case FINISHED_WORK:
                 loadInitialState();
-                mTimerService.setTimerState(TimerState.FINISHED_WORK);
 
-                //TODO: extract to a single function
                 mAlertDialog = buildStartBreakDialog();
                 mAlertDialog.setCanceledOnTouchOutside(false);
                 mAlertDialog.show();
+
                 break;
             case ACTIVE_BREAK:
             case FINISHED_BREAK:
                 loadInitialState();
-
                 enablePauseButton();
-                mTimerService.setTimerState(TimerState.FINISHED_BREAK);
 
                 if (mTimerService.getCurrentSessionStreak() >= mPref.getSessionsBeforeLongBreak()) {
                     mTimerService.setCurrentSessionStreak(0);
@@ -640,6 +637,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 .setNegativeButton(getString(R.string.dialog_session_cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        mTimerService.sendToBackground();
                     }
                 })
                 .create();
@@ -675,6 +673,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 .setNeutralButton(getString(R.string.dialog_session_close), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        mTimerService.sendToBackground();
                     }
                 })
                 .create();
