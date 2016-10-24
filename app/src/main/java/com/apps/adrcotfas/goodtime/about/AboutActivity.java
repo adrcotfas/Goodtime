@@ -180,7 +180,7 @@ public class AboutActivity extends AppCompatActivity {
             appVersion.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    Uri uri = Uri.parse("https://github.com/adrcotfas");
+                    Uri uri = Uri.parse("https://github.com/adrcotfas/Goodtime");
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(intent);
                     return true;
