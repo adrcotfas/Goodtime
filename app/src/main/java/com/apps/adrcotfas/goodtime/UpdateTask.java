@@ -6,9 +6,9 @@ import java.util.TimerTask;
 
 public class UpdateTask extends TimerTask {
     final Handler handler;
-    final MainActivity ref;
+    final TimerService ref;
 
-    public UpdateTask(Handler handler, MainActivity ref) {
+    public UpdateTask(Handler handler, TimerService ref) {
         super();
         this.handler = handler;
         this.ref = ref;

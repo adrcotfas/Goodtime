@@ -7,7 +7,7 @@
             android:defaultValue="25"
             android:key="pref_workTime"
             android:title="@string/pref_session_duration"
-            app:msbp_dialogEnabled="false"
+            app:msbp_dialogEnabled="true"
             app:msbp_interval="1"
             app:msbp_maxValue="60"
             app:msbp_measurementUnit="@string/pref_unit_minutes"
@@ -17,7 +17,7 @@
             android:defaultValue="5"
             android:key="pref_breakTime"
             android:title="@string/pref_break_duration"
-            app:msbp_dialogEnabled="false"
+            app:msbp_dialogEnabled="true"
             app:msbp_interval="1"
             app:msbp_maxValue="30"
             app:msbp_measurementUnit="@string/pref_unit_minutes"
@@ -27,7 +27,7 @@
             android:defaultValue="15"
             android:key="pref_longBreakDuration"
             android:title="@string/pref_long_break_duration"
-            app:msbp_dialogEnabled="false"
+            app:msbp_dialogEnabled="true"
             app:msbp_interval="1"
             app:msbp_maxValue="30"
             app:msbp_measurementUnit="@string/pref_unit_minutes"
@@ -38,7 +38,7 @@
             android:defaultValue="4"
             android:key="pref_sessionsBeforeLongBreak"
             android:title="@string/pref_sessions_for_long_break"
-            app:msbp_dialogEnabled="false"
+            app:msbp_dialogEnabled="true"
             app:msbp_interval="1"
             app:msbp_maxValue="8"
             app:msbp_measurementUnit="@string/pref_unit_sessions"
@@ -57,10 +57,17 @@
             android:showDefault="false"
             />
 
-        <SwitchPreference
+        <CheckBoxPreference
             android:defaultValue="true"
             android:key="pref_vibrate"
             android:title="@string/pref_vibrate" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_rotate"
+            android:title="@string/pref_rotate"
+            android:summary="@string/pref_rotate_summary"/>
+
     </PreferenceCategory>
 
   <PreferenceCategory android:title="@string/pref_header_modes">

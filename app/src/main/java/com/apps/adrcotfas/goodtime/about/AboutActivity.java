@@ -87,7 +87,7 @@ public class AboutActivity extends AppCompatActivity {
 
             Purchase purchase3 = inventory.getPurchase(SKU_3_DOLLARS);
             if (purchase3 != null) {
-                Log.d(TAG, "We have gas. Consuming it.");
+                Log.d(TAG, "Consume purchase.");
                 try {
                     mHelper.consumeAsync(inventory.getPurchase(SKU_3_DOLLARS), mConsumeFinishedListener);
                 } catch (IabHelper.IabAsyncInProgressException e) {
@@ -97,7 +97,7 @@ public class AboutActivity extends AppCompatActivity {
 
             Purchase purchase5 = inventory.getPurchase(SKU_5_DOLLARS);
             if (purchase5 != null) {
-                Log.d(TAG, "We have gas. Consuming it.");
+                Log.d(TAG, "Consume purchase.");
                 try {
                     mHelper.consumeAsync(inventory.getPurchase(SKU_5_DOLLARS), mConsumeFinishedListener);
                 } catch (IabHelper.IabAsyncInProgressException e) {
@@ -180,7 +180,7 @@ public class AboutActivity extends AppCompatActivity {
             appVersion.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    Uri uri = Uri.parse("https://github.com/adrcotfas");
+                    Uri uri = Uri.parse("https://github.com/adrcotfas/Goodtime");
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(intent);
                     return true;
@@ -193,9 +193,9 @@ public class AboutActivity extends AppCompatActivity {
 
                     final CharSequence[] items = getResources().getStringArray(R.array.donations);
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Donate to support updates and more quality apps.");
+                    builder.setTitle(R.string.about_donate);
                     builder.setNegativeButton(
-                            "Cancel",
+                            R.string.dialog_reset_cancel,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -211,7 +211,7 @@ public class AboutActivity extends AppCompatActivity {
                                             ((AboutActivity) getActivity()).getPurchaseListener(), "");
                                 } catch (IabHelper.IabAsyncInProgressException | IllegalStateException e) {
                                     e.printStackTrace();
-                                    Toast.makeText((getActivity()), "Something went wrong.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText((getActivity()), R.string.about_something_wrong, Toast.LENGTH_SHORT).show();
                                 }
                             } else if (items[item].equals("$3")) {
                                 try {
@@ -219,7 +219,7 @@ public class AboutActivity extends AppCompatActivity {
                                             ((AboutActivity) getActivity()).getPurchaseListener(), "");
                                 } catch (IabHelper.IabAsyncInProgressException | IllegalStateException e) {
                                     e.printStackTrace();
-                                    Toast.makeText((getActivity()), "Something went wrong.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText((getActivity()), R.string.about_something_wrong, Toast.LENGTH_SHORT).show();
                                 }
                             } else if (items[item].equals("$5")) {
                                 try {
@@ -227,7 +227,7 @@ public class AboutActivity extends AppCompatActivity {
                                             ((AboutActivity) getActivity()).getPurchaseListener(), "");
                                 } catch (IabHelper.IabAsyncInProgressException | IllegalStateException e) {
                                     e.printStackTrace();
-                                    Toast.makeText((getActivity()), "Something went wrong.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText((getActivity()), R.string.about_something_wrong, Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }
@@ -266,7 +266,7 @@ public class AboutActivity extends AppCompatActivity {
                     try {
                         startActivity(Intent.createChooser(email, "Send feedback"));
                     } catch (android.content.ActivityNotFoundException ex) {
-                        Toast.makeText((getActivity()), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText((getActivity()), R.string.about_no_email, Toast.LENGTH_SHORT).show();
                     }
                     return true;
                 }
