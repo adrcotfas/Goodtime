@@ -10,18 +10,19 @@ public class Preferences {
         mPref = pref;
     }
 
-    public static final String FIRST_RUN = "pref_firstRun";
-    public static final String SESSION_DURATION = "pref_workTime";
-    public static final String BREAK_DURATION = "pref_breakTime";
-    public static final String LONG_BREAK_DURATION = "pref_longBreakDuration";
-    public static final String SESSIONS_BEFORE_LONG_BREAK = "pref_sessionsBeforeLongBreak";
-    public static final String DISABLE_SOUND_AND_VIBRATION = "pref_disableSoundAndVibration";
-    public static final String DISABLE_WIFI = "pref_disableWifi";
-    public static final String KEEP_SCREEN_ON = "pref_keepScreenOn";
-    public static final String CONTINUOUS_MODE = "pref_continuousMode";
-    public static final String NOTIFICATION_VIBRATE = "pref_vibrate";
-    public static final String NOTIFICATION_SOUND = "pref_notificationSound";
-    public static final String TOTAL_SESSION_COUNT = "pref_totalSessions";
+    public static final String FIRST_RUN                    = "pref_firstRun";
+    public static final String SESSION_DURATION             = "pref_workTime";
+    public static final String BREAK_DURATION               = "pref_breakTime";
+    public static final String LONG_BREAK_DURATION          = "pref_longBreakDuration";
+    public static final String SESSIONS_BEFORE_LONG_BREAK   = "pref_sessionsBeforeLongBreak";
+    public static final String DISABLE_SOUND_AND_VIBRATION  = "pref_disableSoundAndVibration";
+    public static final String DISABLE_WIFI                 = "pref_disableWifi";
+    public static final String KEEP_SCREEN_ON               = "pref_keepScreenOn";
+    public static final String CONTINUOUS_MODE              = "pref_continuousMode";
+    public static final String NOTIFICATION_VIBRATE         = "pref_vibrate";
+    public static final String ROTATE_TIME_LABEL            = "pref_rotate";
+    public static final String NOTIFICATION_SOUND           = "pref_notificationSound";
+    public static final String TOTAL_SESSION_COUNT          = "pref_totalSessions";
 
     public boolean getRingtonesCopied() {
         return mPref.getBoolean(CustomNotification.PREF_KEY_RINGTONES_COPIED, false);
@@ -62,6 +63,8 @@ public class Preferences {
     public boolean getNotificationVibrate() {
         return mPref.getBoolean(NOTIFICATION_VIBRATE, true);
     }
+
+    public boolean getRotateTimeLabel() {return mPref.getBoolean(ROTATE_TIME_LABEL, true); }
 
     public String getNotificationSound() {
         return mPref.getString(NOTIFICATION_SOUND, "");

@@ -34,6 +34,8 @@
   <string name="pref_ringtone">Notification sound</string>
   <string name="pref_ringtone_summary">Set the notification sound</string>
   <string name="pref_vibrate">Vibration</string>
+  <string name="pref_rotate">Rotate the time label</string>
+  <string name="pref_rotate_summary">In case of screen orientation change.</string>
   <string name="pref_header_modes">During work sessions</string>
   <string name="pref_disable_sound">Disable sound and vibration</string>
   <string name="pref_disable_wifi">Disable Wi-Fi</string>

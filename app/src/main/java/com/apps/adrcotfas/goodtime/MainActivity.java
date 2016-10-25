@@ -34,8 +34,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.OrientationEventListener;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -102,25 +100,30 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     };
 
     private class OrientationListener extends OrientationEventListener{
-        final int ROTATION_O    = 1;
-        final int ROTATION_90   = 2;
-        final int ROTATION_270  = 4;
+        final int ROTATION_O        = 1;
+        final int ROTATION_90       = 2;
+        final int ROTATION_MINUS90  = 3;
 
         private int rotation = ROTATION_O;
         public OrientationListener(Context context) { super(context); }
 
         @Override public void onOrientationChanged(int orientation) {
-            if( (orientation < 35 || orientation > 325) && rotation!= ROTATION_O){
+            if( (orientation < 35 || orientation > 325)){
+                if (rotation == ROTATION_90) {
+                    mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.landscape_to_portrait));
+                }
+                else if (rotation == ROTATION_MINUS90) {
+                    mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.revlandscape_to_portrait));
+                }
                 rotation = ROTATION_O;
-                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.to_portrait));
             }
-            else if(orientation > 55 && orientation < 125 && rotation!=ROTATION_270){
-                rotation = ROTATION_270;
-                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.to_reverse_landscape));
+            else if(orientation > 55 && orientation < 125 && rotation != ROTATION_MINUS90){
+                rotation = ROTATION_MINUS90;
+                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.portrait_to_revlandscape));
             }
-            else if(orientation > 235 && orientation < 305 && rotation!=ROTATION_90){
+            else if(orientation > 235 && orientation < 305 && rotation != ROTATION_90){
                 rotation = ROTATION_90;
-                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.to_landscape));
+                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.portrait_to_landscape));
             }
         }
     }
@@ -143,7 +146,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         Intent intent = new Intent(this, TimerService.class);
         startService(intent);
         bindService(intent, mTimerServiceConnection, Context.BIND_AUTO_CREATE);
-        mOrientationListener.enable();
+
+        if (mPref.getRotateTimeLabel()) {
+            mOrientationListener.enable();
+        }
     }
 
     @Override
@@ -164,7 +170,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (mIsBoundToTimerService && mTimerService.getTimerState() != TimerState.INACTIVE) {
             mTimerService.bringToForegroundAndUpdateNotification();
         }
-        mOrientationListener.disable();
+        if (mPref.getRotateTimeLabel()) {
+            mOrientationListener.disable();
+        }
         super.onStop();
     }
 

@@ -57,10 +57,17 @@
             android:showDefault="false"
             />
 
-        <SwitchPreference
+        <CheckBoxPreference
             android:defaultValue="true"
             android:key="pref_vibrate"
             android:title="@string/pref_vibrate" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_rotate"
+            android:title="@string/pref_rotate"
+            android:summary="@string/pref_rotate_summary"/>
+
     </PreferenceCategory>
 
   <PreferenceCategory android:title="@string/pref_header_modes">
