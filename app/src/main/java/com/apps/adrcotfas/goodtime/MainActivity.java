@@ -55,6 +55,7 @@ import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 import static android.view.animation.AnimationUtils.loadAnimation;
 import static android.widget.Toast.LENGTH_SHORT;
 import static com.apps.adrcotfas.goodtime.Preferences.FIRST_RUN;
+import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;
 import static com.apps.adrcotfas.goodtime.Preferences.SESSION_DURATION;
 import static com.apps.adrcotfas.goodtime.Preferences.TOTAL_SESSION_COUNT;
 import static java.lang.String.format;
@@ -214,14 +215,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private Preferences setUpPreferences() {
-        SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
-        mPref.registerOnSharedPreferenceChangeListener(this);
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        preferences.registerOnSharedPreferenceChangeListener(this);
         mPrivatePref = getSharedPreferences("preferences_private", Context.MODE_PRIVATE);
         mPrivatePref.registerOnSharedPreferenceChangeListener(this);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
 
-        return new Preferences(mPref);
+        return new Preferences(preferences);
     }
 
     private void setUpAndroidNougatSettings() {

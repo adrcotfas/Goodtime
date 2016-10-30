@@ -2,8 +2,9 @@ package com.apps.adrcotfas.goodtime;
 
 import android.app.Notification;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
-import java.util.Timer;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Binder;
@@ -12,9 +13,12 @@ import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import java.util.Timer;
+
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static android.app.PendingIntent.getActivity;
 import static android.media.AudioManager.RINGER_MODE_SILENT;
+import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;
 
 public class TimerService extends Service {
 
@@ -32,12 +36,18 @@ public class TimerService extends Service {
     private int mPreviousRingerMode;
     private boolean mPreviousWifiMode;
     private boolean mIsOnForeground;
+    private Preferences mPref;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        saveCurrentStateOfSound();
-        saveCurrentStateOfWifi();
+
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences(
+                PREFERENCES_NAME,
+                Context.MODE_PRIVATE
+        );
+        mPref = new Preferences(preferences);
+
         mBroadcastManager = LocalBroadcastManager.getInstance(this);
     }
 
@@ -47,6 +57,8 @@ public class TimerService extends Service {
     }
 
     public void scheduleTimer(long delay){
+        saveCurrentStateOfSound();
+        saveCurrentStateOfWifi();
 
         mTimer = new Timer();
         mTimer.schedule(new UpdateTask(new Handler(), TimerService.this), delay , 1000);
