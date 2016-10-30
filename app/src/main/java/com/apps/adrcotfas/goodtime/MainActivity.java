@@ -11,7 +11,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -21,7 +20,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
@@ -42,7 +40,6 @@ import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
 import java.util.Locale;
 
 import static android.app.PendingIntent.getActivity;
-import static android.graphics.Color.RED;
 import static android.graphics.Typeface.createFromAsset;
 import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
 import static android.os.PowerManager.FULL_WAKE_LOCK;
@@ -415,8 +412,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             updateTimerLabel(mTimerService.getRemainingTime());
             mTimerService.removeTimer();
             shutScreenOffIfPreferred();
-            restoreSoundIfPreferred();
-            restoreWifiIfPreferred();
         }
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
 
@@ -461,30 +456,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mTimeLabel.setTextColor(Color.WHITE);
         loadRunningTimerUiState();
 
-        switch (mTimerService.getTimerState()) {
-            case ACTIVE_WORK:
-                disableSoundIfPreferred();
-                disableWifiIfPreferred();
-                break;
-            case ACTIVE_BREAK:
-        }
-
         keepScreenOnIfPreferred();
         acquirePartialWakelock();
 
         mTimerService.scheduleTimer(delay);
-    }
-
-    private void disableSoundIfPreferred() {
-        if (mPref.getDisableSoundAndVibration()) {
-            mTimerService.disableSound();
-        }
-    }
-
-    private void disableWifiIfPreferred() {
-        if (mPref.getDisableWifi()) {
-            mTimerService.disableWifi();
-        }
     }
 
     private void keepScreenOnIfPreferred() {
@@ -529,47 +504,17 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         acquireScreenWakelock();
         releaseWakelock();
         shutScreenOffIfPreferred();
-        restoreSoundIfPreferred();
-        restoreWifiIfPreferred();
 
         mTimerService.removeTimer();
 
         increaseTotalSessions();
 
-        sendNotification();
 
         bringApplicationToFront();
         if (mPref.getContinuousMode()) {
             goOnContinuousMode();
         } else {
             showContinueDialog();
-        }
-    }
-
-    private void sendNotification() {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-        String notificationSound = mPref.getNotificationSound();
-        if (!notificationSound.equals("")) {
-            mBuilder.setSound(Uri.parse(notificationSound));
-        }
-        mBuilder.setSmallIcon(R.mipmap.ic_launcher)
-        .setVibrate(new long[]{0, 300, 700, 300})
-        .setLights(RED, 500, 500)
-        .setContentTitle(getString(R.string.dialog_session_message));
-
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(NOTIFICATION_TAG, mBuilder.build());
-    }
-
-    private void restoreSoundIfPreferred() {
-        if (mPref.getDisableSoundAndVibration()) {
-            mTimerService.restoreSound();
-        }
-    }
-
-    private void restoreWifiIfPreferred() {
-        if (mPref.getDisableWifi()) {
-            mTimerService.restoreWifi();
         }
     }
 

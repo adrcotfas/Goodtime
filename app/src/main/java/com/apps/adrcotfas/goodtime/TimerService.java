@@ -1,23 +1,29 @@
 package com.apps.adrcotfas.goodtime;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import java.util.Timer;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static android.app.PendingIntent.getActivity;
-import static android.media.AudioManager.RINGER_MODE_SILENT;
+import static android.graphics.Color.RED;
+import static android.media.AudioAttributes.USAGE_ALARM;
+import static com.apps.adrcotfas.goodtime.MainActivity.NOTIFICATION_TAG;
 import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;
 
 public class TimerService extends Service {
@@ -66,18 +72,77 @@ public class TimerService extends Service {
 
     public void runTimer() {
         if (mTimerState != TimerState.INACTIVE) {
-            if (mRemainingTime != 0) {
-                --mRemainingTime;
+            if (mRemainingTime > 0) {
+                mRemainingTime--;
             }
-            Intent remainingTimeIntent = new Intent(ACTION_TIMERSERVICE);
-            remainingTimeIntent.putExtra(REMAINING_TIME, getRemainingTime());
-            mBroadcastManager.sendBroadcast(remainingTimeIntent);
+
+            if (mRemainingTime == 0) {
+                onCountdownFinished();
+            }
+
+            sendUpdateIntent();
 
             if (mIsOnForeground && mTimerBroughtToForegroundState != mTimerState) {
                 bringToForegroundAndUpdateNotification();
             }
         }
     }
+
+    private void onCountdownFinished() {
+        Log.d(TAG, "Countdown finished, restoring sound and WiFi and sending a notification");
+
+        restoreSoundIfPreferred();
+        restoreWifiIfPreferred();
+        sendNotification();
+    }
+
+    private void sendUpdateIntent() {
+        Intent remainingTimeIntent = new Intent(ACTION_TIMERSERVICE);
+        remainingTimeIntent.putExtra(REMAINING_TIME, getRemainingTime());
+        mBroadcastManager.sendBroadcast(remainingTimeIntent);
+    }
+
+    private void sendNotification() {
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+        String notificationSound = mPref.getNotificationSound();
+        if (!notificationSound.equals("")) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mBuilder.setSound(Uri.parse(notificationSound), USAGE_ALARM);
+            } else {
+                mBuilder.setSound(Uri.parse(notificationSound));
+            }
+        }
+        mBuilder.setSmallIcon(R.drawable.ic_status_goodtime)
+                .setVibrate(new long[]{0, 300, 700, 300})
+                .setLights(RED, 500, 500)
+                .setContentTitle(getString(R.string.dialog_session_message))
+                .setContentText(buildNotificationText());
+
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(NOTIFICATION_TAG, mBuilder.build());
+    }
+
+    private CharSequence buildNotificationText() {
+        CharSequence contextText = getString(R.string.notification_session);
+        switch (mTimerState) {
+            case ACTIVE_WORK:
+                break;
+            case ACTIVE_BREAK:
+                contextText = getString(R.string.notification_break);
+                break;
+            case PAUSED_WORK:
+                contextText = getString(R.string.notification_pause);
+                break;
+            case FINISHED_WORK:
+                contextText = getString(R.string.notification_work_complete);
+                break;
+            case FINISHED_BREAK:
+                contextText = getString(R.string.notification_break_complete);
+                break;
+        }
+        return contextText;
+    }
+
 
     public void removeTimer() {
         if (mIsOnForeground) {
@@ -114,14 +179,6 @@ public class TimerService extends Service {
         return mCurrentSessionStreak;
     }
 
-    public int getPreviousRingerMode() {
-        return mPreviousRingerMode;
-    }
-
-    public boolean getPreviousWifiMode() {
-        return mPreviousWifiMode;
-    }
-
     protected void setTimerState(TimerState mTimerState) {
         this.mTimerState = mTimerState;
     }
@@ -134,34 +191,20 @@ public class TimerService extends Service {
         this.mRemainingTime = mRemainingTime;
     }
 
-    protected void setPreviousRingerMode(int previousRingerMode) {
-        this.mPreviousRingerMode = previousRingerMode;
+    private void restoreSoundIfPreferred() {
+        if (mPref.getDisableSoundAndVibration()) {
+            Log.d(TAG, "Restoring sound mode");
+            AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+            aManager.setRingerMode(mPreviousRingerMode);
+        }
     }
 
-    protected void setPreviousWifiMode(boolean previousWifiMode) {
-        this.mPreviousWifiMode = previousWifiMode;
-    }
-
-    protected void restoreSound() {
-        Log.d(TAG, "Restoring sound mode");
-        AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        aManager.setRingerMode(mPreviousRingerMode);
-    }
-
-    protected void restoreWifi() {
-        Log.d(TAG, "Restoring Wifi mode");
-        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-        wifiManager.setWifiEnabled(mPreviousWifiMode);
-    }
-
-    protected void disableSound() {
-        AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        aManager.setRingerMode(RINGER_MODE_SILENT);
-    }
-
-    protected void disableWifi() {
-        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-        wifiManager.setWifiEnabled(false);
+    private void restoreWifiIfPreferred() {
+        if (mPref.getDisableWifi()) {
+            Log.d(TAG, "Restoring Wifi mode");
+            WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+            wifiManager.setWifiEnabled(mPreviousWifiMode);
+        }
     }
 
     protected void bringToForegroundAndUpdateNotification() {
@@ -185,42 +228,34 @@ public class TimerService extends Service {
     }
 
     private Notification createNotification() {
-
-        CharSequence contextText = getString(R.string.notification_session);
-        boolean ongoing = true;
-        switch (mTimerState) {
-            case ACTIVE_WORK:
-                break;
-            case ACTIVE_BREAK:
-                contextText = getString(R.string.notification_break);
-                break;
-            case PAUSED_WORK:
-                contextText = getString(R.string.notification_pause);
-                ongoing = false;
-                break;
-            case FINISHED_WORK:
-                contextText = getString(R.string.notification_work_complete);
-                ongoing = false;
-                break;
-            case FINISHED_BREAK:
-                contextText = getString(R.string.notification_break_complete);
-                ongoing = false;
-                break;
-            }
-
         return new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_status_goodtime)
                 .setAutoCancel(false)
                 .setContentTitle("Goodtime")
-                .setContentText(contextText)
-                .setOngoing(ongoing)
+                .setContentText(buildNotificationText())
+                .setOngoing(isNotificationOngoing())
                 .setShowWhen(false)
                 .setContentIntent(
                         getActivity(
                                 this,
                                 0,
                                 new Intent(getApplicationContext(), MainActivity.class),
-                                FLAG_UPDATE_CURRENT))
+                                FLAG_UPDATE_CURRENT
+                        ))
                 .build();
+    }
+
+    private boolean isNotificationOngoing() {
+        switch (mTimerState) {
+            case ACTIVE_WORK:
+            case ACTIVE_BREAK:
+                return true;
+            case PAUSED_WORK:
+            case FINISHED_WORK:
+            case FINISHED_BREAK:
+                return true;
+            }
+
+        return true;
     }
 }
