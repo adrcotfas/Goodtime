@@ -53,8 +53,6 @@ public class TimerService extends Service {
     }
 
     public void runTimer() {
-        Log.d(TAG, "Updating timer");
-
         if (mTimerState != TimerState.INACTIVE) {
             if (mRemainingTime != 0) {
                 --mRemainingTime;
