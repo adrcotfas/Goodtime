@@ -19,9 +19,10 @@ import android.util.Log;
 
 import java.util.Timer;
 
+import static android.app.PendingIntent.FLAG_ONE_SHOT;
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static android.app.PendingIntent.getActivity;
-import static android.graphics.Color.RED;
+import static android.graphics.Color.WHITE;
 import static android.media.AudioAttributes.USAGE_ALARM;
 import static com.apps.adrcotfas.goodtime.MainActivity.NOTIFICATION_TAG;
 import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;
@@ -70,6 +71,17 @@ public class TimerService extends Service {
         mTimer.schedule(new UpdateTask(new Handler(), TimerService.this), delay , 1000);
     }
 
+    private void saveCurrentStateOfSound() {
+        AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        mPreviousRingerMode = aManager.getRingerMode();
+    }
+
+    private void saveCurrentStateOfWifi() {
+        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+        mPreviousWifiMode = wifiManager.isWifiEnabled();
+    }
+
+
     public void runTimer() {
         if (mTimerState != TimerState.INACTIVE) {
             if (mRemainingTime > 0) {
@@ -93,16 +105,26 @@ public class TimerService extends Service {
 
         restoreSoundIfPreferred();
         restoreWifiIfPreferred();
-        sendNotification();
+        sendFinishedNotification();
     }
 
-    private void sendUpdateIntent() {
-        Intent remainingTimeIntent = new Intent(ACTION_TIMERSERVICE);
-        remainingTimeIntent.putExtra(REMAINING_TIME, getRemainingTime());
-        mBroadcastManager.sendBroadcast(remainingTimeIntent);
+    private void restoreSoundIfPreferred() {
+        if (mPref.getDisableSoundAndVibration()) {
+            Log.d(TAG, "Restoring sound mode");
+            AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+            aManager.setRingerMode(mPreviousRingerMode);
+        }
     }
 
-    private void sendNotification() {
+    private void restoreWifiIfPreferred() {
+        if (mPref.getDisableWifi()) {
+            Log.d(TAG, "Restoring Wifi mode");
+            WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+            wifiManager.setWifiEnabled(mPreviousWifiMode);
+        }
+    }
+
+    private void sendFinishedNotification() {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         String notificationSound = mPref.getNotificationSound();
         if (!notificationSound.equals("")) {
@@ -114,9 +136,16 @@ public class TimerService extends Service {
         }
         mBuilder.setSmallIcon(R.drawable.ic_status_goodtime)
                 .setVibrate(new long[]{0, 300, 700, 300})
-                .setLights(RED, 500, 500)
+                .setLights(WHITE, 250, 750)
                 .setContentTitle(getString(R.string.dialog_session_message))
-                .setContentText(buildNotificationText());
+                .setContentText(buildNotificationText())
+                .setContentIntent(
+                        getActivity(
+                                this,
+                                0,
+                                new Intent(getApplicationContext(), MainActivity.class),
+                                FLAG_ONE_SHOT
+                        ));
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(NOTIFICATION_TAG, mBuilder.build());
@@ -141,6 +170,12 @@ public class TimerService extends Service {
                 break;
         }
         return contextText;
+    }
+
+    private void sendUpdateIntent() {
+        Intent remainingTimeIntent = new Intent(ACTION_TIMERSERVICE);
+        remainingTimeIntent.putExtra(REMAINING_TIME, getRemainingTime());
+        mBroadcastManager.sendBroadcast(remainingTimeIntent);
     }
 
 
@@ -191,26 +226,10 @@ public class TimerService extends Service {
         this.mRemainingTime = mRemainingTime;
     }
 
-    private void restoreSoundIfPreferred() {
-        if (mPref.getDisableSoundAndVibration()) {
-            Log.d(TAG, "Restoring sound mode");
-            AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-            aManager.setRingerMode(mPreviousRingerMode);
-        }
-    }
-
-    private void restoreWifiIfPreferred() {
-        if (mPref.getDisableWifi()) {
-            Log.d(TAG, "Restoring Wifi mode");
-            WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-            wifiManager.setWifiEnabled(mPreviousWifiMode);
-        }
-    }
-
     protected void bringToForegroundAndUpdateNotification() {
         mIsOnForeground = true;
         mTimerBroughtToForegroundState = mTimerState;
-        startForeground(GOODTIME_NOTIFICATION_ID, createNotification());
+        startForeground(GOODTIME_NOTIFICATION_ID, createForegroundNotification());
     }
 
     protected void sendToBackground() {
@@ -218,16 +237,7 @@ public class TimerService extends Service {
         stopForeground(true);
     }
 
-    private void saveCurrentStateOfSound() {
-        AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        mPreviousRingerMode = aManager.getRingerMode();
-    }
-    private void saveCurrentStateOfWifi() {
-        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-        mPreviousWifiMode = wifiManager.isWifiEnabled();
-    }
-
-    private Notification createNotification() {
+    private Notification createForegroundNotification() {
         return new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_status_goodtime)
                 .setAutoCancel(false)
@@ -247,15 +257,14 @@ public class TimerService extends Service {
 
     private boolean isNotificationOngoing() {
         switch (mTimerState) {
-            case ACTIVE_WORK:
-            case ACTIVE_BREAK:
-                return true;
             case PAUSED_WORK:
             case FINISHED_WORK:
             case FINISHED_BREAK:
+                return false;
+            case ACTIVE_WORK:
+            case ACTIVE_BREAK:
+            default:
                 return true;
-            }
-
-        return true;
+        }
     }
 }

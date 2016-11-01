@@ -509,7 +509,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         increaseTotalSessions();
 
-
         bringApplicationToFront();
         if (mPref.getContinuousMode()) {
             goOnContinuousMode();
