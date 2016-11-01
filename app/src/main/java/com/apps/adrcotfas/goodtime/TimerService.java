@@ -145,7 +145,8 @@ public class TimerService extends Service {
                                 0,
                                 new Intent(getApplicationContext(), MainActivity.class),
                                 FLAG_ONE_SHOT
-                        ));
+                        ))
+                .setAutoCancel(true);
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(NOTIFICATION_TAG, mBuilder.build());
