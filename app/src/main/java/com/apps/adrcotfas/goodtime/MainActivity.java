@@ -408,8 +408,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         if (mIsBoundToTimerService) {
             mTimerService.setTimerState(TimerState.INACTIVE);
-            mTimerService.setRemainingTime(mPref.getSessionDuration() * 60);
-            updateTimerLabel(mTimerService.getRemainingTime());
+            int remainingTime = mPref.getSessionDuration() * 60;
+            mTimerService.setRemainingTime(remainingTime);
+            updateTimerLabel(remainingTime);
             mTimerService.removeTimer();
             shutScreenOffIfPreferred();
         }
@@ -441,15 +442,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
 
-    private void loadRunningTimerUiState() {
-        updateTimerLabel(mTimerService.getRemainingTime());
-
-        mStartButton.setVisibility(INVISIBLE);
-        mPauseButton.setVisibility(VISIBLE);
-        mStopButton.setVisibility(VISIBLE);
-        mHorizontalSeparator.setVisibility(VISIBLE);
-    }
-
     private void startTimer(long delay) {
         Log.i(TAG, "Timer has been started");
 
@@ -460,6 +452,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         acquirePartialWakelock();
 
         mTimerService.scheduleTimer(delay);
+    }
+
+    private void loadRunningTimerUiState() {
+        updateTimerLabel(mTimerService.getRemainingTime());
+
+        mStartButton.setVisibility(INVISIBLE);
+        mPauseButton.setVisibility(VISIBLE);
+        mStopButton.setVisibility(VISIBLE);
+        mHorizontalSeparator.setVisibility(VISIBLE);
     }
 
     private void keepScreenOnIfPreferred() {
@@ -633,9 +634,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void startBreak() {
         disablePauseButton();
-        mTimerService.setRemainingTime((mTimerService.getCurrentSessionStreak() >= mPref.getSessionsBeforeLongBreak())
-                         ? mPref.getLongBreakDuration() * 60
-                         : mPref.getBreakDuration() * 60);
+        mTimerService.setRemainingTime(
+                mTimerService.getCurrentSessionStreak() >= mPref.getSessionsBeforeLongBreak()
+                ? mPref.getLongBreakDuration() * 60
+                : mPref.getBreakDuration() * 60
+        );
         mTimerService.setTimerState(TimerState.ACTIVE_BREAK);
         startTimer(0);
     }

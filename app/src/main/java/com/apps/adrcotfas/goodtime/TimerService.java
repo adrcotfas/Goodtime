@@ -15,11 +15,11 @@ import android.util.Log;
 
 import java.util.Timer;
 
-import static android.app.PendingIntent.FLAG_ONE_SHOT;
 import static com.apps.adrcotfas.goodtime.MainActivity.NOTIFICATION_TAG;
 import static com.apps.adrcotfas.goodtime.Notifications.createFinishedNotification;
 import static com.apps.adrcotfas.goodtime.Notifications.createForegroundNotification;
 import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;
+import static com.apps.adrcotfas.goodtime.TimerState.INACTIVE;
 
 public class TimerService extends Service {
 
@@ -61,8 +61,7 @@ public class TimerService extends Service {
         saveCurrentStateOfSound();
         saveCurrentStateOfWifi();
 
-        mTimer = new Timer();
-        mTimer.schedule(new UpdateTask(new Handler(), TimerService.this), delay , 1000);
+        createAndStartTimer(delay);
     }
 
     private void saveCurrentStateOfSound() {
@@ -75,9 +74,19 @@ public class TimerService extends Service {
         mPreviousWifiMode = wifiManager.isWifiEnabled();
     }
 
+    private void createAndStartTimer(long delay) {
+        Log.d(TAG, "Starting new timer");
 
-    public void runTimer() {
-        if (mTimerState != TimerState.INACTIVE) {
+        mTimer = new Timer();
+        mTimer.schedule(
+                new UpdateTask(new Handler(), this),
+                delay,
+                1000
+        );
+    }
+
+    public void countdown() {
+        if (mTimerState != INACTIVE) {
             if (mRemainingTime > 0) {
                 mRemainingTime--;
             }
@@ -95,7 +104,7 @@ public class TimerService extends Service {
     }
 
     private void onCountdownFinished() {
-        Log.d(TAG, "Countdown finished, restoring sound and WiFi and sending a notification");
+        Log.d(TAG, "Countdown finished");
 
         restoreSoundIfPreferred();
         restoreWifiIfPreferred();
@@ -129,7 +138,7 @@ public class TimerService extends Service {
 
     private void sendUpdateIntent() {
         Intent remainingTimeIntent = new Intent(ACTION_TIMERSERVICE);
-        remainingTimeIntent.putExtra(REMAINING_TIME, getRemainingTime());
+        remainingTimeIntent.putExtra(REMAINING_TIME, mRemainingTime);
         mBroadcastManager.sendBroadcast(remainingTimeIntent);
     }
 
