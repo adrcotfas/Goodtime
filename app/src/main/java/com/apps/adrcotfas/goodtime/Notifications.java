@@ -7,19 +7,18 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
-import java.util.Optional;
-
 import static android.app.PendingIntent.FLAG_ONE_SHOT;
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static android.app.PendingIntent.getActivity;
 import static android.graphics.Color.WHITE;
 import static android.media.AudioAttributes.USAGE_ALARM;
+import static com.apps.adrcotfas.goodtime.TimerState.PAUSED;
 
 public class Notifications {
 
     public static Notification createFinishedNotification(
             Context context,
-            TimerState timerState,
+            SessionType sessionType,
             String notificationSound
     ) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
@@ -31,31 +30,43 @@ public class Notifications {
             }
         }
         builder.setSmallIcon(R.drawable.ic_status_goodtime)
-                .setVibrate(new long[]{0, 300, 700, 300})
-                .setLights(WHITE, 250, 750)
-                .setContentTitle(context.getString(R.string.dialog_session_message))
-                .setContentText(buildNotificationText(context, timerState))
-                .setContentIntent(
+               .setVibrate(new long[]{0, 300, 700, 300})
+               .setLights(WHITE, 250, 750)
+               .setContentTitle(context.getString(R.string.dialog_session_message))
+               .setContentText(buildCompletedNotificationText(context, sessionType))
+               .setContentIntent(
                         getActivity(
                                 context,
                                 0,
                                 new Intent(context.getApplicationContext(), MainActivity.class),
                                 FLAG_ONE_SHOT
                         ))
-                .setAutoCancel(true);
+               .setAutoCancel(true);
 
         return builder.build();
     }
 
+    private static CharSequence buildCompletedNotificationText(Context context, SessionType sessionType) {
+        switch (sessionType) {
+            case BREAK:
+            case LONG_BREAK:
+                return context.getString(R.string.notification_break_complete);
+            case WORK:
+            default:
+                return context.getString(R.string.notification_work_complete);
+        }
+    }
+
     public static Notification createForegroundNotification(
             Context context,
+            SessionType sessionType,
             TimerState timerState
     ) {
         return new Notification.Builder(context)
                 .setSmallIcon(R.drawable.ic_status_goodtime)
                 .setAutoCancel(false)
                 .setContentTitle(context.getString(R.string.app_name))
-                .setContentText(buildNotificationText(context, timerState))
+                .setContentText(buildForegroundNotificationText(context, sessionType, timerState))
                 .setOngoing(isNotificationOngoing(timerState))
                 .setShowWhen(false)
                 .setContentIntent(
@@ -68,38 +79,31 @@ public class Notifications {
                 .build();
     }
 
-    private static CharSequence buildNotificationText(
+    private static CharSequence buildForegroundNotificationText(
             Context context,
+            SessionType sessionType,
             TimerState timerState
     ) {
-        CharSequence contextText = context.getString(R.string.notification_session);
-        switch (timerState) {
-            case ACTIVE_WORK:
-                break;
-            case ACTIVE_BREAK:
-                contextText = context.getString(R.string.notification_break);
-                break;
-            case PAUSED_WORK:
-                contextText = context.getString(R.string.notification_pause);
-                break;
-            case FINISHED_WORK:
-                contextText = context.getString(R.string.notification_work_complete);
-                break;
-            case FINISHED_BREAK:
-                contextText = context.getString(R.string.notification_break_complete);
-                break;
+        switch (sessionType) {
+            case BREAK:
+            case LONG_BREAK:
+                return context.getString(R.string.notification_break);
+            case WORK:
+            default:
+                if (timerState == PAUSED) {
+                    return context.getString(R.string.notification_pause);
+                } else {
+                    return context.getString(R.string.notification_session);
+                }
         }
-        return contextText;
     }
 
     private static boolean isNotificationOngoing(TimerState timerState) {
         switch (timerState) {
-            case PAUSED_WORK:
-            case FINISHED_WORK:
-            case FINISHED_BREAK:
+            case INACTIVE:
+            case PAUSED:
                 return false;
-            case ACTIVE_WORK:
-            case ACTIVE_BREAK:
+            case ACTIVE:
             default:
                 return true;
         }

@@ -23,7 +23,10 @@ import static com.apps.adrcotfas.goodtime.MainActivity.NOTIFICATION_TAG;
 import static com.apps.adrcotfas.goodtime.Notifications.createFinishedNotification;
 import static com.apps.adrcotfas.goodtime.Notifications.createForegroundNotification;
 import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;
+import static com.apps.adrcotfas.goodtime.SessionType.WORK;
+import static com.apps.adrcotfas.goodtime.TimerState.ACTIVE;
 import static com.apps.adrcotfas.goodtime.TimerState.INACTIVE;
+import static com.apps.adrcotfas.goodtime.TimerState.PAUSED;
 
 public class TimerService extends Service {
 
@@ -42,6 +45,7 @@ public class TimerService extends Service {
     private boolean mPreviousWifiMode;
     private boolean mIsOnForeground;
     private Preferences mPref;
+    private SessionType mCurrentSession;
     private PowerManager.WakeLock mWakeLock;
 
     @Override
@@ -53,6 +57,8 @@ public class TimerService extends Service {
                 Context.MODE_PRIVATE
         );
         mPref = new Preferences(preferences);
+        mTimerState = INACTIVE;
+        mCurrentSession = WORK;
 
         mBroadcastManager = LocalBroadcastManager.getInstance(this);
     }
@@ -68,14 +74,34 @@ public class TimerService extends Service {
         releaseWakelock();
     }
 
-    public void scheduleTimer(long delay){
+    public void scheduleTimer(long delay, SessionType sessionType) {
+        mRemainingTime = calculateSessionDurationFor(sessionType);
+        Log.i(TAG, "Starting new timer for " + sessionType + ", duration " + mRemainingTime);
 
         acquirePartialWakelock();
 
         saveCurrentStateOfSound();
         saveCurrentStateOfWifi();
 
+        mTimerState = ACTIVE;
+        mCurrentSession = sessionType;
+
         createAndStartTimer(delay);
+    }
+
+    private int calculateSessionDurationFor(
+            SessionType sessionType
+    ) {
+        switch (sessionType) {
+            case WORK:
+                return mPref.getSessionDuration() * 60;
+            case BREAK:
+                return mPref.getBreakDuration() * 60;
+            case LONG_BREAK:
+                return mPref.getLongBreakDuration() * 60;
+            default:
+                throw new IllegalStateException("This cannot happen");
+        }
     }
 
     private void acquirePartialWakelock() {
@@ -86,6 +112,7 @@ public class TimerService extends Service {
         mWakeLock.acquire();
     }
 
+
     private void saveCurrentStateOfSound() {
         AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         mPreviousRingerMode = aManager.getRingerMode();
@@ -94,6 +121,11 @@ public class TimerService extends Service {
     private void saveCurrentStateOfWifi() {
         WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
         mPreviousWifiMode = wifiManager.isWifiEnabled();
+    }
+
+    public void unpauseTimer(long delay) {
+        mTimerState = ACTIVE;
+        createAndStartTimer(delay);
     }
 
     private void createAndStartTimer(long delay) {
@@ -108,7 +140,7 @@ public class TimerService extends Service {
     }
 
     public void countdown() {
-        if (mTimerState != INACTIVE) {
+        if (mTimerState != INACTIVE && mTimerState != PAUSED) {
             if (mRemainingTime > 0) {
                 mRemainingTime--;
             }
@@ -129,10 +161,15 @@ public class TimerService extends Service {
         Log.d(TAG, "Countdown finished");
 
         releaseWakelock();
+        removeTimer();
 
         restoreSoundIfPreferred();
         restoreWifiIfPreferred();
         sendFinishedNotification();
+
+        mTimerState = INACTIVE;
+    }
+
 
     private void releaseWakelock() {
         if (mWakeLock != null) {
@@ -164,7 +201,7 @@ public class TimerService extends Service {
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(
                 NOTIFICATION_TAG,
-                createFinishedNotification(this, mTimerState, mPref.getNotificationSound())
+                createFinishedNotification(this, mCurrentSession, mPref.getNotificationSound())
         );
     }
 
@@ -175,6 +212,11 @@ public class TimerService extends Service {
         mBroadcastManager.sendBroadcast(remainingTimeIntent);
     }
 
+    public void pauseTimer() {
+        mTimerState = PAUSED;
+        removeTimer();
+        releaseWakelock();
+    }
 
     public void removeTimer() {
         if (mIsOnForeground) {
@@ -203,6 +245,10 @@ public class TimerService extends Service {
         return mTimerState;
     }
 
+    public SessionType getSessionType() {
+        return mCurrentSession;
+    }
+
     public int getRemainingTime() {
         return mRemainingTime;
     }
@@ -211,16 +257,8 @@ public class TimerService extends Service {
         return mCurrentSessionStreak;
     }
 
-    protected void setTimerState(TimerState mTimerState) {
-        this.mTimerState = mTimerState;
-    }
-
     protected void setCurrentSessionStreak(int mCurrentSessionStreak) {
         this.mCurrentSessionStreak = mCurrentSessionStreak;
-    }
-
-    protected void setRemainingTime(int mRemainingTime) {
-        this.mRemainingTime = mRemainingTime;
     }
 
     protected void bringToForegroundAndUpdateNotification() {
@@ -228,7 +266,7 @@ public class TimerService extends Service {
         mTimerBroughtToForegroundState = mTimerState;
         startForeground(
                 GOODTIME_NOTIFICATION_ID,
-                createForegroundNotification(this, mTimerState)
+                createForegroundNotification(this, mCurrentSession, mTimerState)
         );
     }
 

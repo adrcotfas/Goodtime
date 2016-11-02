@@ -54,6 +54,10 @@ import static com.apps.adrcotfas.goodtime.Preferences.FIRST_RUN;
 import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;
 import static com.apps.adrcotfas.goodtime.Preferences.SESSION_DURATION;
 import static com.apps.adrcotfas.goodtime.Preferences.TOTAL_SESSION_COUNT;
+import static com.apps.adrcotfas.goodtime.SessionType.BREAK;
+import static com.apps.adrcotfas.goodtime.SessionType.LONG_BREAK;
+import static com.apps.adrcotfas.goodtime.SessionType.WORK;
+import static com.apps.adrcotfas.goodtime.TimerState.INACTIVE;
 import static java.lang.String.format;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -83,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             TimerService.TimerBinder binder = (TimerService.TimerBinder) iBinder;
             mTimerService = binder.getService();
             mIsBoundToTimerService = true;
-            mTimerService.setTimerState(TimerState.INACTIVE);
             mTimerService.sendToBackground();
         }
 
@@ -161,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     protected void onStop() {
-        if (mIsBoundToTimerService && mTimerService.getTimerState() != TimerState.INACTIVE) {
+        if (mIsBoundToTimerService && mTimerService.getTimerState() != INACTIVE) {
             mTimerService.bringToForegroundAndUpdateNotification();
         }
         if (mPref.getRotateTimeLabel()) {
@@ -288,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     buttons.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade));
                 }
 
-                startSession(300);
+                startTimer(300, WORK);
                 enablePauseButton();
                 mStartButton.setEnabled(false);
                 mStartButton.postDelayed(new Runnable() {
@@ -373,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 button.setText(String.valueOf(mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0)));
             }
         } else if (key.equals(SESSION_DURATION)) {
-            if (mTimerService.getTimerState() == TimerState.INACTIVE) {
+            if (mTimerService.getTimerState() == INACTIVE) {
                 updateTimerLabel(mPref.getSessionDuration() * 60);
             }
         }
@@ -381,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     public void onBackPressed() {
-        if (mTimerService.getTimerState() != TimerState.INACTIVE) {
+        if (mTimerService.getTimerState() != INACTIVE) {
             /// move app to background
             moveTaskToBack(true);
         } else {
@@ -404,10 +407,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         Log.d(TAG, "Loading initial state");
 
         if (mIsBoundToTimerService) {
-            mTimerService.setTimerState(TimerState.INACTIVE);
-            int remainingTime = mPref.getSessionDuration() * 60;
-            mTimerService.setRemainingTime(remainingTime);
-            updateTimerLabel(remainingTime);
+            updateTimerLabel(mPref.getSessionDuration() * 60);
             mTimerService.removeTimer();
             shutScreenOffIfPreferred();
         }
@@ -426,7 +426,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
 
-    private void startTimer(long delay) {
+    private void startTimer(
+            long delay,
+            SessionType sessionType
+    ) {
         Log.i(TAG, "Timer has been started");
 
         mTimeLabel.setTextColor(Color.WHITE);
@@ -434,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         keepScreenOnIfPreferred();
 
-        mTimerService.scheduleTimer(delay);
+        mTimerService.scheduleTimer(delay, sessionType);
     }
 
     private void loadRunningTimerUiState() {
@@ -458,17 +461,21 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
         long timeOfButtonPress = System.currentTimeMillis();
         switch (mTimerService.getTimerState()) {
-            case ACTIVE_WORK:
-                mTimerService.setTimerState(TimerState.PAUSED_WORK);
+            case ACTIVE:
+                mTimerService.pauseTimer();
+
                 mPauseButton.setText(getString(R.string.resume));
                 mPauseButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
-                mTimerService.removeTimer();
                 break;
-            case PAUSED_WORK:
-                mTimerService.setTimerState(TimerState.ACTIVE_WORK);
+            case PAUSED:
+                mTimerService.unpauseTimer(
+                        System.currentTimeMillis() - timeOfButtonPress > 1000
+                        ? 0
+                        : 1000 - (System.currentTimeMillis() - timeOfButtonPress)
+                );
+
                 mPauseButton.setText(getString(R.string.pause));
                 mPauseButton.clearAnimation();
-                startTimer(System.currentTimeMillis() - timeOfButtonPress > 1000 ? 0 : 1000 - (System.currentTimeMillis() - timeOfButtonPress));
                 break;
         }
     }
@@ -478,8 +485,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         acquireScreenWakelock();
         shutScreenOffIfPreferred();
-
-        mTimerService.removeTimer();
 
         increaseTotalSessions();
 
@@ -492,7 +497,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void increaseTotalSessions() {
-        if (mTimerService.getTimerState() == TimerState.ACTIVE_WORK) {
+        if (mTimerService.getTimerState() == INACTIVE && mTimerService.getSessionType() == WORK) {
             mTimerService.setCurrentSessionStreak(mTimerService.getCurrentSessionStreak() + 1);
             int totalSessions = mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0);
             mPrivatePref.edit()
@@ -515,9 +520,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void showContinueDialog() {
         wakeScreen();
 
-        switch (mTimerService.getTimerState()) {
-            case ACTIVE_WORK:
-            case FINISHED_WORK:
+        switch (mTimerService.getSessionType()) {
+            case WORK:
                 loadInitialState();
 
                 mAlertDialog = buildStartBreakDialog();
@@ -525,8 +529,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 mAlertDialog.show();
 
                 break;
-            case ACTIVE_BREAK:
-            case FINISHED_BREAK:
+            case BREAK:
+            case LONG_BREAK:
                 loadInitialState();
                 enablePauseButton();
 
@@ -537,11 +541,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 mAlertDialog = buildStartSessionDialog();
                 mAlertDialog.setCanceledOnTouchOutside(false);
                 mAlertDialog.show();
-
-                break;
-            default:
-                mTimerService.setTimerState(TimerState.INACTIVE);
-                break;
         }
     }
 
@@ -551,7 +550,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 .setPositiveButton(getString(R.string.dialog_break_session), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        startSession(0);
+                        startTimer(0, WORK);
                     }
                 })
                 .setNegativeButton(getString(R.string.dialog_session_cancel), new DialogInterface.OnClickListener() {
@@ -586,7 +585,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                                     DialogInterface dialog,
                                     int which
                             ) {
-                                startSession(0);
+                                startTimer(0, WORK);
                             }
                         }
                 )
@@ -599,21 +598,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 .create();
     }
 
-    private void startSession(int delay) {
-        mTimerService.setRemainingTime(mPref.getSessionDuration() * 60);
-        mTimerService.setTimerState(TimerState.ACTIVE_WORK);
-        startTimer(delay);
-    }
-
     private void startBreak() {
         disablePauseButton();
-        mTimerService.setRemainingTime(
+
+        startTimer(
+                0,
                 mTimerService.getCurrentSessionStreak() >= mPref.getSessionsBeforeLongBreak()
-                ? mPref.getLongBreakDuration() * 60
-                : mPref.getBreakDuration() * 60
+                ? LONG_BREAK
+                : BREAK
         );
-        mTimerService.setTimerState(TimerState.ACTIVE_BREAK);
-        startTimer(0);
     }
 
     private void wakeScreen() {
@@ -627,27 +620,20 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void goOnContinuousMode() {
-        switch (mTimerService.getTimerState()) {
-            case ACTIVE_WORK:
-            case FINISHED_WORK:
+        switch (mTimerService.getSessionType()) {
+            case WORK:
                 loadInitialState();
-                mTimerService.setTimerState(TimerState.FINISHED_WORK);
                 startBreak();
                 break;
-            case ACTIVE_BREAK:
-            case FINISHED_BREAK:
+            case BREAK:
+            case LONG_BREAK:
                 loadInitialState();
                 enablePauseButton();
-                mTimerService.setTimerState(TimerState.FINISHED_BREAK);
                 if (mTimerService.getCurrentSessionStreak() >= mPref.getSessionsBeforeLongBreak()) {
                     mTimerService.setCurrentSessionStreak(0);
                 }
 
-                startSession(0);
-                break;
-            default:
-                mTimerService.setTimerState(TimerState.INACTIVE);
-                break;
+                startTimer(0, WORK);
         }
     }
 
