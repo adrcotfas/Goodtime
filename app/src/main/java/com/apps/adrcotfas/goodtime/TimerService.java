@@ -10,11 +10,15 @@ import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.Timer;
 
+import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
+import static android.os.PowerManager.ON_AFTER_RELEASE;
+import static android.os.PowerManager.PARTIAL_WAKE_LOCK;
 import static com.apps.adrcotfas.goodtime.MainActivity.NOTIFICATION_TAG;
 import static com.apps.adrcotfas.goodtime.Notifications.createFinishedNotification;
 import static com.apps.adrcotfas.goodtime.Notifications.createForegroundNotification;
@@ -38,6 +42,7 @@ public class TimerService extends Service {
     private boolean mPreviousWifiMode;
     private boolean mIsOnForeground;
     private Preferences mPref;
+    private PowerManager.WakeLock mWakeLock;
 
     @Override
     public void onCreate() {
@@ -57,11 +62,28 @@ public class TimerService extends Service {
         return Service.START_STICKY;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releaseWakelock();
+    }
+
     public void scheduleTimer(long delay){
+
+        acquirePartialWakelock();
+
         saveCurrentStateOfSound();
         saveCurrentStateOfWifi();
 
         createAndStartTimer(delay);
+    }
+
+    private void acquirePartialWakelock() {
+        mWakeLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(
+                PARTIAL_WAKE_LOCK | ON_AFTER_RELEASE | ACQUIRE_CAUSES_WAKEUP,
+                "starting partial wake lock"
+        );
+        mWakeLock.acquire();
     }
 
     private void saveCurrentStateOfSound() {
@@ -106,9 +128,20 @@ public class TimerService extends Service {
     private void onCountdownFinished() {
         Log.d(TAG, "Countdown finished");
 
+        releaseWakelock();
+
         restoreSoundIfPreferred();
         restoreWifiIfPreferred();
         sendFinishedNotification();
+
+    private void releaseWakelock() {
+        if (mWakeLock != null) {
+            try {
+                mWakeLock.release();
+            } catch (Throwable th) {
+                // ignoring this exception, probably wakeLock was already released
+            }
+        }
     }
 
     private void restoreSoundIfPreferred() {

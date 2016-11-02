@@ -44,7 +44,6 @@ import static android.graphics.Typeface.createFromAsset;
 import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
 import static android.os.PowerManager.FULL_WAKE_LOCK;
 import static android.os.PowerManager.ON_AFTER_RELEASE;
-import static android.os.PowerManager.PARTIAL_WAKE_LOCK;
 import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -63,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private static final String TAG = "MainActivity";
     public static final int NOTIFICATION_TAG = 2;
 
-    private PowerManager.WakeLock mWakeLock;
     private long mBackPressedAt;
     private FloatingActionButton mStartButton;
     private Button mPauseButton;
@@ -184,7 +182,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (mAlertDialog != null) {
             mAlertDialog.dismiss();
         }
-        releaseWakelock();
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mBroadcastReceiver);
         super.onDestroy();
     }
@@ -421,24 +418,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mPauseButton.setText(getString(R.string.pause));
         mStopButton.setVisibility(INVISIBLE);
         mHorizontalSeparator.setVisibility(INVISIBLE);
-
-        releaseWakelock();
-
     }
 
     private void shutScreenOffIfPreferred() {
         if (mPref.getKeepScreenOn()) {
             getWindow().clearFlags(FLAG_KEEP_SCREEN_ON);
-        }
-    }
-
-    private void releaseWakelock() {
-        if (mWakeLock != null) {
-            try {
-                mWakeLock.release();
-            } catch (Throwable th) {
-                // ignoring this exception, probably wakeLock was already released
-            }
         }
     }
 
@@ -449,7 +433,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         loadRunningTimerUiState();
 
         keepScreenOnIfPreferred();
-        acquirePartialWakelock();
 
         mTimerService.scheduleTimer(delay);
     }
@@ -469,20 +452,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
 
-    private void acquirePartialWakelock() {
-        mWakeLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(
-                PARTIAL_WAKE_LOCK | ON_AFTER_RELEASE | ACQUIRE_CAUSES_WAKEUP,
-                "starting partial wake lock"
-        );
-        mWakeLock.acquire();
-    }
-
     private void pauseTimer() {
         Log.i(TAG, "Timer has been paused");
 
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
         long timeOfButtonPress = System.currentTimeMillis();
-        releaseWakelock();
         switch (mTimerService.getTimerState()) {
             case ACTIVE_WORK:
                 mTimerService.setTimerState(TimerState.PAUSED_WORK);
@@ -503,7 +477,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         Log.i(TAG, "Countdown has finished");
 
         acquireScreenWakelock();
-        releaseWakelock();
         shutScreenOffIfPreferred();
 
         mTimerService.removeTimer();
