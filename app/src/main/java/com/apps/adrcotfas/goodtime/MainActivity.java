@@ -155,6 +155,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (mIsBoundToTimerService) {
             mTimerService.sendToBackground();
         }
+
+        removeCompletionNotification();
+        
         if (mPrivatePref.getBoolean(FIRST_RUN, true)) {
             Intent introIntent = new Intent(this, ProductTourActivity.class);
             startActivity(introIntent);
@@ -335,6 +338,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mTimeLabel.setTypeface(createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf"));
             updateTimerLabel(mPref.getSessionDuration() * 60);
         }
+    }
+
+    private void removeCompletionNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(NOTIFICATION_TAG);
     }
 
     private void disablePauseButton() {
