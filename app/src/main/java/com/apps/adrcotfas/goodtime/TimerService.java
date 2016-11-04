@@ -132,6 +132,8 @@ public class TimerService extends Service {
     private void createAndStartTimer(long delay) {
         Log.d(TAG, "Starting new timer");
 
+        sendUpdateIntent();
+
         mTimer = new Timer();
         mTimer.schedule(
                 new UpdateTask(new Handler(), this),
