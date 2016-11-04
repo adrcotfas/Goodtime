@@ -16,7 +16,7 @@ import static com.apps.adrcotfas.goodtime.TimerState.PAUSED;
 
 public class Notifications {
 
-    public static Notification createFinishedNotification(
+    public static Notification createCompletionNotification(
             Context context,
             SessionType sessionType,
             String notificationSound

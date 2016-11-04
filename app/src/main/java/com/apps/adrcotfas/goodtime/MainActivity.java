@@ -498,7 +498,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void increaseTotalSessions() {
         if (mTimerService.getTimerState() == INACTIVE && mTimerService.getSessionType() == WORK) {
-            mTimerService.setCurrentSessionStreak(mTimerService.getCurrentSessionStreak() + 1);
+            mTimerService.increaseCurrentSessionStreak();
             int totalSessions = mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0);
             mPrivatePref.edit()
                         .putInt(TOTAL_SESSION_COUNT, ++totalSessions)
@@ -535,7 +535,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 enablePauseButton();
 
                 if (mTimerService.getCurrentSessionStreak() >= mPref.getSessionsBeforeLongBreak()) {
-                    mTimerService.setCurrentSessionStreak(0);
+                    mTimerService.resetCurrentSessionStreak();
                 }
 
                 mAlertDialog = buildStartSessionDialog();
@@ -630,7 +630,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 loadInitialState();
                 enablePauseButton();
                 if (mTimerService.getCurrentSessionStreak() >= mPref.getSessionsBeforeLongBreak()) {
-                    mTimerService.setCurrentSessionStreak(0);
+                    mTimerService.resetCurrentSessionStreak();
                 }
 
                 startTimer(0, WORK);
@@ -675,7 +675,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 .setPositiveButton(getString(R.string.dialog_reset_ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mTimerService.setCurrentSessionStreak(0);
+                        mTimerService.resetCurrentSessionStreak();
                         mPrivatePref.edit()
                                     .putInt(TOTAL_SESSION_COUNT, 0)
                                     .apply();

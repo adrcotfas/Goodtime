@@ -20,7 +20,7 @@ import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
 import static android.os.PowerManager.ON_AFTER_RELEASE;
 import static android.os.PowerManager.PARTIAL_WAKE_LOCK;
 import static com.apps.adrcotfas.goodtime.MainActivity.NOTIFICATION_TAG;
-import static com.apps.adrcotfas.goodtime.Notifications.createFinishedNotification;
+import static com.apps.adrcotfas.goodtime.Notifications.createCompletionNotification;
 import static com.apps.adrcotfas.goodtime.Notifications.createForegroundNotification;
 import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;
 import static com.apps.adrcotfas.goodtime.SessionType.WORK;
@@ -30,10 +30,11 @@ import static com.apps.adrcotfas.goodtime.TimerState.PAUSED;
 
 public class TimerService extends Service {
 
-    private static final int GOODTIME_NOTIFICATION_ID = 1;
+    private static final int NOTIFICATION_ID = 1;
     private static final String TAG = "TimerService";
     public final static String ACTION_TIMERSERVICE = "com.apps.adrcotfas.goodtime.TIMERSERVICE";
     public final static String REMAINING_TIME = "com.apps.adrcotfas.goodtime.REMAINING_TIME";
+
     private int mRemainingTime;
     private int mCurrentSessionStreak;
     private Timer mTimer;
@@ -201,7 +202,7 @@ public class TimerService extends Service {
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(
                 NOTIFICATION_TAG,
-                createFinishedNotification(this, mCurrentSession, mPref.getNotificationSound())
+                createCompletionNotification(this, mCurrentSession, mPref.getNotificationSound())
         );
     }
 
@@ -257,15 +258,19 @@ public class TimerService extends Service {
         return mCurrentSessionStreak;
     }
 
-    protected void setCurrentSessionStreak(int mCurrentSessionStreak) {
-        this.mCurrentSessionStreak = mCurrentSessionStreak;
+    public void increaseCurrentSessionStreak() {
+        mCurrentSessionStreak++;
+    }
+
+    public void resetCurrentSessionStreak() {
+        mCurrentSessionStreak = 0;
     }
 
     protected void bringToForegroundAndUpdateNotification() {
         mIsOnForeground = true;
         mTimerBroughtToForegroundState = mTimerState;
         startForeground(
-                GOODTIME_NOTIFICATION_ID,
+                NOTIFICATION_ID,
                 createForegroundNotification(this, mCurrentSession, mTimerState)
         );
     }
