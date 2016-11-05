@@ -326,6 +326,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
                 mStartButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.implode_reverse));
 
+                mTimerService.stopSession();
                 loadInitialState();
             }
         });
@@ -443,7 +444,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         keepScreenOnIfPreferred();
 
-        mTimerService.scheduleTimer(delay, sessionType);
+        mTimerService.startSession(delay, sessionType);
     }
 
     private void loadRunningTimerUiState() {

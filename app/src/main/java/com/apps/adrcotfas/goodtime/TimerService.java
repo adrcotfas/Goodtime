@@ -75,7 +75,7 @@ public class TimerService extends Service {
         releaseWakelock();
     }
 
-    public void scheduleTimer(long delay, SessionType sessionType) {
+    public void startSession(long delay, SessionType sessionType) {
         mRemainingTime = calculateSessionDurationFor(sessionType);
         Log.i(TAG, "Starting new timer for " + sessionType + ", duration " + mRemainingTime);
 
@@ -127,6 +127,20 @@ public class TimerService extends Service {
     public void unpauseTimer(long delay) {
         mTimerState = ACTIVE;
         createAndStartTimer(delay);
+    }
+
+    public void stopSession() {
+        Log.d(TAG, "Session stopped");
+
+        sendToBackground();
+
+        releaseWakelock();
+        removeTimer();
+
+        restoreSoundIfPreferred();
+        restoreWifiIfPreferred();
+
+        mTimerState = INACTIVE;
     }
 
     private void createAndStartTimer(long delay) {
