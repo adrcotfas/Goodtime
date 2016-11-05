@@ -448,8 +448,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void loadRunningTimerUiState() {
-        updateTimerLabel(mTimerService.getRemainingTime());
-
         mStartButton.setVisibility(INVISIBLE);
         mPauseButton.setVisibility(VISIBLE);
         mStopButton.setVisibility(VISIBLE);
