@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import static android.app.PendingIntent.FLAG_ONE_SHOT;
@@ -12,6 +11,8 @@ import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static android.app.PendingIntent.getActivity;
 import static android.graphics.Color.WHITE;
 import static android.media.AudioAttributes.USAGE_ALARM;
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static com.apps.adrcotfas.goodtime.TimerState.PAUSED;
 
 public class Notifications {
@@ -23,7 +24,7 @@ public class Notifications {
     ) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         if (!notificationSound.equals("")) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (SDK_INT >= LOLLIPOP) {
                 builder.setSound(Uri.parse(notificationSound), USAGE_ALARM);
             } else {
                 builder.setSound(Uri.parse(notificationSound));
