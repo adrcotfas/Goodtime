@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.goodtime;
 
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -39,7 +38,6 @@ import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
 
 import java.util.Locale;
 
-import static android.app.PendingIntent.getActivity;
 import static android.graphics.Typeface.createFromAsset;
 import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
 import static android.os.PowerManager.FULL_WAKE_LOCK;
@@ -157,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
 
         removeCompletionNotification();
-        
+
         if (mPrivatePref.getBoolean(FIRST_RUN, true)) {
             Intent introIntent = new Intent(this, ProductTourActivity.class);
             startActivity(introIntent);
@@ -496,7 +494,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         increaseTotalSessions();
 
-        bringApplicationToFront();
         if (mPref.getContinuousMode()) {
             goOnContinuousMode();
         } else {
@@ -663,17 +660,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         SpannableString currentFormattedTick = new SpannableString(currentTick);
         currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
         mTimeLabel.setText(currentFormattedTick);
-    }
-
-    private void bringApplicationToFront() {
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = getActivity(this, 0, notificationIntent, 0);
-        try {
-            pendingIntent.send();
-        } catch (PendingIntent.CanceledException e) {
-            e.printStackTrace();
-        }
     }
 
     private void showSessionCounterDialog() {
