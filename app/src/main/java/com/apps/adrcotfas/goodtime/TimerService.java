@@ -171,6 +171,8 @@ public class TimerService extends Service {
         sendFinishedNotification();
 
         mTimerState = INACTIVE;
+
+        sendToBackground();
     }
 
 
