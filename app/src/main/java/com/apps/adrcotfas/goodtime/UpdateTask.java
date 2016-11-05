@@ -5,8 +5,9 @@ import android.os.Handler;
 import java.util.TimerTask;
 
 public class UpdateTask extends TimerTask {
-    final Handler handler;
-    final TimerService ref;
+
+    private final Handler handler;
+    private final TimerService ref;
 
     public UpdateTask(Handler handler, TimerService ref) {
         super();
@@ -19,7 +20,7 @@ public class UpdateTask extends TimerTask {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                ref.runTimer();
+                ref.countdown();
             }
         });
     }

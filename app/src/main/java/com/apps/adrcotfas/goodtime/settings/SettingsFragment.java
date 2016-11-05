@@ -10,15 +10,20 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
+
 import com.apps.adrcotfas.goodtime.R;
 
 import static com.apps.adrcotfas.goodtime.Preferences.DISABLE_SOUND_AND_VIBRATION;
+import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;
 
 public class SettingsFragment extends PreferenceFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PreferenceManager manager = getPreferenceManager();
+        manager.setSharedPreferencesName(PREFERENCES_NAME);
         addPreferencesFromResource(R.xml.preferences);
     }
 
