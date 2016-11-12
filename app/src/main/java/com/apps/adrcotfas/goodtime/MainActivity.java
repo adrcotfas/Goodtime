@@ -128,11 +128,17 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onCreate(savedInstanceState);
 
         mPref = setUpPreferences();
+        migrateOldPreferences();
         installCustomRingtones();
         setUpUi();
         loadInitialState();
         setUpAndroidNougatSettings();
         setupBroadcastReceiver();
+    }
+
+    private void migrateOldPreferences() {
+        SharedPreferences oldPref = PreferenceManager.getDefaultSharedPreferences(this);
+        mPref.migrateFromOldPreferences(oldPref);
     }
 
     @Override
