@@ -20,7 +20,8 @@ public class Notifications {
     public static Notification createCompletionNotification(
             Context context,
             SessionType sessionType,
-            String notificationSound
+            String notificationSound,
+            boolean vibrate
     ) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         if (!notificationSound.equals("")) {
@@ -30,8 +31,10 @@ public class Notifications {
                 builder.setSound(Uri.parse(notificationSound));
             }
         }
+        if(vibrate) {
+            builder.setVibrate(new long[]{0, 300, 700, 300});
+        }
         builder.setSmallIcon(R.drawable.ic_status_goodtime)
-               .setVibrate(new long[]{0, 300, 700, 300})
                .setLights(WHITE, 250, 750)
                .setContentTitle(context.getString(R.string.dialog_session_message))
                .setContentText(buildCompletedNotificationText(context, sessionType))
