@@ -12,8 +12,6 @@ import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import java.util.Timer;
-
 import static com.apps.adrcotfas.goodtime.TimerActivity.NOTIFICATION_TAG;
 import static com.apps.adrcotfas.goodtime.Notifications.createCompletionNotification;
 import static com.apps.adrcotfas.goodtime.Notifications.createForegroundNotification;
@@ -32,7 +30,6 @@ public class TimerService extends Service {
 
     private int mRemainingTime;
     private int mCurrentSessionStreak;
-    private Timer mTimer;
     private TimerState mTimerState;
     private TimerState mTimerBroughtToForegroundState;
     private final IBinder mBinder = new TimerBinder();
@@ -114,8 +111,6 @@ public class TimerService extends Service {
 
         sendToBackground();
 
-        removeTimer();
-
         restoreSoundIfPreferred();
         restoreWifiIfPreferred();
 
@@ -124,8 +119,6 @@ public class TimerService extends Service {
 
     private void onCountdownFinished() {
         Log.d(TAG, "Countdown finished");
-
-        removeTimer();
 
         restoreSoundIfPreferred();
         restoreWifiIfPreferred();
@@ -167,19 +160,6 @@ public class TimerService extends Service {
 
     public void pauseTimer() {
         mTimerState = PAUSED;
-        removeTimer();
-    }
-
-    public void removeTimer() {
-        if (mIsOnForeground) {
-            bringToForegroundAndUpdateNotification();
-        }
-
-        if (mTimer != null) {
-            mTimer.cancel();
-            mTimer.purge();
-            mTimer = null;
-        }
     }
 
     public class TimerBinder extends Binder {

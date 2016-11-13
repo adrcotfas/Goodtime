@@ -183,7 +183,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     @Override
     protected void onDestroy() {
         if (mIsBoundToTimerService) {
-            mTimerService.removeTimer();
             stopService(new Intent(this, TimerService.class));
             unbindService(mTimerServiceConnection);
             mIsBoundToTimerService = false;
@@ -421,7 +420,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
         if (mIsBoundToTimerService) {
             updateTimerLabel(mPref.getSessionDuration() * 60);
-            mTimerService.removeTimer();
+            updateTimerLabel(mPref.getSessionDuration() * 60);
             shutScreenOffIfPreferred();
         }
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
