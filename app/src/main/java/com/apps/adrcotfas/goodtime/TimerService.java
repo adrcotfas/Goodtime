@@ -220,10 +220,14 @@ public class TimerService extends Service {
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(
                 NOTIFICATION_TAG,
-                createCompletionNotification(this, mCurrentSession, mPref.getNotificationSound())
+                createCompletionNotification(
+                        this,
+                        mCurrentSession,
+                        mPref.getNotificationSound(),
+                        mPref.getNotificationVibrate()
+                )
         );
     }
-
 
     private void sendUpdateIntent() {
         Intent remainingTimeIntent = new Intent(ACTION_TIMERSERVICE);
