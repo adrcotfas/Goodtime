@@ -11,6 +11,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import java.util.concurrent.TimeUnit;
 
 import static com.apps.adrcotfas.goodtime.TimerActivity.NOTIFICATION_TAG;
 import static com.apps.adrcotfas.goodtime.Notifications.createCompletionNotification;
@@ -28,7 +29,7 @@ public class TimerService extends Service {
     public final static String ACTION_TIMERSERVICE = "com.apps.adrcotfas.goodtime.TIMERSERVICE";
     public final static String REMAINING_TIME = "com.apps.adrcotfas.goodtime.REMAINING_TIME";
 
-    private int mRemainingTime;
+    private long mCountDownFinishedTime;
     private int mCurrentSessionStreak;
     private TimerState mTimerState;
     private TimerState mTimerBroughtToForegroundState;
@@ -37,6 +38,7 @@ public class TimerService extends Service {
     private int mPreviousRingerMode;
     private boolean mPreviousWifiMode;
     private boolean mIsOnForeground;
+    private boolean mIsTimerRunning;
     private Preferences mPref;
     private SessionType mCurrentSession;
 
@@ -65,28 +67,27 @@ public class TimerService extends Service {
         super.onDestroy();
     }
 
-    public void startSession(long delay, SessionType sessionType) {
-        mRemainingTime = calculateSessionDurationFor(sessionType);
-        Log.i(TAG, "Starting new timer for " + sessionType + ", duration " + mRemainingTime);
+    public void startSession(SessionType sessionType) {
+        mIsTimerRunning = true;
+        mCountDownFinishedTime = calculateSessionDurationFor(sessionType);
+        Log.i(TAG, "Starting new timer for " + sessionType + ", ending at " + mCountDownFinishedTime);
 
         saveCurrentStateOfSound();
         saveCurrentStateOfWifi();
 
         mTimerState = ACTIVE;
         mCurrentSession = sessionType;
-
     }
 
-    private int calculateSessionDurationFor(
-            SessionType sessionType
-    ) {
+    private long calculateSessionDurationFor(SessionType sessionType) {
+        long currentTime = System.currentTimeMillis();
         switch (sessionType) {
             case WORK:
-                return mPref.getSessionDuration() * 60;
+                return currentTime + TimeUnit.MINUTES.toMillis(mPref.getSessionDuration());
             case BREAK:
-                return mPref.getBreakDuration() * 60;
+                return currentTime + TimeUnit.MINUTES.toMillis(mPref.getBreakDuration());
             case LONG_BREAK:
-                return mPref.getLongBreakDuration() * 60;
+                return currentTime + TimeUnit.MINUTES.toMillis(mPref.getLongBreakDuration());
             default:
                 throw new IllegalStateException("This cannot happen");
         }
@@ -107,6 +108,7 @@ public class TimerService extends Service {
     }
 
     public void stopSession() {
+        mIsTimerRunning = false;
         Log.d(TAG, "Session stopped");
 
         sendToBackground();
@@ -162,6 +164,10 @@ public class TimerService extends Service {
         mTimerState = PAUSED;
     }
 
+    public boolean isTimerRunning() {
+        return mIsTimerRunning;
+    }
+
     public class TimerBinder extends Binder {
         TimerService getService() {
             return TimerService.this;
@@ -184,6 +190,8 @@ public class TimerService extends Service {
     public int getCurrentSessionStreak() {
         return mCurrentSessionStreak;
     }
+
+    public long getCountDownFinishedTime() { return mCountDownFinishedTime;}
 
     public void increaseCurrentSessionStreak() {
         mCurrentSessionStreak++;
