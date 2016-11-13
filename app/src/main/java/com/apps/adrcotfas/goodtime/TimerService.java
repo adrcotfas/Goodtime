@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -87,7 +86,6 @@ public class TimerService extends Service {
         mTimerState = ACTIVE;
         mCurrentSession = sessionType;
 
-        createAndStartTimer(delay);
     }
 
     private int calculateSessionDurationFor(
@@ -126,7 +124,6 @@ public class TimerService extends Service {
 
     public void unpauseTimer(long delay) {
         mTimerState = ACTIVE;
-        createAndStartTimer(delay);
     }
 
     public void stopSession() {
@@ -141,37 +138,6 @@ public class TimerService extends Service {
         restoreWifiIfPreferred();
 
         mTimerState = INACTIVE;
-    }
-
-    private void createAndStartTimer(long delay) {
-        Log.d(TAG, "Starting new timer");
-
-        sendUpdateIntent();
-
-        mTimer = new Timer();
-        mTimer.schedule(
-                new UpdateTask(new Handler(), this),
-                delay,
-                1000
-        );
-    }
-
-    public void countdown() {
-        if (mTimerState != INACTIVE && mTimerState != PAUSED) {
-            if (mRemainingTime > 0) {
-                mRemainingTime--;
-            }
-
-            if (mRemainingTime == 0) {
-                onCountdownFinished();
-            }
-
-            sendUpdateIntent();
-
-            if (mIsOnForeground && mTimerBroughtToForegroundState != mTimerState) {
-                bringToForegroundAndUpdateNotification();
-            }
-        }
     }
 
     private void onCountdownFinished() {
@@ -229,12 +195,6 @@ public class TimerService extends Service {
         );
     }
 
-    private void sendUpdateIntent() {
-        Intent remainingTimeIntent = new Intent(ACTION_TIMERSERVICE);
-        remainingTimeIntent.putExtra(REMAINING_TIME, mRemainingTime);
-        mBroadcastManager.sendBroadcast(remainingTimeIntent);
-    }
-
     public void pauseTimer() {
         mTimerState = PAUSED;
         removeTimer();
@@ -270,10 +230,6 @@ public class TimerService extends Service {
 
     public SessionType getSessionType() {
         return mCurrentSession;
-    }
-
-    public int getRemainingTime() {
-        return mRemainingTime;
     }
 
     public int getCurrentSessionStreak() {
