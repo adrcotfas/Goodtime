@@ -38,7 +38,6 @@ import com.apps.adrcotfas.goodtime.settings.CustomNotification;
 import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
 
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import static android.graphics.Typeface.createFromAsset;
 import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
@@ -651,9 +650,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         int seconds = 0;
 
         if (mIsBoundToTimerService && mTimerService.isTimerRunning()) {
-            long currentTime = System.currentTimeMillis();
-            int remainingTime = (int) (TimeUnit.MILLISECONDS.toSeconds(
-                    mTimerService.getCountDownFinishedTime() - currentTime));
+            int remainingTime = mTimerService.getRemainingTime();
             minutes = remainingTime / 60;
             seconds = remainingTime % 60;
         }

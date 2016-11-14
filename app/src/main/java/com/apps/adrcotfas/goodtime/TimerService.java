@@ -191,7 +191,10 @@ public class TimerService extends Service {
         return mCurrentSessionStreak;
     }
 
-    public long getCountDownFinishedTime() { return mCountDownFinishedTime;}
+    public int getRemainingTime() {
+        return (int) (TimeUnit.MILLISECONDS.toSeconds(
+                mCountDownFinishedTime - System.currentTimeMillis()));
+    }
 
     public void increaseCurrentSessionStreak() {
         mCurrentSessionStreak++;
