@@ -27,9 +27,9 @@ public class TimerService extends Service {
     private static final int NOTIFICATION_ID = 1;
     private static final String TAG = "TimerService";
     public final static String ACTION_TIMERSERVICE = "com.apps.adrcotfas.goodtime.TIMERSERVICE";
-    public final static String REMAINING_TIME = "com.apps.adrcotfas.goodtime.REMAINING_TIME";
 
     private long mCountDownFinishedTime;
+    private int mRemainingTimePaused;
     private int mCurrentSessionStreak;
     private TimerState mTimerState;
     private TimerState mTimerBroughtToForegroundState;
@@ -70,7 +70,8 @@ public class TimerService extends Service {
     public void startSession(SessionType sessionType) {
         mIsTimerRunning = true;
         mCountDownFinishedTime = calculateSessionDurationFor(sessionType);
-        Log.i(TAG, "Starting new timer for " + sessionType + ", ending at " + mCountDownFinishedTime);
+        Log.i(TAG, "Starting new timer for " + sessionType + ", ending in "
+                + getRemainingTime() + " seconds.");
 
         saveCurrentStateOfSound();
         saveCurrentStateOfWifi();
@@ -103,8 +104,19 @@ public class TimerService extends Service {
         mPreviousWifiMode = wifiManager.isWifiEnabled();
     }
 
-    public void unpauseTimer(long delay) {
+    public void pauseTimer() {
+        mTimerState = PAUSED;
+        mIsTimerRunning = false;
+        mRemainingTimePaused = getRemainingTime();
+    }
+
+    public void unpauseTimer() {
         mTimerState = ACTIVE;
+        mIsTimerRunning = true;
+        mCountDownFinishedTime = System.currentTimeMillis() +
+                TimeUnit.SECONDS.toMillis(mRemainingTimePaused);
+        Log.i(TAG, "Resuming countdown for " + getSessionType() + ", ending in "
+                + getRemainingTime() + " seconds.");
     }
 
     public void stopSession() {
@@ -158,10 +170,6 @@ public class TimerService extends Service {
                         mPref.getNotificationVibrate()
                 )
         );
-    }
-
-    public void pauseTimer() {
-        mTimerState = PAUSED;
     }
 
     public boolean isTimerRunning() {

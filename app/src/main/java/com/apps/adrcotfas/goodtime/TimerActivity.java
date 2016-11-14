@@ -159,7 +159,8 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     @Override
     protected void onResume() {
         super.onResume();
-        if (mIsBoundToTimerService && mTimerService.getTimerState() != INACTIVE) {
+        if (mIsBoundToTimerService && mTimerService.getTimerState() != INACTIVE &&
+                mTimerService.isTimerRunning()) {
             mTimerService.sendToBackground();
             mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
         }
@@ -312,8 +313,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: handle pause
-                mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
                 pauseTimer();
             }
         });
@@ -466,20 +465,18 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         Log.i(TAG, "Timer has been paused");
 
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
-        long timeOfButtonPress = System.currentTimeMillis();
         switch (mTimerService.getTimerState()) {
             case ACTIVE:
+                mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
                 mTimerService.pauseTimer();
 
                 mPauseButton.setText(getString(R.string.resume));
                 mPauseButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
                 break;
             case PAUSED:
-                mTimerService.unpauseTimer(
-                        System.currentTimeMillis() - timeOfButtonPress > 1000
-                        ? 0
-                        : 1000 - (System.currentTimeMillis() - timeOfButtonPress)
-                );
+
+                mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
+                mTimerService.unpauseTimer();
 
                 mPauseButton.setText(getString(R.string.pause));
                 mPauseButton.clearAnimation();
