@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "672760269171",
+    "firebase_url": "https://goodtime-testing.firebaseio.com",
+    "project_id": "goodtime---testing",
+    "storage_bucket": "goodtime---testing.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672760269171:android:9a825acf3b42050e",
+        "android_client_info": {
+          "package_name": "com.apps.adrcotfas.goodtime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "672760269171-cjcku98p3snj3usie65o8vr8v76ieeif.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVmxJpbwccFk1qWb7KVp2rN7DyIyFmHgs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
