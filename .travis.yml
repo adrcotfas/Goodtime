@@ -15,7 +15,6 @@ android:
   - sys-img-armeabi-v7a-android-24
 
 before_script:
-  # - npm install -g firebase-tools
   - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
   - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator
