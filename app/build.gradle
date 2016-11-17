@@ -39,7 +39,7 @@ dependencies {
     compile 'com.android.support:design:24.2.1'
     compile 'com.heinrichreimersoftware:material-intro:1.5.4'
     compile 'com.pavelsikun:material-seekbar-preference:2.3.0'
-    compile 'com.google.firebase:firebase-core:9.0.0'
+    compile 'com.google.firebase:firebase-core:9.8.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

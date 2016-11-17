@@ -5,12 +5,10 @@ android:
   - tools
   - platform-tools
   - build-tools-24.0.2
-  #- android-23
   - android-24
   - extra-android-support
   - extra-android-m2repository
   - extra-google-google_play_services
-  #- sys-img-armeabi-v7a-android-23
   - sys-img-armeabi-v7a-android-24
 
 before_script:
