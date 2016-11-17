@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "509800114604-tn9o8gm423vcn1up03lr8vl5mkkvv94t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.apps.adrcotfas.goodtime",
+            "certificate_hash": "58307B4640587612E7C6CE52AB3C5D235FF08986"
+          }
+        },
+        {
           "client_id": "509800114604-mbf3j8obo49q0c4bphntfegm836qdoec.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "509800114604-mbf3j8obo49q0c4bphntfegm836qdoec.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
