@@ -476,7 +476,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             case PAUSED:
 
                 mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
-                mTimerService.unpauseTimer();
+                mTimerService.unPauseTimer();
 
                 mPauseButton.setText(getString(R.string.pause));
                 mPauseButton.clearAnimation();

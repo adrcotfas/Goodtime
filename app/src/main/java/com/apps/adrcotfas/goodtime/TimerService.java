@@ -110,7 +110,7 @@ public class TimerService extends Service {
         mRemainingTimePaused = getRemainingTime();
     }
 
-    public void unpauseTimer() {
+    public void unPauseTimer() {
         mTimerState = ACTIVE;
         mIsTimerRunning = true;
         mCountDownFinishedTime = System.currentTimeMillis() +
