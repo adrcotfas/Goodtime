@@ -80,6 +80,18 @@ public class TimerService extends Service {
         mCurrentSession = sessionType;
     }
 
+    public void stopSession() {
+        mIsTimerRunning = false;
+        Log.d(TAG, "Session stopped");
+
+        sendToBackground();
+
+        restoreSoundIfPreferred();
+        restoreWifiIfPreferred();
+
+        mTimerState = INACTIVE;
+    }
+
     private long calculateSessionDurationFor(SessionType sessionType) {
         long currentTime = System.currentTimeMillis();
         switch (sessionType) {
@@ -117,18 +129,6 @@ public class TimerService extends Service {
                 TimeUnit.SECONDS.toMillis(mRemainingTimePaused);
         Log.i(TAG, "Resuming countdown for " + getSessionType() + ", ending in "
                 + getRemainingTime() + " seconds.");
-    }
-
-    public void stopSession() {
-        mIsTimerRunning = false;
-        Log.d(TAG, "Session stopped");
-
-        sendToBackground();
-
-        restoreSoundIfPreferred();
-        restoreWifiIfPreferred();
-
-        mTimerState = INACTIVE;
     }
 
     private void onCountdownFinished() {
