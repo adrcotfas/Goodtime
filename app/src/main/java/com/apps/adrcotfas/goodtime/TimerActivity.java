@@ -463,11 +463,10 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     }
 
     private void pauseTimer() {
-        Log.i(TAG, "Timer has been paused");
-
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
         switch (mTimerService.getTimerState()) {
             case ACTIVE:
+                Log.i(TAG, "Timer has been paused");
                 mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
                 mTimerService.pauseTimer();
 
@@ -475,7 +474,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 mPauseButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
                 break;
             case PAUSED:
-
+                Log.i(TAG, "Timer has been resumed");
                 mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
                 mTimerService.unPauseTimer();
 
