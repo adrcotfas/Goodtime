@@ -13,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import java.util.concurrent.TimeUnit;
 
+import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static com.apps.adrcotfas.goodtime.TimerActivity.NOTIFICATION_TAG;
 import static com.apps.adrcotfas.goodtime.Notifications.createCompletionNotification;
 import static com.apps.adrcotfas.goodtime.Notifications.createForegroundNotification;
@@ -172,6 +173,12 @@ public class TimerService extends Service {
         Log.d(TAG, "Restoring sound mode");
         AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         aManager.setRingerMode(mPreviousRingerMode);
+    }
+
+    private void restoreWifi() {
+        Log.d(TAG, "Restoring Wifi mode");
+        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+        wifiManager.setWifiEnabled(mPreviousWifiMode);
     }
 
     private void sendFinishedNotification() {
