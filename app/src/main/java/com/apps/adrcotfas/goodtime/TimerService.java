@@ -16,6 +16,7 @@ import android.util.Log;
 
 import java.util.Timer;
 
+import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
 import static android.os.PowerManager.ON_AFTER_RELEASE;
 import static android.os.PowerManager.PARTIAL_WAKE_LOCK;
@@ -81,8 +82,14 @@ public class TimerService extends Service {
 
         acquirePartialWakelock();
 
-        saveCurrentStateOfSound();
-        saveCurrentStateOfWifi();
+        if (mPref.getDisableSoundAndVibration() && sessionType == WORK) {
+            saveCurrentStateOfSound();
+            disableSound();
+        }
+        if (mPref.getDisableWifi() && sessionType == WORK) {
+            saveCurrentStateOfWifi();
+            disableWifi();
+        }
 
         mTimerState = ACTIVE;
         mCurrentSession = sessionType;
@@ -113,17 +120,6 @@ public class TimerService extends Service {
         mWakeLock.acquire();
     }
 
-
-    private void saveCurrentStateOfSound() {
-        AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        mPreviousRingerMode = aManager.getRingerMode();
-    }
-
-    private void saveCurrentStateOfWifi() {
-        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-        mPreviousWifiMode = wifiManager.isWifiEnabled();
-    }
-
     public void unpauseTimer(long delay) {
         mTimerState = ACTIVE;
         createAndStartTimer(delay);
@@ -137,8 +133,12 @@ public class TimerService extends Service {
         releaseWakelock();
         removeTimer();
 
-        restoreSoundIfPreferred();
-        restoreWifiIfPreferred();
+        if (mPref.getDisableSoundAndVibration()) {
+            restoreSound();
+        }
+        if (mPref.getDisableWifi()) {
+            restoreWifi();
+        }
 
         mTimerState = INACTIVE;
     }
@@ -176,16 +176,18 @@ public class TimerService extends Service {
 
     private void onCountdownFinished() {
         Log.d(TAG, "Countdown finished");
-
         releaseWakelock();
         removeTimer();
 
-        restoreSoundIfPreferred();
-        restoreWifiIfPreferred();
+        if (mPref.getDisableSoundAndVibration()) {
+            restoreSound();
+        }
+        if (mPref.getDisableWifi()) {
+            restoreWifi();
+        }
+
         sendFinishedNotification();
-
         mTimerState = INACTIVE;
-
         sendToBackground();
     }
 
@@ -200,20 +202,38 @@ public class TimerService extends Service {
         }
     }
 
-    private void restoreSoundIfPreferred() {
-        if (mPref.getDisableSoundAndVibration()) {
-            Log.d(TAG, "Restoring sound mode");
-            AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-            aManager.setRingerMode(mPreviousRingerMode);
-        }
+    private void saveCurrentStateOfSound() {
+        AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        mPreviousRingerMode = aManager.getRingerMode();
     }
 
-    private void restoreWifiIfPreferred() {
-        if (mPref.getDisableWifi()) {
-            Log.d(TAG, "Restoring Wifi mode");
-            WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-            wifiManager.setWifiEnabled(mPreviousWifiMode);
-        }
+    private void saveCurrentStateOfWifi() {
+        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+        mPreviousWifiMode = wifiManager.isWifiEnabled();
+    }
+
+    private void disableSound() {
+        Log.d(TAG, "Disabling sound");
+        AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        aManager.setRingerMode(RINGER_MODE_SILENT);
+    }
+
+    private void disableWifi() {
+        Log.d(TAG, "Disabling Wifi");
+        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+        wifiManager.setWifiEnabled(false);
+    }
+
+    private void restoreSound() {
+        Log.d(TAG, "Restoring sound mode");
+        AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        aManager.setRingerMode(mPreviousRingerMode);
+    }
+
+    private void restoreWifi() {
+        Log.d(TAG, "Restoring Wifi mode");
+        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+        wifiManager.setWifiEnabled(mPreviousWifiMode);
     }
 
     private void sendFinishedNotification() {
