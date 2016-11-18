@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "509800114604",
+    "firebase_url": "https://goodtime-4cc8d.firebaseio.com",
+    "project_id": "goodtime-4cc8d",
+    "storage_bucket": "goodtime-4cc8d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509800114604:android:9a825acf3b42050e",
+        "android_client_info": {
+          "package_name": "com.apps.adrcotfas.goodtime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "509800114604-tn9o8gm423vcn1up03lr8vl5mkkvv94t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.apps.adrcotfas.goodtime",
+            "certificate_hash": "58307B4640587612E7C6CE52AB3C5D235FF08986"
+          }
+        },
+        {
+          "client_id": "509800114604-mbf3j8obo49q0c4bphntfegm836qdoec.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaxk2jVtKdr8sLe2LApU9gJFyg_UkjlE0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "509800114604-mbf3j8obo49q0c4bphntfegm836qdoec.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
