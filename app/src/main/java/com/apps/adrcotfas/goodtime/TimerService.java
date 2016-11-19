@@ -118,7 +118,7 @@ public class TimerService extends Service {
     }
 
     private long calculateSessionDurationFor(SessionType sessionType) {
-        long currentTime = System.currentTimeMillis();
+        long currentTime = SystemClock.elapsedRealtime();
         switch (sessionType) {
             case WORK:
                 return currentTime + TimeUnit.MINUTES.toMillis(mPref.getSessionDuration());
@@ -131,20 +131,21 @@ public class TimerService extends Service {
         }
     }
 
-    public void pauseTimer() {
+    public void pauseSession() {
         mTimerState = PAUSED;
         mIsTimerRunning = false;
         mRemainingTimePaused = getRemainingTime();
         cancelAlarm();
     }
 
-    public void unPauseTimer() {
+    public void unPauseSession() {
         mTimerState = ACTIVE;
         mIsTimerRunning = true;
-        mCountDownFinishedTime = System.currentTimeMillis() +
+        mCountDownFinishedTime = SystemClock.elapsedRealtime() +
                 TimeUnit.SECONDS.toMillis(mRemainingTimePaused);
         Log.i(TAG, "Resuming countdown for " + getSessionType() + ", ending in "
                 + getRemainingTime() + " seconds.");
+        setAlarm(mCountDownFinishedTime);
     }
 
     private void onCountdownFinished() {
@@ -158,6 +159,7 @@ public class TimerService extends Service {
         }
 
         sendFinishedNotification();
+        mIsTimerRunning = false;
         mTimerState = INACTIVE;
         sendToBackground();
     }
@@ -238,7 +240,7 @@ public class TimerService extends Service {
 
     public int getRemainingTime() {
         return (int) (TimeUnit.MILLISECONDS.toSeconds(
-                mCountDownFinishedTime - System.currentTimeMillis()));
+                mCountDownFinishedTime - SystemClock.elapsedRealtime()));
     }
 
     public void increaseCurrentSessionStreak() {

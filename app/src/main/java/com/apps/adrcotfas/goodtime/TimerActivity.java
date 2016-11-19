@@ -88,7 +88,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             TimerService.TimerBinder binder = (TimerService.TimerBinder) iBinder;
             mTimerService = binder.getService();
             mIsBoundToTimerService = true;
-            mTimerService.sendToBackground();
         }
 
         @Override
@@ -291,7 +290,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
                 mStartButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.implode));
                 if (buttons != null) {
                     buttons.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade));
@@ -324,7 +322,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
                 mPauseButton.clearAnimation();
                 if (buttons != null) {
                     buttons.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade_reverse));
@@ -419,6 +416,8 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     private void loadInitialState() {
         Log.d(TAG, "Loading initial state");
 
+        mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
+
         if (mIsBoundToTimerService) {
             updateTimerLabel();
             shutScreenOffIfPreferred();
@@ -441,6 +440,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     private void startTimer(SessionType sessionType) {
         Log.i(TAG, "Timer has been started");
 
+        mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
         mTimeLabel.setTextColor(Color.WHITE);
         loadRunningTimerUiState();
 
@@ -468,7 +468,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             case ACTIVE:
                 Log.i(TAG, "Timer has been paused");
                 mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
-                mTimerService.pauseTimer();
+                mTimerService.pauseSession();
 
                 mPauseButton.setText(getString(R.string.resume));
                 mPauseButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
@@ -476,7 +476,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             case PAUSED:
                 Log.i(TAG, "Timer has been resumed");
                 mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
-                mTimerService.unPauseTimer();
+                mTimerService.unPauseSession();
 
                 mPauseButton.setText(getString(R.string.pause));
                 mPauseButton.clearAnimation();
@@ -490,6 +490,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         acquireScreenWakelock();
         shutScreenOffIfPreferred();
 
+        mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
         increaseTotalSessions();
 
         if (mPref.getContinuousMode()) {
@@ -553,12 +554,14 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 .setPositiveButton(getString(R.string.dialog_break_session), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        removeCompletionNotification();
                         startTimer(WORK);
                     }
                 })
                 .setNegativeButton(getString(R.string.dialog_session_cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        removeCompletionNotification();
                         mTimerService.sendToBackground();
                     }
                 })
@@ -576,6 +579,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                                     DialogInterface dialog,
                                     int which
                             ) {
+                                removeCompletionNotification();
                                 startBreak();
                             }
                         }
@@ -588,6 +592,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                                     DialogInterface dialog,
                                     int which
                             ) {
+                                removeCompletionNotification();
                                 startTimer(WORK);
                             }
                         }
@@ -595,6 +600,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 .setNeutralButton(getString(R.string.dialog_session_close), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        removeCompletionNotification();
                         mTimerService.sendToBackground();
                     }
                 })
