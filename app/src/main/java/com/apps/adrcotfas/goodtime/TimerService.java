@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import static android.app.AlarmManager.ELAPSED_REALTIME_WAKEUP;
 import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static android.os.Build.VERSION.SDK_INT;
+import static com.apps.adrcotfas.goodtime.SessionType.LONG_BREAK;
 import static com.apps.adrcotfas.goodtime.TimerActivity.NOTIFICATION_TAG;
 import static com.apps.adrcotfas.goodtime.Notifications.createCompletionNotification;
 import static com.apps.adrcotfas.goodtime.Notifications.createForegroundNotification;
@@ -111,6 +112,9 @@ public class TimerService extends Service {
         }
         if (mPref.getDisableWifi()) {
             restoreWifi();
+        }
+        if (mCurrentSession == LONG_BREAK) {
+            resetCurrentSessionStreak();
         }
 
         mTimerState = INACTIVE;
