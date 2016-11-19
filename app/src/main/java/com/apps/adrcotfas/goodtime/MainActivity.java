@@ -128,8 +128,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onCreate(savedInstanceState);
 
         mPref = setUpPreferences();
-        // TODO: uncomment when fixed
-        //migrateOldPreferences();
+        migrateOldPreferences();
         installCustomRingtones();
         setUpUi();
         loadInitialState();

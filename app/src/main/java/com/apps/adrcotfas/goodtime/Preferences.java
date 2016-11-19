@@ -91,7 +91,7 @@ public class Preferences {
     }
 
     public void migrateFromOldPreferences(SharedPreferences oldPref) {
-        if(oldPref.getBoolean(SESSION_DURATION, true)) {
+        if(oldPref.getInt(SESSION_DURATION, -1) == -1) {
             return;
         }
 
