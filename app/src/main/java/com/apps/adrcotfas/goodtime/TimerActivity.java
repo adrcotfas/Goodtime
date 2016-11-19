@@ -205,9 +205,9 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (mIsBoundToTimerService) {
-                    // TODO: handle countdown finished
-                    //onCountdownFinished();
+                if (mIsBoundToTimerService
+                        && intent.getBooleanExtra(TimerService.COUNTDOWN_FINISHED, true)) {
+                    onCountdownFinished();
                 }
             }
         };

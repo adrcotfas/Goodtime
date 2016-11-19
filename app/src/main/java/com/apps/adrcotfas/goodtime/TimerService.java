@@ -1,19 +1,27 @@
 package com.apps.adrcotfas.goodtime;
 
+import android.app.AlarmManager;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import java.util.concurrent.TimeUnit;
 
+import static android.app.AlarmManager.ELAPSED_REALTIME_WAKEUP;
 import static android.media.AudioManager.RINGER_MODE_SILENT;
+import static android.os.Build.VERSION.SDK_INT;
 import static com.apps.adrcotfas.goodtime.TimerActivity.NOTIFICATION_TAG;
 import static com.apps.adrcotfas.goodtime.Notifications.createCompletionNotification;
 import static com.apps.adrcotfas.goodtime.Notifications.createForegroundNotification;
@@ -28,6 +36,7 @@ public class TimerService extends Service {
     private static final int NOTIFICATION_ID = 1;
     private static final String TAG = "TimerService";
     public final static String ACTION_TIMERSERVICE = "com.apps.adrcotfas.goodtime.TIMERSERVICE";
+    public final static String COUNTDOWN_FINISHED = "com.apps.adrcotfas.goodtime.COUNTDOWN_FINISHED";
 
     private long mCountDownFinishedTime;
     private int mRemainingTimePaused;
@@ -42,6 +51,9 @@ public class TimerService extends Service {
     private boolean mIsTimerRunning;
     private Preferences mPref;
     private SessionType mCurrentSession;
+
+    private BroadcastReceiver mAlarmReceiver;
+    private AlarmManager mAlarmManager;
 
     @Override
     public void onCreate() {
@@ -85,6 +97,7 @@ public class TimerService extends Service {
 
         mTimerState = ACTIVE;
         mCurrentSession = sessionType;
+        setAlarm(mCountDownFinishedTime);
     }
 
     public void stopSession() {
@@ -101,6 +114,7 @@ public class TimerService extends Service {
         }
 
         mTimerState = INACTIVE;
+        cancelAlarm();
     }
 
     private long calculateSessionDurationFor(SessionType sessionType) {
@@ -121,6 +135,7 @@ public class TimerService extends Service {
         mTimerState = PAUSED;
         mIsTimerRunning = false;
         mRemainingTimePaused = getRemainingTime();
+        cancelAlarm();
     }
 
     public void unPauseTimer() {
@@ -246,6 +261,44 @@ public class TimerService extends Service {
     protected void sendToBackground() {
         mIsOnForeground = false;
         stopForeground(true);
+    }
+
+    public void setAlarm(long countDownTime) {
+        Log.w(TAG, "Alarm set.");
+        mAlarmReceiver = new BroadcastReceiver() {
+            @Override public void onReceive(Context context, Intent _ )
+            {
+                Intent finishedIntent = new Intent(ACTION_TIMERSERVICE);
+                finishedIntent.putExtra(COUNTDOWN_FINISHED, true);
+                mBroadcastManager.sendBroadcast(finishedIntent);
+                Log.d(TAG, "Countdown finished");
+                onCountdownFinished();
+                context.unregisterReceiver(this);
+            }
+        };
+
+        this.registerReceiver( mAlarmReceiver, new IntentFilter(ACTION_TIMERSERVICE) );
+
+        PendingIntent intent = PendingIntent.getBroadcast( this, 0, new Intent(ACTION_TIMERSERVICE), 0);
+        mAlarmManager = (AlarmManager)(this.getSystemService(Context.ALARM_SERVICE));
+
+        if (SDK_INT >= Build.VERSION_CODES.M) {
+            mAlarmManager.setExactAndAllowWhileIdle(ELAPSED_REALTIME_WAKEUP, countDownTime, intent);
+        } else if (SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            mAlarmManager.setExact(ELAPSED_REALTIME_WAKEUP, countDownTime, intent);
+        }
+    }
+
+    void cancelAlarm() {
+        Log.w(TAG, "Alarm canceled.");
+        PendingIntent intent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_TIMERSERVICE), 0);
+        mAlarmManager.cancel(intent);
+
+        try {
+            this.unregisterReceiver(mAlarmReceiver);
+        } catch(IllegalArgumentException e) {
+            Log.w(TAG, "AlarmReceiver is already unregistered.");
+        }
     }
 
 }
