@@ -18,7 +18,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="com.apps.adrcotfas.goodtime.MainActivity"
-            android:label="Goodtime"
+            android:label="@string/app_name"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
@@ -29,19 +29,19 @@
         </activity>
         <activity
             android:name=".settings.SettingsActivity"
-            android:label="Settings"
+            android:label="@string/action_settings"
             android:parentActivityName="com.apps.adrcotfas.goodtime.MainActivity"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".about.AboutActivity"
-            android:label="About"
+            android:label="@string/action_about"
             android:parentActivityName="com.apps.adrcotfas.goodtime.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".about.LicencesActivity"
-            android:label="Contributors and licences"
+            android:label="@string/about_contributors"
             android:parentActivityName=".about.AboutActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>
