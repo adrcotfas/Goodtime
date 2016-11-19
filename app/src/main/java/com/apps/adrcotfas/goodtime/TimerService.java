@@ -286,6 +286,8 @@ public class TimerService extends Service {
             mAlarmManager.setExactAndAllowWhileIdle(ELAPSED_REALTIME_WAKEUP, countDownTime, intent);
         } else if (SDK_INT >= Build.VERSION_CODES.KITKAT) {
             mAlarmManager.setExact(ELAPSED_REALTIME_WAKEUP, countDownTime, intent);
+        } else {
+            mAlarmManager.set(ELAPSED_REALTIME_WAKEUP, countDownTime, intent);
         }
     }
 
