@@ -43,12 +43,10 @@ public class TimerService extends Service {
     private int mRemainingTimePaused;
     private int mCurrentSessionStreak;
     private TimerState mTimerState;
-    private TimerState mTimerBroughtToForegroundState;
     private final IBinder mBinder = new TimerBinder();
     private LocalBroadcastManager mBroadcastManager;
     private int mPreviousRingerMode;
     private boolean mPreviousWifiMode;
-    private boolean mIsOnForeground;
     private boolean mIsTimerRunning;
     private Preferences mPref;
     private SessionType mCurrentSession;
@@ -255,9 +253,7 @@ public class TimerService extends Service {
         mCurrentSessionStreak = 0;
     }
 
-    protected void bringToForegroundAndUpdateNotification() {
-        mIsOnForeground = true;
-        mTimerBroughtToForegroundState = mTimerState;
+    protected void bringToForeground() {
         startForeground(
                 NOTIFICATION_ID,
                 createForegroundNotification(this, mCurrentSession, mTimerState)
@@ -265,7 +261,6 @@ public class TimerService extends Service {
     }
 
     protected void sendToBackground() {
-        mIsOnForeground = false;
         stopForeground(true);
     }
 

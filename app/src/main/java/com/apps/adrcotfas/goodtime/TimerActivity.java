@@ -175,7 +175,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     @Override
     protected void onStop() {
         if (mIsBoundToTimerService && mTimerService.getTimerState() != INACTIVE) {
-            mTimerService.bringToForegroundAndUpdateNotification();
+            mTimerService.bringToForeground();
             mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
         }
         if (mPref.getRotateTimeLabel()) {
