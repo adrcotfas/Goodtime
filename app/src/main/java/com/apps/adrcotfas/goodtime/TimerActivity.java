@@ -130,8 +130,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         super.onCreate(savedInstanceState);
 
         mPref = setUpPreferences();
-        // TODO: uncomment when fixed
-        //migrateOldPreferences();
+        migrateOldPreferences();
         installCustomRingtones();
         setUpUi();
         loadInitialState();
