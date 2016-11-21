@@ -42,7 +42,7 @@ public class Notifications {
                         getActivity(
                                 context,
                                 0,
-                                new Intent(context.getApplicationContext(), MainActivity.class),
+                                new Intent(context.getApplicationContext(), TimerActivity.class),
                                 FLAG_ONE_SHOT
                         ))
                .setAutoCancel(true);
@@ -77,7 +77,7 @@ public class Notifications {
                         getActivity(
                                 context,
                                 0,
-                                new Intent(context.getApplicationContext(), MainActivity.class),
+                                new Intent(context.getApplicationContext(), TimerActivity.class),
                                 FLAG_UPDATE_CURRENT
                         ))
                 .build();

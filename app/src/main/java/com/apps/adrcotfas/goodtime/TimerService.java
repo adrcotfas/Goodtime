@@ -20,7 +20,7 @@ import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
 import static android.os.PowerManager.ON_AFTER_RELEASE;
 import static android.os.PowerManager.PARTIAL_WAKE_LOCK;
-import static com.apps.adrcotfas.goodtime.MainActivity.NOTIFICATION_TAG;
+import static com.apps.adrcotfas.goodtime.TimerActivity.NOTIFICATION_TAG;
 import static com.apps.adrcotfas.goodtime.Notifications.createCompletionNotification;
 import static com.apps.adrcotfas.goodtime.Notifications.createForegroundNotification;
 import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;

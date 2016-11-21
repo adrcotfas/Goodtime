@@ -58,10 +58,10 @@ import static com.apps.adrcotfas.goodtime.SessionType.WORK;
 import static com.apps.adrcotfas.goodtime.TimerState.INACTIVE;
 import static java.lang.String.format;
 
-public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class TimerActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final int MAXIMUM_MILLISECONDS_BETWEEN_BACK_PRESSES = 2000;
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "TimerActivity";
     public static final int NOTIFICATION_TAG = 2;
 
     private long mBackPressedAt;
