@@ -236,6 +236,10 @@ public class TimerService extends Service {
         return mCurrentSession;
     }
 
+    public int getRemainingTime() {
+        return mRemainingTime;
+    }
+
     public int getCurrentSessionStreak() {
         return mCurrentSessionStreak;
     }
