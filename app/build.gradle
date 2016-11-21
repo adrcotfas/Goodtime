@@ -7,7 +7,7 @@ android {
         applicationId 'com.apps.adrcotfas.goodtime'
         minSdkVersion 17
         targetSdkVersion 24
-        versionCode 39
+        versionCode 40
         versionName "1.1.0"
     }
     buildTypes {
