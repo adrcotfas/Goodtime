@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -62,6 +63,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
     private static final int MAXIMUM_MILLISECONDS_BETWEEN_BACK_PRESSES = 2000;
     private static final String TAG = "TimerActivity";
+    protected final static int MSG_UPDATE_TIME = 0;
     public static final int NOTIFICATION_TAG = 2;
 
     private long mBackPressedAt;
@@ -78,6 +80,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     private TimerService mTimerService;
     private BroadcastReceiver mBroadcastReceiver;
     private boolean mIsBoundToTimerService = false;
+    private final Handler mUpdateTimeHandler = new TimeLabelUpdateHandler(this);
     private ServiceConnection mTimerServiceConnection = new ServiceConnection() {
 
         @Override
@@ -85,7 +88,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             TimerService.TimerBinder binder = (TimerService.TimerBinder) iBinder;
             mTimerService = binder.getService();
             mIsBoundToTimerService = true;
-            mTimerService.sendToBackground();
         }
 
         @Override
@@ -156,11 +158,12 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     @Override
     protected void onResume() {
         super.onResume();
-        if (mIsBoundToTimerService) {
+        if (mIsBoundToTimerService && mTimerService.getTimerState() != INACTIVE &&
+                mTimerService.isTimerRunning()) {
             mTimerService.sendToBackground();
+            mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
         }
-
-        removeCompletionNotification();
+            removeCompletionNotification();
 
         if (mPrivatePref.getBoolean(FIRST_RUN, true)) {
             Intent introIntent = new Intent(this, ProductTourActivity.class);
@@ -172,7 +175,8 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     @Override
     protected void onStop() {
         if (mIsBoundToTimerService && mTimerService.getTimerState() != INACTIVE) {
-            mTimerService.bringToForegroundAndUpdateNotification();
+            mTimerService.bringToForeground();
+            mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
         }
         if (mPref.getRotateTimeLabel()) {
             mOrientationListener.disable();
@@ -183,7 +187,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     @Override
     protected void onDestroy() {
         if (mIsBoundToTimerService) {
-            mTimerService.removeTimer();
             stopService(new Intent(this, TimerService.class));
             unbindService(mTimerServiceConnection);
             mIsBoundToTimerService = false;
@@ -200,16 +203,9 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (mIsBoundToTimerService) {
-                    int remainingTime = intent.getIntExtra(TimerService.REMAINING_TIME, 0);
-
-                    Log.d(TAG, "Updating timer, " + remainingTime + " remaining");
-
-                    updateTimerLabel(remainingTime);
-
-                    if (remainingTime == 0) {
-                        onCountdownFinished();
-                    }
+                if (mIsBoundToTimerService
+                        && intent.getBooleanExtra(TimerService.COUNTDOWN_FINISHED, true)) {
+                    onCountdownFinished();
                 }
             }
         };
@@ -298,7 +294,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                     buttons.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade));
                 }
 
-                startTimer(300, WORK);
+                startTimer(WORK);
                 enablePauseButton();
                 mStartButton.setEnabled(false);
                 mStartButton.postDelayed(new Runnable() {
@@ -341,7 +337,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     private void setUpTimerLabel() {
         if (mTimeLabel != null) {
             mTimeLabel.setTypeface(createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf"));
-            updateTimerLabel(mPref.getSessionDuration() * 60);
+            updateTimerLabel();
         }
     }
 
@@ -390,7 +386,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             }
         } else if (key.equals(SESSION_DURATION)) {
             if (mTimerService.getTimerState() == INACTIVE) {
-                updateTimerLabel(mPref.getSessionDuration() * 60);
+                updateTimerLabel();
             }
         }
     }
@@ -419,9 +415,10 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     private void loadInitialState() {
         Log.d(TAG, "Loading initial state");
 
+        mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
+
         if (mIsBoundToTimerService) {
-            updateTimerLabel(mPref.getSessionDuration() * 60);
-            mTimerService.removeTimer();
+            updateTimerLabel();
             shutScreenOffIfPreferred();
         }
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
@@ -439,18 +436,16 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         }
     }
 
-    private void startTimer(
-            long delay,
-            SessionType sessionType
-    ) {
+    private void startTimer(SessionType sessionType) {
         Log.i(TAG, "Timer has been started");
 
+        mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
         mTimeLabel.setTextColor(Color.WHITE);
         loadRunningTimerUiState();
 
         keepScreenOnIfPreferred();
 
-        mTimerService.startSession(delay, sessionType);
+        mTimerService.startSession(sessionType);
     }
 
     private void loadRunningTimerUiState() {
@@ -467,23 +462,20 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     }
 
     private void pauseTimer() {
-        Log.i(TAG, "Timer has been paused");
-
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
-        long timeOfButtonPress = System.currentTimeMillis();
         switch (mTimerService.getTimerState()) {
             case ACTIVE:
-                mTimerService.pauseTimer();
+                Log.i(TAG, "Timer has been paused");
+                mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
+                mTimerService.pauseSession();
 
                 mPauseButton.setText(getString(R.string.resume));
                 mPauseButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
                 break;
             case PAUSED:
-                mTimerService.unpauseTimer(
-                        System.currentTimeMillis() - timeOfButtonPress > 1000
-                        ? 0
-                        : 1000 - (System.currentTimeMillis() - timeOfButtonPress)
-                );
+                Log.i(TAG, "Timer has been resumed");
+                mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
+                mTimerService.unPauseSession();
 
                 mPauseButton.setText(getString(R.string.pause));
                 mPauseButton.clearAnimation();
@@ -497,6 +489,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         acquireScreenWakelock();
         shutScreenOffIfPreferred();
 
+        mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
         increaseTotalSessions();
 
         if (mPref.getContinuousMode()) {
@@ -560,12 +553,14 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 .setPositiveButton(getString(R.string.dialog_break_session), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        startTimer(0, WORK);
+                        removeCompletionNotification();
+                        startTimer(WORK);
                     }
                 })
                 .setNegativeButton(getString(R.string.dialog_session_cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        removeCompletionNotification();
                         mTimerService.sendToBackground();
                     }
                 })
@@ -583,6 +578,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                                     DialogInterface dialog,
                                     int which
                             ) {
+                                removeCompletionNotification();
                                 startBreak();
                             }
                         }
@@ -595,13 +591,15 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                                     DialogInterface dialog,
                                     int which
                             ) {
-                                startTimer(0, WORK);
+                                removeCompletionNotification();
+                                startTimer(WORK);
                             }
                         }
                 )
                 .setNeutralButton(getString(R.string.dialog_session_close), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        removeCompletionNotification();
                         mTimerService.sendToBackground();
                     }
                 })
@@ -611,9 +609,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     private void startBreak() {
         disablePauseButton();
 
-        startTimer(
-                0,
-                mTimerService.getCurrentSessionStreak() >= mPref.getSessionsBeforeLongBreak()
+        startTimer(mTimerService.getCurrentSessionStreak() >= mPref.getSessionsBeforeLongBreak()
                 ? LONG_BREAK
                 : BREAK
         );
@@ -642,8 +638,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 if (mTimerService.getCurrentSessionStreak() >= mPref.getSessionsBeforeLongBreak()) {
                     mTimerService.resetCurrentSessionStreak();
                 }
-
-                startTimer(0, WORK);
+                startTimer(WORK);
         }
     }
 
@@ -652,12 +647,17 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mPauseButton.setTextColor(getResources().getColor(R.color.yellow));
     }
 
-    private void updateTimerLabel(
-            final int remainingTime
-    ) {
-        int minutes = remainingTime / 60;
-        int seconds = remainingTime % 60;
+    protected void updateTimerLabel() {
+        int minutes = mPref.getSessionDuration();
+        int seconds = 0;
 
+        if (mIsBoundToTimerService && mTimerService.isTimerRunning()) {
+            int remainingTime = mTimerService.getRemainingTime();
+            minutes = remainingTime / 60;
+            seconds = remainingTime % 60;
+        }
+
+        Log.i(TAG, "Updating time label: " + minutes + ":" + seconds);
         String currentTick = (minutes > 0 ? minutes : "") +
                 "." +
                 format(Locale.US, "%02d", seconds);
