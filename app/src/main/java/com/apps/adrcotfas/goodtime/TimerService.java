@@ -1,25 +1,28 @@
 package com.apps.adrcotfas.goodtime;
 
+import android.app.AlarmManager;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Binder;
-import android.os.Handler;
+import android.os.Build;
 import android.os.IBinder;
-import android.os.PowerManager;
+import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import java.util.concurrent.TimeUnit;
 
-import java.util.Timer;
-
+import static android.app.AlarmManager.ELAPSED_REALTIME_WAKEUP;
 import static android.media.AudioManager.RINGER_MODE_SILENT;
-import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
-import static android.os.PowerManager.ON_AFTER_RELEASE;
-import static android.os.PowerManager.PARTIAL_WAKE_LOCK;
+import static android.os.Build.VERSION.SDK_INT;
+import static com.apps.adrcotfas.goodtime.SessionType.LONG_BREAK;
 import static com.apps.adrcotfas.goodtime.TimerActivity.NOTIFICATION_TAG;
 import static com.apps.adrcotfas.goodtime.Notifications.createCompletionNotification;
 import static com.apps.adrcotfas.goodtime.Notifications.createForegroundNotification;
@@ -34,21 +37,22 @@ public class TimerService extends Service {
     private static final int NOTIFICATION_ID = 1;
     private static final String TAG = "TimerService";
     public final static String ACTION_TIMERSERVICE = "com.apps.adrcotfas.goodtime.TIMERSERVICE";
-    public final static String REMAINING_TIME = "com.apps.adrcotfas.goodtime.REMAINING_TIME";
+    public final static String COUNTDOWN_FINISHED = "com.apps.adrcotfas.goodtime.COUNTDOWN_FINISHED";
 
-    private int mRemainingTime;
+    private long mCountDownFinishedTime;
+    private int mRemainingTimePaused;
     private int mCurrentSessionStreak;
-    private Timer mTimer;
     private TimerState mTimerState;
-    private TimerState mTimerBroughtToForegroundState;
     private final IBinder mBinder = new TimerBinder();
     private LocalBroadcastManager mBroadcastManager;
     private int mPreviousRingerMode;
     private boolean mPreviousWifiMode;
-    private boolean mIsOnForeground;
+    private boolean mIsTimerRunning;
     private Preferences mPref;
     private SessionType mCurrentSession;
-    private PowerManager.WakeLock mWakeLock;
+
+    private BroadcastReceiver mAlarmReceiver;
+    private AlarmManager mAlarmManager;
 
     @Override
     public void onCreate() {
@@ -73,14 +77,13 @@ public class TimerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        releaseWakelock();
     }
 
-    public void startSession(long delay, SessionType sessionType) {
-        mRemainingTime = calculateSessionDurationFor(sessionType);
-        Log.i(TAG, "Starting new timer for " + sessionType + ", duration " + mRemainingTime);
-
-        acquirePartialWakelock();
+    public void startSession(SessionType sessionType) {
+        mIsTimerRunning = true;
+        mCountDownFinishedTime = calculateSessionDurationFor(sessionType);
+        Log.i(TAG, "Starting new timer for " + sessionType + ", ending in "
+                + getRemainingTime() + " seconds.");
 
         if (mPref.getDisableSoundAndVibration() && sessionType == WORK) {
             saveCurrentStateOfSound();
@@ -93,45 +96,14 @@ public class TimerService extends Service {
 
         mTimerState = ACTIVE;
         mCurrentSession = sessionType;
-
-        createAndStartTimer(delay);
-    }
-
-    private int calculateSessionDurationFor(
-            SessionType sessionType
-    ) {
-        switch (sessionType) {
-            case WORK:
-                return mPref.getSessionDuration() * 60;
-            case BREAK:
-                return mPref.getBreakDuration() * 60;
-            case LONG_BREAK:
-                return mPref.getLongBreakDuration() * 60;
-            default:
-                throw new IllegalStateException("This cannot happen");
-        }
-    }
-
-    private void acquirePartialWakelock() {
-        mWakeLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(
-                PARTIAL_WAKE_LOCK | ON_AFTER_RELEASE | ACQUIRE_CAUSES_WAKEUP,
-                "starting partial wake lock"
-        );
-        mWakeLock.acquire();
-    }
-
-    public void unpauseTimer(long delay) {
-        mTimerState = ACTIVE;
-        createAndStartTimer(delay);
+        setAlarm(mCountDownFinishedTime);
     }
 
     public void stopSession() {
+        mIsTimerRunning = false;
         Log.d(TAG, "Session stopped");
 
         sendToBackground();
-
-        releaseWakelock();
-        removeTimer();
 
         if (mPref.getDisableSoundAndVibration()) {
             restoreSound();
@@ -139,45 +111,47 @@ public class TimerService extends Service {
         if (mPref.getDisableWifi()) {
             restoreWifi();
         }
+        if (mCurrentSession == LONG_BREAK) {
+            resetCurrentSessionStreak();
+        }
 
         mTimerState = INACTIVE;
+        cancelAlarm();
     }
 
-    private void createAndStartTimer(long delay) {
-        Log.d(TAG, "Starting new timer");
-
-        sendUpdateIntent();
-
-        mTimer = new Timer();
-        mTimer.schedule(
-                new UpdateTask(new Handler(), this),
-                delay,
-                1000
-        );
-    }
-
-    public void countdown() {
-        if (mTimerState != INACTIVE && mTimerState != PAUSED) {
-            if (mRemainingTime > 0) {
-                mRemainingTime--;
-            }
-
-            if (mRemainingTime == 0) {
-                onCountdownFinished();
-            }
-
-            sendUpdateIntent();
-
-            if (mIsOnForeground && mTimerBroughtToForegroundState != mTimerState) {
-                bringToForegroundAndUpdateNotification();
-            }
+    private long calculateSessionDurationFor(SessionType sessionType) {
+        long currentTime = SystemClock.elapsedRealtime();
+        switch (sessionType) {
+            case WORK:
+                return currentTime + TimeUnit.MINUTES.toMillis(mPref.getSessionDuration());
+            case BREAK:
+                return currentTime + TimeUnit.MINUTES.toMillis(mPref.getBreakDuration());
+            case LONG_BREAK:
+                return currentTime + TimeUnit.MINUTES.toMillis(mPref.getLongBreakDuration());
+            default:
+                throw new IllegalStateException("This cannot happen");
         }
+    }
+
+    public void pauseSession() {
+        mTimerState = PAUSED;
+        mIsTimerRunning = false;
+        mRemainingTimePaused = getRemainingTime();
+        cancelAlarm();
+    }
+
+    public void unPauseSession() {
+        mTimerState = ACTIVE;
+        mIsTimerRunning = true;
+        mCountDownFinishedTime = SystemClock.elapsedRealtime() +
+                TimeUnit.SECONDS.toMillis(mRemainingTimePaused);
+        Log.i(TAG, "Resuming countdown for " + getSessionType() + ", ending in "
+                + getRemainingTime() + " seconds.");
+        setAlarm(mCountDownFinishedTime);
     }
 
     private void onCountdownFinished() {
         Log.d(TAG, "Countdown finished");
-        releaseWakelock();
-        removeTimer();
 
         if (mPref.getDisableSoundAndVibration()) {
             restoreSound();
@@ -187,19 +161,9 @@ public class TimerService extends Service {
         }
 
         sendFinishedNotification();
+        mIsTimerRunning = false;
         mTimerState = INACTIVE;
         sendToBackground();
-    }
-
-
-    private void releaseWakelock() {
-        if (mWakeLock != null) {
-            try {
-                mWakeLock.release();
-            } catch (Throwable th) {
-                // ignoring this exception, probably wakeLock was already released
-            }
-        }
     }
 
     private void saveCurrentStateOfSound() {
@@ -249,28 +213,8 @@ public class TimerService extends Service {
         );
     }
 
-    private void sendUpdateIntent() {
-        Intent remainingTimeIntent = new Intent(ACTION_TIMERSERVICE);
-        remainingTimeIntent.putExtra(REMAINING_TIME, mRemainingTime);
-        mBroadcastManager.sendBroadcast(remainingTimeIntent);
-    }
-
-    public void pauseTimer() {
-        mTimerState = PAUSED;
-        removeTimer();
-        releaseWakelock();
-    }
-
-    public void removeTimer() {
-        if (mIsOnForeground) {
-            bringToForegroundAndUpdateNotification();
-        }
-
-        if (mTimer != null) {
-            mTimer.cancel();
-            mTimer.purge();
-            mTimer = null;
-        }
+    public boolean isTimerRunning() {
+        return mIsTimerRunning;
     }
 
     public class TimerBinder extends Binder {
@@ -292,12 +236,13 @@ public class TimerService extends Service {
         return mCurrentSession;
     }
 
-    public int getRemainingTime() {
-        return mRemainingTime;
-    }
-
     public int getCurrentSessionStreak() {
         return mCurrentSessionStreak;
+    }
+
+    public int getRemainingTime() {
+        return (int) (TimeUnit.MILLISECONDS.toSeconds(
+                mCountDownFinishedTime - SystemClock.elapsedRealtime()));
     }
 
     public void increaseCurrentSessionStreak() {
@@ -308,9 +253,7 @@ public class TimerService extends Service {
         mCurrentSessionStreak = 0;
     }
 
-    protected void bringToForegroundAndUpdateNotification() {
-        mIsOnForeground = true;
-        mTimerBroughtToForegroundState = mTimerState;
+    protected void bringToForeground() {
         startForeground(
                 NOTIFICATION_ID,
                 createForegroundNotification(this, mCurrentSession, mTimerState)
@@ -318,8 +261,47 @@ public class TimerService extends Service {
     }
 
     protected void sendToBackground() {
-        mIsOnForeground = false;
         stopForeground(true);
+    }
+
+    public void setAlarm(long countDownTime) {
+        Log.w(TAG, "Alarm set.");
+        mAlarmReceiver = new BroadcastReceiver() {
+            @Override public void onReceive(Context context, Intent _ )
+            {
+                Intent finishedIntent = new Intent(ACTION_TIMERSERVICE);
+                finishedIntent.putExtra(COUNTDOWN_FINISHED, true);
+                mBroadcastManager.sendBroadcast(finishedIntent);
+                Log.d(TAG, "Countdown finished");
+                onCountdownFinished();
+                context.unregisterReceiver(this);
+            }
+        };
+
+        this.registerReceiver( mAlarmReceiver, new IntentFilter(ACTION_TIMERSERVICE) );
+
+        PendingIntent intent = PendingIntent.getBroadcast( this, 0, new Intent(ACTION_TIMERSERVICE), 0);
+        mAlarmManager = (AlarmManager)(this.getSystemService(Context.ALARM_SERVICE));
+
+        if (SDK_INT >= Build.VERSION_CODES.M) {
+            mAlarmManager.setExactAndAllowWhileIdle(ELAPSED_REALTIME_WAKEUP, countDownTime, intent);
+        } else if (SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            mAlarmManager.setExact(ELAPSED_REALTIME_WAKEUP, countDownTime, intent);
+        } else {
+            mAlarmManager.set(ELAPSED_REALTIME_WAKEUP, countDownTime, intent);
+        }
+    }
+
+    void cancelAlarm() {
+        Log.w(TAG, "Alarm canceled.");
+        PendingIntent intent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_TIMERSERVICE), 0);
+        mAlarmManager.cancel(intent);
+
+        try {
+            this.unregisterReceiver(mAlarmReceiver);
+        } catch(IllegalArgumentException e) {
+            Log.w(TAG, "AlarmReceiver is already unregistered.");
+        }
     }
 
 }
