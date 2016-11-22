@@ -276,24 +276,10 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     }
 
     private void setUpStartButton() {
-        final RelativeLayout buttons = (RelativeLayout) findViewById(R.id.buttons);
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mStartButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.implode));
-                if (buttons != null) {
-                    buttons.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade));
-                }
-
-                startTimer(WORK);
-                enablePauseButton();
-                mStartButton.setEnabled(false);
-                mStartButton.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mStartButton.setEnabled(true);
-                    }
-                }, 300);
+                onStartButtonClick();
             }
         });
     }
@@ -302,25 +288,16 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pauseTimer();
+                onPauseButtonClick();
             }
         });
     }
 
     private void setUpStopButton() {
-        final RelativeLayout buttons = (RelativeLayout) findViewById(R.id.buttons);
         mStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPauseButton.clearAnimation();
-                if (buttons != null) {
-                    buttons.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade_reverse));
-                }
-
-                mStartButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.implode_reverse));
-
-                mTimerService.stopSession();
-                loadInitialState();
+                onStopButtonClick();
             }
         });
     }
@@ -452,7 +429,24 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         }
     }
 
-    private void pauseTimer() {
+    private void onStartButtonClick() {
+        mStartButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.implode));
+        final RelativeLayout buttons = (RelativeLayout) findViewById(R.id.buttons);
+        if (buttons != null) {
+            buttons.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade));
+        }
+
+        startTimer(WORK);
+        enablePauseButton();
+        mStartButton.setEnabled(false);
+        mStartButton.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mStartButton.setEnabled(true);
+            }
+        }, 300);
+    }
+    private void onPauseButtonClick() {
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
         switch (mTimerService.getTimerState()) {
             case ACTIVE:
@@ -472,6 +466,19 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 mPauseButton.clearAnimation();
                 break;
         }
+    }
+
+    private void onStopButtonClick() {
+        mPauseButton.clearAnimation();
+        final RelativeLayout buttons = (RelativeLayout) findViewById(R.id.buttons);
+        if (buttons != null) {
+            buttons.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade_reverse));
+        }
+
+        mStartButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.implode_reverse));
+
+        mTimerService.stopSession();
+        loadInitialState();
     }
 
     private void onCountdownFinished() {
