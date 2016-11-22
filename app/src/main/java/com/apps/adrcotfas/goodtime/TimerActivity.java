@@ -201,14 +201,13 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (mIsBoundToTimerService
-                        && intent.getBooleanExtra(TimerService.COUNTDOWN_FINISHED, true)) {
+                if (intent.getAction().equals(TimerService.ACTION_TIMERACTIVITY_FINISHED)) {
                     onCountdownFinished();
                 }
             }
         };
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver((mBroadcastReceiver),
-                new IntentFilter(TimerService.ACTION_TIMERSERVICE)
+                new IntentFilter(TimerService.ACTION_TIMERACTIVITY_FINISHED)
         );
     }
 
@@ -483,6 +482,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
         mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
         increaseTotalSessions();
+        loadInitialState();
 
         if (mPref.getContinuousMode()) {
             goOnContinuousMode();
@@ -517,22 +517,16 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
         switch (mTimerService.getSessionType()) {
             case WORK:
-                loadInitialState();
-
                 mAlertDialog = buildStartBreakDialog();
                 mAlertDialog.setCanceledOnTouchOutside(false);
                 mAlertDialog.show();
-
                 break;
             case BREAK:
             case LONG_BREAK:
-                loadInitialState();
                 enablePauseButton();
-
                 if (mTimerService.getCurrentSessionStreak() >= mPref.getSessionsBeforeLongBreak()) {
                     mTimerService.resetCurrentSessionStreak();
                 }
-
                 mAlertDialog = buildStartSessionDialog();
                 mAlertDialog.setCanceledOnTouchOutside(false);
                 mAlertDialog.show();
@@ -620,12 +614,10 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     private void goOnContinuousMode() {
         switch (mTimerService.getSessionType()) {
             case WORK:
-                loadInitialState();
                 startBreak();
                 break;
             case BREAK:
             case LONG_BREAK:
-                loadInitialState();
                 enablePauseButton();
                 if (mTimerService.getCurrentSessionStreak() >= mPref.getSessionsBeforeLongBreak()) {
                     mTimerService.resetCurrentSessionStreak();
