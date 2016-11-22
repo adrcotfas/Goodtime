@@ -3,11 +3,6 @@
         <PreferenceCategory
             android:title="Thanks to">
                 <Preference
-                    android:key="patrick_ford"
-                    android:summary="for the notification chime."
-                    android:title="Patrick Ford">
-                </Preference>
-                <Preference
                     android:key="fdw"
                     android:summary="for the contributions."
                     android:title="Fabian Winter">

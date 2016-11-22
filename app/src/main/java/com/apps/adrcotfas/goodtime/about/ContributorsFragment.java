@@ -37,9 +37,6 @@ public class ContributorsFragment
     }
 
     private void addLicenses() {
-        findPreference("patrick_ford").setOnPreferenceClickListener(
-                createPreferenceClickListener("https://www.freesound.org/people/hykenfreak")
-        );
         findPreference("fdw").setOnPreferenceClickListener(
                 createPreferenceClickListener("https://github.com/fdw")
         );

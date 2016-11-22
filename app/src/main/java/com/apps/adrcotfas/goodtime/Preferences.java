@@ -3,8 +3,6 @@ package com.apps.adrcotfas.goodtime;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.apps.adrcotfas.goodtime.settings.CustomNotification;
-
 public class Preferences {
 
     public static final String PREFERENCES_NAME = "com.apps.adrcotfas.goodtime.preferences";
@@ -36,10 +34,6 @@ public class Preferences {
                  .putInt(SETTINGS_VERSION, CURRENT_SETTINGS_VERSION)
                  .apply();
         }
-    }
-
-    public boolean getRingtonesCopied() {
-        return mPref.getBoolean(CustomNotification.PREF_KEY_RINGTONES_COPIED, false);
     }
 
     public int getSessionDuration() {

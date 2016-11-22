@@ -34,7 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.about.AboutActivity;
-import com.apps.adrcotfas.goodtime.settings.CustomNotification;
 import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
 
 import java.util.Locale;
@@ -131,7 +130,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
         mPref = setUpPreferences();
         migrateOldPreferences();
-        installCustomRingtones();
         setUpUi();
         loadInitialState();
         setUpAndroidNougatSettings();
@@ -232,12 +230,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             if (!notificationManager.isNotificationPolicyAccessGranted()) {
                 mPref.setDisableSoundAndVibration(false);
             }
-        }
-    }
-
-    private void installCustomRingtones() {
-        if (!mPref.getRingtonesCopied()) {
-            CustomNotification.installToStorage(this);
         }
     }
 
