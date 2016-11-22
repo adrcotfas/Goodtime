@@ -385,7 +385,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 button.setText(String.valueOf(mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0)));
             }
         } else if (key.equals(SESSION_DURATION)) {
-            if (mTimerService.getTimerState() == INACTIVE) {
+            if (mIsBoundToTimerService && mTimerService.getTimerState() == INACTIVE) {
                 updateTimerLabel();
             }
         }
