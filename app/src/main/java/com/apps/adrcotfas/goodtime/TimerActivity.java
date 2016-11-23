@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -37,6 +38,7 @@ import com.apps.adrcotfas.goodtime.about.AboutActivity;
 import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
 
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import static android.graphics.Typeface.createFromAsset;
 import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
@@ -56,6 +58,7 @@ import static com.apps.adrcotfas.goodtime.SessionType.BREAK;
 import static com.apps.adrcotfas.goodtime.SessionType.LONG_BREAK;
 import static com.apps.adrcotfas.goodtime.SessionType.WORK;
 import static com.apps.adrcotfas.goodtime.TimerState.INACTIVE;
+import static com.apps.adrcotfas.goodtime.TimerState.PAUSED;
 import static java.lang.String.format;
 
 public class TimerActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -79,6 +82,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     private TimerService mTimerService;
     private BroadcastReceiver mBroadcastReceiver;
     private boolean mIsBoundToTimerService = false;
+    private boolean mIsUiVisible;
     private final Handler mUpdateTimeHandler = new TimeLabelUpdateHandler(this);
     private ServiceConnection mTimerServiceConnection = new ServiceConnection() {
 
@@ -156,8 +160,8 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     @Override
     protected void onResume() {
         super.onResume();
-        if (mIsBoundToTimerService && mTimerService.getTimerState() != INACTIVE &&
-                mTimerService.isTimerRunning()) {
+        mIsUiVisible = true;
+        if (mIsBoundToTimerService && mTimerService.getTimerState() != INACTIVE) {
             mTimerService.sendToBackground();
             mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
         }
@@ -172,6 +176,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
     @Override
     protected void onStop() {
+        mIsUiVisible = false;
         if (mIsBoundToTimerService && mTimerService.getTimerState() != INACTIVE) {
             mTimerService.bringToForeground();
             mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
@@ -201,13 +206,24 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(TimerService.ACTION_TIMERACTIVITY_FINISHED)) {
+                if (intent.getAction().equals(TimerService.ACTION_FINISHED_UI)) {
                     onCountdownFinished();
+                } else if (intent.getAction().equals(Notifications.ACTION_PAUSE_UI)) {
+                    onPauseButtonClick();
+                    mTimerService.bringToForeground();
+                } else if (intent.getAction().equals(Notifications.ACTION_STOP_UI)) {
+                    onStopButtonClick();
                 }
             }
         };
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver((mBroadcastReceiver),
-                new IntentFilter(TimerService.ACTION_TIMERACTIVITY_FINISHED)
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                (mBroadcastReceiver), new IntentFilter(TimerService.ACTION_FINISHED_UI)
+        );
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                (mBroadcastReceiver), new IntentFilter(Notifications.ACTION_PAUSE_UI)
+        );
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                (mBroadcastReceiver), new IntentFilter(Notifications.ACTION_STOP_UI)
         );
     }
 
@@ -459,7 +475,9 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 break;
             case PAUSED:
                 Log.i(TAG, "Timer has been resumed");
-                mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
+                if (mIsUiVisible) {
+                    mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
+                }
                 mTimerService.unPauseSession();
 
                 mPauseButton.setText(getString(R.string.pause));
@@ -639,14 +657,22 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     }
 
     protected void updateTimerLabel() {
-        int minutes = mPref.getSessionDuration();
-        int seconds = 0;
+        int remainingTime = 0;
 
-        if (mIsBoundToTimerService && mTimerService.isTimerRunning()) {
-            int remainingTime = mTimerService.getRemainingTime();
-            minutes = remainingTime / 60;
-            seconds = remainingTime % 60;
+        if (mIsBoundToTimerService) {
+            if (mTimerService.isTimerRunning()) {
+                remainingTime = mTimerService.getRemainingTime();
+            } else if (mTimerService.getTimerState().equals(PAUSED)){
+                remainingTime = mTimerService.getRemainingTimePaused();
+            } else {
+                remainingTime = (int)TimeUnit.MINUTES.toSeconds(mPref.getSessionDuration());
+            }
+        } else {
+            remainingTime = (int)TimeUnit.MINUTES.toSeconds(mPref.getSessionDuration());
         }
+
+        int minutes = remainingTime / 60;
+        int seconds = remainingTime % 60;
 
         Log.i(TAG, "Updating time label: " + minutes + ":" + seconds);
         String currentTick = (minutes > 0 ? minutes : "") +

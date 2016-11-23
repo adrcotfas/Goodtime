@@ -1,10 +1,13 @@
 package com.apps.adrcotfas.goodtime;
 
+import android.app.IntentService;
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 
 import static android.app.PendingIntent.FLAG_ONE_SHOT;
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
@@ -16,6 +19,11 @@ import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static com.apps.adrcotfas.goodtime.TimerState.PAUSED;
 
 public class Notifications {
+
+    public final static String ACTION_PAUSE = "com.apps.adrcotfas.goodtime.PAUSE";
+    public final static String ACTION_STOP = "com.apps.adrcotfas.goodtime.STOP";
+    public final static String ACTION_PAUSE_UI = "com.apps.adrcotfas.goodtime.PAUSE_UI";
+    public final static String ACTION_STOP_UI = "com.apps.adrcotfas.goodtime.STOP_UI";
 
     public static Notification createCompletionNotification(
             Context context,
@@ -66,7 +74,27 @@ public class Notifications {
             SessionType sessionType,
             TimerState timerState
     ) {
-        return new Notification.Builder(context)
+
+        Intent pauseIntent = new Intent(context, NotificationActionService.class)
+                .setAction(ACTION_PAUSE);
+        PendingIntent actionPauseIntent = PendingIntent.getService(context, 0,
+                pauseIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        boolean isTimerActive = timerState.equals(TimerState.ACTIVE);
+        NotificationCompat.Action pauseAction = new NotificationCompat.Action.Builder(
+                isTimerActive ? R.drawable.ic_notification_pause
+                              : R.drawable.ic_notification_resume,
+                context.getString(isTimerActive ? R.string.pause
+                                                : R.string.resume), actionPauseIntent).build();
+
+        Intent stopIntent = new Intent(context, NotificationActionService.class)
+                .setAction(ACTION_STOP);
+        PendingIntent actionStopIntent = PendingIntent.getService(context, 0,
+                stopIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        NotificationCompat.Action stopAction = new NotificationCompat.Action.Builder(
+                R.drawable.ic_notification_stop, context.getString(R.string.stop), actionStopIntent).build();
+
+        return new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_status_goodtime)
                 .setAutoCancel(false)
                 .setContentTitle(context.getString(R.string.app_name))
@@ -80,6 +108,9 @@ public class Notifications {
                                 new Intent(context.getApplicationContext(), TimerActivity.class),
                                 FLAG_UPDATE_CURRENT
                         ))
+                .addAction(pauseAction)
+                .addAction(stopAction)
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .build();
     }
 
@@ -110,6 +141,23 @@ public class Notifications {
             case ACTIVE:
             default:
                 return true;
+        }
+    }
+
+    public static class NotificationActionService extends IntentService {
+        public NotificationActionService() {
+            super(NotificationActionService.class.getSimpleName());
+        }
+
+        @Override
+        protected void onHandleIntent(Intent intent) {
+            if (ACTION_PAUSE.equals(intent.getAction())) {
+                Intent pauseIntent = new Intent(ACTION_PAUSE_UI);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(pauseIntent);
+            } else if(ACTION_STOP.equals(intent.getAction())) {
+                Intent stopIntent = new Intent(ACTION_STOP_UI);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(stopIntent);
+            }
         }
     }
 }

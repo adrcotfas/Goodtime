@@ -51,6 +51,9 @@
         <service
             android:name=".TimerService">
         </service>
+        <service
+            android:name=".Notifications$NotificationActionService">
+        </service>
     </application>
 
 </manifest>

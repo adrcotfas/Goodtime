@@ -36,8 +36,8 @@ public class TimerService extends Service {
 
     private static final int NOTIFICATION_ID = 1;
     private static final String TAG = "TimerService";
-    public final static String ACTION_TIMERSERVICE_FINISHED = "ACTION_TIMERSERVICE_FINISHED";
-    public final static String ACTION_TIMERACTIVITY_FINISHED = "ACTION_TIMERACTIVITY_FINISHED";
+    public final static String ACTION_FINISHED = "com.apps.adrcotfas.goodtime.FINISHED";
+    public final static String ACTION_FINISHED_UI = "com.apps.adrcotfas.goodtime.FINISHED_UI";
 
     private long mCountDownFinishedTime;
     private int mRemainingTimePaused;
@@ -245,6 +245,10 @@ public class TimerService extends Service {
                 mCountDownFinishedTime - SystemClock.elapsedRealtime()));
     }
 
+    public int getRemainingTimePaused() {
+        return mRemainingTimePaused;
+    }
+
     public void increaseCurrentSessionStreak() {
         mCurrentSessionStreak++;
     }
@@ -271,14 +275,14 @@ public class TimerService extends Service {
             {
                 onCountdownFinished();
                 context.unregisterReceiver(this);
-                Intent finishedIntent = new Intent(ACTION_TIMERACTIVITY_FINISHED);
+                Intent finishedIntent = new Intent(ACTION_FINISHED_UI);
                 mBroadcastManager.sendBroadcast(finishedIntent);
             }
         };
 
-        this.registerReceiver( mAlarmReceiver, new IntentFilter(ACTION_TIMERSERVICE_FINISHED) );
+        this.registerReceiver( mAlarmReceiver, new IntentFilter(ACTION_FINISHED) );
 
-        PendingIntent intent = PendingIntent.getBroadcast( this, 0, new Intent(ACTION_TIMERSERVICE_FINISHED), 0);
+        PendingIntent intent = PendingIntent.getBroadcast( this, 0, new Intent(ACTION_FINISHED), 0);
         mAlarmManager = (AlarmManager)(this.getSystemService(Context.ALARM_SERVICE));
 
         if (SDK_INT >= Build.VERSION_CODES.M) {
@@ -292,7 +296,7 @@ public class TimerService extends Service {
 
     void cancelAlarm() {
         Log.w(TAG, "Alarm canceled.");
-        PendingIntent intent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_TIMERSERVICE_FINISHED), 0);
+        PendingIntent intent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_FINISHED), 0);
         mAlarmManager.cancel(intent);
 
         try {
