@@ -21,9 +21,15 @@ import static com.apps.adrcotfas.goodtime.TimerState.PAUSED;
 public class Notifications {
 
     public final static String ACTION_PAUSE = "com.apps.adrcotfas.goodtime.PAUSE";
-    public final static String ACTION_STOP = "com.apps.adrcotfas.goodtime.STOP";
     public final static String ACTION_PAUSE_UI = "com.apps.adrcotfas.goodtime.PAUSE_UI";
+    public final static String ACTION_STOP = "com.apps.adrcotfas.goodtime.STOP";
     public final static String ACTION_STOP_UI = "com.apps.adrcotfas.goodtime.STOP_UI";
+    public final static String ACTION_START_BREAK = "com.apps.adrcotfas.goodtime.START_BREAK";
+    public final static String ACTION_START_BREAK_UI = "com.apps.adrcotfas.goodtime.START_BREAK_UI";
+    public final static String ACTION_SKIP_BREAK = "com.apps.adrcotfas.goodtime.SKIP_BREAK";
+    public final static String ACTION_SKIP_BREAK_UI = "com.apps.adrcotfas.goodtime.SKIP_BREAK_UI";
+    public final static String ACTION_START_WORK = "com.apps.adrcotfas.goodtime.START_WORK";
+    public final static String ACTION_START_WORK_UI = "com.apps.adrcotfas.goodtime.START_WORK_UI";
 
     public static Notification createCompletionNotification(
             Context context,
@@ -31,6 +37,34 @@ public class Notifications {
             String notificationSound,
             boolean vibrate
     ) {
+
+        Intent startBreakIntent = new Intent(context, NotificationActionService.class)
+                .setAction(ACTION_START_BREAK);
+        PendingIntent startBreakPendingIntent = PendingIntent.getService(context, 0,
+                startBreakIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        NotificationCompat.Action startBreakAction = new NotificationCompat.Action.Builder(
+                R.drawable.ic_notification_resume,
+                context.getString(R.string.dialog_session_break).toUpperCase(),
+                startBreakPendingIntent).build();
+
+        Intent skipBreakIntent = new Intent(context, NotificationActionService.class)
+                .setAction(ACTION_SKIP_BREAK);
+        PendingIntent skipBreakPendingIntent = PendingIntent.getService(context, 0,
+                skipBreakIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        NotificationCompat.Action skipBreakAction = new NotificationCompat.Action.Builder(
+                R.drawable.ic_notification_skip,
+                context.getString(R.string.dialog_session_skip).toUpperCase(),
+                skipBreakPendingIntent).build();
+
+        Intent startWorkIntent = new Intent(context, NotificationActionService.class)
+                .setAction(ACTION_START_WORK);
+        PendingIntent startWorkPendingIntent = PendingIntent.getService(context, 0,
+                startWorkIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        NotificationCompat.Action startWorkAction = new NotificationCompat.Action.Builder(
+                R.drawable.ic_notification_resume,
+                context.getString(R.string.dialog_break_session).toUpperCase(),
+                startWorkPendingIntent).build();
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         if (!notificationSound.equals("")) {
             if (SDK_INT >= LOLLIPOP) {
@@ -53,7 +87,15 @@ public class Notifications {
                                 new Intent(context.getApplicationContext(), TimerActivity.class),
                                 FLAG_ONE_SHOT
                         ))
+               .setVisibility(Notification.VISIBILITY_PUBLIC)
                .setAutoCancel(true);
+
+        if (sessionType.equals(SessionType.WORK)) {
+            builder.addAction(startBreakAction)
+                   .addAction(skipBreakAction);
+        } else {
+            builder.addAction(startWorkAction);
+        }
 
         return builder.build();
     }
@@ -77,7 +119,7 @@ public class Notifications {
 
         Intent pauseIntent = new Intent(context, NotificationActionService.class)
                 .setAction(ACTION_PAUSE);
-        PendingIntent actionPauseIntent = PendingIntent.getService(context, 0,
+        PendingIntent pausePendingIntent = PendingIntent.getService(context, 0,
                 pauseIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         boolean isTimerActive = timerState.equals(TimerState.ACTIVE);
@@ -85,33 +127,36 @@ public class Notifications {
                 isTimerActive ? R.drawable.ic_notification_pause
                               : R.drawable.ic_notification_resume,
                 context.getString(isTimerActive ? R.string.pause
-                                                : R.string.resume), actionPauseIntent).build();
+                                                : R.string.resume), pausePendingIntent).build();
 
         Intent stopIntent = new Intent(context, NotificationActionService.class)
                 .setAction(ACTION_STOP);
-        PendingIntent actionStopIntent = PendingIntent.getService(context, 0,
+        PendingIntent stopPendingIntent = PendingIntent.getService(context, 0,
                 stopIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         NotificationCompat.Action stopAction = new NotificationCompat.Action.Builder(
-                R.drawable.ic_notification_stop, context.getString(R.string.stop), actionStopIntent).build();
+                R.drawable.ic_notification_stop, context.getString(R.string.stop), stopPendingIntent).build();
 
-        return new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.ic_status_goodtime)
-                .setAutoCancel(false)
-                .setContentTitle(context.getString(R.string.app_name))
-                .setContentText(buildForegroundNotificationText(context, sessionType, timerState))
-                .setOngoing(isNotificationOngoing(timerState))
-                .setShowWhen(false)
-                .setContentIntent(
-                        getActivity(
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        builder.setSmallIcon(R.drawable.ic_status_goodtime)
+               .setAutoCancel(false)
+               .setContentTitle(context.getString(R.string.app_name))
+               .setContentText(buildForegroundNotificationText(context, sessionType, timerState))
+               .setOngoing(isNotificationOngoing(timerState))
+               .setShowWhen(false)
+               .setContentIntent(
+                       getActivity(
                                 context,
                                 0,
                                 new Intent(context.getApplicationContext(), TimerActivity.class),
                                 FLAG_UPDATE_CURRENT
-                        ))
-                .addAction(pauseAction)
-                .addAction(stopAction)
-                .setVisibility(Notification.VISIBILITY_PUBLIC)
-                .build();
+                        ));
+
+        if (sessionType.equals(SessionType.WORK)) {
+            builder.addAction(pauseAction);
+        }
+        builder.addAction(stopAction);
+
+        return builder.build();
     }
 
     private static CharSequence buildForegroundNotificationText(
@@ -151,12 +196,27 @@ public class Notifications {
 
         @Override
         protected void onHandleIntent(Intent intent) {
-            if (ACTION_PAUSE.equals(intent.getAction())) {
-                Intent pauseIntent = new Intent(ACTION_PAUSE_UI);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(pauseIntent);
-            } else if(ACTION_STOP.equals(intent.getAction())) {
-                Intent stopIntent = new Intent(ACTION_STOP_UI);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(stopIntent);
+            switch (intent.getAction()) {
+                case ACTION_PAUSE:
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(
+                            new Intent(ACTION_PAUSE_UI));
+                    break;
+                case ACTION_STOP:
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(
+                            new Intent(ACTION_STOP_UI));
+                    break;
+                case ACTION_SKIP_BREAK:
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(
+                            new Intent(ACTION_SKIP_BREAK_UI));
+                    break;
+                case ACTION_START_BREAK:
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(
+                            new Intent(ACTION_START_BREAK_UI));
+                    break;
+                case ACTION_START_WORK:
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(
+                            new Intent(ACTION_START_WORK_UI));
+                    break;
             }
         }
     }

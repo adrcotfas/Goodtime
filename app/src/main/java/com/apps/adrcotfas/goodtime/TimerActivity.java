@@ -206,13 +206,35 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(TimerService.ACTION_FINISHED_UI)) {
-                    onCountdownFinished();
-                } else if (intent.getAction().equals(Notifications.ACTION_PAUSE_UI)) {
-                    onPauseButtonClick();
-                    mTimerService.bringToForeground();
-                } else if (intent.getAction().equals(Notifications.ACTION_STOP_UI)) {
-                    onStopButtonClick();
+                switch (intent.getAction()) {
+                    case TimerService.ACTION_FINISHED_UI:
+                        onCountdownFinished();
+                        break;
+                    case Notifications.ACTION_PAUSE_UI:
+                        onPauseButtonClick();
+                        mTimerService.bringToForeground();
+                        break;
+                    case Notifications.ACTION_STOP_UI:
+                        onStopButtonClick();
+                        break;
+                    case Notifications.ACTION_SKIP_BREAK_UI:
+                        mAlertDialog.dismiss();
+                        startTimer(WORK);
+                        removeCompletionNotification();;
+                        mTimerService.bringToForeground();
+                        break;
+                    case Notifications.ACTION_START_BREAK_UI:
+                        mAlertDialog.dismiss();
+                        startBreak();
+                        removeCompletionNotification();
+                        mTimerService.bringToForeground();
+                        break;
+                    case Notifications.ACTION_START_WORK_UI:
+                        mAlertDialog.dismiss();
+                        startTimer(WORK);
+                        removeCompletionNotification();
+                        mTimerService.bringToForeground();
+                        break;
                 }
             }
         };
@@ -224,6 +246,15 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         );
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
                 (mBroadcastReceiver), new IntentFilter(Notifications.ACTION_STOP_UI)
+        );
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                (mBroadcastReceiver), new IntentFilter(Notifications.ACTION_SKIP_BREAK_UI)
+        );
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                (mBroadcastReceiver), new IntentFilter(Notifications.ACTION_START_BREAK_UI)
+        );
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                (mBroadcastReceiver), new IntentFilter(Notifications.ACTION_START_WORK_UI)
         );
     }
 
@@ -568,7 +599,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                         startTimer(WORK);
                     }
                 })
-                .setNegativeButton(getString(R.string.dialog_session_cancel), new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.dialog_session_close), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         removeCompletionNotification();
