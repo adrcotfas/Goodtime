@@ -17,33 +17,33 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+
 import java.util.concurrent.TimeUnit;
 
 import static android.app.AlarmManager.ELAPSED_REALTIME_WAKEUP;
 import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static android.os.Build.VERSION.SDK_INT;
-import static com.apps.adrcotfas.goodtime.SessionType.LONG_BREAK;
-import static com.apps.adrcotfas.goodtime.TimerActivity.NOTIFICATION_TAG;
 import static com.apps.adrcotfas.goodtime.Notifications.createCompletionNotification;
 import static com.apps.adrcotfas.goodtime.Notifications.createForegroundNotification;
 import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;
+import static com.apps.adrcotfas.goodtime.SessionType.LONG_BREAK;
 import static com.apps.adrcotfas.goodtime.SessionType.WORK;
+import static com.apps.adrcotfas.goodtime.TimerActivity.NOTIFICATION_TAG;
 import static com.apps.adrcotfas.goodtime.TimerState.ACTIVE;
 import static com.apps.adrcotfas.goodtime.TimerState.INACTIVE;
 import static com.apps.adrcotfas.goodtime.TimerState.PAUSED;
 
 public class TimerService extends Service {
 
-    private static final int NOTIFICATION_ID = 1;
-    private static final String TAG = "TimerService";
     public final static String ACTION_FINISHED = "com.apps.adrcotfas.goodtime.FINISHED";
     public final static String ACTION_FINISHED_UI = "com.apps.adrcotfas.goodtime.FINISHED_UI";
-
+    private static final int NOTIFICATION_ID = 1;
+    private static final String TAG = "TimerService";
+    private final IBinder mBinder = new TimerBinder();
     private long mCountDownFinishedTime;
     private int mRemainingTimePaused;
     private int mCurrentSessionStreak;
     private TimerState mTimerState;
-    private final IBinder mBinder = new TimerBinder();
     private LocalBroadcastManager mBroadcastManager;
     private int mPreviousRingerMode;
     private boolean mPreviousWifiMode;
@@ -217,12 +217,6 @@ public class TimerService extends Service {
         return mIsTimerRunning;
     }
 
-    public class TimerBinder extends Binder {
-        TimerService getService() {
-            return TimerService.this;
-        }
-    }
-
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
@@ -271,8 +265,8 @@ public class TimerService extends Service {
     public void setAlarm(long countDownTime) {
         Log.w(TAG, "Alarm set.");
         mAlarmReceiver = new BroadcastReceiver() {
-            @Override public void onReceive(Context context, Intent _ )
-            {
+            @Override
+            public void onReceive(Context context, Intent _) {
                 onCountdownFinished();
                 context.unregisterReceiver(this);
                 Intent finishedIntent = new Intent(ACTION_FINISHED_UI);
@@ -280,10 +274,10 @@ public class TimerService extends Service {
             }
         };
 
-        this.registerReceiver( mAlarmReceiver, new IntentFilter(ACTION_FINISHED) );
+        this.registerReceiver(mAlarmReceiver, new IntentFilter(ACTION_FINISHED));
 
-        PendingIntent intent = PendingIntent.getBroadcast( this, 0, new Intent(ACTION_FINISHED), 0);
-        mAlarmManager = (AlarmManager)(this.getSystemService(Context.ALARM_SERVICE));
+        PendingIntent intent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_FINISHED), 0);
+        mAlarmManager = (AlarmManager) (this.getSystemService(Context.ALARM_SERVICE));
 
         if (SDK_INT >= Build.VERSION_CODES.M) {
             mAlarmManager.setExactAndAllowWhileIdle(ELAPSED_REALTIME_WAKEUP, countDownTime, intent);
@@ -301,8 +295,14 @@ public class TimerService extends Service {
 
         try {
             this.unregisterReceiver(mAlarmReceiver);
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             Log.w(TAG, "AlarmReceiver is already unregistered.");
+        }
+    }
+
+    public class TimerBinder extends Binder {
+        TimerService getService() {
+            return TimerService.this;
         }
     }
 

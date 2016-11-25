@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateFormat;
+
 import java.util.Calendar;
 
 import static android.app.PendingIntent.FLAG_ONE_SHOT;
@@ -48,25 +49,25 @@ public final class Notifications {
                 builder.setSound(Uri.parse(notificationSound));
             }
         }
-        if(vibrate) {
+        if (vibrate) {
             builder.setVibrate(new long[]{0, 300, 700, 300});
         }
         builder.setSmallIcon(R.drawable.ic_status_goodtime)
-               .setLights(WHITE, 250, 750)
-               .setContentTitle(context.getString(R.string.dialog_session_message))
-               .setContentText(buildCompletedNotificationText(context, sessionType))
-               .setContentIntent(
+                .setLights(WHITE, 250, 750)
+                .setContentTitle(context.getString(R.string.dialog_session_message))
+                .setContentText(buildCompletedNotificationText(context, sessionType))
+                .setContentIntent(
                         getActivity(
                                 context,
                                 0,
                                 new Intent(context.getApplicationContext(), TimerActivity.class),
                                 FLAG_ONE_SHOT
                         ))
-               .setAutoCancel(true);
+                .setAutoCancel(true);
 
         if (isWorkingSession(sessionType)) {
             builder.addAction(createStartBreakAction(context))
-                   .addAction(createSkipBreakAction(context));
+                    .addAction(createSkipBreakAction(context));
         } else {
             builder.addAction(createStartWorkAction(context));
         }
@@ -94,13 +95,13 @@ public final class Notifications {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.drawable.ic_status_goodtime)
-               .setAutoCancel(false)
-               .setContentTitle(context.getString(R.string.app_name))
-               .setContentText(buildForegroundNotificationText(context, sessionType, timerState, remainingTime))
-               .setOngoing(isTimerActive(timerState))
-               .setShowWhen(false)
-               .setContentIntent(
-                       getActivity(
+                .setAutoCancel(false)
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText(buildForegroundNotificationText(context, sessionType, timerState, remainingTime))
+                .setOngoing(isTimerActive(timerState))
+                .setShowWhen(false)
+                .setContentIntent(
+                        getActivity(
                                 context,
                                 0,
                                 new Intent(context.getApplicationContext(), TimerActivity.class),
