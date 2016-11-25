@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -46,7 +47,7 @@ public final class Notifications {
             if (SDK_INT >= LOLLIPOP) {
                 builder.setSound(Uri.parse(notificationSound), USAGE_ALARM);
             } else {
-                builder.setSound(Uri.parse(notificationSound));
+                builder.setSound(Uri.parse(notificationSound), AudioManager.STREAM_ALARM);
             }
         }
         if (vibrate) {
