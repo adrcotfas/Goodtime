@@ -238,7 +238,7 @@ public final class Notifications {
                 stopPendingIntent).build();
     }
 
-    private static class NotificationActionService extends IntentService {
+    public static class NotificationActionService extends IntentService {
         public NotificationActionService() {
             super(NotificationActionService.class.getSimpleName());
         }
