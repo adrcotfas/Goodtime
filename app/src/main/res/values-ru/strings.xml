@@ -12,8 +12,8 @@
   <string name="dialog_session_cancel">"Отмена"</string>
   <string name="dialog_session_skip">"Пропустить перерыв"</string>
   <string name="dialog_session_close">"Закрыть"</string>
-  <string name="notification_session">"Рабочая сессия в процессе"</string>
-  <string name="notification_break">"Перерыв в процессе"</string>
+  <string name="notification_session">"Рабочая сессия в процессе до"</string>
+  <string name="notification_break">"Перерыв в процессе до"</string>
   <string name="notification_pause">"Рабочая сессия приостановлена. Продолжить?"</string>
   <string name="notification_break_complete">"Перерыв завершен. Возобновить работу?"</string>
   <string name="notification_work_complete">"Сессия завершена. Продолжить?"</string>

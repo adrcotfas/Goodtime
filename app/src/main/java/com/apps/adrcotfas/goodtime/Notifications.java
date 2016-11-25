@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.format.DateFormat;
+import java.util.Calendar;
 
 import static android.app.PendingIntent.FLAG_ONE_SHOT;
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
@@ -86,14 +88,15 @@ public final class Notifications {
     public static Notification createForegroundNotification(
             Context context,
             SessionType sessionType,
-            TimerState timerState
+            TimerState timerState,
+            int remainingTime
     ) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.drawable.ic_status_goodtime)
                .setAutoCancel(false)
                .setContentTitle(context.getString(R.string.app_name))
-               .setContentText(buildForegroundNotificationText(context, sessionType, timerState))
+               .setContentText(buildForegroundNotificationText(context, sessionType, timerState, remainingTime))
                .setOngoing(isTimerActive(timerState))
                .setShowWhen(false)
                .setContentIntent(
@@ -104,12 +107,12 @@ public final class Notifications {
                                 FLAG_UPDATE_CURRENT
                         ));
 
+        builder.addAction(createStopAction(context));
         if (isWorkingSession(sessionType)) {
             builder.addAction(
                     isTimerActive(timerState) ? createPauseAction(context)
                                               : createResumeAction(context));
         }
-        builder.addAction(createStopAction(context));
 
         return builder.build();
     }
@@ -117,20 +120,34 @@ public final class Notifications {
     private static CharSequence buildForegroundNotificationText(
             Context context,
             SessionType sessionType,
-            TimerState timerState
+            TimerState timerState,
+            int remainingTime
     ) {
         switch (sessionType) {
             case BREAK:
             case LONG_BREAK:
-                return context.getString(R.string.notification_break);
+                return context.getString(R.string.notification_break)
+                        + buildNotificationCountdownTime(context, remainingTime);
             case WORK:
             default:
                 if (timerState == PAUSED) {
                     return context.getString(R.string.notification_pause);
                 } else {
-                    return context.getString(R.string.notification_session);
+                    return context.getString(R.string.notification_session)
+                            + buildNotificationCountdownTime(context, remainingTime);
                 }
         }
+    }
+
+    private static CharSequence buildNotificationCountdownTime(Context context, int remainingTime) {
+
+        boolean is24HourFormat = android.text.format.DateFormat.is24HourFormat(context);
+
+        String inFormat = is24HourFormat ? " k:mm" : " h:mm aa";
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.SECOND, remainingTime);
+
+        return DateFormat.format(inFormat, calendar) + ".";
     }
 
     private static boolean isTimerActive(TimerState timerState) {
@@ -156,7 +173,7 @@ public final class Notifications {
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_resume,
-                context.getString(R.string.dialog_session_break).toUpperCase(),
+                context.getString(R.string.dialog_session_break),
                 startBreakPendingIntent).build();
     }
 
@@ -168,7 +185,7 @@ public final class Notifications {
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_skip,
-                context.getString(R.string.dialog_session_skip).toUpperCase(),
+                context.getString(R.string.dialog_session_skip),
                 skipBreakPendingIntent).build();
     }
 
@@ -180,7 +197,7 @@ public final class Notifications {
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_resume,
-                context.getString(R.string.dialog_break_session).toUpperCase(),
+                context.getString(R.string.dialog_break_session),
                 startWorkPendingIntent).build();
     }
 

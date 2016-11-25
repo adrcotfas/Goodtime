@@ -260,7 +260,7 @@ public class TimerService extends Service {
     protected void bringToForeground() {
         startForeground(
                 NOTIFICATION_ID,
-                createForegroundNotification(this, mCurrentSession, mTimerState)
+                createForegroundNotification(this, mCurrentSession, mTimerState, getRemainingTime())
         );
     }
 

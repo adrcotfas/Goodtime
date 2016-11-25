@@ -12,8 +12,8 @@
   <string name="dialog_session_cancel">"Abbrechen"</string>
   <string name="dialog_session_skip">"Pause überspringen"</string>
   <string name="dialog_session_close">"Schließen"</string>
-  <string name="notification_session">"Du arbeitest gerade, oder?"</string>
-  <string name="notification_break">"Du pausierst gerade."</string>
+  <string name="notification_session">"Du arbeitest gerade bis"</string>
+  <string name="notification_break">"Du pausierst gerade bis"</string>
   <string name="notification_pause">"Sitzung ist unterbrochen. Weitermachen?"</string>
   <string name="notification_break_complete">"Pause ist vorbei. Weiterarbeiten?"</string>
   <string name="notification_work_complete">"Session ist vorbei? Weitermachen?"</string>
