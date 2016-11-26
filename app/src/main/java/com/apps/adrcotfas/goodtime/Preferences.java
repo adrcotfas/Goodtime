@@ -3,8 +3,6 @@ package com.apps.adrcotfas.goodtime;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.apps.adrcotfas.goodtime.settings.CustomNotification;
-
 public class Preferences {
 
     public static final String PREFERENCES_NAME = "com.apps.adrcotfas.goodtime.preferences";
@@ -25,6 +23,7 @@ public class Preferences {
     private static final String CONTINUOUS_MODE = "pref_continuousMode";
     private static final String NOTIFICATION_VIBRATE = "pref_vibrate";
     private static final String ROTATE_TIME_LABEL = "pref_rotate";
+    private static final String FULLSCREEN_MODE = "pref_fullscreen";
 
     private final SharedPreferences mPref;
 
@@ -36,10 +35,6 @@ public class Preferences {
                  .putInt(SETTINGS_VERSION, CURRENT_SETTINGS_VERSION)
                  .apply();
         }
-    }
-
-    public boolean getRingtonesCopied() {
-        return mPref.getBoolean(CustomNotification.PREF_KEY_RINGTONES_COPIED, false);
     }
 
     public int getSessionDuration() {
@@ -82,6 +77,10 @@ public class Preferences {
         return mPref.getBoolean(ROTATE_TIME_LABEL, true);
     }
 
+    public boolean getFullscreenMode() {
+        return mPref.getBoolean(FULLSCREEN_MODE, false);
+    }
+
     public String getNotificationSound() {
         return mPref.getString(NOTIFICATION_SOUND, "");
     }
@@ -108,6 +107,7 @@ public class Preferences {
              .putBoolean(CONTINUOUS_MODE, oldPref.getBoolean(CONTINUOUS_MODE, false))
              .putBoolean(NOTIFICATION_VIBRATE, oldPref.getBoolean(NOTIFICATION_VIBRATE, false))
              .putBoolean(ROTATE_TIME_LABEL, oldPref.getBoolean(ROTATE_TIME_LABEL, true))
+             .putBoolean(FULLSCREEN_MODE, oldPref.getBoolean(FULLSCREEN_MODE, true))
              .putString(NOTIFICATION_SOUND, oldPref.getString(NOTIFICATION_SOUND, ""))
              .apply();
 

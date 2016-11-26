@@ -12,8 +12,8 @@
   <string name="dialog_session_cancel">Cancel</string>
   <string name="dialog_session_skip">Skip break</string>
   <string name="dialog_session_close">Close</string>
-  <string name="notification_session">Work session in progress.</string>
-  <string name="notification_break">Break session in progress.</string>
+  <string name="notification_session">Work in progress until</string>
+  <string name="notification_break">Break in progress until</string>
   <string name="notification_pause">Work session is paused. Resume?</string>
   <string name="notification_break_complete">Break complete. Resume work?</string>
   <string name="notification_work_complete">Session complete. Continue?</string>
@@ -42,6 +42,7 @@
   <string name="pref_unit_sessions">sessions</string>
   <string name="pref_rotate">Rotate the time label</string>
   <string name="pref_rotate_summary">In case of screen orientation change.</string>
+  <string name="pref_fullscreen">Fullscreen mode</string>
 
   <string name="intro_avoid_distractions">Avoid distractions</string>
   <string name="intro_avoid_distractions_description">Keep your work on track using timed sessions handled by the app.</string>
