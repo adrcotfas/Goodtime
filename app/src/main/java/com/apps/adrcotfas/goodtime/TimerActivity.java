@@ -28,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.OrientationEventListener;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -128,6 +129,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     @Override
     protected void onResume() {
         super.onResume();
+
         mIsUiVisible = true;
         if (mIsBoundToTimerService && mTimerService.getTimerState() != INACTIVE) {
             mTimerService.sendToBackground();
@@ -140,6 +142,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             startActivity(introIntent);
             mPrivatePref.edit().putBoolean(FIRST_RUN, false).apply();
         }
+        setFullscreenMode(mPref.getFullscreenMode());
     }
 
     @Override
@@ -704,6 +707,16 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 })
                 .create();
         mAlertDialog.show();
+    }
+
+    private void setFullscreenMode(boolean fullscreen) {
+        if (fullscreen) {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        }
     }
 
     private class OrientationListener extends OrientationEventListener {
