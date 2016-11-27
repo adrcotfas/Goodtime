@@ -189,19 +189,25 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                         onStopButtonClick();
                         break;
                     case Notifications.ACTION_SKIP_BREAK_UI:
-                        mAlertDialog.dismiss();
+                        if (mAlertDialog != null){
+                            mAlertDialog.dismiss();
+                        }
                         startTimer(WORK);
                         removeCompletionNotification();
                         mTimerService.bringToForeground();
                         break;
                     case Notifications.ACTION_START_BREAK_UI:
-                        mAlertDialog.dismiss();
+                        if (mAlertDialog != null){
+                            mAlertDialog.dismiss();
+                        }
                         startBreak();
                         removeCompletionNotification();
                         mTimerService.bringToForeground();
                         break;
                     case Notifications.ACTION_START_WORK_UI:
-                        mAlertDialog.dismiss();
+                        if (mAlertDialog != null){
+                            mAlertDialog.dismiss();
+                        }
                         startTimer(WORK);
                         removeCompletionNotification();
                         mTimerService.bringToForeground();
