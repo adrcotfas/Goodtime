@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Goodtime</string>
-    <string name="default_ringtone_path" translatable="false">content://settings/system/notification_sound</string>
 
     <integer name="default_work_duration">25</integer>
     <integer name="default_break_duration">5</integer>

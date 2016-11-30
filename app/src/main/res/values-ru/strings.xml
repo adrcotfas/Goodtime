@@ -4,7 +4,6 @@
   <string name="stop">"СТОП"</string>
   <string name="pause">"ПАУЗА"</string>
   <string name="resume">"ПУСК"</string>
-  <string name="goodtime_notification_title">"Звук уведомления Goodtime"</string>
   <string name="dialog_break_message">"Перерыв завершен"</string>
   <string name="dialog_break_session">"Начать сессию"</string>
   <string name="dialog_session_message">"Сессия завершена"</string>
