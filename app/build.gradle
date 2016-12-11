@@ -39,8 +39,9 @@ dependencies {
     compile 'com.android.support:design:24.2.1'
     compile 'com.heinrichreimersoftware:material-intro:1.6'
     compile 'com.pavelsikun:material-seekbar-preference:2.3.0'
-    compile 'com.google.firebase:firebase-core:9.8.0'
-    compile 'com.google.firebase:firebase-crash:9.8.0'
+    compile 'com.google.firebase:firebase-core:10.0.1'
+    compile 'com.google.firebase:firebase-crash:10.0.1'
+    compile 'com.google.firebase:firebase-invites:10.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
