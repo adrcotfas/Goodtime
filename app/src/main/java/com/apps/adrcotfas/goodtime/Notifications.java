@@ -35,6 +35,26 @@ public final class Notifications {
     public final static String ACTION_START_WORK = "com.apps.adrcotfas.goodtime.START_WORK";
     public final static String ACTION_START_WORK_UI = "com.apps.adrcotfas.goodtime.START_WORK_UI";
 
+
+    public static Notification createInvisibleCompletionNotification(
+            Context context,
+            String notificationSound,
+            boolean vibrate
+    ) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        if (!notificationSound.equals("")) {
+            if (SDK_INT >= LOLLIPOP) {
+                builder.setSound(Uri.parse(notificationSound), USAGE_ALARM);
+            } else {
+                builder.setSound(Uri.parse(notificationSound), AudioManager.STREAM_ALARM);
+            }
+        }
+        if (vibrate) {
+            builder.setVibrate(new long[]{0, 300, 700, 300});
+        }
+            return builder.build();
+    }
+
     public static Notification createCompletionNotification(
             Context context,
             SessionType sessionType,
