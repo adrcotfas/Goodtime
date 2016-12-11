@@ -160,7 +160,10 @@ public class TimerService extends Service {
             restoreWifi();
         }
 
-        sendFinishedNotification();
+        if (!mPref.getContinuousMode()) {
+            sendFinishedNotification();
+        }
+
         mIsTimerRunning = false;
         mTimerState = INACTIVE;
         sendToBackground();

@@ -658,6 +658,9 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 }
                 startTimer(WORK);
         }
+        if (!mIsUiVisible) {
+            mTimerService.bringToForeground();
+        }
     }
 
     private void enablePauseButton() {
