@@ -39,7 +39,8 @@ public final class Notifications {
             Context context,
             SessionType sessionType,
             String notificationSound,
-            boolean vibrate
+            boolean vibrate,
+            boolean addButtons
     ) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
@@ -66,13 +67,14 @@ public final class Notifications {
                         ))
                 .setAutoCancel(true);
 
-        if (isWorkingSession(sessionType)) {
-            builder.addAction(createStartBreakAction(context))
-                    .addAction(createSkipBreakAction(context));
-        } else {
-            builder.addAction(createStartWorkAction(context));
+        if(addButtons) {
+            if (isWorkingSession(sessionType)) {
+                builder.addAction(createStartBreakAction(context))
+                        .addAction(createSkipBreakAction(context));
+            } else {
+                builder.addAction(createStartWorkAction(context));
+            }
         }
-
         return builder.build();
     }
 

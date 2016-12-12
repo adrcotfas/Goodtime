@@ -160,7 +160,7 @@ public class TimerService extends Service {
             restoreWifi();
         }
 
-        sendFinishedNotification();
+        sendFinishedNotification(!mPref.getContinuousMode());
 
         mIsTimerRunning = false;
         mTimerState = INACTIVE;
@@ -201,7 +201,7 @@ public class TimerService extends Service {
         wifiManager.setWifiEnabled(mPreviousWifiMode);
     }
 
-    private void sendFinishedNotification() {
+    private void sendFinishedNotification(boolean addButtons) {
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(
                 NOTIFICATION_TAG,
@@ -209,7 +209,8 @@ public class TimerService extends Service {
                         this,
                         mCurrentSession,
                         mPref.getNotificationSound(),
-                        mPref.getNotificationVibrate()
+                        mPref.getNotificationVibrate(),
+                        addButtons
                 )
         );
     }
