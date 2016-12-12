@@ -25,7 +25,6 @@ import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static android.os.Build.VERSION.SDK_INT;
 import static com.apps.adrcotfas.goodtime.Notifications.createCompletionNotification;
 import static com.apps.adrcotfas.goodtime.Notifications.createForegroundNotification;
-import static com.apps.adrcotfas.goodtime.Notifications.createInvisibleCompletionNotification;
 import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;
 import static com.apps.adrcotfas.goodtime.SessionType.LONG_BREAK;
 import static com.apps.adrcotfas.goodtime.SessionType.WORK;
@@ -161,11 +160,7 @@ public class TimerService extends Service {
             restoreWifi();
         }
 
-        if (mPref.getContinuousMode()) {
-            sendInvisibleFinishedNotification();
-        } else {
-            sendFinishedNotification();
-        }
+        sendFinishedNotification();
 
         mIsTimerRunning = false;
         mTimerState = INACTIVE;
@@ -216,16 +211,6 @@ public class TimerService extends Service {
                         mPref.getNotificationSound(),
                         mPref.getNotificationVibrate()
                 )
-        );
-    }
-
-    private void sendInvisibleFinishedNotification() {
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(
-                NOTIFICATION_TAG,createInvisibleCompletionNotification(
-                        this,
-                        mPref.getNotificationSound(),
-                        mPref.getNotificationVibrate())
         );
     }
 
