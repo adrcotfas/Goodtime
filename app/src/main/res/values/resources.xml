@@ -10,7 +10,6 @@
     <string name="donation_1_dollar" translatable="false">$1</string>
     <string name="donation_3_dollars" translatable="false">$3</string>
     <string name="donation_5_dollars" translatable="false">$5</string>
-    <string name="invitation_custom_image" translatable="false"><![CDATA[https://firebasestorage.googleapis.com/v0/b/goodtime–4cc8d.appspot.com/o/Goodtime_FirebaseImg.png?alt=media&token=103a4294–f390–4a65–8fb0-b673d02cdbd1]]></string>
 
     <string-array name="donations">
         <item>@string/donation_1_dollar</item>

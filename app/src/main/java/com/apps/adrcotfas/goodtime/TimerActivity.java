@@ -748,7 +748,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
                 .setMessage(getString(R.string.invitation_message))
                 .setDeepLink(Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName))
-                .setCustomImage(Uri.parse(getString(R.string.invitation_custom_image)))
                 .setCallToActionText(getString(R.string.invitation_cta))
                 .build();
         startActivityForResult(intent, REQUEST_INVITE);
