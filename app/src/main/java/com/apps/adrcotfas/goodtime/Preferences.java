@@ -12,8 +12,8 @@ public class Preferences {
     public static final String FIRST_RUN = "pref_firstRun";
     public static final String SESSION_DURATION = "pref_workTime";
     public static final String DISABLE_SOUND_AND_VIBRATION = "pref_disableSoundAndVibration";
-    public static final String NOTIFICATION_SOUND = "pref_notificationSound";
     public static final String TOTAL_SESSION_COUNT = "pref_totalSessions";
+    private static final String NOTIFICATION_SOUND = "pref_notificationSound";
     private static final String BREAK_DURATION = "pref_breakTime";
     private static final String LONG_BREAK_DURATION = "pref_longBreakDuration";
     private static final String SESSIONS_BEFORE_LONG_BREAK = "pref_sessionsBeforeLongBreak";
@@ -38,19 +38,19 @@ public class Preferences {
     }
 
     public int getSessionDuration() {
-        return mPref.getInt(SESSION_DURATION, 25);
+        return mPref.getInt(SESSION_DURATION, R.integer.default_work_duration);
     }
 
     public int getSessionsBeforeLongBreak() {
-        return mPref.getInt(SESSIONS_BEFORE_LONG_BREAK, 4);
+        return mPref.getInt(SESSIONS_BEFORE_LONG_BREAK, R.integer.default_sessions);
     }
 
     public int getBreakDuration() {
-        return mPref.getInt(BREAK_DURATION, 5);
+        return mPref.getInt(BREAK_DURATION, R.integer.default_break_duration);
     }
 
     public int getLongBreakDuration() {
-        return mPref.getInt(LONG_BREAK_DURATION, 15);
+        return mPref.getInt(LONG_BREAK_DURATION, R.integer.default_long_break_duration);
     }
 
     public boolean getKeepScreenOn() {
@@ -85,8 +85,8 @@ public class Preferences {
         return mPref.getString(NOTIFICATION_SOUND, "");
     }
 
-    public void setDisableSoundAndVibration(boolean disableSoundAndVibration) {
-        mPref.edit().putBoolean(DISABLE_SOUND_AND_VIBRATION, disableSoundAndVibration).apply();
+    public void disableSoundAndVibration() {
+        mPref.edit().putBoolean(DISABLE_SOUND_AND_VIBRATION, false).apply();
     }
 
     public void migrateFromOldPreferences(SharedPreferences oldPref) {

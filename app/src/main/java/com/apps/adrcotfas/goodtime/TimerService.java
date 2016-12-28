@@ -36,8 +36,8 @@ import static com.apps.adrcotfas.goodtime.TimerState.PAUSED;
 
 public class TimerService extends Service {
 
-    public final static String ACTION_FINISHED = "com.apps.adrcotfas.goodtime.FINISHED";
-    public final static String ACTION_FINISHED_UI = "com.apps.adrcotfas.goodtime.FINISHED_UI";
+    public static final String ACTION_FINISHED_UI = "com.apps.adrcotfas.goodtime.FINISHED_UI";
+    private static final String ACTION_FINISHED = "com.apps.adrcotfas.goodtime.FINISHED";
     private static final int NOTIFICATION_ID = 1;
     private static final String TAG = "TimerService";
     private final IBinder mBinder = new TimerBinder();
@@ -48,7 +48,6 @@ public class TimerService extends Service {
     private LocalBroadcastManager mBroadcastManager;
     private int mPreviousRingerMode;
     private boolean mPreviousWifiMode;
-    private boolean mIsTimerRunning;
     private Preferences mPref;
     private SessionType mCurrentSession;
 
@@ -75,14 +74,8 @@ public class TimerService extends Service {
         return Service.START_STICKY;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
     public void startSession(SessionType sessionType) {
-        mIsTimerRunning = true;
-        mCountDownFinishedTime = calculateSessionDurationFor(sessionType);
+        mCountDownFinishedTime = calculateEndTimeFor(sessionType);
         Log.i(TAG, "Starting new timer for " + sessionType + ", ending in "
                 + getRemainingTime() + " seconds.");
 
@@ -95,13 +88,11 @@ public class TimerService extends Service {
             disableWifi();
         }
 
-        mTimerState = ACTIVE;
         mCurrentSession = sessionType;
         setAlarm(mCountDownFinishedTime);
     }
 
     public void stopSession() {
-        mIsTimerRunning = false;
         Log.d(TAG, "Session stopped");
 
         sendToBackground();
@@ -120,7 +111,7 @@ public class TimerService extends Service {
         cancelAlarm();
     }
 
-    private long calculateSessionDurationFor(SessionType sessionType) {
+    private long calculateEndTimeFor(SessionType sessionType) {
         long currentTime = SystemClock.elapsedRealtime();
         switch (sessionType) {
             case WORK:
@@ -136,14 +127,12 @@ public class TimerService extends Service {
 
     public void pauseSession() {
         mTimerState = PAUSED;
-        mIsTimerRunning = false;
         mRemainingTimePaused = getRemainingTime();
         cancelAlarm();
     }
 
     public void unPauseSession() {
         mTimerState = ACTIVE;
-        mIsTimerRunning = true;
         mCountDownFinishedTime = SystemClock.elapsedRealtime() +
                 TimeUnit.SECONDS.toMillis(mRemainingTimePaused);
         Log.i(TAG, "Resuming countdown for " + getSessionType() + ", ending in "
@@ -167,7 +156,6 @@ public class TimerService extends Service {
             sendFinishedNotification();
         }
 
-        mIsTimerRunning = false;
         mTimerState = INACTIVE;
         sendToBackground();
     }
@@ -230,7 +218,7 @@ public class TimerService extends Service {
     }
 
     public boolean isTimerRunning() {
-        return mIsTimerRunning;
+        return mTimerState == ACTIVE;
     }
 
     @Override
@@ -278,7 +266,7 @@ public class TimerService extends Service {
         stopForeground(true);
     }
 
-    public void setAlarm(long countDownTime) {
+    private void setAlarm(long countDownTime) {
         Log.w(TAG, "Alarm set.");
         mAlarmReceiver = new BroadcastReceiver() {
             @Override
@@ -304,7 +292,7 @@ public class TimerService extends Service {
         }
     }
 
-    void cancelAlarm() {
+    private void cancelAlarm() {
         Log.w(TAG, "Alarm canceled.");
         PendingIntent intent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_FINISHED), 0);
         mAlarmManager.cancel(intent);

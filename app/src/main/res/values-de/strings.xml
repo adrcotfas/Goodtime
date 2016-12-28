@@ -4,7 +4,6 @@
   <string name="stop">"STOP"</string>
   <string name="pause">"PAUSE"</string>
   <string name="resume">"WEITER"</string>
-  <string name="goodtime_notification_title">"Goodtime Benachrichtigungston"</string>
   <string name="dialog_break_message">"Genug pausiert!"</string>
   <string name="dialog_break_session">"Sitzung starten"</string>
   <string name="dialog_session_message">"Genug gearbeitet!"</string>

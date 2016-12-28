@@ -251,7 +251,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             NotificationManager notificationManager = (NotificationManager)
                     getSystemService(Context.NOTIFICATION_SERVICE);
             if (!notificationManager.isNotificationPolicyAccessGranted()) {
-                mPref.setDisableSoundAndVibration(false);
+                mPref.disableSoundAndVibration();
             }
         }
     }
@@ -669,8 +669,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     }
 
     protected void updateTimerLabel() {
-        int remainingTime = 0;
-
+        int remainingTime;
         if (mIsBoundToTimerService) {
             if (mTimerService.isTimerRunning()) {
                 remainingTime = mTimerService.getRemainingTime();
