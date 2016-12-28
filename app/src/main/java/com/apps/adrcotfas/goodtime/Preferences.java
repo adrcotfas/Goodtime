@@ -38,19 +38,19 @@ public class Preferences {
     }
 
     public int getSessionDuration() {
-        return mPref.getInt(SESSION_DURATION, R.integer.default_work_duration);
+        return mPref.getInt(SESSION_DURATION, 25);
     }
 
     public int getSessionsBeforeLongBreak() {
-        return mPref.getInt(SESSIONS_BEFORE_LONG_BREAK, R.integer.default_sessions);
+        return mPref.getInt(SESSIONS_BEFORE_LONG_BREAK, 4);
     }
 
     public int getBreakDuration() {
-        return mPref.getInt(BREAK_DURATION, R.integer.default_break_duration);
+        return mPref.getInt(BREAK_DURATION, 5);
     }
 
     public int getLongBreakDuration() {
-        return mPref.getInt(LONG_BREAK_DURATION, R.integer.default_long_break_duration);
+        return mPref.getInt(LONG_BREAK_DURATION, 15);
     }
 
     public boolean getKeepScreenOn() {
