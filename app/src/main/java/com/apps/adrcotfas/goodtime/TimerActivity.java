@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,6 +37,7 @@ import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.about.AboutActivity;
 import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
+import com.google.android.gms.appinvite.AppInviteInvitation;
 
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -68,6 +70,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     private static final int MAXIMUM_MILLISECONDS_BETWEEN_BACK_PRESSES = 2000;
     private static final int  MAXIMUM_MILLISECONDS_NOTIFICATION_TIME = 2000;
     private static final String TAG = "TimerActivity";
+    private static final int REQUEST_INVITE = 0;
     private final Handler mUpdateTimeHandler = new TimeLabelUpdateHandler(this);
     private long mBackPressedAt;
     private FloatingActionButton mStartButton;
@@ -362,6 +365,10 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         if (id == R.id.action_about) {
             Intent intent = new Intent(this, AboutActivity.class);
             startActivity(intent);
+            return true;
+        }
+        if (id == R.id.action_invite) {
+            onInviteClicked();
             return true;
         }
 
@@ -733,6 +740,18 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         }
+    }
+
+    private void onInviteClicked() {
+
+        final String appPackageName = getPackageName();
+        Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
+                .setMessage(getString(R.string.invitation_message))
+                .setDeepLink(Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName))
+                .setCustomImage(Uri.parse(getString(R.string.invitation_custom_image)))
+                .setCallToActionText(getString(R.string.invitation_cta))
+                .build();
+        startActivityForResult(intent, REQUEST_INVITE);
     }
 
     private class OrientationListener extends OrientationEventListener {

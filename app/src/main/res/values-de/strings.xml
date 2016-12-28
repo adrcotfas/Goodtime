@@ -1,6 +1,7 @@
 <resources>
   <string name="action_settings">"Einstellungen"</string>
   <string name="action_about">"Über"</string>
+  <string name="action_invite">Freunde einladen</string>
   <string name="stop">"STOP"</string>
   <string name="pause">"PAUSE"</string>
   <string name="resume">"WEITER"</string>
@@ -59,4 +60,8 @@
   <string name="about_feedback">"Schicke Feedback"</string>
   <string name="about_contributors">"Mitwirkende und Lizenzen"</string>
   <string name="about_tour">"Intro"</string>
+
+  <string name="invitation_title">App-Einladung senden</string>
+  <string name="invitation_cta">Installieren!</string>
+  <string name="invitation_message">Goodtime hilft dir, die Pomodore Technik anzuwenden</string>
 </resources>
