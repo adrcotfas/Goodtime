@@ -87,6 +87,7 @@ public class TimerService extends Service {
             disableWifi();
         }
 
+        mTimerState = ACTIVE;
         mCurrentSession = sessionType;
         setAlarm(mCountDownFinishedTime);
     }
