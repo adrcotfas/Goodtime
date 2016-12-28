@@ -66,6 +66,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     public static final int NOTIFICATION_TAG = 2;
     protected final static int MSG_UPDATE_TIME = 0;
     private static final int MAXIMUM_MILLISECONDS_BETWEEN_BACK_PRESSES = 2000;
+    private static final int  MAXIMUM_MILLISECONDS_NOTIFICATION_TIME = 2000;
     private static final String TAG = "TimerActivity";
     private final Handler mUpdateTimeHandler = new TimeLabelUpdateHandler(this);
     private long mBackPressedAt;
@@ -661,6 +662,13 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         if (!mIsUiVisible) {
             mTimerService.bringToForeground();
         }
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                removeCompletionNotification();
+            }
+        }, MAXIMUM_MILLISECONDS_NOTIFICATION_TIME);
     }
 
     private void enablePauseButton() {

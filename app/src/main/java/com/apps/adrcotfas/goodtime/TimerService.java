@@ -25,7 +25,6 @@ import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static android.os.Build.VERSION.SDK_INT;
 import static com.apps.adrcotfas.goodtime.Notifications.createCompletionNotification;
 import static com.apps.adrcotfas.goodtime.Notifications.createForegroundNotification;
-import static com.apps.adrcotfas.goodtime.Notifications.createInvisibleCompletionNotification;
 import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;
 import static com.apps.adrcotfas.goodtime.SessionType.LONG_BREAK;
 import static com.apps.adrcotfas.goodtime.SessionType.WORK;
@@ -150,11 +149,7 @@ public class TimerService extends Service {
             restoreWifi();
         }
 
-        if (mPref.getContinuousMode()) {
-            sendInvisibleFinishedNotification();
-        } else {
-            sendFinishedNotification();
-        }
+        sendFinishedNotification(!mPref.getContinuousMode());
 
         mTimerState = INACTIVE;
         sendToBackground();
@@ -194,7 +189,7 @@ public class TimerService extends Service {
         wifiManager.setWifiEnabled(mPreviousWifiMode);
     }
 
-    private void sendFinishedNotification() {
+    private void sendFinishedNotification(boolean addButtons) {
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(
                 NOTIFICATION_TAG,
@@ -202,18 +197,9 @@ public class TimerService extends Service {
                         this,
                         mCurrentSession,
                         mPref.getNotificationSound(),
-                        mPref.getNotificationVibrate()
+                        mPref.getNotificationVibrate(),
+                        addButtons
                 )
-        );
-    }
-
-    private void sendInvisibleFinishedNotification() {
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(
-                NOTIFICATION_TAG,createInvisibleCompletionNotification(
-                        this,
-                        mPref.getNotificationSound(),
-                        mPref.getNotificationVibrate())
         );
     }
 
