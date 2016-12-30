@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -39,6 +40,7 @@ import com.apps.adrcotfas.goodtime.about.AboutActivity;
 import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -750,7 +752,16 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 .setDeepLink(Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName))
                 .setCallToActionText(getString(R.string.invitation_cta))
                 .build();
-        startActivityForResult(intent, REQUEST_INVITE);
+        PackageManager packageManager = getPackageManager();
+        List activities = packageManager.queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        boolean isIntentSafe = activities.size() > 0;
+        if (isIntentSafe) {
+            startActivityForResult(intent, REQUEST_INVITE);
+        } else {
+            Toast.makeText(getBaseContext(), R.string.toast_google_services_missing, LENGTH_SHORT)
+                    .show();
+        }
     }
 
     private class OrientationListener extends OrientationEventListener {

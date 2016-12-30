@@ -22,6 +22,7 @@
   <string name="dialog_reset_ok">"Ok"</string>
   <string name="dialog_reset_cancel">"Nein"</string>
   <string name="toast_back_press">"Erneut tippen, um zu beenden"</string>
+  <string name="toast_google_services_missing">Bitte aktualisieren Google Play Services</string>
 
   <string name="pref_header_general">"Sitzungen"</string>
   <string name="pref_session_duration">"Dauer einer Sitzung"</string>

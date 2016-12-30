@@ -22,6 +22,7 @@
   <string name="dialog_reset_ok">OK</string>
   <string name="dialog_reset_cancel">Cancel</string>
   <string name="toast_back_press">Press the back button again to exit</string>
+  <string name="toast_google_services_missing">Please update Google Play Services</string>
 
   <string name="pref_header_general">Sessions</string>
   <string name="pref_session_duration">Work session duration</string>

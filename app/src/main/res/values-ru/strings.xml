@@ -22,6 +22,7 @@
   <string name="dialog_reset_ok">"ОК"</string>
   <string name="dialog_reset_cancel">"Отмена"</string>
   <string name="toast_back_press">"Нажмите кнопку назад для выхода"</string>
+  <string name="toast_google_services_missing" >Пожалуйста обновите Google Play Services</string>
 
   <string name="pref_header_general">"Сессии"</string>
   <string name="pref_session_duration">"Длительность рабочей сессии"</string>
