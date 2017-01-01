@@ -455,13 +455,9 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 Log.i(TAG, "Timer has been paused");
                 mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
                 mTimerService.pauseSession();
-
                 mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
-                mStopButton.setVisibility(VISIBLE);
-                if (mStopButton != null) {
-                    mStopButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade));
-                }
 
+                toggleStopButtonVisibility(true);
                 break;
             case PAUSED:
                 Log.i(TAG, "Timer has been resumed");
@@ -470,11 +466,23 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 }
                 mTimerService.unPauseSession();
                 mTimeLabel.clearAnimation();
-                mStopButton.setVisibility(INVISIBLE);
-                if (mStopButton != null) {
-                    mStopButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade_reverse));
-                }
+
+                toggleStopButtonVisibility(false);
                 break;
+        }
+    }
+
+    private void toggleStopButtonVisibility(boolean visible) {
+        if (visible) {
+            mStopButton.setVisibility(VISIBLE);
+            if (mStopButton != null) {
+                mStopButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade));
+            }
+        } else {
+            mStopButton.setVisibility(INVISIBLE);
+            if (mStopButton != null) {
+                mStopButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade_reverse));
+            }
         }
     }
 
