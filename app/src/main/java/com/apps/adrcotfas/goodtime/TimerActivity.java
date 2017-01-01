@@ -38,8 +38,6 @@ import com.apps.adrcotfas.goodtime.about.AboutActivity;
 import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -180,7 +178,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                         onCountdownFinished();
                         break;
                     case Notifications.ACTION_PAUSE_UI:
-                        onPauseButtonClick();
+                        onTimeLabelClick();
                         mTimerService.bringToForeground();
                         break;
                     case Notifications.ACTION_STOP_UI:
@@ -304,7 +302,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mTimeLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onPauseButtonClick();
+                onTimeLabelClick();
             }
         });
     }
@@ -450,7 +448,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         }, 300);
     }
 
-    private void onPauseButtonClick() {
+    private void onTimeLabelClick() {
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
         switch (mTimerService.getTimerState()) {
             case ACTIVE:
