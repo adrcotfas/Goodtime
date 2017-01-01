@@ -3,6 +3,7 @@
   <string name="action_about">About</string>
   <string name="action_invite">Invite Friends</string>
   <string name="stop">STOP</string>
+  <string name="stop_label">tap here to stop</string>
   <string name="pause">PAUSE</string>
   <string name="resume">RESUME</string>
   <string name="dialog_break_message">Break complete</string>
@@ -42,7 +43,6 @@
   <string name="pref_unit_minutes">minutes</string>
   <string name="pref_unit_sessions">sessions</string>
   <string name="pref_rotate">Rotate the time label</string>
-  <string name="pref_rotate_summary">In case of screen orientation change.</string>
   <string name="pref_fullscreen">Fullscreen mode</string>
 
   <string name="intro_avoid_distractions">Avoid distractions</string>

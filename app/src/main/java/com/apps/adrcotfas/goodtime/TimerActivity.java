@@ -28,17 +28,17 @@ import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.about.AboutActivity;
 import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
 import com.google.android.gms.appinvite.AppInviteInvitation;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 import java.util.Locale;
@@ -76,14 +76,11 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     private final Handler mUpdateTimeHandler = new TimeLabelUpdateHandler(this);
     private long mBackPressedAt;
     private FloatingActionButton mStartButton;
-    private Button mPauseButton;
-    private Button mStopButton;
+    private TextView mStopButton;
     private TextView mTimeLabel;
-    private View mHorizontalSeparator;
     private Preferences mPref;
     private SharedPreferences mPrivatePref;
     private AlertDialog mAlertDialog;
-    private OrientationListener mOrientationListener;
     private TimerService mTimerService;
     private BroadcastReceiver mBroadcastReceiver;
     private boolean mIsBoundToTimerService = false;
@@ -127,9 +124,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         startService(intent);
         bindService(intent, mTimerServiceConnection, Context.BIND_AUTO_CREATE);
 
-        if (mPref.getRotateTimeLabel()) {
-            mOrientationListener.enable();
-        }
+        switchOrientation(mPref.getRotateTimeLabel());
     }
 
     @Override
@@ -157,9 +152,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         if (mIsBoundToTimerService && mTimerService.getTimerState() != INACTIVE) {
             mTimerService.bringToForeground();
             mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
-        }
-        if (mPref.getRotateTimeLabel()) {
-            mOrientationListener.disable();
         }
         super.onStop();
     }
@@ -273,18 +265,12 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mStartButton = (FloatingActionButton) findViewById(R.id.startButton);
         setUpStartButton();
 
-        mPauseButton = (Button) findViewById(R.id.pauseButton);
-        setUpPauseButton();
-
-        mStopButton = (Button) findViewById(R.id.stopButton);
+        mStopButton = (TextView) findViewById(R.id.stopButton);
         setUpStopButton();
-
-        mHorizontalSeparator = findViewById(R.id.horizontalSeparator);
 
         mTimeLabel = (TextView) findViewById(R.id.textView);
         setUpTimerLabel();
-
-        mOrientationListener = new OrientationListener(this);
+        setUpPauseButton();
     }
 
     private void setUpToolbar(Toolbar toolbar) {
@@ -315,7 +301,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     }
 
     private void setUpPauseButton() {
-        mPauseButton.setOnClickListener(new View.OnClickListener() {
+        mTimeLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onPauseButtonClick();
@@ -342,11 +328,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     private void removeCompletionNotification() {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(NOTIFICATION_TAG);
-    }
-
-    private void disablePauseButton() {
-        mPauseButton.setEnabled(false);
-        mPauseButton.setTextColor(getResources().getColor(R.color.gray));
     }
 
     @Override
@@ -426,10 +407,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
 
         mStartButton.setVisibility(VISIBLE);
-        mPauseButton.setVisibility(INVISIBLE);
-        mPauseButton.setText(getString(R.string.pause));
         mStopButton.setVisibility(INVISIBLE);
-        mHorizontalSeparator.setVisibility(INVISIBLE);
     }
 
     private void shutScreenOffIfPreferred() {
@@ -452,9 +430,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
     private void loadRunningTimerUiState() {
         mStartButton.setVisibility(INVISIBLE);
-        mPauseButton.setVisibility(VISIBLE);
-        mStopButton.setVisibility(VISIBLE);
-        mHorizontalSeparator.setVisibility(VISIBLE);
     }
 
     private void keepScreenOnIfPreferred() {
@@ -465,13 +440,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
     private void onStartButtonClick() {
         mStartButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.implode));
-        final RelativeLayout buttons = (RelativeLayout) findViewById(R.id.buttons);
-        if (buttons != null) {
-            buttons.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade));
-        }
-
         startTimer(WORK);
-        enablePauseButton();
         mStartButton.setEnabled(false);
         mStartButton.postDelayed(new Runnable() {
             @Override
@@ -489,8 +458,12 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
                 mTimerService.pauseSession();
 
-                mPauseButton.setText(getString(R.string.resume));
-                mPauseButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
+                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
+                mStopButton.setVisibility(VISIBLE);
+                if (mStopButton != null) {
+                    mStopButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade));
+                }
+
                 break;
             case PAUSED:
                 Log.i(TAG, "Timer has been resumed");
@@ -498,20 +471,20 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                     mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
                 }
                 mTimerService.unPauseSession();
-
-                mPauseButton.setText(getString(R.string.pause));
-                mPauseButton.clearAnimation();
+                mTimeLabel.clearAnimation();
+                mStopButton.setVisibility(INVISIBLE);
+                if (mStopButton != null) {
+                    mStopButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade_reverse));
+                }
                 break;
         }
     }
 
     private void onStopButtonClick() {
-        mPauseButton.clearAnimation();
-        final RelativeLayout buttons = (RelativeLayout) findViewById(R.id.buttons);
-        if (buttons != null) {
-            buttons.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade_reverse));
+        mTimeLabel.clearAnimation();
+        if (mStopButton != null) {
+            mStopButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade_reverse));
         }
-
         mStartButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.implode_reverse));
 
         mTimerService.stopSession();
@@ -567,7 +540,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 break;
             case BREAK:
             case LONG_BREAK:
-                enablePauseButton();
                 if (mTimerService.getCurrentSessionStreak() >= mPref.getSessionsBeforeLongBreak()) {
                     mTimerService.resetCurrentSessionStreak();
                 }
@@ -637,8 +609,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     }
 
     private void startBreak() {
-        disablePauseButton();
-
         startTimer(mTimerService.getCurrentSessionStreak() >= mPref.getSessionsBeforeLongBreak()
                 ? LONG_BREAK
                 : BREAK
@@ -662,7 +632,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 break;
             case BREAK:
             case LONG_BREAK:
-                enablePauseButton();
                 if (mTimerService.getCurrentSessionStreak() >= mPref.getSessionsBeforeLongBreak()) {
                     mTimerService.resetCurrentSessionStreak();
                 }
@@ -678,11 +647,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 removeCompletionNotification();
             }
         }, MAXIMUM_MILLISECONDS_NOTIFICATION_TIME);
-    }
-
-    private void enablePauseButton() {
-        mPauseButton.setEnabled(true);
-        mPauseButton.setTextColor(getResources().getColor(R.color.yellow));
     }
 
     protected void updateTimerLabel() {
@@ -764,33 +728,11 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         }
     }
 
-    private class OrientationListener extends OrientationEventListener {
-        final int ROTATION_O = 1;
-        final int ROTATION_90 = 2;
-        final int ROTATION_MINUS90 = 3;
-
-        private int rotation = ROTATION_O;
-
-        public OrientationListener(Context context) {
-            super(context);
-        }
-
-        @Override
-        public void onOrientationChanged(int orientation) {
-            if ((orientation < 35 || orientation > 325)) {
-                if (rotation == ROTATION_90) {
-                    mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.landscape_to_portrait));
-                } else if (rotation == ROTATION_MINUS90) {
-                    mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.revlandscape_to_portrait));
-                }
-                rotation = ROTATION_O;
-            } else if (orientation > 55 && orientation < 125 && rotation != ROTATION_MINUS90) {
-                rotation = ROTATION_MINUS90;
-                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.portrait_to_revlandscape));
-            } else if (orientation > 235 && orientation < 305 && rotation != ROTATION_90) {
-                rotation = ROTATION_90;
-                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.portrait_to_landscape));
-            }
+    private void switchOrientation(boolean rotate) {
+        if(rotate) {
+            mTimeLabel.setRotation(90);
+        } else {
+            mTimeLabel.setRotation(0);
         }
     }
 }

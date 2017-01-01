@@ -3,6 +3,7 @@
   <string name="action_about">"О программе"</string>
   <string name="action_invite">Пригласить друзей</string>
   <string name="stop">"СТОП"</string>
+  <string name="stop_label">нажмите, чтобы остановить</string>
   <string name="pause">"ПАУЗА"</string>
   <string name="resume">"ПУСК"</string>
   <string name="dialog_break_message">"Перерыв завершен"</string>
@@ -42,7 +43,6 @@
   <string name="pref_unit_minutes">"минут(ы)"</string>
   <string name="pref_unit_sessions">"сессии(ий)"</string>
   <string name="pref_rotate">"Вращать цифры"</string>
-  <string name="pref_rotate_summary">"При вращении экрана"</string>
   <string name="pref_fullscreen">"Полноэкранный режим"</string>
 
   <string name="intro_avoid_distractions">"Не отвлекайтесь"</string>
