@@ -267,7 +267,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         setUpStopButton();
 
         mTimeLabel = (TextView) findViewById(R.id.textView);
-        setUpTimerLabel();
+        setUpTimeLabel();
         setUpPauseButton();
     }
 
@@ -316,10 +316,10 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         });
     }
 
-    private void setUpTimerLabel() {
+    private void setUpTimeLabel() {
         if (mTimeLabel != null) {
             mTimeLabel.setTypeface(createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf"));
-            updateTimerLabel();
+            updateTimeLabel();
         }
     }
 
@@ -367,7 +367,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             }
         } else if (key.equals(SESSION_DURATION)) {
             if (mIsBoundToTimerService && mTimerService.getTimerState() == INACTIVE) {
-                updateTimerLabel();
+                updateTimeLabel();
             }
         }
     }
@@ -399,7 +399,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
 
         if (mIsBoundToTimerService) {
-            updateTimerLabel();
+            updateTimeLabel();
             shutScreenOffIfPreferred();
         }
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
@@ -664,7 +664,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         }, MAXIMUM_MILLISECONDS_NOTIFICATION_TIME);
     }
 
-    protected void updateTimerLabel() {
+    protected void updateTimeLabel() {
         int remainingTime;
         if (mIsBoundToTimerService) {
             if (mTimerService.isTimerRunning()) {

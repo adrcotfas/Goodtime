@@ -16,7 +16,7 @@ class TimeLabelUpdateHandler extends Handler {
     public void handleMessage(Message message) {
         if (TimerActivity.MSG_UPDATE_TIME == message.what) {
             if (activity != null){
-                activity.updateTimerLabel();
+                activity.updateTimeLabel();
             }
             sendEmptyMessageDelayed(TimerActivity.MSG_UPDATE_TIME, UPDATE_RATE_MS);
         }
