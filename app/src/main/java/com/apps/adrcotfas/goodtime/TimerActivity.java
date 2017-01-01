@@ -405,7 +405,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
 
         mStartButton.setVisibility(VISIBLE);
-        mStopButton.setVisibility(INVISIBLE);
+        toggleStopButtonVisibility(false);
     }
 
     private void shutScreenOffIfPreferred() {
@@ -452,12 +452,23 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
         switch (mTimerService.getTimerState()) {
             case ACTIVE:
-                Log.i(TAG, "Timer has been paused");
-                mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
-                mTimerService.pauseSession();
-                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
+                if (mTimerService.getSessionType() == WORK) {
+                    Log.i(TAG, "Timer has been paused");
+                    mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
+                    mTimerService.pauseSession();
+                    mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
+                    toggleStopButtonVisibility(true);
+                } else {
+                    toggleStopButtonVisibility(true);
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            toggleStopButtonVisibility(false);
+                        }
+                    }, MAXIMUM_MILLISECONDS_NOTIFICATION_TIME);
+                }
 
-                toggleStopButtonVisibility(true);
                 break;
             case PAUSED:
                 Log.i(TAG, "Timer has been resumed");
@@ -472,29 +483,27 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         }
     }
 
+    private void onStopButtonClick() {
+        mTimeLabel.clearAnimation();
+        toggleStopButtonVisibility(false);
+        mStartButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.implode_reverse));
+
+        mTimerService.stopSession();
+        loadInitialState();
+    }
+
     private void toggleStopButtonVisibility(boolean visible) {
-        if (visible) {
+        if (visible && mStopButton.getVisibility() == INVISIBLE) {
             mStopButton.setVisibility(VISIBLE);
             if (mStopButton != null) {
                 mStopButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade));
             }
-        } else {
+        } else if (!visible && mStopButton.getVisibility() == VISIBLE) {
             mStopButton.setVisibility(INVISIBLE);
             if (mStopButton != null) {
                 mStopButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade_reverse));
             }
         }
-    }
-
-    private void onStopButtonClick() {
-        mTimeLabel.clearAnimation();
-        if (mStopButton != null) {
-            mStopButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade_reverse));
-        }
-        mStartButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.implode_reverse));
-
-        mTimerService.stopSession();
-        loadInitialState();
     }
 
     private void onCountdownFinished() {
