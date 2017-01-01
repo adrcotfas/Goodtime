@@ -67,6 +67,11 @@ public class TimerService extends Service {
 
         mBroadcastManager = LocalBroadcastManager.getInstance(this);
     }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(mAlarmReceiver);
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
