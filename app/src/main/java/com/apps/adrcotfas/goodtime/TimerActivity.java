@@ -17,7 +17,12 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -34,6 +39,11 @@ import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.about.AboutActivity;
 import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
+import com.apps.adrcotfas.goodtime.util.DeviceInfo;
+import com.apps.adrcotfas.goodtime.util.IabHelper;
+import com.apps.adrcotfas.goodtime.util.IabResult;
+import com.apps.adrcotfas.goodtime.util.Inventory;
+import com.apps.adrcotfas.goodtime.util.Purchase;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 
 import java.util.List;
@@ -61,12 +71,192 @@ import static com.apps.adrcotfas.goodtime.TimerState.INACTIVE;
 import static com.apps.adrcotfas.goodtime.TimerState.PAUSED;
 import static java.lang.String.format;
 
-public class TimerActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class TimerActivity extends AppCompatActivity
+        implements SharedPreferences.OnSharedPreferenceChangeListener,
+        NavigationView.OnNavigationItemSelectedListener {
+
+    //region IAP related stuff
+    // TODO: move to separate activity
+    // SKUs for the donations
+    static final String SKU_1_DOLLAR = "1_dollar";
+    static final String SKU_3_DOLLARS = "3_dollars";
+    static final String SKU_5_DOLLARS = "5_dollars";
+
+    IabHelper mHelper;
+    // Called when consumption is complete
+    final IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
+        public void onConsumeFinished(Purchase purchase, IabResult result) {
+            Log.d(TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
+            // if we were disposed of in the meantime, quit.
+            if (mHelper == null) return;
+            if (result.isSuccess()) {
+                Log.d(TAG, "Consumption successful. Provisioning.");
+            } else {
+                Log.e(TAG, "Error while consuming: " + result);
+            }
+            Log.d(TAG, "End consumption flow.");
+        }
+    };
+
+    // Callback for when a purchase is finished
+    final IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
+        public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+
+            Log.d(TAG, "Purchase finished: " + result + ", purchase: " + purchase);
+            // if we were disposed of in the meantime, quit.
+            if (mHelper == null) return;
+            if (result.isFailure()) {
+                Log.e(TAG, "Error purchasing: " + result);
+                return;
+            }
+
+            Log.d(TAG, "Purchase successful.");
+            Toast.makeText(TimerActivity.this, "Thank you for your donation!", Toast.LENGTH_LONG).show();
+            try {
+                mHelper.consumeAsync(purchase, mConsumeFinishedListener);
+            } catch (IabHelper.IabAsyncInProgressException e) {
+                Log.e(TAG, "Error consuming the purchase. Another async operation in progress.");
+            }
+        }
+    };
+
+    final IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
+
+            // Have we been disposed of in the meantime? If so, quit.
+            if (mHelper == null) return;
+
+            // Is it a failure?
+            if (result.isFailure()) {
+                return;
+            }
+            Log.d(TAG, "Query inventory was successful.");
+            Purchase purchase1 = inventory.getPurchase(SKU_1_DOLLAR);
+            if (purchase1 != null) {
+                try {
+                    mHelper.consumeAsync(inventory.getPurchase(SKU_1_DOLLAR), mConsumeFinishedListener);
+                } catch (IabHelper.IabAsyncInProgressException e) {
+                    Log.e(TAG, "Error consuming the purchase.");
+                }
+            }
+
+            Purchase purchase3 = inventory.getPurchase(SKU_3_DOLLARS);
+            if (purchase3 != null) {
+                Log.d(TAG, "Consume purchase.");
+                try {
+                    mHelper.consumeAsync(inventory.getPurchase(SKU_3_DOLLARS), mConsumeFinishedListener);
+                } catch (IabHelper.IabAsyncInProgressException e) {
+                    Log.e(TAG, "Error consuming the purchase.");
+                }
+            }
+
+            Purchase purchase5 = inventory.getPurchase(SKU_5_DOLLARS);
+            if (purchase5 != null) {
+                Log.d(TAG, "Consume purchase.");
+                try {
+                    mHelper.consumeAsync(inventory.getPurchase(SKU_5_DOLLARS), mConsumeFinishedListener);
+                } catch (IabHelper.IabAsyncInProgressException e) {
+                    Log.e(TAG, "Error consuming the purchase.");
+                }
+            }
+        }
+    };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
+        // Pass on the activity result to the helper for handling
+        if (!mHelper.handleActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        } else {
+            Log.d(TAG, "onActivityResult handled by IABUtil.");
+        }
+    }
+
+    protected IabHelper getIabHelper() {
+        return mHelper;
+    }
+
+    protected IabHelper.OnIabPurchaseFinishedListener getPurchaseListener() {
+        return mPurchaseFinishedListener;
+    }
+
+    private void setupIabHelper() {
+        String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgH+Nj4oEbJKEnrds3qaDcdjti0hnL1hlYsOoX5hVNUs4CpTzVmiAtO3LHwLGJzvtDmagsszKgVFn3SmVeA7y+GS93I6FwsCEmXNGdaCJW4TftLqSxT9Q4Qn8R8hWk3OXgo1ZF2FxGuicwq9zt4W+6pW7QMhpoBA0DyCLhoCulINVTkEKBBWeCS4CDkhXrnXCoAbhmYn2R7Ifhn7voy1YR9Vr/G9tCHzvLM1k4bntyOebxdMwPy49Dsrzam1hgPhzmEMqwolchLx95DFXVfHcWSFtBpZwR4sPFhXny5CQ255CruCdQd8L5CHdRhrHyNkzBVrwoYg8WWZUQ3Ijcu2e5wIDAQAB";
+
+        // compute your public key and store it in base64EncodedPublicKey
+        mHelper = new IabHelper(this, base64EncodedPublicKey);
+        mHelper.enableDebugLogging(false);
+        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+            public void onIabSetupFinished(IabResult result) {
+                if (!result.isSuccess()) {
+                    // Oh noes, there was a problem.
+                    return;
+                }
+                // Have we been disposed of in the meantime? If so, quit.
+                if (mHelper == null) return;
+
+                try {
+                    mHelper.queryInventoryAsync(mGotInventoryListener);
+                } catch (IabHelper.IabAsyncInProgressException e) {
+                    Log.e(TAG, "Error querying inventory. Another async operation in progress.");
+                }
+            }
+        });
+    }
+
+    private void openDonationsDialog() {
+        final CharSequence[] items = getResources().getStringArray(R.array.donations);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.about_donate);
+        builder.setNegativeButton(
+                R.string.dialog_reset_cancel,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (items[item].equals("$1")) {
+                    try {
+                        getIabHelper().launchPurchaseFlow(TimerActivity.this, SKU_1_DOLLAR, 667,
+                                getPurchaseListener(), "");
+                    } catch (IabHelper.IabAsyncInProgressException | IllegalStateException e) {
+                        e.printStackTrace();
+                        Toast.makeText(TimerActivity.this, R.string.about_something_wrong, Toast.LENGTH_SHORT).show();
+                    }
+                } else if (items[item].equals("$3")) {
+                    try {
+                        getIabHelper().launchPurchaseFlow(TimerActivity.this, SKU_3_DOLLARS, 667,
+                                getPurchaseListener(), "");
+                    } catch (IabHelper.IabAsyncInProgressException | IllegalStateException e) {
+                        e.printStackTrace();
+                        Toast.makeText(TimerActivity.this, R.string.about_something_wrong, Toast.LENGTH_SHORT).show();
+                    }
+                } else if (items[item].equals("$5")) {
+                    try {
+                        getIabHelper().launchPurchaseFlow(TimerActivity.this, SKU_5_DOLLARS, 667,
+                                getPurchaseListener(), "");
+                    } catch (IabHelper.IabAsyncInProgressException | IllegalStateException e) {
+                        e.printStackTrace();
+                        Toast.makeText(TimerActivity.this, R.string.about_something_wrong, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+        builder.show();
+    }
+
+    //endregion
 
     public static final int NOTIFICATION_TAG = 2;
     protected final static int MSG_UPDATE_TIME = 0;
     private static final int MAXIMUM_MILLISECONDS_BETWEEN_KEY_PRESSES = 2000;
-    private static final int  MAXIMUM_MILLISECONDS_NOTIFICATION_TIME = 2000;
+    private static final int MAXIMUM_MILLISECONDS_NOTIFICATION_TIME = 2000;
     private static final String TAG = "TimerActivity";
     private static final int REQUEST_INVITE = 0;
     private final Handler mUpdateTimeHandler = new TimeLabelUpdateHandler(this);
@@ -107,6 +297,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         loadInitialState();
         setUpAndroidNougatSettings();
         setupBroadcastReceiver();
+        setupIabHelper();
     }
 
     private void migrateOldPreferences() {
@@ -184,7 +375,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                         onStopLabelClick();
                         break;
                     case Notifications.ACTION_SKIP_BREAK_UI:
-                        if (mAlertDialog != null){
+                        if (mAlertDialog != null) {
                             mAlertDialog.dismiss();
                         }
                         startTimer(WORK);
@@ -192,7 +383,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                         mTimerService.bringToForeground();
                         break;
                     case Notifications.ACTION_START_BREAK_UI:
-                        if (mAlertDialog != null){
+                        if (mAlertDialog != null) {
                             mAlertDialog.dismiss();
                         }
                         startBreak();
@@ -200,7 +391,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                         mTimerService.bringToForeground();
                         break;
                     case Notifications.ACTION_START_WORK_UI:
-                        if (mAlertDialog != null){
+                        if (mAlertDialog != null) {
                             mAlertDialog.dismiss();
                         }
                         startTimer(WORK);
@@ -256,6 +447,14 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setUpToolbar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         setUpSessionCounter();
 
@@ -332,16 +531,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             startActivity(intent);
             return true;
         }
-        if (id == R.id.action_about) {
-            Intent intent = new Intent(this, AboutActivity.class);
-            startActivity(intent);
-            return true;
-        }
-        if (id == R.id.action_invite) {
-            onInviteClicked();
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -363,8 +552,13 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
     @Override
     public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+            return;
+        }
+
         if (mTimerService.getTimerState() != INACTIVE) {
-            /// move app to background
             moveTaskToBack(true);
         } else {
             if (mBackPressedAt + MAXIMUM_MILLISECONDS_BETWEEN_KEY_PRESSES > System.currentTimeMillis()) {
@@ -429,7 +623,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                     mTimerService.pauseSession();
                     mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
                 } else if (mTimeLabelPressedAt + MAXIMUM_MILLISECONDS_BETWEEN_KEY_PRESSES
-                        <= System.currentTimeMillis()){
+                        <= System.currentTimeMillis()) {
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -715,10 +909,65 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     }
 
     private void switchOrientation(boolean rotate) {
-        if(rotate) {
+        if (rotate) {
             mTimeLabel.setRotation(90);
         } else {
             mTimeLabel.setRotation(0);
         }
+    }
+
+    private void openPlayStorePage() {
+        final String appPackageName = getPackageName();
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
+    }
+
+    private void openFeedback() {
+        Intent email = new Intent(Intent.ACTION_SENDTO);
+        email.setData(new Uri.Builder().scheme("mailto").build());
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{"adrcotfas@gmail.com"});
+        email.putExtra(Intent.EXTRA_SUBJECT, "[Goodtime] Feedback");
+        email.putExtra(Intent.EXTRA_TEXT, "\nMy device info: \n" + DeviceInfo.getDeviceInfo()
+                + "\nApp version: " + BuildConfig.VERSION_NAME
+                + "\nFeedback:" + "\n");
+        try {
+            startActivity(Intent.createChooser(email, "Send feedback"));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(this, R.string.about_no_email, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_about:
+                Intent aboutIntent = new Intent(this, AboutActivity.class);
+                startActivity(aboutIntent);
+                break;
+            case R.id.action_rate:
+                openPlayStorePage();
+                break;
+            case R.id.action_invite:
+                onInviteClicked();
+                break;
+            case R.id.about_pro:
+                openDonationsDialog();
+                break;
+            case R.id.action_settings:
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                break;
+            case R.id.action_feedback:
+                openFeedback();
+                break;
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

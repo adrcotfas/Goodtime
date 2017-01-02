@@ -6,18 +6,6 @@
         android:title="@string/about_version">
     </Preference>
     <Preference
-        android:key="about_pro"
-        android:title="@string/about_support">
-    </Preference>
-    <Preference
-        android:key="about_rate"
-        android:title="@string/about_rate">
-    </Preference>
-    <Preference
-        android:key="about_feedback"
-        android:title="@string/about_feedback">
-    </Preference>
-    <Preference
         android:key="about_licences"
         android:title="@string/about_contributors">
     </Preference>
