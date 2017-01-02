@@ -74,7 +74,7 @@ public class Preferences {
     }
 
     public boolean getRotateTimeLabel() {
-        return mPref.getBoolean(ROTATE_TIME_LABEL, true);
+        return mPref.getBoolean(ROTATE_TIME_LABEL, false);
     }
 
     public boolean getFullscreenMode() {
@@ -106,7 +106,7 @@ public class Preferences {
              .putBoolean(DISABLE_WIFI, oldPref.getBoolean(DISABLE_WIFI, false))
              .putBoolean(CONTINUOUS_MODE, oldPref.getBoolean(CONTINUOUS_MODE, false))
              .putBoolean(NOTIFICATION_VIBRATE, oldPref.getBoolean(NOTIFICATION_VIBRATE, false))
-             .putBoolean(ROTATE_TIME_LABEL, oldPref.getBoolean(ROTATE_TIME_LABEL, true))
+             .putBoolean(ROTATE_TIME_LABEL, oldPref.getBoolean(ROTATE_TIME_LABEL, false))
              .putBoolean(FULLSCREEN_MODE, oldPref.getBoolean(FULLSCREEN_MODE, true))
              .putString(NOTIFICATION_SOUND, oldPref.getString(NOTIFICATION_SOUND, ""))
              .apply();
