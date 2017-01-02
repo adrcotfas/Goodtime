@@ -70,7 +70,11 @@ public class TimerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        this.unregisterReceiver(mAlarmReceiver);
+        try {
+            this.unregisterReceiver(mAlarmReceiver);
+        } catch (Throwable th) {
+            // ignoring this exception
+        }
     }
 
     @Override
@@ -287,7 +291,9 @@ public class TimerService extends Service {
     private void cancelAlarm() {
         Log.w(TAG, "Alarm canceled.");
         PendingIntent intent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_FINISHED), 0);
-        mAlarmManager.cancel(intent);
+        if (mAlarmManager != null) {
+            mAlarmManager.cancel(intent);
+        }
 
         try {
             this.unregisterReceiver(mAlarmReceiver);
