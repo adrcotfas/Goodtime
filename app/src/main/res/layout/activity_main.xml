@@ -23,15 +23,6 @@
             android:textStyle="bold" />
     </android.support.v7.widget.Toolbar>
 
-
     <include layout="@layout/content_main" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/startButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_status_goodtime" />
 
 </android.support.design.widget.CoordinatorLayout>

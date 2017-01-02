@@ -10,7 +10,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -67,14 +65,15 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
     public static final int NOTIFICATION_TAG = 2;
     protected final static int MSG_UPDATE_TIME = 0;
-    private static final int MAXIMUM_MILLISECONDS_BETWEEN_BACK_PRESSES = 2000;
+    private static final int MAXIMUM_MILLISECONDS_BETWEEN_KEY_PRESSES = 2000;
     private static final int  MAXIMUM_MILLISECONDS_NOTIFICATION_TIME = 2000;
     private static final String TAG = "TimerActivity";
     private static final int REQUEST_INVITE = 0;
     private final Handler mUpdateTimeHandler = new TimeLabelUpdateHandler(this);
     private long mBackPressedAt;
-    private FloatingActionButton mStartButton;
-    private TextView mStopButton;
+    private long mTimeLabelPressedAt;
+    private TextView mStartLabel;
+    private TextView mStopLabel;
     private TextView mTimeLabel;
     private Preferences mPref;
     private SharedPreferences mPrivatePref;
@@ -182,7 +181,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                         mTimerService.bringToForeground();
                         break;
                     case Notifications.ACTION_STOP_UI:
-                        onStopButtonClick();
+                        onStopLabelClick();
                         break;
                     case Notifications.ACTION_SKIP_BREAK_UI:
                         if (mAlertDialog != null){
@@ -260,11 +259,10 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
         setUpSessionCounter();
 
-        mStartButton = (FloatingActionButton) findViewById(R.id.startButton);
-        setUpStartButton();
+        mStartLabel = (TextView) findViewById(R.id.startLabel);
 
-        mStopButton = (TextView) findViewById(R.id.stopButton);
-        setUpStopButton();
+        mStopLabel = (TextView) findViewById(R.id.stopLabel);
+        setUpStopLabel();
 
         mTimeLabel = (TextView) findViewById(R.id.textView);
         setUpTimeLabel();
@@ -289,15 +287,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         }
     }
 
-    private void setUpStartButton() {
-        mStartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onStartButtonClick();
-            }
-        });
-    }
-
     private void setUpPauseButton() {
         mTimeLabel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -307,11 +296,11 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         });
     }
 
-    private void setUpStopButton() {
-        mStopButton.setOnClickListener(new View.OnClickListener() {
+    private void setUpStopLabel() {
+        mStopLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onStopButtonClick();
+                onStopLabelClick();
             }
         });
     }
@@ -378,7 +367,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             /// move app to background
             moveTaskToBack(true);
         } else {
-            if (mBackPressedAt + MAXIMUM_MILLISECONDS_BETWEEN_BACK_PRESSES > System.currentTimeMillis()) {
+            if (mBackPressedAt + MAXIMUM_MILLISECONDS_BETWEEN_KEY_PRESSES > System.currentTimeMillis()) {
                 super.onBackPressed();
                 return;
             } else {
@@ -402,10 +391,8 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             updateTimeLabel();
             shutScreenOffIfPreferred();
         }
-        mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
 
-        mStartButton.setVisibility(VISIBLE);
-        toggleStopButtonVisibility(false);
+        setVisibility(mStartLabel, VISIBLE);
     }
 
     private void shutScreenOffIfPreferred() {
@@ -418,16 +405,11 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         Log.i(TAG, "Timer has been started");
 
         mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
-        mTimeLabel.setTextColor(Color.WHITE);
-        loadRunningTimerUiState();
+        setVisibility(mStartLabel, INVISIBLE);
 
         keepScreenOnIfPreferred();
 
         mTimerService.startSession(sessionType);
-    }
-
-    private void loadRunningTimerUiState() {
-        mStartButton.setVisibility(INVISIBLE);
     }
 
     private void keepScreenOnIfPreferred() {
@@ -436,39 +418,28 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         }
     }
 
-    private void onStartButtonClick() {
-        mStartButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.implode));
-        startTimer(WORK);
-        mStartButton.setEnabled(false);
-        mStartButton.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mStartButton.setEnabled(true);
-            }
-        }, 300);
-    }
-
     private void onTimeLabelClick() {
-        mTimeLabel.setTextColor(getResources().getColor(R.color.lightGray));
         switch (mTimerService.getTimerState()) {
             case ACTIVE:
+                setVisibility(mStopLabel, VISIBLE);
+
                 if (mTimerService.getSessionType() == WORK) {
                     Log.i(TAG, "Timer has been paused");
                     mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
                     mTimerService.pauseSession();
                     mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
-                    toggleStopButtonVisibility(true);
-                } else {
-                    toggleStopButtonVisibility(true);
+                } else if (mTimeLabelPressedAt + MAXIMUM_MILLISECONDS_BETWEEN_KEY_PRESSES
+                        <= System.currentTimeMillis()){
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            toggleStopButtonVisibility(false);
+                            setVisibility(mStopLabel, INVISIBLE);
                         }
-                    }, MAXIMUM_MILLISECONDS_NOTIFICATION_TIME);
+                    }, MAXIMUM_MILLISECONDS_BETWEEN_KEY_PRESSES);
                 }
 
+                mTimeLabelPressedAt = System.currentTimeMillis();
                 break;
             case PAUSED:
                 Log.i(TAG, "Timer has been resumed");
@@ -477,31 +448,31 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 }
                 mTimerService.unPauseSession();
                 mTimeLabel.clearAnimation();
-
-                toggleStopButtonVisibility(false);
+                setVisibility(mStopLabel, INVISIBLE);
+                break;
+            case INACTIVE:
+                startTimer(WORK);
+                setVisibility(mStartLabel, INVISIBLE);
                 break;
         }
     }
 
-    private void onStopButtonClick() {
+    private void onStopLabelClick() {
         mTimeLabel.clearAnimation();
-        toggleStopButtonVisibility(false);
-        mStartButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.implode_reverse));
 
+        setVisibility(mStopLabel, INVISIBLE);
         mTimerService.stopSession();
         loadInitialState();
     }
 
-    private void toggleStopButtonVisibility(boolean visible) {
-        if (visible && mStopButton.getVisibility() == INVISIBLE) {
-            mStopButton.setVisibility(VISIBLE);
-            if (mStopButton != null) {
-                mStopButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade));
-            }
-        } else if (!visible && mStopButton.getVisibility() == VISIBLE) {
-            mStopButton.setVisibility(INVISIBLE);
-            if (mStopButton != null) {
-                mStopButton.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade_reverse));
+    private void setVisibility(TextView textview, int visibility) {
+        if (textview != null) {
+            if (visibility == VISIBLE && textview.getVisibility() == INVISIBLE) {
+                textview.setVisibility(VISIBLE);
+                textview.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade));
+            } else if (visibility == INVISIBLE && textview.getVisibility() == VISIBLE) {
+                textview.setVisibility(INVISIBLE);
+                textview.startAnimation(loadAnimation(getApplicationContext(), R.anim.fade_reverse));
             }
         }
     }

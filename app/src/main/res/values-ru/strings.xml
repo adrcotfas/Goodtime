@@ -4,6 +4,7 @@
   <string name="action_invite">Пригласить друзей</string>
   <string name="stop">"СТОП"</string>
   <string name="stop_label">нажмите, чтобы остановить</string>
+  <string name="start_label">нажмите на таймер, чтобы начать</string>
   <string name="pause">"ПАУЗА"</string>
   <string name="resume">"ПУСК"</string>
   <string name="dialog_break_message">"Перерыв завершен"</string>

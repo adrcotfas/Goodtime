@@ -4,6 +4,7 @@
   <string name="action_invite">Invite Friends</string>
   <string name="stop">STOP</string>
   <string name="stop_label">tap here to stop</string>
+  <string name="start_label">tap the timer to start</string>
   <string name="pause">PAUSE</string>
   <string name="resume">RESUME</string>
   <string name="dialog_break_message">Break complete</string>

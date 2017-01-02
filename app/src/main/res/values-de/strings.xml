@@ -4,6 +4,7 @@
   <string name="action_invite">Freunde einladen</string>
   <string name="stop">"STOP"</string>
   <string name="stop_label">drücken Sie hier, um zu stoppen</string>
+  <string name="start_label">drücken Sie den Timer zum starten</string>
   <string name="pause">"PAUSE"</string>
   <string name="resume">"WEITER"</string>
   <string name="dialog_break_message">"Genug pausiert!"</string>
@@ -42,7 +43,7 @@
   <string name="pref_grant_permission">"Antippen zum Erlauben"</string>
   <string name="pref_unit_minutes">"Minuten"</string>
   <string name="pref_unit_sessions">"Sitzungen"</string>
-  <string name="pref_rotate">"Rotate the time label"</string>
+  <string name="pref_rotate">"Teitanzeige rotieren"</string>
   <string name="pref_fullscreen">Vollbildmodus</string>
 
   <string name="intro_avoid_distractions">"Vermeide Ablenkungen"</string>

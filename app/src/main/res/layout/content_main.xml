@@ -25,7 +25,22 @@
         android:adjustViewBounds="true"/>
 
     <TextView
-        android:id="@+id/stopButton"
+        android:id="@+id/startLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:background="@null"
+        android:text="@string/start_label"
+        android:textSize="16sp"
+        android:textColor="@color/lightTransparent"
+        android:fontFamily="sans-serif-light"
+        android:visibility="visible"
+        android:enabled="false"/>
+
+    <TextView
+        android:id="@+id/stopLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
