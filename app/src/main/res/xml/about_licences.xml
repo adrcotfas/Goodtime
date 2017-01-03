@@ -13,19 +13,19 @@
     </Preference>
 
     <Preference
-        android:key=""
+        android:key="c1"
         android:icon="@drawable/ic_language"
         android:title="Fabian Winter">
     </Preference>
 
     <Preference
-        android:key=""
+        android:key="c2"
         android:icon="@drawable/ic_language"
         android:title="Bene Erhart">
     </Preference>
 
     <Preference
-        android:key=""
+        android:key="c3"
         android:icon="@drawable/ic_language"
         android:title="Александр Фролов">
     </Preference>
