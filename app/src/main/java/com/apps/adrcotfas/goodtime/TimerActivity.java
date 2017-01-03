@@ -294,11 +294,11 @@ public class TimerActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mPref = setUpPreferences();
+        mPref = setupPreferences();
         migrateOldPreferences();
-        setUpUi();
+        setupUi();
         loadInitialState();
-        setUpAndroidNougatSettings();
+        setupAndroidNougatSettings();
         setupBroadcastReceiver();
         setupIabHelper();
     }
@@ -424,7 +424,7 @@ public class TimerActivity extends AppCompatActivity
         );
     }
 
-    private Preferences setUpPreferences() {
+    private Preferences setupPreferences() {
         SharedPreferences preferences = getApplicationContext().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         preferences.registerOnSharedPreferenceChangeListener(this);
         mPrivatePref = getSharedPreferences("preferences_private", Context.MODE_PRIVATE);
@@ -435,7 +435,7 @@ public class TimerActivity extends AppCompatActivity
         return new Preferences(preferences);
     }
 
-    private void setUpAndroidNougatSettings() {
+    private void setupAndroidNougatSettings() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             NotificationManager notificationManager = (NotificationManager)
                     getSystemService(Context.NOTIFICATION_SERVICE);
@@ -445,31 +445,24 @@ public class TimerActivity extends AppCompatActivity
         }
     }
 
-    private void setUpUi() {
+    private void setupUi() {
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setUpToolbar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        setupToolbar(toolbar);
+        setupDrawer(toolbar);
 
         mStartLabel = (TextView) findViewById(R.id.startLabel);
 
         mStopLabel = (TextView) findViewById(R.id.stopLabel);
-        setUpStopLabel();
+        setupStopLabel();
 
         mTimeLabel = (TextView) findViewById(R.id.textView);
-        setUpTimeLabel();
-        setUpPauseButton();
+        setupTimeLabel();
+        setupPauseButton();
     }
 
-    private void setUpToolbar(Toolbar toolbar) {
+    private void setupToolbar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
 
@@ -495,7 +488,17 @@ public class TimerActivity extends AppCompatActivity
         }
     }
 
-    private void setUpPauseButton() {
+    private void setupDrawer(Toolbar toolbar) {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    private void setupPauseButton() {
         mTimeLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -504,7 +507,7 @@ public class TimerActivity extends AppCompatActivity
         });
     }
 
-    private void setUpStopLabel() {
+    private void setupStopLabel() {
         mStopLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -513,7 +516,7 @@ public class TimerActivity extends AppCompatActivity
         });
     }
 
-    private void setUpTimeLabel() {
+    private void setupTimeLabel() {
         if (mTimeLabel != null) {
             mTimeLabel.setTypeface(createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf"));
             updateTimeLabel();
@@ -557,7 +560,8 @@ public class TimerActivity extends AppCompatActivity
             }
         } else if (key.equals(ENABLE_SESSIONS_COUNTER)) {
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setUpToolbar(toolbar);
+            setupToolbar(toolbar);
+            setupDrawer(toolbar);
         }
     }
 
