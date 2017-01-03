@@ -43,7 +43,7 @@
   <string name="pref_grant_permission">"Antippen zum Erlauben"</string>
   <string name="pref_unit_minutes">"Minuten"</string>
   <string name="pref_unit_sessions">"Sitzungen"</string>
-  <string name="pref_rotate">"Landschafts-Modus"</string>
+  <string name="pref_landscape">"Landschafts-Modus"</string>
   <string name="pref_fullscreen">Vollbildmodus</string>
   <string name="pref_counter">Sessions counter</string>
 

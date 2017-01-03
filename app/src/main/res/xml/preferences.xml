@@ -64,8 +64,8 @@
 
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="pref_rotate"
-            android:title="@string/pref_rotate"/>
+            android:key="pref_landscape"
+            android:title="@string/pref_landscape"/>
 
         <CheckBoxPreference
             android:defaultValue="false"

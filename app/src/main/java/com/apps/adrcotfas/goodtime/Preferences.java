@@ -23,7 +23,7 @@ public class Preferences {
     private static final String KEEP_SCREEN_ON = "pref_keepScreenOn";
     private static final String CONTINUOUS_MODE = "pref_continuousMode";
     private static final String NOTIFICATION_VIBRATE = "pref_vibrate";
-    private static final String ROTATE_TIME_LABEL = "pref_rotate";
+    private static final String ROTATE_TIME_LABEL = "pref_landscape";
     private static final String FULLSCREEN_MODE = "pref_fullscreen";
 
     private final SharedPreferences mPref;
