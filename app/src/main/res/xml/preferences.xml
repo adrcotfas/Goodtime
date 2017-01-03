@@ -29,7 +29,7 @@
             android:title="@string/pref_long_break_duration"
             app:msbp_dialogEnabled="true"
             app:msbp_interval="1"
-            app:msbp_maxValue="30"
+            app:msbp_maxValue="60"
             app:msbp_measurementUnit="@string/pref_unit_minutes"
             app:msbp_minValue="1" />
 
