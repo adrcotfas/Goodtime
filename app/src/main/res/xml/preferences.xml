@@ -63,15 +63,19 @@
             android:title="@string/pref_vibrate" />
 
         <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref_rotate"
-            android:title="@string/pref_rotate"
-            android:summary="@string/pref_rotate_summary"/>
+            android:defaultValue="false"
+            android:key="pref_landscape"
+            android:title="@string/pref_landscape"/>
 
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref_fullscreen"
             android:title="@string/pref_fullscreen"/>
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_counter"
+            android:title="@string/pref_counter"/>
 
     </PreferenceCategory>
 

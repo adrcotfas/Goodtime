@@ -13,6 +13,7 @@ public class Preferences {
     public static final String SESSION_DURATION = "pref_workTime";
     public static final String DISABLE_SOUND_AND_VIBRATION = "pref_disableSoundAndVibration";
     public static final String TOTAL_SESSION_COUNT = "pref_totalSessions";
+    public static final String ENABLE_SESSIONS_COUNTER = "pref_counter";
     private static final String NOTIFICATION_SOUND = "pref_notificationSound";
     private static final String BREAK_DURATION = "pref_breakTime";
     private static final String LONG_BREAK_DURATION = "pref_longBreakDuration";
@@ -22,7 +23,7 @@ public class Preferences {
     private static final String KEEP_SCREEN_ON = "pref_keepScreenOn";
     private static final String CONTINUOUS_MODE = "pref_continuousMode";
     private static final String NOTIFICATION_VIBRATE = "pref_vibrate";
-    private static final String ROTATE_TIME_LABEL = "pref_rotate";
+    private static final String ROTATE_TIME_LABEL = "pref_landscape";
     private static final String FULLSCREEN_MODE = "pref_fullscreen";
 
     private final SharedPreferences mPref;
@@ -74,11 +75,15 @@ public class Preferences {
     }
 
     public boolean getRotateTimeLabel() {
-        return mPref.getBoolean(ROTATE_TIME_LABEL, true);
+        return mPref.getBoolean(ROTATE_TIME_LABEL, false);
     }
 
     public boolean getFullscreenMode() {
         return mPref.getBoolean(FULLSCREEN_MODE, false);
+    }
+
+    public boolean getEnableSessionCounter() {
+        return mPref.getBoolean(ENABLE_SESSIONS_COUNTER, true);
     }
 
     public String getNotificationSound() {
@@ -106,8 +111,9 @@ public class Preferences {
              .putBoolean(DISABLE_WIFI, oldPref.getBoolean(DISABLE_WIFI, false))
              .putBoolean(CONTINUOUS_MODE, oldPref.getBoolean(CONTINUOUS_MODE, false))
              .putBoolean(NOTIFICATION_VIBRATE, oldPref.getBoolean(NOTIFICATION_VIBRATE, false))
-             .putBoolean(ROTATE_TIME_LABEL, oldPref.getBoolean(ROTATE_TIME_LABEL, true))
+             .putBoolean(ROTATE_TIME_LABEL, oldPref.getBoolean(ROTATE_TIME_LABEL, false))
              .putBoolean(FULLSCREEN_MODE, oldPref.getBoolean(FULLSCREEN_MODE, true))
+             .putBoolean(ENABLE_SESSIONS_COUNTER, oldPref.getBoolean(ENABLE_SESSIONS_COUNTER, true))
              .putString(NOTIFICATION_SOUND, oldPref.getString(NOTIFICATION_SOUND, ""))
              .apply();
 

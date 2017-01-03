@@ -3,6 +3,8 @@
   <string name="action_about">About</string>
   <string name="action_invite">Invite Friends</string>
   <string name="stop">STOP</string>
+  <string name="stop_label">tap here to stop</string>
+  <string name="start_label">tap the timer to start</string>
   <string name="pause">PAUSE</string>
   <string name="resume">RESUME</string>
   <string name="dialog_break_message">Break complete</string>
@@ -41,9 +43,9 @@
   <string name="pref_grant_permission">Click to grant permission</string>
   <string name="pref_unit_minutes">minutes</string>
   <string name="pref_unit_sessions">sessions</string>
-  <string name="pref_rotate">Rotate the time label</string>
-  <string name="pref_rotate_summary">In case of screen orientation change.</string>
+  <string name="pref_landscape">"Landscape mode"</string>
   <string name="pref_fullscreen">Fullscreen mode</string>
+  <string name="pref_counter">Sessions counter</string>
 
   <string name="intro_avoid_distractions">Avoid distractions</string>
   <string name="intro_avoid_distractions_description">Keep your work on track using timed sessions handled by the app.</string>
@@ -55,14 +57,16 @@
   <string name="about_donate">Donate to support updates and more quality apps.</string>
   <string name="about_something_wrong">Something went wrong.</string>
   <string name="about_no_email">There are no email clients installed.</string>
-  <string name="about_version">About</string>
+  <string name="about_version">Version</string>
   <string name="about_support">Support the developer</string>
   <string name="about_rate">Rate this app</string>
   <string name="about_feedback">Send feedback</string>
   <string name="about_contributors">Contributors and licences</string>
   <string name="about_tour">Product tour</string>
+  <string name="action_translate">Translate this app</string>
 
   <string name="invitation_title">Send app invitation</string>
   <string name="invitation_cta">Install!</string>
-  <string name="invitation_message">Goodtime will help you use the Pomodoro technique</string>
+  <string name="invitation_message">Try the Goodtime app to improve your productivity!</string>
+
 </resources>

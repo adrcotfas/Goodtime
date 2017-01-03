@@ -1,20 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".TimerActivity">
-    <item
-        android:id="@+id/action_about"
-        android:orderInCategory="1"
-        android:title="@string/action_about"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="2"
+    tools:context=".TimerActivity" >
+    <item android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_invite"
-        android:orderInCategory="3"
-        android:title="@string/action_invite"
-        app:showAsAction="never" />
+        app:showAsAction="always"
+        android:menuCategory="secondary"/>
 </menu>

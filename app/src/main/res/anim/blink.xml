@@ -3,7 +3,7 @@
     <alpha android:fromAlpha="0.2"
         android:toAlpha="1.0"
         android:interpolator="@android:anim/accelerate_interpolator"
-        android:duration="750"
+        android:duration="1000"
         android:repeatMode="reverse"
         android:repeatCount="infinite"/>
 </set>
