@@ -30,11 +30,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -267,7 +267,7 @@ public class TimerActivity extends AppCompatActivity
     private TextView mStartLabel;
     private TextView mStopLabel;
     private TextView mTimeLabel;
-    private Button mSessionCounterButton;
+    private TextView mSessionCounterButton;
     private Preferences mPref;
     private SharedPreferences mPrivatePref;
     private AlertDialog mAlertDialog;
@@ -471,9 +471,15 @@ public class TimerActivity extends AppCompatActivity
         }
 
         if (mPref.getEnableSessionCounter()) {
-            mSessionCounterButton = new Button(this);
+            mSessionCounterButton = new TextView(this);
             mSessionCounterButton.setBackgroundColor(getResources().getColor(R.color.transparent));
-            mSessionCounterButton.setMinimumWidth(24);
+
+            final float scale = getResources().getDisplayMetrics().density;
+            final int minWidth = (int) (55 * scale + 0.5f);
+            final int padding = (int) (12 * scale + 0.5f);
+            mSessionCounterButton.setMinimumWidth(minWidth);
+            mSessionCounterButton.setPadding(padding, 0, padding, 0);
+            mSessionCounterButton.setGravity(Gravity.CENTER);
             mSessionCounterButton.setTypeface(mSessionCounterButton.getTypeface(), Typeface.BOLD);
 
             mSessionCounterButton.setText(String.valueOf(mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0)));
@@ -483,7 +489,6 @@ public class TimerActivity extends AppCompatActivity
                     showSessionCounterDialog();
                 }
             });
-
             toolbar.addView(mSessionCounterButton, new Toolbar.LayoutParams(GravityCompat.END));
         }
     }
