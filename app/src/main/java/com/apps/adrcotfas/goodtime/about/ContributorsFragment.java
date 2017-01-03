@@ -49,15 +49,6 @@ public class ContributorsFragment
         findPreference("seekbar-pref").setOnPreferenceClickListener(
                 createPreferenceClickListener("https://github.com/MrBIMC/MaterialSeekBarPreference")
         );
-        findPreference("arthur_shlain").setOnPreferenceClickListener(
-                createPreferenceClickListener("http://creativecommons.org/licenses/by/3.0/us/")
-        );
-        findPreference("dominic_whittle").setOnPreferenceClickListener(
-                createPreferenceClickListener("http://creativecommons.org/licenses/by/3.0/us/")
-        );
-        findPreference("michal-kucera").setOnPreferenceClickListener(
-                createPreferenceClickListener("http://creativecommons.org/licenses/by/3.0/us/")
-        );
     }
 
     private Preference.OnPreferenceClickListener createPreferenceClickListener(

@@ -550,18 +550,22 @@ public class TimerActivity extends AppCompatActivity
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Log.d(TAG, "A preference has changed");
 
-        if (key.equals(TOTAL_SESSION_COUNT)) {
-            if (mSessionCounterButton != null) {
-                mSessionCounterButton.setText(String.valueOf(mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0)));
-            }
-        } else if (key.equals(SESSION_DURATION)) {
-            if (mIsBoundToTimerService && mTimerService.getTimerState() == INACTIVE) {
-                updateTimeLabel();
-            }
-        } else if (key.equals(ENABLE_SESSIONS_COUNTER)) {
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setupToolbar(toolbar);
-            setupDrawer(toolbar);
+        switch (key) {
+            case TOTAL_SESSION_COUNT:
+                if (mSessionCounterButton != null) {
+                    mSessionCounterButton.setText(String.valueOf(mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0)));
+                }
+                break;
+            case SESSION_DURATION:
+                if (mIsBoundToTimerService && mTimerService.getTimerState() == INACTIVE) {
+                    updateTimeLabel();
+                }
+                break;
+            case ENABLE_SESSIONS_COUNTER:
+                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+                setupToolbar(toolbar);
+                setupDrawer(toolbar);
+                break;
         }
     }
 
@@ -940,6 +944,14 @@ public class TimerActivity extends AppCompatActivity
         }
     }
 
+    private void openTranslationPage() {
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://poeditor.com/join/project/DsP4ey4Kb9")));
+        } catch (Throwable th) {
+            // ignore
+        }
+    }
+
     private void openFeedback() {
         Intent email = new Intent(Intent.ACTION_SENDTO);
         email.setData(new Uri.Builder().scheme("mailto").build());
@@ -965,6 +977,9 @@ public class TimerActivity extends AppCompatActivity
                 break;
             case R.id.action_rate:
                 openPlayStorePage();
+                break;
+            case R.id.action_translate:
+                openTranslationPage();
                 break;
             case R.id.action_invite:
                 onInviteClicked();

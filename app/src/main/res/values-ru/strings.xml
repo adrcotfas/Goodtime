@@ -63,8 +63,10 @@
   <string name="about_feedback">"Отправить отзыв"</string>
   <string name="about_contributors">"Благодарности и лицензии"</string>
   <string name="about_tour">"Тур по приложению"</string>
+  <string name="action_translate">Translate this app</string>
 
   <string name="invitation_title">Отправить приложение приглашение</string>
   <string name="invitation_cta">Установить!</string>
   <string name="invitation_message">Goodtime поможет вам использовать технику Pomodoro</string>
+
 </resources>

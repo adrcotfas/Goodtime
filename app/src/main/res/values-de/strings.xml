@@ -63,6 +63,7 @@
   <string name="about_feedback">"Schicke Feedback"</string>
   <string name="about_contributors">"Mitwirkende und Lizenzen"</string>
   <string name="about_tour">"Intro"</string>
+  <string name="action_translate">Translate this app</string>
 
   <string name="invitation_title">App-Einladung senden</string>
   <string name="invitation_cta">Installieren!</string>

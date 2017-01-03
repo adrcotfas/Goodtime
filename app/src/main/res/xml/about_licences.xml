@@ -1,45 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-        <PreferenceCategory
-            android:title="Thanks to">
-                <Preference
-                    android:key="fdw"
-                    android:summary="for the contributions."
-                    android:title="Fabian Winter">
-                </Preference>
-                <Preference
-                    android:key="wolfgang42"
-                    android:summary="for the contributions."
-                    android:title="Wolfgang Faust">
-                </Preference>
-        </PreferenceCategory>
+    <Preference
+        android:key="fdw"
+        android:icon="@drawable/ic_code"
+        android:title="Fabian Winter">
+    </Preference>
 
-        <PreferenceCategory
-            android:title="Licences">
-                <Preference
-                    android:key="material-intro"
-                    android:summary="Licensed under the Apache License, Version 2.0"
-                    android:title="material-intro / Heinrich Reimer">
-                </Preference>
-                <Preference
-                    android:key="seekbar-pref"
-                    android:summary="Licensed under the Apache License, Version 2.0"
-                    android:title="MaterialSeekBarPreference / Pavel Sikun">
-                </Preference>
-                <Preference
-                    android:key="arthur_shlain"
-                    android:summary="Licensed under the CC BY 3.0 US"
-                    android:title="attachment icon / Arthur Shlain / Noun Project">
-                </Preference>
-                <Preference
-                    android:key="dominic_whittle"
-                    android:summary="Licensed under the CC BY 3.0 US"
-                    android:title="video icon / Dominic Whittle / Noun Project ">
-                </Preference>
-                <Preference
-                    android:key="michal-kucera"
-                    android:summary="Licensed under the CC BY 3.0 US"
-                    android:title="messaging icon / Michal Kučera / Noun Project">
-                </Preference>
-        </PreferenceCategory>
+    <Preference
+        android:key="wolfgang42"
+        android:icon="@drawable/ic_code"
+        android:title="Wolfgang Faust">
+    </Preference>
+
+    <Preference
+        android:key=""
+        android:icon="@drawable/ic_language"
+        android:title="Fabian Winter">
+    </Preference>
+
+    <Preference
+        android:key=""
+        android:icon="@drawable/ic_language"
+        android:title="Bene Erhart">
+    </Preference>
+
+    <Preference
+        android:key=""
+        android:icon="@drawable/ic_language"
+        android:title="Александр Фролов">
+    </Preference>
+
+    <PreferenceCategory
+        android:title="Licences">
+            <Preference
+                android:key="material-intro"
+                android:summary="Licensed under the Apache License, Version 2.0"
+                android:title="material-intro / Heinrich Reimer">
+            </Preference>
+            <Preference
+                android:key="seekbar-pref"
+                android:summary="Licensed under the Apache License, Version 2.0"
+                android:title="MaterialSeekBarPreference / Pavel Sikun">
+            </Preference>
+    </PreferenceCategory>
 </PreferenceScreen>
