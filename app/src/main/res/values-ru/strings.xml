@@ -45,6 +45,7 @@
   <string name="pref_unit_sessions">"сессии(ий)"</string>
   <string name="pref_rotate">"Вращать цифры"</string>
   <string name="pref_fullscreen">"Полноэкранный режим"</string>
+  <string name="pref_counter">Sessions counter</string>
 
   <string name="intro_avoid_distractions">"Не отвлекайтесь"</string>
   <string name="intro_avoid_distractions_description">"Выполняйте намеченные задачи, используя управляемые приложением временные сессии."</string>

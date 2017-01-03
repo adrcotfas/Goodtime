@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -64,6 +65,7 @@ import static com.apps.adrcotfas.goodtime.Preferences.FIRST_RUN;
 import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;
 import static com.apps.adrcotfas.goodtime.Preferences.SESSION_DURATION;
 import static com.apps.adrcotfas.goodtime.Preferences.TOTAL_SESSION_COUNT;
+import static com.apps.adrcotfas.goodtime.Preferences.ENABLE_SESSIONS_COUNTER;
 import static com.apps.adrcotfas.goodtime.SessionType.BREAK;
 import static com.apps.adrcotfas.goodtime.SessionType.LONG_BREAK;
 import static com.apps.adrcotfas.goodtime.SessionType.WORK;
@@ -265,6 +267,7 @@ public class TimerActivity extends AppCompatActivity
     private TextView mStartLabel;
     private TextView mStopLabel;
     private TextView mTimeLabel;
+    private Button mSessionCounterButton;
     private Preferences mPref;
     private SharedPreferences mPrivatePref;
     private AlertDialog mAlertDialog;
@@ -456,8 +459,6 @@ public class TimerActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        setUpSessionCounter();
-
         mStartLabel = (TextView) findViewById(R.id.startLabel);
 
         mStopLabel = (TextView) findViewById(R.id.stopLabel);
@@ -471,18 +472,26 @@ public class TimerActivity extends AppCompatActivity
     private void setUpToolbar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
-    }
 
-    private void setUpSessionCounter() {
-        Button sessionCounterButton = (Button) findViewById(R.id.totalSessionsButton);
-        if (sessionCounterButton != null) {
-            sessionCounterButton.setText(String.valueOf(mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0)));
-            sessionCounterButton.setOnClickListener(new View.OnClickListener() {
+        if (mSessionCounterButton != null ) {
+            toolbar.removeView(mSessionCounterButton);
+        }
+
+        if (mPref.getEnableSessionCounter()) {
+            mSessionCounterButton = new Button(this);
+            mSessionCounterButton.setBackgroundColor(getResources().getColor(R.color.transparent));
+            mSessionCounterButton.setMinimumWidth(24);
+            mSessionCounterButton.setTypeface(mSessionCounterButton.getTypeface(), Typeface.BOLD);
+
+            mSessionCounterButton.setText(String.valueOf(mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0)));
+            mSessionCounterButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     showSessionCounterDialog();
                 }
             });
+
+            toolbar.addView(mSessionCounterButton, new Toolbar.LayoutParams(GravityCompat.END));
         }
     }
 
@@ -539,14 +548,16 @@ public class TimerActivity extends AppCompatActivity
         Log.d(TAG, "A preference has changed");
 
         if (key.equals(TOTAL_SESSION_COUNT)) {
-            Button button = (Button) findViewById(R.id.totalSessionsButton);
-            if (button != null) {
-                button.setText(String.valueOf(mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0)));
+            if (mSessionCounterButton != null) {
+                mSessionCounterButton.setText(String.valueOf(mPrivatePref.getInt(TOTAL_SESSION_COUNT, 0)));
             }
         } else if (key.equals(SESSION_DURATION)) {
             if (mIsBoundToTimerService && mTimerService.getTimerState() == INACTIVE) {
                 updateTimeLabel();
             }
+        } else if (key.equals(ENABLE_SESSIONS_COUNTER)) {
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setUpToolbar(toolbar);
         }
     }
 

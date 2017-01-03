@@ -45,6 +45,7 @@
   <string name="pref_unit_sessions">"Sitzungen"</string>
   <string name="pref_rotate">"Teitanzeige rotieren"</string>
   <string name="pref_fullscreen">Vollbildmodus</string>
+  <string name="pref_counter">Sessions counter</string>
 
   <string name="intro_avoid_distractions">"Vermeide Ablenkungen"</string>
   <string name="intro_avoid_distractions_description">"Konzentriere dich auf deine Arbeit mit automatisch verwalteten Sessions."</string>

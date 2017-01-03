@@ -45,6 +45,7 @@
   <string name="pref_unit_sessions">sessions</string>
   <string name="pref_rotate">Rotate the time label</string>
   <string name="pref_fullscreen">Fullscreen mode</string>
+  <string name="pref_counter">Sessions counter</string>
 
   <string name="intro_avoid_distractions">Avoid distractions</string>
   <string name="intro_avoid_distractions_description">Keep your work on track using timed sessions handled by the app.</string>

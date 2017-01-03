@@ -72,6 +72,11 @@
             android:key="pref_fullscreen"
             android:title="@string/pref_fullscreen"/>
 
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_counter"
+            android:title="@string/pref_counter"/>
+
     </PreferenceCategory>
 
   <PreferenceCategory android:title="@string/pref_header_modes">

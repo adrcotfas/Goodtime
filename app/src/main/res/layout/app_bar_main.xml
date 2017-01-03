@@ -18,16 +18,6 @@
             android:layout_height="?attr/actionBarSize"
             app:elevation="0dp">
 
-            <Button
-                android:id="@+id/totalSessionsButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:background="@color/transparent"
-                android:minWidth="50sp"
-                android:textStyle="bold" />
-
-
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
