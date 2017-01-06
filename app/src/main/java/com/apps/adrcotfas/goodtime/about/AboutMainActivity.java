@@ -11,7 +11,7 @@ import com.apps.adrcotfas.goodtime.ProductTourActivity;
 import com.apps.adrcotfas.goodtime.R;
 
 
-public class AboutActivity extends AppCompatActivity {
+public class AboutMainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,10 +30,10 @@ public class AboutActivity extends AppCompatActivity {
 
             Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.aboutToolbar);
             if (toolbar != null) {
-                ((AboutActivity) getActivity()).setSupportActionBar(toolbar);
+                ((AboutMainActivity) getActivity()).setSupportActionBar(toolbar);
 
-                ((AboutActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-                ((AboutActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                ((AboutMainActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+                ((AboutMainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
 
             Preference appVersion = findPreference("about_version");
@@ -71,7 +71,7 @@ public class AboutActivity extends AppCompatActivity {
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), AboutActivity.class));
+                startActivity(new Intent(getActivity(), AboutMainActivity.class));
                 return true;
             }
             return super.onOptionsItemSelected(item);

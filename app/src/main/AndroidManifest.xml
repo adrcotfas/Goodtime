@@ -33,7 +33,7 @@
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".about.AboutActivity"
+            android:name=".about.AboutMainActivity"
             android:label="@string/action_about"
             android:parentActivityName=".TimerActivity"
             android:theme="@style/AppTheme.NoActionBar"
@@ -41,7 +41,7 @@
         <activity
             android:name=".about.LicencesActivity"
             android:label="@string/about_contributors"
-            android:parentActivityName=".about.AboutActivity"
+            android:parentActivityName=".about.AboutMainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>
         <activity

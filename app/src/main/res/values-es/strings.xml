@@ -1,0 +1,71 @@
+<resources>
+<string name="action_settings">"Ajustes"</string>
+<string name="action_about">"Acerca de"</string>
+<string name="action_invite">"Invitar a amigos"</string>
+<string name="stop">"DETENER"</string>
+<string name="stop_label">"Pulsa aquí para detener"</string>
+<string name="start_label">"Pulsa el temporizador para empezar"</string>
+<string name="pause">"PAUSAR"</string>
+<string name="resume">"CONTINUAR"</string>
+<string name="dialog_break_message">"Descanso completo"</string>
+<string name="dialog_break_session">"Iniciar sesión"</string>
+<string name="dialog_session_message">"Sesión completada"</string>
+<string name="dialog_session_break">"Iniciar descanso"</string>
+<string name="dialog_session_cancel">"CANCELAR"</string>
+<string name="dialog_session_skip">"Saltar descanso"</string>
+<string name="dialog_session_close">"CERRAR"</string>
+<string name="notification_session">"Sesión de trabajo en progreso"</string>
+<string name="notification_break">"Sesión de descanso en progreso"</string>
+<string name="notification_pause">"Sesión de trabajo en pausa. ¿Continuar?"</string>
+<string name="notification_break_complete">"Descanso completo. ¿Continuar trabajando?"</string>
+<string name="notification_work_complete">"Sesión completa. ¿Continuar?"</string>
+<string name="dialog_reset_title">"¿Limpiar contador de sesiones?"</string>
+<string name="dialog_reset_message">"El contador de sesiones completadas será limpiado"</string>
+<string name="dialog_reset_ok">"OK"</string>
+<string name="dialog_reset_cancel">"Cancelar"</string>
+<string name="toast_back_press">"Presione de nuevo el botón de regresar para salir"</string>
+<string name="toast_google_services_missing">"Por favor, actualice Google Play Services"</string>
+
+<string name="pref_header_general">"Sesiones"</string>
+<string name="pref_session_duration">"Duración de la sesión de trabajo"</string>
+<string name="pref_break_duration">"Duración del descanso"</string>
+<string name="pref_long_break_duration">"Duración del descanso largo"</string>
+<string name="pref_sessions_for_long_break">"Número de sesiones antes del descanso largo"</string>
+<string name="pref_header_notification">"General"</string>
+<string name="pref_ringtone">"Sonido de notificación"</string>
+<string name="pref_ringtone_summary">"Elegir el sonido de notificación"</string>
+<string name="pref_vibrate">"Vibración"</string>
+<string name="pref_header_modes">"Durante las sesiones de trabajo"</string>
+<string name="pref_disable_sound">"Desactivar sonido y vibración"</string>
+<string name="pref_disable_wifi">"Desactivar Wi-Fi"</string>
+<string name="pref_keep_screen_on">"Mantener la pantalla encendida"</string>
+<string name="pref_continuous_mode">"Modo continuo"</string>
+<string name="pref_grant_permission">"Dar click para conceder permiso"</string>
+<string name="pref_unit_minutes">"Minutos"</string>
+<string name="pref_unit_sessions">"Sesiones"</string>
+<string name="pref_landscape">"Modo paisaje"</string>
+<string name="pref_fullscreen">Fullscreen mode</string>
+<string name="pref_counter">"Contador de sesiones"</string>
+
+<string name="intro_avoid_distractions">"Evita distracciones"</string>
+<string name="intro_avoid_distractions_description">"Mantén tu trabajo en buen camino usando sesiones de tiempo manejadas por la app"</string>
+<string name="intro_clear_mind">"Limpia tu mente"</string>
+<string name="intro_clear_mind_description">"Prémiate con descansos cortos y refréscate"</string>
+<string name="intro_get_started">"Iniciar"</string>
+<string name="intro_get_started_description">"Mantente concentrado, olvídate de procrastinar e incrementa tu productividad"</string>
+
+<string name="about_donate">"Dona para apoyar actualizaciones y mas apps de calidad"</string>
+<string name="about_something_wrong">"Algo salió mal"</string>
+<string name="about_no_email">"No hay clientes de e-mail instalados"</string>
+<string name="about_version">"Versión"</string>
+<string name="about_support">"Apoya al desarrollador"</string>
+<string name="about_rate">"Califica esta app"</string>
+<string name="about_feedback">"Envía comentarios"</string>
+<string name="about_contributors">"Contibuidores y licencias"</string>
+<string name="about_tour">"Guía de inicio"</string>
+<string name="action_translate">"Traduce esta aplicación"</string>
+
+<string name="invitation_title">"Enviar invitación de la app"</string>
+<string name="invitation_cta">"Instalar"</string>
+<string name="invitation_message">"¡Prueba la aplicación Goodtime para mejorar tu productividad!"</string>
+</resources>

@@ -30,6 +30,54 @@
         android:title="Александр Фролов">
     </Preference>
 
+    <Preference
+        android:key="c4"
+        android:icon="@drawable/ic_language"
+        android:title="Davor Cengija">
+    </Preference>
+
+    <Preference
+        android:key="c5"
+        android:icon="@drawable/ic_language"
+        android:title="Dominik Kundinger">
+    </Preference>
+
+    <Preference
+        android:key="c6"
+        android:icon="@drawable/ic_language"
+        android:title="Albert Torres">
+    </Preference>
+
+    <Preference
+        android:key="c7"
+        android:icon="@drawable/ic_language"
+        android:title="Victor Coutinho Ramalho">
+    </Preference>
+
+    <Preference
+        android:key="c8"
+        android:icon="@drawable/ic_language"
+        android:title="Victor Hugo Moura">
+    </Preference>
+
+    <Preference
+        android:key="c9"
+        android:icon="@drawable/ic_language"
+        android:title="Jorge Ontaneda">
+    </Preference>
+
+    <Preference
+        android:key="c10"
+        android:icon="@drawable/ic_language"
+        android:title="Cristobal Parra Holgado">
+    </Preference>
+
+    <Preference
+        android:key="c11"
+        android:icon="@drawable/ic_language"
+        android:title="Fren Roent">
+    </Preference>
+
     <PreferenceCategory
         android:title="Licences">
             <Preference

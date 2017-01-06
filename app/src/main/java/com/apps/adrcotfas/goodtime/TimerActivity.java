@@ -38,7 +38,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.apps.adrcotfas.goodtime.about.AboutActivity;
+import com.apps.adrcotfas.goodtime.about.AboutMainActivity;
 import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.util.DeviceInfo;
 import com.apps.adrcotfas.goodtime.util.IabHelper;
@@ -977,7 +977,7 @@ public class TimerActivity extends AppCompatActivity
 
         switch (item.getItemId()) {
             case R.id.action_about:
-                Intent aboutIntent = new Intent(this, AboutActivity.class);
+                Intent aboutIntent = new Intent(this, AboutMainActivity.class);
                 startActivity(aboutIntent);
                 break;
             case R.id.action_rate:
