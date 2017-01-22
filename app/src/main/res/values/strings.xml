@@ -61,7 +61,8 @@
 <string name="about_support">Support the developer</string>
 <string name="about_rate">Rate this app</string>
 <string name="about_feedback">Send feedback</string>
-<string name="about_contributors">Contributors and licences</string>
+<string name="about_contributors">Contributors</string>
+<string name="about_licences">Licences</string>
 <string name="about_tour">Product tour</string>
 <string name="action_translate">Translate this app</string>
 

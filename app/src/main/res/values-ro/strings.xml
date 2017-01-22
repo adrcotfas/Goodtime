@@ -62,7 +62,8 @@
 <string name="about_support">"Sprijină dezvoltatorul"</string>
 <string name="about_rate">"Evaluează această aplicație"</string>
 <string name="about_feedback">"Trimite feedback"</string>
-<string name="about_contributors">"Contribuitori și licențe"</string>
+<string name="about_contributors">"Contribuitori"</string>
+<string name="about_licences">"Licențe"</string>
 <string name="about_tour">"Turul aplicației"</string>
 <string name="action_translate">"Traduceți aplicația"</string>
 

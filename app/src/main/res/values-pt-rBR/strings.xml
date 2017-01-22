@@ -62,7 +62,8 @@
 <string name="about_support">"Apoie o desenvolvedor"</string>
 <string name="about_rate">"Avalie este app"</string>
 <string name="about_feedback">"Mande feedback"</string>
-<string name="about_contributors">"Contribuintes e licenças"</string>
+<string name="about_contributors">"Contribuintes"</string>
+<string name="about_licences">"Licenças"</string>
 <string name="about_tour">"Tour do produto"</string>
 <string name="action_translate">"Traduzir esta aplicação"</string>
 

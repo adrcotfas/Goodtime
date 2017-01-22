@@ -61,7 +61,8 @@
 <string name="about_support">"Поддержать разработчика"</string>
 <string name="about_rate">"Оценить приложение"</string>
 <string name="about_feedback">"Отправить отзыв"</string>
-<string name="about_contributors">"Благодарности и лицензии"</string>
+<string name="about_contributors">"Благодарности"</string>
+<string name="about_licences">"Лицензии"</string>
 <string name="about_tour">"Тур по приложению"</string>
 <string name="action_translate">Translate this app</string>
 

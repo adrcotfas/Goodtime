@@ -61,7 +61,8 @@
 <string name="about_support">"Podrži programera"</string>
 <string name="about_rate">"Ocijeni aplikaciju"</string>
 <string name="about_feedback">"Pošalji komentar"</string>
-<string name="about_contributors">"Pomagači i licence"</string>
+<string name="about_contributors">"Pomagači"</string>
+<string name="about_licences">"Licence"</string>
 <string name="about_tour">"Prolazak kroz aplikaciju"</string>
 <string name="action_translate">"Prevedi ovu aplikaciju"</string>
 
