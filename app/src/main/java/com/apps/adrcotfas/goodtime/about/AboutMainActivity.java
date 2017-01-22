@@ -6,12 +6,15 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import com.apps.adrcotfas.goodtime.ProductTourActivity;
 import com.apps.adrcotfas.goodtime.R;
 
 
 public class AboutMainActivity extends AppCompatActivity {
+
+    protected static String ABOUT_FRAGMENT_ID = "com.apps.adrcotfas.goodtime.ABOUT_FRAGMENT_ID";
+    protected static int CONTRIBUTORS_FRAGMENT_ID = 1;
+    protected static int LICENCES_FRAGMENT_ID = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,15 +50,28 @@ public class AboutMainActivity extends AppCompatActivity {
                 }
             });
 
-            Preference licences = findPreference("about_licences");
-            licences.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            Preference contributors = findPreference("about_contributors");
+            contributors.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    Intent intent = new Intent(getActivity(), LicencesActivity.class);
+                    Intent intent = new Intent(getActivity(), AboutSubActivity.class);
+                    intent.putExtra(ABOUT_FRAGMENT_ID, CONTRIBUTORS_FRAGMENT_ID);
                     startActivity(intent);
                     return true;
                 }
             });
+
+            Preference licences = findPreference("about_licences");
+            licences.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(getActivity(), AboutSubActivity.class);
+                    intent.putExtra(ABOUT_FRAGMENT_ID, LICENCES_FRAGMENT_ID);
+                    startActivity(intent);
+                    return true;
+                }
+            });
+
             Preference productTour = findPreference("about_product_tour");
             productTour.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override

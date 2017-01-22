@@ -6,8 +6,12 @@
         android:title="@string/about_version">
     </Preference>
     <Preference
-        android:key="about_licences"
+        android:key="about_contributors"
         android:title="@string/about_contributors">
+    </Preference>
+    <Preference
+        android:key="about_licences"
+        android:title="@string/about_licences">
     </Preference>
     <Preference
         android:key="about_product_tour"

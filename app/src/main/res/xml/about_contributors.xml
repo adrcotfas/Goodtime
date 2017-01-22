@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:key="fdw"
+        android:icon="@drawable/ic_code"
+        android:title="Fabian Winter">
+    </Preference>
+
+    <Preference
+        android:key="wolfgang42"
+        android:icon="@drawable/ic_code"
+        android:title="Wolfgang Faust">
+    </Preference>
+
+    <Preference
+        android:key="c1"
+        android:icon="@drawable/ic_language"
+        android:title="Fabian Winter">
+    </Preference>
+
+    <Preference
+        android:key="c2"
+        android:icon="@drawable/ic_language"
+        android:title="Bene Erhart">
+    </Preference>
+
+    <Preference
+        android:key="c3"
+        android:icon="@drawable/ic_language"
+        android:title="Александр Фролов">
+    </Preference>
+
+    <Preference
+        android:key="c4"
+        android:icon="@drawable/ic_language"
+        android:title="Davor Cengija">
+    </Preference>
+
+    <Preference
+        android:key="c5"
+        android:icon="@drawable/ic_language"
+        android:title="Dominik Kundinger">
+    </Preference>
+
+    <Preference
+        android:key="c6"
+        android:icon="@drawable/ic_language"
+        android:title="Albert Torres">
+    </Preference>
+
+    <Preference
+        android:key="c7"
+        android:icon="@drawable/ic_language"
+        android:title="Victor Coutinho Ramalho">
+    </Preference>
+
+    <Preference
+        android:key="c8"
+        android:icon="@drawable/ic_language"
+        android:title="Victor Hugo Moura">
+    </Preference>
+
+    <Preference
+        android:key="c9"
+        android:icon="@drawable/ic_language"
+        android:title="Jorge Ontaneda">
+    </Preference>
+
+    <Preference
+        android:key="c10"
+        android:icon="@drawable/ic_language"
+        android:title="Cristobal Parra Holgado">
+    </Preference>
+
+    <Preference
+        android:key="c11"
+        android:icon="@drawable/ic_language"
+        android:title="Fren Roent">
+    </Preference>
+</PreferenceScreen>
