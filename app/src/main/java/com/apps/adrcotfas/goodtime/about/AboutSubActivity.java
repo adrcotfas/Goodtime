@@ -1,13 +1,9 @@
 package com.apps.adrcotfas.goodtime.about;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.support.v7.app.AppCompatActivity;
 import com.apps.adrcotfas.goodtime.R;
 
-import static android.content.Intent.ACTION_VIEW;
 import static com.apps.adrcotfas.goodtime.about.AboutFragment.ABOUT_FRAGMENT_ID;
 import static com.apps.adrcotfas.goodtime.about.AboutFragment.CONTRIBUTORS_FRAGMENT_ID;
 import static com.apps.adrcotfas.goodtime.about.AboutFragment.LICENCES_FRAGMENT_ID;
