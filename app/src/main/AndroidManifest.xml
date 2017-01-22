@@ -39,7 +39,7 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".about.LicencesActivity"
+            android:name=".about.AboutSubActivity"
             android:label="@string/about_contributors"
             android:parentActivityName=".about.AboutMainActivity"
             android:theme="@style/AppTheme.NoActionBar"
