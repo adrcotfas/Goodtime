@@ -2,13 +2,11 @@ package com.apps.adrcotfas.goodtime.about;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-
 import com.apps.adrcotfas.goodtime.R;
 
-import static com.apps.adrcotfas.goodtime.about.AboutMainActivity.ABOUT_FRAGMENT_ID;
-import static com.apps.adrcotfas.goodtime.about.AboutMainActivity.CONTRIBUTORS_FRAGMENT_ID;
-import static com.apps.adrcotfas.goodtime.about.AboutMainActivity.LICENCES_FRAGMENT_ID;
-
+import static com.apps.adrcotfas.goodtime.about.AboutFragment.ABOUT_FRAGMENT_ID;
+import static com.apps.adrcotfas.goodtime.about.AboutFragment.CONTRIBUTORS_FRAGMENT_ID;
+import static com.apps.adrcotfas.goodtime.about.AboutFragment.LICENCES_FRAGMENT_ID;
 
 public class AboutSubActivity
         extends AppCompatActivity {
