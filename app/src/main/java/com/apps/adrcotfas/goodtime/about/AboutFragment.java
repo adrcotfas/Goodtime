@@ -11,10 +11,6 @@ import com.apps.adrcotfas.goodtime.R;
 
 public class AboutFragment extends PreferenceFragment {
 
-    protected static String ABOUT_FRAGMENT_ID = "com.apps.adrcotfas.goodtime.ABOUT_FRAGMENT_ID";
-    protected static int CONTRIBUTORS_FRAGMENT_ID = 1;
-    protected static int LICENCES_FRAGMENT_ID = 2;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,8 +31,8 @@ public class AboutFragment extends PreferenceFragment {
         contributors.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent(getActivity(), AboutSubActivity.class);
-                intent.putExtra(ABOUT_FRAGMENT_ID, CONTRIBUTORS_FRAGMENT_ID);
+                Uri uri = Uri.parse("https://github.com/adrcotfas/Goodtime/blob/master/contributors.md");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
                 return true;
             }
@@ -46,8 +42,7 @@ public class AboutFragment extends PreferenceFragment {
         licences.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent(getActivity(), AboutSubActivity.class);
-                intent.putExtra(ABOUT_FRAGMENT_ID, LICENCES_FRAGMENT_ID);
+                Intent intent = new Intent(getActivity(), LicencesActivity.class);
                 startActivity(intent);
                 return true;
             }
