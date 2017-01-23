@@ -14,7 +14,7 @@ public class AboutSubActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.open_source_licences);
+        setContentView(R.layout.generic_layout);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             int fragmentId = bundle.getInt(ABOUT_FRAGMENT_ID);

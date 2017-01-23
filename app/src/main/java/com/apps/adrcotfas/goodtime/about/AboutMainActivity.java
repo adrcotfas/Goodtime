@@ -9,7 +9,7 @@ public class AboutMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.about_main);
+        setContentView(R.layout.generic_layout);
 
         getFragmentManager()
                 .beginTransaction()

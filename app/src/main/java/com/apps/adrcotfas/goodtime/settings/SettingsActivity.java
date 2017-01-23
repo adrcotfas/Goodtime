@@ -11,7 +11,7 @@ public class SettingsActivity extends AppCompatActivity {
         getDelegate().installViewFactory();
         getDelegate().onCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings_main);
+        setContentView(R.layout.generic_layout);
 
         getFragmentManager()
                 .beginTransaction()
