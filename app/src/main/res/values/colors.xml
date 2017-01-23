@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="transparent">#28ffffff</color>
     <color name="lightTransparent">#beffffff</color>
     <color name="gray">#FF9E9E9E</color>
     <color name="lightGray">#FFBDBDBD</color>
-    <color name="intro01">#00897B</color>
-    <color name="intro02">#38A4DD</color>
-    <color name="intro03">#212121</color>
-    <color name="yellow">#ffd180</color>
-    <color name="red">#ff8a80</color>
+    <color name="teal">#00897B</color>
+    <color name="cyan">#00acc1</color>
+    <color name="blue">#42a5f5</color>
+    <color name="darkGray">#212121</color>
 </resources>

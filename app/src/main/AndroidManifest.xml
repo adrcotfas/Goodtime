@@ -45,6 +45,12 @@
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"/>
         <activity
+            android:name=".about.DonationsActivity"
+            android:theme="@style/AppTheme"
+            android:label="@string/about_support"
+            android:parentActivityName=".TimerActivity"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".about.ProductTourActivity"
             android:theme="@style/Theme.Intro"
             android:screenOrientation="portrait"/>

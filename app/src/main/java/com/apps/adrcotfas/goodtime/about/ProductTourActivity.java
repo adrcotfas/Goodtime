@@ -20,24 +20,24 @@ public class ProductTourActivity extends IntroActivity {
                 .title(R.string.intro_avoid_distractions)
                 .description(R.string.intro_avoid_distractions_description)
                 .image(R.drawable.intro01)
-                .background(R.color.intro01)
-                .backgroundDark(R.color.intro01)
+                .background(R.color.teal)
+                .backgroundDark(R.color.teal)
                 .build());
 
         addSlide(new SimpleSlide.Builder()
                 .title(R.string.intro_clear_mind)
                 .description(R.string.intro_clear_mind_description)
                 .image(R.drawable.intro02)
-                .background(R.color.intro02)
-                .backgroundDark(R.color.intro02)
+                .background(R.color.blue)
+                .backgroundDark(R.color.blue)
                 .build());
 
         addSlide(new SimpleSlide.Builder()
                 .title(R.string.intro_get_started)
                 .description(R.string.intro_get_started_description)
                 .image(R.drawable.intro03)
-                .background(R.color.intro03)
-                .backgroundDark(R.color.intro03)
+                .background(R.color.darkGray)
+                .backgroundDark(R.color.darkGray)
                 .build());
     }
 }

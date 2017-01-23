@@ -10,5 +10,16 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
+    <style name="TealButton" parent="AppButton">
+        <item name="android:colorButtonNormal">@color/teal</item>
+    </style>
+
+    <style name="CyanButton" parent="AppButton">
+        <item name="android:colorButtonNormal">@color/cyan</item>
+    </style>
+
+    <style name="BlueButton" parent="AppButton">
+        <item name="android:colorButtonNormal">@color/blue</item>
+    </style>
 
 </resources>
