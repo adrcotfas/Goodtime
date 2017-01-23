@@ -20,12 +20,12 @@ public class AboutSubActivity
             int fragmentId = bundle.getInt(ABOUT_FRAGMENT_ID);
             if (fragmentId == CONTRIBUTORS_FRAGMENT_ID) {
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.licences_content, new ContributorsFragment())
+                        .replace(android.R.id.content, new ContributorsFragment(), "ContributorsFragment")
                         .commit();
                 setTitle(R.string.about_contributors);
             } else if (fragmentId == LICENCES_FRAGMENT_ID) {
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.licences_content, new LicencesFragment())
+                        .replace(android.R.id.content, new LicencesFragment(), "LicencesFragment")
                         .commit();
                 setTitle(R.string.about_licences);
             }
