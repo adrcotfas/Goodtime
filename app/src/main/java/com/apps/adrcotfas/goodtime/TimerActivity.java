@@ -39,6 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.about.AboutMainActivity;
+import com.apps.adrcotfas.goodtime.about.ProductTourActivity;
 import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.util.DeviceInfo;
 import com.apps.adrcotfas.goodtime.util.IabHelper;

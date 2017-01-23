@@ -1,7 +1,8 @@
-package com.apps.adrcotfas.goodtime;
+package com.apps.adrcotfas.goodtime.about;
 
 import android.os.Bundle;
 
+import com.apps.adrcotfas.goodtime.R;
 import com.heinrichreimersoftware.materialintro.app.IntroActivity;
 import com.heinrichreimersoftware.materialintro.slide.SimpleSlide;
 

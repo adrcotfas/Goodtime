@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
-import com.apps.adrcotfas.goodtime.ProductTourActivity;
 import com.apps.adrcotfas.goodtime.R;
 
 
