@@ -6,14 +6,13 @@ import android.util.Log;
 public class Preferences {
 
     public static final String PREFERENCES_NAME = "com.apps.adrcotfas.goodtime.preferences";
+    public static final String DISABLE_SOUND_AND_VIBRATION = "pref_disableSoundAndVibration";
+    static final String FIRST_RUN = "pref_firstRun";
+    static final String SESSION_DURATION = "pref_workTime";
+    static final String TOTAL_SESSION_COUNT = "pref_totalSessions";
+    static final String ENABLE_SESSIONS_COUNTER = "pref_counter";
     private static final String TAG = "Preferences";
     private static final int CURRENT_SETTINGS_VERSION = 2;
-
-    public static final String FIRST_RUN = "pref_firstRun";
-    public static final String SESSION_DURATION = "pref_workTime";
-    public static final String DISABLE_SOUND_AND_VIBRATION = "pref_disableSoundAndVibration";
-    public static final String TOTAL_SESSION_COUNT = "pref_totalSessions";
-    public static final String ENABLE_SESSIONS_COUNTER = "pref_counter";
     private static final String NOTIFICATION_SOUND = "pref_notificationSound";
     private static final String BREAK_DURATION = "pref_breakTime";
     private static final String LONG_BREAK_DURATION = "pref_longBreakDuration";
@@ -28,7 +27,7 @@ public class Preferences {
 
     private final SharedPreferences mPref;
 
-    public Preferences(SharedPreferences pref) {
+    Preferences(SharedPreferences pref) {
         mPref = pref;
 
         if (pref.getInt(SETTINGS_VERSION, 0) == 0) {
@@ -38,63 +37,63 @@ public class Preferences {
         }
     }
 
-    public int getSessionDuration() {
+    int getSessionDuration() {
         return mPref.getInt(SESSION_DURATION, 25);
     }
 
-    public int getSessionsBeforeLongBreak() {
+    int getSessionsBeforeLongBreak() {
         return mPref.getInt(SESSIONS_BEFORE_LONG_BREAK, 4);
     }
 
-    public int getBreakDuration() {
+    int getBreakDuration() {
         return mPref.getInt(BREAK_DURATION, 5);
     }
 
-    public int getLongBreakDuration() {
+    int getLongBreakDuration() {
         return mPref.getInt(LONG_BREAK_DURATION, 15);
     }
 
-    public boolean getKeepScreenOn() {
+    boolean getKeepScreenOn() {
         return mPref.getBoolean(KEEP_SCREEN_ON, false);
     }
 
-    public boolean getDisableSoundAndVibration() {
+    boolean getDisableSoundAndVibration() {
         return mPref.getBoolean(DISABLE_SOUND_AND_VIBRATION, false);
     }
 
-    public boolean getDisableWifi() {
+    boolean getDisableWifi() {
         return mPref.getBoolean(DISABLE_WIFI, true);
     }
 
-    public boolean getContinuousMode() {
+    boolean getContinuousMode() {
         return mPref.getBoolean(CONTINUOUS_MODE, false);
     }
 
-    public boolean getNotificationVibrate() {
+    boolean getNotificationVibrate() {
         return mPref.getBoolean(NOTIFICATION_VIBRATE, true);
     }
 
-    public boolean getRotateTimeLabel() {
+    boolean getRotateTimeLabel() {
         return mPref.getBoolean(LANDSCAPE_MODE, false);
     }
 
-    public boolean getFullscreenMode() {
+    boolean getFullscreenMode() {
         return mPref.getBoolean(FULLSCREEN_MODE, false);
     }
 
-    public boolean getEnableSessionCounter() {
+    boolean getEnableSessionCounter() {
         return mPref.getBoolean(ENABLE_SESSIONS_COUNTER, true);
     }
 
-    public String getNotificationSound() {
+    String getNotificationSound() {
         return mPref.getString(NOTIFICATION_SOUND, "");
     }
 
-    public void disableSoundAndVibration() {
+    void disableSoundAndVibration() {
         mPref.edit().putBoolean(DISABLE_SOUND_AND_VIBRATION, false).apply();
     }
 
-    public void migrateFromOldPreferences(SharedPreferences oldPref) {
+    void migrateFromOldPreferences(SharedPreferences oldPref) {
         if(oldPref.getInt(SESSION_DURATION, -1) == -1) {
             return;
         }
