@@ -949,14 +949,6 @@ public class TimerActivity extends AppCompatActivity
         }
     }
 
-    private void openTranslationPage() {
-        try {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://poeditor.com/join/project/DsP4ey4Kb9")));
-        } catch (Throwable th) {
-            // ignore
-        }
-    }
-
     private void openFeedback() {
         Intent email = new Intent(Intent.ACTION_SENDTO);
         email.setData(new Uri.Builder().scheme("mailto").build());
@@ -982,9 +974,6 @@ public class TimerActivity extends AppCompatActivity
                 break;
             case R.id.action_rate:
                 openPlayStorePage();
-                break;
-            case R.id.action_translate:
-                openTranslationPage();
                 break;
             case R.id.action_invite:
                 onInviteClicked();

@@ -54,6 +54,17 @@ public class AboutFragment extends PreferenceFragment {
             }
         });
 
+        Preference translate = findPreference("about_translate");
+        translate.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Uri uri = Uri.parse("https://poeditor.com/join/project/DsP4ey4Kb9");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+                return true;
+            }
+        });
+
         Preference productTour = findPreference("about_product_tour");
         productTour.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override

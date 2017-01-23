@@ -14,6 +14,10 @@
         android:title="@string/about_licences">
     </Preference>
     <Preference
+        android:key="about_translate"
+        android:title="@string/action_translate">
+    </Preference>
+    <Preference
         android:key="about_product_tour"
         android:title="@string/about_tour">
     </Preference>
