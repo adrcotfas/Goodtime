@@ -279,6 +279,7 @@ public class TimerActivity extends AppCompatActivity
         mTimeLabel = (TextView) findViewById(R.id.textView);
         setupTimeLabel();
         setupPauseButton();
+        setupLongPress();
     }
 
     private void setupToolbar(Toolbar toolbar) {
@@ -327,6 +328,16 @@ public class TimerActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 onTimeLabelClick();
+            }
+        });
+    }
+
+    private void setupLongPress() {
+        mTimeLabel.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                onTimeLabelLongClick();
+                return true;
             }
         });
     }
@@ -492,6 +503,60 @@ public class TimerActivity extends AppCompatActivity
                 setVisibility(mStartLabel, INVISIBLE);
                 break;
         }
+    }
+
+    private void onTimeLabelLongClick() {
+        switch (mTimerService.getTimerState()) {
+            case ACTIVE:
+            case PAUSED:
+                if (mTimerService.getSessionType() == WORK) {
+                    showSkipWorkDialog();
+                } else {
+                    showSkipBreakDialog();
+                }
+                break;
+            case INACTIVE:
+                break;
+        }
+    }
+
+    private void showSkipWorkDialog() {
+        mAlertDialog = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.dialog_session_break) + "?")
+                .setPositiveButton(getString(R.string.dialog_reset_ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onStopLabelClick();
+                        increaseTotalSessions();
+                        startBreak();
+                    }
+                })
+                .setNegativeButton(getString(R.string.dialog_reset_cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .create();
+        mAlertDialog.show();
+    }
+
+    private void showSkipBreakDialog() {
+        mAlertDialog = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.dialog_session_skip) + "?")
+                .setPositiveButton(getString(R.string.dialog_reset_ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onStopLabelClick();
+                        startTimer(WORK);
+                    }
+                })
+                .setNegativeButton(getString(R.string.dialog_reset_cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .create();
+        mAlertDialog.show();
     }
 
     private void onStopLabelClick() {
