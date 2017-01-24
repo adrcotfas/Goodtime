@@ -18,10 +18,6 @@
             android:icon="@drawable/ic_rate"
             android:title="@string/about_rate" />
         <item
-            android:id="@+id/action_translate"
-            android:icon="@drawable/ic_language"
-            android:title="@string/action_translate" />
-        <item
             android:id="@+id/action_invite"
             android:icon="@drawable/ic_share"
             android:title="@string/action_invite" />

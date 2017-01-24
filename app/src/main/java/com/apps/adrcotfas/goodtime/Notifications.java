@@ -24,18 +24,18 @@ import static com.apps.adrcotfas.goodtime.TimerState.PAUSED;
 
 public final class Notifications {
 
-    public final static String ACTION_PAUSE = "com.apps.adrcotfas.goodtime.PAUSE";
-    public final static String ACTION_PAUSE_UI = "com.apps.adrcotfas.goodtime.PAUSE_UI";
-    public final static String ACTION_STOP = "com.apps.adrcotfas.goodtime.STOP";
-    public final static String ACTION_STOP_UI = "com.apps.adrcotfas.goodtime.STOP_UI";
-    public final static String ACTION_START_BREAK = "com.apps.adrcotfas.goodtime.START_BREAK";
-    public final static String ACTION_START_BREAK_UI = "com.apps.adrcotfas.goodtime.START_BREAK_UI";
-    public final static String ACTION_SKIP_BREAK = "com.apps.adrcotfas.goodtime.SKIP_BREAK";
-    public final static String ACTION_SKIP_BREAK_UI = "com.apps.adrcotfas.goodtime.SKIP_BREAK_UI";
-    public final static String ACTION_START_WORK = "com.apps.adrcotfas.goodtime.START_WORK";
-    public final static String ACTION_START_WORK_UI = "com.apps.adrcotfas.goodtime.START_WORK_UI";
+    final static String ACTION_PAUSE_UI = "com.apps.adrcotfas.goodtime.PAUSE_UI";
+    final static String ACTION_STOP_UI = "com.apps.adrcotfas.goodtime.STOP_UI";
+    final static String ACTION_START_BREAK_UI = "com.apps.adrcotfas.goodtime.START_BREAK_UI";
+    final static String ACTION_SKIP_BREAK_UI = "com.apps.adrcotfas.goodtime.SKIP_BREAK_UI";
+    final static String ACTION_START_WORK_UI = "com.apps.adrcotfas.goodtime.START_WORK_UI";
+    private final static String ACTION_PAUSE = "com.apps.adrcotfas.goodtime.PAUSE";
+    private final static String ACTION_STOP = "com.apps.adrcotfas.goodtime.STOP";
+    private final static String ACTION_START_BREAK = "com.apps.adrcotfas.goodtime.START_BREAK";
+    private final static String ACTION_SKIP_BREAK = "com.apps.adrcotfas.goodtime.SKIP_BREAK";
+    private final static String ACTION_START_WORK = "com.apps.adrcotfas.goodtime.START_WORK";
 
-    public static Notification createCompletionNotification(
+    static Notification createCompletionNotification(
             Context context,
             SessionType sessionType,
             String notificationSound,
@@ -89,7 +89,7 @@ public final class Notifications {
         }
     }
 
-    public static Notification createForegroundNotification(
+    static Notification createForegroundNotification(
             Context context,
             SessionType sessionType,
             TimerState timerState,

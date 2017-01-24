@@ -33,19 +33,25 @@
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".about.AboutActivity"
+            android:name=".about.AboutMainActivity"
             android:label="@string/action_about"
             android:parentActivityName=".TimerActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".about.LicencesActivity"
-            android:label="@string/about_contributors"
-            android:parentActivityName=".about.AboutActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/about_licences"
+            android:parentActivityName=".about.AboutMainActivity"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ProductTourActivity"
+            android:name=".about.DonationsActivity"
+            android:theme="@style/AppTheme"
+            android:label="@string/about_support"
+            android:parentActivityName=".TimerActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".about.ProductTourActivity"
             android:theme="@style/Theme.Intro"
             android:screenOrientation="portrait"/>
         <service
