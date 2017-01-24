@@ -284,7 +284,13 @@ public class TimerActivity extends AppCompatActivity
 
     private void setupToolbar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(null);
+        try {
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
+            }
+        } catch (Throwable th) {
+            // ignoring this exception
+        }
 
         if (mSessionCounterButton != null ) {
             toolbar.removeView(mSessionCounterButton);
