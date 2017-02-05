@@ -315,7 +315,10 @@ public class TimerActivity extends AppCompatActivity
                     showSessionCounterDialog();
                 }
             });
-            toolbar.addView(mSessionCounterButton, new Toolbar.LayoutParams(GravityCompat.END));
+            // TODO: remove this check and find a better solution
+            if (toolbar != null) {
+                toolbar.addView(mSessionCounterButton, new Toolbar.LayoutParams(GravityCompat.END));
+            }
         }
     }
 
