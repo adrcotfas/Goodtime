@@ -20,6 +20,8 @@ import static android.graphics.Color.WHITE;
 import static android.media.AudioAttributes.USAGE_ALARM;
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
+import static android.support.v4.app.NotificationCompat.PRIORITY_HIGH;
+import static android.support.v4.app.NotificationCompat.VISIBILITY_PUBLIC;
 import static com.apps.adrcotfas.goodtime.TimerState.PAUSED;
 
 public final class Notifications {
@@ -44,17 +46,9 @@ public final class Notifications {
     ) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        if (!notificationSound.equals("")) {
-            if (SDK_INT >= LOLLIPOP) {
-                builder.setSound(Uri.parse(notificationSound), USAGE_ALARM);
-            } else {
-                builder.setSound(Uri.parse(notificationSound), AudioManager.STREAM_ALARM);
-            }
-        }
-        if (vibrate) {
-            builder.setVibrate(new long[]{0, 300, 700, 300});
-        }
         builder.setSmallIcon(R.drawable.ic_status_goodtime)
+                .setPriority(PRIORITY_HIGH)
+                .setVisibility(VISIBILITY_PUBLIC)
                 .setLights(WHITE, 250, 750)
                 .setContentTitle(context.getString(R.string.dialog_session_message))
                 .setContentText(buildCompletedNotificationText(context, sessionType))
@@ -73,6 +67,16 @@ public final class Notifications {
                         .addAction(createSkipBreakAction(context));
             } else {
                 builder.addAction(createStartWorkAction(context));
+            }
+        }
+        if (vibrate) {
+            builder.setVibrate(new long[]{0, 300, 700, 300});
+        }
+        if (!notificationSound.equals("")) {
+            if (SDK_INT >= LOLLIPOP) {
+                builder.setSound(Uri.parse(notificationSound), USAGE_ALARM);
+            } else {
+                builder.setSound(Uri.parse(notificationSound), AudioManager.STREAM_ALARM);
             }
         }
         return builder.build();
