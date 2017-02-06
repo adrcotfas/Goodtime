@@ -40,8 +40,6 @@ public final class Notifications {
     static Notification createCompletionNotification(
             Context context,
             SessionType sessionType,
-            String notificationSound,
-            boolean vibrate,
             boolean addButtons
     ) {
 
@@ -67,16 +65,6 @@ public final class Notifications {
                         .addAction(createSkipBreakAction(context));
             } else {
                 builder.addAction(createStartWorkAction(context));
-            }
-        }
-        if (vibrate) {
-            builder.setVibrate(new long[]{0, 300, 700, 300});
-        }
-        if (!notificationSound.equals("")) {
-            if (SDK_INT >= LOLLIPOP) {
-                builder.setSound(Uri.parse(notificationSound), USAGE_ALARM);
-            } else {
-                builder.setSound(Uri.parse(notificationSound), AudioManager.STREAM_ALARM);
             }
         }
         return builder.build();
