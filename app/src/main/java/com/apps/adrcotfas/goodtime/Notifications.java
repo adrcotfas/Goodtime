@@ -60,12 +60,20 @@ public final class Notifications {
                 .setAutoCancel(true);
 
         if(addButtons) {
+            NotificationCompat.WearableExtender extender = new NotificationCompat.WearableExtender();
             if (isWorkingSession(sessionType)) {
-                builder.addAction(createStartBreakAction(context))
-                        .addAction(createSkipBreakAction(context));
+                NotificationCompat.Action startBreakAction = createStartBreakAction(context);
+                NotificationCompat.Action skipBreakAction = createSkipBreakAction(context);
+                builder.addAction(startBreakAction)
+                        .addAction(skipBreakAction);
+                extender.addAction(startBreakAction)
+                        .addAction(skipBreakAction);
             } else {
-                builder.addAction(createStartWorkAction(context));
+                NotificationCompat.Action startWorkAction = createStartWorkAction(context);
+                builder.addAction(startWorkAction);
+                extender.addAction(startWorkAction);
             }
+            builder.extend(extender);
         }
         return builder.build();
     }
