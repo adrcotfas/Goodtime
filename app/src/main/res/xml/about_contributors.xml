@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <Preference
+        android:key="edio"
+        android:icon="@drawable/ic_code"
+        android:title="Dmytro Kostiuchenko">
+    </Preference>
+
+    <Preference
         android:key="fdw"
         android:icon="@drawable/ic_code"
         android:title="Fabian Winter">
