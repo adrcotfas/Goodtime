@@ -845,7 +845,7 @@ public class TimerActivity extends AppCompatActivity
     private void openFeedback() {
         Intent email = new Intent(Intent.ACTION_SENDTO);
         email.setData(new Uri.Builder().scheme("mailto").build());
-        email.putExtra(Intent.EXTRA_EMAIL, new String[]{"adrcotfas@gmail.com"});
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{"goodtime-app@googlegroups.com"});
         email.putExtra(Intent.EXTRA_SUBJECT, "[Goodtime] Feedback");
         email.putExtra(Intent.EXTRA_TEXT, "\nMy device info: \n" + DeviceInfo.getDeviceInfo()
                 + "\nApp version: " + BuildConfig.VERSION_NAME
