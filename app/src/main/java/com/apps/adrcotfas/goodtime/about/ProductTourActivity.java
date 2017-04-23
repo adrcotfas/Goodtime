@@ -11,8 +11,6 @@ public class ProductTourActivity extends IntroActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setFullscreen(true);
-
         /**
          * Standard fade (like Google's intros)
          */
