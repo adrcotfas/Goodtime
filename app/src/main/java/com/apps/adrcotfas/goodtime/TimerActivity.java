@@ -78,7 +78,7 @@ public class TimerActivity extends AppCompatActivity
     public static final int NOTIFICATION_TAG = 2;
     protected final static int MSG_UPDATE_TIME = 0;
     private static final int MAXIMUM_MILLISECONDS_BETWEEN_KEY_PRESSES = 2000;
-    private static final int MAXIMUM_MILLISECONDS_NOTIFICATION_TIME = 2000;
+    private static final int MAXIMUM_MILLISECONDS_NOTIFICATION_TIME = 4000;
     private static final String TAG = "TimerActivity";
     private static final int REQUEST_INVITE = 0;
     private final Handler mUpdateTimeHandler = new TimeLabelUpdateHandler(this);
@@ -146,7 +146,6 @@ public class TimerActivity extends AppCompatActivity
             mTimerService.sendToBackground();
             mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
         }
-        removeCompletionNotification();
 
         if (mPrivatePref.getBoolean(FIRST_RUN, true)) {
             Intent introIntent = new Intent(this, ProductTourActivity.class);
