@@ -40,6 +40,8 @@ public final class Notifications {
     static Notification createCompletionNotification(
             Context context,
             SessionType sessionType,
+            String notificationSound,
+            boolean vibrate,
             boolean addButtons
     ) {
 
@@ -60,11 +62,29 @@ public final class Notifications {
                 .setAutoCancel(true);
 
         if(addButtons) {
+            NotificationCompat.WearableExtender extender = new NotificationCompat.WearableExtender();
             if (isWorkingSession(sessionType)) {
-                builder.addAction(createStartBreakAction(context))
-                        .addAction(createSkipBreakAction(context));
+                NotificationCompat.Action startBreakAction = createStartBreakAction(context);
+                NotificationCompat.Action skipBreakAction = createSkipBreakAction(context);
+                builder.addAction(startBreakAction)
+                        .addAction(skipBreakAction);
+                extender.addAction(startBreakAction)
+                        .addAction(skipBreakAction);
             } else {
-                builder.addAction(createStartWorkAction(context));
+                NotificationCompat.Action startWorkAction = createStartWorkAction(context);
+                builder.addAction(startWorkAction);
+                extender.addAction(startWorkAction);
+            }
+            builder.extend(extender);
+        }
+        if (vibrate) {
+            builder.setVibrate(new long[]{0, 300, 700, 300});
+        }
+        if (!notificationSound.equals("")) {
+            if (SDK_INT >= LOLLIPOP) {
+                builder.setSound(Uri.parse(notificationSound), USAGE_ALARM);
+            } else {
+                builder.setSound(Uri.parse(notificationSound), AudioManager.STREAM_ALARM);
             }
         }
         return builder.build();

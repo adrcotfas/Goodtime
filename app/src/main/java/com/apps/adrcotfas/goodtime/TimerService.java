@@ -10,9 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.media.AudioAttributes;
 import android.media.AudioManager;
-import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.Build;
@@ -25,9 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import static android.app.AlarmManager.ELAPSED_REALTIME_WAKEUP;
 import static android.media.AudioManager.RINGER_MODE_SILENT;
-import static android.media.AudioManager.STREAM_ALARM;
 import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static com.apps.adrcotfas.goodtime.Notifications.createCompletionNotification;
 import static com.apps.adrcotfas.goodtime.Notifications.createForegroundNotification;
 import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;
@@ -209,23 +205,11 @@ public class TimerService extends Service {
         Notification notification = createCompletionNotification(
                 this,
                 mCurrentSession,
+                mPref.getNotificationSound(),
+                mPref.getNotificationVibrate(),
                 addButtons
         );
 
-        if (mPref.getNotificationVibrate()) {
-            notification.vibrate = new long[]{0, 300, 700, 300};
-        }
-
-        if (SDK_INT >= LOLLIPOP) {
-            AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_ALARM)
-                    .build();
-            notification.audioAttributes = audioAttributes;
-        } else {
-            notification.audioStreamType = STREAM_ALARM;
-        }
-
-        notification.sound = Uri.parse(mPref.getNotificationSound());
         mNotificationManager.notify(
                 NOTIFICATION_TAG,
                 notification
