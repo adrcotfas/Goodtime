@@ -78,7 +78,7 @@ public class TimerActivity extends AppCompatActivity
     public static final int NOTIFICATION_TAG = 2;
     protected final static int MSG_UPDATE_TIME = 0;
     private static final int MAXIMUM_MILLISECONDS_BETWEEN_KEY_PRESSES = 2000;
-    private static final int MAXIMUM_MILLISECONDS_NOTIFICATION_TIME = 2000;
+    private static final int MAXIMUM_MILLISECONDS_NOTIFICATION_TIME = 4000;
     private static final String TAG = "TimerActivity";
     private static final int REQUEST_INVITE = 0;
     private final Handler mUpdateTimeHandler = new TimeLabelUpdateHandler(this);
@@ -146,7 +146,6 @@ public class TimerActivity extends AppCompatActivity
             mTimerService.sendToBackground();
             mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
         }
-        removeCompletionNotification();
 
         if (mPrivatePref.getBoolean(FIRST_RUN, true)) {
             Intent introIntent = new Intent(this, ProductTourActivity.class);
@@ -845,7 +844,7 @@ public class TimerActivity extends AppCompatActivity
     private void openFeedback() {
         Intent email = new Intent(Intent.ACTION_SENDTO);
         email.setData(new Uri.Builder().scheme("mailto").build());
-        email.putExtra(Intent.EXTRA_EMAIL, new String[]{"adrcotfas@gmail.com"});
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{"goodtime-app@googlegroups.com"});
         email.putExtra(Intent.EXTRA_SUBJECT, "[Goodtime] Feedback");
         email.putExtra(Intent.EXTRA_TEXT, "\nMy device info: \n" + DeviceInfo.getDeviceInfo()
                 + "\nApp version: " + BuildConfig.VERSION_NAME
