@@ -166,6 +166,10 @@ public class TimerActivity extends AppCompatActivity
             startActivity(introIntent);
             mPrivatePref.edit().putBoolean(FIRST_RUN, false).apply();
         }
+
+        if (mPref.getFullscreenMode()) {
+            mFullscreenHelper.hide();
+        }
     }
 
     @Override
