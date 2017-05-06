@@ -11,6 +11,8 @@ public class Preferences {
     static final String SESSION_DURATION = "pref_workTime";
     static final String TOTAL_SESSION_COUNT = "pref_totalSessions";
     static final String ENABLE_SESSIONS_COUNTER = "pref_counter";
+    static final String FULLSCREEN_MODE = "pref_fullscreen";
+    static final String SESSION_TYPE_ICON = "pref_sessionTypeIcon";
     private static final String TAG = "Preferences";
     private static final int CURRENT_SETTINGS_VERSION = 2;
     private static final String NOTIFICATION_SOUND = "pref_notificationSound";
@@ -23,16 +25,16 @@ public class Preferences {
     private static final String CONTINUOUS_MODE = "pref_continuousMode";
     private static final String NOTIFICATION_VIBRATE = "pref_vibrate";
     private static final String LANDSCAPE_MODE = "pref_landscape";
-    private static final String FULLSCREEN_MODE = "pref_fullscreen";
 
     private final SharedPreferences mPref;
 
     Preferences(SharedPreferences pref) {
         mPref = pref;
 
-        if (pref.getInt(SETTINGS_VERSION, 0) == 0) {
+        if (pref.getInt(SETTINGS_VERSION, 0) < CURRENT_SETTINGS_VERSION) {
             mPref.edit()
                  .putInt(SETTINGS_VERSION, CURRENT_SETTINGS_VERSION)
+                 .putBoolean(LANDSCAPE_MODE, false)
                  .apply();
         }
     }
@@ -79,6 +81,10 @@ public class Preferences {
 
     boolean getFullscreenMode() {
         return mPref.getBoolean(FULLSCREEN_MODE, false);
+    }
+
+    boolean getSessionTypeIcon() {
+        return mPref.getBoolean(SESSION_TYPE_ICON, false);
     }
 
     boolean getEnableSessionCounter() {

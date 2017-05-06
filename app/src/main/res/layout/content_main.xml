@@ -11,11 +11,16 @@
     tools:context=".TimerActivity"
     tools:showIn="@layout/activity_main">
 
+    <View
+        android:id="@+id/main"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent" />
+
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="25dp"
         android:layout_centerHorizontal="true"
         android:layout_centerInParent="true"
         android:clickable="true"
@@ -23,6 +28,14 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="65sp"
         android:adjustViewBounds="true"/>
+
+    <View
+        android:id="@+id/sessionTypeIcon"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_marginLeft="75dp"
+        android:layout_alignTop="@id/textView"
+         />
 
     <TextView
         android:id="@+id/startLabel"
