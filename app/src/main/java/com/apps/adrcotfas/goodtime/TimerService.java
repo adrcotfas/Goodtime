@@ -269,7 +269,7 @@ public class TimerService extends Service {
         Log.w(TAG, "Alarm set.");
         mAlarmReceiver = new BroadcastReceiver() {
             @Override
-            public void onReceive(Context context, Intent _) {
+            public void onReceive(Context context, Intent intent) {
                 onCountdownFinished();
                 context.unregisterReceiver(this);
                 Intent finishedIntent = new Intent(ACTION_FINISHED_UI);
