@@ -84,7 +84,7 @@ public class Preferences {
     }
 
     boolean getSessionTypeIcon() {
-        return mPref.getBoolean(SESSION_TYPE_ICON, false);
+        return mPref.getBoolean(SESSION_TYPE_ICON, true);
     }
 
     boolean getEnableSessionCounter() {

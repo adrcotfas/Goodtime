@@ -99,7 +99,7 @@
       android:title="@string/pref_continuous_mode"
       android:summary="@string/pref_continuous_mode_summary"/>
      <CheckBoxPreference
-      android:defaultValue="false"
+      android:defaultValue="true"
       android:key="pref_sessionTypeIcon"
       android:title="@string/pref_session_type_icon"
       android:summary="@string/pref_session_type_icon_summary"/>
