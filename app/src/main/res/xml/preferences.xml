@@ -65,7 +65,8 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref_landscape"
-            android:title="@string/pref_landscape"/>
+            android:title="@string/pref_landscape"
+            android:enabled="false"/>
 
         <CheckBoxPreference
             android:defaultValue="false"
@@ -76,7 +77,6 @@
             android:defaultValue="true"
             android:key="pref_counter"
             android:title="@string/pref_counter"/>
-
     </PreferenceCategory>
 
   <PreferenceCategory android:title="@string/pref_header_modes">
@@ -96,7 +96,13 @@
     <CheckBoxPreference
       android:defaultValue="false"
       android:key="pref_continuousMode"
-      android:title="@string/pref_continuous_mode" />
+      android:title="@string/pref_continuous_mode"
+      android:summary="@string/pref_continuous_mode_summary"/>
+     <CheckBoxPreference
+      android:defaultValue="true"
+      android:key="pref_sessionTypeIcon"
+      android:title="@string/pref_session_type_icon"
+      android:summary="@string/pref_session_type_icon_summary"/>
   </PreferenceCategory>
 </PreferenceScreen>
 

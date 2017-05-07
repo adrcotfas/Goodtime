@@ -7,8 +7,8 @@ android {
         applicationId 'com.apps.adrcotfas.goodtime'
         minSdkVersion 17
         targetSdkVersion 24
-        versionCode 53
-        versionName "1.2.5"
+        versionCode 56
+        versionName "1.2.7"
     }
     buildTypes {
         release {
@@ -19,6 +19,9 @@ android {
     }
     applicationVariants.all { variant ->
         variant.resValue "string", "versionName", variant.versionName
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 

@@ -20,6 +20,7 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -34,7 +35,6 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,8 +60,10 @@ import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 import static android.view.animation.AnimationUtils.loadAnimation;
 import static android.widget.Toast.LENGTH_SHORT;
 import static com.apps.adrcotfas.goodtime.Preferences.FIRST_RUN;
+import static com.apps.adrcotfas.goodtime.Preferences.FULLSCREEN_MODE;
 import static com.apps.adrcotfas.goodtime.Preferences.PREFERENCES_NAME;
 import static com.apps.adrcotfas.goodtime.Preferences.SESSION_DURATION;
+import static com.apps.adrcotfas.goodtime.Preferences.SESSION_TYPE_ICON;
 import static com.apps.adrcotfas.goodtime.Preferences.TOTAL_SESSION_COUNT;
 import static com.apps.adrcotfas.goodtime.Preferences.ENABLE_SESSIONS_COUNTER;
 import static com.apps.adrcotfas.goodtime.SessionType.BREAK;
@@ -88,6 +90,7 @@ public class TimerActivity extends AppCompatActivity
     private TextView mStopLabel;
     private TextView mTimeLabel;
     private TextView mSessionCounterButton;
+    private View mSessionTypeIcon;
     private Preferences mPref;
     private SharedPreferences mPrivatePref;
     private AlertDialog mAlertDialog;
@@ -95,6 +98,8 @@ public class TimerActivity extends AppCompatActivity
     private BroadcastReceiver mBroadcastReceiver;
     private boolean mIsBoundToTimerService = false;
     private boolean mIsUiVisible;
+    private FullscreenHelper mFullscreenHelper;
+
     private ServiceConnection mTimerServiceConnection = new ServiceConnection() {
 
         @Override
@@ -120,6 +125,15 @@ public class TimerActivity extends AppCompatActivity
         loadInitialState();
         setupAndroidNougatSettings();
         setupBroadcastReceiver();
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (mPref.getFullscreenMode())
+        {
+            mFullscreenHelper.delayedHide(100);
+        }
     }
 
     private void migrateOldPreferences() {
@@ -152,7 +166,10 @@ public class TimerActivity extends AppCompatActivity
             startActivity(introIntent);
             mPrivatePref.edit().putBoolean(FIRST_RUN, false).apply();
         }
-        setFullscreenMode(mPref.getFullscreenMode());
+
+        if (mPref.getFullscreenMode()) {
+            mFullscreenHelper.hide();
+        }
     }
 
     @Override
@@ -279,6 +296,12 @@ public class TimerActivity extends AppCompatActivity
         setupTimeLabel();
         setupPauseButton();
         setupLongPress();
+
+        if (mPref.getFullscreenMode()) {
+            enableFullscreen();
+        }
+
+        mSessionTypeIcon = findViewById(R.id.sessionTypeIcon);
     }
 
     private void setupToolbar(Toolbar toolbar) {
@@ -409,6 +432,35 @@ public class TimerActivity extends AppCompatActivity
                 setupToolbar(toolbar);
                 setupDrawer(toolbar);
                 break;
+            case FULLSCREEN_MODE:
+                if (mPref.getFullscreenMode()) {
+                    enableFullscreen();
+                } else {
+                    disableFullscreen();
+                }
+                break;
+            case SESSION_TYPE_ICON:
+                if (mPref.getSessionTypeIcon()) {
+                    setupSessionTypeIcon();
+                } else {
+                    mSessionTypeIcon.setBackground(null);
+                }
+        }
+    }
+
+    private void setupSessionTypeIcon() {
+        if (mIsBoundToTimerService) {
+            if (!mTimerService.getTimerState().equals(INACTIVE)) {
+                if (mTimerService.getSessionType().equals(WORK)) {
+                    mSessionTypeIcon.setBackground(
+                            ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_work));
+                } else {
+                    mSessionTypeIcon.setBackground(
+                            ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_break));
+                }
+            } else {
+                mSessionTypeIcon.setBackground(null);
+            }
         }
     }
 
@@ -449,6 +501,10 @@ public class TimerActivity extends AppCompatActivity
         }
 
         setVisibility(mStartLabel, VISIBLE);
+
+        if (mPref.getSessionTypeIcon()) {
+            setupSessionTypeIcon();
+        }
     }
 
     private void shutScreenOffIfPreferred() {
@@ -466,6 +522,14 @@ public class TimerActivity extends AppCompatActivity
         keepScreenOnIfPreferred();
 
         mTimerService.startSession(sessionType);
+
+        if (mPref.getFullscreenMode()) {
+            mFullscreenHelper.hide();
+        }
+
+        if (mPref.getSessionTypeIcon()) {
+            setupSessionTypeIcon();
+        }
     }
 
     private void keepScreenOnIfPreferred() {
@@ -484,6 +548,9 @@ public class TimerActivity extends AppCompatActivity
                     mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
                     mTimerService.pauseSession();
                     mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
+                    if (mPref.getSessionTypeIcon()) {
+                        mSessionTypeIcon.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
+                    }
                 } else if (mTimeLabelPressedAt + MAXIMUM_MILLISECONDS_BETWEEN_KEY_PRESSES
                         <= System.currentTimeMillis()) {
                     final Handler handler = new Handler();
@@ -504,6 +571,9 @@ public class TimerActivity extends AppCompatActivity
                 }
                 mTimerService.unPauseSession();
                 mTimeLabel.clearAnimation();
+                if (mPref.getSessionTypeIcon()) {
+                    mSessionTypeIcon.clearAnimation();
+                }
                 setVisibility(mStopLabel, INVISIBLE);
                 break;
             case INACTIVE:
@@ -569,6 +639,9 @@ public class TimerActivity extends AppCompatActivity
 
     private void onStopLabelClick() {
         mTimeLabel.clearAnimation();
+        if (mPref.getSessionTypeIcon()) {
+            mSessionTypeIcon.clearAnimation();
+        }
 
         setVisibility(mStopLabel, INVISIBLE);
         mTimerService.stopSession();
@@ -764,11 +837,12 @@ public class TimerActivity extends AppCompatActivity
 
         Log.i(TAG, "Updating time label: " + minutes + ":" + seconds);
         String currentTick = (minutes > 0 ? minutes : "") +
-                "." +
+                (minutes > 0 ? "." : "")  +
                 format(Locale.US, "%02d", seconds);
 
         SpannableString currentFormattedTick = new SpannableString(currentTick);
-        currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0, currentTick.indexOf("."), 0);
+        currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0,
+                minutes > 0 ? currentTick.indexOf(".") : currentTick.length(), 0);
         mTimeLabel.setText(currentFormattedTick);
     }
 
@@ -794,13 +868,13 @@ public class TimerActivity extends AppCompatActivity
         mAlertDialog.show();
     }
 
-    private void setFullscreenMode(boolean fullscreen) {
-        if (fullscreen) {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        } else {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+    private void enableFullscreen() {
+        mFullscreenHelper = new FullscreenHelper(findViewById(R.id.main), getSupportActionBar());
+    }
+
+    private void disableFullscreen() {
+        if (mFullscreenHelper != null) {
+            mFullscreenHelper.disable();
         }
     }
 

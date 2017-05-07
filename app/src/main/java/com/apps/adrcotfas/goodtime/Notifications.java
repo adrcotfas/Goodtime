@@ -113,6 +113,7 @@ public final class Notifications {
                 .setAutoCancel(false)
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(buildForegroundNotificationText(context, sessionType, timerState, remainingTime))
+                .setVisibility(VISIBILITY_PUBLIC)
                 .setOngoing(isTimerActive(timerState))
                 .setShowWhen(false)
                 .setContentIntent(
