@@ -14,7 +14,7 @@ public class Preferences {
     static final String FULLSCREEN_MODE = "pref_fullscreen";
     static final String SESSION_TYPE_ICON = "pref_sessionTypeIcon";
     private static final String TAG = "Preferences";
-    private static final int CURRENT_SETTINGS_VERSION = 2;
+    private static final int CURRENT_SETTINGS_VERSION = 3;
     private static final String NOTIFICATION_SOUND = "pref_notificationSound";
     private static final String BREAK_DURATION = "pref_breakTime";
     private static final String LONG_BREAK_DURATION = "pref_longBreakDuration";
