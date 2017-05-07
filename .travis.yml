@@ -30,4 +30,4 @@ android:
 script:
     - ./gradlew build check
 after_script:
-- if [ -f /home/travis/build/adrcotfas/Goodtime/app/build/outputs/lint-results-debug.xml ]; then lynx -dump /home/travis/build/adrcotfas/Goodtime/app/build/outputs/lint-results-debug.xml; fi
+- if [ -f /home/travis/build/adrcotfas/Goodtime/app/build/outputs/lint-results-debug.html ]; then lynx -dump /home/travis/build/adrcotfas/Goodtime/app/build/outputs/lint-results-debug.html; fi
