@@ -29,14 +29,6 @@
         android:textSize="65sp"
         android:adjustViewBounds="true"/>
 
-    <View
-        android:id="@+id/sessionTypeIcon"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_marginLeft="75dp"
-        android:layout_alignTop="@id/textView"
-         />
-
     <TextView
         android:id="@+id/startLabel"
         android:layout_width="wrap_content"

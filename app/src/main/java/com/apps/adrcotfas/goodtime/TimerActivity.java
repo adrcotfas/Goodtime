@@ -90,7 +90,7 @@ public class TimerActivity extends AppCompatActivity
     private TextView mStopLabel;
     private TextView mTimeLabel;
     private TextView mSessionCounterButton;
-    private View mSessionTypeIcon;
+    private MenuItem mSessionTypeIcon;
     private Preferences mPref;
     private SharedPreferences mPrivatePref;
     private AlertDialog mAlertDialog;
@@ -300,8 +300,6 @@ public class TimerActivity extends AppCompatActivity
         if (mPref.getFullscreenMode()) {
             enableFullscreen();
         }
-
-        mSessionTypeIcon = findViewById(R.id.sessionTypeIcon);
     }
 
     private void setupToolbar(Toolbar toolbar) {
@@ -313,7 +311,10 @@ public class TimerActivity extends AppCompatActivity
         } catch (Throwable th) {
             // ignoring this exception
         }
+        setupSessionCounter(toolbar);
+    }
 
+    private void setupSessionCounter(Toolbar toolbar) {
         if (mSessionCounterButton != null ) {
             toolbar.removeView(mSessionCounterButton);
         }
@@ -397,6 +398,7 @@ public class TimerActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        mSessionTypeIcon = menu.findItem(R.id.sessionTypeIcon);
         return true;
     }
 
@@ -429,8 +431,7 @@ public class TimerActivity extends AppCompatActivity
                 break;
             case ENABLE_SESSIONS_COUNTER:
                 Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-                setupToolbar(toolbar);
-                setupDrawer(toolbar);
+                setupSessionCounter(toolbar);
                 break;
             case FULLSCREEN_MODE:
                 if (mPref.getFullscreenMode()) {
@@ -443,7 +444,7 @@ public class TimerActivity extends AppCompatActivity
                 if (mPref.getSessionTypeIcon()) {
                     setupSessionTypeIcon();
                 } else {
-                    mSessionTypeIcon.setBackground(null);
+                    mSessionTypeIcon.setVisible(false);
                 }
         }
     }
@@ -452,14 +453,16 @@ public class TimerActivity extends AppCompatActivity
         if (mIsBoundToTimerService) {
             if (!mTimerService.getTimerState().equals(INACTIVE)) {
                 if (mTimerService.getSessionType().equals(WORK)) {
-                    mSessionTypeIcon.setBackground(
-                            ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_work));
+                    mSessionTypeIcon.setIcon(
+                            ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_work))
+                    .setVisible(true);
                 } else {
-                    mSessionTypeIcon.setBackground(
-                            ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_break));
+                    mSessionTypeIcon.setIcon(
+                            ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_break))
+                            .setVisible(true);
                 }
             } else {
-                mSessionTypeIcon.setBackground(null);
+                mSessionTypeIcon.setVisible(false);
             }
         }
     }
@@ -548,9 +551,6 @@ public class TimerActivity extends AppCompatActivity
                     mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
                     mTimerService.pauseSession();
                     mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
-                    if (mPref.getSessionTypeIcon()) {
-                        mSessionTypeIcon.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
-                    }
                 } else if (mTimeLabelPressedAt + MAXIMUM_MILLISECONDS_BETWEEN_KEY_PRESSES
                         <= System.currentTimeMillis()) {
                     final Handler handler = new Handler();
@@ -571,9 +571,6 @@ public class TimerActivity extends AppCompatActivity
                 }
                 mTimerService.unPauseSession();
                 mTimeLabel.clearAnimation();
-                if (mPref.getSessionTypeIcon()) {
-                    mSessionTypeIcon.clearAnimation();
-                }
                 setVisibility(mStopLabel, INVISIBLE);
                 break;
             case INACTIVE:
@@ -639,9 +636,6 @@ public class TimerActivity extends AppCompatActivity
 
     private void onStopLabelClick() {
         mTimeLabel.clearAnimation();
-        if (mPref.getSessionTypeIcon()) {
-            mSessionTypeIcon.clearAnimation();
-        }
 
         setVisibility(mStopLabel, INVISIBLE);
         mTimerService.stopSession();
