@@ -1,5 +1,11 @@
 language: android
 jdk: oraclejdk8
+
+addons:
+  apt:
+    packages:
+      - lynx
+
 env:
  global:
     - ANDROID_API_LEVEL=24
@@ -23,3 +29,5 @@ android:
     - addon-google_apis-google-$ANDROID_API_LEVEL
 script:
     - ./gradlew build check
+after_script:
+- if [ -f /home/travis/build/adrcotfas/Goodtime/app/build/outputs/lint-results-debug.xml ]; then lynx -dump /home/travis/build/adrcotfas/Goodtime/app/build/outputs/lint-results-debug.xml; fi
