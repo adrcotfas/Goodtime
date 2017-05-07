@@ -52,7 +52,7 @@
             android:title="@string/pref_ringtone"
             android:defaultValue="content://settings/system/notification_sound"
             android:summary="@string/pref_ringtone_summary"
-            android:ringtoneType="all|"
+            android:ringtoneType="all"
             android:showSilent="true"
             android:showDefault="false"
             />
