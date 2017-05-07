@@ -34,7 +34,6 @@ public class Preferences {
         if (pref.getInt(SETTINGS_VERSION, 0) < CURRENT_SETTINGS_VERSION) {
             mPref.edit()
                  .putInt(SETTINGS_VERSION, CURRENT_SETTINGS_VERSION)
-                 .putBoolean(LANDSCAPE_MODE, false)
                  .apply();
         }
     }
