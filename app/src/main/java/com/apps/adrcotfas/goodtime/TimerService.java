@@ -19,6 +19,8 @@ import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.apps.adrcotfas.goodtime.util.WakeLocker;
+
 import java.util.concurrent.TimeUnit;
 
 import static android.app.AlarmManager.ELAPSED_REALTIME_WAKEUP;
@@ -270,6 +272,7 @@ public class TimerService extends Service {
         mAlarmReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                WakeLocker.acquire(context);
                 onCountdownFinished();
                 context.unregisterReceiver(this);
                 Intent finishedIntent = new Intent(ACTION_FINISHED_UI);

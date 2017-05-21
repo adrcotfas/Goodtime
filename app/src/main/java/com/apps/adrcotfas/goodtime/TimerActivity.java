@@ -43,6 +43,7 @@ import com.apps.adrcotfas.goodtime.about.DonationsActivity;
 import com.apps.adrcotfas.goodtime.about.ProductTourActivity;
 import com.apps.adrcotfas.goodtime.settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.util.DeviceInfo;
+import com.apps.adrcotfas.goodtime.util.WakeLocker;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 
 import java.util.List;
@@ -50,9 +51,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import static android.graphics.Typeface.createFromAsset;
-import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
 import static android.os.PowerManager.FULL_WAKE_LOCK;
-import static android.os.PowerManager.ON_AFTER_RELEASE;
 import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -81,7 +80,7 @@ public class TimerActivity extends AppCompatActivity
     protected final static int MSG_UPDATE_TIME = 0;
     private static final int MAXIMUM_MILLISECONDS_BETWEEN_KEY_PRESSES = 2000;
     private static final int MAXIMUM_MILLISECONDS_NOTIFICATION_TIME = 4000;
-    private static final String TAG = "TimerActivity";
+    public static final String TAG = "TimerActivity";
     private static final int REQUEST_INVITE = 0;
     private final Handler mUpdateTimeHandler = new TimeLabelUpdateHandler(this);
     private long mBackPressedAt;
@@ -657,7 +656,6 @@ public class TimerActivity extends AppCompatActivity
     private void onCountdownFinished() {
         Log.i(TAG, "Countdown has finished");
 
-        acquireScreenWakelock();
         shutScreenOffIfPreferred();
 
         mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
@@ -669,6 +667,7 @@ public class TimerActivity extends AppCompatActivity
         } else {
             showContinueDialog();
         }
+        WakeLocker.release();
     }
 
     private void increaseTotalSessions() {
@@ -679,17 +678,6 @@ public class TimerActivity extends AppCompatActivity
                     .putInt(TOTAL_SESSION_COUNT, ++totalSessions)
                     .apply();
         }
-    }
-
-    private void acquireScreenWakelock() {
-        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock screenWakeLock = powerManager.newWakeLock(
-                SCREEN_BRIGHT_WAKE_LOCK | ON_AFTER_RELEASE | ACQUIRE_CAUSES_WAKEUP,
-                "wake screen lock"
-        );
-
-        screenWakeLock.acquire();
-        screenWakeLock.release();
     }
 
     private void showContinueDialog() {
