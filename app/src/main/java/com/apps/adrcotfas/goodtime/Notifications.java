@@ -73,7 +73,6 @@ public final class Notifications {
             } else {
                 NotificationCompat.Action startWorkAction = createStartWorkAction(context);
                 builder.addAction(startWorkAction);
-
                 extender.addAction(startWorkAction);
             }
             builder.extend(extender);
