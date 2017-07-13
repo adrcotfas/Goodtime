@@ -50,7 +50,7 @@ public final class Notifications {
                 .setPriority(PRIORITY_HIGH)
                 .setVisibility(VISIBILITY_PUBLIC)
                 .setLights(WHITE, 250, 750)
-                .setContentTitle(context.getString(R.string.dialog_session_message))
+                .setContentTitle(buildCompletedNotificationTitle(context, sessionType))
                 .setContentText(buildCompletedNotificationText(context, sessionType))
                 .setContentIntent(
                         getActivity(
@@ -88,6 +88,17 @@ public final class Notifications {
             }
         }
         return builder.build();
+    }
+
+    private static CharSequence buildCompletedNotificationTitle(Context context, SessionType sessionType) {
+        switch (sessionType) {
+            case BREAK:
+            case LONG_BREAK:
+                return context.getString(R.string.dialog_break_message);
+            case WORK:
+            default:
+                return context.getString(R.string.dialog_session_message);
+        }
     }
 
     private static CharSequence buildCompletedNotificationText(Context context, SessionType sessionType) {
