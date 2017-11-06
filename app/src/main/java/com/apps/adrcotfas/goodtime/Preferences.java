@@ -21,6 +21,7 @@ public class Preferences {
     private static final String SESSIONS_BEFORE_LONG_BREAK = "pref_sessionsBeforeLongBreak";
     private static final String SETTINGS_VERSION = "pref_settings_version";
     private static final String DISABLE_WIFI = "pref_disableWifi";
+    private static final String DISABLE_BLUETOOTH = "pref_disableBluetooth";
     private static final String KEEP_SCREEN_ON = "pref_keepScreenOn";
     private static final String CONTINUOUS_MODE = "pref_continuousMode";
     private static final String NOTIFICATION_VIBRATE = "pref_vibrate";
@@ -64,6 +65,10 @@ public class Preferences {
 
     boolean getDisableWifi() {
         return mPref.getBoolean(DISABLE_WIFI, true);
+    }
+
+    boolean getDisableBluetooth() {
+        return mPref.getBoolean(DISABLE_BLUETOOTH, true);
     }
 
     boolean getContinuousMode() {
@@ -113,6 +118,7 @@ public class Preferences {
              .putBoolean(KEEP_SCREEN_ON, oldPref.getBoolean(KEEP_SCREEN_ON, false))
              .putBoolean(DISABLE_SOUND_AND_VIBRATION, oldPref.getBoolean(DISABLE_SOUND_AND_VIBRATION, false))
              .putBoolean(DISABLE_WIFI, oldPref.getBoolean(DISABLE_WIFI, true))
+             .putBoolean(DISABLE_BLUETOOTH, oldPref.getBoolean(DISABLE_BLUETOOTH, true))
              .putBoolean(CONTINUOUS_MODE, oldPref.getBoolean(CONTINUOUS_MODE, false))
              .putBoolean(NOTIFICATION_VIBRATE, oldPref.getBoolean(NOTIFICATION_VIBRATE, true))
              .putBoolean(LANDSCAPE_MODE, oldPref.getBoolean(LANDSCAPE_MODE, false))
