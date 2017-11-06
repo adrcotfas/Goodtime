@@ -175,6 +175,19 @@ public class TimerService extends Service {
             restoreWifi();
         }
 
+        if (mPreviousWifiMode && mPref.getDisableWifi()) {
+            while (!checkWifiEnabled()) {
+                SystemClock.sleep(1000);
+            }
+        }
+        if (mPreviousBluetoothMode && mPref.getDisableBluetooth()) {
+            while (!checkBluetoothEnabled()) {
+                SystemClock.sleep(1000);
+            }
+            Log.d(TAG, "Waiting 3 seconds");
+            SystemClock.sleep(3000);
+        }
+
         sendFinishedNotification(!mPref.getContinuousMode());
 
         mTimerState = INACTIVE;
@@ -232,6 +245,18 @@ public class TimerService extends Service {
             BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             mBluetoothAdapter.enable();
         }
+    }
+
+    private boolean checkWifiEnabled() {
+        Log.d(TAG, "Check WiFi is restored");
+        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+        return wifiManager.isWifiEnabled();
+    }
+
+    private boolean checkBluetoothEnabled() {
+        Log.d(TAG, "Check Bluetooth is restored");
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        return mBluetoothAdapter.isEnabled();
     }
 
     private void sendFinishedNotification(boolean addButtons) {
