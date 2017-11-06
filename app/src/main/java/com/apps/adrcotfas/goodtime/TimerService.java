@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -50,6 +51,7 @@ public class TimerService extends Service {
     private LocalBroadcastManager mBroadcastManager;
     private int mPreviousRingerMode;
     private boolean mPreviousWifiMode;
+    private boolean mPreviousBluetoothMode;
     private Preferences mPref;
     private SessionType mCurrentSession;
 
@@ -99,6 +101,11 @@ public class TimerService extends Service {
             disableWifi();
         }
 
+        if (mPref.getDisableBluetooth() && sessionType == WORK) {
+            saveCurrentStateOfBluetooth();
+            disableBluetooth();
+        }
+
         mTimerState = ACTIVE;
         mCurrentSession = sessionType;
         setAlarm(mCountDownFinishedTime);
@@ -114,6 +121,9 @@ public class TimerService extends Service {
         }
         if (mPref.getDisableWifi()) {
             restoreWifi();
+        }
+        if (mPref.getDisableBluetooth()) {
+            restoreBluetooth();
         }
         if (mCurrentSession == LONG_BREAK) {
             resetCurrentSessionStreak();
@@ -158,8 +168,24 @@ public class TimerService extends Service {
         if (mPref.getDisableSoundAndVibration()) {
             restoreSound();
         }
+        if (mPref.getDisableBluetooth()) {
+            restoreBluetooth();
+        }
         if (mPref.getDisableWifi()) {
             restoreWifi();
+        }
+
+        if (mPreviousWifiMode && mPref.getDisableWifi()) {
+            while (!checkWifiEnabled()) {
+                SystemClock.sleep(1000);
+            }
+        }
+        if (mPreviousBluetoothMode && mPref.getDisableBluetooth()) {
+            while (!checkBluetoothEnabled()) {
+                SystemClock.sleep(1000);
+            }
+            Log.d(TAG, "Waiting 3 seconds");
+            SystemClock.sleep(3000);
         }
 
         sendFinishedNotification(!mPref.getContinuousMode());
@@ -178,6 +204,11 @@ public class TimerService extends Service {
         mPreviousWifiMode = wifiManager.isWifiEnabled();
     }
 
+    private void saveCurrentStateOfBluetooth() {
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mPreviousBluetoothMode = mBluetoothAdapter.isEnabled();
+    }
+
     private void disableSound() {
         Log.d(TAG, "Disabling sound");
         AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -190,6 +221,12 @@ public class TimerService extends Service {
         wifiManager.setWifiEnabled(false);
     }
 
+    private void disableBluetooth() {
+        Log.d(TAG, "Disabling Bluetooth");
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mBluetoothAdapter.disable();
+    }
+
     private void restoreSound() {
         Log.d(TAG, "Restoring sound mode");
         AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -200,6 +237,26 @@ public class TimerService extends Service {
         Log.d(TAG, "Restoring Wifi mode");
         WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
         wifiManager.setWifiEnabled(mPreviousWifiMode);
+    }
+
+    private void restoreBluetooth() {
+        Log.d(TAG, "Restoring Bluetooth mode");
+        if (mPreviousBluetoothMode) {
+            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            mBluetoothAdapter.enable();
+        }
+    }
+
+    private boolean checkWifiEnabled() {
+        Log.d(TAG, "Check WiFi is restored");
+        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+        return wifiManager.isWifiEnabled();
+    }
+
+    private boolean checkBluetoothEnabled() {
+        Log.d(TAG, "Check Bluetooth is restored");
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        return mBluetoothAdapter.isEnabled();
     }
 
     private void sendFinishedNotification(boolean addButtons) {
