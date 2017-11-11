@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/adrcotfas/Goodtime.svg?branch=master)](https://travis-ci.org/adrcotfas/Goodtime)
+[![Build Status](https://travis-ci.org/goodtime-productivity/Goodtime.svg?branch=master)](https://travis-ci.org/goodtime-productivity/Goodtime)
 
 # Goodtime
 
