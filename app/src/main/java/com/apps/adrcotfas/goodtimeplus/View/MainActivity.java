@@ -14,6 +14,8 @@ import com.apps.adrcotfas.goodtimeplus.R;
 import com.apps.adrcotfas.goodtimeplus.ViewModel.SessionViewModel;
 import com.apps.adrcotfas.goodtimeplus.Model.TimerService;
 
+import java.util.concurrent.TimeUnit;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -50,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
         mViewModel.getSession().getDuration().observe(MainActivity.this, new Observer<Long>() {
             @Override
-            public void onChanged(@Nullable Long duration) {
-                    textView.setText(Long.toString(duration));
+            public void onChanged(@Nullable Long millis) {
+                    textView.setText(Long.toString(TimeUnit.MILLISECONDS.toSeconds(millis)));
                     Log.v(TAG, "drawing the time label.");
             }
         });

@@ -19,10 +19,6 @@ public class GoodtimeApplication extends Application{
         mCurrentSession = new CurrentSession(Constants.SESSION_TIME);
     }
 
-    public void setDuration(long newDuration) {
-        mCurrentSession.setDuration(newDuration);
-    }
-
     public CurrentSession getCurrentSession() {
         return mCurrentSession;
     }
