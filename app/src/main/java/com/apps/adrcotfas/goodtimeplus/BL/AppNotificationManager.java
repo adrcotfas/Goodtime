@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtimeplus.Model;
+package com.apps.adrcotfas.goodtimeplus.BL;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -8,8 +8,10 @@ import android.support.v4.app.NotificationCompat;
 
 import com.apps.adrcotfas.goodtimeplus.R;
 
-public class NotificationBuilder {
+public class AppNotificationManager {
 
+    //TODO: https://developer.android.com/guide/topics/ui/notifiers/notifications.html#Updating
+    // https://developer.android.com/reference/android/app/Notification.Builder.html#setChronometerCountDown(boolean)
     public static Notification createNotification(Context context, CurrentSession currentSession) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = null;

@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtimeplus.Model;
+package com.apps.adrcotfas.goodtimeplus.BL;
 import android.app.Application;
 
 import com.apps.adrcotfas.goodtimeplus.Util.Constants;

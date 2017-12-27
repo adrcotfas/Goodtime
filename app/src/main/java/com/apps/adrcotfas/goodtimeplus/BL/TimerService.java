@@ -1,20 +1,23 @@
-package com.apps.adrcotfas.goodtimeplus.Model;
+package com.apps.adrcotfas.goodtimeplus.BL;
 
 import android.app.Notification;
 import android.app.Service;
+import android.arch.lifecycle.LifecycleService;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.apps.adrcotfas.goodtimeplus.Util.Constants;
 
-public class TimerService extends Service{
+public class TimerService extends Service {
 
     private static final String TAG = TimerService.class.getSimpleName();
 
     private CurrentSession mCurrentSession = GoodtimeApplication.getInstance().getCurrentSession();
     private AppTimer mAppTimer = new AppTimer(mCurrentSession);
-    private Notification mNotification;
 
     @Override
     public void onCreate() {
@@ -26,11 +29,11 @@ public class TimerService extends Service{
         switch (intent.getAction()) {
             case Constants.ACTION.START_TIMER:
 
-                mNotification = NotificationBuilder.createNotification(getApplicationContext(), mCurrentSession);
                 mAppTimer.start();
+                Notification notification = AppNotificationManager.createNotification(getApplicationContext(), mCurrentSession);
                 startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                        mNotification);
-            break;
+                        notification);
+                break;
 
             case Constants.ACTION.STOP_TIMER:
                 mAppTimer.toggle();
@@ -38,13 +41,13 @@ public class TimerService extends Service{
 //                mAppTimer.cancel();
 //                stopForeground(true);
 //                stopSelf();
-            break;
+                break;
 
             case Constants.ACTION.TOGGLE_TIMER:
                 mAppTimer.toggle();
 
             default:
-            break;
+                break;
         }
 
         return START_STICKY;
