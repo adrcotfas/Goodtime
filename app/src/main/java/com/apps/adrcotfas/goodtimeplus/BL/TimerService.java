@@ -27,29 +27,23 @@ public class TimerService extends Service {
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
         switch (intent.getAction()) {
-            case Constants.ACTION.START_TIMER:
+            case Constants.ACTION.TOGGLE_TIMER:
 
-                mAppTimer.start();
+                mAppTimer.toggle();
                 Notification notification = AppNotificationManager.createNotification(getApplicationContext(), mCurrentSession);
                 startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
                         notification);
                 break;
 
             case Constants.ACTION.STOP_TIMER:
-                mAppTimer.toggle();
-//                Log.v(TAG, "Stop timer");
-//                mAppTimer.cancel();
-//                stopForeground(true);
-//                stopSelf();
+                mAppTimer.stop();
+                stopForeground(true);
+                stopSelf();
                 break;
-
-            case Constants.ACTION.TOGGLE_TIMER:
-                mAppTimer.toggle();
 
             default:
                 break;
         }
-
         return START_STICKY;
     }
 
