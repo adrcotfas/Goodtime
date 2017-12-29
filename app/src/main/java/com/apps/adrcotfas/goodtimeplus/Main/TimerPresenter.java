@@ -1,6 +1,6 @@
 package com.apps.adrcotfas.goodtimeplus.Main;
 
-public class TimerPresenter implements TimerContract.Presenter{
+public class TimerPresenter implements TimerContract.Presenter {
 
     private TimerContract.View mView;
 

@@ -13,4 +13,7 @@ public class Constants {
     public interface NOTIFICATION_ID {
         int FOREGROUND_SERVICE = 42;
     }
+
+    public static class EventType {
+    }
 }

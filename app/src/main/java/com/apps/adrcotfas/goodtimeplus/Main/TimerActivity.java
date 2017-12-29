@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.apps.adrcotfas.goodtimeplus.BL.CurrentSession;
 import com.apps.adrcotfas.goodtimeplus.BL.GoodtimeApplication;
+import com.apps.adrcotfas.goodtimeplus.BL.RxBus;
 import com.apps.adrcotfas.goodtimeplus.Util.Constants;
 import com.apps.adrcotfas.goodtimeplus.R;
 import com.apps.adrcotfas.goodtimeplus.BL.TimerService;
@@ -20,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.functions.Consumer;
 
 public class TimerActivity extends AppCompatActivity implements TimerContract.View {
 
@@ -55,6 +57,19 @@ public class TimerActivity extends AppCompatActivity implements TimerContract.Vi
                 updateTime(millis);
             }
         });
+
+        //TODO: observe TimerState to animate timer and show extra buttons
+        //TODO: observe SessionType to show an icon
+
+//        GoodtimeApplication.getInstance().getBus().getEvents().subscribe(new Consumer<Object>() {
+//
+//            @Override
+//            public void accept(Object o) throws Exception {
+//                if (o instanceof Constants.EventType) {
+//                    Log.i(TAG,"LALALALALALALA event received");
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -65,6 +80,7 @@ public class TimerActivity extends AppCompatActivity implements TimerContract.Vi
 
     @Override
     public void start() {
+
         Intent startIntent = new Intent(TimerActivity.this, TimerService.class);
         startIntent.setAction(Constants.ACTION.TOGGLE_TIMER);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

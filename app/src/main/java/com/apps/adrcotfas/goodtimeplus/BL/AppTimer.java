@@ -35,6 +35,8 @@ public class AppTimer {
     }
 
     public void toggle() {
+
+        //GoodtimeApplication.getInstance().getBus().send(new Constants.EventType());
         if (mCurrentSession.getTimerState().getValue() == TimerState.ACTIVE) {
             mCurrentSession.setTimerState(TimerState.PAUSED);
             mTimer.cancel();
