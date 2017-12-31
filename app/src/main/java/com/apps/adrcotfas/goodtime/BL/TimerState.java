@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtimeplus.BL;
+package com.apps.adrcotfas.goodtime.BL;
 
 public enum TimerState {
     INACTIVE,

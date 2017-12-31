@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtimeplus.Database;
+package com.apps.adrcotfas.goodtime.Database;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.apps.adrcotfas.goodtimeplus">
+    package="com.apps.adrcotfas.goodtime">
 
     <application
-        android:name=".BL.GoodtimeApplication"
+        android:name="com.apps.adrcotfas.goodtime.BL.GoodtimeApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Main.TimerActivity">
+        <activity android:name="com.apps.adrcotfas.goodtime.Main.TimerActivity"
+                  android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".BL.TimerService"></service>
+        <service android:name="com.apps.adrcotfas.goodtime.BL.TimerService"></service>
     </application>
 
 </manifest>

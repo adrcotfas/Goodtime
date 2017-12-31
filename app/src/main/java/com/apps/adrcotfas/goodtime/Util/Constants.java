@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtimeplus.Util;
+package com.apps.adrcotfas.goodtime.Util;
 
 import java.util.concurrent.TimeUnit;
 
@@ -14,6 +14,9 @@ public class Constants {
         int FOREGROUND_SERVICE = 42;
     }
 
-    public static class EventType {
-    }
+    public static class StartEvent {}
+    public static class PauseEvent {}
+    public static class StopEvent {}
+    public static class FinishWorkEvent {}
+    public static class FinishBreakEvent {}
 }

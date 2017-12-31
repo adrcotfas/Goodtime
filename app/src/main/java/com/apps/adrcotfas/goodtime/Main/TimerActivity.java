@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtimeplus.Main;
+package com.apps.adrcotfas.goodtime.Main;
 
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
@@ -9,19 +9,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.apps.adrcotfas.goodtimeplus.BL.CurrentSession;
-import com.apps.adrcotfas.goodtimeplus.BL.GoodtimeApplication;
-import com.apps.adrcotfas.goodtimeplus.BL.RxBus;
-import com.apps.adrcotfas.goodtimeplus.Util.Constants;
-import com.apps.adrcotfas.goodtimeplus.R;
-import com.apps.adrcotfas.goodtimeplus.BL.TimerService;
+import com.apps.adrcotfas.goodtime.BL.CurrentSession;
+import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
+import com.apps.adrcotfas.goodtime.Util.Constants;
+import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.BL.TimerService;
 
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.functions.Consumer;
 
 public class TimerActivity extends AppCompatActivity implements TimerContract.View {
 

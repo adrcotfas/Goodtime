@@ -1,9 +1,9 @@
-package com.apps.adrcotfas.goodtimeplus.BL;
+package com.apps.adrcotfas.goodtime.BL;
 
 import android.os.CountDownTimer;
 import android.util.Log;
 
-import com.apps.adrcotfas.goodtimeplus.Util.Constants;
+import com.apps.adrcotfas.goodtime.Util.Constants;
 
 public class AppTimer {
 
@@ -27,21 +27,22 @@ public class AppTimer {
     }
 
     public void stop() {
+        GoodtimeApplication.getInstance().getBus().send(new Constants.StopEvent());
         mTimer.cancel();
         mCurrentSession.setTimerState(TimerState.INACTIVE);
         mCurrentSession.setDuration(Constants.SESSION_TIME);
         mCurrentSession.setSessionType(SessionType.WORK);
-        //mCurrentSession = new CurrentSession(Constants.SESSION_TIME);
     }
 
     public void toggle() {
 
-        //GoodtimeApplication.getInstance().getBus().send(new Constants.EventType());
         if (mCurrentSession.getTimerState().getValue() == TimerState.ACTIVE) {
             mCurrentSession.setTimerState(TimerState.PAUSED);
+            GoodtimeApplication.getInstance().getBus().send(new Constants.PauseEvent());
             mTimer.cancel();
         } else if (mCurrentSession.getTimerState().getValue() != TimerState.FINISHED) {
             mCurrentSession.setTimerState(TimerState.ACTIVE);
+            GoodtimeApplication.getInstance().getBus().send(new Constants.StartEvent());
             start();
         } else {
             Log.wtf(TAG, "Trying to toggle the timer but it's in FINISHED state.");
@@ -69,6 +70,12 @@ public class AppTimer {
         @Override
         public void onFinish() {
             Log.v(TAG, "is finished.");
+            if (mCurrentSession.getSessionType().getValue() == SessionType.WORK) {
+                GoodtimeApplication.getInstance().getBus().send(new Constants.FinishWorkEvent());
+            }
+            else {
+                GoodtimeApplication.getInstance().getBus().send(new Constants.FinishBreakEvent());
+            }
             mCurrentSession.setTimerState(TimerState.FINISHED);
             mRemaining = 0;
         }

@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtimeplus;
+package com.apps.adrcotfas.goodtime;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

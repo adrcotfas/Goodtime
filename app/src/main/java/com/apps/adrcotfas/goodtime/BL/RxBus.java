@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtimeplus.BL;
+package com.apps.adrcotfas.goodtime.BL;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
@@ -19,7 +19,6 @@ public class RxBus {
 
     /**
      * Subscribe to this Observable. On event, do something
-     * e.g. replace a fragment
      */
     public Observable<Object> getEvents() {
         return subject;

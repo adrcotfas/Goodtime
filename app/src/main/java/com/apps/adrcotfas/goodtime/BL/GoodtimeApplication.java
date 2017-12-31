@@ -1,7 +1,7 @@
-package com.apps.adrcotfas.goodtimeplus.BL;
+package com.apps.adrcotfas.goodtime.BL;
 import android.app.Application;
 
-import com.apps.adrcotfas.goodtimeplus.Util.Constants;
+import com.apps.adrcotfas.goodtime.Util.Constants;
 
 public class GoodtimeApplication extends Application{
 

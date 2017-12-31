@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtimeplus.Main;
+package com.apps.adrcotfas.goodtime.Main;
 
 public class TimerPresenter implements TimerContract.Presenter {
 
