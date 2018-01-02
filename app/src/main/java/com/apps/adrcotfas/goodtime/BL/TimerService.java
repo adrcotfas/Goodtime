@@ -32,16 +32,11 @@ public class TimerService extends Service {
 
         switch (intent.getAction()) {
             case Constants.ACTION.TOGGLE_TIMER:
-
-                mAppTimer.toggle();
-                startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                        mAppNotificationManager.createNotification(getApplicationContext(), mCurrentSession));
+                onToggleEvent();
                 break;
 
             case Constants.ACTION.STOP_TIMER:
-                mAppTimer.stop();
-                stopForeground(true);
-                stopSelf();
+                onStopEvent();
                 break;
 
             default:
@@ -52,18 +47,30 @@ public class TimerService extends Service {
 
     private void setupEvents() {
         GoodtimeApplication.getInstance().getBus().getEvents().subscribe(new Consumer<Object>() {
-
             @Override
             public void accept(Object o) throws Exception {
-                if (o instanceof Constants.FinishWorkEvent) {
-                    onFinishWorkEvent();
+                if (o instanceof Constants.FinishEvent) {
+                    onFinishEvent();
                 }
             }
         });
     }
 
-    private void onFinishWorkEvent() {
-        //TODO: notify finish work
+    private void onToggleEvent() {
+        mAppTimer.toggle();
+        startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
+                mAppNotificationManager.createNotification(getApplicationContext(), mCurrentSession));
+    }
+
+    private void onStopEvent() {
+        mAppTimer.stop();
+        stopForeground(true);
+        stopSelf();
+
+    }
+
+    private void onFinishEvent() {
+
     }
 
     @Override

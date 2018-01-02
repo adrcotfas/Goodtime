@@ -47,18 +47,23 @@ public class AppNotificationManager {
                 "STOP",
                 stopIntent).build();
 
+        if (mBuilder.mActions.isEmpty()) {
+            mBuilder.addAction(stopAction);
+            mBuilder.addAction(stopAction);
+        } else {
+            mBuilder.mActions.set(0, stopAction);
+            mBuilder.mActions.set(0, stopAction);
+        }
+
         return mBuilder
                 .setContentTitle("Work session in progress")
                 .setContentText("x minutes remaining")
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentIntent(pendingIntent)
-                .addAction(stopAction)
-                .addAction(stopAction)
                 .setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(0, 1))
                 .setOngoing(true)
-                .setShowWhen(false)
-                .build();
+                .setShowWhen(false).build();
     }
 
     public void notifyFinished(Context context) {

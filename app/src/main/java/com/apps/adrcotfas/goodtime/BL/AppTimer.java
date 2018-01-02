@@ -27,7 +27,6 @@ public class AppTimer {
     }
 
     public void stop() {
-        GoodtimeApplication.getInstance().getBus().send(new Constants.StopEvent());
         mTimer.cancel();
         mCurrentSession.setTimerState(TimerState.INACTIVE);
         mCurrentSession.setDuration(Constants.SESSION_TIME);
@@ -36,16 +35,16 @@ public class AppTimer {
 
     public void toggle() {
 
-        if (mCurrentSession.getTimerState().getValue() == TimerState.ACTIVE) {
-            mCurrentSession.setTimerState(TimerState.PAUSED);
-            GoodtimeApplication.getInstance().getBus().send(new Constants.PauseEvent());
-            mTimer.cancel();
-        } else if (mCurrentSession.getTimerState().getValue() != TimerState.FINISHED) {
-            mCurrentSession.setTimerState(TimerState.ACTIVE);
-            GoodtimeApplication.getInstance().getBus().send(new Constants.StartEvent());
-            start();
-        } else {
-            Log.wtf(TAG, "Trying to toggle the timer but it's in FINISHED state.");
+        switch(mCurrentSession.getTimerState().getValue()) {
+            case INACTIVE:
+            case PAUSED:
+                mCurrentSession.setTimerState(TimerState.ACTIVE);
+                start();
+                break;
+            case ACTIVE:
+                mCurrentSession.setTimerState(TimerState.PAUSED);
+                mTimer.cancel();
+                break;
         }
     }
 
@@ -70,13 +69,8 @@ public class AppTimer {
         @Override
         public void onFinish() {
             Log.v(TAG, "is finished.");
-            if (mCurrentSession.getSessionType().getValue() == SessionType.WORK) {
-                GoodtimeApplication.getInstance().getBus().send(new Constants.FinishWorkEvent());
-            }
-            else {
-                GoodtimeApplication.getInstance().getBus().send(new Constants.FinishBreakEvent());
-            }
-            mCurrentSession.setTimerState(TimerState.FINISHED);
+            GoodtimeApplication.getInstance().getBus().send(new Constants.FinishEvent());
+            mCurrentSession.setTimerState(TimerState.INACTIVE);
             mRemaining = 0;
         }
     }

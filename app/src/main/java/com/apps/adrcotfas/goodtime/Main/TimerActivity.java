@@ -58,16 +58,6 @@ public class TimerActivity extends AppCompatActivity implements TimerContract.Vi
 
         //TODO: observe TimerState to animate timer and show extra buttons
         //TODO: observe SessionType to show an icon
-
-//        GoodtimeApplication.getInstance().getBus().getEvents().subscribe(new Consumer<Object>() {
-//
-//            @Override
-//            public void accept(Object o) throws Exception {
-//                if (o instanceof Constants.EventType) {
-//                    Log.i(TAG,"LALALALALALALA event received");
-//                }
-//            }
-//        });
     }
 
     @Override
