@@ -21,24 +21,23 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class TimerActivity extends AppCompatActivity implements TimerContract.View {
+public class TimerActivity extends AppCompatActivity {
 
     private static final String TAG = TimerActivity.class.getSimpleName();
 
     private final CurrentSession mCurrentSession = GoodtimeApplication.getInstance().getCurrentSession();
 
-    private TimerContract.Presenter mPresenter;
 
     @BindView(R.id.timeLabel)  TextView mTimeLabel;
 
     @OnClick(R.id.timeLabel)
     public void onStartButtonClick() {
-        mPresenter.start();
+        start();
     }
 
     @OnClick(R.id.stopButton)
     public void onStopButtonClick() {
-        mPresenter.stop();
+        stop();
     }
 
     @Override
@@ -46,8 +45,6 @@ public class TimerActivity extends AppCompatActivity implements TimerContract.Vi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
-        mPresenter = new TimerPresenter(this);
 
         mCurrentSession.getDuration().observe(TimerActivity.this, new Observer<Long>() {
             @Override
@@ -60,13 +57,11 @@ public class TimerActivity extends AppCompatActivity implements TimerContract.Vi
         //TODO: observe SessionType to show an icon
     }
 
-    @Override
     public void updateTime(Long millis) {
         mTimeLabel.setText(Long.toString(TimeUnit.MILLISECONDS.toSeconds(millis)));
         Log.v(TAG, "drawing the time label.");
     }
 
-    @Override
     public void start() {
 
         Intent startIntent = new Intent(TimerActivity.this, TimerService.class);
@@ -78,7 +73,6 @@ public class TimerActivity extends AppCompatActivity implements TimerContract.Vi
         }
     }
 
-    @Override
     public void stop() {
         Intent stopIntent = new Intent(TimerActivity.this, TimerService.class);
         stopIntent.setAction(Constants.ACTION.STOP_TIMER);
@@ -89,12 +83,10 @@ public class TimerActivity extends AppCompatActivity implements TimerContract.Vi
         }
     }
 
-    @Override
     public void toggle() {
 
     }
 
-    @Override
     public void skip() {
 
     }
