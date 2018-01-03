@@ -11,7 +11,7 @@ public class Constants {
         String SKIP_BREAK = "com.apps.adrcotfas.goodtimeplus.action.skipBreak";
     }
 
-    public static long SESSION_TIME = TimeUnit.SECONDS.toMillis(70);
+    public static long SESSION_TIME = TimeUnit.SECONDS.toMillis(10);
 
     public static int NOTIFICATION_ID = 42;
 

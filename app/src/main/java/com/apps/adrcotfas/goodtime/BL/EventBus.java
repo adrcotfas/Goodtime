@@ -3,9 +3,9 @@ package com.apps.adrcotfas.goodtime.BL;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 
-public class RxBus {
+public class EventBus {
 
-    public RxBus() {
+    public EventBus() {
     }
 
     private PublishSubject<Object> subject = PublishSubject.create();

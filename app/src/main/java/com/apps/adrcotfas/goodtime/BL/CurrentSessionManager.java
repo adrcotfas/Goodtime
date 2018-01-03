@@ -7,6 +7,11 @@ import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class manages and modifies the mutable members of {@link CurrentSession}
+ * The duration is updated using an {@link AppCountDownTimer}. Events coming from other layers will
+ * trigger an update of the {@link CurrentSession}'s {@link TimerState} and {@link SessionType}.
+ */
 public class CurrentSessionManager {
 
     private static String TAG = CountDownTimer.class.getSimpleName();

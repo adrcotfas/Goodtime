@@ -3,11 +3,15 @@ import android.app.Application;
 
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
+/**
+ * Maintains a global state of the app and stores the event bus ({@link EventBus})
+ * and the {@link CurrentSession}
+ */
 public class GoodtimeApplication extends Application{
 
     private static volatile GoodtimeApplication INSTANCE;
     private static CurrentSession mCurrentSession;
-    private static RxBus mBus;
+    private static EventBus mBus;
 
     public static GoodtimeApplication getInstance() {
         return INSTANCE;
@@ -18,14 +22,14 @@ public class GoodtimeApplication extends Application{
         super.onCreate();
         INSTANCE = this;
         mCurrentSession = new CurrentSession(Constants.SESSION_TIME);
-        mBus = new RxBus();
+        mBus = new EventBus();
     }
 
     public CurrentSession getCurrentSession() {
         return mCurrentSession;
     }
 
-    public RxBus getBus() {
+    public EventBus getBus() {
         return mBus;
     }
 }

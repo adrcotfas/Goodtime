@@ -10,6 +10,9 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.functions.Consumer;
 
+/**
+ * Class representing the foreground service which triggers the countdown timer and handles events.
+ */
 public class TimerService extends Service {
 
     private static final String TAG = TimerService.class.getSimpleName();

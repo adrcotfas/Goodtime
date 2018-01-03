@@ -12,9 +12,13 @@ import com.apps.adrcotfas.goodtime.Main.TimerActivity;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
-import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Class responsible with creating and updating notifications for the foreground {@link TimerService}
+ * and triggering notifications for events like finishing a session.
+ * The notifications are customized according to {@link PreferenceManager}.
+ */
 public class NotificationManager {
 
     private static final String TAG = NotificationManager.class.getSimpleName();

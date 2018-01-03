@@ -1,9 +1,13 @@
 package com.apps.adrcotfas.goodtime.Main;
 
+import android.app.Dialog;
 import android.arch.lifecycle.Observer;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.functions.Consumer;
 
 public class TimerActivity extends AppCompatActivity {
 
@@ -55,6 +60,15 @@ public class TimerActivity extends AppCompatActivity {
 
         //TODO: observe TimerState to animate timer and show extra buttons
         //TODO: observe SessionType to show an icon
+
+        GoodtimeApplication.getInstance().getBus().getEvents().subscribe(new Consumer<Object>() {
+            @Override
+            public void accept(Object o) throws Exception {
+                if (o instanceof Constants.FinishEvent) {
+                    finish();
+                }
+            }
+        });
     }
 
     public void updateTime(Long millis) {
@@ -89,5 +103,13 @@ public class TimerActivity extends AppCompatActivity {
 
     public void skip() {
 
+    }
+
+    public void finish() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Test")
+                .setTitle("test");
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

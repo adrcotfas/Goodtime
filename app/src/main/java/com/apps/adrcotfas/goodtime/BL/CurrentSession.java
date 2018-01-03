@@ -2,6 +2,10 @@ package com.apps.adrcotfas.goodtime.BL;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
+/**
+ * Stores the session remaining duration, type and timer state.
+ * @see GoodtimeApplication
+ */
 public class CurrentSession {
     private MutableLiveData<Long> mDuration = new MutableLiveData<>();
     private MutableLiveData<TimerState> mTimerState = new MutableLiveData<>();
