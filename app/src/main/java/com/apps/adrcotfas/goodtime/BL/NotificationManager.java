@@ -2,11 +2,9 @@ package com.apps.adrcotfas.goodtime.BL;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -14,19 +12,20 @@ import com.apps.adrcotfas.goodtime.Main.TimerActivity;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
-import static android.support.v4.app.NotificationCompat.PRIORITY_MAX;
+import java.sql.Time;
+import java.util.concurrent.TimeUnit;
 
-public class AppNotificationManager {
+public class NotificationManager {
 
-    private static final String TAG = AppNotificationManager.class.getSimpleName();
+    private static final String TAG = NotificationManager.class.getSimpleName();
 
-    private NotificationManager mNotificationManager;
+    private android.app.NotificationManager mNotificationManager;
     private NotificationCompat.Builder mBuilder;
 
-    public AppNotificationManager(Context context) {
-        mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    public NotificationManager(Context context) {
+        mNotificationManager = (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel("ID", "Name", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel notificationChannel = new NotificationChannel("ID", "Name", android.app.NotificationManager.IMPORTANCE_DEFAULT);
             mNotificationManager.createNotificationChannel(notificationChannel);
             mBuilder = new NotificationCompat.Builder(context, notificationChannel.getId());
         } else {
@@ -43,7 +42,7 @@ public class AppNotificationManager {
             if (currentSession.getTimerState().getValue() == TimerState.ACTIVE) {
                 mBuilder.addAction(buildPauseAction(context))
                         .setContentTitle("Work session in progress")
-                        .setContentText("x minutes remaining");
+                        .setContentText(buildProgressText(currentSession.getDuration().getValue()));
             } else if (currentSession.getTimerState().getValue() == TimerState.PAUSED) {
                 mBuilder.addAction(buildResumeAction(context))
                         .setContentTitle("Work session is paused")
@@ -138,6 +137,20 @@ public class AppNotificationManager {
                 togglePendingIntent).build();
     }
 
+    private CharSequence buildProgressText(Long duration) {
+        CharSequence output;
+        long minutesLeft = TimeUnit.MILLISECONDS.toMinutes(duration);
+        if (minutesLeft > 1) {
+            output = minutesLeft + " minutes left";
+        } else if (minutesLeft == 1){
+            output = "1 minute left";
+        } else {
+            output = "prepare to finish";
+        }
+
+        return output;
+    }
+
     public void notifyFinished(Context context, CurrentSession currentSession) {
 
         mBuilder.mActions.clear();
@@ -159,5 +172,10 @@ public class AppNotificationManager {
                 .build();
 
         mNotificationManager.notify(Constants.NOTIFICATION_ID, finishedNotification);
+    }
+
+    public void updateNotificationProgress(Long duration) {
+        mBuilder.setContentText(buildProgressText(duration));
+        mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
     }
 }

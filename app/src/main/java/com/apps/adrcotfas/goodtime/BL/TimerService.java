@@ -6,6 +6,8 @@ import android.os.IBinder;
 
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.functions.Consumer;
 
 public class TimerService extends Service {
@@ -13,16 +15,16 @@ public class TimerService extends Service {
     private static final String TAG = TimerService.class.getSimpleName();
 
     private CurrentSession mCurrentSession;
-    private AppTimer mAppTimer;
-    private AppNotificationManager mAppNotificationManager;
+    private CurrentSessionManager mCurrentSessionManager;
+    private NotificationManager mAppNotificationManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        mAppNotificationManager = new AppNotificationManager(getApplicationContext());
+        mAppNotificationManager = new NotificationManager(getApplicationContext());
         mCurrentSession = GoodtimeApplication.getInstance().getCurrentSession();
-        mAppTimer = new AppTimer(mCurrentSession);
+        mCurrentSessionManager = new CurrentSessionManager(mCurrentSession);
 
         setupEvents();
     }
@@ -59,19 +61,25 @@ public class TimerService extends Service {
             public void accept(Object o) throws Exception {
                 if (o instanceof Constants.FinishEvent) {
                     onFinishEvent();
+                } else if (o instanceof Constants.UpdateTimerProgressEvent) {
+                    updateNotificationProgress();
                 }
             }
         });
     }
 
+    private void updateNotificationProgress() {
+        mAppNotificationManager.updateNotificationProgress(mCurrentSession.getDuration().getValue());
+    }
+
     private void onToggleEvent() {
-        mAppTimer.toggle();
+        mCurrentSessionManager.toggleTimer();
         startForeground(Constants.NOTIFICATION_ID,
                 mAppNotificationManager.createNotification(getApplicationContext(), mCurrentSession));
     }
 
     private void onStopEvent() {
-        mAppTimer.stop();
+        mCurrentSessionManager.stopTimer();
         stopForeground(true);
         stopSelf();
 

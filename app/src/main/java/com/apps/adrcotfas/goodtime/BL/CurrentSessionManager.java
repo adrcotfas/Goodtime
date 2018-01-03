@@ -5,7 +5,9 @@ import android.util.Log;
 
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
-public class AppTimer {
+import java.util.concurrent.TimeUnit;
+
+public class CurrentSessionManager {
 
     private static String TAG = CountDownTimer.class.getSimpleName();
 
@@ -13,33 +15,33 @@ public class AppTimer {
     private CurrentSession mCurrentSession;
     private long mRemaining;
 
-    public AppTimer(CurrentSession currentSession) {
+    public CurrentSessionManager(CurrentSession currentSession) {
         this.mCurrentSession = currentSession;
         mRemaining = mCurrentSession.getDuration().getValue();
         mTimer = new AppCountDownTimer(mRemaining);
     }
 
-    public void start() {
+    public void startTimer() {
 
         mTimer = new AppCountDownTimer(mRemaining);
         mTimer.start();
         mCurrentSession.setTimerState(TimerState.ACTIVE);
     }
 
-    public void stop() {
+    public void stopTimer() {
         mTimer.cancel();
         mCurrentSession.setTimerState(TimerState.INACTIVE);
         mCurrentSession.setDuration(Constants.SESSION_TIME);
         mCurrentSession.setSessionType(SessionType.WORK);
     }
 
-    public void toggle() {
+    public void toggleTimer() {
 
         switch(mCurrentSession.getTimerState().getValue()) {
             case INACTIVE:
             case PAUSED:
                 mCurrentSession.setTimerState(TimerState.ACTIVE);
-                start();
+                startTimer();
                 break;
             case ACTIVE:
                 mCurrentSession.setTimerState(TimerState.PAUSED);
@@ -50,6 +52,8 @@ public class AppTimer {
 
     private class AppCountDownTimer extends CountDownTimer {
 
+        private long mMinutesUntilFinished;
+
         /**
          * @param millisInFuture    The number of millis in the future from the call
          *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
@@ -57,6 +61,7 @@ public class AppTimer {
          */
         public AppCountDownTimer(long millisInFuture) {
             super(millisInFuture, 1000);
+            mMinutesUntilFinished = TimeUnit.MILLISECONDS.toMinutes(millisInFuture);
         }
 
         @Override
@@ -64,6 +69,10 @@ public class AppTimer {
             Log.v(TAG, "is Ticking: " + millisUntilFinished + " millis remaining.");
             mCurrentSession.setDuration(millisUntilFinished);
             mRemaining = millisUntilFinished;
+            if (mMinutesUntilFinished > TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)) {
+                mMinutesUntilFinished = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
+                GoodtimeApplication.getInstance().getBus().send(new Constants.UpdateTimerProgressEvent());
+            }
         }
 
         @Override
