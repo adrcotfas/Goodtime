@@ -32,13 +32,21 @@ public class TimerService extends Service {
 
         switch (intent.getAction()) {
             case Constants.ACTION.TOGGLE_TIMER:
+            case Constants.ACTION.SKIP_BREAK:
                 onToggleEvent();
                 break;
 
             case Constants.ACTION.STOP_TIMER:
                 onStopEvent();
                 break;
-
+            case Constants.ACTION.START_WORK:
+                // TODO: update CurrentSession to work
+                onToggleEvent();
+                break;
+            case Constants.ACTION.START_BREAK:
+                // TODO: update CurrentSession to break
+                onToggleEvent();
+                break;
             default:
                 break;
         }
@@ -71,7 +79,7 @@ public class TimerService extends Service {
     }
 
     private void onFinishEvent() {
-        mAppNotificationManager.notifyFinished(mCurrentSession);
+        mAppNotificationManager.notifyFinished(getApplicationContext(), mCurrentSession);
 
         // TODO: update notification
         // TODO: trigger dialog box

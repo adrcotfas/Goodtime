@@ -57,7 +57,12 @@ public class AppNotificationManager {
                 .setSmallIcon(R.drawable.ic_status_goodtime)
                 .setContentIntent(createActivityIntent(context))
                 .setOngoing(true)
-                .setShowWhen(false).build();
+                .build();
+    }
+
+    private PendingIntent createActivityIntent(Context context) {
+        return PendingIntent.getActivity(context,
+                0, new Intent(context, TimerActivity.class), 0);
     }
 
     //TODO: add string resources
@@ -97,21 +102,62 @@ public class AppNotificationManager {
                 togglePendingIntent).build();
     }
 
-    private PendingIntent createActivityIntent(Context context) {
-        return PendingIntent.getActivity(context,
-                0, new Intent(context, TimerActivity.class), 0);
+    private NotificationCompat.Action buildStartWorkAction(Context context) {
+        Intent toggleIntent = new Intent(context, TimerService.class);
+        toggleIntent.setAction(Constants.ACTION.START_WORK);
+        PendingIntent togglePendingIntent = PendingIntent.getService(context,
+                0, toggleIntent, 0);
+
+        return new NotificationCompat.Action.Builder(
+                R.drawable.ic_notification_resume,
+                "START WORK",
+                togglePendingIntent).build();
     }
 
-    public void notifyFinished(CurrentSession currentSession) {
+    private NotificationCompat.Action buildStartBreakAction(Context context) {
+        Intent toggleIntent = new Intent(context, TimerService.class);
+        toggleIntent.setAction(Constants.ACTION.START_BREAK);
+        PendingIntent togglePendingIntent = PendingIntent.getService(context,
+                0, toggleIntent, 0);
+
+        return new NotificationCompat.Action.Builder(
+                R.drawable.ic_notification_resume,
+                "START BREAK",
+                togglePendingIntent).build();
+    }
+
+    private NotificationCompat.Action buildSkipBreakAction(Context context) {
+        Intent toggleIntent = new Intent(context, TimerService.class);
+        toggleIntent.setAction(Constants.ACTION.SKIP_BREAK);
+        PendingIntent togglePendingIntent = PendingIntent.getService(context,
+                0, toggleIntent, 0);
+
+        return new NotificationCompat.Action.Builder(
+                R.drawable.ic_notification_skip,
+                "SKIP BREAK",
+                togglePendingIntent).build();
+    }
+
+    public void notifyFinished(Context context, CurrentSession currentSession) {
+
+        mBuilder.mActions.clear();
 
         //TODO: set sound according to preferences
+        if (currentSession.getSessionType().getValue() == SessionType.WORK) {
+            mBuilder.setContentTitle("Work session finished")
+                    .setContentText("Continue?")
+                    .addAction(buildStartBreakAction(context))
+                    .addAction(buildSkipBreakAction(context));
+        } else {
+            mBuilder.setContentTitle("Break finished")
+                    .setContentText("Continue?")
+                    .addAction(buildStartWorkAction(context));
+        }
 
         Notification finishedNotification = mBuilder
-                .setContentTitle(currentSession.getSessionType().getValue() == SessionType.WORK ?
-                        "Work session finished" : "Break finished")
-                .setContentText("Continue?")
                 .setOngoing(false)
-                .setShowWhen(true).build();
+                .build();
+
         mNotificationManager.notify(Constants.NOTIFICATION_ID, finishedNotification);
     }
 }
