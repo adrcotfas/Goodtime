@@ -67,16 +67,16 @@ public class TimerService extends Service {
         stopForeground(true);
         stopSelf();
 
+        // TODO: store what was done of the session to ROOM
     }
 
     private void onFinishEvent() {
+        // TODO: update notification
+        // TODO: trigger dialog box
+        // TODO: store session to ROOM
 
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
     @Override
     public IBinder onBind(Intent intent) {
         return null;
