@@ -8,11 +8,9 @@ public class Constants {
         String STOP_TIMER  = "com.apps.adrcotfas.goodtimeplus.action.stop";
     }
 
-    public static long SESSION_TIME = TimeUnit.MINUTES.toMillis(25);
+    public static long SESSION_TIME = TimeUnit.SECONDS.toMillis(10);
 
-    public interface NOTIFICATION_ID {
-        int FOREGROUND_SERVICE = 42;
-    }
+    public static int NOTIFICATION_ID = 42;
 
     public static class FinishEvent {}
 }

@@ -58,7 +58,7 @@ public class TimerService extends Service {
 
     private void onToggleEvent() {
         mAppTimer.toggle();
-        startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
+        startForeground(Constants.NOTIFICATION_ID,
                 mAppNotificationManager.createNotification(getApplicationContext(), mCurrentSession));
     }
 
@@ -71,6 +71,8 @@ public class TimerService extends Service {
     }
 
     private void onFinishEvent() {
+        mAppNotificationManager.notifyFinished(mCurrentSession);
+
         // TODO: update notification
         // TODO: trigger dialog box
         // TODO: store session to ROOM
