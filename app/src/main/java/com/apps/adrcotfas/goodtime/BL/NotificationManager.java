@@ -11,6 +11,7 @@ import android.util.Log;
 import com.apps.adrcotfas.goodtime.Main.TimerActivity;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.Constants;
+import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 
 import java.util.concurrent.TimeUnit;
 
@@ -63,98 +64,6 @@ public class NotificationManager {
                 .build();
     }
 
-    private PendingIntent createActivityIntent(Context context) {
-        return PendingIntent.getActivity(context,
-                0, new Intent(context, TimerActivity.class), 0);
-    }
-
-    //TODO: add string resources
-    private NotificationCompat.Action buildStopAction(Context context) {
-        Intent stopIntent = new Intent(context, TimerService.class);
-        stopIntent.setAction(Constants.ACTION.STOP_TIMER);
-        PendingIntent stopPendingIntent = PendingIntent.getService(context,
-                0, stopIntent, 0);
-
-        return new NotificationCompat.Action.Builder(
-                R.drawable.ic_notification_stop,
-                "STOP",
-                stopPendingIntent).build();
-    }
-
-    private NotificationCompat.Action buildResumeAction(Context context) {
-        Intent toggleIntent = new Intent(context, TimerService.class);
-        toggleIntent.setAction(Constants.ACTION.TOGGLE_TIMER);
-        PendingIntent togglePendingIntent = PendingIntent.getService(context,
-                0, toggleIntent, 0);
-
-        return new NotificationCompat.Action.Builder(
-                R.drawable.ic_notification_resume,
-                "RESUME",
-                togglePendingIntent).build();
-    }
-
-    private NotificationCompat.Action buildPauseAction(Context context) {
-        Intent toggleIntent = new Intent(context, TimerService.class);
-        toggleIntent.setAction(Constants.ACTION.TOGGLE_TIMER);
-        PendingIntent togglePendingIntent = PendingIntent.getService(context,
-                0, toggleIntent, 0);
-
-        return new NotificationCompat.Action.Builder(
-                R.drawable.ic_notification_pause,
-                "PAUSE",
-                togglePendingIntent).build();
-    }
-
-    private NotificationCompat.Action buildStartWorkAction(Context context) {
-        Intent toggleIntent = new Intent(context, TimerService.class);
-        toggleIntent.setAction(Constants.ACTION.START_WORK);
-        PendingIntent togglePendingIntent = PendingIntent.getService(context,
-                0, toggleIntent, 0);
-
-        return new NotificationCompat.Action.Builder(
-                R.drawable.ic_notification_resume,
-                "START WORK",
-                togglePendingIntent).build();
-    }
-
-    private NotificationCompat.Action buildStartBreakAction(Context context) {
-        Intent toggleIntent = new Intent(context, TimerService.class);
-        toggleIntent.setAction(Constants.ACTION.START_BREAK);
-        PendingIntent togglePendingIntent = PendingIntent.getService(context,
-                0, toggleIntent, 0);
-
-        return new NotificationCompat.Action.Builder(
-                R.drawable.ic_notification_resume,
-                "START BREAK",
-                togglePendingIntent).build();
-    }
-
-    private NotificationCompat.Action buildSkipBreakAction(Context context) {
-        Intent toggleIntent = new Intent(context, TimerService.class);
-        toggleIntent.setAction(Constants.ACTION.SKIP_BREAK);
-        PendingIntent togglePendingIntent = PendingIntent.getService(context,
-                0, toggleIntent, 0);
-
-        return new NotificationCompat.Action.Builder(
-                R.drawable.ic_notification_skip,
-                "SKIP BREAK",
-                togglePendingIntent).build();
-    }
-
-    private CharSequence buildProgressText(Long duration) {
-        CharSequence output;
-        long minutesLeft = TimeUnit.MILLISECONDS.toMinutes(duration);
-        if (minutesLeft > 1) {
-            output = minutesLeft + " minutes left";
-        } else if (minutesLeft == 1){
-            output = "1 minute left";
-        } else {
-            output = "prepare to finish";
-        }
-
-        return output;
-    }
-
     public void notifyFinished(Context context, CurrentSession currentSession) {
 
         mBuilder.mActions.clear();
@@ -176,6 +85,88 @@ public class NotificationManager {
                 .build();
 
         mNotificationManager.notify(Constants.NOTIFICATION_ID, finishedNotification);
+    }
+
+    private PendingIntent createActivityIntent(Context context) {
+        return PendingIntent.getActivity(context,
+                0, new Intent(context, TimerActivity.class), 0);
+    }
+
+    //TODO: add string resources
+    private NotificationCompat.Action buildStopAction(Context context) {
+
+        PendingIntent stopPendingIntent = PendingIntent.getService(context, 0,
+                new IntentWithAction(context, TimerService.class, Constants.ACTION.STOP_TIMER), 0);
+
+        return new NotificationCompat.Action.Builder(
+                R.drawable.ic_notification_stop,
+                "STOP",
+                stopPendingIntent).build();
+    }
+
+    private NotificationCompat.Action buildResumeAction(Context context) {
+        PendingIntent togglePendingIntent = PendingIntent.getService(context, 0,
+                new IntentWithAction(context, TimerService.class, Constants.ACTION.TOGGLE_TIMER), 0);
+
+        return new NotificationCompat.Action.Builder(
+                R.drawable.ic_notification_resume,
+                "RESUME",
+                togglePendingIntent).build();
+    }
+
+    private NotificationCompat.Action buildPauseAction(Context context) {
+
+        PendingIntent togglePendingIntent = PendingIntent.getService(context, 0,
+                new IntentWithAction(context, TimerService.class, Constants.ACTION.TOGGLE_TIMER), 0);
+
+        return new NotificationCompat.Action.Builder(
+                R.drawable.ic_notification_pause,
+                "PAUSE",
+                togglePendingIntent).build();
+    }
+
+    private NotificationCompat.Action buildStartWorkAction(Context context) {
+        PendingIntent togglePendingIntent = PendingIntent.getService(context, 0,
+                new IntentWithAction(context, TimerService.class, Constants.ACTION.START_WORK), 0);
+
+        return new NotificationCompat.Action.Builder(
+                R.drawable.ic_notification_resume,
+                "START WORK",
+                togglePendingIntent).build();
+    }
+
+    private NotificationCompat.Action buildStartBreakAction(Context context) {
+        PendingIntent togglePendingIntent = PendingIntent.getService(context, 0,
+                new IntentWithAction(context, TimerService.class, Constants.ACTION.START_BREAK), 0);
+
+        return new NotificationCompat.Action.Builder(
+                R.drawable.ic_notification_resume,
+                "START BREAK",
+                togglePendingIntent).build();
+    }
+
+    private NotificationCompat.Action buildSkipBreakAction(Context context) {
+        PendingIntent togglePendingIntent = PendingIntent.getService(context, 0,
+                new IntentWithAction(context, TimerService.class, Constants.ACTION.SKIP_BREAK), 0);
+
+        return new NotificationCompat.Action.Builder(
+                R.drawable.ic_notification_skip,
+                "SKIP BREAK",
+                togglePendingIntent).build();
+    }
+
+    private CharSequence buildProgressText(Long duration) {
+        CharSequence output;
+        long minutesLeft = TimeUnit.MILLISECONDS.toMinutes(duration);
+        if (minutesLeft > 1) {
+            output = minutesLeft + " minutes left";
+        } else if (minutesLeft == 1){
+            output = "1 minute left";
+        } else {
+            output = "prepare to finish";
+        }
+
+        return output;
     }
 
     public void updateNotificationProgress(Long duration) {

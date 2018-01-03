@@ -1,12 +1,9 @@
 package com.apps.adrcotfas.goodtime.Main;
 
-import android.app.Dialog;
 import android.arch.lifecycle.Observer;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +15,7 @@ import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.BL.TimerService;
+import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 
 import java.util.concurrent.TimeUnit;
 
@@ -77,9 +75,7 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     public void start() {
-
-        Intent startIntent = new Intent(TimerActivity.this, TimerService.class);
-        startIntent.setAction(Constants.ACTION.TOGGLE_TIMER);
+        Intent startIntent = new IntentWithAction(TimerActivity.this, TimerService.class, Constants.ACTION.TOGGLE_TIMER);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(startIntent);
         } else {
@@ -88,8 +84,7 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     public void stop() {
-        Intent stopIntent = new Intent(TimerActivity.this, TimerService.class);
-        stopIntent.setAction(Constants.ACTION.STOP_TIMER);
+        Intent stopIntent = new IntentWithAction(TimerActivity.this, TimerService.class, Constants.ACTION.STOP_TIMER);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(stopIntent);
         } else {
