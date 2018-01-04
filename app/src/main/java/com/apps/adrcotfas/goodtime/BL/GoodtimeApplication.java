@@ -21,7 +21,7 @@ public class GoodtimeApplication extends Application{
     public void onCreate() {
         super.onCreate();
         INSTANCE = this;
-        mCurrentSession = new CurrentSession(Constants.SESSION_TIME);
+        mCurrentSession = new CurrentSession(Constants.WORK_TIME);
         mBus = new EventBus();
     }
 

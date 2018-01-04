@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.apps.adrcotfas.goodtime.Main.TimerActivity;
 import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Util.Assert;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 
@@ -30,7 +31,9 @@ public class NotificationManager {
     public NotificationManager(Context context) {
         mNotificationManager = (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel("ID", "Name", android.app.NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel notificationChannel = new NotificationChannel(TAG, "Goodtime notifications",
+                    android.app.NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setBypassDnd(true);
             mNotificationManager.createNotificationChannel(notificationChannel);
             mBuilder = new NotificationCompat.Builder(context, notificationChannel.getId());
         } else {
@@ -44,17 +47,20 @@ public class NotificationManager {
         mBuilder.addAction(buildStopAction(context));
 
         if (currentSession.getSessionType().getValue() == SessionType.WORK) {
-            if (currentSession.getTimerState().getValue() == TimerState.ACTIVE) {
-                mBuilder.addAction(buildPauseAction(context))
-                        .setContentTitle("Work session in progress")
-                        .setContentText(buildProgressText(currentSession.getDuration().getValue()));
-            } else if (currentSession.getTimerState().getValue() == TimerState.PAUSED) {
+            if (currentSession.getTimerState().getValue() == TimerState.PAUSED) {
                 mBuilder.addAction(buildResumeAction(context))
                         .setContentTitle("Work session is paused")
                         .setContentText("Continue?");
             } else {
-                Log.wtf(TAG, "Trying to create a notification in an invalid state.");
+                mBuilder.addAction(buildPauseAction(context))
+                        .setContentTitle("Work session in progress")
+                        .setContentText(buildProgressText(currentSession.getDuration().getValue()));
             }
+        } else if (currentSession.getSessionType().getValue() == SessionType.BREAK) {
+            mBuilder.setContentTitle("Break in progress")
+                    .setContentText(buildProgressText(currentSession.getDuration().getValue()));
+        } else {
+            Log.wtf(TAG, "Trying to create a notification in an invalid state.");
         }
 
         return mBuilder
@@ -68,18 +74,21 @@ public class NotificationManager {
 
         mBuilder.mActions.clear();
 
-        //TODO: set sound according to preferences
+        Assert.that(currentSession.getTimerState().getValue() == TimerState.ACTIVE, "Invalid timer state.");
         if (currentSession.getSessionType().getValue() == SessionType.WORK) {
             mBuilder.setContentTitle("Work session finished")
                     .setContentText("Continue?")
                     .addAction(buildStartBreakAction(context))
                     .addAction(buildSkipBreakAction(context));
-        } else {
+        } else if (currentSession.getSessionType().getValue() == SessionType.BREAK) {
             mBuilder.setContentTitle("Break finished")
                     .setContentText("Continue?")
                     .addAction(buildStartWorkAction(context));
+        } else {
+            Log.wtf(TAG, "Trying to create a notification in an invalid state.");
         }
 
+        //TODO: set sound according to preferences
         Notification finishedNotification = mBuilder
                 .setOngoing(false)
                 .build();
@@ -96,7 +105,7 @@ public class NotificationManager {
     private NotificationCompat.Action buildStopAction(Context context) {
 
         PendingIntent stopPendingIntent = PendingIntent.getService(context, 0,
-                new IntentWithAction(context, TimerService.class, Constants.ACTION.STOP_TIMER), 0);
+                new IntentWithAction(context, TimerService.class, Constants.ACTION.STOP), 0);
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_stop,
@@ -106,7 +115,7 @@ public class NotificationManager {
 
     private NotificationCompat.Action buildResumeAction(Context context) {
         PendingIntent togglePendingIntent = PendingIntent.getService(context, 0,
-                new IntentWithAction(context, TimerService.class, Constants.ACTION.TOGGLE_TIMER), 0);
+                new IntentWithAction(context, TimerService.class, Constants.ACTION.TOGGLE), 0);
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_resume,
@@ -117,7 +126,7 @@ public class NotificationManager {
     private NotificationCompat.Action buildPauseAction(Context context) {
 
         PendingIntent togglePendingIntent = PendingIntent.getService(context, 0,
-                new IntentWithAction(context, TimerService.class, Constants.ACTION.TOGGLE_TIMER), 0);
+                new IntentWithAction(context, TimerService.class, Constants.ACTION.TOGGLE), 0);
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_pause,

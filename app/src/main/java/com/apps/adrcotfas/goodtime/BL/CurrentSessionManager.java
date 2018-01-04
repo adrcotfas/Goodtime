@@ -16,7 +16,7 @@ public class CurrentSessionManager {
 
     private static String TAG = CountDownTimer.class.getSimpleName();
 
-    private CountDownTimer mTimer;
+    private AppCountDownTimer mTimer;
     private CurrentSession mCurrentSession;
     private long mRemaining;
 
@@ -26,33 +26,40 @@ public class CurrentSessionManager {
         mTimer = new AppCountDownTimer(mRemaining);
     }
 
-    public void startTimer() {
-
-        mTimer = new AppCountDownTimer(mRemaining);
-        mTimer.start();
+    public void startTimer(SessionType sessionType) {
+        // TODO: set the duration according to the settings. Also include long break
         mCurrentSession.setTimerState(TimerState.ACTIVE);
+        if (sessionType == SessionType.WORK) {
+            mCurrentSession.setDuration(Constants.WORK_TIME);
+            mTimer = new AppCountDownTimer(Constants.WORK_TIME);
+        } else {
+            mCurrentSession.setDuration(Constants.BREAK_TIME);
+            mTimer = new AppCountDownTimer(Constants.BREAK_TIME);
+        }
+        mTimer.start();
+    }
+
+    public void toggleTimer() {
+        switch(mCurrentSession.getTimerState().getValue()) {
+            case PAUSED:
+                mTimer.start();
+                mCurrentSession.setTimerState(TimerState.ACTIVE);
+                break;
+            case ACTIVE:
+                mTimer.cancel();
+                mTimer = new AppCountDownTimer(mRemaining);
+                mCurrentSession.setTimerState(TimerState.PAUSED);
+                break;
+            default:
+                Log.wtf(TAG, "The timer is in an invalid state.");
+                break;
+        }
     }
 
     public void stopTimer() {
         mTimer.cancel();
         mCurrentSession.setTimerState(TimerState.INACTIVE);
-        mCurrentSession.setDuration(Constants.SESSION_TIME);
-        mCurrentSession.setSessionType(SessionType.WORK);
-    }
-
-    public void toggleTimer() {
-
-        switch(mCurrentSession.getTimerState().getValue()) {
-            case INACTIVE:
-            case PAUSED:
-                mCurrentSession.setTimerState(TimerState.ACTIVE);
-                startTimer();
-                break;
-            case ACTIVE:
-                mCurrentSession.setTimerState(TimerState.PAUSED);
-                mTimer.cancel();
-                break;
-        }
+        mCurrentSession.setDuration(Constants.WORK_TIME);
     }
 
     private class AppCountDownTimer extends CountDownTimer {
@@ -84,6 +91,7 @@ public class CurrentSessionManager {
         public void onFinish() {
             Log.v(TAG, "is finished.");
             GoodtimeApplication.getInstance().getBus().send(new Constants.FinishEvent());
+            mCurrentSession.setDuration(Constants.WORK_TIME);
             mCurrentSession.setTimerState(TimerState.INACTIVE);
             mRemaining = 0;
         }

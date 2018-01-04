@@ -75,7 +75,20 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     public void start() {
-        Intent startIntent = new IntentWithAction(TimerActivity.this, TimerService.class, Constants.ACTION.TOGGLE_TIMER);
+        Intent startIntent = new Intent();
+        switch (mCurrentSession.getTimerState().getValue())
+        {
+            case INACTIVE:
+                startIntent = new IntentWithAction(TimerActivity.this, TimerService.class, Constants.ACTION.START_WORK);
+                break;
+            case ACTIVE:
+            case PAUSED:
+                startIntent = new IntentWithAction(TimerActivity.this, TimerService.class, Constants.ACTION.TOGGLE);
+                break;
+            default:
+                Log.wtf(TAG, "Invalid timer state.");
+                break;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(startIntent);
         } else {
@@ -84,7 +97,7 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     public void stop() {
-        Intent stopIntent = new IntentWithAction(TimerActivity.this, TimerService.class, Constants.ACTION.STOP_TIMER);
+        Intent stopIntent = new IntentWithAction(TimerActivity.this, TimerService.class, Constants.ACTION.STOP);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(stopIntent);
         } else {

@@ -6,8 +6,6 @@ import android.os.IBinder;
 
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
-import java.util.concurrent.TimeUnit;
-
 import io.reactivex.functions.Consumer;
 
 /**
@@ -36,21 +34,21 @@ public class TimerService extends Service {
     public int onStartCommand(final Intent intent, int flags, int startId) {
 
         switch (intent.getAction()) {
-            case Constants.ACTION.TOGGLE_TIMER:
+            case Constants.ACTION.START_WORK:
             case Constants.ACTION.SKIP_BREAK:
-                onToggleEvent();
+                onStartEvent(SessionType.WORK);
                 break;
-
-            case Constants.ACTION.STOP_TIMER:
+            case Constants.ACTION.STOP:
                 onStopEvent();
                 break;
-            case Constants.ACTION.START_WORK:
-                // TODO: update CurrentSession to work
+            case Constants.ACTION.TOGGLE:
                 onToggleEvent();
                 break;
             case Constants.ACTION.START_BREAK:
-                // TODO: update CurrentSession to break
-                onToggleEvent();
+                onStartEvent(SessionType.BREAK);
+                break;
+            case Constants.ACTION.SKIP_WORK:
+                onSkipWorkEvent();
                 break;
             default:
                 break;
@@ -71,8 +69,10 @@ public class TimerService extends Service {
         });
     }
 
-    private void updateNotificationProgress() {
-        mAppNotificationManager.updateNotificationProgress(mCurrentSession.getDuration().getValue());
+    private void onStartEvent(SessionType sessionType) {
+        mCurrentSessionManager.startTimer(sessionType);
+        startForeground(Constants.NOTIFICATION_ID,
+                mAppNotificationManager.createNotification(getApplicationContext(), mCurrentSession));
     }
 
     private void onToggleEvent() {
@@ -85,17 +85,24 @@ public class TimerService extends Service {
         mCurrentSessionManager.stopTimer();
         stopForeground(true);
         stopSelf();
-
         // TODO: store what was done of the session to ROOM
     }
 
     private void onFinishEvent() {
+        //TODO: in continuous mode, do not stop the service
+        stopForeground(true);
+        stopSelf();
         mAppNotificationManager.notifyFinished(getApplicationContext(), mCurrentSession);
-
-        // TODO: update notification
-        // TODO: trigger dialog box
         // TODO: store session to ROOM
+    }
 
+    private void onSkipWorkEvent() {
+        // TODO: store what was done of the session to ROOM
+        onStartEvent(SessionType.BREAK);
+    }
+
+    private void updateNotificationProgress() {
+        mAppNotificationManager.updateNotificationProgress(mCurrentSession.getDuration().getValue());
     }
 
     @Override
