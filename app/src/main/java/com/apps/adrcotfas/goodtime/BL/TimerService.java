@@ -60,11 +60,15 @@ public class TimerService extends Service {
         GoodtimeApplication.getInstance().getBus().getEvents().subscribe(new Consumer<Object>() {
             @Override
             public void accept(Object o) throws Exception {
-                if (o instanceof Constants.FinishEvent) {
-                    onFinishEvent();
-                } else if (o instanceof Constants.UpdateTimerProgressEvent) {
-                    updateNotificationProgress();
-                }
+            if (o instanceof Constants.FinishWorkEvent) {
+                onFinishEvent(SessionType.WORK);
+            } else if (o instanceof Constants.FinishBreakEvent) {
+                onFinishEvent(SessionType.BREAK);
+            } else if (o instanceof Constants.UpdateTimerProgressEvent) {
+                updateNotificationProgress();
+            } else if (o instanceof  Constants.ClearNotificationEvent) {
+                mAppNotificationManager.clearNotification();
+            }
             }
         });
     }
@@ -73,6 +77,7 @@ public class TimerService extends Service {
         mCurrentSessionManager.startTimer(sessionType);
         startForeground(Constants.NOTIFICATION_ID,
                 mAppNotificationManager.createNotification(getApplicationContext(), mCurrentSession));
+        GoodtimeApplication.getInstance().getBus().send(new Constants.ClearFinishDialogEvent());
     }
 
     private void onToggleEvent() {
@@ -88,11 +93,11 @@ public class TimerService extends Service {
         // TODO: store what was done of the session to ROOM
     }
 
-    private void onFinishEvent() {
+    private void onFinishEvent(SessionType sessionType) {
         //TODO: in continuous mode, do not stop the service
         stopForeground(true);
         stopSelf();
-        mAppNotificationManager.notifyFinished(getApplicationContext(), mCurrentSession);
+        mAppNotificationManager.notifyFinished(getApplicationContext(), sessionType);
         // TODO: store session to ROOM
     }
 

@@ -10,7 +10,6 @@ import android.util.Log;
 
 import com.apps.adrcotfas.goodtime.Main.TimerActivity;
 import com.apps.adrcotfas.goodtime.R;
-import com.apps.adrcotfas.goodtime.Util.Assert;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 
@@ -70,22 +69,18 @@ public class NotificationManager {
                 .build();
     }
 
-    public void notifyFinished(Context context, CurrentSession currentSession) {
+    public void notifyFinished(Context context, SessionType sessionType) {
 
         mBuilder.mActions.clear();
-
-        Assert.that(currentSession.getTimerState().getValue() == TimerState.ACTIVE, "Invalid timer state.");
-        if (currentSession.getSessionType().getValue() == SessionType.WORK) {
+        if (sessionType == SessionType.WORK) {
             mBuilder.setContentTitle("Work session finished")
                     .setContentText("Continue?")
                     .addAction(buildStartBreakAction(context))
                     .addAction(buildSkipBreakAction(context));
-        } else if (currentSession.getSessionType().getValue() == SessionType.BREAK) {
+        } else {
             mBuilder.setContentTitle("Break finished")
                     .setContentText("Continue?")
                     .addAction(buildStartWorkAction(context));
-        } else {
-            Log.wtf(TAG, "Trying to create a notification in an invalid state.");
         }
 
         //TODO: set sound according to preferences
@@ -181,5 +176,9 @@ public class NotificationManager {
     public void updateNotificationProgress(Long duration) {
         mBuilder.setContentText(buildProgressText(duration));
         mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
+    }
+
+    public void clearNotification() {
+        mNotificationManager.cancelAll();
     }
 }

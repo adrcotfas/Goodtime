@@ -1,5 +1,7 @@
 package com.apps.adrcotfas.goodtime.Util;
 
+import com.apps.adrcotfas.goodtime.BL.SessionType;
+
 import java.util.concurrent.TimeUnit;
 
 public class Constants {
@@ -18,6 +20,9 @@ public class Constants {
 
     public static int NOTIFICATION_ID = 42;
 
-    public static class FinishEvent {}
+    public static class FinishWorkEvent {}
+    public static class FinishBreakEvent {}
     public static class UpdateTimerProgressEvent {}
+    public static class ClearNotificationEvent {}
+    public static class ClearFinishDialogEvent {}
 }

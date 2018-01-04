@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.goodtime.Main;
 
 import android.arch.lifecycle.Observer;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.apps.adrcotfas.goodtime.BL.CurrentSession;
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
+import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.BL.TimerService;
@@ -29,13 +31,13 @@ public class TimerActivity extends AppCompatActivity {
     private static final String TAG = TimerActivity.class.getSimpleName();
 
     private final CurrentSession mCurrentSession = GoodtimeApplication.getInstance().getCurrentSession();
-
+    private AlertDialog mDialog;
 
     @BindView(R.id.timeLabel)  TextView mTimeLabel;
 
     @OnClick(R.id.timeLabel)
     public void onStartButtonClick() {
-        start();
+        start(SessionType.WORK);
     }
 
     @OnClick(R.id.stopButton)
@@ -62,8 +64,14 @@ public class TimerActivity extends AppCompatActivity {
         GoodtimeApplication.getInstance().getBus().getEvents().subscribe(new Consumer<Object>() {
             @Override
             public void accept(Object o) throws Exception {
-                if (o instanceof Constants.FinishEvent) {
-                    finish();
+                if (o instanceof Constants.FinishWorkEvent) {
+                    showFinishDialog(SessionType.WORK);
+                } else if (o instanceof  Constants.FinishBreakEvent) {
+                    showFinishDialog(SessionType.BREAK);
+                } else if (o instanceof Constants.ClearFinishDialogEvent) {
+                    if (mDialog != null) {
+                        mDialog.cancel();
+                    }
                 }
             }
         });
@@ -74,12 +82,13 @@ public class TimerActivity extends AppCompatActivity {
         Log.v(TAG, "drawing the time label.");
     }
 
-    public void start() {
+    public void start(SessionType sessionType) {
         Intent startIntent = new Intent();
         switch (mCurrentSession.getTimerState().getValue())
         {
             case INACTIVE:
-                startIntent = new IntentWithAction(TimerActivity.this, TimerService.class, Constants.ACTION.START_WORK);
+                startIntent = new IntentWithAction(TimerActivity.this, TimerService.class,
+                        sessionType == SessionType.WORK ? Constants.ACTION.START_WORK : Constants.ACTION.START_BREAK);
                 break;
             case ACTIVE:
             case PAUSED:
@@ -113,11 +122,52 @@ public class TimerActivity extends AppCompatActivity {
 
     }
 
-    public void finish() {
+    public void showFinishDialog(SessionType sessionType) {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Test")
-                .setTitle("test");
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        if (sessionType == SessionType.WORK) {
+            builder.setTitle("Session complete")
+            .setPositiveButton("Start break", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    start(SessionType.BREAK);
+                }
+            })
+            .setNegativeButton("Skip break", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    start(SessionType.WORK);
+                }
+            })
+            .setNeutralButton("Close", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    GoodtimeApplication.getInstance().getBus().send(new Constants.ClearNotificationEvent());
+                }
+            });
+        } else {
+            builder.setTitle("Break complete")
+                    .setPositiveButton("Begin Session", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            start(SessionType.WORK);
+                        }
+                    })
+                    .setNegativeButton("Skip work", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            start(SessionType.BREAK);
+                        }
+                    })
+                    .setNeutralButton("Close", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            GoodtimeApplication.getInstance().getBus().send(new Constants.ClearNotificationEvent());
+                        }
+                    });
+        }
+
+        mDialog = builder.create();
+        mDialog.show();
     }
 }

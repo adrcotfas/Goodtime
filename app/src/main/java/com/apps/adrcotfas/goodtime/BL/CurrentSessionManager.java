@@ -90,10 +90,12 @@ public class CurrentSessionManager {
         @Override
         public void onFinish() {
             Log.v(TAG, "is finished.");
-            GoodtimeApplication.getInstance().getBus().send(new Constants.FinishEvent());
             mCurrentSession.setDuration(Constants.WORK_TIME);
             mCurrentSession.setTimerState(TimerState.INACTIVE);
             mRemaining = 0;
+            GoodtimeApplication.getInstance().getBus().send(
+                    mCurrentSession.getSessionType().getValue() == SessionType.WORK ?
+                            new Constants.FinishWorkEvent() : new Constants.FinishBreakEvent());
         }
     }
 }
