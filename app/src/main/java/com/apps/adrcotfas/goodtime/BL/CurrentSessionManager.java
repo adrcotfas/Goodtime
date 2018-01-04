@@ -3,6 +3,7 @@ package com.apps.adrcotfas.goodtime.BL;
 import android.os.CountDownTimer;
 import android.util.Log;
 
+import com.apps.adrcotfas.goodtime.Database.Session;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;
@@ -31,9 +32,11 @@ public class CurrentSessionManager {
         mCurrentSession.setTimerState(TimerState.ACTIVE);
         if (sessionType == SessionType.WORK) {
             mCurrentSession.setDuration(Constants.WORK_TIME);
+            mCurrentSession.setSessionType(SessionType.WORK);
             mTimer = new AppCountDownTimer(Constants.WORK_TIME);
         } else {
             mCurrentSession.setDuration(Constants.BREAK_TIME);
+            mCurrentSession.setSessionType(SessionType.BREAK);
             mTimer = new AppCountDownTimer(Constants.BREAK_TIME);
         }
         mTimer.start();

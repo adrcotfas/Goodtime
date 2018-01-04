@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.apps.adrcotfas.goodtime.BL.CurrentSession;
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
 import com.apps.adrcotfas.goodtime.BL.SessionType;
+import com.apps.adrcotfas.goodtime.BL.TimerState;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.BL.TimerService;
@@ -33,7 +34,7 @@ public class TimerActivity extends AppCompatActivity {
     private final CurrentSession mCurrentSession = GoodtimeApplication.getInstance().getCurrentSession();
     private AlertDialog mDialog;
 
-    @BindView(R.id.timeLabel)  TextView mTimeLabel;
+    @BindView(R.id.timeLabel) TextView mTimeLabel;
 
     @OnClick(R.id.timeLabel)
     public void onStartButtonClick() {
@@ -57,16 +58,26 @@ public class TimerActivity extends AppCompatActivity {
                 updateTime(millis);
             }
         });
+        mCurrentSession.getSessionType().observe(TimerActivity.this, new Observer<SessionType>() {
+            @Override
+            public void onChanged(@Nullable SessionType sessionType) {
+                //TODO: observe SessionType to show an icon
+            }
+        });
 
-        //TODO: observe TimerState to animate timer and show extra buttons
-        //TODO: observe SessionType to show an icon
+        mCurrentSession.getTimerState().observe(TimerActivity.this, new Observer<TimerState>() {
+            @Override
+            public void onChanged(@Nullable TimerState timerState) {
+                //TODO: observe TimerState to animate timer and show extra buttons
+            }
+        });
 
         GoodtimeApplication.getInstance().getBus().getEvents().subscribe(new Consumer<Object>() {
             @Override
             public void accept(Object o) throws Exception {
                 if (o instanceof Constants.FinishWorkEvent) {
                     showFinishDialog(SessionType.WORK);
-                } else if (o instanceof  Constants.FinishBreakEvent) {
+                } else if (o instanceof Constants.FinishBreakEvent) {
                     showFinishDialog(SessionType.BREAK);
                 } else if (o instanceof Constants.ClearFinishDialogEvent) {
                     if (mDialog != null) {
@@ -84,8 +95,7 @@ public class TimerActivity extends AppCompatActivity {
 
     public void start(SessionType sessionType) {
         Intent startIntent = new Intent();
-        switch (mCurrentSession.getTimerState().getValue())
-        {
+        switch (mCurrentSession.getTimerState().getValue()) {
             case INACTIVE:
                 startIntent = new IntentWithAction(TimerActivity.this, TimerService.class,
                         sessionType == SessionType.WORK ? Constants.ACTION.START_WORK : Constants.ACTION.START_BREAK);
@@ -114,37 +124,29 @@ public class TimerActivity extends AppCompatActivity {
         }
     }
 
-    public void toggle() {
-
-    }
-
-    public void skip() {
-
-    }
-
     public void showFinishDialog(SessionType sessionType) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         if (sessionType == SessionType.WORK) {
             builder.setTitle("Session complete")
-            .setPositiveButton("Start break", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    start(SessionType.BREAK);
-                }
-            })
-            .setNegativeButton("Skip break", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    start(SessionType.WORK);
-                }
-            })
-            .setNeutralButton("Close", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    GoodtimeApplication.getInstance().getBus().send(new Constants.ClearNotificationEvent());
-                }
-            });
+                    .setPositiveButton("Start break", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            start(SessionType.BREAK);
+                        }
+                    })
+                    .setNegativeButton("Skip break", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            start(SessionType.WORK);
+                        }
+                    })
+                    .setNeutralButton("Close", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            GoodtimeApplication.getInstance().getBus().send(new Constants.ClearNotificationEvent());
+                        }
+                    });
         } else {
             builder.setTitle("Break complete")
                     .setPositiveButton("Begin Session", new DialogInterface.OnClickListener() {

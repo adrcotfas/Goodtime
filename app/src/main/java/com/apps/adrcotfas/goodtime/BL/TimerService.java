@@ -60,15 +60,15 @@ public class TimerService extends Service {
         GoodtimeApplication.getInstance().getBus().getEvents().subscribe(new Consumer<Object>() {
             @Override
             public void accept(Object o) throws Exception {
-            if (o instanceof Constants.FinishWorkEvent) {
-                onFinishEvent(SessionType.WORK);
-            } else if (o instanceof Constants.FinishBreakEvent) {
-                onFinishEvent(SessionType.BREAK);
-            } else if (o instanceof Constants.UpdateTimerProgressEvent) {
-                updateNotificationProgress();
-            } else if (o instanceof  Constants.ClearNotificationEvent) {
-                mAppNotificationManager.clearNotification();
-            }
+                if (o instanceof Constants.FinishWorkEvent) {
+                    onFinishEvent(SessionType.WORK);
+                } else if (o instanceof Constants.FinishBreakEvent) {
+                    onFinishEvent(SessionType.BREAK);
+                } else if (o instanceof Constants.UpdateTimerProgressEvent) {
+                    updateNotificationProgress();
+                } else if (o instanceof Constants.ClearNotificationEvent) {
+                    mAppNotificationManager.clearNotification();
+                }
             }
         });
     }

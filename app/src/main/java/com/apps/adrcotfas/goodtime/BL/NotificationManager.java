@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Class responsible with creating and updating notifications for the foreground {@link TimerService}
- * and triggering notifications for events like finishing a session.
+ * and triggering notifications for events like finishing a session or updating the remaining time.
  * The notifications are customized according to {@link PreferenceManager}.
  */
 public class NotificationManager {
@@ -91,6 +91,29 @@ public class NotificationManager {
         mNotificationManager.notify(Constants.NOTIFICATION_ID, finishedNotification);
     }
 
+    public void updateNotificationProgress(Long duration) {
+        mBuilder.setContentText(buildProgressText(duration));
+        mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
+    }
+
+    public void clearNotification() {
+        mNotificationManager.cancelAll();
+    }
+
+    private CharSequence buildProgressText(Long duration) {
+        CharSequence output;
+        long minutesLeft = TimeUnit.MILLISECONDS.toMinutes(duration);
+        if (minutesLeft > 1) {
+            output = minutesLeft + " minutes left";
+        } else if (minutesLeft == 1){
+            output = "1 minute left";
+        } else {
+            output = "prepare to finish";
+        }
+
+        return output;
+    }
+
     private PendingIntent createActivityIntent(Context context) {
         return PendingIntent.getActivity(context,
                 0, new Intent(context, TimerActivity.class), 0);
@@ -157,28 +180,5 @@ public class NotificationManager {
                 R.drawable.ic_notification_skip,
                 "SKIP BREAK",
                 togglePendingIntent).build();
-    }
-
-    private CharSequence buildProgressText(Long duration) {
-        CharSequence output;
-        long minutesLeft = TimeUnit.MILLISECONDS.toMinutes(duration);
-        if (minutesLeft > 1) {
-            output = minutesLeft + " minutes left";
-        } else if (minutesLeft == 1){
-            output = "1 minute left";
-        } else {
-            output = "prepare to finish";
-        }
-
-        return output;
-    }
-
-    public void updateNotificationProgress(Long duration) {
-        mBuilder.setContentText(buildProgressText(duration));
-        mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
-    }
-
-    public void clearNotification() {
-        mNotificationManager.cancelAll();
     }
 }
