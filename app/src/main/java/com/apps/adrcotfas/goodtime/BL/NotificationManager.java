@@ -31,7 +31,7 @@ public class NotificationManager {
         mNotificationManager = (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(TAG, "Goodtime notifications",
-                    android.app.NotificationManager.IMPORTANCE_HIGH);
+                    android.app.NotificationManager.IMPORTANCE_DEFAULT);
             notificationChannel.setBypassDnd(true);
             mNotificationManager.createNotificationChannel(notificationChannel);
             mBuilder = new NotificationCompat.Builder(context, notificationChannel.getId());

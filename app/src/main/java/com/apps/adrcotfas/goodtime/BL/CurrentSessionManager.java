@@ -3,7 +3,6 @@ package com.apps.adrcotfas.goodtime.BL;
 import android.os.CountDownTimer;
 import android.util.Log;
 
-import com.apps.adrcotfas.goodtime.Database.Session;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;
