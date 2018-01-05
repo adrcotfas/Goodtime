@@ -7,13 +7,12 @@
     <string name="pref_disable_wifi">"Disable Wi-Fi"</string>
     <string name="pref_fullscreen">"Fullscreen mode"</string>
     <string name="pref_grant_permission">"Click to grant permission"</string>
-    <string name="pref_header_general">"Sessions"</string>
-    <string name="pref_header_modes">"During work sessions"</string>
-    <string name="pref_header_notification">"General"</string>
+    <string name="pref_header_notifications">"Notifications"</string>
+    <string name="pref_header_general">"General"</string>
     <string name="pref_keep_screen_on">"Keep the screen on"</string>
     <string name="pref_landscape">"Landscape mode"</string>
     <string name="pref_long_break_duration">"Long break duration"</string>
-    <string name="pref_ringtone">"Notification sound"</string>
+    <string name="pref_ringtone">"Notification sound for work"</string>
     <string name="pref_ringtone_summary">"Set the notification sound"</string>
     <string name="pref_work_duration">"Work session duration"</string>
     <string name="pref_sessions_before_long_break">"Number of sessions before a long break"</string>
@@ -21,9 +20,12 @@
     <string name="pref_unit_minutes">"minutes"</string>
     <string name="pref_unit_sessions">"sessions"</string>
     <string name="pref_vibrate">"Vibration"</string>
+    <string name="pref_theme">"Theme"</string>
     <string name="pref_session_type_icon" translatable="false">"Session type icon"</string>
     <string name="pref_session_type_icon_summary" translatable="false">"Display an icon representing work or break."</string>
     <string name="pref_continuous_mode_summary" translatable="false">"Continue sessions without user interaction."</string>
     <string name="pref_header_long_break">Long break</string>
     <string name="pref_ringtone_dialog">Ringtone</string>
+    <string name="pref_enable_ringtone">Enable notification sound</string>
+    <string name="pref_ringtone_break">Notification sound for break</string>
 </resources>

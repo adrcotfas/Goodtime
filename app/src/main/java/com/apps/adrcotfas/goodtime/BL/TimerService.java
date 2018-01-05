@@ -31,7 +31,7 @@ public class TimerService extends Service {
     }
 
     @Override
-    public int onStartCommand(final Intent intent, int flags, int startId) {
+    public synchronized int onStartCommand(final Intent intent, int flags, int startId) {
 
         switch (intent.getAction()) {
             case Constants.ACTION.START_WORK:
@@ -74,10 +74,10 @@ public class TimerService extends Service {
     }
 
     private void onStartEvent(SessionType sessionType) {
+        GoodtimeApplication.getInstance().getBus().send(new Constants.ClearFinishDialogEvent());
         mCurrentSessionManager.startTimer(sessionType);
         startForeground(Constants.NOTIFICATION_ID,
                 mAppNotificationManager.createNotification(getApplicationContext(), mCurrentSession));
-        GoodtimeApplication.getInstance().getBus().send(new Constants.ClearFinishDialogEvent());
     }
 
     private void onToggleEvent() {

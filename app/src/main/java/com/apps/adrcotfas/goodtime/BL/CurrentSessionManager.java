@@ -30,13 +30,15 @@ public class CurrentSessionManager {
         // TODO: set the duration according to the settings. Also include long break
         mCurrentSession.setTimerState(TimerState.ACTIVE);
         if (sessionType == SessionType.WORK) {
-            mCurrentSession.setDuration(Constants.WORK_TIME);
+            long workDuration = TimeUnit.MINUTES.toMillis(PreferenceManager.getWorkDuration());
+            mCurrentSession.setDuration(workDuration);
             mCurrentSession.setSessionType(SessionType.WORK);
-            mTimer = new AppCountDownTimer(Constants.WORK_TIME);
+            mTimer = new AppCountDownTimer(workDuration);
         } else {
-            mCurrentSession.setDuration(Constants.BREAK_TIME);
+            long breakDuration = TimeUnit.MINUTES.toMillis(PreferenceManager.getBreakDuration());
+            mCurrentSession.setDuration(breakDuration);
             mCurrentSession.setSessionType(SessionType.BREAK);
-            mTimer = new AppCountDownTimer(Constants.BREAK_TIME);
+            mTimer = new AppCountDownTimer(breakDuration);
         }
         mTimer.start();
     }
@@ -61,7 +63,8 @@ public class CurrentSessionManager {
     public void stopTimer() {
         mTimer.cancel();
         mCurrentSession.setTimerState(TimerState.INACTIVE);
-        mCurrentSession.setDuration(Constants.WORK_TIME);
+        long workDuration = TimeUnit.MINUTES.toMillis(PreferenceManager.getWorkDuration());
+        mCurrentSession.setDuration(workDuration);
     }
 
     private class AppCountDownTimer extends CountDownTimer {
@@ -92,7 +95,8 @@ public class CurrentSessionManager {
         @Override
         public void onFinish() {
             Log.v(TAG, "is finished.");
-            mCurrentSession.setDuration(Constants.WORK_TIME);
+            long workDuration = TimeUnit.MINUTES.toMillis(PreferenceManager.getWorkDuration());
+            mCurrentSession.setDuration(workDuration);
             mCurrentSession.setTimerState(TimerState.INACTIVE);
             mRemaining = 0;
             GoodtimeApplication.getInstance().getBus().send(
