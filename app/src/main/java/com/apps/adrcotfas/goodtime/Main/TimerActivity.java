@@ -9,12 +9,15 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.apps.adrcotfas.goodtime.BL.CurrentSession;
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
 import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.BL.TimerState;
+import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.BL.TimerService;
@@ -35,7 +38,7 @@ public class TimerActivity extends AppCompatActivity {
     private AlertDialog mDialog;
 
     @BindView(R.id.timeLabel) TextView mTimeLabel;
-
+    @BindView(R.id.stopButton) Button mStopButton;
     @OnClick(R.id.timeLabel)
     public void onStartButtonClick() {
         start(SessionType.WORK);
@@ -44,6 +47,13 @@ public class TimerActivity extends AppCompatActivity {
     @OnClick(R.id.stopButton)
     public void onStopButtonClick() {
         stop();
+    }
+
+    @OnClick(R.id.settings)
+    public void onSettingsClick() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+
     }
 
     @Override
@@ -68,7 +78,13 @@ public class TimerActivity extends AppCompatActivity {
         mCurrentSession.getTimerState().observe(TimerActivity.this, new Observer<TimerState>() {
             @Override
             public void onChanged(@Nullable TimerState timerState) {
-                //TODO: observe TimerState to animate timer and show extra buttons
+                if (timerState == TimerState.PAUSED) {
+                    //TODO: animate timer
+                    mStopButton.setVisibility(View.VISIBLE);
+                } else {
+                    //TODO: stop animating timer
+                    mStopButton.setVisibility(View.INVISIBLE);
+                }
             }
         });
 
@@ -146,6 +162,12 @@ public class TimerActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             GoodtimeApplication.getInstance().getBus().send(new Constants.ClearNotificationEvent());
                         }
+                    })
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            GoodtimeApplication.getInstance().getBus().send(new Constants.ClearNotificationEvent());
+                        }
                     });
         } else {
             builder.setTitle("Break complete")
@@ -164,6 +186,12 @@ public class TimerActivity extends AppCompatActivity {
                     .setNeutralButton("Close", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            GoodtimeApplication.getInstance().getBus().send(new Constants.ClearNotificationEvent());
+                        }
+                    })
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
                             GoodtimeApplication.getInstance().getBus().send(new Constants.ClearNotificationEvent());
                         }
                     });

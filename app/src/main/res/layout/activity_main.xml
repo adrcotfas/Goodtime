@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!"
+        android:textSize="60sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -21,8 +22,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="35dp"
+        android:layout_marginEnd="148dp"
+        android:text="Stop"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Stop Foreground Service"/>
+        tools:layout_editor_absoluteY="78dp"
+        android:layout_marginRight="148dp" />
+
+    <Button
+        android:id="@+id/settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="144dp"
+        android:text="Settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="394dp"
+        android:layout_marginRight="144dp" />
 
 </android.support.constraint.ConstraintLayout>
