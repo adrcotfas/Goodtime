@@ -15,7 +15,6 @@ public class TimerService extends Service {
 
     private static final String TAG = TimerService.class.getSimpleName();
 
-    private CurrentSession mCurrentSession;
     private CurrentSessionManager mCurrentSessionManager;
     private NotificationManager mAppNotificationManager;
 
@@ -24,8 +23,7 @@ public class TimerService extends Service {
         super.onCreate();
 
         mAppNotificationManager = new NotificationManager(getApplicationContext());
-        mCurrentSession = GoodtimeApplication.getInstance().getCurrentSession();
-        mCurrentSessionManager = new CurrentSessionManager(mCurrentSession);
+        mCurrentSessionManager = GoodtimeApplication.getInstance().getCurrentSessionManager();
 
         setupEvents();
     }
@@ -76,14 +74,14 @@ public class TimerService extends Service {
     private void onStartEvent(SessionType sessionType) {
         GoodtimeApplication.getInstance().getBus().send(new Constants.ClearFinishDialogEvent());
         mCurrentSessionManager.startTimer(sessionType);
-        startForeground(Constants.NOTIFICATION_ID,
-                mAppNotificationManager.createNotification(getApplicationContext(), mCurrentSession));
+        startForeground(Constants.NOTIFICATION_ID, mAppNotificationManager.createNotification(
+                getApplicationContext(), mCurrentSessionManager.getCurrentSession()));
     }
 
     private void onToggleEvent() {
         mCurrentSessionManager.toggleTimer();
-        startForeground(Constants.NOTIFICATION_ID,
-                mAppNotificationManager.createNotification(getApplicationContext(), mCurrentSession));
+        startForeground(Constants.NOTIFICATION_ID, mAppNotificationManager.createNotification(
+                getApplicationContext(), mCurrentSessionManager.getCurrentSession()));
     }
 
     private void onStopEvent() {
@@ -107,7 +105,8 @@ public class TimerService extends Service {
     }
 
     private void updateNotificationProgress() {
-        mAppNotificationManager.updateNotificationProgress(mCurrentSession.getDuration().getValue());
+        mAppNotificationManager.updateNotificationProgress(
+                mCurrentSessionManager.getCurrentSession().getDuration().getValue());
     }
 
     @Override

@@ -3,14 +3,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark"
-        android:visibility="visible" />
+    <include
+        layout="@layout/toolbar">
+    </include>
 
     <FrameLayout
         android:id="@+id/fragment"

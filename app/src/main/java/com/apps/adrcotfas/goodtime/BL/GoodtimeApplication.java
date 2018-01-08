@@ -1,8 +1,9 @@
 package com.apps.adrcotfas.goodtime.BL;
 import android.app.Application;
 import android.support.v7.preference.PreferenceManager;
-import java.util.concurrent.TimeUnit;
 
+import java.util.concurrent.TimeUnit;
+import static com.apps.adrcotfas.goodtime.BL.PreferenceManager.*;
 
 /**
  * Maintains a global state of the app and stores the event bus ({@link EventBus})
@@ -11,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 public class GoodtimeApplication extends Application {
 
     private static volatile GoodtimeApplication INSTANCE;
-    private static CurrentSession mCurrentSession;
     private static EventBus mBus;
+    private static CurrentSessionManager mCurrentSessionManager;
 
     public static GoodtimeApplication getInstance() {
         return INSTANCE;
@@ -23,17 +24,21 @@ public class GoodtimeApplication extends Application {
         super.onCreate();
         INSTANCE = this;
 
-        mCurrentSession = new CurrentSession(TimeUnit.MINUTES.toMillis(
+        mCurrentSessionManager = new CurrentSessionManager(new CurrentSession(TimeUnit.MINUTES.toMillis(
                 Long.parseLong(PreferenceManager.getDefaultSharedPreferences(this)
-                        .getString("WORK_DURATION", "25"))));
+                        .getString(WORK_DURATION, "25")))));
         mBus = new EventBus();
     }
 
     public CurrentSession getCurrentSession() {
-        return mCurrentSession;
+        return mCurrentSessionManager.getCurrentSession();
     }
 
     public EventBus getBus() {
         return mBus;
+    }
+
+    public CurrentSessionManager getCurrentSessionManager() {
+        return mCurrentSessionManager;
     }
 }

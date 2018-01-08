@@ -18,4 +18,5 @@ public class Constants {
     public static class UpdateTimerProgressEvent {}
     public static class ClearNotificationEvent {}
     public static class ClearFinishDialogEvent {}
+    public static class WorkDurationUpdatedEvent {}
 }

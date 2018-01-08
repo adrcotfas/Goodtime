@@ -67,6 +67,10 @@ public class CurrentSessionManager {
         mCurrentSession.setDuration(workDuration);
     }
 
+    public CurrentSession getCurrentSession() {
+        return mCurrentSession;
+    }
+
     private class AppCountDownTimer extends CountDownTimer {
 
         private long mMinutesUntilFinished;

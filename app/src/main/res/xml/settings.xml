@@ -5,59 +5,59 @@
     <PreferenceCategory android:title="@string/pref_header_general">
         <AutoSummaryEditTextPreference
             android:defaultValue="25"
-            android:key="WORK_DURATION"
-            android:title="@string/pref_work_duration"
             android:dialogMessage="Enter the work duration"
             android:inputType="number"
+            android:key="pref_work_duration"
             android:persistent="true"
+            android:title="@string/pref_work_duration"
             app:pref_summaryHasText="%s minutes" />
 
         <AutoSummaryEditTextPreference
             android:defaultValue="5"
-            android:key="BREAK_DURATION"
-            android:title="@string/pref_break_duration"
             android:dialogMessage="Enter the work duration"
             android:inputType="number"
+            android:key="pref_break_duration"
             android:persistent="true"
+            android:title="@string/pref_break_duration"
             app:pref_summaryHasText="%s minutes" />
 
         <SwitchPreference
             android:defaultValue="true"
-            android:key="ENABLE_LONG_BREAK"
+            android:key="pref_enable_long_break"
             android:title="@string/pref_enable_long_break">
         </SwitchPreference>
 
         <AutoSummaryEditTextPreference
             android:defaultValue="15"
-            android:key="LONG_BREAK_DURATION"
-            android:title="@string/pref_long_break_duration"
             android:dialogMessage="Enter the work duration"
             android:inputType="number"
+            android:key="pref_long_break_duration"
             android:persistent="true"
-            app:pref_summaryHasText="%s minutes"/>
+            android:title="@string/pref_long_break_duration"
+            app:pref_summaryHasText="%s minutes" />
 
         <AutoSummaryEditTextPreference
             android:defaultValue="4"
-            android:key="SESSIONS_BEFORE_LONG_BREAK"
-            android:title="@string/pref_sessions_before_long_break"
             android:dialogMessage="Enter the work duration"
             android:inputType="number"
+            android:key="pref_sessions_before_long_break"
             android:persistent="true"
-            app:pref_summaryHasText="%s sessions"/>
+            android:title="@string/pref_sessions_before_long_break"
+            app:pref_summaryHasText="%s sessions" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_header_notifications">
 
         <SwitchPreference
             android:defaultValue="true"
-            android:key="ENABLE_RINGTONE"
+            android:key="pref_enable_ringtone"
             android:title="@string/pref_enable_ringtone">
         </SwitchPreference>
 
         <RingtonePreference
-            android:dialogTitle="@string/pref_ringtone_dialog"
-            android:key="RINGTONE_WORK"
             android:defaultValue="content://settings/system/notification_sound"
+            android:dialogTitle="@string/pref_ringtone_dialog"
+            android:key="pref_ringtone"
             android:persistent="true"
             android:ringtoneType="ringtone"
             android:showDefault="true"
@@ -67,9 +67,9 @@
             app:pref_summaryHasRingtone="%s" />
 
         <RingtonePreference
-            android:dialogTitle="@string/pref_ringtone_dialog"
-            android:key="RINGTONE_BREAK"
             android:defaultValue="content://settings/system/notification_sound"
+            android:dialogTitle="@string/pref_ringtone_dialog"
+            android:key="pref_ringtone_break"
             android:persistent="true"
             android:ringtoneType="ringtone"
             android:showDefault="true"
@@ -80,38 +80,38 @@
 
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="ENABLE_VIBRATE"
+            android:key="pref_vibrate"
             android:title="@string/pref_vibrate" />
 
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="ENABLE_FULLSCREEN"
-            android:title="@string/pref_fullscreen"/>
+            android:key="pref_fullscreen"
+            android:title="@string/pref_fullscreen" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_header_general">
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="DISABLE_SOUND_AND_VIBRATION"
-            android:title="@string/pref_disable_sound_and_vibration"/>
+            android:key="pref_disable_sound_and_vibration"
+            android:title="@string/pref_disable_sound_and_vibration" />
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="DISABLE_WIFI"
+            android:key="pref_disable_wifi"
             android:title="@string/pref_disable_wifi" />
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="ENABLE_SCREEN_ON"
+            android:key="pref_keep_screen_on"
             android:title="@string/pref_keep_screen_on" />
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="ENABLE_CONTINUOUS_MODE"
+            android:key="pref_continuous_mode"
             android:summary="@string/pref_continuous_mode_summary"
-            android:title="@string/pref_continuous_mode"/>
+            android:title="@string/pref_continuous_mode" />
 
         <ColorPickerPreference
             android:defaultValue="#88C440"
             android:dialogTitle="@string/pref_theme"
-            android:key="THEME"
+            android:key="pref_theme"
             android:persistent="false"
             android:title="Theme"
             app:pref_size="small" />

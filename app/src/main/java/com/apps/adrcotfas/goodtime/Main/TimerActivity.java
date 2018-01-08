@@ -3,11 +3,13 @@ package com.apps.adrcotfas.goodtime.Main;
 import android.arch.lifecycle.Observer;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 
 import com.apps.adrcotfas.goodtime.BL.CurrentSession;
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
+import com.apps.adrcotfas.goodtime.BL.PreferenceManager;
 import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.BL.TimerState;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
@@ -30,12 +33,15 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.functions.Consumer;
 
-public class TimerActivity extends AppCompatActivity {
+import static com.apps.adrcotfas.goodtime.BL.PreferenceManager.ENABLE_FULLSCREEN;
+
+public class TimerActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     private static final String TAG = TimerActivity.class.getSimpleName();
 
     private final CurrentSession mCurrentSession = GoodtimeApplication.getInstance().getCurrentSession();
     private AlertDialog mDialog;
+    private FullscreenHelper mFullscreenHelper;
 
     @BindView(R.id.timeLabel) TextView mTimeLabel;
     @BindView(R.id.stopButton) Button mStopButton;
@@ -60,8 +66,14 @@ public class TimerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         ButterKnife.bind(this);
 
+        setupEvents();
+    }
+
+    private void setupEvents() {
         mCurrentSession.getDuration().observe(TimerActivity.this, new Observer<Long>() {
             @Override
             public void onChanged(@Nullable Long millis) {
@@ -99,6 +111,8 @@ public class TimerActivity extends AppCompatActivity {
                     if (mDialog != null) {
                         mDialog.cancel();
                     }
+                } else if (o instanceof Constants.WorkDurationUpdatedEvent) {
+                    updateTime(TimeUnit.MINUTES.toMillis(PreferenceManager.getWorkDuration()));
                 }
             }
         });
@@ -199,5 +213,30 @@ public class TimerActivity extends AppCompatActivity {
 
         mDialog = builder.create();
         mDialog.show();
+    }
+
+    private void enableFullscreen() {
+        //mFullscreenHelper = new FullscreenHelper(findViewById(R.id.main), getSupportActionBar());
+    }
+
+    private void disableFullscreen() {
+        if (mFullscreenHelper != null) {
+            mFullscreenHelper.disable();
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        switch (key) {
+            case ENABLE_FULLSCREEN:
+                if (PreferenceManager.isFullscreenEnabled()) {
+                    enableFullscreen();
+                } else {
+                    disableFullscreen();
+                }
+                break;
+            default:
+                break;
+        }
     }
 }

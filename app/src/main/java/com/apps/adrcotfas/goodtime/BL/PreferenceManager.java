@@ -6,74 +6,95 @@ import static android.support.v7.preference.PreferenceManager.getDefaultSharedPr
 
 public class PreferenceManager implements Preference.OnPreferenceChangeListener{
 
+    public final static String WORK_DURATION               = "pref_work_duration";
+    public final static String BREAK_DURATION              = "pref_break_duration";
+    public final static String ENABLE_LONG_BREAK           = "pref_enable_long_break";
+    public final static String LONG_BREAK_DURATION         = "pref_long_break_duration";
+    public final static String SESSIONS_BEFORE_LONG_BREAK  = "pref_sessions_before_long_break";
+    public final static String ENABLE_RINGTONE             = "pref_enable_ringtone";
+    public final static String RINGTONE_WORK               = "pref_ringtone";
+    public final static String RINGTONE_BREAK              = "pref_ringtone_break";
+    public final static String ENABLE_VIBRATE              = "pref_vibrate";
+    public final static String ENABLE_FULLSCREEN           = "pref_fullscreen";
+    public final static String DISABLE_SOUND_AND_VIBRATION = "pref_disable_sound_and_vibration";
+    public final static String DISABLE_WIFI                = "pref_disable_wifi";
+    public final static String ENABLE_SCREEN_ON            = "pref_keep_screen_on";
+    public final static String ENABLE_CONTINUOUS_MODE      = "pref_continuous_mode";
+    public final static String THEME                       = "pref_theme";
+
     public static long getWorkDuration() {
         return Long.parseLong(getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getString("WORK_DURATION", "25"));
+                .getString(WORK_DURATION, "25"));
     }
 
     public static long getBreakDuration() {
         return Long.parseLong(getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getString("BREAK_DURATION", "5"));
+                .getString(BREAK_DURATION, "5"));
     }
 
     public static boolean isLongBreakEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getBoolean("ENABLE_LONG_BREAK", true);
+                .getBoolean(ENABLE_LONG_BREAK, true);
     }
 
     public static long getLongBreakDuration() {
         return Long.parseLong(getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getString("LONG_BREAK_DURATION", "15"));
+                .getString(LONG_BREAK_DURATION, "15"));
     }
 
     public static long getSessionsBeforeLongBreak() {
         return Long.parseLong(getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getString("SESSIONS_BEFORE_LONG_BREAK", "4"));
+                .getString(SESSIONS_BEFORE_LONG_BREAK, "4"));
     }
 
     public static boolean isRingtoneEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getBoolean("ENABLE_RINGTONE", true);
+                .getBoolean(ENABLE_RINGTONE, true);
     }
 
     public static String getRingtoneWork() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getString("RINGTONE_WORK", "");
+                .getString(RINGTONE_WORK, "");
     }
 
     public static String getRingtoneBreak() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getString("RINGTONE_BREAK", "");
+                .getString(RINGTONE_BREAK, "");
     }
 
     public static boolean isVibrationEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getBoolean("ENABLE_VIBRATE", true);
+                .getBoolean(ENABLE_VIBRATE, true);
     }
 
     public static boolean isFullscreenEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getBoolean("ENABLE_FULLSCREEN", false);
+                .getBoolean(ENABLE_FULLSCREEN, false);
     }
 
     public static boolean isSoundAndVibrationDisabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getBoolean("DISABLE_SOUND_AND_VIBRATION", false);
+                .getBoolean(DISABLE_SOUND_AND_VIBRATION, false);
     }
 
     public static boolean isWiFiDisabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getBoolean("DISABLE_WIFI", false);
+                .getBoolean(DISABLE_WIFI, false);
     }
 
     public static boolean isScreenOnEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getBoolean("ENABLE_SCREEN_ON", false);
+                .getBoolean(ENABLE_SCREEN_ON, false);
+    }
+
+    public static boolean isContinuousModeEnabled() {
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getBoolean(ENABLE_CONTINUOUS_MODE, false);
     }
 
     public static String getTheme() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getString("THEME", "");
+                .getString(THEME, "");
     }
 
     @Override

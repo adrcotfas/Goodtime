@@ -6,6 +6,10 @@
     android:layout_height="match_parent"
     tools:context="com.apps.adrcotfas.goodtime.Main.TimerActivity">
 
+    <include
+        layout="@layout/toolbar">
+    </include>
+
     <TextView
         android:id="@+id/timeLabel"
         android:layout_width="wrap_content"
@@ -23,14 +27,18 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:text="Stop"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <Button
         android:id="@+id/settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="134dp"
+        android:layout_marginTop="61dp"
         android:text="Settings"
-        app:layout_constraintEnd_toStartOf="@+id/stopButton" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>
