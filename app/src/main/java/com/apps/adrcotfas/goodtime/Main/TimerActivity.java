@@ -71,6 +71,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         ButterKnife.bind(this);
 
         setupEvents();
+        enableFullscreen();
     }
 
     private void setupEvents() {
@@ -216,7 +217,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     }
 
     private void enableFullscreen() {
-        //mFullscreenHelper = new FullscreenHelper(findViewById(R.id.main), getSupportActionBar());
+        mFullscreenHelper = new FullscreenHelper(findViewById(R.id.main), getSupportActionBar());
     }
 
     private void disableFullscreen() {
