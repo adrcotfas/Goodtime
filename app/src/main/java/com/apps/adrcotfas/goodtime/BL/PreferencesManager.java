@@ -4,7 +4,7 @@ import android.preference.Preference;
 
 import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 
-public class PreferenceManager implements Preference.OnPreferenceChangeListener{
+public class PreferencesManager implements Preference.OnPreferenceChangeListener{
 
     public final static String WORK_DURATION               = "pref_work_duration";
     public final static String BREAK_DURATION              = "pref_break_duration";

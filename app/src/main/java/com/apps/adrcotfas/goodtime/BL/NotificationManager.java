@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Class responsible with creating and updating notifications for the foreground {@link TimerService}
  * and triggering notifications for events like finishing a session or updating the remaining time.
- * The notifications are customized according to {@link PreferenceManager}.
+ * The notifications are customized according to {@link PreferencesManager}.
  */
 public class NotificationManager {
 
@@ -44,6 +44,7 @@ public class NotificationManager {
 
         mBuilder.mActions.clear();
         mBuilder.addAction(buildStopAction(context));
+        mBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
         if (currentSession.getSessionType().getValue() == SessionType.WORK) {
             if (currentSession.getTimerState().getValue() == TimerState.PAUSED) {
@@ -72,6 +73,7 @@ public class NotificationManager {
     public void notifyFinished(Context context, SessionType sessionType) {
 
         mBuilder.mActions.clear();
+        mBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         if (sessionType == SessionType.WORK) {
             mBuilder.setContentTitle("Work session finished")
                     .setContentText("Continue?")

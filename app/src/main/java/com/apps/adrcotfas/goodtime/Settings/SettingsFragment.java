@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
-import com.apps.adrcotfas.goodtime.BL.PreferenceManager;
+import com.apps.adrcotfas.goodtime.BL.PreferencesManager;
 import com.apps.adrcotfas.goodtime.BL.TimerState;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.Constants;
@@ -20,23 +20,23 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers {
     public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
 
-        findPreference(PreferenceManager.ENABLE_LONG_BREAK).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        findPreference(PreferencesManager.ENABLE_LONG_BREAK).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                findPreference(PreferenceManager.LONG_BREAK_DURATION).setVisible((Boolean) newValue);
-                findPreference(PreferenceManager.SESSIONS_BEFORE_LONG_BREAK).setVisible((Boolean) newValue);
+                findPreference(PreferencesManager.LONG_BREAK_DURATION).setVisible((Boolean) newValue);
+                findPreference(PreferencesManager.SESSIONS_BEFORE_LONG_BREAK).setVisible((Boolean) newValue);
                 return true;
             }
         });
-        findPreference(PreferenceManager.ENABLE_RINGTONE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        findPreference(PreferencesManager.ENABLE_RINGTONE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                findPreference(PreferenceManager.RINGTONE_WORK).setVisible((Boolean) newValue);
-                findPreference(PreferenceManager.RINGTONE_BREAK).setVisible((Boolean) newValue);
+                findPreference(PreferencesManager.RINGTONE_WORK).setVisible((Boolean) newValue);
+                findPreference(PreferencesManager.RINGTONE_BREAK).setVisible((Boolean) newValue);
                 return true;
             }
         });
-        findPreference(PreferenceManager.WORK_DURATION).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        findPreference(PreferencesManager.WORK_DURATION).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 if (GoodtimeApplication.getInstance().getCurrentSession().getTimerState().getValue()

@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +18,7 @@ import android.widget.TextView;
 
 import com.apps.adrcotfas.goodtime.BL.CurrentSession;
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
-import com.apps.adrcotfas.goodtime.BL.PreferenceManager;
+import com.apps.adrcotfas.goodtime.BL.PreferencesManager;
 import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.BL.TimerState;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
@@ -33,7 +34,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.functions.Consumer;
 
-import static com.apps.adrcotfas.goodtime.BL.PreferenceManager.ENABLE_FULLSCREEN;
+import static com.apps.adrcotfas.goodtime.BL.PreferencesManager.ENABLE_FULLSCREEN;
 
 public class TimerActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
@@ -71,7 +72,21 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         ButterKnife.bind(this);
 
         setupEvents();
-        enableFullscreen();
+        toggleFullscreenMode();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        pref.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        pref.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     private void setupEvents() {
@@ -113,7 +128,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                         mDialog.cancel();
                     }
                 } else if (o instanceof Constants.WorkDurationUpdatedEvent) {
-                    updateTime(TimeUnit.MINUTES.toMillis(PreferenceManager.getWorkDuration()));
+                    updateTime(TimeUnit.MINUTES.toMillis(PreferencesManager.getWorkDuration()));
                 }
             }
         });
@@ -216,13 +231,15 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mDialog.show();
     }
 
-    private void enableFullscreen() {
-        mFullscreenHelper = new FullscreenHelper(findViewById(R.id.main), getSupportActionBar());
-    }
-
-    private void disableFullscreen() {
-        if (mFullscreenHelper != null) {
-            mFullscreenHelper.disable();
+    private void toggleFullscreenMode() {
+        if (PreferencesManager.isFullscreenEnabled()) {
+            if (mFullscreenHelper == null) {
+                mFullscreenHelper = new FullscreenHelper(findViewById(R.id.main), getSupportActionBar());
+            }
+        } else {
+            if (mFullscreenHelper != null) {
+                mFullscreenHelper.disable();
+            }
         }
     }
 
@@ -230,11 +247,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
             case ENABLE_FULLSCREEN:
-                if (PreferenceManager.isFullscreenEnabled()) {
-                    enableFullscreen();
-                } else {
-                    disableFullscreen();
-                }
+                toggleFullscreenMode();
                 break;
             default:
                 break;

@@ -30,12 +30,12 @@ public class CurrentSessionManager {
         // TODO: set the duration according to the settings. Also include long break
         mCurrentSession.setTimerState(TimerState.ACTIVE);
         if (sessionType == SessionType.WORK) {
-            long workDuration = TimeUnit.MINUTES.toMillis(PreferenceManager.getWorkDuration());
+            long workDuration = TimeUnit.MINUTES.toMillis(PreferencesManager.getWorkDuration());
             mCurrentSession.setDuration(workDuration);
             mCurrentSession.setSessionType(SessionType.WORK);
             mTimer = new AppCountDownTimer(workDuration);
         } else {
-            long breakDuration = TimeUnit.MINUTES.toMillis(PreferenceManager.getBreakDuration());
+            long breakDuration = TimeUnit.MINUTES.toMillis(PreferencesManager.getBreakDuration());
             mCurrentSession.setDuration(breakDuration);
             mCurrentSession.setSessionType(SessionType.BREAK);
             mTimer = new AppCountDownTimer(breakDuration);
@@ -63,7 +63,7 @@ public class CurrentSessionManager {
     public void stopTimer() {
         mTimer.cancel();
         mCurrentSession.setTimerState(TimerState.INACTIVE);
-        long workDuration = TimeUnit.MINUTES.toMillis(PreferenceManager.getWorkDuration());
+        long workDuration = TimeUnit.MINUTES.toMillis(PreferencesManager.getWorkDuration());
         mCurrentSession.setDuration(workDuration);
     }
 
@@ -99,7 +99,7 @@ public class CurrentSessionManager {
         @Override
         public void onFinish() {
             Log.v(TAG, "is finished.");
-            long workDuration = TimeUnit.MINUTES.toMillis(PreferenceManager.getWorkDuration());
+            long workDuration = TimeUnit.MINUTES.toMillis(PreferencesManager.getWorkDuration());
             mCurrentSession.setDuration(workDuration);
             mCurrentSession.setTimerState(TimerState.INACTIVE);
             mRemaining = 0;
