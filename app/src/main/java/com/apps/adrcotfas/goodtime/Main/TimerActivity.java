@@ -35,6 +35,7 @@ import butterknife.OnClick;
 import io.reactivex.functions.Consumer;
 
 import static com.apps.adrcotfas.goodtime.BL.PreferencesManager.ENABLE_FULLSCREEN;
+import static com.apps.adrcotfas.goodtime.BL.PreferencesManager.WORK_DURATION;
 
 public class TimerActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
@@ -83,10 +84,10 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onDestroy() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.unregisterOnSharedPreferenceChangeListener(this);
+        super.onDestroy();
     }
 
     private void setupEvents() {
@@ -127,8 +128,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                     if (mDialog != null) {
                         mDialog.cancel();
                     }
-                } else if (o instanceof Constants.WorkDurationUpdatedEvent) {
-                    updateTime(TimeUnit.MINUTES.toMillis(PreferencesManager.getWorkDuration()));
                 }
             }
         });
@@ -248,6 +247,12 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         switch (key) {
             case ENABLE_FULLSCREEN:
                 toggleFullscreenMode();
+                break;
+            case WORK_DURATION:
+                if (GoodtimeApplication.getInstance().getCurrentSession().getTimerState().getValue()
+                        == TimerState.INACTIVE) {
+                    updateTime(TimeUnit.MINUTES.toMillis(PreferencesManager.getWorkDuration()));
+                }
                 break;
             default:
                 break;

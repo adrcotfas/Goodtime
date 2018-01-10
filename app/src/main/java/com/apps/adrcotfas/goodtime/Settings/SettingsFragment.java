@@ -36,16 +36,6 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers {
                 return true;
             }
         });
-        findPreference(PreferencesManager.WORK_DURATION).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (GoodtimeApplication.getInstance().getCurrentSession().getTimerState().getValue()
-                        == TimerState.INACTIVE) {
-                    GoodtimeApplication.getInstance().getBus().send(new Constants.WorkDurationUpdatedEvent());
-                }
-                return true;
-            }
-        });
     }
 
     @Override
