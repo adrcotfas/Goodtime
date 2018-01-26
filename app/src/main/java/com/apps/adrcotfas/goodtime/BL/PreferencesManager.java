@@ -23,13 +23,13 @@ public class PreferencesManager implements Preference.OnPreferenceChangeListener
     public final static String THEME                       = "pref_theme";
 
     public static long getWorkDuration() {
-        return Long.parseLong(getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getString(WORK_DURATION, "25"));
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getInt(WORK_DURATION, 25);
     }
 
     public static long getBreakDuration() {
-        return Long.parseLong(getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getString(BREAK_DURATION, "5"));
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getInt(BREAK_DURATION, 5);
     }
 
     public static boolean isLongBreakEnabled() {
@@ -38,13 +38,13 @@ public class PreferencesManager implements Preference.OnPreferenceChangeListener
     }
 
     public static long getLongBreakDuration() {
-        return Long.parseLong(getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getString(LONG_BREAK_DURATION, "15"));
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getInt(LONG_BREAK_DURATION, 15);
     }
 
     public static long getSessionsBeforeLongBreak() {
-        return Long.parseLong(getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getString(SESSIONS_BEFORE_LONG_BREAK, "4"));
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getInt(SESSIONS_BEFORE_LONG_BREAK, 4);
     }
 
     public static boolean isRingtoneEnabled() {

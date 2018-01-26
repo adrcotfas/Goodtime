@@ -25,8 +25,8 @@ public class GoodtimeApplication extends Application {
         INSTANCE = this;
 
         mCurrentSessionManager = new CurrentSessionManager(new CurrentSession(TimeUnit.MINUTES.toMillis(
-                Long.parseLong(PreferenceManager.getDefaultSharedPreferences(this)
-                        .getString(WORK_DURATION, "25")))));
+                PreferenceManager.getDefaultSharedPreferences(this)
+                        .getInt(WORK_DURATION, 25))));
         mBus = new EventBus();
     }
 

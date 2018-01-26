@@ -3,23 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="@string/pref_header_general">
-        <AutoSummaryEditTextPreference
-            android:defaultValue="25"
-            android:dialogMessage="Enter the work duration"
-            android:inputType="number"
-            android:key="pref_work_duration"
-            android:persistent="true"
-            android:title="@string/pref_work_duration"
-            app:pref_summaryHasText="%s minutes" />
 
-        <AutoSummaryEditTextPreference
+        <com.pavelsikun.seekbarpreference.SeekBarPreferenceCompat
+            android:defaultValue="25"
+            android:key="pref_work_duration"
+            android:title="@string/pref_work_duration"
+            app:msbp_interval="1"
+            app:msbp_maxValue="60"
+            app:msbp_measurementUnit="@plurals/plural_minutes"
+            app:msbp_minValue="1" />
+
+        <com.pavelsikun.seekbarpreference.SeekBarPreferenceCompat
             android:defaultValue="5"
-            android:dialogMessage="Enter the work duration"
-            android:inputType="number"
             android:key="pref_break_duration"
-            android:persistent="true"
             android:title="@string/pref_break_duration"
-            app:pref_summaryHasText="%s minutes" />
+            app:msbp_interval="1"
+            app:msbp_maxValue="30"
+            app:msbp_measurementUnit="@plurals/plural_minutes"
+            app:msbp_minValue="1" />
 
         <SwitchPreference
             android:defaultValue="true"
@@ -27,23 +28,24 @@
             android:title="@string/pref_enable_long_break">
         </SwitchPreference>
 
-        <AutoSummaryEditTextPreference
+        <com.pavelsikun.seekbarpreference.SeekBarPreferenceCompat
             android:defaultValue="15"
-            android:dialogMessage="Enter the work duration"
-            android:inputType="number"
             android:key="pref_long_break_duration"
-            android:persistent="true"
             android:title="@string/pref_long_break_duration"
-            app:pref_summaryHasText="%s minutes" />
+            app:msbp_interval="1"
+            app:msbp_maxValue="30"
+            app:msbp_measurementUnit="@plurals/plural_minutes"
+            app:msbp_minValue="1" />
 
-        <AutoSummaryEditTextPreference
+        <com.pavelsikun.seekbarpreference.SeekBarPreferenceCompat
             android:defaultValue="4"
-            android:dialogMessage="Enter the work duration"
-            android:inputType="number"
             android:key="pref_sessions_before_long_break"
-            android:persistent="true"
             android:title="@string/pref_sessions_before_long_break"
-            app:pref_summaryHasText="%s sessions" />
+            app:msbp_interval="1"
+            app:msbp_maxValue="8"
+            app:msbp_measurementUnit="@plurals/plural_sessions"
+            app:msbp_minValue="1" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_header_notifications">
@@ -89,7 +91,7 @@
             android:title="@string/pref_fullscreen" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_header_general">
+    <PreferenceCategory android:title="@string/pref_header_during_work_sessions">
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref_disable_sound_and_vibration"

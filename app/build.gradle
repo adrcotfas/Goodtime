@@ -32,12 +32,12 @@ dependencies {
     compile 'android.arch.persistence.room:runtime:1.0.0'
     compile 'android.arch.lifecycle:extensions:1.0.0'
 
+    // Preferences
+    compile project(':MaterialSeekBarPreference')
     compile 'com.android.support:preference-v7:27.0.2'
     compile 'com.android.support:preference-v14:27.0.2'
     compile 'com.takisoft.fix:preference-v7:27.0.2.0'
     compile 'com.takisoft.fix:preference-v7-extras:27.0.2.0'
-
-    compile 'com.pavelsikun:material-seekbar-preference:2.3.0+'
 
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'io.reactivex.rxjava2:rxjava:2.1.7'
