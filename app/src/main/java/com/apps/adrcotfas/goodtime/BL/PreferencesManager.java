@@ -1,10 +1,8 @@
 package com.apps.adrcotfas.goodtime.BL;
 
-import android.preference.Preference;
-
 import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 
-public class PreferencesManager implements Preference.OnPreferenceChangeListener{
+public class PreferencesManager {
 
     public final static String WORK_DURATION               = "pref_work_duration";
     public final static String BREAK_DURATION              = "pref_break_duration";
@@ -95,10 +93,5 @@ public class PreferencesManager implements Preference.OnPreferenceChangeListener
     public static String getTheme() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getString(THEME, "");
-    }
-
-    @Override
-    public boolean onPreferenceChange(Preference preference, Object o) {
-        return false;
     }
 }
