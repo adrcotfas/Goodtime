@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Class responsible with creating and updating notifications for the foreground {@link TimerService}
  * and triggering notifications for events like finishing a session or updating the remaining time.
- * The notifications are customized according to {@link PreferencesManager}.
+ * The notifications are customized according to {@link PreferenceHelper}.
  */
 public class NotificationManager {
 

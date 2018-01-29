@@ -3,7 +3,7 @@ import android.app.Application;
 import android.support.v7.preference.PreferenceManager;
 
 import java.util.concurrent.TimeUnit;
-import static com.apps.adrcotfas.goodtime.BL.PreferencesManager.*;
+import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.*;
 
 /**
  * Maintains a global state of the app and stores the event bus ({@link EventBus})

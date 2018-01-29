@@ -2,8 +2,9 @@ package com.apps.adrcotfas.goodtime.BL;
 
 import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 
-public class PreferencesManager {
+public class PreferenceHelper {
 
+    public final static String PROFILE                     = "pref_profile";
     public final static String WORK_DURATION               = "pref_work_duration";
     public final static String BREAK_DURATION              = "pref_break_duration";
     public final static String ENABLE_LONG_BREAK           = "pref_enable_long_break";

@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.apps.adrcotfas.goodtime.BL.CurrentSession;
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
-import com.apps.adrcotfas.goodtime.BL.PreferencesManager;
+import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.BL.TimerState;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
@@ -34,8 +34,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.functions.Consumer;
 
-import static com.apps.adrcotfas.goodtime.BL.PreferencesManager.ENABLE_FULLSCREEN;
-import static com.apps.adrcotfas.goodtime.BL.PreferencesManager.WORK_DURATION;
+import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_FULLSCREEN;
+import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
 
 public class TimerActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
@@ -231,7 +231,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     }
 
     private void toggleFullscreenMode() {
-        if (PreferencesManager.isFullscreenEnabled()) {
+        if (PreferenceHelper.isFullscreenEnabled()) {
             if (mFullscreenHelper == null) {
                 mFullscreenHelper = new FullscreenHelper(findViewById(R.id.main), getSupportActionBar());
             }
@@ -251,7 +251,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             case WORK_DURATION:
                 if (GoodtimeApplication.getInstance().getCurrentSession().getTimerState().getValue()
                         == TimerState.INACTIVE) {
-                    updateTime(TimeUnit.MINUTES.toMillis(PreferencesManager.getWorkDuration()));
+                    updateTime(TimeUnit.MINUTES.toMillis(PreferenceHelper.getWorkDuration()));
                 }
                 break;
             default:

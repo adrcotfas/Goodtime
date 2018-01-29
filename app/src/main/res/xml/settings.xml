@@ -4,6 +4,16 @@
 
     <PreferenceCategory android:title="@string/pref_header_general">
 
+        <DropDownPreference
+            android:dialogTitle="Profile"
+            android:key="pref_profile"
+            android:entries="@array/pref_profiles"
+            android:defaultValue="@string/pref_profile_pomodoro"
+            android:entryValues="@array/pref_profiles"
+            android:persistent="false"
+            android:summary="%s"
+            android:title="Profile" />
+
         <com.pavelsikun.seekbarpreference.SeekBarPreferenceCompat
             android:defaultValue="25"
             android:key="pref_work_duration"
@@ -32,6 +42,7 @@
             android:defaultValue="15"
             android:key="pref_long_break_duration"
             android:title="@string/pref_long_break_duration"
+            android:dependency="pref_enable_long_break"
             app:msbp_interval="1"
             app:msbp_maxValue="30"
             app:msbp_measurementUnit="@plurals/plural_minutes"
@@ -41,6 +52,7 @@
             android:defaultValue="4"
             android:key="pref_sessions_before_long_break"
             android:title="@string/pref_sessions_before_long_break"
+            android:dependency="pref_enable_long_break"
             app:msbp_interval="1"
             app:msbp_maxValue="8"
             app:msbp_measurementUnit="@plurals/plural_sessions"
@@ -63,8 +75,9 @@
             android:persistent="true"
             android:ringtoneType="ringtone"
             android:showDefault="true"
-            android:summary="@string/pref_ringtone_summary"
+            android:summary="pref_ringtone_summary"
             android:title="@string/pref_ringtone"
+            android:dependency="pref_enable_ringtone"
             app:pref_showAdd="true"
             app:pref_summaryHasRingtone="%s" />
 
@@ -77,6 +90,7 @@
             android:showDefault="true"
             android:summary="@string/pref_ringtone_summary"
             android:title="@string/pref_ringtone_break"
+            android:dependency="pref_enable_ringtone"
             app:pref_showAdd="true"
             app:pref_summaryHasRingtone="%s" />
 

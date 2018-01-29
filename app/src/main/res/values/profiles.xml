@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_profile_pomodoro">Pomodoro</string>
+    <string name="pref_profile_5217">52/17</string>
+
+    <string-array name="pref_profiles">
+        <item>@string/pref_profile_pomodoro</item>
+        <item>@string/pref_profile_5217</item>
+    </string-array>
+
+</resources>
