@@ -34,7 +34,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.functions.Consumer;
 
+import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_FULLSCREEN;
+import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREEN_ON;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
 
 public class TimerActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
@@ -81,6 +83,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         super.onResume();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.registerOnSharedPreferenceChangeListener(this);
+        toggleKeepScreenOn(PreferenceHelper.isScreenOnEnabled());
     }
 
     @Override
@@ -242,6 +245,14 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         }
     }
 
+    public void toggleKeepScreenOn(boolean enabled) {
+        if (enabled) {
+            getWindow().addFlags(FLAG_KEEP_SCREEN_ON);
+        } else {
+            getWindow().clearFlags(FLAG_KEEP_SCREEN_ON);
+        }
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
@@ -253,6 +264,9 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                         == TimerState.INACTIVE) {
                     updateTime(TimeUnit.MINUTES.toMillis(PreferenceHelper.getWorkDuration()));
                 }
+                break;
+            case ENABLE_SCREEN_ON:
+                toggleKeepScreenOn(PreferenceHelper.isScreenOnEnabled());
                 break;
             default:
                 break;
