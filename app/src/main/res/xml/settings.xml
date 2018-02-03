@@ -67,6 +67,14 @@
             android:key="pref_keep_screen_on"
             android:title="@string/pref_keep_screen_on" />
 
+        <ColorPickerPreference
+            android:defaultValue="#88C440"
+            android:dialogTitle="@string/pref_theme"
+            android:key="pref_theme"
+            android:persistent="false"
+            android:title="Theme"
+            app:pref_size="small" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_header_notifications">
@@ -84,6 +92,7 @@
             android:persistent="true"
             android:ringtoneType="ringtone"
             android:showDefault="true"
+            android:showSilent="false"
             android:summary="pref_ringtone_summary"
             android:title="@string/pref_ringtone"
             android:dependency="pref_enable_ringtone"
@@ -97,16 +106,25 @@
             android:persistent="true"
             android:ringtoneType="ringtone"
             android:showDefault="true"
+            android:showSilent="false"
             android:summary="@string/pref_ringtone_summary"
             android:title="@string/pref_ringtone_break"
             android:dependency="pref_enable_ringtone"
             app:pref_showAdd="true"
             app:pref_summaryHasRingtone="%s" />
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="pref_vibrate"
             android:title="@string/pref_vibrate" />
+
+        <ListPreference
+            android:defaultValue="@string/pref_vibrate_default"
+            android:key="pref_vibrate_pattern"
+            android:dependency="pref_vibrate"
+            android:title="Vibration pattern"
+            android:entries="@array/vibration_pattern_entries"
+            android:entryValues="@array/vibration_pattern_entries" />
 
     </PreferenceCategory>
 
@@ -125,14 +143,6 @@
             android:key="pref_continuous_mode"
             android:summary="@string/pref_continuous_mode_summary"
             android:title="@string/pref_continuous_mode" />
-
-        <ColorPickerPreference
-            android:defaultValue="#88C440"
-            android:dialogTitle="@string/pref_theme"
-            android:key="pref_theme"
-            android:persistent="false"
-            android:title="Theme"
-            app:pref_size="small" />
 
     </PreferenceCategory>
 

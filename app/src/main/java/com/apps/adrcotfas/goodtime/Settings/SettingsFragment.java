@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
 import android.view.LayoutInflater;
@@ -42,6 +43,14 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
             }
         });
 
+        findPreference(PreferenceHelper.PROFILE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                switchProfile((CharSequence) newValue);
+                return true;
+            }
+        });
+
         SwitchPreference enableRingtonePref = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_RINGTONE);
         toggleEnableRingtonePreference(enableRingtonePref.isChecked());
 
@@ -52,13 +61,18 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
                 return true;
             }
         });
-        findPreference(PreferenceHelper.PROFILE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+        SwitchPreference enableVibrationPref = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_VIBRATE);
+        toggleEnableVibratePreference(enableVibrationPref.isChecked());
+
+        enableVibrationPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                switchProfile((CharSequence) newValue);
+                toggleEnableVibratePreference((Boolean) newValue);
                 return true;
             }
         });
+        findPreference(PreferenceHelper.VIBRATE_PATTERN).setSummary(PreferenceHelper.getVibrationPattern());
     }
 
     @Override
@@ -72,6 +86,28 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
         disableSoundCheckbox = (CheckBoxPreference)
                 findPreference(DISABLE_SOUND_AND_VIBRATION);
         setupDisableSoundCheckBox();
+    }
+
+    @Override
+    public void onDisplayPreferenceDialog(Preference preference) {
+        DialogFragment dialogFragment = null;
+        if (preference.getKey().equals("pref_vibrate_pattern"))
+        {
+            dialogFragment = new VibrationPreferenceDialogFragmentCompat();
+            Bundle bundle = new Bundle(1);
+            bundle.putString("key", preference.getKey());
+            dialogFragment.setArguments(bundle);
+        }
+
+        if (dialogFragment != null)
+        {
+            dialogFragment.setTargetFragment(this, 0);
+            dialogFragment.show(this.getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
+        }
+        else
+        {
+            super.onDisplayPreferenceDialog(preference);
+        }
     }
 
     private void updateDisableSoundCheckBoxState(boolean notificationPolicyAccessGranted) {
@@ -162,6 +198,10 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
     private void toggleEnableRingtonePreference(Boolean newValue) {
         findPreference(PreferenceHelper.RINGTONE_WORK).setVisible(newValue);
         findPreference(PreferenceHelper.RINGTONE_BREAK).setVisible(newValue);
+    }
+
+    private void toggleEnableVibratePreference(Boolean newValue) {
+        findPreference(PreferenceHelper.VIBRATE_PATTERN).setVisible(newValue);
     }
 
     private void toggleLongBreakPreference(Boolean newValue) {

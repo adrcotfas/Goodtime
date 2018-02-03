@@ -8,4 +8,16 @@
         <item>@string/pref_profile_5217</item>
     </string-array>
 
+    <string name="pref_vibrate_default">Default</string>
+    <string name="pref_vibrate_sos">SOS</string>
+    <string name="pref_vibrate_heartbeat">Heartbeat</string>
+    <string name="pref_vibrate_jackhammer">Jackhammer</string>
+
+    <string-array name="vibration_pattern_entries">
+        <item>@string/pref_vibrate_default</item>
+        <item>@string/pref_vibrate_sos</item>
+        <item>@string/pref_vibrate_heartbeat</item>
+        <item>@string/pref_vibrate_jackhammer</item>
+    </string-array>
+
 </resources>
