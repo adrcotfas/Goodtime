@@ -68,11 +68,12 @@
             android:title="@string/pref_keep_screen_on" />
 
         <ColorPickerPreference
-            android:defaultValue="#88C440"
+            android:defaultValue="@color/black"
             android:dialogTitle="@string/pref_theme"
             android:key="pref_theme"
             android:persistent="false"
             android:title="Theme"
+            app:pref_colors="@array/themeColors"
             app:pref_size="small" />
 
     </PreferenceCategory>
@@ -87,7 +88,6 @@
 
         <RingtonePreference
             android:defaultValue="content://settings/system/notification_sound"
-            android:dialogTitle="@string/pref_ringtone_dialog"
             android:key="pref_ringtone"
             android:persistent="true"
             android:ringtoneType="ringtone"
@@ -101,7 +101,6 @@
 
         <RingtonePreference
             android:defaultValue="content://settings/system/notification_sound"
-            android:dialogTitle="@string/pref_ringtone_dialog"
             android:key="pref_ringtone_break"
             android:persistent="true"
             android:ringtoneType="ringtone"

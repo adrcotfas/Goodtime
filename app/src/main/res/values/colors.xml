@@ -3,4 +3,19 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="black">#000000</color>
+    <color name="red">#FF0000</color>
+    <color name="orange">#FF7F00</color>
+    <color name="blue">#0000FF</color>
+    <color name="violet">#7F00FF</color>
+
+    <array name="themeColors">
+        <item>@color/black</item>
+        <item>@color/red</item>
+        <item>@color/orange</item>
+        <item>@color/blue</item>
+        <item>@color/violet</item>
+    </array>
+
 </resources>
