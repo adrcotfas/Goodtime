@@ -6,30 +6,14 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="drawerArrowStyle">@style/Theme.MyTheme.DrawerArrowStyle</item>
-        <item name="toolbarStyle">@style/Theme.MyTheme.Toolbar</item>
     </style>
 
-    <style name="Theme.MyTheme.DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
-        <item name="spinBars">true</item>
-        <item name="color">@android:color/white</item>
+    <style name="AppThemeDark" parent="@style/PreferenceFixTheme.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="Theme.MyTheme.Toolbar" parent="@style/Widget.AppCompat.Toolbar">
-        <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="color">@android:color/white</item>
-        <item name="titleTextAppearance">@style/Theme.MyTheme.Toolbar.TextAppearance</item>
-        <item name="subtitleTextAppearance">@style/Theme.MyTheme.Toolbar.TextAppearance.Subtitle
-        </item>
-    </style>
-
-    <style name="Theme.MyTheme.Toolbar.TextAppearance" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="Theme.MyTheme.Toolbar.TextAppearance.Subtitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
-        <item name="android:textColor">@android:color/white</item>
-    </style>
 
 </resources>

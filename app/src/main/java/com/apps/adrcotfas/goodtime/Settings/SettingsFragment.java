@@ -73,6 +73,16 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
             }
         });
         findPreference(PreferenceHelper.VIBRATE_PATTERN).setSummary(PreferenceHelper.getVibrationPattern());
+
+        findPreference(PreferenceHelper.THEME).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if (getActivity() != null){
+                    getActivity().recreate();
+                }
+                return true;
+            }
+        });
     }
 
     @Override

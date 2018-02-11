@@ -9,6 +9,8 @@ import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.widget.Toolbar;
 
 import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
+
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,6 +21,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ThemeHelper.setTheme(this);
         setContentView(R.layout.settings_main);
         ButterKnife.bind(this);
 

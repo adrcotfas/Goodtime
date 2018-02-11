@@ -26,6 +26,7 @@ import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.BL.TimerService;
 import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
+import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +38,7 @@ import io.reactivex.functions.Consumer;
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_FULLSCREEN;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREEN_ON;
+import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.THEME;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
 
 public class TimerActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
@@ -69,6 +71,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ThemeHelper.setTheme(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -267,6 +270,9 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 break;
             case ENABLE_SCREEN_ON:
                 toggleKeepScreenOn(PreferenceHelper.isScreenOnEnabled());
+                break;
+            case THEME:
+                recreate();
                 break;
             default:
                 break;
