@@ -20,14 +20,14 @@ import java.util.concurrent.TimeUnit;
  * and triggering notifications for events like finishing a session or updating the remaining time.
  * The notifications are customized according to {@link PreferenceHelper}.
  */
-public class NotificationManager {
+public class NotificationHelper {
 
-    private static final String TAG = NotificationManager.class.getSimpleName();
+    private static final String TAG = NotificationHelper.class.getSimpleName();
 
     private android.app.NotificationManager mNotificationManager;
     private NotificationCompat.Builder mBuilder;
 
-    public NotificationManager(Context context) {
+    public NotificationHelper(Context context) {
         mNotificationManager = (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(TAG, "Goodtime notifications",

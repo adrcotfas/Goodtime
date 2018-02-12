@@ -15,15 +15,15 @@ public class TimerService extends Service {
 
     private static final String TAG = TimerService.class.getSimpleName();
 
-    private CurrentSessionManager mCurrentSessionManager;
-    private NotificationManager mAppNotificationManager;
+    private CurrentSessionManager mSessionManager;
+    private NotificationHelper mNotificationHelper;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        mAppNotificationManager = new NotificationManager(getApplicationContext());
-        mCurrentSessionManager = GoodtimeApplication.getInstance().getCurrentSessionManager();
+        mNotificationHelper = new NotificationHelper(getApplicationContext());
+        mSessionManager = GoodtimeApplication.getInstance().getCurrentSessionManager();
 
         setupEvents();
     }
@@ -65,7 +65,7 @@ public class TimerService extends Service {
                 } else if (o instanceof Constants.UpdateTimerProgressEvent) {
                     updateNotificationProgress();
                 } else if (o instanceof Constants.ClearNotificationEvent) {
-                    mAppNotificationManager.clearNotification();
+                    mNotificationHelper.clearNotification();
                 }
             }
         });
@@ -73,19 +73,19 @@ public class TimerService extends Service {
 
     private void onStartEvent(SessionType sessionType) {
         GoodtimeApplication.getInstance().getBus().send(new Constants.ClearFinishDialogEvent());
-        mCurrentSessionManager.startTimer(sessionType);
-        startForeground(Constants.NOTIFICATION_ID, mAppNotificationManager.createNotification(
-                getApplicationContext(), mCurrentSessionManager.getCurrentSession()));
+        mSessionManager.startTimer(sessionType);
+        startForeground(Constants.NOTIFICATION_ID, mNotificationHelper.createNotification(
+                getApplicationContext(), mSessionManager.getCurrentSession()));
     }
 
     private void onToggleEvent() {
-        mCurrentSessionManager.toggleTimer();
-        startForeground(Constants.NOTIFICATION_ID, mAppNotificationManager.createNotification(
-                getApplicationContext(), mCurrentSessionManager.getCurrentSession()));
+        mSessionManager.toggleTimer();
+        startForeground(Constants.NOTIFICATION_ID, mNotificationHelper.createNotification(
+                getApplicationContext(), mSessionManager.getCurrentSession()));
     }
 
     private void onStopEvent() {
-        mCurrentSessionManager.stopTimer();
+        mSessionManager.stopTimer();
         stopForeground(true);
         stopSelf();
         // TODO: store what was done of the session to ROOM
@@ -95,7 +95,7 @@ public class TimerService extends Service {
         //TODO: in continuous mode, do not stop the service
         stopForeground(true);
         stopSelf();
-        mAppNotificationManager.notifyFinished(getApplicationContext(), sessionType);
+        mNotificationHelper.notifyFinished(getApplicationContext(), sessionType);
         // TODO: store session to ROOM
     }
 
@@ -105,8 +105,8 @@ public class TimerService extends Service {
     }
 
     private void updateNotificationProgress() {
-        mAppNotificationManager.updateNotificationProgress(
-                mCurrentSessionManager.getCurrentSession().getDuration().getValue());
+        mNotificationHelper.updateNotificationProgress(
+                mSessionManager.getCurrentSession().getDuration().getValue());
     }
 
     @Override
