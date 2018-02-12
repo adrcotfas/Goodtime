@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+
+    <color name="goodtime_teal">#ff80cbc4</color>
+    <color name="goodtime_light_blue">#90CAF9</color>
+    <color name="goodtime_blue">#03A9F4</color>
 
     <color name="black">#000000</color>
-    <color name="red">#FF0000</color>
-    <color name="orange">#FF7F00</color>
-    <color name="blue">#0000FF</color>
-    <color name="violet">#7F00FF</color>
+    <color name="dark_grey">#212121</color>
 
     <array name="themeColors">
         <item>@color/black</item>
-        <item>@color/red</item>
-        <item>@color/orange</item>
-        <item>@color/blue</item>
-        <item>@color/violet</item>
+        <item>@color/dark_grey</item>
     </array>
 
 </resources>

@@ -1,18 +1,14 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="@style/PreferenceFixTheme.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="Classic" parent="@style/PreferenceFixTheme.NoActionBar">
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryDark">@color/black</item>
+        <item name="colorAccent">@color/goodtime_teal</item>
+        <item name="android:windowBackground">@color/black</item>
     </style>
 
-    <style name="AppThemeDark" parent="@style/PreferenceFixTheme.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="MaterialDark" parent="@style/PreferenceFixTheme.NoActionBar">
+        <item name="colorPrimaryDark">@color/dark_grey</item>
     </style>
 
 

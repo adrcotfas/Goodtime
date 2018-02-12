@@ -8,14 +8,13 @@ import com.apps.adrcotfas.goodtime.R;
 
 public class ThemeHelper {
     public static void setTheme(AppCompatActivity activity) {
-        int theme = R.style.AppTheme;
         switch (PreferenceHelper.getTheme()) {
             case Color.BLACK:
-                theme = R.style.AppThemeDark;
+                activity.setTheme(R.style.Classic);
                 break;
             default:
+                activity.setTheme(R.style.MaterialDark);
                 break;
         }
-        activity.setTheme(theme);
     }
 }
