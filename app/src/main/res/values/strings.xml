@@ -23,8 +23,8 @@
     <string name="pref_vibrate">"Vibration"</string>
     <string name="pref_theme">"Theme"</string>
     <string name="pref_session_type_icon" translatable="false">"Session type icon"</string>
-    <string name="pref_session_type_icon_summary" translatable="false">"Display an icon representing work or break."</string>
-    <string name="pref_continuous_mode_summary" translatable="false">"Continue sessions without user interaction."</string>
+    <string name="pref_session_type_icon_summary" translatable="false">"Display an icon representing work or break"</string>
+    <string name="pref_continuous_mode_summary" translatable="false">"Continue sessions without user interaction"</string>
     <string name="pref_header_during_work_sessions">During work sessions</string>
     <string name="pref_ringtone_dialog">Ringtone</string>
     <string name="pref_enable_ringtone">Enable notification sound</string>
