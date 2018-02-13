@@ -94,7 +94,8 @@ public class NotificationHelper {
     }
 
     public void updateNotificationProgress(Long duration) {
-        mBuilder.setContentText(buildProgressText(duration));
+        mBuilder.setOnlyAlertOnce(true)
+                .setContentText(buildProgressText(duration));
         mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
     }
 
@@ -104,13 +105,12 @@ public class NotificationHelper {
 
     private CharSequence buildProgressText(Long duration) {
         CharSequence output;
-        long minutesLeft = TimeUnit.MILLISECONDS.toMinutes(duration);
+        long minutesLeft = TimeUnit.MILLISECONDS.toMinutes(duration + 500);
         if (minutesLeft > 1) {
+            //TODO: extract to strings
             output = minutesLeft + " minutes left";
-        } else if (minutesLeft == 1){
-            output = "1 minute left";
         } else {
-            output = "prepare to finish";
+            output = "1 minute left";
         }
 
         return output;
