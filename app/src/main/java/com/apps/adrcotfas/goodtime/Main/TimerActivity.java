@@ -10,7 +10,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -173,8 +172,10 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         }
     }
 
+    //TODO: extract strings
     public void showFinishDialog(SessionType sessionType) {
 
+        Log.i(TAG, "Showing the finish dialog.");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         if (sessionType == SessionType.WORK) {
             builder.setTitle("Session complete")
@@ -231,6 +232,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         }
 
         mDialog = builder.create();
+        mDialog.setCanceledOnTouchOutside(true);
         mDialog.show();
     }
 

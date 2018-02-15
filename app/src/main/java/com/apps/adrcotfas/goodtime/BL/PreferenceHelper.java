@@ -1,7 +1,5 @@
 package com.apps.adrcotfas.goodtime.BL;
 
-import android.graphics.Color;
-
 import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class PreferenceHelper {
@@ -101,6 +99,6 @@ public class PreferenceHelper {
 
     public static int getTheme() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getInt(THEME, Color.BLACK);
+                .getInt(THEME, 0);
     }
 }

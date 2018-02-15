@@ -13,7 +13,7 @@ class FullscreenHelper {
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
     private View mContentView;
-    private ActionBar mActionBar;
+    //TODO private ActionBar mActionBar;
 
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
@@ -31,7 +31,7 @@ class FullscreenHelper {
         @Override
         public void run() {
             // Delayed display of UI elements
-            mActionBar.show();
+            //TODO: mActionBar.show();
         }
     };
     private final Runnable mHideRunnable = new Runnable() {
@@ -45,7 +45,7 @@ class FullscreenHelper {
 
         mVisible = true;
         mContentView = contentView;
-        mActionBar = actionBar;
+        //TODO: mActionBar = actionBar;
 
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,9 +76,10 @@ class FullscreenHelper {
 
     public void hide() {
         // Hide UI first
-        if (mActionBar != null) {
-            mActionBar.hide();
-        }
+        //TODO:
+//        if (mActionBar != null) {
+//            mActionBar.hide();
+//        }
         mVisible = false;
 
         // Schedule a runnable to remove the status and navigation bar after a delay
