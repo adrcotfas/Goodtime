@@ -1,0 +1,24 @@
+<resources>
+    <style name="Classic" parent="@style/PreferenceFixTheme.NoActionBar">
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryDark">@color/black</item>
+        <item name="colorAccent">@color/classicAccent</item>
+        <item name="android:windowBackground">@color/black</item>
+    </style>
+
+    <style name="Dark" parent="@style/PreferenceFixTheme.NoActionBar">
+        <item name="colorPrimary">@color/darkPrimary</item>
+        <item name="colorPrimaryDark">@color/darkPrimaryDark</item>
+        <item name="colorAccent">@color/darkAccent</item>
+        <item name="android:windowBackground">@color/darkBackground</item>
+    </style>
+
+    <style name="Light" parent="@style/PreferenceFixTheme.Light.NoActionBar">
+        <item name="colorPrimary">@color/lightPrimary</item>
+        <item name="colorPrimaryDark">@color/lightPrimaryDark</item>
+        <item name="colorAccent">@color/lightPrimary</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+
+
+</resources>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="classicAccent">#80CBC4</color>
+    <color name="darkPrimary">#111111</color>
+    <color name="darkPrimaryDark">#000000</color>
+    <color name="darkAccent">#80CBC4</color>
+    <color name="darkBackground">#212121</color>
+    <color name="lightPrimary">#009688</color>
+    <color name="lightPrimaryDark">#00796B</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+
+    <color name="pref_classic">#0f0f0f</color>
+    <color name="pref_dark">#252525</color>
+    <color name="pref_light">#e0f2f1</color>
+
+    <array name="themeColors">
+        <item>@color/pref_classic</item>
+        <item>@color/pref_dark</item>
+        <item>@color/pref_light</item>
+    </array>
+
+</resources>
