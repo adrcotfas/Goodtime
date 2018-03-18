@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="@string/pref_header_general">
+
+        <ListPreference
+            android:dialogTitle="Profile"
+            android:key="pref_profile"
+            android:entries="@array/pref_profiles"
+            android:defaultValue="@string/pref_profile_pomodoro"
+            android:entryValues="@array/pref_profiles"
+            android:persistent="false"
+            android:summary="%s"
+            android:title="Profile" />
+
+        <com.pavelsikun.seekbarpreference.SeekBarPreferenceCompat
+            android:defaultValue="25"
+            android:key="pref_work_duration"
+            android:title="@string/pref_work_duration"
+            app:msbp_interval="1"
+            app:msbp_maxValue="120"
+            app:msbp_measurementUnit="@plurals/plural_minutes"
+            app:msbp_minValue="1" />
+
+        <com.pavelsikun.seekbarpreference.SeekBarPreferenceCompat
+            android:defaultValue="5"
+            android:key="pref_break_duration"
+            android:title="@string/pref_break_duration"
+            app:msbp_interval="1"
+            app:msbp_maxValue="30"
+            app:msbp_measurementUnit="@plurals/plural_minutes"
+            app:msbp_minValue="1" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_enable_long_break"
+            android:title="@string/pref_enable_long_break">
+        </SwitchPreference>
+
+        <com.pavelsikun.seekbarpreference.SeekBarPreferenceCompat
+            android:defaultValue="15"
+            android:key="pref_long_break_duration"
+            android:title="@string/pref_long_break_duration"
+            android:dependency="pref_enable_long_break"
+            app:msbp_interval="1"
+            app:msbp_maxValue="30"
+            app:msbp_measurementUnit="@plurals/plural_minutes"
+            app:msbp_minValue="1" />
+
+        <com.pavelsikun.seekbarpreference.SeekBarPreferenceCompat
+            android:defaultValue="4"
+            android:key="pref_sessions_before_long_break"
+            android:title="@string/pref_sessions_before_long_break"
+            android:dependency="pref_enable_long_break"
+            app:msbp_interval="1"
+            app:msbp_maxValue="8"
+            app:msbp_measurementUnit="@plurals/plural_sessions"
+            app:msbp_minValue="1" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_fullscreen"
+            android:title="@string/pref_fullscreen" />
+
+        <ColorPickerPreference
+            android:defaultValue="@color/black"
+            android:dialogTitle="@string/pref_theme"
+            android:persistent="true"
+            android:key="pref_theme"
+            android:title="Theme"
+            app:pref_colors="@array/themeColors"
+            app:pref_size="small" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_header_notifications">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_enable_ringtone"
+            android:title="@string/pref_enable_ringtone">
+        </SwitchPreference>
+
+        <RingtonePreference
+            android:defaultValue="content://settings/system/notification_sound"
+            android:key="pref_ringtone"
+            android:persistent="true"
+            android:ringtoneType="ringtone"
+            android:showDefault="true"
+            android:showSilent="false"
+            android:summary="pref_ringtone_summary"
+            android:title="@string/pref_ringtone"
+            android:dependency="pref_enable_ringtone"
+            app:pref_showAdd="true"
+            app:pref_summaryHasRingtone="%s" />
+
+        <RingtonePreference
+            android:defaultValue="content://settings/system/notification_sound"
+            android:key="pref_ringtone_break"
+            android:persistent="true"
+            android:ringtoneType="ringtone"
+            android:showDefault="true"
+            android:showSilent="false"
+            android:summary="@string/pref_ringtone_summary"
+            android:title="@string/pref_ringtone_break"
+            android:dependency="pref_enable_ringtone"
+            app:pref_showAdd="true"
+            app:pref_summaryHasRingtone="%s" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_vibrate"
+            android:title="@string/pref_vibrate" />
+
+        <ListPreference
+            android:defaultValue="@string/pref_vibrate_default"
+            android:key="pref_vibrate_pattern"
+            android:dependency="pref_vibrate"
+            android:title="Vibration pattern"
+            android:entries="@array/vibration_pattern_entries"
+            android:entryValues="@array/vibration_pattern_entries" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_header_during_work_sessions">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_disable_sound_and_vibration"
+            android:title="@string/pref_disable_sound_and_vibration" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_disable_wifi"
+            android:title="@string/pref_disable_wifi" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_keep_screen_on"
+            android:title="@string/pref_keep_screen_on" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_continuous_mode"
+            android:summary="@string/pref_continuous_mode_summary"
+            android:title="@string/pref_continuous_mode" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,1 +1,2 @@
-include ':app'
+include ':app', ':MaterialSeekBarPreference'
+project(':MaterialSeekBarPreference').projectDir = new File('app/libs/MaterialSeekBarPreference')
