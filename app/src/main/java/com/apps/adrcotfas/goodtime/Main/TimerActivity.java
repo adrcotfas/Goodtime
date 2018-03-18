@@ -36,7 +36,6 @@ import butterknife.OnClick;
 import io.reactivex.functions.Consumer;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
-import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_FULLSCREEN;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREEN_ON;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.THEME;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
@@ -80,7 +79,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         getSupportActionBar().setTitle(null);
 
         setupEvents();
-        toggleFullscreenMode();
     }
 
     @Override
@@ -89,6 +87,8 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.registerOnSharedPreferenceChangeListener(this);
         toggleKeepScreenOn(PreferenceHelper.isScreenOnEnabled());
+
+        toggleFullscreenMode();
     }
 
     @Override
@@ -249,6 +249,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         } else {
             if (mFullscreenHelper != null) {
                 mFullscreenHelper.disable();
+                mFullscreenHelper = null;
             }
         }
     }
@@ -264,9 +265,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
-            case ENABLE_FULLSCREEN:
-                toggleFullscreenMode();
-                break;
             case WORK_DURATION:
                 if (GoodtimeApplication.getInstance().getCurrentSession().getTimerState().getValue()
                         == TimerState.INACTIVE) {
