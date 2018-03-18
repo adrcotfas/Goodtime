@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -50,6 +51,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
     @BindView(R.id.timeLabel) TextView mTimeLabel;
     @BindView(R.id.stopButton) Button mStopButton;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
     @OnClick(R.id.timeLabel)
     public void onStartButtonClick() {
         start(SessionType.WORK);
@@ -73,6 +75,9 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         ThemeHelper.setTheme(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle(null);
 
         setupEvents();
         toggleFullscreenMode();

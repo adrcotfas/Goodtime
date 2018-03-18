@@ -7,6 +7,10 @@
     android:fitsSystemWindows="true"
     tools:context="com.apps.adrcotfas.goodtime.Main.TimerActivity">
 
+    <include
+        layout="@layout/toolbar">
+    </include>
+
     <View
         android:id="@+id/main"
         android:layout_height="match_parent"
