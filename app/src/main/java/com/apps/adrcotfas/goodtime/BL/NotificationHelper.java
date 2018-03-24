@@ -2,9 +2,11 @@ package com.apps.adrcotfas.goodtime.BL;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -31,20 +33,24 @@ public class NotificationHelper {
         mNotificationManager = (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(TAG, "Goodtime notifications",
-                    android.app.NotificationManager.IMPORTANCE_DEFAULT);
+                    NotificationManager.IMPORTANCE_HIGH);
             notificationChannel.setBypassDnd(true);
+
+            notificationChannel.setImportance(NotificationManager.IMPORTANCE_HIGH);
             mNotificationManager.createNotificationChannel(notificationChannel);
             mBuilder = new NotificationCompat.Builder(context, notificationChannel.getId());
         } else {
             mBuilder = new NotificationCompat.Builder(context);
         }
+        mBuilder = new NotificationCompat.Builder(context);
     }
 
     public Notification createNotification(Context context, CurrentSession currentSession) {
-
+        Log.v(TAG, "createNotification");
         mBuilder.mActions.clear();
-        mBuilder.addAction(buildStopAction(context));
-        mBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+        mBuilder.addAction(buildStopAction(context))
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setSound(null);
 
         if (currentSession.getSessionType().getValue() == SessionType.WORK) {
             if (currentSession.getTimerState().getValue() == TimerState.PAUSED) {
@@ -71,26 +77,25 @@ public class NotificationHelper {
     }
 
     public void notifyFinished(Context context, SessionType sessionType) {
-
+        Log.v(TAG, "notifyFinished");
         mBuilder.mActions.clear();
-        mBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+        mBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setAutoCancel(true)
+                .setOngoing(false);
         if (sessionType == SessionType.WORK) {
             mBuilder.setContentTitle("Work session finished")
                     .setContentText("Continue?")
+                    .setSound(Uri.parse(PreferenceHelper.getSoundWork()))
                     .addAction(buildStartBreakAction(context))
                     .addAction(buildSkipBreakAction(context));
         } else {
             mBuilder.setContentTitle("Break finished")
                     .setContentText("Continue?")
+                    .setSound(Uri.parse(PreferenceHelper.getSoundBreak()))
                     .addAction(buildStartWorkAction(context));
         }
-
-        //TODO: set sound according to preferences
-        Notification finishedNotification = mBuilder
-                .setOngoing(false)
-                .build();
-
-        mNotificationManager.notify(Constants.NOTIFICATION_ID, finishedNotification);
+        mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
     }
 
     public void updateNotificationProgress(Long duration) {
