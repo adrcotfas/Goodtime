@@ -8,7 +8,7 @@ public class EventBus {
     public EventBus() {
     }
 
-    private PublishSubject<Object> subject = PublishSubject.create();
+    private final PublishSubject<Object> subject = PublishSubject.create();
 
     /**
      * Pass any event down to event listeners.

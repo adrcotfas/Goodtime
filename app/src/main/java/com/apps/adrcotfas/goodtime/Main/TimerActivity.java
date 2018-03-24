@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
@@ -47,6 +48,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     private final CurrentSession mCurrentSession = GoodtimeApplication.getInstance().getCurrentSession();
     private AlertDialog mDialog;
     private FullscreenHelper mFullscreenHelper;
+    private Disposable mEventSubscription;
 
     @BindView(R.id.timeLabel) TextView mTimeLabel;
     @BindView(R.id.stopButton) Button mStopButton;
@@ -95,6 +97,11 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     protected void onDestroy() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.unregisterOnSharedPreferenceChangeListener(this);
+
+        if (mEventSubscription != null && !mEventSubscription.isDisposed()) {
+            mEventSubscription.dispose();
+        }
+
         super.onDestroy();
     }
 
@@ -125,7 +132,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             }
         });
 
-        GoodtimeApplication.getInstance().getBus().getEvents().subscribe(new Consumer<Object>() {
+        mEventSubscription = GoodtimeApplication.getInstance().getBus().getEvents().subscribe(new Consumer<Object>() {
             @Override
             public void accept(Object o) throws Exception {
                 if (o instanceof Constants.FinishWorkEvent) {
