@@ -29,17 +29,12 @@ public class CurrentSessionManager {
     public void startTimer(SessionType sessionType) {
         // TODO: set the duration according to the settings. Also include long break
         mCurrentSession.setTimerState(TimerState.ACTIVE);
-        if (sessionType == SessionType.WORK) {
-            long workDuration = TimeUnit.MINUTES.toMillis(PreferenceHelper.getWorkDuration());
-            mCurrentSession.setDuration(workDuration);
-            mCurrentSession.setSessionType(SessionType.WORK);
-            mTimer = new AppCountDownTimer(workDuration);
-        } else {
-            long breakDuration = TimeUnit.MINUTES.toMillis(PreferenceHelper.getBreakDuration());
-            mCurrentSession.setDuration(breakDuration);
-            mCurrentSession.setSessionType(SessionType.BREAK);
-            mTimer = new AppCountDownTimer(breakDuration);
-        }
+        mCurrentSession.setSessionType(sessionType);
+
+        // TODO modify to minutes
+        long duration = TimeUnit.SECONDS.toMillis(PreferenceHelper.getSessionDuration(sessionType));
+        mCurrentSession.setDuration(duration);
+        mTimer = new AppCountDownTimer(duration);
         mTimer.start();
     }
 
@@ -63,7 +58,7 @@ public class CurrentSessionManager {
     public void stopTimer() {
         mTimer.cancel();
         mCurrentSession.setTimerState(TimerState.INACTIVE);
-        long workDuration = TimeUnit.MINUTES.toMillis(PreferenceHelper.getWorkDuration());
+        long workDuration = TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK));
         mCurrentSession.setDuration(workDuration);
     }
 
@@ -99,7 +94,7 @@ public class CurrentSessionManager {
         @Override
         public void onFinish() {
             Log.v(TAG, "is finished.");
-            long workDuration = TimeUnit.MINUTES.toMillis(PreferenceHelper.getWorkDuration());
+            long workDuration = TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK));
             mCurrentSession.setDuration(workDuration);
             mCurrentSession.setTimerState(TimerState.INACTIVE);
             mRemaining = 0;

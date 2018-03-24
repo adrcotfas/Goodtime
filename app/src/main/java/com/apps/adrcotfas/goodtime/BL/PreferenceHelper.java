@@ -22,14 +22,17 @@ public class PreferenceHelper {
     public final static String ENABLE_CONTINUOUS_MODE      = "pref_continuous_mode";
     public final static String THEME                       = "pref_theme";
 
-    public static long getWorkDuration() {
-        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getInt(WORK_DURATION, 25);
-    }
+    public final static String SOUND_WORK                  = "pref_ringtone";
+    public final static String SOUND_BREAK                 = "pref_ringtone_break";
 
-    public static long getBreakDuration() {
-        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getInt(BREAK_DURATION, 5);
+    public static long getSessionDuration(SessionType sessionType) {
+        if (sessionType == SessionType.WORK) {
+            return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                    .getInt(WORK_DURATION, 25);
+        } else {
+            return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                    .getInt(BREAK_DURATION, 5);
+        }
     }
 
     public static boolean isLongBreakEnabled() {
@@ -100,5 +103,13 @@ public class PreferenceHelper {
     public static int getTheme() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getInt(THEME, 0);
+    }
+
+    public static String getSoundWork() {
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getString(SOUND_WORK, "");
+    }
+
+    public static String getSoundBreak() {
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getString(SOUND_BREAK, "");
     }
 }

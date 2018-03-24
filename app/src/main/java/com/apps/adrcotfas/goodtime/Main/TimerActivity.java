@@ -275,7 +275,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             case WORK_DURATION:
                 if (GoodtimeApplication.getInstance().getCurrentSession().getTimerState().getValue()
                         == TimerState.INACTIVE) {
-                    updateTime(TimeUnit.MINUTES.toMillis(PreferenceHelper.getWorkDuration()));
+                    updateTime(TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)));
                 }
                 break;
             case ENABLE_SCREEN_ON:
