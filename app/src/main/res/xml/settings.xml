@@ -10,7 +10,7 @@
             android:entries="@array/pref_profiles"
             android:defaultValue="@string/pref_profile_pomodoro"
             android:entryValues="@array/pref_profiles"
-            android:persistent="false"
+            android:persistent="true"
             android:summary="%s"
             android:title="Profile" />
 
