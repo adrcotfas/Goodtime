@@ -112,7 +112,6 @@ public class TimerService extends Service {
         // TODO: store session to ROOM
         // TODO: in continuous mode, do not stop the service
         stopForeground(true);
-        stopSelf();
         mNotificationHelper.notifyFinished(getApplicationContext(), sessionType);
     }
 
