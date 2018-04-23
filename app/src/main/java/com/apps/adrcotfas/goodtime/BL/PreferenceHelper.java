@@ -14,7 +14,6 @@ public class PreferenceHelper {
     public final static String RINGTONE_WORK               = "pref_ringtone";
     public final static String RINGTONE_BREAK              = "pref_ringtone_break";
     public final static String ENABLE_VIBRATE              = "pref_vibrate";
-    public final static String VIBRATE_PATTERN             = "pref_vibrate_pattern";
     public final static String ENABLE_FULLSCREEN           = "pref_fullscreen";
     public final static String DISABLE_SOUND_AND_VIBRATION = "pref_disable_sound_and_vibration";
     public final static String DISABLE_WIFI                = "pref_disable_wifi";
@@ -68,11 +67,6 @@ public class PreferenceHelper {
     public static boolean isVibrationEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(ENABLE_VIBRATE, true);
-    }
-
-    public static String getVibrationPattern() {
-        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getString(VIBRATE_PATTERN, "");
     }
 
     public static boolean isFullscreenEnabled() {

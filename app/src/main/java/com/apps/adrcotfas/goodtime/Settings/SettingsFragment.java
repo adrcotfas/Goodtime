@@ -62,18 +62,6 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
             }
         });
 
-        SwitchPreference enableVibrationPref = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_VIBRATE);
-        toggleEnableVibratePreference(enableVibrationPref.isChecked());
-
-        enableVibrationPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                toggleEnableVibratePreference((Boolean) newValue);
-                return true;
-            }
-        });
-        findPreference(PreferenceHelper.VIBRATE_PATTERN).setSummary(PreferenceHelper.getVibrationPattern());
-
         findPreference(PreferenceHelper.THEME).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -96,28 +84,6 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
         disableSoundCheckbox = (CheckBoxPreference)
                 findPreference(DISABLE_SOUND_AND_VIBRATION);
         setupDisableSoundCheckBox();
-    }
-
-    @Override
-    public void onDisplayPreferenceDialog(Preference preference) {
-        DialogFragment dialogFragment = null;
-        if (preference.getKey().equals("pref_vibrate_pattern"))
-        {
-            dialogFragment = new VibrationPreferenceDialogFragmentCompat();
-            Bundle bundle = new Bundle(1);
-            bundle.putString("key", preference.getKey());
-            dialogFragment.setArguments(bundle);
-        }
-
-        if (dialogFragment != null)
-        {
-            dialogFragment.setTargetFragment(this, 0);
-            dialogFragment.show(this.getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
-        }
-        else
-        {
-            super.onDisplayPreferenceDialog(preference);
-        }
     }
 
     private void updateDisableSoundCheckBoxState(boolean notificationPolicyAccessGranted) {
@@ -208,10 +174,6 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
     private void toggleEnableRingtonePreference(Boolean newValue) {
         findPreference(PreferenceHelper.RINGTONE_WORK).setVisible(newValue);
         findPreference(PreferenceHelper.RINGTONE_BREAK).setVisible(newValue);
-    }
-
-    private void toggleEnableVibratePreference(Boolean newValue) {
-        findPreference(PreferenceHelper.VIBRATE_PATTERN).setVisible(newValue);
     }
 
     private void toggleLongBreakPreference(Boolean newValue) {

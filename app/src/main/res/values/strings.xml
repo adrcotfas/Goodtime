@@ -27,7 +27,7 @@
     <string name="pref_continuous_mode_summary" translatable="false">"Continue sessions without user interaction"</string>
     <string name="pref_header_during_work_sessions">During work sessions</string>
     <string name="pref_ringtone_dialog">Ringtone</string>
-    <string name="pref_enable_ringtone">Enable notification sound</string>
+    <string name="pref_enable_ringtone">Notification sound</string>
     <string name="pref_ringtone_break">Notification sound for break</string>
 
     <plurals name="plural_minutes" >

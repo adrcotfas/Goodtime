@@ -113,14 +113,6 @@
             android:key="pref_vibrate"
             android:title="@string/pref_vibrate" />
 
-        <ListPreference
-            android:defaultValue="@string/pref_vibrate_default"
-            android:key="pref_vibrate_pattern"
-            android:dependency="pref_vibrate"
-            android:title="Vibration pattern"
-            android:entries="@array/vibration_pattern_entries"
-            android:entryValues="@array/vibration_pattern_entries" />
-
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_header_during_work_sessions">
