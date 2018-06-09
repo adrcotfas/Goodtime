@@ -41,7 +41,10 @@
                 android:value=".Main.TimerActivity" />
         </activity>
 
-        <service android:name="com.apps.adrcotfas.goodtime.BL.TimerService" />
+        <service
+            android:name="com.apps.adrcotfas.goodtime.BL.TimerService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>
