@@ -9,13 +9,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.apps.adrcotfas.goodtime.BL.NotificationHelper;
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.Constants;
@@ -24,10 +24,9 @@ import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers;
 
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.DISABLE_SOUND_AND_VIBRATION;
 
-public class SettingsFragment extends PreferenceFragmentCompatDividers implements ActivityCompat.OnRequestPermissionsResultCallback{
+public class SettingsFragment extends PreferenceFragmentCompatDividers implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     CheckBoxPreference disableSoundCheckbox;
-
 
     @Override
     public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
@@ -51,21 +50,49 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
             }
         });
 
+        Preference notificationChannelsPref = findPreference(PreferenceHelper.NOTIFICATION_CHANNELS);
         SwitchPreference enableRingtonePref = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_RINGTONE);
-        toggleEnableRingtonePreference(enableRingtonePref.isChecked());
+        SwitchPreference enableVibrationPref = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_VIBRATE);
 
-        enableRingtonePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                toggleEnableRingtonePreference((Boolean) newValue);
-                return true;
-            }
-        });
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
+            enableVibrationPref.setVisible(true);
+            enableRingtonePref.setVisible(true);
+            toggleEnableRingtonePreference(enableRingtonePref.isChecked());
+            enableRingtonePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    toggleEnableRingtonePreference((Boolean) newValue);
+                    return true;
+                }
+            });
+            notificationChannelsPref.setVisible(false);
+        } else {
+            enableRingtonePref.setVisible(false);
+            enableVibrationPref.setVisible(false);
+            toggleEnableRingtonePreference(false);
+            notificationChannelsPref.setVisible(true);
+            notificationChannelsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent();
+                    intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                    intent.putExtra("android.provider.extra.CHANNEL_ID", NotificationHelper.IN_PROGRESS_CHANNEL_ID);
+                    intent.putExtra("android.provider.extra.APP_PACKAGE", getContext().getPackageName());
+                    startActivity(intent);
+
+//                    Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+//                    intent.putExtra(Settings.EXTRA_CHANNEL_ID, NotificationHelper.IN_PROGRESS_CHANNEL_ID);
+//                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, getContext().getPackageName());
+//                    startActivity(intent);
+                    return true;
+                }
+            });
+        }
 
         findPreference(PreferenceHelper.THEME).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (getActivity() != null){
+                if (getActivity() != null) {
                     getActivity().recreate();
                 }
                 return true;
@@ -124,7 +151,7 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    private boolean isNotificationPolicyAccessGranted()  {
+    private boolean isNotificationPolicyAccessGranted() {
         NotificationManager notificationManager = (NotificationManager)
                 getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
         return notificationManager.isNotificationPolicyAccessGranted();

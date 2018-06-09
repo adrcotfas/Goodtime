@@ -29,6 +29,7 @@
     <string name="pref_ringtone_dialog">Ringtone</string>
     <string name="pref_enable_ringtone">Notification sound</string>
     <string name="pref_ringtone_break">Notification sound for break</string>
+    <string name="pref_notification_channels">Notification Settings</string>
 
     <plurals name="plural_minutes" >
         <item quantity="one">%d minute</item>
