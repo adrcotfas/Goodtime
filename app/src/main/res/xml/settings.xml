@@ -93,6 +93,12 @@
             android:title="@string/pref_enable_ringtone">
         </SwitchPreference>
 
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_ringtone_insistent"
+            android:title="@string/pref_ringtone_insistent"
+            android:summary="@string/pref_ringtone_insistent_summary"/>
+
         <RingtonePreference
             android:defaultValue="content://settings/system/notification_sound"
             android:key="pref_ringtone"
