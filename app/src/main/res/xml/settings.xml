@@ -82,6 +82,11 @@
 
     <PreferenceCategory android:title="@string/pref_header_notifications">
 
+        <Preference
+            android:key="pref_notification_channels"
+            android:title="@string/pref_notification_channels">
+        </Preference>
+
         <SwitchPreference
             android:defaultValue="true"
             android:key="pref_enable_ringtone"
