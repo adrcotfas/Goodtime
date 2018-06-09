@@ -2,15 +2,15 @@ package com.apps.adrcotfas.goodtime.BL;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.IBinder;
-import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+
+import static com.apps.adrcotfas.goodtime.BL.NotificationHelper.IN_PROGRESS_NOTIFICATION_ID;
 
 /**
  * Class representing the foreground service which triggers the countdown timer and handles events.
@@ -89,14 +89,15 @@ public class TimerService extends Service {
     private void onStartEvent(SessionType sessionType) {
         GoodtimeApplication.getInstance().getBus().send(new Constants.ClearFinishDialogEvent());
         mSessionManager.startTimer(sessionType);
-        startForeground(Constants.NOTIFICATION_ID, mNotificationHelper.createNotification(
-                getApplicationContext(), mSessionManager.getCurrentSession()));
+        mNotificationHelper.clearNotification();
+        startForeground(IN_PROGRESS_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
+                mSessionManager.getCurrentSession()).build());
     }
 
     private void onToggleEvent() {
         mSessionManager.toggleTimer();
-        startForeground(Constants.NOTIFICATION_ID, mNotificationHelper.createNotification(
-                getApplicationContext(), mSessionManager.getCurrentSession()));
+        startForeground(IN_PROGRESS_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
+                mSessionManager.getCurrentSession()).build());
     }
 
     private void onStopEvent() {

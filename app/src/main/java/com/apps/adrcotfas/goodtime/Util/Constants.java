@@ -18,8 +18,6 @@ public class Constants {
         String STOP        = "goodtime.action.stop";
     }
 
-    public static int NOTIFICATION_ID = 42;
-
     public static class FinishWorkEvent {}
     public static class FinishBreakEvent {}
     public static class UpdateTimerProgressEvent {}

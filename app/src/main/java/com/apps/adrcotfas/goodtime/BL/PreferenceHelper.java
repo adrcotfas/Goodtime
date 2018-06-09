@@ -57,7 +57,7 @@ public class PreferenceHelper {
                 .getString(RINGTONE_WORK, "");
     }
 
-    public static String getRingtoneBreak() {
+    public static String getNotificationSoundBreak() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getString(RINGTONE_BREAK, "");
     }
