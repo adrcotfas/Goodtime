@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
@@ -22,22 +23,22 @@ import java.util.concurrent.TimeUnit;
  * and triggering notifications for events like finishing a session or updating the remaining time.
  * The notifications are customized according to {@link PreferenceHelper}.
  */
-public class NotificationHelper {
+public class NotificationHelper extends ContextWrapper {
 
     private static final String TAG = NotificationHelper.class.getSimpleName();
-
-    private android.app.NotificationManager mNotificationManager;
+    public static final String IN_PROGRESS_CHANNEL_ID = "goodtime.IN_PROGRESS_CHANNEL_ID";
+    private NotificationManager manager;
     private NotificationCompat.Builder mBuilder;
 
     public NotificationHelper(Context context) {
-        mNotificationManager = (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        super(context);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(TAG, "Goodtime notifications",
+            NotificationChannel notificationChannel = new NotificationChannel(IN_PROGRESS_CHANNEL_ID, "Goodtime notifications",
                     NotificationManager.IMPORTANCE_HIGH);
             notificationChannel.setBypassDnd(true);
 
             notificationChannel.setImportance(NotificationManager.IMPORTANCE_HIGH);
-            mNotificationManager.createNotificationChannel(notificationChannel);
+            getManager().createNotificationChannel(notificationChannel);
             mBuilder = new NotificationCompat.Builder(context, notificationChannel.getId());
         } else {
             mBuilder = new NotificationCompat.Builder(context);
@@ -48,7 +49,8 @@ public class NotificationHelper {
     public Notification createNotification(Context context, CurrentSession currentSession) {
         Log.v(TAG, "createNotification");
         mBuilder.mActions.clear();
-        mBuilder.addAction(buildStopAction(context))
+        mBuilder.setChannelId(IN_PROGRESS_CHANNEL_ID)
+                .addAction(buildStopAction(context))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSound(null);
 
@@ -86,26 +88,26 @@ public class NotificationHelper {
         if (sessionType == SessionType.WORK) {
             mBuilder.setContentTitle("Work session finished")
                     .setContentText("Continue?")
-                    .setSound(Uri.parse(PreferenceHelper.getSoundWork()))
+                    .setSound(Uri.parse(PreferenceHelper.getNotificationSound()))
                     .addAction(buildStartBreakAction(context))
                     .addAction(buildSkipBreakAction(context));
         } else {
             mBuilder.setContentTitle("Break finished")
                     .setContentText("Continue?")
-                    .setSound(Uri.parse(PreferenceHelper.getSoundBreak()))
+                    .setSound(Uri.parse(PreferenceHelper.getNotificationSound()))
                     .addAction(buildStartWorkAction(context));
         }
-        mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
+        getManager().notify(Constants.NOTIFICATION_ID, mBuilder.build());
     }
 
     public void updateNotificationProgress(Long duration) {
         mBuilder.setOnlyAlertOnce(true)
                 .setContentText(buildProgressText(duration));
-        mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
+        getManager().notify(Constants.NOTIFICATION_ID, mBuilder.build());
     }
 
     public void clearNotification() {
-        mNotificationManager.cancelAll();
+        getManager().cancelAll();
     }
 
     private CharSequence buildProgressText(Long duration) {
@@ -119,6 +121,21 @@ public class NotificationHelper {
         }
 
         return output;
+    }
+
+
+    /**
+     * Get the notification manager.
+     *
+     * Utility method as this helper works with it a lot.
+     *
+     * @return The system service NotificationManager
+     */
+    private NotificationManager getManager() {
+        if (manager == null) {
+            manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        }
+        return manager;
     }
 
     private PendingIntent createActivityIntent(Context context) {
