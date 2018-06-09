@@ -64,14 +64,19 @@ public class NotificationHelper extends ContextWrapper {
                     .setVibrate(PreferenceHelper.isVibrationEnabled() ? DEFAULT_VIBRATE_PATTERN : null)
                     .setSound(PreferenceHelper.isRingtoneEnabled() ? Uri.parse(PreferenceHelper.getNotificationSound()) : null, AudioManager.STREAM_ALARM);
             Notification notification = mBuilderWorkFinished.build();
-            //notification.flags = Notification.FLAG_INSISTENT;
+
+            notification.flags =  PreferenceHelper.isRingtoneInsistent() ?
+                    notification.flags | Notification.FLAG_INSISTENT : notification.flags & ~Notification.FLAG_INSISTENT;
+
             mManager.notify(START_BREAK_NOTIFICATION_ID, notification);
         } else {
             mBuilderBreakFinished
                     .setVibrate(PreferenceHelper.isVibrationEnabled() ? DEFAULT_VIBRATE_PATTERN : null)
                     .setSound(PreferenceHelper.isRingtoneEnabled() ? Uri.parse(PreferenceHelper.getNotificationSoundBreak()) : null, AudioManager.STREAM_ALARM);
             Notification notification = mBuilderBreakFinished.build();
-            //notification.flags = Notification.FLAG_INSISTENT;
+
+            notification.flags =  PreferenceHelper.isRingtoneInsistent() ?
+                    notification.flags | Notification.FLAG_INSISTENT : notification.flags & ~Notification.FLAG_INSISTENT;
             mManager.notify(START_WORK_NOTIFICATION_ID, notification);
         }
     }
