@@ -244,7 +244,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         }
 
         mDialog = builder.create();
-        mDialog.setCanceledOnTouchOutside(true);
+        mDialog.setCanceledOnTouchOutside(false);
         mDialog.show();
     }
 
