@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -115,12 +116,14 @@ public class NotificationHelper extends ContextWrapper {
 
         NotificationChannel channelWorkFinished = new NotificationChannel(CHANNEL_ID_WORK_FINISHED, "Work finished",
                 NotificationManager.IMPORTANCE_HIGH);
+        channelWorkFinished.setDescription("Work finished notification");
         channelWorkFinished.setBypassDnd(true);
         channelWorkFinished.enableVibration(true);
         mManager.createNotificationChannel(channelWorkFinished);
 
         NotificationChannel channelBreakFinished = new NotificationChannel(CHANNEL_ID_BREAK_FINISHED, "Break finished",
                 NotificationManager.IMPORTANCE_HIGH);
+        channelWorkFinished.setDescription("Break finished notification");
         channelBreakFinished.setBypassDnd(true);
         channelBreakFinished.enableVibration(true);
         mManager.createNotificationChannel(channelBreakFinished);
@@ -131,7 +134,7 @@ public class NotificationHelper extends ContextWrapper {
                 .setSmallIcon(R.drawable.ic_status_goodtime)
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setContentIntent(createActivityIntent(this))
+                .setContentIntent(createActivityIntent())
                 .setOngoing(true)
                 .setShowWhen(false);
 
@@ -141,7 +144,7 @@ public class NotificationHelper extends ContextWrapper {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setAutoCancel(true)
-                .setContentIntent(createActivityIntent(this))
+                .setContentIntent(createActivityIntent())
                 .setOngoing(false)
                 .setShowWhen(false)
                 .setContentTitle("Work session finished")
@@ -156,7 +159,7 @@ public class NotificationHelper extends ContextWrapper {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setAutoCancel(true)
                 .setShowWhen(false)
-                .setContentIntent(createActivityIntent(this))
+                .setContentIntent(createActivityIntent())
                 .setOngoing(false)
                 .setContentTitle("Break finished")
                 .setContentText("Continue?")
@@ -202,9 +205,12 @@ public class NotificationHelper extends ContextWrapper {
         return mBuilderInProgress;
     }
 
-    private PendingIntent createActivityIntent(Context context) {
-        return PendingIntent.getActivity(context,
-                0, new Intent(context, TimerActivity.class), 0);
+    private PendingIntent createActivityIntent() {
+        Intent openMainIntent = new Intent(this, TimerActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(TimerActivity.class);
+        stackBuilder.addNextIntent(openMainIntent);
+        return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT);
     }
 
     //TODO: add string resources
