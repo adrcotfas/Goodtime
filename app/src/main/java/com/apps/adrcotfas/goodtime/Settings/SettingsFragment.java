@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.ActivityCompat;
@@ -50,11 +51,12 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
             }
         });
 
-        Preference notificationChannelsPref = findPreference(PreferenceHelper.NOTIFICATION_CHANNELS);
         SwitchPreference enableRingtonePref = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_RINGTONE);
         SwitchPreference enableVibrationPref = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_VIBRATE);
+        Preference notificationChannelsPref = findPreference(PreferenceHelper.NOTIFICATION_CHANNELS);
 
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
+            notificationChannelsPref.setVisible(false);
             enableVibrationPref.setVisible(true);
             enableRingtonePref.setVisible(true);
             toggleEnableRingtonePreference(enableRingtonePref.isChecked());
@@ -65,26 +67,20 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
                     return true;
                 }
             });
-            notificationChannelsPref.setVisible(false);
         } else {
             enableRingtonePref.setVisible(false);
             enableVibrationPref.setVisible(false);
             toggleEnableRingtonePreference(false);
             notificationChannelsPref.setVisible(true);
             notificationChannelsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @TargetApi(Build.VERSION_CODES.O)
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    Intent intent = new Intent();
-                    intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-                    intent.putExtra("android.provider.extra.CHANNEL_ID", NotificationHelper.IN_PROGRESS_CHANNEL_ID);
-                    intent.putExtra("android.provider.extra.APP_PACKAGE", getContext().getPackageName());
-                    startActivity(intent);
-
-//                    Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
-//                    intent.putExtra(Settings.EXTRA_CHANNEL_ID, NotificationHelper.IN_PROGRESS_CHANNEL_ID);
-//                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, getContext().getPackageName());
-//                    startActivity(intent);
-                    return true;
+                Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, getContext().getPackageName());
+                intent.putExtra(Settings.EXTRA_CHANNEL_ID, NotificationHelper.CHANNEL_ID_WORK_FINISHED);
+                startActivity(intent);
+                return true;
                 }
             });
         }
