@@ -6,13 +6,11 @@ import java.util.concurrent.TimeUnit;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.*;
 
 /**
- * Maintains a global state of the app and stores the event bus ({@link EventBus})
- * and the {@link CurrentSession}
+ * Maintains a global state of the app and the {@link CurrentSession}
  */
 public class GoodtimeApplication extends Application {
 
     private static volatile GoodtimeApplication INSTANCE;
-    private static EventBus mBus;
     private static CurrentSessionManager mCurrentSessionManager;
 
     public static GoodtimeApplication getInstance() {
@@ -27,16 +25,12 @@ public class GoodtimeApplication extends Application {
         mCurrentSessionManager = new CurrentSessionManager(new CurrentSession(TimeUnit.MINUTES.toMillis(
                 PreferenceManager.getDefaultSharedPreferences(this)
                         .getInt(WORK_DURATION, 25))));
-        mBus = new EventBus();
     }
 
     public CurrentSession getCurrentSession() {
         return mCurrentSessionManager.getCurrentSession();
     }
 
-    public EventBus getBus() {
-        return mBus;
-    }
 
     public CurrentSessionManager getCurrentSessionManager() {
         return mCurrentSessionManager;

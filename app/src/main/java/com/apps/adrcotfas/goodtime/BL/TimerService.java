@@ -9,8 +9,7 @@ import android.util.Log;
 
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
+import de.greenrobot.event.EventBus;
 
 import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static com.apps.adrcotfas.goodtime.BL.NotificationHelper.IN_PROGRESS_NOTIFICATION_ID;
@@ -24,7 +23,6 @@ public class TimerService extends Service {
 
     private CurrentSessionManager mSessionManager;
     private NotificationHelper mNotificationHelper;
-    private Disposable mEventSubscription;
 
     private int mPreviousRingerMode;
     private boolean mPreviousWifiMode;
@@ -32,20 +30,16 @@ public class TimerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
         Log.v(TAG, "onCreate");
         mNotificationHelper = new NotificationHelper(getApplicationContext());
         mSessionManager = GoodtimeApplication.getInstance().getCurrentSessionManager();
-
-        setupEvents();
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        if (mEventSubscription != null && !mEventSubscription.isDisposed()) {
-            mEventSubscription.dispose();
-        }
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -75,25 +69,24 @@ public class TimerService extends Service {
         return START_STICKY;
     }
 
-    private void setupEvents() {
-        mEventSubscription = GoodtimeApplication.getInstance().getBus().getEvents().subscribe(new Consumer<Object>() {
-            @Override
-            public void accept(Object o) throws Exception {
-                if (o instanceof Constants.FinishWorkEvent) {
-                    onFinishEvent(SessionType.WORK);
-                } else if (o instanceof Constants.FinishBreakEvent) {
-                    onFinishEvent(SessionType.BREAK);
-                } else if (o instanceof Constants.UpdateTimerProgressEvent) {
-                    updateNotificationProgress();
-                } else if (o instanceof Constants.ClearNotificationEvent) {
-                    mNotificationHelper.clearNotification();
-                }
-            }
-        });
+    /**
+     * Called when an event is posted to the EventBus
+     * @param o holds the type of the Event
+     */
+    public void onEvent(Object o) {
+        if (o instanceof Constants.FinishWorkEvent) {
+            onFinishEvent(SessionType.WORK);
+        } else if (o instanceof Constants.FinishBreakEvent) {
+            onFinishEvent(SessionType.BREAK);
+        } else if (o instanceof Constants.UpdateTimerProgressEvent) {
+            updateNotificationProgress();
+        } else if (o instanceof Constants.ClearNotificationEvent) {
+            mNotificationHelper.clearNotification();
+        }
     }
 
     private void onStartEvent(SessionType sessionType) {
-        GoodtimeApplication.getInstance().getBus().send(new Constants.ClearFinishDialogEvent());
+        EventBus.getDefault().post(new Constants.ClearFinishDialogEvent());
         mSessionManager.startTimer(sessionType);
 
         if (sessionType == SessionType.WORK) {

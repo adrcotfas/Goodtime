@@ -7,6 +7,8 @@ import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * This class manages and modifies the mutable members of {@link CurrentSession}
  * The duration is updated using an {@link AppCountDownTimer}. Events coming from other layers will
@@ -87,7 +89,7 @@ public class CurrentSessionManager {
             mRemaining = millisUntilFinished;
             if (mMinutesUntilFinished > TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)) {
                 mMinutesUntilFinished = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
-                GoodtimeApplication.getInstance().getBus().send(new Constants.UpdateTimerProgressEvent());
+                EventBus.getDefault().post(new Constants.UpdateTimerProgressEvent());
             }
         }
 
@@ -98,7 +100,7 @@ public class CurrentSessionManager {
             mCurrentSession.setDuration(workDuration);
             mCurrentSession.setTimerState(TimerState.INACTIVE);
             mRemaining = 0;
-            GoodtimeApplication.getInstance().getBus().send(
+            EventBus.getDefault().post(
                     mCurrentSession.getSessionType().getValue() == SessionType.WORK ?
                             new Constants.FinishWorkEvent() : new Constants.FinishBreakEvent());
         }
