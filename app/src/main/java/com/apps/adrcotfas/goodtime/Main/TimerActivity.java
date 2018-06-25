@@ -137,7 +137,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
      * Called when an event is posted to the EventBus
      * @param o holds the type of the Event
      */
-    public void onEvent(Object o) {
+    public void onEventMainThread(Object o) {
         if (o instanceof Constants.FinishWorkEvent) {
             showFinishDialog(SessionType.WORK);
         } else if (o instanceof Constants.FinishBreakEvent) {

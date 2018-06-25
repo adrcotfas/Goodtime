@@ -7,6 +7,8 @@ import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;
 
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -30,6 +32,14 @@ public class CurrentSessionManager {
 
     public void startTimer(SessionType sessionType) {
         // TODO: set the duration according to the settings. Also include long break
+
+        OneTimeWorkRequest workRequest =
+                new OneTimeWorkRequest.Builder(FinishSessionWorker.class)
+                        .setInitialDelay(PreferenceHelper.getSessionDuration(sessionType), TimeUnit.SECONDS)
+                        .addTag(FinishSessionWorker.WORK_TAG)
+                        .build();
+        WorkManager.getInstance().enqueue(workRequest);
+
         mCurrentSession.setTimerState(TimerState.ACTIVE);
         mCurrentSession.setSessionType(sessionType);
 
@@ -44,10 +54,18 @@ public class CurrentSessionManager {
         switch(mCurrentSession.getTimerState().getValue()) {
             case PAUSED:
                 mTimer.start();
+                OneTimeWorkRequest workRequest =
+                        new OneTimeWorkRequest.Builder(FinishSessionWorker.class)
+                                .setInitialDelay(mRemaining, TimeUnit.MILLISECONDS)
+                                .build();
+                WorkManager.getInstance().enqueue(workRequest);
+
                 mCurrentSession.setTimerState(TimerState.ACTIVE);
                 break;
             case ACTIVE:
                 mTimer.cancel();
+                WorkManager.getInstance().cancelAllWork();
+
                 mTimer = new AppCountDownTimer(mRemaining);
                 mCurrentSession.setTimerState(TimerState.PAUSED);
                 break;
@@ -100,9 +118,6 @@ public class CurrentSessionManager {
             mCurrentSession.setDuration(workDuration);
             mCurrentSession.setTimerState(TimerState.INACTIVE);
             mRemaining = 0;
-            EventBus.getDefault().post(
-                    mCurrentSession.getSessionType().getValue() == SessionType.WORK ?
-                            new Constants.FinishWorkEvent() : new Constants.FinishBreakEvent());
         }
     }
 }
