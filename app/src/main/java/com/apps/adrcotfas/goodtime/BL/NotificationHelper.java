@@ -31,20 +31,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class NotificationHelper extends ContextWrapper {
 
-    static final long[] DEFAULT_VIBRATE_PATTERN = {0, 250, 250, 250};
-
     private static final String TAG = NotificationHelper.class.getSimpleName();
-    public static int IN_PROGRESS_NOTIFICATION_ID = 42;
-    public static int START_WORK_NOTIFICATION_ID = 43;
-    public static int START_BREAK_NOTIFICATION_ID = 43;
-    public static final String IN_PROGRESS_CHANNEL_ID = "goodtime.IN_PROGRESS_CHANNEL_ID";
-    public static final String CHANNEL_ID_BREAK_FINISHED = "goodtime.CHANNEL_ID_BREAK_FINISHED";
-    public static final String CHANNEL_ID_WORK_FINISHED = "goodtime.CHANNEL_ID_WORK_FINISHED";
+    public static final String GOODTIME_NOTIFICATION = "goodtime.notification";
+    public static int GOODTIME_NOTIFICATION_ID = 42;
 
     private NotificationManager mManager;
-    private NotificationCompat.Builder mBuilderInProgress;
-    private NotificationCompat.Builder mBuilderWorkFinished;
-    private NotificationCompat.Builder mBuilderBreakFinished;
 
     public NotificationHelper(Context context) {
         super(context);
@@ -52,42 +43,22 @@ public class NotificationHelper extends ContextWrapper {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             initChannels();
         }
-        initBuilders();
     }
 
-    public void notifyFinished(Context context, SessionType sessionType) {
+    public void notifyFinished(SessionType sessionType) {
         Log.v(TAG, "notifyFinished");
 
         clearNotification();
-
-        if (sessionType == SessionType.WORK) {
-            mBuilderWorkFinished
-                    .setVibrate(PreferenceHelper.isVibrationEnabled() ? DEFAULT_VIBRATE_PATTERN : null)
-                    .setSound(PreferenceHelper.isRingtoneEnabled() ? Uri.parse(PreferenceHelper.getNotificationSound()) : null, AudioManager.STREAM_ALARM);
-            Notification notification = mBuilderWorkFinished.build();
-
-            notification.flags =  PreferenceHelper.isRingtoneInsistent() ?
-                    notification.flags | Notification.FLAG_INSISTENT : notification.flags & ~Notification.FLAG_INSISTENT;
-
-            mManager.notify(START_BREAK_NOTIFICATION_ID, notification);
-        } else {
-            mBuilderBreakFinished
-                    .setVibrate(PreferenceHelper.isVibrationEnabled() ? DEFAULT_VIBRATE_PATTERN : null)
-                    .setSound(PreferenceHelper.isRingtoneEnabled() ? Uri.parse(PreferenceHelper.getNotificationSoundBreak()) : null, AudioManager.STREAM_ALARM);
-            Notification notification = mBuilderBreakFinished.build();
-
-            notification.flags =  PreferenceHelper.isRingtoneInsistent() ?
-                    notification.flags | Notification.FLAG_INSISTENT : notification.flags & ~Notification.FLAG_INSISTENT;
-            mManager.notify(START_WORK_NOTIFICATION_ID, notification);
-        }
+        Notification notification = getFinishedSessionBuilder(sessionType).build();
+        mManager.notify(GOODTIME_NOTIFICATION_ID, notification);
     }
 
-    public void updateNotificationProgress(Long duration) {
-        if (mBuilderInProgress != null) {
-            mBuilderInProgress.setOnlyAlertOnce(true)
-                    .setContentText(buildProgressText(duration));
-            mManager.notify(IN_PROGRESS_NOTIFICATION_ID, mBuilderInProgress.build());
-        }
+    public void updateNotificationProgress(CurrentSession currentSession) {
+        Log.v(TAG, "updateNotificationProgress");
+        NotificationCompat.Builder builder = getInProgressBuilder(currentSession);
+            builder.setOnlyAlertOnce(true)
+                    .setContentText(buildProgressText(currentSession.getDuration().getValue()));
+            mManager.notify(GOODTIME_NOTIFICATION_ID, builder.build());
     }
 
     public void clearNotification() {
@@ -108,69 +79,15 @@ public class NotificationHelper extends ContextWrapper {
 
     @TargetApi(Build.VERSION_CODES.O)
     private void initChannels() {
-        NotificationChannel channelInProgress = new NotificationChannel(IN_PROGRESS_CHANNEL_ID, "In progress",
+        NotificationChannel channelInProgress = new NotificationChannel(GOODTIME_NOTIFICATION, "Goodtime Notifications",
                 NotificationManager.IMPORTANCE_LOW);
         channelInProgress.setBypassDnd(true);
         channelInProgress.setSound(null, null);
         mManager.createNotificationChannel(channelInProgress);
-
-        NotificationChannel channelWorkFinished = new NotificationChannel(CHANNEL_ID_WORK_FINISHED, "Work finished",
-                NotificationManager.IMPORTANCE_HIGH);
-        channelWorkFinished.setDescription("Work finished notification");
-        channelWorkFinished.setBypassDnd(true);
-        channelWorkFinished.enableVibration(true);
-        mManager.createNotificationChannel(channelWorkFinished);
-
-        NotificationChannel channelBreakFinished = new NotificationChannel(CHANNEL_ID_BREAK_FINISHED, "Break finished",
-                NotificationManager.IMPORTANCE_HIGH);
-        channelWorkFinished.setDescription("Break finished notification");
-        channelBreakFinished.setBypassDnd(true);
-        channelBreakFinished.enableVibration(true);
-        mManager.createNotificationChannel(channelBreakFinished);
     }
-
-    private void initBuilders() {
-        mBuilderInProgress = new NotificationCompat.Builder(this, IN_PROGRESS_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_status_goodtime)
-                .setCategory(NotificationCompat.CATEGORY_PROGRESS)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setContentIntent(createActivityIntent())
-                .setOngoing(true)
-                .setShowWhen(false);
-
-        mBuilderWorkFinished = new NotificationCompat.Builder(this, CHANNEL_ID_WORK_FINISHED)
-                .setSmallIcon(R.drawable.ic_status_goodtime)
-                .setCategory(NotificationCompat.CATEGORY_ALARM)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setAutoCancel(true)
-                .setContentIntent(createActivityIntent())
-                .setOngoing(false)
-                .setShowWhen(false)
-                .setContentTitle("Work session finished")
-                .setContentText("Continue?")
-                .addAction(buildStartBreakAction(this))
-                .addAction(buildSkipBreakAction(this));
-
-        mBuilderBreakFinished = new NotificationCompat.Builder(this, CHANNEL_ID_BREAK_FINISHED)
-                .setSmallIcon(R.drawable.ic_status_goodtime)
-                .setCategory(NotificationCompat.CATEGORY_ALARM)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setAutoCancel(true)
-                .setShowWhen(false)
-                .setContentIntent(createActivityIntent())
-                .setOngoing(false)
-                .setContentTitle("Break finished")
-                .setContentText("Continue?")
-                .addAction(buildStartWorkAction(this));
-        }
 
     /**
      * Get a "in progress" notification
-     *
-     * Provide the builder rather than the notification it's self as useful for making notification
-     * changes.
      *
      * @param currentSession the current session
      * @return the builder
@@ -178,23 +95,28 @@ public class NotificationHelper extends ContextWrapper {
     public NotificationCompat.Builder getInProgressBuilder(CurrentSession currentSession) {
         Log.v(TAG, "createNotification");
 
-        mBuilderInProgress.mActions.clear();
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, GOODTIME_NOTIFICATION)
+                .setSmallIcon(R.drawable.ic_status_goodtime)
+                .setCategory(NotificationCompat.CATEGORY_PROGRESS)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setContentIntent(createActivityIntent())
+                .setOngoing(true)
+                .setShowWhen(false);
+
         if (currentSession.getSessionType().getValue() == SessionType.WORK) {
             if (currentSession.getTimerState().getValue() == TimerState.PAUSED) {
-                mBuilderInProgress
-                        .addAction(buildStopAction(this))
+                builder.addAction(buildStopAction(this))
                         .addAction(buildResumeAction(this))
                         .setContentTitle("Work session is paused")
                         .setContentText("Continue?");
             } else {
-                mBuilderInProgress
-                        .addAction(buildStopAction(this))
+                builder.addAction(buildStopAction(this))
                         .addAction(buildPauseAction(this))
                         .setContentTitle("Work session in progress")
                         .setContentText(buildProgressText(currentSession.getDuration().getValue()));
             }
         } else if (currentSession.getSessionType().getValue() == SessionType.BREAK) {
-            mBuilderInProgress
+            builder
                     .addAction(buildStopAction(this))
                     .setContentTitle("Break in progress")
                     .setContentText(buildProgressText(currentSession.getDuration().getValue()));
@@ -202,7 +124,30 @@ public class NotificationHelper extends ContextWrapper {
             Log.wtf(TAG, "Trying to create a notification in an invalid state.");
         }
 
-        return mBuilderInProgress;
+        return builder;
+    }
+
+    public NotificationCompat.Builder getFinishedSessionBuilder(SessionType sessionType) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, GOODTIME_NOTIFICATION)
+                .setSmallIcon(R.drawable.ic_status_goodtime)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setAutoCancel(true)
+                .setContentIntent(createActivityIntent())
+                .setOngoing(false)
+                .setShowWhen(false);
+        if (sessionType == SessionType.WORK) {
+            builder.setContentTitle("Work session finished")
+                    .setContentText("Continue?")
+                    .addAction(buildStartBreakAction(this))
+                    .addAction(buildSkipBreakAction(this));
+        } else if (sessionType == SessionType.BREAK) {
+            builder.setContentTitle("Break finished")
+                    .setContentText("Continue?")
+                    .addAction(buildStartWorkAction(this));
+        }
+        return builder;
     }
 
     private PendingIntent createActivityIntent() {

@@ -12,7 +12,7 @@ import com.apps.adrcotfas.goodtime.Util.Constants;
 import de.greenrobot.event.EventBus;
 
 import static android.media.AudioManager.RINGER_MODE_SILENT;
-import static com.apps.adrcotfas.goodtime.BL.NotificationHelper.IN_PROGRESS_NOTIFICATION_ID;
+import static com.apps.adrcotfas.goodtime.BL.NotificationHelper.GOODTIME_NOTIFICATION_ID;
 
 /**
  * Class representing the foreground service which triggers the countdown timer and handles events.
@@ -99,13 +99,13 @@ public class TimerService extends Service {
         }
 
         mNotificationHelper.clearNotification();
-        startForeground(IN_PROGRESS_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
+        startForeground(GOODTIME_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
                 mSessionManager.getCurrentSession()).build());
     }
 
     private void onToggleEvent() {
         mSessionManager.toggleTimer();
-        startForeground(IN_PROGRESS_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
+        startForeground(GOODTIME_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
                 mSessionManager.getCurrentSession()).build());
     }
 
@@ -140,7 +140,7 @@ public class TimerService extends Service {
         // TODO: store session to ROOM
         // TODO: in continuous mode, do not stop the service
         stopForeground(true);
-        mNotificationHelper.notifyFinished(getApplicationContext(), sessionType);
+        mNotificationHelper.notifyFinished(sessionType);
     }
 
     private void onSkipWorkEvent() {
@@ -150,7 +150,7 @@ public class TimerService extends Service {
 
     private void updateNotificationProgress() {
         mNotificationHelper.updateNotificationProgress(
-                mSessionManager.getCurrentSession().getDuration().getValue());
+                mSessionManager.getCurrentSession());
     }
 
     private void toggleSound(boolean restore) {
