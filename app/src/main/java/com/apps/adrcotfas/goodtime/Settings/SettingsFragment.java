@@ -52,38 +52,16 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
         });
 
         SwitchPreference enableRingtonePref = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_RINGTONE);
-        SwitchPreference enableVibrationPref = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_VIBRATE);
-        Preference notificationChannelsPref = findPreference(PreferenceHelper.NOTIFICATION_CHANNELS);
 
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
-            notificationChannelsPref.setVisible(false);
-            enableVibrationPref.setVisible(true);
-            enableRingtonePref.setVisible(true);
-            toggleEnableRingtonePreference(enableRingtonePref.isChecked());
-            enableRingtonePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    toggleEnableRingtonePreference((Boolean) newValue);
-                    return true;
-                }
-            });
-        } else {
-            enableRingtonePref.setVisible(false);
-            enableVibrationPref.setVisible(false);
-            toggleEnableRingtonePreference(false);
-            notificationChannelsPref.setVisible(true);
-            notificationChannelsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @TargetApi(Build.VERSION_CODES.O)
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
-                intent.putExtra(Settings.EXTRA_APP_PACKAGE, getContext().getPackageName());
-                intent.putExtra(Settings.EXTRA_CHANNEL_ID, NotificationHelper.CHANNEL_ID_WORK_FINISHED);
-                startActivity(intent);
+        enableRingtonePref.setVisible(true);
+        toggleEnableRingtonePreference(enableRingtonePref.isChecked());
+        enableRingtonePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                toggleEnableRingtonePreference((Boolean) newValue);
                 return true;
-                }
-            });
-        }
+            }
+        });
 
         findPreference(PreferenceHelper.THEME).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
