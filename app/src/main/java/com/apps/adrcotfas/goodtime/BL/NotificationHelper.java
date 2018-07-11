@@ -66,15 +66,12 @@ public class NotificationHelper extends ContextWrapper {
     }
 
     private CharSequence buildProgressText(Long duration) {
-        CharSequence output;
-        long minutesLeft = TimeUnit.MILLISECONDS.toMinutes(duration + 500);
-        if (minutesLeft > 1) {
-            output = minutesLeft + " minutes left";
-        } else {
-            output = "1 minute left";
-        }
+        long secondsLeft = TimeUnit.MILLISECONDS.toSeconds(duration);
+        long minutesLeft = secondsLeft / 60;
+        secondsLeft %= 60;
 
-        return output;
+        return (minutesLeft > 9 ? minutesLeft : "0" + minutesLeft) + ":" +
+                (secondsLeft > 9 ? secondsLeft : "0" + secondsLeft);
     }
 
     @TargetApi(Build.VERSION_CODES.O)

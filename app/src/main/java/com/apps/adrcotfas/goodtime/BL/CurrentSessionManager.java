@@ -105,10 +105,10 @@ public class CurrentSessionManager {
             Log.v(TAG, "is Ticking: " + millisUntilFinished + " millis remaining.");
             mCurrentSession.setDuration(millisUntilFinished);
             mRemaining = millisUntilFinished;
-            if (mMinutesUntilFinished > TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)) {
-                mMinutesUntilFinished = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
+            //TODO: remove if (mMinutesUntilFinished > TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)) {
+            //    mMinutesUntilFinished = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
                 EventBus.getDefault().post(new Constants.UpdateTimerProgressEvent());
-            }
+            //}
         }
 
         @Override
