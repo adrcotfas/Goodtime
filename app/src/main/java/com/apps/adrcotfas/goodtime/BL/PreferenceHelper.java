@@ -21,6 +21,7 @@ public class PreferenceHelper {
     public final static String ENABLE_SCREEN_ON            = "pref_keep_screen_on";
     public final static String ENABLE_CONTINUOUS_MODE      = "pref_continuous_mode";
     public final static String THEME                       = "pref_theme";
+    public final static String PRO_VERSION                 = "pref_testing_pro_version";
 
     public static long getSessionDuration(SessionType sessionType) {
         if (sessionType == SessionType.WORK) {
@@ -100,5 +101,10 @@ public class PreferenceHelper {
     public static int getTheme() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getInt(THEME, 0);
+    }
+
+    public static boolean isProVersion() {
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getBoolean(PRO_VERSION, false);
     }
 }

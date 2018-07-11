@@ -2,6 +2,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="pref_testing_pro_version"
+        android:title="[testing] Pro version">
+    </SwitchPreference>
+
     <PreferenceCategory android:title="@string/pref_header_general">
 
         <ListPreference
