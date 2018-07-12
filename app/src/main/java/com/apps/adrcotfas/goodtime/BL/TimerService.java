@@ -23,6 +23,7 @@ public class TimerService extends Service {
 
     private CurrentSessionManager mSessionManager;
     private NotificationHelper mNotificationHelper;
+    private RingtoneAndVibrationPlayer mRingtoneAndVibrationPlayer;
 
     private int mPreviousRingerMode;
     private boolean mPreviousWifiMode;
@@ -32,6 +33,7 @@ public class TimerService extends Service {
         super.onCreate();
         Log.v(TAG, "onCreate");
         mNotificationHelper = new NotificationHelper(getApplicationContext());
+        mRingtoneAndVibrationPlayer = new RingtoneAndVibrationPlayer(getApplicationContext());
         mSessionManager = GoodtimeApplication.getInstance().getCurrentSessionManager();
         EventBus.getDefault().register(this);
     }
@@ -82,6 +84,7 @@ public class TimerService extends Service {
             updateNotificationProgress();
         } else if (o instanceof Constants.ClearNotificationEvent) {
             mNotificationHelper.clearNotification();
+            mRingtoneAndVibrationPlayer.stop();
         }
     }
 
@@ -141,6 +144,7 @@ public class TimerService extends Service {
         // TODO: in continuous mode, do not stop the service
         stopForeground(true);
         mNotificationHelper.notifyFinished(sessionType);
+        mRingtoneAndVibrationPlayer.play(sessionType);
     }
 
     private void onSkipWorkEvent() {

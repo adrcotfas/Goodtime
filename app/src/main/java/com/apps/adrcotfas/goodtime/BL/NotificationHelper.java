@@ -9,8 +9,6 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -47,7 +45,6 @@ public class NotificationHelper extends ContextWrapper {
 
     public void notifyFinished(SessionType sessionType) {
         Log.v(TAG, "notifyFinished");
-
         clearNotification();
         Notification notification = getFinishedSessionBuilder(sessionType).build();
         mManager.notify(GOODTIME_NOTIFICATION_ID, notification);
