@@ -4,6 +4,9 @@ import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -22,6 +25,7 @@ import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.pavelsikun.seekbarpreference.SeekBarPreferenceCompat;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers;
+import com.takisoft.fix.support.v7.preference.RingtonePreference;
 
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.DISABLE_SOUND_AND_VIBRATION;
 
@@ -68,6 +72,32 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 if (getActivity() != null) {
                     getActivity().recreate();
+                }
+                return true;
+            }
+        });
+
+        //TODO: handle with IAP
+        findPreference(PreferenceHelper.PRO_VERSION).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                final RingtonePreference prefWork = (RingtonePreference) findPreference(PreferenceHelper.RINGTONE_WORK);
+                final RingtonePreference prefBreak = (RingtonePreference) findPreference(PreferenceHelper.RINGTONE_BREAK);
+
+                if ((boolean) newValue) {
+                    prefBreak.setEnabled(true);
+                    prefWork.setOnPreferenceChangeListener(null);
+
+                } else {
+                    prefBreak.setEnabled(false);
+                    prefBreak.setRingtone(prefWork.getRingtone());
+                    prefWork.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                        @Override
+                        public boolean onPreferenceChange(Preference preference, Object newValue) {
+                            prefBreak.setRingtone((Uri) newValue);
+                            return true;
+                        }
+                    });
                 }
                 return true;
             }
