@@ -79,6 +79,7 @@ public class NotificationHelper extends ContextWrapper {
         NotificationChannel channelInProgress = new NotificationChannel(GOODTIME_NOTIFICATION, "Goodtime Notifications",
                 NotificationManager.IMPORTANCE_LOW);
         channelInProgress.setBypassDnd(true);
+        channelInProgress.setShowBadge(false);
         channelInProgress.setSound(null, null);
         mManager.createNotificationChannel(channelInProgress);
     }
