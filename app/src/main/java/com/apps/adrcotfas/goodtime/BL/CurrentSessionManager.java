@@ -36,7 +36,7 @@ public class CurrentSessionManager {
         OneTimeWorkRequest workRequest =
                 new OneTimeWorkRequest.Builder(FinishSessionWorker.class)
                         .setInitialDelay(PreferenceHelper.getSessionDuration(sessionType), TimeUnit.SECONDS)
-                        .addTag(FinishSessionWorker.WORK_TAG)
+                        .addTag(sessionType.toString())
                         .build();
         WorkManager.getInstance().enqueue(workRequest);
 
