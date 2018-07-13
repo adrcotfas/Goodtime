@@ -30,9 +30,16 @@ public class RingtoneAndVibrationPlayer extends ContextWrapper{
             if (PreferenceHelper.isRingtoneEnabled()) {
                 mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
                 mMediaPlayer.setLooping(PreferenceHelper.isRingtoneInsistent());
-                mMediaPlayer.prepare();
-                mMediaPlayer.start();
+                mMediaPlayer.prepareAsync();
             }
+
+            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mMediaPlayer.start();
+                }
+            });
+
             if (PreferenceHelper.isVibrationEnabled()) {
                 mVibrator.vibrate(new long[] {0, 500, 500, 500},
                         PreferenceHelper.isRingtoneInsistent() ? 2 : -1);
