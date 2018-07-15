@@ -213,7 +213,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            EventBus.getDefault().post(new Constants.ClearNotificationEvent());
+                            // do nothing
                         }
                     });
         } else {
@@ -239,7 +239,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            EventBus.getDefault().post(new Constants.ClearNotificationEvent());
+                            // do nothing
                         }
                     });
         }

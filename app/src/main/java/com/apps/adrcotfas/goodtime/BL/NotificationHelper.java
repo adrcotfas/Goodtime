@@ -147,10 +147,7 @@ public class NotificationHelper extends ContextWrapper {
 
     private PendingIntent createActivityIntent() {
         Intent openMainIntent = new Intent(this, TimerActivity.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(TimerActivity.class);
-        stackBuilder.addNextIntent(openMainIntent);
-        return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT);
+        return PendingIntent.getActivity(this, 0, openMainIntent, 0);
     }
 
     //TODO: add string resources
