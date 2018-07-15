@@ -11,6 +11,7 @@ public class PreferenceHelper {
     public final static String LONG_BREAK_DURATION         = "pref_long_break_duration";
     public final static String SESSIONS_BEFORE_LONG_BREAK  = "pref_sessions_before_long_break";
     public final static String ENABLE_RINGTONE             = "pref_enable_ringtone";
+    public final static String INSISTENT_RINGTONE          = "pref_ringtone_insistent";
     public final static String RINGTONE_WORK               = "pref_ringtone";
     public final static String RINGTONE_BREAK              = "pref_ringtone_break";
     public final static String ENABLE_VIBRATE              = "pref_vibrate";
@@ -20,9 +21,7 @@ public class PreferenceHelper {
     public final static String ENABLE_SCREEN_ON            = "pref_keep_screen_on";
     public final static String ENABLE_CONTINUOUS_MODE      = "pref_continuous_mode";
     public final static String THEME                       = "pref_theme";
-
-    public final static String SOUND_WORK                  = "pref_ringtone";
-    public final static String SOUND_BREAK                 = "pref_ringtone_break";
+    public final static String PRO_VERSION                 = "pref_testing_pro_version";
 
     public static long getSessionDuration(SessionType sessionType) {
         if (sessionType == SessionType.WORK) {
@@ -54,12 +53,17 @@ public class PreferenceHelper {
                 .getBoolean(ENABLE_RINGTONE, true);
     }
 
-    public static String getRingtoneWork() {
+    public static boolean isRingtoneInsistent() {
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getBoolean(INSISTENT_RINGTONE, false);
+    }
+
+    public static String getNotificationSound() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getString(RINGTONE_WORK, "");
     }
 
-    public static String getRingtoneBreak() {
+    public static String getNotificationSoundBreak() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getString(RINGTONE_BREAK, "");
     }
@@ -99,11 +103,8 @@ public class PreferenceHelper {
                 .getInt(THEME, 0);
     }
 
-    public static String getSoundWork() {
-        return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getString(SOUND_WORK, "");
-    }
-
-    public static String getSoundBreak() {
-        return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getString(SOUND_BREAK, "");
+    public static boolean isProVersion() {
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getBoolean(PRO_VERSION, false);
     }
 }

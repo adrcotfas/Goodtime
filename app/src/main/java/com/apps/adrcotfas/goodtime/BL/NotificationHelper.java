@@ -1,12 +1,15 @@
 package com.apps.adrcotfas.goodtime.BL;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
-import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -17,117 +20,138 @@ import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 
 import java.util.concurrent.TimeUnit;
 
+//TODO: extract to strings
+
 /**
  * Class responsible with creating and updating notifications for the foreground {@link TimerService}
  * and triggering notifications for events like finishing a session or updating the remaining time.
  * The notifications are customized according to {@link PreferenceHelper}.
  */
-public class NotificationHelper {
+public class NotificationHelper extends ContextWrapper {
 
     private static final String TAG = NotificationHelper.class.getSimpleName();
+    public static final String GOODTIME_NOTIFICATION = "goodtime.notification";
+    public static int GOODTIME_NOTIFICATION_ID = 42;
 
-    private android.app.NotificationManager mNotificationManager;
-    private NotificationCompat.Builder mBuilder;
+    private NotificationManager mManager;
 
     public NotificationHelper(Context context) {
-        mNotificationManager = (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        super(context);
+        mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(TAG, "Goodtime notifications",
-                    NotificationManager.IMPORTANCE_HIGH);
-            notificationChannel.setBypassDnd(true);
-
-            notificationChannel.setImportance(NotificationManager.IMPORTANCE_HIGH);
-            mNotificationManager.createNotificationChannel(notificationChannel);
-            mBuilder = new NotificationCompat.Builder(context, notificationChannel.getId());
-        } else {
-            mBuilder = new NotificationCompat.Builder(context);
+            initChannels();
         }
-        mBuilder = new NotificationCompat.Builder(context);
     }
 
-    public Notification createNotification(Context context, CurrentSession currentSession) {
+    public void notifyFinished(SessionType sessionType) {
+        Log.v(TAG, "notifyFinished");
+        clearNotification();
+        Notification notification = getFinishedSessionBuilder(sessionType).build();
+        mManager.notify(GOODTIME_NOTIFICATION_ID, notification);
+    }
+
+    public void updateNotificationProgress(CurrentSession currentSession) {
+        Log.v(TAG, "updateNotificationProgress");
+        NotificationCompat.Builder builder = getInProgressBuilder(currentSession);
+            builder.setOnlyAlertOnce(true)
+                    .setContentText(buildProgressText(currentSession.getDuration().getValue()));
+            mManager.notify(GOODTIME_NOTIFICATION_ID, builder.build());
+    }
+
+    public void clearNotification() {
+        mManager.cancelAll();
+    }
+
+    private CharSequence buildProgressText(Long duration) {
+        long secondsLeft = TimeUnit.MILLISECONDS.toSeconds(duration);
+        long minutesLeft = secondsLeft / 60;
+        secondsLeft %= 60;
+
+        return (minutesLeft > 9 ? minutesLeft : "0" + minutesLeft) + ":" +
+                (secondsLeft > 9 ? secondsLeft : "0" + secondsLeft);
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private void initChannels() {
+        NotificationChannel channelInProgress = new NotificationChannel(GOODTIME_NOTIFICATION, "Goodtime Notifications",
+                NotificationManager.IMPORTANCE_LOW);
+        channelInProgress.setBypassDnd(true);
+        channelInProgress.setShowBadge(false);
+        channelInProgress.setSound(null, null);
+        mManager.createNotificationChannel(channelInProgress);
+    }
+
+    /**
+     * Get a "in progress" notification
+     *
+     * @param currentSession the current session
+     * @return the builder
+     */
+    public NotificationCompat.Builder getInProgressBuilder(CurrentSession currentSession) {
         Log.v(TAG, "createNotification");
-        mBuilder.mActions.clear();
-        mBuilder.addAction(buildStopAction(context))
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, GOODTIME_NOTIFICATION)
+                .setSmallIcon(R.drawable.ic_status_goodtime)
+                .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setSound(null);
+                .setContentIntent(createActivityIntent())
+                .setOngoing(true)
+                .setShowWhen(false);
 
         if (currentSession.getSessionType().getValue() == SessionType.WORK) {
             if (currentSession.getTimerState().getValue() == TimerState.PAUSED) {
-                mBuilder.addAction(buildResumeAction(context))
+                builder.addAction(buildStopAction(this))
+                        .addAction(buildResumeAction(this))
                         .setContentTitle("Work session is paused")
                         .setContentText("Continue?");
             } else {
-                mBuilder.addAction(buildPauseAction(context))
+                builder.addAction(buildStopAction(this))
+                        .addAction(buildPauseAction(this))
                         .setContentTitle("Work session in progress")
                         .setContentText(buildProgressText(currentSession.getDuration().getValue()));
             }
         } else if (currentSession.getSessionType().getValue() == SessionType.BREAK) {
-            mBuilder.setContentTitle("Break in progress")
+            builder
+                    .addAction(buildStopAction(this))
+                    .setContentTitle("Break in progress")
                     .setContentText(buildProgressText(currentSession.getDuration().getValue()));
         } else {
             Log.wtf(TAG, "Trying to create a notification in an invalid state.");
         }
 
-        return mBuilder
-                .setSmallIcon(R.drawable.ic_status_goodtime)
-                .setContentIntent(createActivityIntent(context))
-                .setOngoing(true)
-                .build();
+        return builder;
     }
 
-    public void notifyFinished(Context context, SessionType sessionType) {
-        Log.v(TAG, "notifyFinished");
-        mBuilder.mActions.clear();
-        mBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+    public NotificationCompat.Builder getFinishedSessionBuilder(SessionType sessionType) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, GOODTIME_NOTIFICATION)
+                .setSmallIcon(R.drawable.ic_status_goodtime)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setAutoCancel(true)
-                .setOngoing(false);
+                .setContentIntent(createActivityIntent())
+                .setOngoing(false)
+                .setShowWhen(false);
         if (sessionType == SessionType.WORK) {
-            mBuilder.setContentTitle("Work session finished")
+            builder.setContentTitle("Work session finished")
                     .setContentText("Continue?")
-                    .setSound(Uri.parse(PreferenceHelper.getSoundWork()))
-                    .addAction(buildStartBreakAction(context))
-                    .addAction(buildSkipBreakAction(context));
-        } else {
-            mBuilder.setContentTitle("Break finished")
+                    .addAction(buildStartBreakAction(this))
+                    .addAction(buildSkipBreakAction(this));
+        } else if (sessionType == SessionType.BREAK) {
+            builder.setContentTitle("Break finished")
                     .setContentText("Continue?")
-                    .setSound(Uri.parse(PreferenceHelper.getSoundBreak()))
-                    .addAction(buildStartWorkAction(context));
+                    .addAction(buildStartWorkAction(this));
         }
-        mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
+        return builder;
     }
 
-    public void updateNotificationProgress(Long duration) {
-        mBuilder.setOnlyAlertOnce(true)
-                .setContentText(buildProgressText(duration));
-        mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
-    }
-
-    public void clearNotification() {
-        mNotificationManager.cancelAll();
-    }
-
-    private CharSequence buildProgressText(Long duration) {
-        CharSequence output;
-        long minutesLeft = TimeUnit.MILLISECONDS.toMinutes(duration + 500);
-        if (minutesLeft > 1) {
-            //TODO: extract to strings
-            output = minutesLeft + " minutes left";
-        } else {
-            output = "1 minute left";
-        }
-
-        return output;
-    }
-
-    private PendingIntent createActivityIntent(Context context) {
-        return PendingIntent.getActivity(context,
-                0, new Intent(context, TimerActivity.class), 0);
+    private PendingIntent createActivityIntent() {
+        Intent openMainIntent = new Intent(this, TimerActivity.class);
+        return PendingIntent.getActivity(this, 0, openMainIntent, 0);
     }
 
     //TODO: add string resources
-    private NotificationCompat.Action buildStopAction(Context context) {
+    private static NotificationCompat.Action buildStopAction(Context context) {
 
         PendingIntent stopPendingIntent = PendingIntent.getService(context, 0,
                 new IntentWithAction(context, TimerService.class, Constants.ACTION.STOP), 0);
@@ -138,7 +162,7 @@ public class NotificationHelper {
                 stopPendingIntent).build();
     }
 
-    private NotificationCompat.Action buildResumeAction(Context context) {
+    private static NotificationCompat.Action buildResumeAction(Context context) {
         PendingIntent togglePendingIntent = PendingIntent.getService(context, 0,
                 new IntentWithAction(context, TimerService.class, Constants.ACTION.TOGGLE), 0);
 
@@ -148,7 +172,7 @@ public class NotificationHelper {
                 togglePendingIntent).build();
     }
 
-    private NotificationCompat.Action buildPauseAction(Context context) {
+    private static NotificationCompat.Action buildPauseAction(Context context) {
 
         PendingIntent togglePendingIntent = PendingIntent.getService(context, 0,
                 new IntentWithAction(context, TimerService.class, Constants.ACTION.TOGGLE), 0);
@@ -159,7 +183,7 @@ public class NotificationHelper {
                 togglePendingIntent).build();
     }
 
-    private NotificationCompat.Action buildStartWorkAction(Context context) {
+    private static NotificationCompat.Action buildStartWorkAction(Context context) {
         PendingIntent togglePendingIntent = PendingIntent.getService(context, 0,
                 new IntentWithAction(context, TimerService.class, Constants.ACTION.START_WORK), 0);
 
@@ -169,7 +193,7 @@ public class NotificationHelper {
                 togglePendingIntent).build();
     }
 
-    private NotificationCompat.Action buildStartBreakAction(Context context) {
+    private static NotificationCompat.Action buildStartBreakAction(Context context) {
         PendingIntent togglePendingIntent = PendingIntent.getService(context, 0,
                 new IntentWithAction(context, TimerService.class, Constants.ACTION.START_BREAK), 0);
 
@@ -179,7 +203,7 @@ public class NotificationHelper {
                 togglePendingIntent).build();
     }
 
-    private NotificationCompat.Action buildSkipBreakAction(Context context) {
+    private static NotificationCompat.Action buildSkipBreakAction(Context context) {
         PendingIntent togglePendingIntent = PendingIntent.getService(context, 0,
                 new IntentWithAction(context, TimerService.class, Constants.ACTION.SKIP_BREAK), 0);
 

@@ -20,7 +20,7 @@ android {
 
 dependencies {
 
-    compile 'com.jakewharton:butterknife:8.8.1'
+    implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -28,17 +28,22 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.android.support:design:27.0.2'
 
-    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
-    compile 'android.arch.persistence.room:runtime:1.0.0'
-    compile 'android.arch.lifecycle:extensions:1.1.0'
+    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
+    implementation 'android.arch.persistence.room:runtime:1.1.1'
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
 
     // Preferences
-    compile project(':MaterialSeekBarPreference')
-    compile 'com.android.support:preference-v7:27.0.2'
-    compile 'com.android.support:preference-v14:27.0.2'
-    compile 'com.takisoft.fix:preference-v7:27.0.2.0'
-    compile 'com.takisoft.fix:preference-v7-extras:27.0.2.0'
+    implementation project(':MaterialSeekBarPreference')
+    implementation 'com.android.support:preference-v7:27.0.2'
+    implementation 'com.android.support:preference-v14:27.0.2'
+    implementation 'com.takisoft.fix:preference-v7:27.0.2.0'
+    implementation 'com.takisoft.fix:preference-v7-extras:27.0.2.0'
 
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'io.reactivex.rxjava2:rxjava:2.1.7'
+    // EventBus
+    implementation 'de.greenrobot:eventbus:2.4.0'
+
+    // WorkManager
+    def work_version = "1.0.0-alpha03"
+    implementation "android.arch.work:work-runtime:$work_version"
+
 }

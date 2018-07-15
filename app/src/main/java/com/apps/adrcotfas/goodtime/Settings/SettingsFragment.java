@@ -4,30 +4,34 @@ import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.apps.adrcotfas.goodtime.BL.NotificationHelper;
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.pavelsikun.seekbarpreference.SeekBarPreferenceCompat;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers;
+import com.takisoft.fix.support.v7.preference.RingtonePreference;
 
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.DISABLE_SOUND_AND_VIBRATION;
 
-public class SettingsFragment extends PreferenceFragmentCompatDividers implements ActivityCompat.OnRequestPermissionsResultCallback{
+public class SettingsFragment extends PreferenceFragmentCompatDividers implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     CheckBoxPreference disableSoundCheckbox;
-
 
     @Override
     public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
@@ -52,8 +56,9 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
         });
 
         SwitchPreference enableRingtonePref = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_RINGTONE);
-        toggleEnableRingtonePreference(enableRingtonePref.isChecked());
 
+        enableRingtonePref.setVisible(true);
+        toggleEnableRingtonePreference(enableRingtonePref.isChecked());
         enableRingtonePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -65,8 +70,34 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
         findPreference(PreferenceHelper.THEME).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (getActivity() != null){
+                if (getActivity() != null) {
                     getActivity().recreate();
+                }
+                return true;
+            }
+        });
+
+        //TODO: handle with IAP
+        findPreference(PreferenceHelper.PRO_VERSION).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                final RingtonePreference prefWork = (RingtonePreference) findPreference(PreferenceHelper.RINGTONE_WORK);
+                final RingtonePreference prefBreak = (RingtonePreference) findPreference(PreferenceHelper.RINGTONE_BREAK);
+
+                if ((boolean) newValue) {
+                    prefBreak.setEnabled(true);
+                    prefWork.setOnPreferenceChangeListener(null);
+
+                } else {
+                    prefBreak.setEnabled(false);
+                    prefBreak.setRingtone(prefWork.getRingtone());
+                    prefWork.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                        @Override
+                        public boolean onPreferenceChange(Preference preference, Object newValue) {
+                            prefBreak.setRingtone((Uri) newValue);
+                            return true;
+                        }
+                    });
                 }
                 return true;
             }
@@ -124,7 +155,7 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    private boolean isNotificationPolicyAccessGranted()  {
+    private boolean isNotificationPolicyAccessGranted() {
         NotificationManager notificationManager = (NotificationManager)
                 getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
         return notificationManager.isNotificationPolicyAccessGranted();

@@ -2,6 +2,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="pref_testing_pro_version"
+        android:title="[testing] Pro version">
+    </SwitchPreference>
+
     <PreferenceCategory android:title="@string/pref_header_general">
 
         <ListPreference
@@ -86,7 +92,7 @@
             android:defaultValue="content://settings/system/notification_sound"
             android:key="pref_ringtone"
             android:persistent="true"
-            android:ringtoneType="ringtone"
+            android:ringtoneType="notification"
             android:showDefault="true"
             android:showSilent="false"
             android:summary="pref_ringtone_summary"
@@ -99,7 +105,7 @@
             android:defaultValue="content://settings/system/notification_sound"
             android:key="pref_ringtone_break"
             android:persistent="true"
-            android:ringtoneType="ringtone"
+            android:ringtoneType="notification"
             android:showDefault="true"
             android:showSilent="false"
             android:summary="@string/pref_ringtone_summary"
@@ -112,6 +118,12 @@
             android:defaultValue="true"
             android:key="pref_vibrate"
             android:title="@string/pref_vibrate" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_ringtone_insistent"
+            android:title="@string/pref_ringtone_insistent"
+            android:summary="@string/pref_ringtone_insistent_summary"/>
 
     </PreferenceCategory>
 

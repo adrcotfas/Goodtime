@@ -6,11 +6,14 @@
     <!-- Used by RingtonePreference to allow adding custom ringtones -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <!-- Used to enable and disable WiFi during work sessions -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
-    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <!-- Used to enable and disable sound during work sessions -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
 
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
     <uses-permission android:name="android.permission.VIBRATE" />
 
@@ -41,7 +44,10 @@
                 android:value=".Main.TimerActivity" />
         </activity>
 
-        <service android:name="com.apps.adrcotfas.goodtime.BL.TimerService" />
+        <service
+            android:name="com.apps.adrcotfas.goodtime.BL.TimerService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

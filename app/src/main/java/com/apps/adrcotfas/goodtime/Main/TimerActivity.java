@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.apps.adrcotfas.goodtime.BL.CurrentSession;
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
+import com.apps.adrcotfas.goodtime.BL.NotificationHelper;
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.BL.TimerState;
@@ -33,8 +34,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
+import de.greenrobot.event.EventBus;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREEN_ON;
@@ -48,7 +48,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     private final CurrentSession mCurrentSession = GoodtimeApplication.getInstance().getCurrentSession();
     private AlertDialog mDialog;
     private FullscreenHelper mFullscreenHelper;
-    private Disposable mEventSubscription;
 
     @BindView(R.id.timeLabel) TextView mTimeLabel;
     @BindView(R.id.stopButton) Button mStopButton;
@@ -73,6 +72,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
         ThemeHelper.setTheme(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
@@ -86,6 +86,10 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     @Override
     protected void onResume() {
         super.onResume();
+
+        // initialize notification channels on the first run
+        new NotificationHelper(getApplicationContext());
+
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.registerOnSharedPreferenceChangeListener(this);
         toggleKeepScreenOn(PreferenceHelper.isScreenOnEnabled());
@@ -97,11 +101,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     protected void onDestroy() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.unregisterOnSharedPreferenceChangeListener(this);
-
-        if (mEventSubscription != null && !mEventSubscription.isDisposed()) {
-            mEventSubscription.dispose();
-        }
-
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -131,21 +131,22 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 }
             }
         });
+    }
 
-        mEventSubscription = GoodtimeApplication.getInstance().getBus().getEvents().subscribe(new Consumer<Object>() {
-            @Override
-            public void accept(Object o) throws Exception {
-                if (o instanceof Constants.FinishWorkEvent) {
-                    showFinishDialog(SessionType.WORK);
-                } else if (o instanceof Constants.FinishBreakEvent) {
-                    showFinishDialog(SessionType.BREAK);
-                } else if (o instanceof Constants.ClearFinishDialogEvent) {
-                    if (mDialog != null) {
-                        mDialog.cancel();
-                    }
-                }
+    /**
+     * Called when an event is posted to the EventBus
+     * @param o holds the type of the Event
+     */
+    public void onEventMainThread(Object o) {
+        if (o instanceof Constants.FinishWorkEvent) {
+            showFinishDialog(SessionType.WORK);
+        } else if (o instanceof Constants.FinishBreakEvent) {
+            showFinishDialog(SessionType.BREAK);
+        } else if (o instanceof Constants.ClearFinishDialogEvent) {
+            if (mDialog != null) {
+                mDialog.cancel();
             }
-        });
+        }
     }
 
     public void updateTime(Long millis) {
@@ -206,13 +207,13 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                     .setNeutralButton("Close", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            GoodtimeApplication.getInstance().getBus().send(new Constants.ClearNotificationEvent());
+                            EventBus.getDefault().post(new Constants.ClearNotificationEvent());
                         }
                     })
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            GoodtimeApplication.getInstance().getBus().send(new Constants.ClearNotificationEvent());
+                            // do nothing
                         }
                     });
         } else {
@@ -232,19 +233,19 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                     .setNeutralButton("Close", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            GoodtimeApplication.getInstance().getBus().send(new Constants.ClearNotificationEvent());
+                            EventBus.getDefault().post(new Constants.ClearNotificationEvent());
                         }
                     })
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            GoodtimeApplication.getInstance().getBus().send(new Constants.ClearNotificationEvent());
+                            // do nothing
                         }
                     });
         }
 
         mDialog = builder.create();
-        mDialog.setCanceledOnTouchOutside(true);
+        mDialog.setCanceledOnTouchOutside(false);
         mDialog.show();
     }
 
