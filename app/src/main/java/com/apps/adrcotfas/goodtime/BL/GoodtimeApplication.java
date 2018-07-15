@@ -22,7 +22,7 @@ public class GoodtimeApplication extends Application {
         super.onCreate();
         INSTANCE = this;
 
-        mCurrentSessionManager = new CurrentSessionManager(new CurrentSession(TimeUnit.MINUTES.toMillis(
+        mCurrentSessionManager = new CurrentSessionManager(this, new CurrentSession(TimeUnit.MINUTES.toMillis(
                 PreferenceManager.getDefaultSharedPreferences(this)
                         .getInt(WORK_DURATION, 25))));
     }

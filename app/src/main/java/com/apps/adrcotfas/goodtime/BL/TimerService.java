@@ -31,6 +31,7 @@ public class TimerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
         Log.v(TAG, "onCreate");
         mNotificationHelper = new NotificationHelper(getApplicationContext());
         mRingtoneAndVibrationPlayer = new RingtoneAndVibrationPlayer(getApplicationContext());
@@ -42,6 +43,7 @@ public class TimerService extends Service {
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
         EventBus.getDefault().unregister(this);
+        mSessionManager.unregisterAlarmReceiver();
         super.onDestroy();
     }
 

@@ -16,6 +16,7 @@ public class Constants {
         String SKIP_WORK   = "goodtime.action.skipWork";
         String TOGGLE      = "goodtime.action.toggle";
         String STOP        = "goodtime.action.stop";
+        String FINISHED    = "goodtime.action.finished";
     }
 
     public static class FinishWorkEvent {}
