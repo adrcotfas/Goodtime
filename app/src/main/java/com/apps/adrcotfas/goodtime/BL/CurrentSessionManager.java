@@ -139,6 +139,7 @@ public class CurrentSessionManager extends ContextWrapper{
             mCurrentSession.setDuration(millisUntilFinished);
             mRemaining = millisUntilFinished;
 
+            // update notification only if the screen is on
             PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
             if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH && powerManager.isInteractive()) ||
                     (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH && powerManager.isScreenOn())) {
