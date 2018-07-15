@@ -92,7 +92,7 @@
             android:defaultValue="content://settings/system/notification_sound"
             android:key="pref_ringtone"
             android:persistent="true"
-            android:ringtoneType="all"
+            android:ringtoneType="notification"
             android:showDefault="true"
             android:showSilent="false"
             android:summary="pref_ringtone_summary"
