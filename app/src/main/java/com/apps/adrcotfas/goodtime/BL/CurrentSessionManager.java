@@ -138,10 +138,12 @@ public class CurrentSessionManager extends ContextWrapper{
             Log.v(TAG, "is Ticking: " + millisUntilFinished + " millis remaining.");
             mCurrentSession.setDuration(millisUntilFinished);
             mRemaining = millisUntilFinished;
-            //TODO: remove if (mMinutesUntilFinished > TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)) {
-            //    mMinutesUntilFinished = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
+
+            PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH && powerManager.isInteractive()) ||
+                    (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH && powerManager.isScreenOn())) {
                 EventBus.getDefault().post(new Constants.UpdateTimerProgressEvent());
-            //}
+            }
         }
 
         @Override
