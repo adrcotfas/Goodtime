@@ -42,8 +42,11 @@ public class TimerService extends Service {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        EventBus.getDefault().unregister(this);
-        mSessionManager.unregisterAlarmReceiver();
+        try {
+            mSessionManager.unregisterAlarmReceiver();
+        } catch (IllegalArgumentException e) {
+            Log.w(TAG, "AlarmReceiver is already unregistered.");
+        }
         super.onDestroy();
     }
 
