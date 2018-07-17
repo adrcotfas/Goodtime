@@ -15,6 +15,8 @@ import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+
 public class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
 
     @BindView(R.id.toolbar) Toolbar mToolbar;
@@ -37,6 +39,11 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
             ft.replace(R.id.fragment, fragment);
             ft.commitAllowingStateLoss();
         }
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        getWindow().addFlags(FLAG_SHOW_WHEN_LOCKED);
     }
 
     @Override
