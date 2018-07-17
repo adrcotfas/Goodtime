@@ -12,6 +12,7 @@ import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.apps.adrcotfas.goodtime.Main.TimerActivity;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;
@@ -26,7 +27,7 @@ import static com.apps.adrcotfas.goodtime.Util.Constants.ACTION.FINISHED;
  */
 public class CurrentSessionManager extends ContextWrapper{
 
-    private static String TAG = CountDownTimer.class.getSimpleName();
+    private static String TAG = CurrentSessionManager.class.getSimpleName();
     public final static String SESSION_TYPE = "goodtime.session.type";
 
     private AppCountDownTimer mTimer;
@@ -36,9 +37,7 @@ public class CurrentSessionManager extends ContextWrapper{
 
     public CurrentSessionManager(Context context, CurrentSession currentSession) {
         super(context);
-        this.mCurrentSession = currentSession;
-        mRemaining = mCurrentSession.getDuration().getValue();
-        mTimer = new AppCountDownTimer(mRemaining);
+        mCurrentSession = currentSession;
         mAlarmReceiver = new AlarmReceiver();
     }
 
@@ -60,11 +59,13 @@ public class CurrentSessionManager extends ContextWrapper{
     public void toggleTimer() {
         switch(mCurrentSession.getTimerState().getValue()) {
             case PAUSED:
+                Log.v(TAG, "toggleTimer PAUSED");
                 scheduleAlarm(mCurrentSession.getSessionType().getValue(), mRemaining);
                 mTimer.start();
                 mCurrentSession.setTimerState(TimerState.ACTIVE);
                 break;
             case ACTIVE:
+                Log.v(TAG, "toggleTimer UNPAUSED");
                 cancelAlarm();
                 mTimer.cancel();
                 mTimer = new AppCountDownTimer(mRemaining);
@@ -77,6 +78,7 @@ public class CurrentSessionManager extends ContextWrapper{
     }
 
     public void stopTimer() {
+        cancelAlarm();
         mTimer.cancel();
         mCurrentSession.setTimerState(TimerState.INACTIVE);
         long workDuration = TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK));
@@ -85,27 +87,55 @@ public class CurrentSessionManager extends ContextWrapper{
 
     private void scheduleAlarm(SessionType sessionType, long duration) {
         this.registerReceiver(mAlarmReceiver, new IntentFilter(FINISHED));
-
         final long triggerAtMillis = duration + SystemClock.elapsedRealtime();
+
+        Log.v(TAG, "scheduleAlarm " + sessionType.toString());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     triggerAtMillis, getAlarmPendingIntent(sessionType));
+
+            //TODO: find a more elegant solution for the second alarm
+            //which just brings the main activity on top in a smooth way.
+            //Starting it from the service lags
+
+            getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    triggerAtMillis, getAlarmActivityIntent());
+
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getAlarmManager().setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     triggerAtMillis, getAlarmPendingIntent(sessionType));
+
+            getAlarmManager().setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    triggerAtMillis, getAlarmActivityIntent());
         } else {
             getAlarmManager().set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     triggerAtMillis, getAlarmPendingIntent(sessionType));
+
+            getAlarmManager().set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    triggerAtMillis, getAlarmActivityIntent());
         }
     }
 
+    private PendingIntent getAlarmActivityIntent() {
+        Intent activityIntent = new Intent(this, TimerActivity.class);
+        activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        return PendingIntent.getActivity(this, 0,
+                activityIntent, 0);
+    }
+
     private void cancelAlarm() {
-        unregisterAlarmReceiver();
         getAlarmManager().cancel(getAlarmPendingIntent(mCurrentSession.getSessionType().getValue()));
+        getAlarmManager().cancel(getAlarmActivityIntent());
+        unregisterAlarmReceiver();
     }
 
     public void unregisterAlarmReceiver() {
-        this.unregisterReceiver(mAlarmReceiver);
+        Log.v(TAG, "unregisterAlarmReceiver");
+        try {
+            this.unregisterReceiver(mAlarmReceiver);
+        } catch (IllegalArgumentException e) {
+            Log.w(TAG, "AlarmReceiver is already unregistered.");
+        }
     }
 
     private AlarmManager getAlarmManager() {
@@ -124,6 +154,8 @@ public class CurrentSessionManager extends ContextWrapper{
     }
 
     private class AppCountDownTimer extends CountDownTimer {
+
+        private String TAG = AppCountDownTimer.class.getSimpleName();
         /**
          * @param millisInFuture    The number of millis in the future from the call
          *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
@@ -150,9 +182,6 @@ public class CurrentSessionManager extends ContextWrapper{
         @Override
         public void onFinish() {
             Log.v(TAG, "is finished.");
-            long workDuration = TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK));
-            mCurrentSession.setDuration(workDuration);
-            mCurrentSession.setTimerState(TimerState.INACTIVE);
             mRemaining = 0;
         }
     }
