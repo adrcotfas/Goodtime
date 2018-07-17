@@ -37,6 +37,8 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+import static android.view.WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREEN_ON;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.THEME;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
@@ -84,11 +86,17 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     }
 
     @Override
+    public void onAttachedToWindow() {
+        getWindow().addFlags(FLAG_SHOW_WHEN_LOCKED
+                | FLAG_TURN_SCREEN_ON);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
         // initialize notification channels on the first run
-        new NotificationHelper(getApplicationContext());
+        new NotificationHelper(this);
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.registerOnSharedPreferenceChangeListener(this);
@@ -139,9 +147,13 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
      */
     public void onEventMainThread(Object o) {
         if (o instanceof Constants.FinishWorkEvent) {
-            showFinishDialog(SessionType.WORK);
+            if (!PreferenceHelper.isContinuousModeEnabled()) {
+                showFinishDialog(SessionType.WORK);
+            }
         } else if (o instanceof Constants.FinishBreakEvent) {
-            showFinishDialog(SessionType.BREAK);
+            if (!PreferenceHelper.isContinuousModeEnabled()) {
+                showFinishDialog(SessionType.BREAK);
+            }
         } else if (o instanceof Constants.ClearFinishDialogEvent) {
             if (mDialog != null) {
                 mDialog.cancel();
