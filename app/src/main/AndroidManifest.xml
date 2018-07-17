@@ -5,17 +5,17 @@
 
     <!-- Used by RingtonePreference to allow adding custom ringtones -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <!-- Used to enable and disable WiFi during work sessions -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-
     <!-- Used to enable and disable sound during work sessions -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
-
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Used to wake the screen when a session is finished -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Used on Android P and later for the timer foreground service -->
+    <uses-permission android:name="Manifest.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:name="com.apps.adrcotfas.goodtime.BL.GoodtimeApplication"
@@ -28,6 +28,7 @@
         tools:ignore="InnerclassSeparator">
         <activity
             android:name="com.apps.adrcotfas.goodtime.Main.TimerActivity"
+            android:showOnLockScreen="true"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,6 +38,7 @@
         <activity
             android:name=".Settings.SettingsActivity"
             android:label="Settings"
+            android:showOnLockScreen="true"
             android:parentActivityName=".Main.TimerActivity">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
