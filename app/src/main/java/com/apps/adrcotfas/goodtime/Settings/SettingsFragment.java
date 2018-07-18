@@ -102,6 +102,29 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
                 return true;
             }
         });
+
+        // Continuous mode versus insistent notification
+        findPreference(PreferenceHelper.ENABLE_CONTINUOUS_MODE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                final CheckBoxPreference pref = (CheckBoxPreference) findPreference(PreferenceHelper.INSISTENT_RINGTONE);
+                if (pref.isChecked()) {
+                    pref.setChecked(false);
+                }
+                return true;
+            }
+        });
+
+        findPreference(PreferenceHelper.INSISTENT_RINGTONE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                final CheckBoxPreference pref = (CheckBoxPreference) findPreference(PreferenceHelper.ENABLE_CONTINUOUS_MODE);
+                if (pref.isChecked()) {
+                    pref.setChecked(false);
+                }
+                return true;
+            }
+        });
     }
 
     @Override
