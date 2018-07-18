@@ -16,10 +16,24 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.v(TAG, "onReceive " + intent.getStringExtra(SESSION_TYPE));
+
+        final SessionType sessionType = SessionType.valueOf(intent.getStringExtra(SESSION_TYPE));
+        Log.v(TAG, "onReceive " + sessionType.toString());
 
         GoodtimeApplication.getInstance().getCurrentSession().setTimerState(TimerState.INACTIVE);
-        EventBus.getDefault().post(intent.getStringExtra(SESSION_TYPE).equals(SessionType.WORK.toString())?
+
+        if (PreferenceHelper.isLongBreakEnabled()) {
+            if (sessionType == SessionType.LONG_BREAK) {
+                PreferenceHelper.resetCurrentStreak();
+            } else if (sessionType == SessionType.WORK){
+                PreferenceHelper.incrementCurrentStreak();
+            }
+
+            Log.v(TAG, "PreferenceHelper.getCurrentStreak: " + PreferenceHelper.getCurrentStreak());
+            Log.v(TAG, "PreferenceHelper.lastWorkFinishedAt: " + PreferenceHelper.lastWorkFinishedAt());
+        }
+
+        EventBus.getDefault().post(sessionType == SessionType.WORK ?
                 new Constants.FinishWorkEvent() : new Constants.FinishBreakEvent());
     }
 }

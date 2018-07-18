@@ -100,7 +100,15 @@ public class TimerService extends Service {
     }
 
     private void onStartEvent(SessionType sessionType) {
+
         EventBus.getDefault().post(new Constants.ClearFinishDialogEvent());
+        if (sessionType == SessionType.BREAK && PreferenceHelper.isLongBreakEnabled()
+                && PreferenceHelper.itsTimeForLongBreak()) {
+            sessionType = SessionType.LONG_BREAK;
+        }
+
+        Log.v(TAG, "onStartEvent: " + sessionType.toString());
+
         getSessionManager().startTimer(sessionType);
 
         if (sessionType == SessionType.WORK) {
@@ -159,7 +167,6 @@ public class TimerService extends Service {
         stopForeground(true);
 
         if (PreferenceHelper.isContinuousModeEnabled()) {
-            // TODO: handle long breaks
             onStartEvent(sessionType == SessionType.WORK ? SessionType.BREAK : SessionType.WORK);
         } else {
             mNotificationHelper.notifyFinished(sessionType);

@@ -1,5 +1,9 @@
 package com.apps.adrcotfas.goodtime.BL;
 
+import android.os.SystemClock;
+
+import java.util.concurrent.TimeUnit;
+
 import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class PreferenceHelper {
@@ -23,14 +27,30 @@ public class PreferenceHelper {
     public final static String THEME                       = "pref_theme";
     public final static String PRO_VERSION                 = "pref_testing_pro_version";
 
+    public final static String WORK_STREAK                 = "pref_WORK_STREAK";
+    public final static String LAST_WORK_FINISHED_AT       = "pref_last_work_finished_at";
+
     public static long getSessionDuration(SessionType sessionType) {
-        if (sessionType == SessionType.WORK) {
-            return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                    .getInt(WORK_DURATION, 25);
-        } else {
-            return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                    .getInt(BREAK_DURATION, 5);
+
+        final long duration;
+        switch (sessionType) {
+            case WORK:
+                duration = getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                        .getInt(WORK_DURATION, 42);
+                break;
+            case BREAK:
+                duration = getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                        .getInt(BREAK_DURATION, 5);
+                break;
+            case LONG_BREAK:
+                duration = getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                        .getInt(LONG_BREAK_DURATION, 5);
+                break;
+            default:
+                duration = 42;
+                break;
         }
+        return duration;
     }
 
     public static boolean isLongBreakEnabled() {
@@ -38,12 +58,7 @@ public class PreferenceHelper {
                 .getBoolean(ENABLE_LONG_BREAK, true);
     }
 
-    public static long getLongBreakDuration() {
-        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getInt(LONG_BREAK_DURATION, 15);
-    }
-
-    public static long getSessionsBeforeLongBreak() {
+    public static int getSessionsBeforeLongBreak() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getInt(SESSIONS_BEFORE_LONG_BREAK, 4);
     }
@@ -106,5 +121,48 @@ public class PreferenceHelper {
     public static boolean isProVersion() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(PRO_VERSION, false);
+    }
+
+    /**
+     * Increments the current completed work session streak but only if it's completed
+     * in a reasonable time frame comparing with the last completed work session,
+     * else it considers this session the first completed one in the streak.
+     */
+    public static void incrementCurrentStreak() {
+
+        // Add an extra 10 minutes to a work and break sessions duration
+        // If the user did not complete another session in this time frame, just increment from 0.
+        final long maxDifference = TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)
+                + PreferenceHelper.getSessionDuration(SessionType.BREAK)
+                + 10);
+
+        final long currentMillis = SystemClock.elapsedRealtime();
+        final boolean increment = lastWorkFinishedAt() == 0
+                || currentMillis - lastWorkFinishedAt() < maxDifference;
+
+        GoodtimeApplication.getSharedPreferences().edit()
+                .putInt(WORK_STREAK, increment ? getCurrentStreak() + 1 : 1).apply();
+
+        GoodtimeApplication.getSharedPreferences().edit()
+                .putLong(LAST_WORK_FINISHED_AT, increment ? currentMillis: 0).apply();
+    }
+
+    public static int getCurrentStreak() {
+        return GoodtimeApplication.getSharedPreferences().getInt(WORK_STREAK, 0);
+    }
+
+    public static long lastWorkFinishedAt() {
+        return GoodtimeApplication.getSharedPreferences().getLong(LAST_WORK_FINISHED_AT, 0);
+    }
+
+    public static void resetCurrentStreak() {
+        GoodtimeApplication.getSharedPreferences().edit()
+                .putInt(WORK_STREAK, 0).apply();
+        GoodtimeApplication.getSharedPreferences().edit()
+                .putLong(LAST_WORK_FINISHED_AT, 0).apply();
+    }
+
+    public static boolean itsTimeForLongBreak() {
+        return getCurrentStreak() >= getSessionsBeforeLongBreak();
     }
 }
