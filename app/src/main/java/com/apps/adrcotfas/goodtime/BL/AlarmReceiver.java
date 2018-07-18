@@ -18,9 +18,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive " + intent.getStringExtra(SESSION_TYPE));
 
-        ((GoodtimeApplication) context.getApplicationContext())
-                .getCurrentSession().setTimerState(TimerState.INACTIVE);
-
+        GoodtimeApplication.getInstance().getCurrentSession().setTimerState(TimerState.INACTIVE);
         EventBus.getDefault().post(intent.getStringExtra(SESSION_TYPE).equals(SessionType.WORK.toString())?
                 new Constants.FinishWorkEvent() : new Constants.FinishBreakEvent());
     }
