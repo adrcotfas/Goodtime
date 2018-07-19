@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.goodtime.BL;
 import android.app.Application;
-import android.content.SharedPreferences;
-import android.support.v7.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.concurrent.TimeUnit;

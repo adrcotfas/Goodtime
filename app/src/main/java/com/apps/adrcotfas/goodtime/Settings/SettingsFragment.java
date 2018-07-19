@@ -4,14 +4,13 @@ import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v14.preference.SwitchPreference;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.preference.CheckBoxPreference;
-import android.support.v7.preference.Preference;
+import androidx.annotation.Nullable;
+import androidx.preference.SwitchPreference;
+import androidx.core.app.ActivityCompat;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.Preference;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +20,9 @@ import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.DISABLE_SOUND_AND_VIBRATION;
+import com.takisoft.preferencex.PreferenceFragmentCompat;
 
-public class SettingsFragment extends PreferenceFragmentCompatDividers implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class SettingsFragment extends PreferenceFragmentCompat  implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     CheckBoxPreference disableSoundCheckbox;
 

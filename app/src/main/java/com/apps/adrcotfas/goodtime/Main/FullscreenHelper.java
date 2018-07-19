@@ -2,7 +2,7 @@ package com.apps.adrcotfas.goodtime.Main;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
-import android.support.v7.app.ActionBar;
+import androidx.appcompat.app.ActionBar;
 import android.view.MotionEvent;
 import android.view.View;
 

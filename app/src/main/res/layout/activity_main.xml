@@ -4,25 +4,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <variable name="toolbarVariable" type="android.support.v7.widget.Toolbar"/>
+        <variable name="toolbarVariable" type="androidx.appcompat.widget.Toolbar"/>
         <variable name="timeLabelVariable" type="android.widget.TextView"/>
         <variable name="stopButtonVariable" type="android.widget.TextView"/>
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         tools:context="com.apps.adrcotfas.goodtime.Main.TimerActivity">
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"
             xmlns:android="http://schemas.android.com/apk/res/android">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
@@ -30,7 +30,7 @@
                 android:minHeight="?attr/actionBarSize"
                 android:visibility="visible"/>
 
-        </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <View
             android:id="@+id/main"
@@ -71,6 +71,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

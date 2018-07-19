@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-        <variable name="toolbarVariable" type="android.support.v7.widget.Toolbar"/>
+        <variable name="toolbarVariable" type="androidx.appcompat.widget.Toolbar"/>
     </data>
 
     <LinearLayout
@@ -11,13 +11,13 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"
             xmlns:android="http://schemas.android.com/apk/res/android">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
@@ -25,7 +25,7 @@
                 android:minHeight="?attr/actionBarSize"
                 android:visibility="visible"/>
 
-        </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <FrameLayout
             android:id="@+id/fragment"

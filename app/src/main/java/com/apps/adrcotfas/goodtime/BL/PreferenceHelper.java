@@ -1,6 +1,6 @@
 package com.apps.adrcotfas.goodtime.BL;
 
-import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class PreferenceHelper {
 
