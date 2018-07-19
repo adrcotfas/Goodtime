@@ -20,5 +20,13 @@
         <item name="android:windowBackground">@color/white</item>
     </style>
 
+    <declare-styleable name="ProperSeekBarPreference">
+        <attr format="integer" name="min"/>
+        <attr name="android:max"/>
+        <attr name="android:layout"/>
+        <attr format="integer" name="seekBarIncrement"/>
+        <attr format="boolean" name="adjustable"/>
+        <attr format="boolean" name="showSeekBarValue"/>
+    </declare-styleable>
 
 </resources>

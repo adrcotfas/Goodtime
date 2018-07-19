@@ -1,9 +1,5 @@
 package com.apps.adrcotfas.goodtime.BL;
 
-import android.os.SystemClock;
-
-import java.util.concurrent.TimeUnit;
-
 import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class PreferenceHelper {
@@ -116,11 +112,6 @@ public class PreferenceHelper {
     public static int getTheme() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getInt(THEME, 0);
-    }
-
-    public static boolean isProVersion() {
-        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getBoolean(PRO_VERSION, false);
     }
 
     /**

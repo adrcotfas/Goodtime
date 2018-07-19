@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -28,12 +29,10 @@ import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.BL.TimerService;
 import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
+import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding;
 
 import java.util.concurrent.TimeUnit;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
@@ -51,37 +50,37 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     private AlertDialog mDialog;
     private FullscreenHelper mFullscreenHelper;
 
-    @BindView(R.id.timeLabel) TextView mTimeLabel;
-    @BindView(R.id.stopButton) Button mStopButton;
-    @BindView(R.id.toolbar) Toolbar mToolbar;
-    @OnClick(R.id.timeLabel)
-    public void onStartButtonClick() {
+    public void onStartButtonClick(View view) {
         start(SessionType.WORK);
     }
 
-    @OnClick(R.id.stopButton)
-    public void onStopButtonClick() {
+    public void onStopButtonClick(View view) {
         stop();
     }
 
-    @OnClick(R.id.settings)
-    public void onSettingsClick() {
+    public void onSettingsClick(View view) {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
 
     }
+
+    Button mStopButton;
+    TextView mTimeLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         ThemeHelper.setTheme(this);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
 
-        setSupportActionBar(mToolbar);
+        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+        mStopButton = binding.stopButton;
+        mTimeLabel = binding.timeLabel;
+
+        setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle(null);
-
+        
         setupEvents();
     }
 
