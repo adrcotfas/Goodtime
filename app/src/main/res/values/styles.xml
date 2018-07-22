@@ -7,17 +7,24 @@
     </style>
 
     <style name="Dark" parent="@style/Theme.MaterialComponents.NoActionBar">
-        <item name="colorPrimary">@color/darkPrimary</item>
-        <item name="colorPrimaryDark">@color/darkPrimaryDark</item>
-        <item name="colorAccent">@color/darkAccent</item>
-        <item name="android:windowBackground">@color/darkBackground</item>
+        <item name="colorPrimary">@color/darkIndigo900</item>
+        <item name="colorPrimaryDark">@color/darkIndigo900</item>
+        <item name="android:windowBackground">@color/darkIndigo900</item>
+        <item name="colorAccent">@color/classicAccent</item>
     </style>
 
-    <style name="Light" parent="@style/Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">@color/lightPrimary</item>
-        <item name="colorPrimaryDark">@color/lightPrimaryDark</item>
-        <item name="colorAccent">@color/lightPrimary</item>
-        <item name="android:windowBackground">@color/white</item>
+    <style name="Blue" parent="@style/ThemeOverlay.MaterialComponents.Dark">
+        <item name="colorPrimary">@color/blue_a700</item>
+        <item name="colorPrimaryDark">@color/blue_a700</item>
+        <item name="android:windowBackground">@color/blue_a700</item>
+        <item name="colorAccent">@color/classicAccent</item>
+    </style>
+
+    <style name="Red" parent="@style/ThemeOverlay.MaterialComponents.Dark">
+        <item name="colorPrimary">@color/red900</item>
+        <item name="colorPrimaryDark">@color/red900</item>
+        <item name="android:windowBackground">@color/red900</item>
+        <item name="colorAccent">@color/classicAccent</item>
     </style>
 
     <declare-styleable name="ProperSeekBarPreference">

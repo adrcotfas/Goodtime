@@ -20,6 +20,8 @@ import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.DISABLE_SOUND_AND_VIBRATION;
+
+import com.takisoft.preferencex.ColorPickerPreference;
 import com.takisoft.preferencex.PreferenceFragmentCompat;
 
 public class SettingsFragment extends PreferenceFragmentCompat  implements ActivityCompat.OnRequestPermissionsResultCallback {
@@ -60,11 +62,14 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
             }
         });
 
-        findPreference(PreferenceHelper.THEME).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        final ColorPickerPreference colorPreference = (ColorPickerPreference) findPreference(PreferenceHelper.THEME);
+        colorPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (getActivity() != null) {
-                    getActivity().recreate();
+                if (colorPreference.getColor() != (int) newValue) {
+                    if (getActivity() != null) {
+                        getActivity().recreate();
+                    }
                 }
                 return true;
             }
