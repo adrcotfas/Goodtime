@@ -8,7 +8,7 @@
         <variable name="timeLabelVariable" type="android.widget.TextView"/>
         <variable name="stopVariable" type="android.widget.TextView"/>
         <variable name="skipVariable" type="android.widget.TextView"/>
-
+        <variable name="add60SecondsVariable" type="android.widget.TextView"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -85,7 +85,8 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:src="@drawable/ringtone_ic_add" />
+                android:src="@drawable/ringtone_ic_add"
+                android:onClick="onAdd60SecondsButtonClick"/>
 
             <ImageButton
                 android:id="@+id/skip"

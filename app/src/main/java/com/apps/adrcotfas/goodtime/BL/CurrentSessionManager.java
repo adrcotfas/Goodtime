@@ -153,6 +153,24 @@ public class CurrentSessionManager extends ContextWrapper{
         return mCurrentSession;
     }
 
+    public void add60Seconds() {
+        Log.v(TAG, "add60Seconds");
+
+        final long extra = TimeUnit.SECONDS.toMillis(60);
+
+        cancelAlarm();
+        mTimer.cancel();
+        mRemaining += extra;
+        mTimer = new AppCountDownTimer(mRemaining);
+
+        if (mCurrentSession.getTimerState().getValue() == TimerState.ACTIVE) {
+            scheduleAlarm(mCurrentSession.getSessionType().getValue(), mRemaining);
+            mTimer.start();
+        } else {
+            mCurrentSession.setDuration(mRemaining);
+        }
+    }
+
     private class AppCountDownTimer extends CountDownTimer {
 
         private String TAG = AppCountDownTimer.class.getSimpleName();

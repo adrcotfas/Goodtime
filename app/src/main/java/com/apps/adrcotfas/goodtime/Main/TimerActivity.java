@@ -60,6 +60,9 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     public void onSkipButtonClick(View view) {
         skip();
     }
+    public void onAdd60SecondsButtonClick(View view) {
+        add60Seconds();
+    }
 
     private void skip() {
         if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
@@ -75,6 +78,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
     ImageButton mStopButton;
     ImageButton mSkipButton;
+    ImageButton mAddSecondsButton;
     TextView mTimeLabel;
 
     @Override
@@ -85,9 +89,10 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        mStopButton = binding.stop;
-        mSkipButton = binding.skip;
-        mTimeLabel = binding.timeLabel;
+        mStopButton       = binding.stop;
+        mSkipButton       = binding.skip;
+        mTimeLabel        = binding.timeLabel;
+        mAddSecondsButton = binding.add60Seconds;
 
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle(null);
@@ -162,10 +167,12 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                     //TODO: animate timer
                     mStopButton.setEnabled(false);
                     mSkipButton.setEnabled(false);
+                    mAddSecondsButton.setEnabled(false);
                 } else {
                     //TODO: stop animating timer
                     mStopButton.setEnabled(true);
                     mSkipButton.setEnabled(true);
+                    mAddSecondsButton.setEnabled(true);
                 }
             }
         });
@@ -219,6 +226,15 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
     public void stop() {
         Intent stopIntent = new IntentWithAction(TimerActivity.this, TimerService.class, Constants.ACTION.STOP);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(stopIntent);
+        } else {
+            startService(stopIntent);
+        }
+    }
+
+    private void add60Seconds() {
+        Intent stopIntent = new IntentWithAction(TimerActivity.this, TimerService.class, Constants.ACTION.ADD_SECONDS);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(stopIntent);
         } else {

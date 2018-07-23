@@ -68,6 +68,9 @@ public class TimerService extends Service {
                 SessionType sessionType = SessionType.valueOf(intent.getStringExtra(SESSION_TYPE));
                 onStartEvent(sessionType);
                 break;
+            case Constants.ACTION.ADD_SECONDS:
+                onAdd60Seconds();
+                break;
             case Constants.ACTION.SKIP:
                 onSkipEvent();
                 break;
@@ -173,6 +176,11 @@ public class TimerService extends Service {
         } else {
             mNotificationHelper.notifyFinished(sessionType);
         }
+    }
+
+    private void onAdd60Seconds() {
+        Log.d(TAG, TimerService.this.hashCode() + " onAdd60Seconds ");
+        getSessionManager().add60Seconds();
     }
 
     private void onSkipEvent() {

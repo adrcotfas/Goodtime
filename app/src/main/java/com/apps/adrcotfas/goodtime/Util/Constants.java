@@ -15,6 +15,7 @@ public class Constants {
         String TOGGLE      = "goodtime.action.toggle";
         String STOP        = "goodtime.action.stop";
         String FINISHED    = "goodtime.action.finished";
+        String ADD_SECONDS = "goodtime.action.addseconds";
     }
 
     public final static String SESSION_TYPE = "goodtime.session.type";
