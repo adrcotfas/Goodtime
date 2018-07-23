@@ -8,7 +8,7 @@ import android.util.Log;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import de.greenrobot.event.EventBus;
 
-import static com.apps.adrcotfas.goodtime.BL.CurrentSessionManager.SESSION_TYPE;
+import static com.apps.adrcotfas.goodtime.Util.Constants.SESSION_TYPE;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -22,18 +22,22 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         GoodtimeApplication.getInstance().getCurrentSession().setTimerState(TimerState.INACTIVE);
 
-        if (PreferenceHelper.isLongBreakEnabled()) {
-            if (sessionType == SessionType.LONG_BREAK) {
-                PreferenceHelper.resetCurrentStreak();
-            } else if (sessionType == SessionType.WORK){
-                PreferenceHelper.incrementCurrentStreak();
-            }
-
-            Log.v(TAG, "PreferenceHelper.getCurrentStreak: " + PreferenceHelper.getCurrentStreak());
-            Log.v(TAG, "PreferenceHelper.lastWorkFinishedAt: " + PreferenceHelper.lastWorkFinishedAt());
+        final Object o;
+        switch (sessionType) {
+            case WORK:
+                o = new Constants.FinishWorkEvent();
+                break;
+            case BREAK:
+                o = new Constants.FinishBreakEvent();
+                break;
+            case LONG_BREAK:
+                o = new Constants.FinishLongBreakEvent();
+                break;
+            default:
+                o = null;
+                break;
         }
 
-        EventBus.getDefault().post(sessionType == SessionType.WORK ?
-                new Constants.FinishWorkEvent() : new Constants.FinishBreakEvent());
+        EventBus.getDefault().post(o);
     }
 }

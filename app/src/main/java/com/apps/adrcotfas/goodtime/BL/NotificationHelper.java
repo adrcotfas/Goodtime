@@ -110,13 +110,10 @@ public class NotificationHelper extends ContextWrapper {
                         .setContentTitle("Work session in progress")
                         .setContentText(buildProgressText(currentSession.getDuration().getValue()));
             }
-        } else if (currentSession.getSessionType().getValue() == SessionType.BREAK) {
-            builder
-                    .addAction(buildStopAction(this))
+        } else {
+            builder.addAction(buildStopAction(this))
                     .setContentTitle("Break in progress")
                     .setContentText(buildProgressText(currentSession.getDuration().getValue()));
-        } else {
-            Log.wtf(TAG, "Trying to create a notification in an invalid state.");
         }
 
         return builder;
@@ -137,7 +134,7 @@ public class NotificationHelper extends ContextWrapper {
                     .setContentText("Continue?")
                     .addAction(buildStartBreakAction(this))
                     .addAction(buildSkipBreakAction(this));
-        } else if (sessionType == SessionType.BREAK) {
+        } else {
             builder.setContentTitle("Break finished")
                     .setContentText("Continue?")
                     .addAction(buildStartWorkAction(this));
@@ -185,7 +182,7 @@ public class NotificationHelper extends ContextWrapper {
 
     private static NotificationCompat.Action buildStartWorkAction(Context context) {
         PendingIntent togglePendingIntent = PendingIntent.getService(context, 0,
-                new IntentWithAction(context, TimerService.class, Constants.ACTION.START_WORK), 0);
+                new IntentWithAction(context, TimerService.class, Constants.ACTION.START, SessionType.WORK), 0);
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_resume,
@@ -195,7 +192,7 @@ public class NotificationHelper extends ContextWrapper {
 
     private static NotificationCompat.Action buildStartBreakAction(Context context) {
         PendingIntent togglePendingIntent = PendingIntent.getService(context, 0,
-                new IntentWithAction(context, TimerService.class, Constants.ACTION.START_BREAK), 0);
+                new IntentWithAction(context, TimerService.class, Constants.ACTION.START, SessionType.BREAK), 0);
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_resume,
@@ -205,7 +202,7 @@ public class NotificationHelper extends ContextWrapper {
 
     private static NotificationCompat.Action buildSkipBreakAction(Context context) {
         PendingIntent togglePendingIntent = PendingIntent.getService(context, 0,
-                new IntentWithAction(context, TimerService.class, Constants.ACTION.SKIP_BREAK), 0);
+                new IntentWithAction(context, TimerService.class, Constants.ACTION.START, SessionType.WORK), 0);
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_skip,

@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import de.greenrobot.event.EventBus;
 
 import static com.apps.adrcotfas.goodtime.Util.Constants.ACTION.FINISHED;
+import static com.apps.adrcotfas.goodtime.Util.Constants.SESSION_TYPE;
 
 /**
  * This class manages and modifies the mutable members of {@link CurrentSession}
@@ -28,7 +29,6 @@ import static com.apps.adrcotfas.goodtime.Util.Constants.ACTION.FINISHED;
 public class CurrentSessionManager extends ContextWrapper{
 
     private static String TAG = CurrentSessionManager.class.getSimpleName();
-    public final static String SESSION_TYPE = "goodtime.session.type";
 
     private AppCountDownTimer mTimer;
     private CurrentSession mCurrentSession;

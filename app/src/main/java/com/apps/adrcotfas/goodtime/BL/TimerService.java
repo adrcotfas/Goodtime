@@ -16,6 +16,7 @@ import de.greenrobot.event.EventBus;
 
 import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static com.apps.adrcotfas.goodtime.BL.NotificationHelper.GOODTIME_NOTIFICATION_ID;
+import static com.apps.adrcotfas.goodtime.Util.Constants.SESSION_TYPE;
 
 /**
  * Class representing the foreground service which triggers the countdown timer and handles events.
@@ -56,10 +57,6 @@ public class TimerService extends Service {
         int result = START_STICKY;
         Log.d(TAG, "onStartCommand " + this.hashCode() + " " + intent.getAction());
         switch (intent.getAction()) {
-            case Constants.ACTION.START_WORK:
-            case Constants.ACTION.SKIP_BREAK:
-                onStartEvent(SessionType.WORK);
-                break;
             case Constants.ACTION.STOP:
                 onStopEvent();
                 break;
@@ -67,11 +64,12 @@ public class TimerService extends Service {
                 onToggleEvent();
                 result = START_NOT_STICKY;
                 break;
-            case Constants.ACTION.START_BREAK:
-                onStartEvent(SessionType.BREAK);
+            case Constants.ACTION.START:
+                SessionType sessionType = SessionType.valueOf(intent.getStringExtra(SESSION_TYPE));
+                onStartEvent(sessionType);
                 break;
-            case Constants.ACTION.SKIP_WORK:
-                onSkipWorkEvent();
+            case Constants.ACTION.SKIP:
+                onSkipEvent();
                 break;
             default:
                 break;
@@ -90,6 +88,8 @@ public class TimerService extends Service {
         } else if (o instanceof Constants.FinishBreakEvent) {
             Log.d(TAG, "onEvent " + o.getClass().getSimpleName());
             onFinishEvent(SessionType.BREAK);
+        } else if (o instanceof  Constants.FinishLongBreakEvent) {
+            onFinishEvent(SessionType.LONG_BREAK);
         } else if (o instanceof Constants.UpdateTimerProgressEvent) {
             updateNotificationProgress();
         } else if (o instanceof Constants.ClearNotificationEvent) {
@@ -102,12 +102,12 @@ public class TimerService extends Service {
     private void onStartEvent(SessionType sessionType) {
 
         EventBus.getDefault().post(new Constants.ClearFinishDialogEvent());
-        if (sessionType == SessionType.BREAK && PreferenceHelper.isLongBreakEnabled()
+        if (sessionType != SessionType.WORK && PreferenceHelper.isLongBreakEnabled()
                 && PreferenceHelper.itsTimeForLongBreak()) {
             sessionType = SessionType.LONG_BREAK;
         }
 
-        Log.v(TAG, "onStartEvent: " + sessionType.toString());
+        Log.d(TAG, "onStartEvent: " + sessionType.toString());
 
         getSessionManager().startTimer(sessionType);
 
@@ -166,10 +166,36 @@ public class TimerService extends Service {
         mRingtoneAndVibrationPlayer.play(sessionType);
         stopForeground(true);
 
+        updateLongBreakStreak(sessionType);
+
         if (PreferenceHelper.isContinuousModeEnabled()) {
             onStartEvent(sessionType == SessionType.WORK ? SessionType.BREAK : SessionType.WORK);
         } else {
             mNotificationHelper.notifyFinished(sessionType);
+        }
+    }
+
+    private void onSkipEvent() {
+        final SessionType sessionType = getSessionManager().getCurrentSession().getSessionType().getValue();
+        Log.d(TAG, TimerService.this.hashCode() + " onSkipEvent " + sessionType.toString());
+
+        getSessionManager().stopTimer();
+        // TODO: store what was done of the session to ROOM
+        stopForeground(true);
+        updateLongBreakStreak(sessionType);
+        onStartEvent(sessionType == SessionType.WORK ? SessionType.BREAK : SessionType.WORK);
+    }
+
+    private void updateLongBreakStreak(SessionType sessionType) {
+        if (PreferenceHelper.isLongBreakEnabled()) {
+            if (sessionType == SessionType.LONG_BREAK) {
+                PreferenceHelper.resetCurrentStreak();
+            } else if (sessionType == SessionType.WORK){
+                PreferenceHelper.incrementCurrentStreak();
+            }
+
+            Log.v(TAG, "PreferenceHelper.getCurrentStreak: " + PreferenceHelper.getCurrentStreak());
+            Log.v(TAG, "PreferenceHelper.lastWorkFinishedAt: " + PreferenceHelper.lastWorkFinishedAt());
         }
     }
 
@@ -182,11 +208,6 @@ public class TimerService extends Service {
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,
                 AlarmReceiver.class.getName());
         wakeLock.acquire(TimeUnit.SECONDS.toMillis(1));
-    }
-
-    private void onSkipWorkEvent() {
-        // TODO: store what was done of the session to ROOM
-        onStartEvent(SessionType.BREAK);
     }
 
     private void updateNotificationProgress() {

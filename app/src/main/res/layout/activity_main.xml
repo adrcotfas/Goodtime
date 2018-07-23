@@ -7,6 +7,8 @@
         <variable name="toolbarVariable" type="androidx.appcompat.widget.Toolbar"/>
         <variable name="timeLabelVariable" type="android.widget.TextView"/>
         <variable name="stopVariable" type="android.widget.TextView"/>
+        <variable name="skipVariable" type="android.widget.TextView"/>
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -91,7 +93,8 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:src="@drawable/ic_notification_skip" />
+                android:src="@drawable/ic_notification_skip"
+                android:onClick="onSkipButtonClick"/>
 
             <ImageButton
                 android:id="@+id/stop"

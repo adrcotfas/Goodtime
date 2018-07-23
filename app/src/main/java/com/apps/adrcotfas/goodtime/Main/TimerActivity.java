@@ -57,8 +57,24 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
     public void onStopButtonClick(View view) {
         stop();
     }
+    public void onSkipButtonClick(View view) {
+        skip();
+    }
+
+    private void skip() {
+        if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
+            Intent skipIntent = new IntentWithAction(TimerActivity.this, TimerService.class,
+                    Constants.ACTION.SKIP);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(skipIntent);
+            } else {
+                startService(skipIntent);
+            }
+        }
+    }
 
     ImageButton mStopButton;
+    ImageButton mSkipButton;
     TextView mTimeLabel;
 
     @Override
@@ -70,6 +86,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         mStopButton = binding.stop;
+        mSkipButton = binding.skip;
         mTimeLabel = binding.timeLabel;
 
         setSupportActionBar(binding.toolbar);
@@ -144,9 +161,11 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 if (timerState == TimerState.INACTIVE) {
                     //TODO: animate timer
                     mStopButton.setEnabled(false);
+                    mSkipButton.setEnabled(false);
                 } else {
                     //TODO: stop animating timer
                     mStopButton.setEnabled(true);
+                    mSkipButton.setEnabled(true);
                 }
             }
         });
@@ -157,17 +176,16 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
      * @param o holds the type of the Event
      */
     public void onEventMainThread(Object o) {
-        if (o instanceof Constants.FinishWorkEvent) {
-            if (!PreferenceHelper.isContinuousModeEnabled()) {
+        if (!PreferenceHelper.isContinuousModeEnabled()) {
+            if (o instanceof Constants.FinishWorkEvent) {
                 showFinishDialog(SessionType.WORK);
-            }
-        } else if (o instanceof Constants.FinishBreakEvent) {
-            if (!PreferenceHelper.isContinuousModeEnabled()) {
+            } else if (o instanceof Constants.FinishBreakEvent
+                    || o instanceof Constants.FinishLongBreakEvent) {
                 showFinishDialog(SessionType.BREAK);
-            }
-        } else if (o instanceof Constants.ClearFinishDialogEvent) {
-            if (mDialog != null) {
-                mDialog.cancel();
+            } else if (o instanceof Constants.ClearFinishDialogEvent) {
+                if (mDialog != null) {
+                    mDialog.cancel();
+                }
             }
         }
     }
@@ -182,7 +200,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         switch (mCurrentSession.getTimerState().getValue()) {
             case INACTIVE:
                 startIntent = new IntentWithAction(TimerActivity.this, TimerService.class,
-                        sessionType == SessionType.WORK ? Constants.ACTION.START_WORK : Constants.ACTION.START_BREAK);
+                        Constants.ACTION.START, sessionType);
                 break;
             case ACTIVE:
             case PAUSED:
@@ -245,12 +263,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             start(SessionType.WORK);
-                        }
-                    })
-                    .setNegativeButton("Skip work", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            start(SessionType.BREAK);
                         }
                     })
                     .setNeutralButton("Close", new DialogInterface.OnClickListener() {
