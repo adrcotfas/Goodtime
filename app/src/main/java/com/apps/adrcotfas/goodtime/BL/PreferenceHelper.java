@@ -25,10 +25,10 @@ public class PreferenceHelper {
     public final static String ENABLE_SCREEN_ON            = "pref_keep_screen_on";
     public final static String ENABLE_CONTINUOUS_MODE      = "pref_continuous_mode";
     public final static String THEME                       = "pref_theme";
-    public final static String PRO_VERSION                 = "pref_testing_pro_version";
 
     public final static String WORK_STREAK                 = "pref_WORK_STREAK";
     public final static String LAST_WORK_FINISHED_AT       = "pref_last_work_finished_at";
+    private static final String ADDED_60_SECONDS_STATE     = "pref_added_60_seconds_State";
 
     public static long getSessionDuration(SessionType sessionType) {
 
@@ -159,5 +159,25 @@ public class PreferenceHelper {
 
     public static boolean itsTimeForLongBreak() {
         return getCurrentStreak() >= getSessionsBeforeLongBreak();
+    }
+
+    /**
+     * Persists the state of a session prolonged by the "Add 60 seconds" action.
+     * It should be set to true when a session is started from an inactive state with the
+     * "add 60 seconds" action.
+     * It should be set to false when a session is stopped by a "stop" event and when a session is finished.
+     * @param enable specifies the new state.
+     */
+    public static void toggleAdded60SecondsState(boolean enable) {
+        GoodtimeApplication.getSharedPreferences().edit()
+                .putBoolean(ADDED_60_SECONDS_STATE, enable).apply();
+    }
+
+    /**
+     * This is used to identify when not to increase the current finished session streak.
+     * @return the state of the "added 60 seconds" state.
+     */
+    public static boolean isInAdded60SecondsState() {
+        return GoodtimeApplication.getSharedPreferences().getBoolean(ADDED_60_SECONDS_STATE, false);
     }
 }

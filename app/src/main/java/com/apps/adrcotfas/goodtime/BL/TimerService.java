@@ -146,6 +146,8 @@ public class TimerService extends Service {
             toggleSound(true);
         }
 
+        PreferenceHelper.toggleAdded60SecondsState(false);
+
         stopForeground(true);
         stopSelf();
         // TODO: store what was done of the session to ROOM
@@ -170,6 +172,7 @@ public class TimerService extends Service {
         stopForeground(true);
 
         updateLongBreakStreak(sessionType);
+        PreferenceHelper.toggleAdded60SecondsState(false);
 
         if (PreferenceHelper.isContinuousModeEnabled()) {
             onStartEvent(sessionType == SessionType.WORK ? SessionType.BREAK : SessionType.WORK);
@@ -180,6 +183,11 @@ public class TimerService extends Service {
 
     private void onAdd60Seconds() {
         Log.d(TAG, TimerService.this.hashCode() + " onAdd60Seconds ");
+        if (getSessionManager().getCurrentSession().getTimerState().getValue() == TimerState.INACTIVE) {
+            startForeground(GOODTIME_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
+                    getSessionManager().getCurrentSession()).build());
+            PreferenceHelper.toggleAdded60SecondsState(true);
+        }
         getSessionManager().add60Seconds();
     }
 
@@ -195,15 +203,17 @@ public class TimerService extends Service {
     }
 
     private void updateLongBreakStreak(SessionType sessionType) {
+
+        final boolean isIn60AddedSecondsState = PreferenceHelper.isInAdded60SecondsState();
         if (PreferenceHelper.isLongBreakEnabled()) {
             if (sessionType == SessionType.LONG_BREAK) {
                 PreferenceHelper.resetCurrentStreak();
-            } else if (sessionType == SessionType.WORK){
+            } else if (sessionType == SessionType.WORK && !isIn60AddedSecondsState){
                 PreferenceHelper.incrementCurrentStreak();
             }
-
-            Log.v(TAG, "PreferenceHelper.getCurrentStreak: " + PreferenceHelper.getCurrentStreak());
-            Log.v(TAG, "PreferenceHelper.lastWorkFinishedAt: " + PreferenceHelper.lastWorkFinishedAt());
+            Log.d(TAG, "PreferenceHelper.isInAdded60SecondsState: " + isIn60AddedSecondsState);
+            Log.d(TAG, "PreferenceHelper.getCurrentStreak: " + PreferenceHelper.getCurrentStreak());
+            Log.d(TAG, "PreferenceHelper.lastWorkFinishedAt: " + PreferenceHelper.lastWorkFinishedAt());
         }
     }
 

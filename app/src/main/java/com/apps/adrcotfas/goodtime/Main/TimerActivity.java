@@ -255,10 +255,10 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                             start(SessionType.BREAK);
                         }
                     })
-                    .setNegativeButton("Skip break", new DialogInterface.OnClickListener() {
+                    .setNegativeButton("Add 60 seconds", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            start(SessionType.WORK);
+                            add60Seconds();
                         }
                     })
                     .setNeutralButton("Close", new DialogInterface.OnClickListener() {

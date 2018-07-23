@@ -163,9 +163,10 @@ public class CurrentSessionManager extends ContextWrapper{
         mRemaining += extra;
         mTimer = new AppCountDownTimer(mRemaining);
 
-        if (mCurrentSession.getTimerState().getValue() == TimerState.ACTIVE) {
+        if (mCurrentSession.getTimerState().getValue() != TimerState.PAUSED) {
             scheduleAlarm(mCurrentSession.getSessionType().getValue(), mRemaining);
             mTimer.start();
+            mCurrentSession.setTimerState(TimerState.ACTIVE);
         } else {
             mCurrentSession.setDuration(mRemaining);
         }
