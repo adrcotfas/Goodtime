@@ -6,7 +6,7 @@
     <data>
         <variable name="toolbarVariable" type="androidx.appcompat.widget.Toolbar"/>
         <variable name="timeLabelVariable" type="android.widget.TextView"/>
-        <variable name="stopButtonVariable" type="android.widget.TextView"/>
+        <variable name="stopVariable" type="android.widget.TextView"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -56,18 +56,52 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.45" />
 
-        <Button
-            android:id="@+id/stopButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginEnd="32dp"
-            android:layout_marginRight="32dp"
-            android:layout_marginBottom="36dp"
-            android:onClick="onStopButtonClick"
-            android:text="Stop"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageButton
+                android:id="@+id/status"
+                android:background="@null"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_status_goodtime" />
+
+            <ImageButton
+                android:id="@+id/add60Seconds"
+                android:background="@null"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:src="@drawable/ringtone_ic_add" />
+
+            <ImageButton
+                android:id="@+id/skip"
+                android:background="@null"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_notification_skip" />
+
+            <ImageButton
+                android:id="@+id/stop"
+                android:background="@null"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_notification_stop"
+                android:onClick="onStopButtonClick"/>
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

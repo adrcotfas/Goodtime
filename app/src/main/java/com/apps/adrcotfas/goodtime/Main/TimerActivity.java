@@ -15,7 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.apps.adrcotfas.goodtime.BL.CurrentSession;
@@ -58,7 +58,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         stop();
     }
 
-    Button mStopButton;
+    ImageButton mStopButton;
     TextView mTimeLabel;
 
     @Override
@@ -69,7 +69,7 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        mStopButton = binding.stopButton;
+        mStopButton = binding.stop;
         mTimeLabel = binding.timeLabel;
 
         setSupportActionBar(binding.toolbar);
@@ -141,12 +141,12 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mCurrentSession.getTimerState().observe(TimerActivity.this, new Observer<TimerState>() {
             @Override
             public void onChanged(@Nullable TimerState timerState) {
-                if (timerState == TimerState.PAUSED) {
+                if (timerState == TimerState.INACTIVE) {
                     //TODO: animate timer
-                    mStopButton.setVisibility(View.VISIBLE);
+                    mStopButton.setEnabled(false);
                 } else {
                     //TODO: stop animating timer
-                    mStopButton.setVisibility(View.INVISIBLE);
+                    mStopButton.setEnabled(true);
                 }
             }
         });
