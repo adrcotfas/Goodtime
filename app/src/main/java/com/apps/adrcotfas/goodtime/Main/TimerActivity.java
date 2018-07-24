@@ -39,6 +39,7 @@ import de.greenrobot.event.EventBus;
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
 import static android.view.WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON;
+import static android.view.animation.AnimationUtils.loadAnimation;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREEN_ON;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.THEME;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
@@ -164,12 +165,14 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             @Override
             public void onChanged(@Nullable TimerState timerState) {
                 if (timerState == TimerState.INACTIVE) {
-                    //TODO: animate timer
+                    mTimeLabel.clearAnimation();
                     mStopButton.setEnabled(false);
                     mSkipButton.setEnabled(false);
                     mAddSecondsButton.setEnabled(false);
+                } else if (timerState == TimerState.PAUSED) {
+                    mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
                 } else {
-                    //TODO: stop animating timer
+                    mTimeLabel.clearAnimation();
                     mStopButton.setEnabled(true);
                     mSkipButton.setEnabled(true);
                     mAddSecondsButton.setEnabled(true);
