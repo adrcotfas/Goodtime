@@ -183,9 +183,9 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mSkipButton.setEnabled(true);
         mAddSecondsButton.setEnabled(true);
 
-        mAddSecondsButton.animate().alpha(1f).setDuration(200).setListener(null);
-        mSkipButton.animate().alpha(1f).setDuration(200).setListener(null);
-        mStopButton.animate().alpha(1f).setDuration(200).setListener(null);
+        mAddSecondsButton.animate().alpha(1f).setDuration(100);
+        mSkipButton.animate().alpha(1f).setDuration(100);
+        mStopButton.animate().alpha(1f).setDuration(100);
     }
 
     private void disableButtons() {
@@ -193,9 +193,9 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         mSkipButton.setEnabled(false);
         mAddSecondsButton.setEnabled(false);
 
-        mSkipButton.animate().alpha(0.5f).setDuration(200).setListener(null);
-        mStopButton.animate().alpha(0.5f).setDuration(200).setListener(null);
-        mAddSecondsButton.animate().alpha(0.5f).setDuration(200).setListener(null);
+        mSkipButton.animate().alpha(0.5f).setDuration(100);
+        mStopButton.animate().alpha(0.5f).setDuration(100);
+        mAddSecondsButton.animate().alpha(0.5f).setDuration(100);
     }
     /**
      * Called when an event is posted to the EventBus
