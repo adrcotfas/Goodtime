@@ -166,21 +166,37 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             public void onChanged(@Nullable TimerState timerState) {
                 if (timerState == TimerState.INACTIVE) {
                     mTimeLabel.clearAnimation();
-                    mStopButton.setEnabled(false);
-                    mSkipButton.setEnabled(false);
-                    mAddSecondsButton.setEnabled(false);
+                    disableButtons();
                 } else if (timerState == TimerState.PAUSED) {
                     mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
+                    enableButtons();
                 } else {
                     mTimeLabel.clearAnimation();
-                    mStopButton.setEnabled(true);
-                    mSkipButton.setEnabled(true);
-                    mAddSecondsButton.setEnabled(true);
+                    enableButtons();
                 }
             }
         });
     }
 
+    private void enableButtons() {
+        mStopButton.setEnabled(true);
+        mSkipButton.setEnabled(true);
+        mAddSecondsButton.setEnabled(true);
+
+        mAddSecondsButton.animate().alpha(1f).setDuration(200).setListener(null);
+        mSkipButton.animate().alpha(1f).setDuration(200).setListener(null);
+        mStopButton.animate().alpha(1f).setDuration(200).setListener(null);
+    }
+
+    private void disableButtons() {
+        mStopButton.setEnabled(false);
+        mSkipButton.setEnabled(false);
+        mAddSecondsButton.setEnabled(false);
+
+        mSkipButton.animate().alpha(0.5f).setDuration(200).setListener(null);
+        mStopButton.animate().alpha(0.5f).setDuration(200).setListener(null);
+        mAddSecondsButton.animate().alpha(0.5f).setDuration(200).setListener(null);
+    }
     /**
      * Called when an event is posted to the EventBus
      * @param o holds the type of the Event
