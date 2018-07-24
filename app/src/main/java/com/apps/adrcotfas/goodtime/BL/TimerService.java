@@ -146,6 +146,10 @@ public class TimerService extends Service {
             toggleSound(true);
         }
 
+        if (getSessionManager().getCurrentSession().getSessionType().getValue() == SessionType.LONG_BREAK) {
+            PreferenceHelper.resetCurrentStreak();
+        }
+
         PreferenceHelper.toggleAdded60SecondsState(false);
 
         stopForeground(true);
