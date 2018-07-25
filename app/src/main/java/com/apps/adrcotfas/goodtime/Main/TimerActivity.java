@@ -90,6 +90,7 @@ public class TimerActivity
     ImageButton mStopButton;
     ImageButton mSkipButton;
     ImageButton mAddSecondsButton;
+    ImageButton mStatusButton;
     TextView mTimeLabel;
 
     @Override
@@ -104,6 +105,7 @@ public class TimerActivity
         mSkipButton       = binding.skip;
         mTimeLabel        = binding.timeLabel;
         mAddSecondsButton = binding.add60Seconds;
+        mStatusButton     = binding.status;
 
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle(null);
@@ -163,7 +165,11 @@ public class TimerActivity
         mCurrentSession.getSessionType().observe(TimerActivity.this, new Observer<SessionType>() {
             @Override
             public void onChanged(@Nullable SessionType sessionType) {
-                //TODO: observe SessionType to show an icon
+                if (sessionType == SessionType.WORK) {
+                    mStatusButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_status_goodtime));
+                } else {
+                    mStatusButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_break));
+                }
             }
         });
 

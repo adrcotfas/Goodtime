@@ -83,6 +83,7 @@ public class CurrentSessionManager extends ContextWrapper{
         mCurrentSession.setTimerState(TimerState.INACTIVE);
         long workDuration = TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK));
         mCurrentSession.setDuration(workDuration);
+        mCurrentSession.setSessionType(SessionType.WORK);
     }
 
     private void scheduleAlarm(SessionType sessionType, long duration) {
