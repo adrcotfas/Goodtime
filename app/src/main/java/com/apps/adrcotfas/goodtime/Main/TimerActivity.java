@@ -1,5 +1,9 @@
 package com.apps.adrcotfas.goodtime.Main;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,11 +16,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Menu;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.BL.CurrentSession;
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
@@ -31,6 +36,7 @@ import com.apps.adrcotfas.goodtime.BL.TimerService;
 import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.concurrent.TimeUnit;
 
@@ -40,17 +46,21 @@ import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
 import static android.view.WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON;
 import static android.view.animation.AnimationUtils.loadAnimation;
+import static android.widget.Toast.LENGTH_SHORT;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREEN_ON;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.THEME;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
 
-public class TimerActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class TimerActivity
+        extends AppCompatActivity
+        implements SharedPreferences.OnSharedPreferenceChangeListener, NavigationView.OnNavigationItemSelectedListener{
 
     private static final String TAG = TimerActivity.class.getSimpleName();
 
     private final CurrentSession mCurrentSession = GoodtimeApplication.getInstance().getCurrentSession();
     private AlertDialog mDialog;
     private FullscreenHelper mFullscreenHelper;
+    private long mBackPressedAt;
 
     public void onStartButtonClick(View view) {
         start(SessionType.WORK);
@@ -97,6 +107,8 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
 
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle(null);
+
+        setupDrawer(binding.toolbar);
         
         setupEvents();
     }
@@ -127,12 +139,6 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
         pref.unregisterOnSharedPreferenceChangeListener(this);
         EventBus.getDefault().unregister(this);
         super.onDestroy();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
     }
 
     @Override
@@ -176,6 +182,40 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
                 }
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(Gravity.START)) {
+            drawer.closeDrawer(Gravity.START);
+        }
+
+        if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
+            moveTaskToBack(true);
+        } else {
+            if (mBackPressedAt + 2000 > System.currentTimeMillis()) {
+                super.onBackPressed();
+            } else {
+                try {
+                    Toast.makeText(getBaseContext(), "Press the back button again to exit", LENGTH_SHORT)
+                            .show();
+                } catch (Throwable th) {
+                    // ignoring this exception
+                }
+            }
+            mBackPressedAt = System.currentTimeMillis();
+        }
+    }
+
+    private void setupDrawer(Toolbar toolbar) {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, 0, 0);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     private void enableButtons() {
@@ -358,5 +398,30 @@ public class TimerActivity extends AppCompatActivity implements SharedPreference
             default:
                 break;
         }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_about:
+                break;
+            case R.id.action_rate:
+                break;
+            case R.id.action_invite:
+                break;
+            case R.id.about_upgrade:
+                break;
+            case R.id.action_settings:
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                break;
+            case R.id.action_feedback:
+                break;
+        }
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(Gravity.START);
+        return true;
     }
 }

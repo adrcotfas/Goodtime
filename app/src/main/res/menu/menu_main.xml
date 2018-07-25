@@ -1,8 +1,0 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".TimerActivity" >
-    <item android:id="@+id/action_settings"
-        android:icon="@drawable/ic_settings"
-        android:title="Settings"
-        android:menuCategory="secondary"/>
-</menu>

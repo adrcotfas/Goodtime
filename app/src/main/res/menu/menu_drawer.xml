@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/menu_top"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/action_about"
+            android:icon="@drawable/ic_about"
+            android:title="About" />
+    </group>
+
+    <group
+        android:id="@+id/menu_middle"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/action_rate"
+            android:icon="@drawable/ic_rate"
+            android:title="Rate this app" />
+        <item
+            android:id="@+id/action_invite"
+            android:icon="@drawable/ic_share"
+            android:title="Invite friends" />
+        <item
+            android:id="@+id/about_upgrade"
+            android:icon="@drawable/ic_donate"
+            android:title="Support the developer"/>
+    </group>
+
+    <group
+        android:id="@+id/menu_bottom"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/action_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="Settings" />
+        <item
+            android:id="@+id/action_feedback"
+            android:icon="@drawable/ic_feedback"
+            android:title="Feedback" />
+    </group>
+
+</menu>

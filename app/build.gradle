@@ -45,4 +45,9 @@ dependencies {
 
     // EventBus
     implementation 'de.greenrobot:eventbus:2.4.0'
+
+    // for the NavigationView of NavigationDrawer
+    implementation 'com.android.support:appcompat-v7:28.1.0'
+    implementation 'com.android.support:design:28.1.0'
+
 }
