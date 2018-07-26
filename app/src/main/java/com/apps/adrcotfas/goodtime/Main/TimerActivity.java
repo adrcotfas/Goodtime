@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.apps.adrcotfas.goodtime.About.AboutActivity;
 import com.apps.adrcotfas.goodtime.BL.CurrentSession;
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
 import com.apps.adrcotfas.goodtime.BL.NotificationHelper;
@@ -408,9 +409,10 @@ public class TimerActivity
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.action_about:
+                Intent aboutIntent = new Intent(this, AboutActivity.class);
+                startActivity(aboutIntent);
                 break;
             case R.id.action_rate:
                 break;

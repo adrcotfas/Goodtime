@@ -7,7 +7,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0"
+        versionName "2.0a"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -50,4 +50,5 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:28.1.0'
     implementation 'com.android.support:design:28.1.0'
 
+    implementation 'me.jfenn:attribouter:0.0.8'
 }

@@ -25,7 +25,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Classic"
-        tools:ignore="InnerclassSeparator">
+        tools:ignore="GoogleAppIndexingWarning,InnerclassSeparator">
         <activity
             android:name="com.apps.adrcotfas.goodtime.Main.TimerActivity"
             android:showOnLockScreen="true"
@@ -38,6 +38,17 @@
         <activity
             android:name=".Settings.SettingsActivity"
             android:label="Settings"
+            android:showOnLockScreen="true"
+            android:parentActivityName=".Main.TimerActivity">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Main.TimerActivity" />
+        </activity>
+
+        <activity
+            android:name=".About.AboutActivity"
+            android:label="About"
             android:showOnLockScreen="true"
             android:parentActivityName=".Main.TimerActivity">
             <!-- Parent activity meta-data to support 4.0 and lower -->

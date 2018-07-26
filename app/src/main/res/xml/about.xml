@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<about>
+    <appInfo repo="goodtime-productivity/Goodtime"
+        description="^">
+        <link id="github" />
+        <link
+            hidden="true"
+            id="website" />
+    </appInfo>
+    <contributors showDefaults="false">
+        <contributor
+            login="adrcotfas"
+            task="^Owner">
+            <link
+                hidden="true"
+                id="website" />
+        </contributor>
+    </contributors>
+    <translators
+        overflow="0">
+        <translator
+            name="Update Me"
+            avatar="https://raw.githubusercontent.com/TheAndroidMaster/TheAndroidMaster.github.io/master/images/headers/rocks.jpg"
+            blog="https://example.com/"
+            locales="zh" />
+    </translators>
+    <licenses
+        title="Open Source Licences"
+        overflow="0"
+        showDefaults="false">
+        <project repo="TheAndroidMaster/Attribouter" />
+        <project repo="Gericop/Android-Support-Preference-V7-Fix" />
+    </licenses>
+</about>

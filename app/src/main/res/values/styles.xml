@@ -1,27 +1,30 @@
 <resources>
 
-    <style name="Classic" parent="@style/Theme.MaterialComponents.NoActionBar">
+    <style name="BaseTheme" parent="@style/Theme.MaterialComponents.NoActionBar">
+    </style>
+
+    <style name="Classic" parent="@style/BaseTheme">
         <item name="colorPrimary">@color/black</item>
         <item name="colorPrimaryDark">@color/black</item>
         <item name="colorAccent">@color/classicAccent</item>
         <item name="android:windowBackground">@color/black</item>
     </style>
 
-    <style name="Dark" parent="@style/Theme.MaterialComponents.NoActionBar">
+    <style name="Dark" parent="@style/BaseTheme">
         <item name="colorPrimary">@color/darkIndigo900</item>
         <item name="colorPrimaryDark">@color/darkIndigo900</item>
         <item name="android:windowBackground">@color/darkIndigo900</item>
         <item name="colorAccent">@color/classicAccent</item>
     </style>
 
-    <style name="Blue" parent="@style/ThemeOverlay.MaterialComponents.Dark">
+    <style name="Blue" parent="@style/BaseTheme">
         <item name="colorPrimary">@color/blue_a700</item>
         <item name="colorPrimaryDark">@color/blue_a700</item>
         <item name="android:windowBackground">@color/blue_a700</item>
         <item name="colorAccent">@color/classicAccent</item>
     </style>
 
-    <style name="Red" parent="@style/ThemeOverlay.MaterialComponents.Dark">
+    <style name="Red" parent="@style/BaseTheme">
         <item name="colorPrimary">@color/red900</item>
         <item name="colorPrimaryDark">@color/red900</item>
         <item name="android:windowBackground">@color/red900</item>
