@@ -7,26 +7,15 @@
             hidden="true"
             id="website" />
     </appInfo>
-    <contributors showDefaults="false">
-        <contributor
-            login="adrcotfas"
-            task="^Owner">
-            <link
-                hidden="true"
-                id="website" />
-        </contributor>
-    </contributors>
-    <translators
-        overflow="0">
+    <translators>
         <translator
             name="Update Me"
-            avatar="https://raw.githubusercontent.com/TheAndroidMaster/TheAndroidMaster.github.io/master/images/headers/rocks.jpg"
+            avatar="@drawable/ic_donate"
             blog="https://example.com/"
             locales="zh" />
     </translators>
     <licenses
         title="Open Source Licences"
-        overflow="0"
         showDefaults="false">
         <project repo="TheAndroidMaster/Attribouter" />
         <project repo="Gericop/Android-Support-Preference-V7-Fix" />
