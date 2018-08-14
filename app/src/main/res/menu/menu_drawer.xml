@@ -14,10 +14,6 @@
         android:id="@+id/menu_middle"
         android:checkableBehavior="none">
         <item
-            android:id="@+id/action_rate"
-            android:icon="@drawable/ic_rate"
-            android:title="Rate this app" />
-        <item
             android:id="@+id/action_invite"
             android:icon="@drawable/ic_share"
             android:title="Invite friends" />

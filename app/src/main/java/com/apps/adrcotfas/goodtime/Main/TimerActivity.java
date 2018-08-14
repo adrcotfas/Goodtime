@@ -414,8 +414,6 @@ public class TimerActivity
                 Intent aboutIntent = new Intent(this, AboutActivity.class);
                 startActivity(aboutIntent);
                 break;
-            case R.id.action_rate:
-                break;
             case R.id.action_invite:
                 break;
             case R.id.about_upgrade:
