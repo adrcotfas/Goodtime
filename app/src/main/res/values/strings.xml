@@ -33,14 +33,4 @@
     <string name="pref_ringtone_break">Notification sound for break</string>
     <string name="pref_notification_channels">Notification Settings</string>
 
-    <plurals name="plural_minutes" >
-        <item quantity="one">%d minute</item>
-        <item quantity="other">%d minutes</item>
-    </plurals>
-
-    <plurals name="plural_sessions" >
-        <item quantity="one">%d session</item>
-        <item quantity="other">%d sessions</item>
-    </plurals>
-
 </resources>
