@@ -26,6 +26,8 @@ public class PreferenceHelper {
     public final static String ENABLE_CONTINUOUS_MODE      = "pref_continuous_mode";
     public final static String THEME                       = "pref_theme";
 
+    public final static String DISABLE_BATTERY_OPTIMIZATION = "pref_disable_battery_optimization";
+
     public final static String WORK_STREAK                 = "pref_WORK_STREAK";
     public final static String LAST_WORK_FINISHED_AT       = "pref_last_work_finished_at";
     private static final String ADDED_60_SECONDS_STATE     = "pref_added_60_seconds_State";

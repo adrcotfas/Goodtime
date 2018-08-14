@@ -156,6 +156,11 @@
             android:summary="@string/pref_continuous_mode_summary"
             android:title="@string/pref_continuous_mode"
             app:iconSpaceReserved="false"/>
+        <Preference
+            android:key="pref_disable_battery_optimization"
+            android:title="Accurate alarms"
+            android:summary="Select All Apps and disable battery optimization for this app"
+            app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>
 

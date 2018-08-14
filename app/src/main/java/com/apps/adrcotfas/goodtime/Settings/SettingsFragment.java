@@ -11,6 +11,8 @@ import androidx.preference.SwitchPreference;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.Preference;
+
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -116,6 +118,22 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
                 return true;
             }
         });
+
+        final Preference disableBatteryOptimizationPref = findPreference(PreferenceHelper.DISABLE_BATTERY_OPTIMIZATION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            disableBatteryOptimizationPref.setVisible(true);
+            disableBatteryOptimizationPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                    startActivity(intent);
+                    return true;
+                }
+            });
+        } else {
+            disableBatteryOptimizationPref.setVisible(false);
+        }
     }
 
     @Override
