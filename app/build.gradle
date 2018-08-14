@@ -26,17 +26,17 @@ android {
 dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
+    implementation 'androidx.appcompat:appcompat:1.0.0-rc01'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
-    implementation 'com.google.android.material:material:1.0.0-beta01'
+    implementation 'com.google.android.material:material:1.0.0-rc01'
 
-    annotationProcessor 'androidx.room:room-compiler:2.0.0-beta01'
-    implementation 'androidx.room:room-runtime:2.0.0-beta01'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-beta01'
+    annotationProcessor 'androidx.room:room-compiler:2.0.0-rc01'
+    implementation 'androidx.room:room-runtime:2.0.0-rc01'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-rc01'
 
     // Preferences
-    implementation 'androidx.preference:preference:1.0.0-beta01'
-    implementation 'androidx.legacy:legacy-preference-v14:1.0.0-beta01'
+    implementation 'androidx.preference:preference:1.0.0-rc01'
+    implementation 'androidx.legacy:legacy-preference-v14:1.0.0-rc01'
 
     implementation 'com.takisoft.preferencex:preferencex:1.0.0-alpha2'
     implementation 'com.takisoft.preferencex:preferencex-simplemenu:1.0.0-alpha2'
@@ -50,5 +50,5 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:28.1.0'
     implementation 'com.android.support:design:28.1.0'
 
-    implementation 'me.jfenn:attribouter:0.0.8'
+    implementation 'me.jfenn:attribouter:0.1.0'
 }
