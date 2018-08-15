@@ -33,6 +33,7 @@ public class CurrentSessionManager extends ContextWrapper{
     private AppCountDownTimer mTimer;
     private CurrentSession mCurrentSession;
     private long mRemaining;
+    private long mElapsed;
     private AlarmReceiver mAlarmReceiver;
 
     public CurrentSessionManager(Context context, CurrentSession currentSession) {
@@ -46,6 +47,7 @@ public class CurrentSessionManager extends ContextWrapper{
 
         // TODO modify to minutes
         final long duration = TimeUnit.SECONDS.toMillis(PreferenceHelper.getSessionDuration(sessionType));
+        mElapsed = 0;
 
         mCurrentSession.setTimerState(TimerState.ACTIVE);
         mCurrentSession.setSessionType(sessionType);
@@ -173,6 +175,10 @@ public class CurrentSessionManager extends ContextWrapper{
         }
     }
 
+    public long getElapsedTime() {
+        return mElapsed;
+    }
+
     private class AppCountDownTimer extends CountDownTimer {
 
         private String TAG = AppCountDownTimer.class.getSimpleName();
@@ -190,6 +196,7 @@ public class CurrentSessionManager extends ContextWrapper{
             Log.v(TAG, "is Ticking: " + millisUntilFinished + " millis remaining.");
             mCurrentSession.setDuration(millisUntilFinished);
             mRemaining = millisUntilFinished;
+            ++mElapsed;
 
             // update notification only if the screen is on
             PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);

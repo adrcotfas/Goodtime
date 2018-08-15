@@ -1,6 +1,5 @@
 package com.apps.adrcotfas.goodtime.Database;
 
-import java.util.Date;
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
@@ -15,7 +14,7 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 public interface SessionDao {
 
     @Query("select * from Session where :endTime == :endTime")
-    LiveData<List<Session>> getSessionByEndTime(Date endTime);
+    LiveData<List<Session>> getSessionByEndTime(long endTime);
 
     @Insert(onConflict = REPLACE)
     long addSession(Session session);

@@ -36,7 +36,7 @@ public class GoodtimeApplication extends Application {
         return mCurrentSessionManager.getCurrentSession();
     }
 
-    public CurrentSessionManager getCurrentSessionManager() {
+    public static CurrentSessionManager getCurrentSessionManager() {
         return mCurrentSessionManager;
     }
 

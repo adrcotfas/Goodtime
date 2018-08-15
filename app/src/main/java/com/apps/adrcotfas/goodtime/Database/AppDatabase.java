@@ -16,7 +16,7 @@ public abstract class AppDatabase extends RoomDatabase{
             synchronized (LOCK) {
                 if (INSTANCE == null) {
                     INSTANCE =  Room.databaseBuilder(context.getApplicationContext(),
-                            AppDatabase.class, "Goodtime").build();
+                            AppDatabase.class, "goodtime-db").build();
                 }
             }
         }

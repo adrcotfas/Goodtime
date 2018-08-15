@@ -4,10 +4,14 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.os.SystemClock;
 import android.util.Log;
 
+import com.apps.adrcotfas.goodtime.Database.AppDatabase;
+import com.apps.adrcotfas.goodtime.Database.Session;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;
@@ -146,7 +150,8 @@ public class TimerService extends Service {
             toggleSound(true);
         }
 
-        if (getSessionManager().getCurrentSession().getSessionType().getValue() == SessionType.LONG_BREAK) {
+        SessionType sessionType = getSessionManager().getCurrentSession().getSessionType().getValue();
+        if (sessionType == SessionType.LONG_BREAK) {
             PreferenceHelper.resetCurrentStreak();
         }
 
@@ -154,7 +159,12 @@ public class TimerService extends Service {
 
         stopForeground(true);
         stopSelf();
-        // TODO: store what was done of the session to ROOM
+
+        // store what was done to the database
+        if (sessionType == SessionType.WORK) {
+            saveToDb();
+        }
+
     }
 
     private void onFinishEvent(SessionType sessionType) {
@@ -170,8 +180,6 @@ public class TimerService extends Service {
             }
         }
 
-        // TODO: store session statistics
-
         mRingtoneAndVibrationPlayer.play(sessionType);
         stopForeground(true);
 
@@ -182,6 +190,11 @@ public class TimerService extends Service {
             onStartEvent(sessionType == SessionType.WORK ? SessionType.BREAK : SessionType.WORK);
         } else {
             mNotificationHelper.notifyFinished(sessionType);
+        }
+
+        // store what was done to the database
+        if (sessionType == SessionType.WORK) {
+            saveToDb();
         }
     }
 
@@ -222,7 +235,7 @@ public class TimerService extends Service {
     }
 
     CurrentSessionManager getSessionManager() {
-        return GoodtimeApplication.getInstance().getCurrentSessionManager();
+        return GoodtimeApplication.getCurrentSessionManager();
     }
 
     private void acquireScreenLock() {
@@ -254,6 +267,22 @@ public class TimerService extends Service {
         } else {
             mPreviousWifiMode = wifiManager.isWifiEnabled();
             wifiManager.setWifiEnabled(false);
+        }
+    }
+
+    private void saveToDb() {
+        //TODO: save session of at least one minute
+        if (true /*getSessionManager().getElapsedTime() >= 60*/) {
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    Session session = new Session();
+                    session.endTime = SystemClock.elapsedRealtime();
+                    session.totalTime = getSessionManager().getElapsedTime();
+                    session.label = getSessionManager().getCurrentSession().getLabel().getValue();
+                    AppDatabase.getDatabase(getApplicationContext()).sessionModel().addSession(session);
+                }
+            });
         }
     }
 

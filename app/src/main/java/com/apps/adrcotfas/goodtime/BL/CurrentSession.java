@@ -10,11 +10,13 @@ public class CurrentSession {
     private MutableLiveData<Long> mDuration = new MutableLiveData<>();
     private MutableLiveData<TimerState> mTimerState = new MutableLiveData<>();
     private MutableLiveData<SessionType> mSessionType = new MutableLiveData<>();
+    private MutableLiveData<String> mLabel = new MutableLiveData<>();
 
     public CurrentSession(long duration) {
         this.mDuration.setValue(duration);
         this.mTimerState.setValue(TimerState.INACTIVE);
         this.mSessionType.setValue(SessionType.WORK);
+        this.mLabel.setValue("");
     }
 
     public LiveData<Long> getDuration() {
@@ -29,6 +31,10 @@ public class CurrentSession {
         return mSessionType;
     }
 
+    public LiveData<String> getLabel() {
+        return mLabel;
+    }
+
     public void setDuration(long newDuration) {
         mDuration.setValue(newDuration);
     }
@@ -39,5 +45,9 @@ public class CurrentSession {
 
     public void setSessionType(SessionType type) {
         mSessionType.setValue(type);
+    }
+
+    public void setLabel(String label) {
+        mLabel.setValue(label);
     }
 }

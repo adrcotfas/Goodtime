@@ -1,7 +1,5 @@
 package com.apps.adrcotfas.goodtime.Database;
 
-import java.util.Date;
-
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -11,7 +9,7 @@ public class Session {
 
     @PrimaryKey
     @NonNull
-    public Date endTime;
+    public long endTime;
 
     @NonNull
     public long totalTime;
