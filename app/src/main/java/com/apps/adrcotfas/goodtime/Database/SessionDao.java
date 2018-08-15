@@ -1,5 +1,8 @@
 package com.apps.adrcotfas.goodtime.Database;
 
+import java.util.Date;
+import java.util.List;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -11,11 +14,11 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface SessionDao {
 
-    @Query("select * from Session where id = :id")
-    LiveData<Session> getSessionById(long id);
+    @Query("select * from Session where :endTime == :endTime")
+    LiveData<List<Session>> getSessionByEndTime(Date endTime);
 
     @Insert(onConflict = REPLACE)
-    long addSession(Session borrowModel);
+    long addSession(Session session);
 
     @Delete
     void deleteSession(Session session);
