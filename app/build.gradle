@@ -53,4 +53,10 @@ dependencies {
 
     // About
     implementation 'me.jfenn:attribouter:0.1.0'
+
+    // Statistics
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+
+    // Time
+    implementation 'joda-time:joda-time:2.10'
 }

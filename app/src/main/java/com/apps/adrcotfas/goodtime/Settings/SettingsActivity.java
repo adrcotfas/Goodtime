@@ -1,16 +1,17 @@
 package com.apps.adrcotfas.goodtime.Settings;
 
-import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceScreen;
 
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
-import com.apps.adrcotfas.goodtime.databinding.SettingsMainBinding;
+import com.apps.adrcotfas.goodtime.databinding.GenericMainBinding;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceScreen;
 
 import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
 
@@ -20,7 +21,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ThemeHelper.setTheme(this);
-        SettingsMainBinding binding = DataBindingUtil.setContentView(this, R.layout.settings_main);
+        GenericMainBinding binding = DataBindingUtil.setContentView(this, R.layout.generic_main);
         setSupportActionBar(binding.toolbar);
 
         if (getSupportActionBar() != null) {

@@ -40,4 +40,11 @@
         <attr format="boolean" name="showSeekBarValue"/>
     </declare-styleable>
 
+
+    <style name="AddEntryDialogTheme" parent="Dark">
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
 </resources>

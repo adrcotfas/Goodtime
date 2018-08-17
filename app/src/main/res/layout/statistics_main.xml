@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable name="chartVariable" type="com.github.mikephil.charting.charts.LineChart"/>
+        <variable name="spinnerVariable" type="android.widget.Spinner"/>
+        <variable name="totalVariable" type="android.widget.TextView"/>
+        <variable name="addEntryButtonVariable" type="android.widget.Button"/>
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.apps.adrcotfas.goodtime.Statistics.StatisticsActivity">
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart"
+            android:layout_width="fill_parent"
+            android:layout_height="200dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:dropDownWidth="wrap_content"
+            android:spinnerMode="dropdown"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/total"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="Total minutes" />
+
+        <Button
+            android:id="@+id/addEntryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add entry" />
+
+    </LinearLayout>
+</layout>

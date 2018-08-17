@@ -16,6 +16,9 @@ public interface SessionDao {
     @Query("select * from Session where :endTime == :endTime")
     LiveData<List<Session>> getSessionByEndTime(long endTime);
 
+    @Query("select * from Session")
+    LiveData<List<Session>> getAllSessions();
+
     @Insert(onConflict = REPLACE)
     long addSession(Session session);
 

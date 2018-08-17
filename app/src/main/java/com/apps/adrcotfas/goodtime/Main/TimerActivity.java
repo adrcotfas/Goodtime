@@ -1,20 +1,10 @@
 package com.apps.adrcotfas.goodtime.Main;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.Observer;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import androidx.databinding.DataBindingUtil;
 import android.os.Build;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -29,11 +19,12 @@ import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
 import com.apps.adrcotfas.goodtime.BL.NotificationHelper;
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.BL.SessionType;
-import com.apps.adrcotfas.goodtime.BL.TimerState;
-import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
-import com.apps.adrcotfas.goodtime.Util.Constants;
-import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.BL.TimerService;
+import com.apps.adrcotfas.goodtime.BL.TimerState;
+import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
+import com.apps.adrcotfas.goodtime.Statistics.StatisticsActivity;
+import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding;
@@ -41,6 +32,16 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.Observer;
+import androidx.preference.PreferenceManager;
 import de.greenrobot.event.EventBus;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
@@ -423,6 +424,9 @@ public class TimerActivity
                 startActivity(settingsIntent);
                 break;
             case R.id.action_feedback:
+                //TODO: move to proper place
+                Intent statisticsIntent = new Intent(this, StatisticsActivity.class);
+                startActivity(statisticsIntent);
                 break;
         }
 

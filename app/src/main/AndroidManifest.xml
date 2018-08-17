@@ -15,7 +15,7 @@
     <!-- Used to wake the screen when a session is finished -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- Used on Android P and later for the timer foreground service -->
-    <uses-permission android:name="Manifest.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:name="com.apps.adrcotfas.goodtime.BL.GoodtimeApplication"
@@ -49,6 +49,17 @@
         <activity
             android:name=".About.AboutActivity"
             android:label="About"
+            android:showOnLockScreen="true"
+            android:parentActivityName=".Main.TimerActivity">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Main.TimerActivity" />
+        </activity>
+
+        <activity
+            android:name=".Statistics.StatisticsActivity"
+            android:label="Statistics"
             android:showOnLockScreen="true"
             android:parentActivityName=".Main.TimerActivity">
             <!-- Parent activity meta-data to support 4.0 and lower -->

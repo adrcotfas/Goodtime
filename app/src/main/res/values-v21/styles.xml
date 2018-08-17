@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AddEntryDialogTheme" parent="Dark">
+        <item name="android:buttonBarPositiveButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
+        <item name="android:buttonBarNeutralButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+    <style name="BaseTheme" parent="@style/Theme.MaterialComponents.NoActionBar">
+        <item name="android:datePickerDialogTheme">@style/AddEntryDialogTheme</item>
+    </style>
+</resources>

@@ -7,7 +7,6 @@ import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
@@ -277,7 +276,7 @@ public class TimerService extends Service {
                 @Override
                 public void run() {
                     Session session = new Session();
-                    session.endTime = SystemClock.elapsedRealtime();
+                    session.endTime = System.currentTimeMillis();
                     session.totalTime = getSessionManager().getElapsedTime();
                     session.label = getSessionManager().getCurrentSession().getLabel().getValue();
                     AppDatabase.getDatabase(getApplicationContext()).sessionModel().addSession(session);
