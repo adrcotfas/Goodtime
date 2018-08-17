@@ -7,6 +7,7 @@
         <variable name="spinnerVariable" type="android.widget.Spinner"/>
         <variable name="totalVariable" type="android.widget.TextView"/>
         <variable name="addEntryButtonVariable" type="android.widget.Button"/>
+        <variable name="deleteEntriesVariable" type="android.widget.Button"/>
     </data>
 
     <LinearLayout
@@ -50,6 +51,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add entry" />
+        <Button
+            android:id="@+id/deleteEntriesButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Delete all entries" />
 
     </LinearLayout>
 </layout>

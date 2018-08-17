@@ -22,6 +22,7 @@ import com.apps.adrcotfas.goodtime.databinding.StatisticsMainBinding;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -53,6 +54,7 @@ public class StatisticsFragment extends Fragment {
     private Spinner mSpinner;
     private TextView mTotal;
     private Button mAddEntryButton;
+    private Button mDeleteEntriesButton;
 
     private List<String> xValues = new ArrayList<>();
 
@@ -74,6 +76,36 @@ public class StatisticsFragment extends Fragment {
             }
         });
 
+        mChart.notifyDataSetChanged();
+
+        mDeleteEntriesButton = binding.deleteEntriesButton;
+        mDeleteEntriesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Delete all entries")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        AsyncTask.execute(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                AppDatabase.getDatabase(getContext()).sessionModel().deleteAllSessions();
+                                            }
+                                        });
+                                    }
+                                }
+                        )
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                })
+                .show();
+            }
+        });
+
         LiveData<List<Session>> sessions =
                 AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessions();
 
@@ -86,27 +118,12 @@ public class StatisticsFragment extends Fragment {
                 }
                 mTotal.setText("Total work duration: " + minutes + " minutes");
 
+                mChart.notifyDataSetChanged();
                 LineData data = generateChartData(sessions);
                 if (data.getEntryCount() != 0) {
                     mChart.setData(data);
                     XAxis xAxis = mChart.getXAxis();
                     xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-                    mChart.getData().setHighlightEnabled(false);
-                    mChart.getXAxis().setTextColor(getActivity().getResources().getColor(R.color.white));
-                    mChart.getAxisRight().setEnabled(false);
-                    mChart.getDescription().setEnabled(false);
-                    mChart.setPinchZoom(false);
-                    mChart.getLegend().setEnabled(false);
-                    mChart.getAxisLeft().setTextColor(getActivity().getResources().getColor(R.color.white));
-                    mChart.getAxisLeft().setGranularity(1);
-                    mChart.setPinchZoom(false);
-                    mChart.setScaleEnabled(true);
-                    mChart.setDragEnabled(true);
-
-                    mChart.setVisibleXRangeMaximum(4);
-
-                    mChart.getXAxis().setGridColor(getActivity().getResources().getColor(R.color.transparent));
-                    mChart.getXAxis().setGranularityEnabled(true);
                     IAxisValueFormatter formatter = new IAxisValueFormatter() {
 
                         @Override
@@ -123,8 +140,31 @@ public class StatisticsFragment extends Fragment {
                     xAxis.setValueFormatter(formatter);
                     xAxis.setAvoidFirstLastClipping(true);
                 } else {
-                    mChart.setData(null);
+
+                    YAxis yAxis = mChart.getAxisLeft();
+                    yAxis.setAxisMaximum(100f);
+                    yAxis.setAxisMinimum(0f);
+
+                    LineData empty = new LineData();
+                    mChart.setData(empty);
+                    mChart.invalidate();
                 }
+                mChart.getData().setHighlightEnabled(false);
+                mChart.getXAxis().setTextColor(getActivity().getResources().getColor(R.color.white));
+                mChart.getAxisRight().setEnabled(false);
+                mChart.getDescription().setEnabled(false);
+                mChart.setPinchZoom(false);
+                mChart.getLegend().setEnabled(false);
+                mChart.getAxisLeft().setTextColor(getActivity().getResources().getColor(R.color.white));
+                mChart.getAxisLeft().setGranularity(1);
+                mChart.setPinchZoom(false);
+                mChart.setScaleEnabled(true);
+                mChart.setDragEnabled(true);
+
+                mChart.setVisibleXRangeMaximum(4);
+
+                mChart.getXAxis().setGridColor(getActivity().getResources().getColor(R.color.transparent));
+                mChart.getXAxis().setGranularityEnabled(true);
             }
         });
 
