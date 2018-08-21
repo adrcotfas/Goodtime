@@ -19,6 +19,7 @@ import com.apps.adrcotfas.goodtime.Database.AppDatabase;
 import com.apps.adrcotfas.goodtime.Database.Session;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsMainBinding;
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
@@ -35,9 +36,7 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import androidx.annotation.Nullable;
@@ -124,47 +123,50 @@ public class StatisticsFragment extends Fragment {
                     mChart.setData(data);
                     XAxis xAxis = mChart.getXAxis();
                     xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
                     IAxisValueFormatter formatter = new IAxisValueFormatter() {
 
                         @Override
                         public String getFormattedValue(float value, AxisBase axis) {
-                            // Dirty fix for a library bug. I have to report it online because 'value' returns old values even if the dataset is changed
-                            if (value < xValues.size() && value > 0) {
+                            if (value < xValues.size() && value >= 0) {
                                 return xValues.get((int) value);
                             } else {
                                 return "";
                             }
                         }
                     };
-                    xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
                     xAxis.setValueFormatter(formatter);
                     xAxis.setAvoidFirstLastClipping(true);
+
+                    mChart.setVisibleXRangeMaximum(5);
+
+                    mChart.moveViewToX(data.getXMax());
+
                 } else {
 
                     YAxis yAxis = mChart.getAxisLeft();
                     yAxis.setAxisMaximum(100f);
-                    yAxis.setAxisMinimum(0f);
+                    yAxis.setAxisMinimum(-1f);
 
-                    LineData empty = new LineData();
-                    mChart.setData(empty);
-                    mChart.invalidate();
+                    mChart.setData(new LineData());
                 }
                 mChart.getData().setHighlightEnabled(false);
                 mChart.getXAxis().setTextColor(getActivity().getResources().getColor(R.color.white));
                 mChart.getAxisRight().setEnabled(false);
                 mChart.getDescription().setEnabled(false);
-                mChart.setPinchZoom(false);
+                mChart.setHardwareAccelerationEnabled(true);
+                mChart.animateY(1000, Easing.EasingOption.EaseOutCubic);
                 mChart.getLegend().setEnabled(false);
                 mChart.getAxisLeft().setTextColor(getActivity().getResources().getColor(R.color.white));
                 mChart.getAxisLeft().setGranularity(1);
                 mChart.setPinchZoom(false);
                 mChart.setScaleEnabled(true);
                 mChart.setDragEnabled(true);
-
-                mChart.setVisibleXRangeMaximum(4);
-
                 mChart.getXAxis().setGridColor(getActivity().getResources().getColor(R.color.transparent));
                 mChart.getXAxis().setGranularityEnabled(true);
+                mChart.invalidate();
+                mChart.notifyDataSetChanged();
+
             }
         });
 
@@ -175,29 +177,39 @@ public class StatisticsFragment extends Fragment {
         List<String> xVals = new ArrayList<>();
         List<Entry> yVals = new ArrayList<>();
 
-        Map<LocalDate, Long> dateAndDurations = new HashMap<>();
-
         TreeMap<LocalDate, Long> sorted = new TreeMap<>();
 
+        // this is to sum up entries from the same day for visualization
         for (int i = 0; i < sessions.size(); ++i) {
             LocalDate localTime = new LocalDate(new Date(sessions.get(i).endTime));
 
-            if (!dateAndDurations.containsKey(localTime)) {
-                dateAndDurations.put(localTime, sessions.get(i).totalTime);
+            if (!sorted.containsKey(localTime)) {
+                sorted.put(localTime, sessions.get(i).totalTime);
             } else {
-                dateAndDurations.put(localTime, dateAndDurations.get(localTime) + sessions.get(i).totalTime);
+                sorted.put(localTime, sorted.get(localTime) + sessions.get(i).totalTime);
             }
         }
-        //TODO: find more elegant solution to sort
-        sorted.putAll(dateAndDurations);
 
-        DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-yy");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("MMM dd");
 
-        int i = 0;
-        for (LocalDate time : sorted.keySet()) {
-            yVals.add(new Entry(i, sorted.get(time)));
-            xVals.add(time.toString(fmt));
-            ++i;
+        if (sorted.size() > 0) {
+
+            int i = 0;
+            LocalDate previousTime = sorted.firstKey();
+
+            for (LocalDate time : sorted.keySet()) {
+                // visualize intermediate days in case of more than one day between sessions
+                while(previousTime.isBefore(time.minusDays(1))) {
+                    yVals.add(new Entry(i, 0));
+                    previousTime = previousTime.plusDays(1);
+                    xVals.add(previousTime.toString(formatter));
+                    ++i;
+                }
+                yVals.add(new Entry(i, sorted.get(time)));
+                xVals.add(time.toString(formatter));
+                ++i;
+                previousTime = time;
+            }
         }
 
         xValues = xVals;
