@@ -5,13 +5,16 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,17 +24,13 @@ import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsMainBinding;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,15 +46,18 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
+import static android.util.TypedValue.COMPLEX_UNIT_DIP;
+
 public class StatisticsFragment extends Fragment {
 
     private LineChart mChart;
-    private Spinner mSpinner;
     private TextView mTotal;
     private Button mAddEntryButton;
     private Button mDeleteEntriesButton;
+    private TextView mSticky;
+    private LinearLayout mLayout;
 
-    private List<String> xValues = new ArrayList<>();
+    private List<LocalDate> xValues = new ArrayList<>();
 
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -65,7 +67,6 @@ public class StatisticsFragment extends Fragment {
         View view = binding.getRoot();
 
         mChart = binding.chart;
-        mSpinner = binding.spinner;
         mTotal = binding.total;
         mAddEntryButton = binding.addEntryButton;
         mAddEntryButton.setOnClickListener(new View.OnClickListener() {
@@ -74,8 +75,40 @@ public class StatisticsFragment extends Fragment {
                 showAddEntryDialog();
             }
         });
+        mSticky = binding.sticky;
+        mLayout = binding.layout;
 
         mChart.notifyDataSetChanged();
+
+        final float textSize = 12f;
+        mSticky.setTextSize(COMPLEX_UNIT_DIP, textSize);
+        mChart.getXAxis().setTextSize(textSize);
+        mChart.getAxisLeft().setTextSize(textSize);
+
+        ViewTreeObserver vto = mLayout.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener (new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                float xo = mChart.getXAxis().getXOffset();
+                float yo = mChart.getXAxis().getYOffset();
+                final DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+                float rho = displayMetrics.density;
+
+                // magic numbers
+                float ty = mChart.getY() - rho*yo - 10f - 0.85f*textSize*rho;
+                float tx = mChart.getX() + rho*xo;
+
+                mSticky.setTranslationY(ty);
+                mSticky.setTranslationX(tx);
+            }
+        });
+
+        mSticky.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.TOP);
+
+        mChart.setExtraLeftOffset(10f);
+        mChart.setExtraBottomOffset(10f);
 
         mDeleteEntriesButton = binding.deleteEntriesButton;
         mDeleteEntriesButton.setOnClickListener(new View.OnClickListener() {
@@ -117,6 +150,10 @@ public class StatisticsFragment extends Fragment {
                 }
                 mTotal.setText("Total work duration: " + minutes + " minutes");
 
+                YAxis yAxis = mChart.getAxisLeft();
+                yAxis.setAxisMaximum(100f);
+                yAxis.setAxisMinimum(-5f);
+
                 mChart.notifyDataSetChanged();
                 LineData data = generateChartData(sessions);
                 if (data.getEntryCount() != 0) {
@@ -124,30 +161,14 @@ public class StatisticsFragment extends Fragment {
                     XAxis xAxis = mChart.getXAxis();
                     xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
 
-                    IAxisValueFormatter formatter = new IAxisValueFormatter() {
-
-                        @Override
-                        public String getFormattedValue(float value, AxisBase axis) {
-                            if (value < xValues.size() && value >= 0) {
-                                return xValues.get((int) value);
-                            } else {
-                                return "";
-                            }
-                        }
-                    };
-                    xAxis.setValueFormatter(formatter);
+                    xAxis.setValueFormatter(new StickyDateAxisValueFormatter(xValues, mChart, mSticky));
                     xAxis.setAvoidFirstLastClipping(true);
 
-                    mChart.setVisibleXRangeMaximum(5);
+                    mChart.setVisibleXRangeMaximum(8);
 
                     mChart.moveViewToX(data.getXMax());
 
                 } else {
-
-                    YAxis yAxis = mChart.getAxisLeft();
-                    yAxis.setAxisMaximum(100f);
-                    yAxis.setAxisMinimum(-1f);
-
                     mChart.setData(new LineData());
                 }
                 mChart.getData().setHighlightEnabled(false);
@@ -174,7 +195,6 @@ public class StatisticsFragment extends Fragment {
     }
 
     private LineData generateChartData(List<Session> sessions) {
-        List<String> xVals = new ArrayList<>();
         List<Entry> yVals = new ArrayList<>();
 
         TreeMap<LocalDate, Long> sorted = new TreeMap<>();
@@ -190,10 +210,9 @@ public class StatisticsFragment extends Fragment {
             }
         }
 
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("MMM dd");
-
         if (sorted.size() > 0) {
 
+            xValues.clear();
             int i = 0;
             LocalDate previousTime = sorted.firstKey();
 
@@ -202,17 +221,16 @@ public class StatisticsFragment extends Fragment {
                 while(previousTime.isBefore(time.minusDays(1))) {
                     yVals.add(new Entry(i, 0));
                     previousTime = previousTime.plusDays(1);
-                    xVals.add(previousTime.toString(formatter));
+                    xValues.add(previousTime);
                     ++i;
                 }
                 yVals.add(new Entry(i, sorted.get(time)));
-                xVals.add(time.toString(formatter));
+                xValues.add(time);
                 ++i;
                 previousTime = time;
             }
         }
 
-        xValues = xVals;
         return new LineData(generateLineDataSet(yVals, ContextCompat.getColor(getContext(), R.color.cyan)));
     }
 

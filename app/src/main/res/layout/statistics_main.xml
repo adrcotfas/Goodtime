@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable name="chartVariable" type="com.github.mikephil.charting.charts.LineChart"/>
-        <variable name="spinnerVariable" type="android.widget.Spinner"/>
         <variable name="totalVariable" type="android.widget.TextView"/>
         <variable name="addEntryButtonVariable" type="android.widget.Button"/>
         <variable name="deleteEntriesVariable" type="android.widget.Button"/>
+        <variable name="layoutVariable" type="android.widget.LinearLayout"/>
+        <variable name="stickyVariable" type="android.widget.TextView"/>
     </data>
 
     <LinearLayout
+        android:id="@+id/layout"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,18 +27,11 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"/>
 
-        <Spinner
-            android:id="@+id/spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:dropDownWidth="wrap_content"
-            android:spinnerMode="dropdown"
-            android:visibility="visible" />
+        <TextView
+            android:id="@+id/sticky"
+            android:textColor="#ffffff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/total"
