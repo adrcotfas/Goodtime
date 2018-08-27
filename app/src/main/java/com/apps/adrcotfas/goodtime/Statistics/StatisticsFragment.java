@@ -198,26 +198,25 @@ public class StatisticsFragment extends Fragment {
     private LineData generateChartData(List<Session> sessions) {
         List<Entry> yVals = new ArrayList<>();
 
-        TreeMap<LocalDate, Long> sorted = new TreeMap<>();
+        TreeMap<LocalDate, Long> tree = new TreeMap<>();
 
         // this is to sum up entries from the same day for visualization
         for (int i = 0; i < sessions.size(); ++i) {
             LocalDate localTime = new LocalDate(new Date(sessions.get(i).endTime));
 
-            if (!sorted.containsKey(localTime)) {
-                sorted.put(localTime, sessions.get(i).totalTime);
+            if (!tree.containsKey(localTime)) {
+                tree.put(localTime, sessions.get(i).totalTime);
             } else {
-                sorted.put(localTime, sorted.get(localTime) + sessions.get(i).totalTime);
+                tree.put(localTime, tree.get(localTime) + sessions.get(i).totalTime);
             }
         }
 
-        if (sorted.size() > 0) {
-
+        if (tree.size() > 0) {
             xValues.clear();
             int i = 0;
-            LocalDate previousTime = sorted.firstKey();
+            LocalDate previousTime = tree.firstKey();
 
-            for (LocalDate time : sorted.keySet()) {
+            for (LocalDate time : tree.keySet()) {
                 // visualize intermediate days in case of more than one day between sessions
                 while(previousTime.isBefore(time.minusDays(1))) {
                     yVals.add(new Entry(i, 0));
@@ -225,7 +224,7 @@ public class StatisticsFragment extends Fragment {
                     xValues.add(previousTime);
                     ++i;
                 }
-                yVals.add(new Entry(i, sorted.get(time)));
+                yVals.add(new Entry(i, tree.get(time)));
                 xValues.add(time);
                 ++i;
                 previousTime = time;
@@ -235,25 +234,23 @@ public class StatisticsFragment extends Fragment {
         return new LineData(generateLineDataSet(yVals, ContextCompat.getColor(getContext(), R.color.cyan)));
     }
 
-    private LineDataSet generateLineDataSet(List<Entry> vals, int color) {
-        // create a dataset and give it a type
-        LineDataSet set1 = new LineDataSet(vals, "");
-
-        set1.setColor(color);
-        set1.setLineWidth(3f);
-        set1.setCircleRadius(3f);
-        set1.setDrawCircleHole(false);
-        set1.disableDashedLine();
-        set1.setDrawFilled(true);
-        set1.setDrawValues(false);
+    private LineDataSet generateLineDataSet(List<Entry> entries, int color) {
+        LineDataSet set = new LineDataSet(entries, "");
+        set.setColor(color);
+        set.setLineWidth(3f);
+        set.setCircleRadius(3f);
+        set.setDrawCircleHole(false);
+        set.disableDashedLine();
+        set.setDrawFilled(true);
+        set.setDrawValues(false);
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            set1.setDrawFilled(false);
-            set1.setLineWidth(2f);
-            set1.setCircleSize(4f);
-            set1.setDrawCircleHole(true);
+            set.setDrawFilled(false);
+            set.setLineWidth(2f);
+            set.setCircleSize(4f);
+            set.setDrawCircleHole(true);
         }
-        return set1;
+        return set;
     }
 
     public void showAddEntryDialog() {
