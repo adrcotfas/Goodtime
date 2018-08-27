@@ -14,38 +14,36 @@ import java.util.List;
 
 public class StickyDateAxisValueFormatter implements IAxisValueFormatter {
 
-    private List<LocalDate> dates;
-    private LineChart chart;
-    private TextView sticky;
+    final private List<LocalDate> mDates;
+    private LineChart mChart;
+    private TextView mStickyText;
     private final DateTimeFormatter monthFormatter = DateTimeFormat.forPattern("MMM");
 
-    StickyDateAxisValueFormatter(List<LocalDate> dates, LineChart chart, TextView sticky) {
-        this.dates = dates;
-        this.chart = chart;
-        this.sticky = sticky;
+    StickyDateAxisValueFormatter(List<LocalDate> mDates, LineChart mChart, TextView mStickyText) {
+        this.mDates = mDates;
+        this.mChart = mChart;
+        this.mStickyText = mStickyText;
     }
 
     @Override
     public String getFormattedValue(float value, AxisBase axis) {
+
+        final int firstValue = (int) mChart.getXAxis().mEntries[0];
         // in case of invalid values
-        if(value < 0) {
+        if(value < 0 || firstValue < 0 || firstValue >= mDates.size()) {
             return "";
         }
 
         // set the sticky TextView
-        int firstValue = (int)chart.getXAxis().mEntries[0];
-        if (firstValue < 0 || firstValue >= dates.size()) {
-            return "";
-        }
-        LocalDate firstDate = dates.get(firstValue);
-        int stickyMonth = firstDate.getMonthOfYear();
-        int stickyYear = firstDate.getYear();
+        final LocalDate firstDate = mDates.get(firstValue);
+        final int stickyMonth = firstDate.getMonthOfYear();
+        final int stickyYear = firstDate.getYear();
         final String stickyText = firstDate.toString(monthFormatter) + "\n" + stickyYear;
-        sticky.setText(stickyText);
+        mStickyText.setText(stickyText);
 
-        LocalDate dateTime = dates.get((int)value);
-        int dayOfMonth = dateTime.getDayOfMonth();
-        int month = dateTime.getMonthOfYear();
+        final LocalDate dateTime = mDates.get((int)value);
+        final int dayOfMonth = dateTime.getDayOfMonth();
+        final int month = dateTime.getMonthOfYear();
 
         String ret;
         if(stickyMonth != month && dayOfMonth == 1) {
