@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -52,10 +51,9 @@ public class StatisticsFragment extends Fragment {
 
     private LineChart mChart;
     private TextView mTotal;
-    private Button mAddEntryButton;
-    private Button mDeleteEntriesButton;
     private TextView mSticky;
     private LinearLayout mLayout;
+    final private float CHART_TEXT_SIZE = 12f;
 
     private List<LocalDate> xValues = new ArrayList<>();
 
@@ -68,50 +66,10 @@ public class StatisticsFragment extends Fragment {
 
         mChart = binding.chart;
         mTotal = binding.total;
-        mAddEntryButton = binding.addEntryButton;
-        mAddEntryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAddEntryDialog();
-            }
-        });
         mSticky = binding.sticky;
         mLayout = binding.layout;
 
-        mChart.notifyDataSetChanged();
-
-        final float textSize = 12f;
-        mSticky.setTextSize(COMPLEX_UNIT_DIP, textSize);
-        mChart.getXAxis().setTextSize(textSize);
-        mChart.getAxisLeft().setTextSize(textSize);
-
-        ViewTreeObserver vto = mLayout.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener (new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                mLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-                float xo = mChart.getXAxis().getXOffset();
-                float yo = mChart.getXAxis().getYOffset();
-                final DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-                float rho = displayMetrics.density;
-
-                // magic numbers
-                float ty = mChart.getY() - rho*yo - 10f - 0.85f*textSize*rho;
-                float tx = mChart.getX() + rho*xo;
-
-                mSticky.setTranslationY(ty);
-                mSticky.setTranslationX(tx);
-            }
-        });
-
-        mSticky.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.TOP);
-
-        mChart.setExtraLeftOffset(10f);
-        mChart.setExtraBottomOffset(10f);
-
-        mDeleteEntriesButton = binding.deleteEntriesButton;
-        mDeleteEntriesButton.setOnClickListener(new View.OnClickListener() {
+        binding.deleteEntriesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new AlertDialog.Builder(getActivity())
@@ -137,7 +95,45 @@ public class StatisticsFragment extends Fragment {
                 .show();
             }
         });
+        binding.addEntryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAddEntryDialog();
+            }
+        });
 
+        setupStickyText();
+        setupChart();
+        setupSessionsObserver();
+
+        return view;
+    }
+
+    private void setupStickyText() {
+        ViewTreeObserver vto = mLayout.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener (new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                float xo = mChart.getXAxis().getXOffset();
+                float yo = mChart.getXAxis().getYOffset();
+                final DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+                float rho = displayMetrics.density;
+
+                // magic numbers
+                float ty = mChart.getY() - rho*yo - 10f - 0.85f * CHART_TEXT_SIZE * rho;
+                float tx = mChart.getX() + rho*xo;
+
+                mSticky.setTranslationY(ty);
+                mSticky.setTranslationX(tx);
+                mSticky.setTextSize(COMPLEX_UNIT_DIP, CHART_TEXT_SIZE);
+                mSticky.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.TOP);
+            }
+        });
+    }
+
+    private void setupSessionsObserver() {
         LiveData<List<Session>> sessions =
                 AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessions();
 
@@ -148,50 +144,55 @@ public class StatisticsFragment extends Fragment {
                 for (Session s : sessions) {
                     minutes += s.totalTime;
                 }
+                //TODO: extract string
                 mTotal.setText("Total work duration: " + minutes + " minutes");
 
-                YAxis yAxis = mChart.getAxisLeft();
-                yAxis.setAxisMaximum(100f);
-                yAxis.setAxisMinimum(-5f);
-
-                mChart.notifyDataSetChanged();
                 LineData data = generateChartData(sessions);
                 if (data.getEntryCount() != 0) {
                     mChart.setData(data);
-                    XAxis xAxis = mChart.getXAxis();
-                    xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-
-                    xAxis.setValueFormatter(new StickyDateAxisValueFormatter(xValues, mChart, mSticky));
-                    xAxis.setAvoidFirstLastClipping(true);
-
-                    mChart.setVisibleXRangeMaximum(8);
-
                     mChart.moveViewToX(data.getXMax());
-
                 } else {
                     mChart.setData(new LineData());
+                    mChart.invalidate();
+                    mChart.notifyDataSetChanged();
                 }
-                mChart.getData().setHighlightEnabled(false);
-                mChart.getXAxis().setTextColor(getActivity().getResources().getColor(R.color.white));
-                mChart.getAxisRight().setEnabled(false);
-                mChart.getDescription().setEnabled(false);
-                mChart.setHardwareAccelerationEnabled(true);
-                mChart.animateY(1000, Easing.EasingOption.EaseOutCubic);
-                mChart.getLegend().setEnabled(false);
-                mChart.getAxisLeft().setTextColor(getActivity().getResources().getColor(R.color.white));
-                mChart.getAxisLeft().setGranularity(1);
-                mChart.setPinchZoom(false);
-                mChart.setScaleEnabled(true);
-                mChart.setDragEnabled(true);
-                mChart.getXAxis().setGridColor(getActivity().getResources().getColor(R.color.transparent));
-                mChart.getXAxis().setGranularityEnabled(true);
-                mChart.invalidate();
-                mChart.notifyDataSetChanged();
-
             }
         });
+    }
 
-        return view;
+    private void setupChart() {
+        YAxis yAxis = mChart.getAxisLeft();
+        yAxis.setAxisMaximum(100f);
+        yAxis.setAxisMinimum(-5f);
+        yAxis.setTextColor(getActivity().getResources().getColor(R.color.white));
+        yAxis.setGranularity(1);
+        yAxis.setTextSize(CHART_TEXT_SIZE);
+
+        XAxis xAxis = mChart.getXAxis();
+        xAxis.setGridColor(getActivity().getResources().getColor(R.color.transparent));
+        xAxis.setGranularityEnabled(true);
+        xAxis.setTextColor(getActivity().getResources().getColor(R.color.white));
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setValueFormatter(new StickyDateAxisValueFormatter(xValues, mChart, mSticky));
+        xAxis.setAvoidFirstLastClipping(true);
+        xAxis.setTextSize(CHART_TEXT_SIZE);
+
+        // TODO: adapt according to screen density and view width
+        mChart.setVisibleXRangeMaximum(8);
+        mChart.setData(new LineData());
+        mChart.getData().setHighlightEnabled(false);
+        mChart.setExtraLeftOffset(10f);
+        mChart.setExtraBottomOffset(10f);
+        mChart.getAxisRight().setEnabled(false);
+        mChart.getDescription().setEnabled(false);
+        mChart.setHardwareAccelerationEnabled(true);
+        mChart.animateY(500, Easing.EasingOption.EaseOutCubic);
+        mChart.getLegend().setEnabled(false);
+        mChart.setPinchZoom(false);
+        mChart.setScaleEnabled(true);
+        mChart.setDragEnabled(true);
+        mChart.invalidate();
+        mChart.notifyDataSetChanged();
     }
 
     private LineData generateChartData(List<Session> sessions) {
