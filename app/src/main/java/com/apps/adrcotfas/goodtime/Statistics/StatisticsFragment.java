@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.Statistics;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -50,7 +51,7 @@ import static android.util.TypedValue.COMPLEX_UNIT_DIP;
 public class StatisticsFragment extends Fragment {
 
     private LineChart mChart;
-    private TextView mTotal;
+    private TextView mStatsTotal;
     private TextView mSticky;
     private LinearLayout mLayout;
     final private float CHART_TEXT_SIZE = 12f;
@@ -65,7 +66,7 @@ public class StatisticsFragment extends Fragment {
         View view = binding.getRoot();
 
         mChart = binding.chart;
-        mTotal = binding.total;
+        mStatsTotal = binding.statsTotal;
         mSticky = binding.sticky;
         mLayout = binding.layout;
 
@@ -138,6 +139,7 @@ public class StatisticsFragment extends Fragment {
                 AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessions();
 
         sessions.observe(this, new Observer<List<Session>>() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onChanged(List<Session> sessions) {
                 long minutes = 0;
@@ -145,7 +147,7 @@ public class StatisticsFragment extends Fragment {
                     minutes += s.totalTime;
                 }
                 //TODO: extract string
-                mTotal.setText("Total work duration: " + minutes + " minutes");
+                mStatsTotal.setText(Long.toString(minutes));
 
                 LineData data = generateChartData(sessions);
                 if (data.getEntryCount() != 0) {
