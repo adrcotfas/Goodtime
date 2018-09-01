@@ -106,7 +106,6 @@ public class StatisticsFragment extends Fragment {
         setupStickyText();
         setupChart();
         setupSessionsObserver();
-
         return view;
     }
 
@@ -153,6 +152,8 @@ public class StatisticsFragment extends Fragment {
                 if (data.getEntryCount() != 0) {
                     mChart.setData(data);
                     mChart.moveViewToX(data.getXMax());
+                    mChart.getData().setHighlightEnabled(false);
+                    mChart.setVisibleXRangeMaximum(8);
                 } else {
                     mChart.setData(new LineData());
                     mChart.invalidate();
@@ -164,8 +165,7 @@ public class StatisticsFragment extends Fragment {
 
     private void setupChart() {
         YAxis yAxis = mChart.getAxisLeft();
-        yAxis.setAxisMaximum(100f);
-        yAxis.setAxisMinimum(-5f);
+        yAxis.setAxisMinimum(-3f);
         yAxis.setTextColor(getActivity().getResources().getColor(R.color.white));
         yAxis.setGranularity(1);
         yAxis.setTextSize(CHART_TEXT_SIZE);
@@ -180,9 +180,8 @@ public class StatisticsFragment extends Fragment {
         xAxis.setTextSize(CHART_TEXT_SIZE);
 
         // TODO: adapt according to screen density and view width
-        mChart.setVisibleXRangeMaximum(8);
         mChart.setData(new LineData());
-        mChart.getData().setHighlightEnabled(false);
+
         mChart.setExtraLeftOffset(10f);
         mChart.setExtraBottomOffset(10f);
         mChart.getAxisRight().setEnabled(false);
