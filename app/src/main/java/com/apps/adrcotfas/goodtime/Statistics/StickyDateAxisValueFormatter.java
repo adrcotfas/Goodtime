@@ -30,7 +30,7 @@ public class StickyDateAxisValueFormatter implements IAxisValueFormatter {
 
         final int firstValue = (int) mChart.getXAxis().mEntries[0];
         // in case of invalid values
-        if(value < 0 || firstValue < 0 || firstValue >= mDates.size()) {
+        if(value < 0 || value >= mDates.size() || firstValue < 0 || firstValue >= mDates.size()) {
             return "";
         }
 
