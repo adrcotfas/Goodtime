@@ -12,9 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,13 +50,21 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
 import static android.util.TypedValue.COMPLEX_UNIT_DIP;
+import static com.apps.adrcotfas.goodtime.Statistics.SpinnerStatsType.DURATION;
 
 public class StatisticsFragment extends Fragment {
 
     private LineChart mChart;
+
+    private TextView mStatsToday;
+    private TextView mStatsThisWeek;
+    private TextView mStatsThisMonth;
     private TextView mStatsTotal;
+
     private TextView mSticky;
     private LinearLayout mLayout;
+    private Spinner mStatsTypeSpinner;
+    private Spinner mRangeTypeSpinner;
     final private float CHART_TEXT_SIZE = 12f;
 
     private List<LocalDate> xValues = new ArrayList<>();
@@ -66,10 +77,16 @@ public class StatisticsFragment extends Fragment {
         View view = binding.getRoot();
 
         mChart = binding.chart;
+
+        mStatsToday = binding.statsToday;
+        mStatsThisWeek = binding.statsWeek;
+        mStatsThisMonth = binding.statsMonth;
         mStatsTotal = binding.statsTotal;
+
         mSticky = binding.sticky;
         mLayout = binding.layout;
-
+        mStatsTypeSpinner = binding.statsTypeSpinner;
+        mRangeTypeSpinner = binding.rangeTypeSpinner;
         binding.deleteEntriesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,10 +120,45 @@ public class StatisticsFragment extends Fragment {
             }
         });
 
+        setupSpinners();
         setupStickyText();
         setupChart();
         setupSessionsObserver();
         return view;
+    }
+
+    private void setupSpinners() {
+        ArrayAdapter<CharSequence> statsTypeAdapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.spinner_stats_type, android.R.layout.simple_spinner_item);
+        statsTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mStatsTypeSpinner.setAdapter(statsTypeAdapter);
+
+        mStatsTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                setupSessionsObserver();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+
+        ArrayAdapter < CharSequence > rangeTypeAdapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.spinner_range_type, android.R.layout.simple_spinner_item);
+        rangeTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mRangeTypeSpinner.setAdapter(rangeTypeAdapter);
+        mRangeTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
     private void setupStickyText() {
@@ -141,19 +193,50 @@ public class StatisticsFragment extends Fragment {
             @SuppressLint("SetTextI18n")
             @Override
             public void onChanged(List<Session> sessions) {
-                long minutes = 0;
-                for (Session s : sessions) {
-                    minutes += s.totalTime;
-                }
-                //TODO: extract string
-                mStatsTotal.setText(Long.toString(minutes));
 
-                LineData data = generateChartData(sessions);
+                final int statsType = mStatsTypeSpinner.getSelectedItemPosition();
+                LineData data = generateChartData(sessions, SpinnerStatsType.values()[statsType]);
+
+                long statsToday = 0;
+                long statsThisWeek = 0;
+                long statsThisMonth = 0;
+                long statsTotal = 0;
+
+                final LocalDate today          = new LocalDate();
+                final LocalDate thisWeekStart  = today.dayOfWeek().withMinimumValue().minusDays(1);
+                final LocalDate thisWeekEnd    = today.dayOfWeek().withMaximumValue().plusDays(1);
+                final LocalDate thisMonthStart = today.dayOfMonth().withMinimumValue().minusDays(1);
+                final LocalDate thisMonthEnd   = today.dayOfMonth().withMaximumValue().plusDays(1);;
+                for (Session s : sessions) {
+                    final LocalDate crt = new LocalDate(new Date(s.endTime));
+                    if (crt.isEqual(today)) {
+                        statsToday += statsType == DURATION.ordinal() ? s.totalTime : 1;
+                    }
+                    if (crt.isAfter(thisWeekStart) && crt.isBefore(thisWeekEnd)) {
+                        statsThisWeek += statsType == DURATION.ordinal() ? s.totalTime : 1;
+                    }
+                    if (crt.isAfter(thisMonthStart) && crt.isBefore(thisMonthEnd)) {
+                        statsThisMonth += statsType == DURATION.ordinal() ? s.totalTime : 1;
+                    }
+                    if (statsType == DURATION.ordinal()) {
+                        statsTotal += s.totalTime;
+                    }
+                }
+                if (statsType == DURATION.ordinal()) {
+                    statsTotal = sessions.size();
+                }
+
+                mStatsToday.setText(Long.toString(statsToday));
+                mStatsThisWeek.setText(Long.toString(statsThisWeek));
+                mStatsThisMonth.setText(Long.toString(statsThisMonth));
+                mStatsTotal.setText(Long.toString(statsTotal));
+
                 if (data.getEntryCount() != 0) {
-                    mChart.setData(data);
                     mChart.moveViewToX(data.getXMax());
+                    mChart.setData(data);
                     mChart.getData().setHighlightEnabled(false);
                     mChart.setVisibleXRangeMaximum(8);
+                    mChart.getAxisLeft().resetAxisMaximum();
                 } else {
                     mChart.setData(new LineData());
                     mChart.invalidate();
@@ -165,7 +248,8 @@ public class StatisticsFragment extends Fragment {
 
     private void setupChart() {
         YAxis yAxis = mChart.getAxisLeft();
-        yAxis.setAxisMinimum(-3f);
+        //yAxis.setAxisMinimum(-3f);
+        yAxis.setAxisMaximum(100);
         yAxis.setTextColor(getActivity().getResources().getColor(R.color.white));
         yAxis.setGranularity(1);
         yAxis.setTextSize(CHART_TEXT_SIZE);
@@ -186,6 +270,7 @@ public class StatisticsFragment extends Fragment {
         mChart.setExtraBottomOffset(10f);
         mChart.getAxisRight().setEnabled(false);
         mChart.getDescription().setEnabled(false);
+        mChart.setNoDataText("");
         mChart.setHardwareAccelerationEnabled(true);
         mChart.animateY(500, Easing.EasingOption.EaseOutCubic);
         mChart.getLegend().setEnabled(false);
@@ -196,7 +281,7 @@ public class StatisticsFragment extends Fragment {
         mChart.notifyDataSetChanged();
     }
 
-    private LineData generateChartData(List<Session> sessions) {
+    private LineData generateChartData(List<Session> sessions, SpinnerStatsType spinnerStatsType) {
         List<Entry> yVals = new ArrayList<>();
 
         TreeMap<LocalDate, Long> tree = new TreeMap<>();
@@ -206,9 +291,10 @@ public class StatisticsFragment extends Fragment {
             LocalDate localTime = new LocalDate(new Date(sessions.get(i).endTime));
 
             if (!tree.containsKey(localTime)) {
-                tree.put(localTime, sessions.get(i).totalTime);
+                tree.put(localTime, spinnerStatsType == DURATION ? sessions.get(i).totalTime : 1);
             } else {
-                tree.put(localTime, tree.get(localTime) + sessions.get(i).totalTime);
+                tree.put(localTime, tree.get(localTime)
+                        + (spinnerStatsType == DURATION ? sessions.get(i).totalTime : 1));
             }
         }
 
