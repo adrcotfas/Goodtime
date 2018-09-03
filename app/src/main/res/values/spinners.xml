@@ -8,4 +8,15 @@
         <item>@string/pref_profile_5217</item>
     </string-array>
 
+    <string-array name="spinner_stats_type">
+        <item>Duration</item>
+        <item>Sessions</item>
+    </string-array>
+
+    <string-array name="spinner_range_type">
+        <item>Days</item>
+        <item>Weeks</item>
+        <item>Months</item>
+    </string-array>
+
 </resources>

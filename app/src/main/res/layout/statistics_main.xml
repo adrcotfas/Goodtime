@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <data>
-        <variable name="chartVariable" type="com.github.mikephil.charting.charts.LineChart"/>
-        <variable name="totalVariable" type="android.widget.TextView"/>
-        <variable name="addEntryButtonVariable" type="android.widget.Button"/>
-        <variable name="deleteEntriesVariable" type="android.widget.Button"/>
-        <variable name="layoutVariable" type="android.widget.LinearLayout"/>
-        <variable name="stickyVariable" type="android.widget.TextView"/>
-        <variable name="statsTodayVariable" type="android.widget.TextView"/>
-        <variable name="statsWeekVariable" type="android.widget.TextView"/>
-        <variable name="statsMonthVariable" type="android.widget.TextView"/>
-        <variable name="statsTotalVariable" type="android.widget.TextView"/>
-    </data>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">

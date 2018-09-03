@@ -3,14 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    <data>
-        <variable name="toolbarVariable" type="androidx.appcompat.widget.Toolbar"/>
-        <variable name="timeLabelVariable" type="android.widget.TextView"/>
-        <variable name="stopVariable" type="android.widget.TextView"/>
-        <variable name="skipVariable" type="android.widget.TextView"/>
-        <variable name="add60SecondsVariable" type="android.widget.TextView"/>
-        <variable name="statusVariable" type="android.widget.TextView"/>
-    </data>
 
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
