@@ -425,15 +425,18 @@ public class StatisticsFragment extends Fragment {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
-                            if (durationEditText.getText().toString().isEmpty()) {
-                                Toast.makeText(getActivity(), "Invalid duration.", Toast.LENGTH_LONG).show();
+                            String input = durationEditText.getText().toString();
+                            if (input.isEmpty()) {
+                                Toast.makeText(getActivity(), "Please enter a valid duration", Toast.LENGTH_LONG).show();
                             }
-                            final long duration = Math.min(Long.parseLong(durationEditText.getText().toString()), 120);
-                            if (duration > 0) {
-                                addEntry(duration, c.getTimeInMillis());
-                                dialog.dismiss();
-                            } else {
-                                Toast.makeText(getActivity(), "Invalid duration.", Toast.LENGTH_LONG).show();
+                            else {
+                                final long duration = Math.min(Long.parseLong(input), 120);
+                                if (duration > 0) {
+                                    addEntry(duration, c.getTimeInMillis());
+                                    dialog.dismiss();
+                                } else {
+                                    Toast.makeText(getActivity(), "Please enter a valid duration", Toast.LENGTH_LONG).show();
+                                }
                             }
                         }
                     }
