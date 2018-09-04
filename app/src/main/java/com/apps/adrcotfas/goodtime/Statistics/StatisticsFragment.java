@@ -1,6 +1,5 @@
 package com.apps.adrcotfas.goodtime.Statistics;
 
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -47,7 +46,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
 import static com.apps.adrcotfas.goodtime.Statistics.SpinnerStatsType.DURATION;
-import static com.apps.adrcotfas.goodtime.Statistics.SpinnerStatsType.NR_OF_SESSIONS;
+import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatMinutes;
 
 public class StatisticsFragment extends Fragment {
 
@@ -161,45 +160,47 @@ public class StatisticsFragment extends Fragment {
                 AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessions();
 
         sessions.observe(this, new Observer<List<Session>>() {
-            @SuppressLint("SetTextI18n")
             @Override
             public void onChanged(List<Session> sessions) {
 
-                final int statsType = mStatsTypeSpinner.getSelectedItemPosition();
-
-                long statsToday = 0;
-                long statsThisWeek = 0;
-                long statsThisMonth = 0;
-                long statsTotal = 0;
+                final boolean isDurationType = mStatsTypeSpinner.getSelectedItemPosition() == DURATION.ordinal();
 
                 final LocalDate today          = new LocalDate();
                 final LocalDate thisWeekStart  = today.dayOfWeek().withMinimumValue().minusDays(1);
                 final LocalDate thisWeekEnd    = today.dayOfWeek().withMaximumValue().plusDays(1);
                 final LocalDate thisMonthStart = today.dayOfMonth().withMinimumValue().minusDays(1);
                 final LocalDate thisMonthEnd   = today.dayOfMonth().withMaximumValue().plusDays(1);;
+
+                long statsToday = 0;
+                long statsThisWeek = 0;
+                long statsThisMonth = 0;
+                long statsTotal = 0;
+
                 for (Session s : sessions) {
+                    final long increment = isDurationType ? s.totalTime : 1;
+
                     final LocalDate crt = new LocalDate(new Date(s.endTime));
                     if (crt.isEqual(today)) {
-                        statsToday += statsType == DURATION.ordinal() ? s.totalTime : 1;
+                        statsToday += increment;
                     }
                     if (crt.isAfter(thisWeekStart) && crt.isBefore(thisWeekEnd)) {
-                        statsThisWeek += statsType == DURATION.ordinal() ? s.totalTime : 1;
+                        statsThisWeek += increment;
                     }
                     if (crt.isAfter(thisMonthStart) && crt.isBefore(thisMonthEnd)) {
-                        statsThisMonth += statsType == DURATION.ordinal() ? s.totalTime : 1;
+                        statsThisMonth += increment;
                     }
-                    if (statsType == DURATION.ordinal()) {
-                        statsTotal += s.totalTime;
+                    if (isDurationType) {
+                        statsTotal += increment;
                     }
                 }
-                if (statsType == NR_OF_SESSIONS.ordinal()) {
+                if (!isDurationType) {
                     statsTotal = sessions.size();
                 }
 
-                mStatsToday.setText(Long.toString(statsToday));
-                mStatsThisWeek.setText(Long.toString(statsThisWeek));
-                mStatsThisMonth.setText(Long.toString(statsThisMonth));
-                mStatsTotal.setText(Long.toString(statsTotal));
+                mStatsToday.setText(isDurationType ? formatMinutes(statsToday) : Long.toString(statsToday));
+                mStatsThisWeek.setText(isDurationType ? formatMinutes(statsThisWeek) : Long.toString(statsThisWeek));
+                mStatsThisMonth.setText(isDurationType ? formatMinutes(statsThisMonth) : Long.toString(statsThisMonth));
+                mStatsTotal.setText(isDurationType ? formatMinutes(statsTotal) : Long.toString(statsTotal));
 
                 final LineData data = generateChartData(sessions);
 
@@ -208,15 +209,14 @@ public class StatisticsFragment extends Fragment {
                 mChart.getData().setHighlightEnabled(false);
 
                 mChart.getAxisLeft().setAxisMinimum(0f);
-                mChart.getAxisLeft().setAxisMaximum(statsType == DURATION.ordinal() ? 110f : 5f);
+                mChart.getAxisLeft().setAxisMaximum(isDurationType ? 110f : 5f);
 
                 final int visibleXRange = pxToDp(mChart.getWidth()) / 46;
-
                 mChart.setVisibleXRangeMaximum(visibleXRange);
                 mChart.setVisibleXRangeMinimum(visibleXRange);
                 mChart.getXAxis().setLabelCount(visibleXRange);
 
-                if (sessions.size() > 0 && data.getYMax() >= (statsType == DURATION.ordinal() ? 100 : 5f)) {
+                if (sessions.size() > 0 && data.getYMax() >= (isDurationType ? 100 : 5f)) {
                     mChart.getAxisLeft().resetAxisMaximum();
                 }
 
