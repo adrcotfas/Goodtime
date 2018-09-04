@@ -29,8 +29,6 @@
                 android:id="@+id/chart"
                 android:layout_width="fill_parent"
                 android:layout_height="200dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"/>
 
@@ -77,24 +75,32 @@
                         android:id="@+id/statsToday"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
                         android:paddingLeft="16dp"
                         android:paddingRight="16dp"/>
                     <TextView
                         android:id="@+id/statsWeek"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
                         android:paddingLeft="16dp"
                         android:paddingRight="16dp"/>
                     <TextView
                         android:id="@+id/statsMonth"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
                         android:paddingLeft="16dp"
                         android:paddingRight="16dp"/>
                     <TextView
                         android:id="@+id/statsTotal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
                         android:paddingLeft="16dp"
                         android:paddingRight="16dp"/>
                 </LinearLayout>

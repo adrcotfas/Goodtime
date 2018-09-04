@@ -197,10 +197,18 @@ public class StatisticsFragment extends Fragment {
                     statsTotal = sessions.size();
                 }
 
-                mStatsToday.setText(isDurationType ? formatMinutes(statsToday) : Long.toString(statsToday));
-                mStatsThisWeek.setText(isDurationType ? formatMinutes(statsThisWeek) : Long.toString(statsThisWeek));
-                mStatsThisMonth.setText(isDurationType ? formatMinutes(statsThisMonth) : Long.toString(statsThisMonth));
-                mStatsTotal.setText(isDurationType ? formatMinutes(statsTotal) : Long.toString(statsTotal));
+                mStatsToday.setText(isDurationType || statsToday == 0
+                        ? formatMinutes(statsToday)
+                        : Long.toString(statsToday));
+                mStatsThisWeek.setText(isDurationType || statsToday == 0
+                        ? formatMinutes(statsThisWeek)
+                        : Long.toString(statsThisWeek));
+                mStatsThisMonth.setText(isDurationType || statsToday == 0
+                        ? formatMinutes(statsThisMonth)
+                        : Long.toString(statsThisMonth));
+                mStatsTotal.setText(isDurationType || statsToday == 0 ?
+                        formatMinutes(statsTotal)
+                        : Long.toString(statsTotal));
 
                 final LineData data = generateChartData(sessions);
 
@@ -209,14 +217,14 @@ public class StatisticsFragment extends Fragment {
                 mChart.getData().setHighlightEnabled(false);
 
                 mChart.getAxisLeft().setAxisMinimum(0f);
-                mChart.getAxisLeft().setAxisMaximum(isDurationType ? 110f : 5f);
+                mChart.getAxisLeft().setAxisMaximum(isDurationType ? 60f : 5f);
 
                 final int visibleXRange = pxToDp(mChart.getWidth()) / 46;
                 mChart.setVisibleXRangeMaximum(visibleXRange);
                 mChart.setVisibleXRangeMinimum(visibleXRange);
                 mChart.getXAxis().setLabelCount(visibleXRange);
 
-                if (sessions.size() > 0 && data.getYMax() >= (isDurationType ? 100 : 5f)) {
+                if (sessions.size() > 0 && data.getYMax() >= (isDurationType ? 60 : 5f)) {
                     mChart.getAxisLeft().resetAxisMaximum();
                 }
 
@@ -226,11 +234,16 @@ public class StatisticsFragment extends Fragment {
     }
 
     private void setupChart() {
-        mChart.setXAxisRenderer(
-                new CustomXAxisRenderer(
-                        mChart.getViewPortHandler(),
-                        mChart.getXAxis(),
-                        mChart.getTransformer(YAxis.AxisDependency.LEFT)));
+        mChart.setXAxisRenderer(new CustomXAxisRenderer(
+                mChart.getViewPortHandler(),
+                mChart.getXAxis(),
+                mChart.getTransformer(YAxis.AxisDependency.LEFT)));
+
+        mChart.setRendererLeftYAxis(new CustomYAxisRenderer(
+                mChart.getViewPortHandler(),
+                mChart.getAxisLeft(),
+                mChart.getTransformer(YAxis.AxisDependency.LEFT)
+                ));
 
         YAxis yAxis = mChart.getAxisLeft();
         yAxis.setTextColor(getActivity().getResources().getColor(R.color.white));
@@ -254,8 +267,9 @@ public class StatisticsFragment extends Fragment {
         xAxis.setDrawGridLines(false);
         xAxis.setDrawAxisLine(false);
 
-        mChart.setExtraTopOffset(10f);
+        mChart.setExtraTopOffset(30f);
         mChart.setExtraBottomOffset(20f);
+        mChart.setExtraLeftOffset(-30);
         mChart.getAxisRight().setEnabled(false);
         mChart.getDescription().setEnabled(false);
         mChart.setNoDataText("");
