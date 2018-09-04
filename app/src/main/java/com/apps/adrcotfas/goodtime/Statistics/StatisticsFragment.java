@@ -217,14 +217,14 @@ public class StatisticsFragment extends Fragment {
                 mChart.getData().setHighlightEnabled(false);
 
                 mChart.getAxisLeft().setAxisMinimum(0f);
-                mChart.getAxisLeft().setAxisMaximum(isDurationType ? 60f : 5f);
+                mChart.getAxisLeft().setAxisMaximum(isDurationType ? 60f : 6f);
 
                 final int visibleXRange = pxToDp(mChart.getWidth()) / 46;
                 mChart.setVisibleXRangeMaximum(visibleXRange);
                 mChart.setVisibleXRangeMinimum(visibleXRange);
                 mChart.getXAxis().setLabelCount(visibleXRange);
 
-                if (sessions.size() > 0 && data.getYMax() >= (isDurationType ? 60 : 5f)) {
+                if (sessions.size() > 0 && data.getYMax() >= (isDurationType ? 60 : 6f)) {
                     mChart.getAxisLeft().resetAxisMaximum();
                 }
 
@@ -306,7 +306,7 @@ public class StatisticsFragment extends Fragment {
                 }
                 break;
             case WEEKS:
-                dummyBegin = dummyEnd.minusWeeks(DUMMY_INTERVAL_RANGE);
+                dummyBegin = dummyEnd.minusWeeks(DUMMY_INTERVAL_RANGE).dayOfWeek().withMinimumValue();
                 for (LocalDate i = dummyBegin; i.isBefore(dummyEnd); i = i.plusWeeks(1)) {
                     tree.put(i, 0L);
                 }
