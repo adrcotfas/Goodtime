@@ -7,16 +7,13 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,8 +46,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
-import static android.util.TypedValue.COMPLEX_UNIT_DIP;
 import static com.apps.adrcotfas.goodtime.Statistics.SpinnerStatsType.DURATION;
+import static com.apps.adrcotfas.goodtime.Statistics.SpinnerStatsType.NR_OF_SESSIONS;
 
 public class StatisticsFragment extends Fragment {
 
@@ -61,10 +58,11 @@ public class StatisticsFragment extends Fragment {
     private TextView mStatsThisMonth;
     private TextView mStatsTotal;
 
-    private TextView mSticky;
-    private LinearLayout mLayout;
     private Spinner mStatsTypeSpinner;
     private Spinner mRangeTypeSpinner;
+
+    private CustomXAxisFormatter mXAxisFormatter;
+
     final private float CHART_TEXT_SIZE = 12f;
 
     private List<LocalDate> xValues = new ArrayList<>();
@@ -77,14 +75,11 @@ public class StatisticsFragment extends Fragment {
         View view = binding.getRoot();
 
         mChart = binding.chart;
-
         mStatsToday = binding.statsToday;
         mStatsThisWeek = binding.statsWeek;
         mStatsThisMonth = binding.statsMonth;
         mStatsTotal = binding.statsTotal;
 
-        mSticky = binding.sticky;
-        mLayout = binding.layout;
         mStatsTypeSpinner = binding.statsTypeSpinner;
         mRangeTypeSpinner = binding.rangeTypeSpinner;
         binding.deleteEntriesButton.setOnClickListener(new View.OnClickListener() {
@@ -121,7 +116,6 @@ public class StatisticsFragment extends Fragment {
         });
 
         setupSpinners();
-        setupStickyText();
         setupChart();
         setupSessionsObserver();
         return view;
@@ -151,36 +145,13 @@ public class StatisticsFragment extends Fragment {
         mRangeTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
+                mXAxisFormatter.setRangeType(SpinnerRangeType.values()[i]);
+                setupSessionsObserver();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
-            }
-        });
-    }
-
-    private void setupStickyText() {
-        ViewTreeObserver vto = mLayout.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener (new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                mLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-                float xo = mChart.getXAxis().getXOffset();
-                float yo = mChart.getXAxis().getYOffset();
-                final DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-                float rho = displayMetrics.density;
-
-                // magic numbers
-                float ty = mChart.getY() - rho*yo - 10f - 0.85f * CHART_TEXT_SIZE * rho;
-                float tx = mChart.getX() + rho*xo;
-
-                mSticky.setTranslationY(ty);
-                mSticky.setTranslationX(tx);
-                mSticky.setTextSize(COMPLEX_UNIT_DIP, CHART_TEXT_SIZE);
-                mSticky.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.TOP);
             }
         });
     }
@@ -195,7 +166,6 @@ public class StatisticsFragment extends Fragment {
             public void onChanged(List<Session> sessions) {
 
                 final int statsType = mStatsTypeSpinner.getSelectedItemPosition();
-                LineData data = generateChartData(sessions, SpinnerStatsType.values()[statsType]);
 
                 long statsToday = 0;
                 long statsThisWeek = 0;
@@ -222,7 +192,7 @@ public class StatisticsFragment extends Fragment {
                         statsTotal += s.totalTime;
                     }
                 }
-                if (statsType == DURATION.ordinal()) {
+                if (statsType == NR_OF_SESSIONS.ordinal()) {
                     statsTotal = sessions.size();
                 }
 
@@ -231,43 +201,61 @@ public class StatisticsFragment extends Fragment {
                 mStatsThisMonth.setText(Long.toString(statsThisMonth));
                 mStatsTotal.setText(Long.toString(statsTotal));
 
-                if (data.getEntryCount() != 0) {
-                    mChart.moveViewToX(data.getXMax());
-                    mChart.setData(data);
-                    mChart.getData().setHighlightEnabled(false);
-                    mChart.setVisibleXRangeMaximum(8);
+                final LineData data = generateChartData(sessions);
+
+                mChart.moveViewToX(data.getXMax());
+                mChart.setData(data);
+                mChart.getData().setHighlightEnabled(false);
+
+                mChart.getAxisLeft().setAxisMinimum(0f);
+                mChart.getAxisLeft().setAxisMaximum(statsType == DURATION.ordinal() ? 110f : 5f);
+
+                final int visibleXRange = pxToDp(mChart.getWidth()) / 46;
+
+                mChart.setVisibleXRangeMaximum(visibleXRange);
+                mChart.setVisibleXRangeMinimum(visibleXRange);
+                mChart.getXAxis().setLabelCount(visibleXRange);
+
+                if (sessions.size() > 0 && data.getYMax() >= (statsType == DURATION.ordinal() ? 100 : 5f)) {
                     mChart.getAxisLeft().resetAxisMaximum();
-                } else {
-                    mChart.setData(new LineData());
-                    mChart.invalidate();
-                    mChart.notifyDataSetChanged();
                 }
+
+                mChart.notifyDataSetChanged();
             }
         });
     }
 
     private void setupChart() {
+        mChart.setXAxisRenderer(
+                new CustomXAxisRenderer(
+                        mChart.getViewPortHandler(),
+                        mChart.getXAxis(),
+                        mChart.getTransformer(YAxis.AxisDependency.LEFT)));
+
         YAxis yAxis = mChart.getAxisLeft();
-        //yAxis.setAxisMinimum(-3f);
-        yAxis.setAxisMaximum(100);
         yAxis.setTextColor(getActivity().getResources().getColor(R.color.white));
         yAxis.setGranularity(1);
         yAxis.setTextSize(CHART_TEXT_SIZE);
+        yAxis.setDrawAxisLine(false);
 
         XAxis xAxis = mChart.getXAxis();
         xAxis.setGridColor(getActivity().getResources().getColor(R.color.transparent));
         xAxis.setGranularityEnabled(true);
         xAxis.setTextColor(getActivity().getResources().getColor(R.color.white));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setValueFormatter(new StickyDateAxisValueFormatter(xValues, mChart, mSticky));
-        xAxis.setAvoidFirstLastClipping(true);
+
+        final SpinnerRangeType rangeType =
+                SpinnerRangeType.values()[mRangeTypeSpinner.getSelectedItemPosition()];
+
+        mXAxisFormatter = new CustomXAxisFormatter(xValues, rangeType);
+        xAxis.setValueFormatter(mXAxisFormatter);
+        xAxis.setAvoidFirstLastClipping(false);
         xAxis.setTextSize(CHART_TEXT_SIZE);
+        xAxis.setDrawGridLines(false);
+        xAxis.setDrawAxisLine(false);
 
-        // TODO: adapt according to screen density and view width
-        mChart.setData(new LineData());
-
-        mChart.setExtraLeftOffset(10f);
-        mChart.setExtraBottomOffset(10f);
+        mChart.setExtraTopOffset(10f);
+        mChart.setExtraBottomOffset(20f);
         mChart.getAxisRight().setEnabled(false);
         mChart.getDescription().setEnabled(false);
         mChart.setNoDataText("");
@@ -275,26 +263,68 @@ public class StatisticsFragment extends Fragment {
         mChart.animateY(500, Easing.EasingOption.EaseOutCubic);
         mChart.getLegend().setEnabled(false);
         mChart.setPinchZoom(false);
+        mChart.setDoubleTapToZoomEnabled(false);
         mChart.setScaleEnabled(true);
         mChart.setDragEnabled(true);
         mChart.invalidate();
         mChart.notifyDataSetChanged();
     }
 
-    private LineData generateChartData(List<Session> sessions, SpinnerStatsType spinnerStatsType) {
-        List<Entry> yVals = new ArrayList<>();
+    private LineData generateChartData(List<Session> sessions) {
 
+        final SpinnerStatsType statsType =
+                SpinnerStatsType.values()[mStatsTypeSpinner.getSelectedItemPosition()];
+        final SpinnerRangeType rangeType =
+                SpinnerRangeType.values()[mRangeTypeSpinner.getSelectedItemPosition()];
+
+        final int DUMMY_INTERVAL_RANGE = 15;
+
+        List<Entry> yVals = new ArrayList<>();
         TreeMap<LocalDate, Long> tree = new TreeMap<>();
+
+        // generate dummy data
+        LocalDate dummyEnd = new LocalDate().plusDays(1);
+        switch (rangeType) {
+            case DAYS:
+                LocalDate dummyBegin = dummyEnd.minusDays(DUMMY_INTERVAL_RANGE);
+                for (LocalDate i = dummyBegin; i.isBefore(dummyEnd); i = i.plusDays(1)) {
+                    tree.put(i, 0L);
+                }
+                break;
+            case WEEKS:
+                dummyBegin = dummyEnd.minusWeeks(DUMMY_INTERVAL_RANGE);
+                for (LocalDate i = dummyBegin; i.isBefore(dummyEnd); i = i.plusWeeks(1)) {
+                    tree.put(i, 0L);
+                }
+                break;
+            case MONTHS:
+                dummyBegin = dummyEnd.minusMonths(DUMMY_INTERVAL_RANGE);
+                for (LocalDate i = dummyBegin; i.isBefore(dummyEnd); i = i.plusMonths(1)) {
+                    tree.put(i, 0L);
+                }
+                break;
+        }
 
         // this is to sum up entries from the same day for visualization
         for (int i = 0; i < sessions.size(); ++i) {
-            LocalDate localTime = new LocalDate(new Date(sessions.get(i).endTime));
+            LocalDate localTime = new LocalDate();
+            switch (rangeType) {
+                case DAYS:
+                    localTime = new LocalDate(new Date(sessions.get(i).endTime));
+                    break;
+                case WEEKS:
+                    localTime = new LocalDate(new Date(sessions.get(i).endTime)).dayOfWeek().withMinimumValue();
+                    break;
+                case MONTHS:
+                    localTime = new LocalDate(new Date(sessions.get(i).endTime)).dayOfMonth().withMinimumValue();
+                    break;
+            }
 
             if (!tree.containsKey(localTime)) {
-                tree.put(localTime, spinnerStatsType == DURATION ? sessions.get(i).totalTime : 1);
+                tree.put(localTime, statsType == DURATION ? sessions.get(i).totalTime : 1);
             } else {
                 tree.put(localTime, tree.get(localTime)
-                        + (spinnerStatsType == DURATION ? sessions.get(i).totalTime : 1));
+                        + (statsType == DURATION ? sessions.get(i).totalTime : 1));
             }
         }
 
@@ -303,21 +333,42 @@ public class StatisticsFragment extends Fragment {
             int i = 0;
             LocalDate previousTime = tree.firstKey();
 
-            for (LocalDate time : tree.keySet()) {
-                // visualize intermediate days in case of more than one day between sessions
-                while(previousTime.isBefore(time.minusDays(1))) {
+            for (LocalDate crt : tree.keySet()) {
+                // visualize intermediate days/weeks/months in case of days without completed sessions
+                LocalDate beforeWhat = new LocalDate();
+                switch (rangeType) {
+                    case DAYS:
+                        beforeWhat = crt.minusDays(1);
+                        break;
+                    case WEEKS:
+                        beforeWhat = crt.minusWeeks(1);
+                        break;
+                    case MONTHS:
+                        beforeWhat = crt.minusMonths(1);
+                }
+
+                while(previousTime.isBefore(beforeWhat)) {
                     yVals.add(new Entry(i, 0));
-                    previousTime = previousTime.plusDays(1);
+
+                    switch (rangeType) {
+                        case DAYS:
+                            previousTime = previousTime.plusDays(1);
+                            break;
+                        case WEEKS:
+                            previousTime = previousTime.plusWeeks(1);
+                            break;
+                        case MONTHS:
+                            previousTime = previousTime.plusMonths(1);
+                    }
                     xValues.add(previousTime);
                     ++i;
                 }
-                yVals.add(new Entry(i, tree.get(time)));
-                xValues.add(time);
+                yVals.add(new Entry(i, tree.get(crt)));
+                xValues.add(crt);
                 ++i;
-                previousTime = time;
+                previousTime = crt;
             }
         }
-
         return new LineData(generateLineDataSet(yVals, ContextCompat.getColor(getContext(), R.color.cyan)));
     }
 
@@ -374,7 +425,10 @@ public class StatisticsFragment extends Fragment {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
-                            long duration = Math.min(Long.parseLong(durationEditText.getText().toString()), 120);
+                            if (durationEditText.getText().toString().isEmpty()) {
+                                Toast.makeText(getActivity(), "Invalid duration.", Toast.LENGTH_LONG).show();
+                            }
+                            final long duration = Math.min(Long.parseLong(durationEditText.getText().toString()), 120);
                             if (duration > 0) {
                                 addEntry(duration, c.getTimeInMillis());
                                 dialog.dismiss();
@@ -405,5 +459,11 @@ public class StatisticsFragment extends Fragment {
                 AppDatabase.getDatabase(getContext()).sessionModel().addSession(session);
             }
         });
+    }
+
+    public int pxToDp(int px) {
+        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return dp;
     }
 }

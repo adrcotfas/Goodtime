@@ -9,11 +9,11 @@
     </string-array>
 
     <string name ="spinner_stats_duration">Duration</string>
-    <string name="spinner_stats_sessions">Sessions</string>
+    <string name="spinner_stats_nr_of_sessions">Sessions</string>
 
     <string-array name="spinner_stats_type">
         <item>@string/spinner_stats_duration</item>
-        <item>@string/spinner_stats_sessions</item>
+        <item>@string/spinner_stats_nr_of_sessions</item>
     </string-array>
 
     <string name ="spinner_range_days">Days</string>
