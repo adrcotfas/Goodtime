@@ -68,6 +68,17 @@
                 android:value=".Main.TimerActivity" />
         </activity>
 
+        <activity
+            android:name=".Statistics.AllEntriesActivity"
+            android:label="Statistics"
+            android:showOnLockScreen="true"
+            android:parentActivityName=".Statistics.StatisticsActivity">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Statistics.StatisticsActivity" />
+        </activity>
+
         <service
             android:name="com.apps.adrcotfas.goodtime.BL.TimerService"
             android:enabled="true"

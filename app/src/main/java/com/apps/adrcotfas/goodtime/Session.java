@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.Database;
+package com.apps.adrcotfas.goodtime;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;

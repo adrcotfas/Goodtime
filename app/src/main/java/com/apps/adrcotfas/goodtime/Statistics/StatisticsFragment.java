@@ -2,6 +2,7 @@ package com.apps.adrcotfas.goodtime.Statistics;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
-import com.apps.adrcotfas.goodtime.Database.Session;
+import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsMainBinding;
 import com.github.mikephil.charting.animation.Easing;
@@ -84,27 +85,31 @@ public class StatisticsFragment extends Fragment {
         binding.deleteEntriesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Delete all entries")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        AsyncTask.execute(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                AppDatabase.getDatabase(getContext()).sessionModel().deleteAllSessions();
-                                            }
-                                        });
-                                    }
-                                }
-                        )
-                        .setNegativeButton("Cancel",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                })
-                .show();
+                Intent intent = new Intent(getActivity(), AllEntriesActivity.class);
+                startActivity(intent);
+
+                //TODO: move dialog to all entries fragment toolbar
+//                new AlertDialog.Builder(getActivity())
+//                        .setTitle("Delete all entries")
+//                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int id) {
+//                                        AsyncTask.execute(new Runnable() {
+//                                            @Override
+//                                            public void run() {
+//                                                AppDatabase.getDatabase(getContext()).sessionModel().deleteAllSessions();
+//                                            }
+//                                        });
+//                                    }
+//                                }
+//                        )
+//                        .setNegativeButton("Cancel",
+//                                new DialogInterface.OnClickListener() {
+//                                    public void onClick(DialogInterface dialog, int id) {
+//                                        dialog.cancel();
+//                                    }
+//                                })
+//                .show();
             }
         });
         binding.addEntryButton.setOnClickListener(new View.OnClickListener() {

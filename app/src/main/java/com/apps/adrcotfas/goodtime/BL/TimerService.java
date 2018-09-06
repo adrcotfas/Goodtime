@@ -10,7 +10,7 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
-import com.apps.adrcotfas.goodtime.Database.Session;
+import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;

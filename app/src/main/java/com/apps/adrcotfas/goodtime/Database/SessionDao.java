@@ -1,5 +1,7 @@
 package com.apps.adrcotfas.goodtime.Database;
 
+import com.apps.adrcotfas.goodtime.Session;
+
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
