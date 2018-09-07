@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -20,20 +20,22 @@
         android:inputType="numberDecimal"
         android:textSize="14sp"/>
 
-    <TextView
+    <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
+        android:id="@+id/single_day_picker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Date and time"
-        android:textSize="14sp"/>
+        app:picker_mustBeOnFuture="false"
 
-    <EditText
-        android:id="@+id/date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:inputType="date"
-        android:textSize="14sp"
-        android:focusable="false"/>
+        app:picker_displayHours="false"
+        app:picker_displayMinutes="false"
+        app:picker_displayDays="false"
+        app:picker_displayYears="true"
+        app:picker_displayMonthNumbers="false"
+        app:picker_displayMonth="true"
+        app:picker_displayDaysOfMonth="true"
 
+        app:picker_cyclic="false"
+        android:padding="8dp"
+        app:picker_visibleItemCount="5" />
 
 </LinearLayout>

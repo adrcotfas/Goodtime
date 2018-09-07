@@ -1,13 +1,18 @@
 <resources>
 
     <style name="BaseTheme" parent="@style/Theme.MaterialComponents.NoActionBar">
+
     </style>
 
     <style name="Classic" parent="@style/BaseTheme">
+        <item name="windowActionModeOverlay">true</item>
         <item name="colorPrimary">@color/black</item>
         <item name="colorPrimaryDark">@color/black</item>
         <item name="colorAccent">@color/classicAccent</item>
         <item name="android:windowBackground">@color/black</item>
+
+        <item name="android:actionModeCloseDrawable">@drawable/ic_clear</item>
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
     </style>
 
     <style name="Dark" parent="@style/BaseTheme">
@@ -40,11 +45,8 @@
         <attr format="boolean" name="showSeekBarValue"/>
     </declare-styleable>
 
-
-    <style name="AddEntryDialogTheme" parent="Dark">
-        <item name="buttonBarPositiveButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
-        <item name="buttonBarNegativeButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
-        <item name="buttonBarNeutralButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
-        <item name="android:windowIsFloating">true</item>
+    <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="background">?attr/colorPrimary</item>
     </style>
+
 </resources>

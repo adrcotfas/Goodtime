@@ -108,15 +108,10 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/addEntryButton"
+                android:id="@+id/allEntriesButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add entry" />
-            <Button
-                android:id="@+id/deleteEntriesButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="All entries" />
+                android:text="All sessions" />
 
         </LinearLayout>
     </ScrollView>

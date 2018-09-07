@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 public class StringUtils {
 
-    private static final DateTimeFormatter monthFormatter = DateTimeFormat.forPattern("EEE dd MMM YYYY");
+    private static final DateTimeFormatter monthFormatter = DateTimeFormat.forPattern("EEEE', 'MMMM d', ' yyyy");
 
     public static String formatMinutes(long minutes) {
 

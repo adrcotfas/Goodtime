@@ -7,6 +7,8 @@ import androidx.room.PrimaryKey;
 @Entity
 public class Session {
 
+    // TODO: have an automatic generated id as primary key instead of endtime
+
     @PrimaryKey
     @NonNull
     public long endTime;

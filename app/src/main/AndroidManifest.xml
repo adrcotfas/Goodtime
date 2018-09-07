@@ -70,7 +70,7 @@
 
         <activity
             android:name=".Statistics.AllEntriesActivity"
-            android:label="Statistics"
+            android:label="All sessions"
             android:showOnLockScreen="true"
             android:parentActivityName=".Statistics.StatisticsActivity">
             <!-- Parent activity meta-data to support 4.0 and lower -->

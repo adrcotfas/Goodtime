@@ -6,7 +6,6 @@ import java.util.List;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
@@ -24,8 +23,11 @@ public interface SessionDao {
     @Insert(onConflict = REPLACE)
     long addSession(Session session);
 
-    @Delete
-    void deleteSession(Session session);
+//    @Query("update Session SET totalTime = :duration, endTime = :endTime, label = :label WHERE id = :id")
+//    long editSession(long id, long duration, long endTime, String label);
+
+    @Query("delete from Session where endTime = :id")
+    void deleteSession(long id);
 
     @Query("delete from Session")
     void deleteAllSessions();

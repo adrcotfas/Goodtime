@@ -22,6 +22,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 }
 
 dependencies {
@@ -61,4 +65,6 @@ dependencies {
     implementation 'joda-time:joda-time:2.10'
 
     implementation 'androidx.recyclerview:recyclerview-selection:1.0.0-rc02'
+
+    implementation 'com.github.florent37:singledateandtimepicker:2.0.7'
 }

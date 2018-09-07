@@ -1,9 +1,6 @@
 package com.apps.adrcotfas.goodtime.Statistics;
 
-import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -12,15 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
-import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsMainBinding;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
@@ -33,13 +27,11 @@ import com.github.mikephil.charting.data.LineDataSet;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -82,40 +74,11 @@ public class StatisticsFragment extends Fragment {
 
         mStatsTypeSpinner = binding.statsTypeSpinner;
         mRangeTypeSpinner = binding.rangeTypeSpinner;
-        binding.deleteEntriesButton.setOnClickListener(new View.OnClickListener() {
+        binding.allEntriesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), AllEntriesActivity.class);
                 startActivity(intent);
-
-                //TODO: move dialog to all entries fragment toolbar
-//                new AlertDialog.Builder(getActivity())
-//                        .setTitle("Delete all entries")
-//                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int id) {
-//                                        AsyncTask.execute(new Runnable() {
-//                                            @Override
-//                                            public void run() {
-//                                                AppDatabase.getDatabase(getContext()).sessionModel().deleteAllSessions();
-//                                            }
-//                                        });
-//                                    }
-//                                }
-//                        )
-//                        .setNegativeButton("Cancel",
-//                                new DialogInterface.OnClickListener() {
-//                                    public void onClick(DialogInterface dialog, int id) {
-//                                        dialog.cancel();
-//                                    }
-//                                })
-//                .show();
-            }
-        });
-        binding.addEntryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAddEntryDialog();
             }
         });
 
@@ -257,7 +220,6 @@ public class StatisticsFragment extends Fragment {
         yAxis.setDrawAxisLine(false);
 
         XAxis xAxis = mChart.getXAxis();
-        xAxis.setGridColor(getActivity().getResources().getColor(R.color.transparent));
         xAxis.setGranularityEnabled(true);
         xAxis.setTextColor(getActivity().getResources().getColor(R.color.white));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -408,79 +370,6 @@ public class StatisticsFragment extends Fragment {
             set.setDrawCircleHole(true);
         }
         return set;
-    }
-
-    public void showAddEntryDialog() {
-        View promptView = getActivity().getLayoutInflater().inflate(R.layout.dialog_add_entry, null);
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity()).setTitle("Add entry");
-        alertDialogBuilder.setView(promptView);
-
-        final EditText durationEditText = promptView.findViewById(R.id.duration);
-        final EditText dateEditText = promptView.findViewById(R.id.date);
-
-        final Calendar c = Calendar.getInstance();
-
-        dateEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerDialog dpd = new DatePickerDialog(getActivity(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year,
-                                                  int monthOfYear, int dayOfMonth) {
-                                dateEditText.setText(dayOfMonth + "-"
-                                        + (monthOfYear + 1) + "-" + year);
-                                c.set(Calendar.YEAR, year);
-                                c.set(Calendar.MONTH, monthOfYear);
-                                c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                            }
-                        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE));
-                dpd.show();
-            }
-        });
-
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int id) {
-                            String input = durationEditText.getText().toString();
-                            if (input.isEmpty()) {
-                                Toast.makeText(getActivity(), "Please enter a valid duration", Toast.LENGTH_LONG).show();
-                            }
-                            else {
-                                final long duration = Math.min(Long.parseLong(input), 120);
-                                if (duration > 0) {
-                                    addEntry(duration, c.getTimeInMillis());
-                                    dialog.dismiss();
-                                } else {
-                                    Toast.makeText(getActivity(), "Please enter a valid duration", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        }
-                    }
-                )
-                .setNegativeButton("Cancel",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-    }
-
-    void addEntry(final long duration, final long timestamp) {
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                Session session = new Session();
-                session.endTime = timestamp;
-                session.totalTime = duration;
-                AppDatabase.getDatabase(getContext()).sessionModel().addSession(session);
-            }
-        });
     }
 
     public int pxToDp(int px) {
