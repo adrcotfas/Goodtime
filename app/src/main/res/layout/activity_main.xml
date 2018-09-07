@@ -85,7 +85,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:src="@drawable/ringtone_ic_add"
+                    android:src="@drawable/ic_add"
                     android:onClick="onAdd60SecondsButtonClick"/>
 
                 <ImageButton
