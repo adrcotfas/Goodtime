@@ -6,10 +6,16 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class Session {
+    @PrimaryKey(autoGenerate = true)
+    public long id;
 
-    // TODO: have an automatic generated id as primary key instead of endtime
+    public Session(long id, long endTime, long totalTime, String label) {
+        this.id = id;
+        this.endTime = endTime;
+        this.totalTime = totalTime;
+        this.label = label;
+    }
 
-    @PrimaryKey
     @NonNull
     public long endTime;
 

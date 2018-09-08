@@ -14,19 +14,22 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface SessionDao {
 
-    @Query("select * from Session where :endTime == :endTime")
-    LiveData<List<Session>> getSessionByEndTime(long endTime);
+    @Query("select * from Session where id = :id")
+    LiveData<Session> getSession(long id);
 
-    @Query("select * from Session")
-    LiveData<List<Session>> getAllSessions();
+    @Query("select * from Session ORDER BY endTime DESC")
+    LiveData<List<Session>> getAllSessionsByEndTime();
+
+    @Query("select * from Session ORDER BY totalTime DESC")
+    LiveData<List<Session>> getAllSessionsByDuration();
 
     @Insert(onConflict = REPLACE)
     long addSession(Session session);
 
-//    @Query("update Session SET totalTime = :duration, endTime = :endTime, label = :label WHERE id = :id")
-//    long editSession(long id, long duration, long endTime, String label);
+    @Query("update Session SET endTime = :endTime, totalTime = :totalTime, label = :label WHERE id = :id")
+    long editSession(long id, long endTime, long totalTime, String label);
 
-    @Query("delete from Session where endTime = :id")
+    @Query("delete from Session where id = :id")
     void deleteSession(long id);
 
     @Query("delete from Session")

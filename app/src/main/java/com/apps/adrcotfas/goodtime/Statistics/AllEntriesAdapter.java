@@ -38,7 +38,7 @@ public class AllEntriesAdapter extends RecyclerView.Adapter<AllEntriesViewHolder
         Session session = mEntries.get(position);
         holder.bind(session);
         holder.rowOverlay.setVisibility(
-                mSelectedEntries.contains(mEntries.get(position).endTime) ? View.VISIBLE : View.INVISIBLE);
+                mSelectedEntries.contains(mEntries.get(position).id) ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -48,9 +48,8 @@ public class AllEntriesAdapter extends RecyclerView.Adapter<AllEntriesViewHolder
 
     @Override
     public long getItemId(int position) {
-        // TODO: return id
         Session session = mEntries.get(position);
-        return session.endTime;
+        return session.id;
     }
 
     public void setData(List<Session> newSessions) {
@@ -93,7 +92,7 @@ public class AllEntriesAdapter extends RecyclerView.Adapter<AllEntriesViewHolder
 
         @Override
         public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-            return oldSessions.get(oldItemPosition).endTime == newSessions.get(newItemPosition).endTime;
+            return oldSessions.get(oldItemPosition).id == newSessions.get(newItemPosition).id;
         }
 
         @Override

@@ -5,12 +5,22 @@
     <item
         android:id="@+id/action_add"
         android:icon="@drawable/ic_add"
-        android:title="Delete"
+        android:title="Add session"
         app:showAsAction="always"/>
 
     <item
         android:id="@+id/action_sort"
         android:icon="@drawable/ic_sort"
-        android:title="Delete"
-        app:showAsAction="always"/>
+        android:title="Sort sessions"
+        app:showAsAction="ifRoom">
+        <menu>
+        <item
+            android:id="@+id/action_sort_by_date"
+            android:title="Sort by date" />
+        <item
+            android:id="@+id/action_sort_by_duration"
+            android:title="Sort by duration"/>
+        </menu>
+    </item>
+
 </menu>

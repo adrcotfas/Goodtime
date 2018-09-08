@@ -36,7 +36,6 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 
 import static com.apps.adrcotfas.goodtime.Statistics.SpinnerStatsType.DURATION;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatMinutes;
@@ -125,79 +124,76 @@ public class StatisticsFragment extends Fragment {
 
     private void setupSessionsObserver() {
         LiveData<List<Session>> sessions =
-                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessions();
+                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime();
 
-        sessions.observe(this, new Observer<List<Session>>() {
-            @Override
-            public void onChanged(List<Session> sessions) {
+        sessions.observe(this, sessions1 -> {
 
-                final boolean isDurationType = mStatsTypeSpinner.getSelectedItemPosition() == DURATION.ordinal();
+            final boolean isDurationType = mStatsTypeSpinner.getSelectedItemPosition() == DURATION.ordinal();
 
-                final LocalDate today          = new LocalDate();
-                final LocalDate thisWeekStart  = today.dayOfWeek().withMinimumValue().minusDays(1);
-                final LocalDate thisWeekEnd    = today.dayOfWeek().withMaximumValue().plusDays(1);
-                final LocalDate thisMonthStart = today.dayOfMonth().withMinimumValue().minusDays(1);
-                final LocalDate thisMonthEnd   = today.dayOfMonth().withMaximumValue().plusDays(1);;
+            final LocalDate today          = new LocalDate();
+            final LocalDate thisWeekStart  = today.dayOfWeek().withMinimumValue().minusDays(1);
+            final LocalDate thisWeekEnd    = today.dayOfWeek().withMaximumValue().plusDays(1);
+            final LocalDate thisMonthStart = today.dayOfMonth().withMinimumValue().minusDays(1);
+            final LocalDate thisMonthEnd   = today.dayOfMonth().withMaximumValue().plusDays(1);;
 
-                long statsToday = 0;
-                long statsThisWeek = 0;
-                long statsThisMonth = 0;
-                long statsTotal = 0;
+            long statsToday = 0;
+            long statsThisWeek = 0;
+            long statsThisMonth = 0;
+            long statsTotal = 0;
 
-                for (Session s : sessions) {
-                    final long increment = isDurationType ? s.totalTime : 1;
+            for (Session s : sessions1) {
+                final long increment = isDurationType ? s.totalTime : 1;
 
-                    final LocalDate crt = new LocalDate(new Date(s.endTime));
-                    if (crt.isEqual(today)) {
-                        statsToday += increment;
-                    }
-                    if (crt.isAfter(thisWeekStart) && crt.isBefore(thisWeekEnd)) {
-                        statsThisWeek += increment;
-                    }
-                    if (crt.isAfter(thisMonthStart) && crt.isBefore(thisMonthEnd)) {
-                        statsThisMonth += increment;
-                    }
-                    if (isDurationType) {
-                        statsTotal += increment;
-                    }
+                final LocalDate crt = new LocalDate(new Date(s.endTime));
+                if (crt.isEqual(today)) {
+                    statsToday += increment;
                 }
-                if (!isDurationType) {
-                    statsTotal = sessions.size();
+                if (crt.isAfter(thisWeekStart) && crt.isBefore(thisWeekEnd)) {
+                    statsThisWeek += increment;
                 }
-
-                mStatsToday.setText(isDurationType || statsToday == 0
-                        ? formatMinutes(statsToday)
-                        : Long.toString(statsToday));
-                mStatsThisWeek.setText(isDurationType || statsToday == 0
-                        ? formatMinutes(statsThisWeek)
-                        : Long.toString(statsThisWeek));
-                mStatsThisMonth.setText(isDurationType || statsToday == 0
-                        ? formatMinutes(statsThisMonth)
-                        : Long.toString(statsThisMonth));
-                mStatsTotal.setText(isDurationType || statsToday == 0 ?
-                        formatMinutes(statsTotal)
-                        : Long.toString(statsTotal));
-
-                final LineData data = generateChartData(sessions);
-
-                mChart.moveViewToX(data.getXMax());
-                mChart.setData(data);
-                mChart.getData().setHighlightEnabled(false);
-
-                mChart.getAxisLeft().setAxisMinimum(0f);
-                mChart.getAxisLeft().setAxisMaximum(isDurationType ? 60f : 6f);
-
-                final int visibleXRange = pxToDp(mChart.getWidth()) / 46;
-                mChart.setVisibleXRangeMaximum(visibleXRange);
-                mChart.setVisibleXRangeMinimum(visibleXRange);
-                mChart.getXAxis().setLabelCount(visibleXRange);
-
-                if (sessions.size() > 0 && data.getYMax() >= (isDurationType ? 60 : 6f)) {
-                    mChart.getAxisLeft().resetAxisMaximum();
+                if (crt.isAfter(thisMonthStart) && crt.isBefore(thisMonthEnd)) {
+                    statsThisMonth += increment;
                 }
-
-                mChart.notifyDataSetChanged();
+                if (isDurationType) {
+                    statsTotal += increment;
+                }
             }
+            if (!isDurationType) {
+                statsTotal = sessions1.size();
+            }
+
+            mStatsToday.setText(isDurationType || statsToday == 0
+                    ? formatMinutes(statsToday)
+                    : Long.toString(statsToday));
+            mStatsThisWeek.setText(isDurationType || statsToday == 0
+                    ? formatMinutes(statsThisWeek)
+                    : Long.toString(statsThisWeek));
+            mStatsThisMonth.setText(isDurationType || statsToday == 0
+                    ? formatMinutes(statsThisMonth)
+                    : Long.toString(statsThisMonth));
+            mStatsTotal.setText(isDurationType || statsToday == 0 ?
+                    formatMinutes(statsTotal)
+                    : Long.toString(statsTotal));
+
+            final LineData data = generateChartData(sessions1);
+
+            mChart.moveViewToX(data.getXMax());
+            mChart.setData(data);
+            mChart.getData().setHighlightEnabled(false);
+
+            mChart.getAxisLeft().setAxisMinimum(0f);
+            mChart.getAxisLeft().setAxisMaximum(isDurationType ? 60f : 6f);
+
+            final int visibleXRange = pxToDp(mChart.getWidth()) / 46;
+            mChart.setVisibleXRangeMaximum(visibleXRange);
+            mChart.setVisibleXRangeMinimum(visibleXRange);
+            mChart.getXAxis().setLabelCount(visibleXRange);
+
+            if (sessions1.size() > 0 && data.getYMax() >= (isDurationType ? 60 : 6f)) {
+                mChart.getAxisLeft().resetAxisMaximum();
+            }
+
+            mChart.notifyDataSetChanged();
         });
     }
 
