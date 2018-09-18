@@ -20,6 +20,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceViewHolder;
 
+import static android.graphics.Paint.UNDERLINE_TEXT_FLAG;
+import static android.text.InputType.TYPE_CLASS_NUMBER;
+import static android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL;
+
 /**
  * Preference based on android.preference.SeekBarPreference but uses support v7 preference as base.
  * The main difference is the fact that the seekbar value is updated while the user is tracking the touch.
@@ -140,20 +144,25 @@ public class ProperSeekBarPreference extends Preference {
         super.onBindViewHolder(view);
         view.itemView.setOnKeyListener(mSeekBarKeyListener);
         mSeekBar = (SeekBar) view.findViewById(R.id.seekbar);
+        float dpi = getContext().getResources().getDisplayMetrics().density;
+
+        mSeekBar.setPadding(0,0,0,(int)(2 * dpi));
         mSeekBarValueTextView = (TextView) view.findViewById(R.id.seekbar_value);
 
         mSeekBarValueTextView.setClickable(true);
+        mSeekBarValueTextView.setPaintFlags(UNDERLINE_TEXT_FLAG);
+        mSeekBarValueTextView.setTextColor(getContext().getResources().getColor(R.color.transparent_white));
 
         mSeekBarValueTextView.setOnClickListener(view1 -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
             LinearLayout layout = new LinearLayout(getContext());
             final EditText input = new EditText(getContext());
+            input.setInputType(TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_DECIMAL);
             input.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             input.setSingleLine();
 
             layout.addView(input);
-            float dpi = getContext().getResources().getDisplayMetrics().density;
             layout.setPadding((int)(19*dpi), (int)(5*dpi), (int)(19*dpi), (int)(5*dpi));
             layout.setOrientation(LinearLayout.VERTICAL);
             layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
