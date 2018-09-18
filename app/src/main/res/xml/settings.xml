@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
@@ -21,6 +22,8 @@
             android:key="pref_work_duration"
             android:title="@string/pref_work_duration"
             app:min="1"
+            app:unitOfMeasurement="m"
+            app:dialogTitle="@string/pref_work_duration"
             android:defaultValue="25"
             android:max="120"
             app:iconSpaceReserved="false"/>
@@ -29,6 +32,8 @@
             android:key="pref_break_duration"
             android:title="@string/pref_break_duration"
             app:min="1"
+            app:unitOfMeasurement="m"
+            app:dialogTitle="@string/pref_break_duration"
             android:defaultValue="5"
             android:max="30"
             app:iconSpaceReserved="false"/>
@@ -44,6 +49,8 @@
             android:title="@string/pref_long_break_duration"
             android:dependency="pref_enable_long_break"
             app:min="1"
+            app:unitOfMeasurement="m"
+            app:dialogTitle="@string/pref_long_break_duration"
             android:defaultValue="15"
             android:max="30"
             app:iconSpaceReserved="false"/>
@@ -53,6 +60,8 @@
             android:title="@string/pref_sessions_before_long_break"
             android:dependency="pref_enable_long_break"
             app:min="2"
+            app:unitOfMeasurement=""
+            app:dialogTitle="@string/pref_sessions_before_long_break"
             android:defaultValue="4"
             android:max="8"
             app:iconSpaceReserved="false"/>

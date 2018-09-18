@@ -43,6 +43,8 @@
         <attr format="integer" name="seekBarIncrement"/>
         <attr format="boolean" name="adjustable"/>
         <attr format="boolean" name="showSeekBarValue"/>
+        <attr format="string" name="unitOfMeasurement"/>
+        <attr format="string" name="dialogTitle"/>
     </declare-styleable>
 
     <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">

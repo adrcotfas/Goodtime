@@ -4,17 +4,21 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.apps.adrcotfas.goodtime.R;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceViewHolder;
 
 /**
  * Preference based on android.preference.SeekBarPreference but uses support v7 preference as base.
@@ -40,6 +44,8 @@ public class ProperSeekBarPreference extends Preference {
     private TextView mSeekBarValueTextView;
     private boolean mAdjustable; // whether the seekbar should respond to the left/right keys
     private boolean mShowSeekBarValue; // whether to show the seekbar value TextView next to the bar
+    private String mUnit;
+    private String mDialogTitle;
 
     private static final String TAG = "ProperSeekBarPreference";
 
@@ -100,7 +106,7 @@ public class ProperSeekBarPreference extends Preference {
         super(context, attrs, defStyleAttr, defStyleRes);
 
         TypedArray a = context.obtainStyledAttributes(
-                attrs, R.styleable.SeekBarPreference, defStyleAttr, defStyleRes);
+                attrs, R.styleable.ProperSeekBarPreference, defStyleAttr, defStyleRes);
 
         /**
          * The ordering of these two statements are important. If we want to set max first, we need
@@ -112,6 +118,8 @@ public class ProperSeekBarPreference extends Preference {
         setSeekBarIncrement(a.getInt(R.styleable.ProperSeekBarPreference_seekBarIncrement, 0));
         mAdjustable = a.getBoolean(R.styleable.ProperSeekBarPreference_adjustable, true);
         mShowSeekBarValue = a.getBoolean(R.styleable.ProperSeekBarPreference_showSeekBarValue, true);
+        mUnit = a.getString(R.styleable.ProperSeekBarPreference_unitOfMeasurement);
+        mDialogTitle = a.getString(R.styleable.ProperSeekBarPreference_dialogTitle);
         a.recycle();
     }
 
@@ -133,6 +141,34 @@ public class ProperSeekBarPreference extends Preference {
         view.itemView.setOnKeyListener(mSeekBarKeyListener);
         mSeekBar = (SeekBar) view.findViewById(R.id.seekbar);
         mSeekBarValueTextView = (TextView) view.findViewById(R.id.seekbar_value);
+
+        mSeekBarValueTextView.setClickable(true);
+
+        mSeekBarValueTextView.setOnClickListener(view1 -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+            LinearLayout layout = new LinearLayout(getContext());
+            final EditText input = new EditText(getContext());
+            input.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            input.setSingleLine();
+
+            layout.addView(input);
+            float dpi = getContext().getResources().getDisplayMetrics().density;
+            layout.setPadding((int)(19*dpi), (int)(5*dpi), (int)(19*dpi), (int)(5*dpi));
+            layout.setOrientation(LinearLayout.VERTICAL);
+            layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+            builder.setTitle(mDialogTitle)
+                    .setView(layout);
+            builder.setPositiveButton("OK", (di, i) -> {
+                final String name = input.getText().toString();
+                setValueInternal(Integer.parseInt(name), true);
+            });
+            builder.setNegativeButton("Cancel", (di, i) -> {
+            });
+            builder.create().show();
+        });
+
         if (mShowSeekBarValue) {
             mSeekBarValueTextView.setVisibility(View.VISIBLE);
         } else {
@@ -158,7 +194,7 @@ public class ProperSeekBarPreference extends Preference {
 
         mSeekBar.setProgress(mSeekBarValue - mMin);
         if (mSeekBarValueTextView != null) {
-            mSeekBarValueTextView.setText(String.valueOf(mSeekBarValue));
+            mSeekBarValueTextView.setText(String.valueOf(mSeekBarValue) + mUnit);
         }
         mSeekBar.setEnabled(isEnabled());
     }
@@ -247,7 +283,7 @@ public class ProperSeekBarPreference extends Preference {
         if (seekBarValue != mSeekBarValue) {
             mSeekBarValue = seekBarValue;
             if (mSeekBarValueTextView != null) {
-                mSeekBarValueTextView.setText(String.valueOf(mSeekBarValue));
+                mSeekBarValueTextView.setText(String.valueOf(mSeekBarValue) + mUnit);
             }
             persistInt(seekBarValue);
             if (notifyChanged) {
