@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -146,11 +148,12 @@ public class ProperSeekBarPreference extends Preference {
         mSeekBar = (SeekBar) view.findViewById(R.id.seekbar);
         float dpi = getContext().getResources().getDisplayMetrics().density;
 
-        mSeekBar.setPadding(0,0,0,(int)(2 * dpi));
+        mSeekBar.setPadding(0,(int)(5 * dpi),(int)(16 * dpi),(int)(5 * dpi));
         mSeekBarValueTextView = (TextView) view.findViewById(R.id.seekbar_value);
 
         mSeekBarValueTextView.setClickable(true);
         mSeekBarValueTextView.setPaintFlags(UNDERLINE_TEXT_FLAG);
+        mSeekBarValueTextView.setTextSize(14);
         mSeekBarValueTextView.setTextColor(getContext().getResources().getColor(R.color.transparent_white));
 
         mSeekBarValueTextView.setOnClickListener(view1 -> {
@@ -171,11 +174,15 @@ public class ProperSeekBarPreference extends Preference {
                     .setView(layout);
             builder.setPositiveButton("OK", (di, i) -> {
                 final String name = input.getText().toString();
-                setValueInternal(Integer.parseInt(name), true);
+                if (!TextUtils.isEmpty(name)) {
+                    setValueInternal(Integer.parseInt(name), true);
+                }
             });
             builder.setNegativeButton("Cancel", (di, i) -> {
             });
-            builder.create().show();
+            AlertDialog dialog = builder.create();
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            dialog.show();
         });
 
         if (mShowSeekBarValue) {
