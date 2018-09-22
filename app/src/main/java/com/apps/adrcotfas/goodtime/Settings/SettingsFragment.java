@@ -20,6 +20,7 @@ import com.takisoft.preferencex.PreferenceFragmentCompat;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.CheckBoxPreference;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
 
@@ -27,53 +28,56 @@ import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.DISABLE_SOUND_AND_
 
 public class SettingsFragment extends PreferenceFragmentCompat  implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    CheckBoxPreference disableSoundCheckbox;
+    // general
+    private ListPreference mPrefProfile;
+    private ProperSeekBarPreference mPrefWorkDuration;
+    private ProperSeekBarPreference mPrefBreakDuration;
+    private SwitchPreference mPrefEnableLongBreak;
+    private ProperSeekBarPreference mPrefLongBreakDuration;
+    private ProperSeekBarPreference mPrefSessionsBeforeLongBreak;
+
+    private ColorPickerPreference mPrefTheme;
+
+    private SwitchPreference mPrefEnableRingtone;
+    private CheckBoxPreference mPrefDisableSoundCheckbox;
 
     @Override
     public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
 
-        SwitchPreference enableLongBreakPref = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_LONG_BREAK);
-        toggleLongBreakPreference(enableLongBreakPref.isChecked());
-        enableLongBreakPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                toggleLongBreakPreference((Boolean) newValue);
-                return true;
-            }
+        // general
+        mPrefProfile = (ListPreference) findPreference(PreferenceHelper.PROFILE);
+        mPrefProfile.setOnPreferenceChangeListener((preference, newValue) -> {
+            switchProfile((CharSequence) newValue);
+            return true;
         });
-
-        findPreference(PreferenceHelper.PROFILE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                switchProfile((CharSequence) newValue);
-                return true;
-            }
+        mPrefWorkDuration = (ProperSeekBarPreference) findPreference(PreferenceHelper.WORK_DURATION);
+        mPrefBreakDuration = (ProperSeekBarPreference) findPreference(PreferenceHelper.BREAK_DURATION);
+        mPrefEnableLongBreak = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_LONG_BREAK);
+        toggleLongBreakPreference(mPrefEnableLongBreak.isChecked());
+        mPrefEnableLongBreak.setOnPreferenceChangeListener((preference, newValue) -> {
+            toggleLongBreakPreference((Boolean) newValue);
+            return true;
         });
+        mPrefLongBreakDuration = (ProperSeekBarPreference) findPreference(PreferenceHelper.LONG_BREAK_DURATION);
+        mPrefSessionsBeforeLongBreak = (ProperSeekBarPreference) findPreference(PreferenceHelper.SESSIONS_BEFORE_LONG_BREAK);
 
-        SwitchPreference enableRingtonePref = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_RINGTONE);
-
-        enableRingtonePref.setVisible(true);
-        toggleEnableRingtonePreference(enableRingtonePref.isChecked());
-        enableRingtonePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                toggleEnableRingtonePreference((Boolean) newValue);
-                return true;
-            }
-        });
-
-        final ColorPickerPreference colorPreference = (ColorPickerPreference) findPreference(PreferenceHelper.THEME);
-        colorPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (colorPreference.getColor() != (int) newValue) {
-                    if (getActivity() != null) {
-                        getActivity().recreate();
-                    }
+        mPrefTheme = (ColorPickerPreference) findPreference(PreferenceHelper.THEME);
+        mPrefTheme.setOnPreferenceChangeListener((preference, newValue) -> {
+            if (mPrefTheme.getColor() != (int) newValue) {
+                if (getActivity() != null) {
+                    getActivity().recreate();
                 }
-                return true;
             }
+            return true;
+        });
+
+        mPrefEnableRingtone = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_RINGTONE);
+        mPrefEnableRingtone.setVisible(true);
+        toggleEnableRingtonePreference(mPrefEnableRingtone.isChecked());
+        mPrefEnableRingtone.setOnPreferenceChangeListener((preference, newValue) -> {
+            toggleEnableRingtonePreference((Boolean) newValue);
+            return true;
         });
 
         //TODO: handle with IAP
@@ -95,40 +99,32 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
 //                }
 //            });
 //        }
+
         // Continuous mode versus insistent notification
-        findPreference(PreferenceHelper.ENABLE_CONTINUOUS_MODE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                final CheckBoxPreference pref = (CheckBoxPreference) findPreference(PreferenceHelper.INSISTENT_RINGTONE);
-                if (pref.isChecked()) {
-                    pref.setChecked(false);
-                }
-                return true;
+        findPreference(PreferenceHelper.ENABLE_CONTINUOUS_MODE).setOnPreferenceChangeListener((preference, newValue) -> {
+            final CheckBoxPreference pref = (CheckBoxPreference) findPreference(PreferenceHelper.INSISTENT_RINGTONE);
+            if (pref.isChecked()) {
+                pref.setChecked(false);
             }
+            return true;
         });
 
-        findPreference(PreferenceHelper.INSISTENT_RINGTONE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                final CheckBoxPreference pref = (CheckBoxPreference) findPreference(PreferenceHelper.ENABLE_CONTINUOUS_MODE);
-                if (pref.isChecked()) {
-                    pref.setChecked(false);
-                }
-                return true;
+        findPreference(PreferenceHelper.INSISTENT_RINGTONE).setOnPreferenceChangeListener((preference, newValue) -> {
+            final CheckBoxPreference pref = (CheckBoxPreference) findPreference(PreferenceHelper.ENABLE_CONTINUOUS_MODE);
+            if (pref.isChecked()) {
+                pref.setChecked(false);
             }
+            return true;
         });
 
         final Preference disableBatteryOptimizationPref = findPreference(PreferenceHelper.DISABLE_BATTERY_OPTIMIZATION);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             disableBatteryOptimizationPref.setVisible(true);
-            disableBatteryOptimizationPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    Intent intent = new Intent();
-                    intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                    startActivity(intent);
-                    return true;
-                }
+            disableBatteryOptimizationPref.setOnPreferenceClickListener(preference -> {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                startActivity(intent);
+                return true;
             });
         } else {
             disableBatteryOptimizationPref.setVisible(false);
@@ -143,33 +139,31 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
     @Override
     public void onResume() {
         super.onResume();
-        disableSoundCheckbox = (CheckBoxPreference)
+        mPrefDisableSoundCheckbox = (CheckBoxPreference)
                 findPreference(DISABLE_SOUND_AND_VIBRATION);
         setupDisableSoundCheckBox();
     }
 
     private void updateDisableSoundCheckBoxState(boolean notificationPolicyAccessGranted) {
-        disableSoundCheckbox.setChecked(notificationPolicyAccessGranted);
+        mPrefDisableSoundCheckbox.setChecked(notificationPolicyAccessGranted);
         updateDisableSoundCheckBoxSummary(notificationPolicyAccessGranted);
     }
 
     private void updateDisableSoundCheckBoxSummary(boolean notificationPolicyAccessGranted) {
         if (notificationPolicyAccessGranted) {
-            disableSoundCheckbox.setSummary("");
+            mPrefDisableSoundCheckbox.setSummary("");
         } else {
-            disableSoundCheckbox.setSummary("Click to grant permission");
+            mPrefDisableSoundCheckbox.setSummary("Click to grant permission");
         }
     }
+
     private void setupDisableSoundCheckBox() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isNotificationPolicyAccessGranted()) {
             updateDisableSoundCheckBoxState(false);
-            disableSoundCheckbox.setOnPreferenceClickListener(
-                    new Preference.OnPreferenceClickListener() {
-                        @Override
-                        public boolean onPreferenceClick(Preference preference) {
-                            requestNotificationPolicyAccess();
-                            return false;
-                        }
+            mPrefDisableSoundCheckbox.setOnPreferenceClickListener(
+                    preference -> {
+                        requestNotificationPolicyAccess();
+                        return false;
                     }
             );
         } else {
@@ -194,41 +188,16 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
 
     private void switchProfile(CharSequence newValue) {
         if (newValue.equals(getResources().getText(R.string.pref_profile_pomodoro))) {
-
-            ProperSeekBarPreference workDurationPref =
-                    (ProperSeekBarPreference) findPreference(PreferenceHelper.WORK_DURATION);
-            workDurationPref.setValue(Constants.DEFAULT_WORK_DURATION_POMODORO);
-
-            ProperSeekBarPreference breakDurationPref =
-                    (ProperSeekBarPreference) findPreference(PreferenceHelper.BREAK_DURATION);
-            breakDurationPref.setValue(Constants.DEFAULT_BREAK_DURATION_POMODORO);
-
-            SwitchPreference enableLongBreakPref =
-                    (SwitchPreference) findPreference(PreferenceHelper.ENABLE_LONG_BREAK);
-            enableLongBreakPref.setChecked(true);
+            mPrefWorkDuration.setValue(Constants.DEFAULT_WORK_DURATION_POMODORO);
+            mPrefBreakDuration.setValue(Constants.DEFAULT_BREAK_DURATION_POMODORO);
+            mPrefEnableLongBreak.setChecked(true);
             toggleLongBreakPreference(true);
-
-            ProperSeekBarPreference longBreakDurationPref =
-                    (ProperSeekBarPreference) findPreference(PreferenceHelper.LONG_BREAK_DURATION);
-            longBreakDurationPref.setValue(Constants.DEFAULT_LONG_BREAK_DURATION);
-
-            ProperSeekBarPreference sessionsBeforeLongBreakPref =
-                    (ProperSeekBarPreference) findPreference(PreferenceHelper.SESSIONS_BEFORE_LONG_BREAK);
-            sessionsBeforeLongBreakPref.setValue(Constants.DEFAULT_SESSIONS_BEFORE_LONG_BREAK);
-
+            mPrefLongBreakDuration.setValue(Constants.DEFAULT_LONG_BREAK_DURATION);
+            mPrefSessionsBeforeLongBreak.setValue(Constants.DEFAULT_SESSIONS_BEFORE_LONG_BREAK);
         } else if (newValue.equals(getResources().getText(R.string.pref_profile_5217))) {
-
-            ProperSeekBarPreference workDurationPref =
-                    (ProperSeekBarPreference) findPreference(PreferenceHelper.WORK_DURATION);
-            workDurationPref.setValue(Constants.DEFAULT_WORK_DURATION_5217);
-
-            ProperSeekBarPreference breakDurationPref =
-                    (ProperSeekBarPreference) findPreference(PreferenceHelper.BREAK_DURATION);
-            breakDurationPref.setValue(Constants.DEFAULT_BREAK_DURATION_5217);
-
-            SwitchPreference enableLongBreakPref =
-                    (SwitchPreference) findPreference(PreferenceHelper.ENABLE_LONG_BREAK);
-            enableLongBreakPref.setChecked(false);
+            mPrefWorkDuration.setValue(Constants.DEFAULT_WORK_DURATION_5217);
+            mPrefBreakDuration.setValue(Constants.DEFAULT_BREAK_DURATION_5217);
+            mPrefEnableLongBreak.setChecked(false);
             toggleLongBreakPreference(false);
         }
     }
