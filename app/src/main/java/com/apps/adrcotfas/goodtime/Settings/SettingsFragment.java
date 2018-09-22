@@ -144,11 +144,6 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
         setupDisableSoundCheckBox();
     }
 
-    private void updateDisableSoundCheckBoxState(boolean notificationPolicyAccessGranted) {
-        mPrefDisableSoundCheckbox.setChecked(notificationPolicyAccessGranted);
-        updateDisableSoundCheckBoxSummary(notificationPolicyAccessGranted);
-    }
-
     private void updateDisableSoundCheckBoxSummary(boolean notificationPolicyAccessGranted) {
         if (notificationPolicyAccessGranted) {
             mPrefDisableSoundCheckbox.setSummary("");
@@ -159,7 +154,8 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
 
     private void setupDisableSoundCheckBox() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isNotificationPolicyAccessGranted()) {
-            updateDisableSoundCheckBoxState(false);
+            updateDisableSoundCheckBoxSummary(false);
+            mPrefDisableSoundCheckbox.setChecked(false);
             mPrefDisableSoundCheckbox.setOnPreferenceClickListener(
                     preference -> {
                         requestNotificationPolicyAccess();
