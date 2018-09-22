@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -30,6 +32,7 @@ import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
@@ -52,6 +55,7 @@ import static android.widget.Toast.LENGTH_SHORT;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREEN_ON;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.THEME;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
+import static java.lang.String.format;
 
 public class TimerActivity
         extends AppCompatActivity
@@ -265,7 +269,19 @@ public class TimerActivity
     }
 
     public void updateTime(Long millis) {
-        mTimeLabel.setText(Long.toString(TimeUnit.MILLISECONDS.toSeconds(millis)));
+
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+        long minutes = TimeUnit.SECONDS.toMinutes(seconds);
+        seconds -= (minutes * 60);
+
+        String currentTick = (minutes > 0 ? minutes : " ") + "." +
+                format(Locale.US, "%02d", seconds);
+
+        SpannableString currentFormattedTick = new SpannableString(currentTick);
+        currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0,
+                currentTick.indexOf("."), 0);
+
+        mTimeLabel.setText(currentFormattedTick);
         Log.v(TAG, "drawing the time label.");
     }
 
