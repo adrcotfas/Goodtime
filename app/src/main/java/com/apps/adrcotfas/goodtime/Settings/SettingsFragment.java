@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -116,19 +117,6 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
             }
             return true;
         });
-
-        final Preference disableBatteryOptimizationPref = findPreference(PreferenceHelper.DISABLE_BATTERY_OPTIMIZATION);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            disableBatteryOptimizationPref.setVisible(true);
-            disableBatteryOptimizationPref.setOnPreferenceClickListener(preference -> {
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                startActivity(intent);
-                return true;
-            });
-        } else {
-            disableBatteryOptimizationPref.setVisible(false);
-        }
     }
 
     @Override
@@ -142,6 +130,19 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
         mPrefDisableSoundCheckbox = (CheckBoxPreference)
                 findPreference(DISABLE_SOUND_AND_VIBRATION);
         setupDisableSoundCheckBox();
+
+        final Preference disableBatteryOptimizationPref = findPreference(PreferenceHelper.DISABLE_BATTERY_OPTIMIZATION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isIgnoringBatteryOptimizations()) {
+            disableBatteryOptimizationPref.setVisible(true);
+            disableBatteryOptimizationPref.setOnPreferenceClickListener(preference -> {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                startActivity(intent);
+                return true;
+            });
+        } else {
+            disableBatteryOptimizationPref.setVisible(false);
+        }
     }
 
     private void updateDisableSoundCheckBoxSummary(boolean notificationPolicyAccessGranted) {
@@ -153,7 +154,7 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
     }
 
     private void setupDisableSoundCheckBox() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isNotificationPolicyAccessGranted()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isNotificationPolicyAccessDenied()) {
             updateDisableSoundCheckBoxSummary(false);
             mPrefDisableSoundCheckbox.setChecked(false);
             mPrefDisableSoundCheckbox.setOnPreferenceClickListener(
@@ -167,8 +168,16 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
         }
     }
 
+    private boolean isIgnoringBatteryOptimizations(){
+        PowerManager pwrm = (PowerManager) getActivity().getSystemService(Context.POWER_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return pwrm.isIgnoringBatteryOptimizations(getActivity().getPackageName());
+        }
+        return true;
+    }
+
     private void requestNotificationPolicyAccess() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isNotificationPolicyAccessGranted()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isNotificationPolicyAccessDenied()) {
             Intent intent = new Intent(android.provider.Settings.
                     ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
             startActivity(intent);
@@ -176,10 +185,10 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    private boolean isNotificationPolicyAccessGranted() {
+    private boolean isNotificationPolicyAccessDenied() {
         NotificationManager notificationManager = (NotificationManager)
                 getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        return notificationManager.isNotificationPolicyAccessGranted();
+        return !notificationManager.isNotificationPolicyAccessGranted();
     }
 
     private void switchProfile(CharSequence newValue) {
