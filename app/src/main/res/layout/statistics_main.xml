@@ -113,6 +113,18 @@
                 android:layout_height="wrap_content"
                 android:text="All sessions" />
 
+            <Button
+                android:id="@+id/backupButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Back-up" />
+
+            <Button
+                android:id="@+id/importButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Import back-up" />
+
         </LinearLayout>
     </ScrollView>
 </layout>

@@ -10,11 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProviders;
 
+//TODO: delete this and use only StatisticsActivity
 public class AllEntriesActivity extends AppCompatActivity {
-
-    private SessionViewModel mSessionViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -23,8 +21,6 @@ public class AllEntriesActivity extends AppCompatActivity {
 
         DataBindingUtil.setContentView(this, R.layout.activity_all_entries);
 
-        mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
-
         if (savedInstanceState == null) {
             Fragment fragment = new AllEntriesFragment();
 
@@ -32,9 +28,5 @@ public class AllEntriesActivity extends AppCompatActivity {
             ft.replace(R.id.fragment, fragment);
             ft.commitAllowingStateLoss();
         }
-    }
-
-    public SessionViewModel getSessionViewModel() {
-        return mSessionViewModel;
     }
 }

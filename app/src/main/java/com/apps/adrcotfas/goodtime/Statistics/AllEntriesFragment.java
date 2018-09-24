@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.Statistics;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.apps.adrcotfas.goodtime.Database.AppDatabase;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsAllEntriesBinding;
@@ -57,7 +59,7 @@ public class AllEntriesFragment extends Fragment {
         mAdapter = new AllEntriesAdapter();
         recyclerView.setAdapter(mAdapter);
 
-        ((AllEntriesActivity) getActivity()).getSessionViewModel().getAllSessionsByEndTime()
+        AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
                 .observe(getActivity(), entries -> mAdapter.setData(entries));
 
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
@@ -111,7 +113,7 @@ public class AllEntriesFragment extends Fragment {
 
     private void deleteSessions() {
         for (Long i : mAdapter.mSelectedEntries) {
-            ((AllEntriesActivity) getActivity()).getSessionViewModel().deleteSession(i);
+            AsyncTask.execute(() -> AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().deleteSession(i));
         }
         mAdapter.mSelectedEntries.clear();
         if (mActionMode != null) {
@@ -168,7 +170,8 @@ public class AllEntriesFragment extends Fragment {
         final EditText durationEditText = promptView.findViewById(R.id.duration);
         final SingleDateAndTimePicker picker = promptView.findViewById(R.id.single_day_picker);
 
-        ((AllEntriesActivity) getActivity()).getSessionViewModel().getSession(sessionId).observe(this, session -> {
+        AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getSession(sessionId)
+                .observe(this, session -> {
             durationEditText.setText(Long.toString(session.totalTime));
             picker.setDefaultDate(new Date(session.endTime));
         });
@@ -183,7 +186,11 @@ public class AllEntriesFragment extends Fragment {
                             else {
                                 final long duration = Math.min(Long.parseLong(input), 120);
                                 if (duration > 0) {
-                                    ((AllEntriesActivity) getActivity()).getSessionViewModel().editSession(sessionId, picker.getDate().getTime(), duration, "");
+
+                                    //TODO: replace AsyncTask everywhere with a ViewModel
+                                    AsyncTask.execute(() ->
+                                    AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel()
+                                            .editSession(sessionId, picker.getDate().getTime(), duration, ""));
                                     dialog.dismiss();
                                     mActionMode.finish();
                                 } else {
@@ -209,15 +216,15 @@ public class AllEntriesFragment extends Fragment {
                 showAddEntryDialog();
                 break;
             case R.id.action_sort_by_date:
-                ((AllEntriesActivity) getActivity()).getSessionViewModel().getAllSessionsByDuration()
+                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByDuration()
                         .removeObservers(getActivity());
-                ((AllEntriesActivity) getActivity()).getSessionViewModel().getAllSessionsByEndTime()
+                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
                         .observe(getActivity(), entries -> mAdapter.setData(entries));
                 break;
             case R.id.action_sort_by_duration:
-                ((AllEntriesActivity) getActivity()).getSessionViewModel().getAllSessionsByEndTime()
+                        AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
                         .removeObservers(getActivity());
-                ((AllEntriesActivity) getActivity()).getSessionViewModel().getAllSessionsByDuration()
+                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByDuration()
                         .observe(getActivity(), entries -> mAdapter.setData(entries));
                 break;
         }
@@ -249,7 +256,8 @@ public class AllEntriesFragment extends Fragment {
                             else {
                                 final long duration = Math.min(Long.parseLong(input), 120);
                                 if (duration > 0) {
-                                    ((AllEntriesActivity) getActivity()).getSessionViewModel().addSession(new Session(0, picker.getDate().getTime(), duration, ""));
+                                    AsyncTask.execute(() -> AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel()
+                                            .addSession(new Session(0, picker.getDate().getTime(), duration, "")));
                                     dialog.dismiss();
                                 } else {
                                     Toast.makeText(getActivity(), "Please enter a valid duration", Toast.LENGTH_LONG).show();

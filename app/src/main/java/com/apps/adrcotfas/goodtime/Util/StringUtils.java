@@ -1,15 +1,14 @@
 package com.apps.adrcotfas.goodtime.Util;
 
-import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class StringUtils {
 
     private static final DateTimeFormatter monthFormatter = DateTimeFormat.forPattern("EEEE', 'MMMM d', ' yyyy");
+    private static final DateTimeFormatter backUpFormatter = DateTimeFormat.forPattern("yyyy-MM-dd-HH:mm");
 
     public static String formatMinutes(long minutes) {
 
@@ -27,6 +26,10 @@ public class StringUtils {
     }
 
     public static String formatDate(long millis) {
-        return (new LocalDate(new Date(millis))).toString(monthFormatter);
+        return monthFormatter.print(millis);
+    }
+
+    public static String formatDateAndTime(long millis) {
+        return backUpFormatter.print(millis);
     }
 }

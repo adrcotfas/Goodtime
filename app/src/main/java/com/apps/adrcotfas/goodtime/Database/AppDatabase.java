@@ -15,9 +15,9 @@ public abstract class AppDatabase extends RoomDatabase{
     private static AppDatabase INSTANCE;
 
     public static AppDatabase getDatabase(Context context) {
-        if (INSTANCE == null) {
+        if (INSTANCE == null || !INSTANCE.isOpen()) {
             synchronized (LOCK) {
-                if (INSTANCE == null) {
+                if (INSTANCE == null || !INSTANCE.isOpen()) {
                     INSTANCE =  Room.databaseBuilder(context.getApplicationContext(),
                             AppDatabase.class, "goodtime-db").build();
                 }
@@ -27,7 +27,14 @@ public abstract class AppDatabase extends RoomDatabase{
     }
 
     public static void destroyInstance() {
+        closeInstance();
         INSTANCE = null;
+    }
+
+    public static void closeInstance() {
+        if(INSTANCE.isOpen()) {
+            INSTANCE.getOpenHelper().close();
+        }
     }
 
     public abstract SessionDao sessionModel();

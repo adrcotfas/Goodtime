@@ -1,11 +1,12 @@
 package com.apps.adrcotfas.goodtime.BL;
 import android.app.Application;
-import androidx.preference.PreferenceManager;
-
 import android.content.SharedPreferences;
 
 import java.util.concurrent.TimeUnit;
-import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.*;
+
+import androidx.preference.PreferenceManager;
+
+import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
 
 /**
  * Maintains a global state of the app and the {@link CurrentSession}
