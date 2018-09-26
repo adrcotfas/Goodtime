@@ -77,7 +77,8 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_status_goodtime" />
+                    android:src="@drawable/ic_status_goodtime"
+                    android:onClick="showLabelPopup"/>
 
                 <ImageButton
                     android:id="@+id/add60Seconds"

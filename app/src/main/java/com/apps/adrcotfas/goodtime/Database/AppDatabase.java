@@ -2,13 +2,14 @@ package com.apps.adrcotfas.goodtime.Database;
 
 import android.content.Context;
 
+import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Session;
 
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = Session.class, version = 1, exportSchema = false)
+@Database(entities = {Session.class, LabelAndColor.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase{
 
     private static final Object LOCK = new Object();
@@ -38,4 +39,6 @@ public abstract class AppDatabase extends RoomDatabase{
     }
 
     public abstract SessionDao sessionModel();
+
+    public abstract LabelAndColorDao labelAndColor();
 }

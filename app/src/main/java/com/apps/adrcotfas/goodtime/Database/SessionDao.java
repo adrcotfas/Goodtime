@@ -24,10 +24,10 @@ public interface SessionDao {
     LiveData<List<Session>> getAllSessionsByDuration();
 
     @Insert(onConflict = REPLACE)
-    long addSession(Session session);
+    void addSession(Session session);
 
     @Query("update Session SET endTime = :endTime, totalTime = :totalTime, label = :label WHERE id = :id")
-    long editSession(long id, long endTime, long totalTime, String label);
+    void editSession(long id, long endTime, long totalTime, String label);
 
     @Query("delete from Session where id = :id")
     void deleteSession(long id);

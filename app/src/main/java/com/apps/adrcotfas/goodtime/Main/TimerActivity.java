@@ -3,9 +3,11 @@ package com.apps.adrcotfas.goodtime.Main;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.Gravity;
@@ -23,6 +25,8 @@ import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.BL.TimerService;
 import com.apps.adrcotfas.goodtime.BL.TimerState;
+import com.apps.adrcotfas.goodtime.Database.AppDatabase;
+import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.Statistics.StatisticsActivity;
@@ -40,6 +44,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -98,6 +103,7 @@ public class TimerActivity
     ImageButton mAddSecondsButton;
     ImageButton mStatusButton;
     TextView mTimeLabel;
+    PopupMenu mLabelPopup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +123,7 @@ public class TimerActivity
         getSupportActionBar().setTitle(null);
 
         setupDrawer(binding.toolbar);
-        
+        setupLabelPopupMenu();
         setupEvents();
     }
 
@@ -323,6 +329,42 @@ public class TimerActivity
         } else {
             startService(stopIntent);
         }
+    }
+
+    private void setupLabelPopupMenu() {
+        mLabelPopup = new PopupMenu(TimerActivity.this, mStatusButton);
+        AppDatabase.getDatabase(getApplicationContext()).labelAndColor()
+                .getLabels().observe(this, labels -> {
+            mLabelPopup.getMenu().clear();
+            mLabelPopup.getMenuInflater().inflate(R.menu.menu_main_select_label, mLabelPopup.getMenu());
+            for (LabelAndColor label : labels) {
+                AsyncTask.execute(() -> {
+                    MenuItem item = mLabelPopup.getMenu().add(label.label);
+                    SpannableString s = new SpannableString(item.getTitle());
+                    final int color = AppDatabase.getDatabase(getApplicationContext()).labelAndColor().getColor(item.getTitle().toString());
+                    s.setSpan(new ForegroundColorSpan(color), 0, s.length(), 0);
+                    item.setTitle(s);
+                });
+            }
+        });
+    }
+
+    public void showLabelPopup(View view) {
+        mLabelPopup.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_edit_labels) {
+                AsyncTask.execute(() -> {
+                    //TODO: replace with dialog or fragment to add and edit labels
+                    AppDatabase.getDatabase(getApplicationContext()).labelAndColor()
+                            .addLabel(new LabelAndColor("art", getResources().getColor(R.color.pref_blue)));
+                    AppDatabase.getDatabase(getApplicationContext()).labelAndColor()
+                            .addLabel(new LabelAndColor("engineering", getResources().getColor(R.color.pref_red)));
+                });
+            } else {
+                GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(item.getTitle().toString());
+            }
+            return true;
+        });
+        mLabelPopup.show();
     }
 
     //TODO: extract strings
