@@ -10,11 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
+import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsMainBinding;
@@ -71,6 +74,8 @@ public class StatisticsFragment extends Fragment {
 
     private List<LocalDate> xValues = new ArrayList<>();
 
+    private LinearLayout mLabelCheckboxes;
+
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -86,6 +91,8 @@ public class StatisticsFragment extends Fragment {
 
         mStatsTypeSpinner = binding.statsTypeSpinner;
         mRangeTypeSpinner = binding.rangeTypeSpinner;
+        mLabelCheckboxes = binding.labelCheckboxes;
+
         binding.allEntriesButton.setOnClickListener(view12 -> {
             Intent intent = new Intent(getActivity(), AllEntriesActivity.class);
             startActivity(intent);
@@ -136,10 +143,23 @@ public class StatisticsFragment extends Fragment {
             }
         });
 
+
+        setupLabelCheckboxes();
         setupSpinners();
         setupChart();
         setupSessionsObserver();
         return view;
+    }
+
+    private void setupLabelCheckboxes() {
+        AppDatabase.getDatabase(getActivity().getApplicationContext()).labelAndColor().getLabels().observe(this, labels -> {
+            for (LabelAndColor label : labels) {
+                CheckBox checkBox = new CheckBox(getActivity());
+                checkBox.setText(label.label);
+                checkBox.setTextColor(label.color);
+                mLabelCheckboxes.addView(checkBox);
+            }
+        });
     }
 
     @Override
