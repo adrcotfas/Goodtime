@@ -8,7 +8,7 @@ buildscript {
         maven { url "https://dl.bintray.com/takisoft/android" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.0-alpha05'
+        classpath 'com.android.tools.build:gradle:3.3.0-alpha11'
     }
 }
 
@@ -22,9 +22,4 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-ext {
-    archLifecycleVersion = "1.0.0"
-    archRoomVersion = "1.0.0"
 }

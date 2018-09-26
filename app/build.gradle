@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.1"
+    buildToolsVersion "28.0.2"
     defaultConfig {
         applicationId "com.apps.adrcotfas.goodtime"
         minSdkVersion 16
@@ -33,7 +33,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.0-rc02'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.android.material:material:1.0.0-rc01'
+
+    annotationProcessor "androidx.databinding:databinding-compiler:3.2.0-alpha16"
 
     annotationProcessor 'androidx.room:room-compiler:2.0.0-rc01'
     implementation 'androidx.room:room-runtime:2.0.0-rc01'
@@ -52,8 +53,8 @@ dependencies {
     implementation 'de.greenrobot:eventbus:2.4.0'
 
     // for the NavigationView of NavigationDrawer
-    implementation 'com.android.support:appcompat-v7:28.1.0'
-    implementation 'com.android.support:design:28.1.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0-alpha1'
+    implementation 'com.google.android.material:material:1.0.0-alpha1'
 
     // About
     implementation 'me.jfenn:attribouter:0.1.0'
