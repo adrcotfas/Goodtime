@@ -1,6 +1,11 @@
 package com.apps.adrcotfas.goodtime.BL;
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
+
+import com.apps.adrcotfas.goodtime.Database.AppDatabase;
+import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.R;
 
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +36,10 @@ public class GoodtimeApplication extends Application {
                         .getInt(WORK_DURATION, 25))));
 
         mPreferences = getSharedPreferences(getPackageName() + "_private_preferences", MODE_PRIVATE);
+
+        //TODO: move this somewhere else?
+        AsyncTask.execute(() -> AppDatabase.getDatabase(getApplicationContext()).labelAndColor()
+                .addLabel(new LabelAndColor("", getResources().getColor(R.color.classicAccent))));
     }
 
     public CurrentSession getCurrentSession() {

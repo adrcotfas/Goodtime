@@ -338,6 +338,9 @@ public class TimerActivity
             mLabelPopup.getMenu().clear();
             mLabelPopup.getMenuInflater().inflate(R.menu.menu_main_select_label, mLabelPopup.getMenu());
             for (LabelAndColor label : labels) {
+                if (label.label.equals("")) {
+                    continue;
+                }
                 AsyncTask.execute(() -> {
                     MenuItem item = mLabelPopup.getMenu().add(label.label);
                     SpannableString s = new SpannableString(item.getTitle());
