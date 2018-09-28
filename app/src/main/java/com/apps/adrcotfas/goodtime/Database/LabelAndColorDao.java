@@ -9,12 +9,12 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import static androidx.room.OnConflictStrategy.REPLACE;
+import static androidx.room.OnConflictStrategy.IGNORE;
 
 @Dao
 public interface LabelAndColorDao {
 
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = IGNORE)
     void addLabel(LabelAndColor session);
 
     @Query("select * from LabelAndColor")
