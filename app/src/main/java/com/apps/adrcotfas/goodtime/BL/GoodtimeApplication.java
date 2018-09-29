@@ -40,7 +40,7 @@ public class GoodtimeApplication extends Application {
         //TODO: move this somewhere else?
         AsyncTask.execute(() -> AppDatabase.getDatabase(getApplicationContext()).labelAndColor()
                 //TODO: extract string, beware when the language is changed
-                .addLabel(new LabelAndColor("unlabeled", getResources().getColor(R.color.classicAccent))));
+                .addLabel(new LabelAndColor("unlabeled", getResources().getColor(R.color.white))));
     }
 
     public CurrentSession getCurrentSession() {
