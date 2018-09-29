@@ -69,7 +69,7 @@ public class TimerActivity
     private static final String TAG = TimerActivity.class.getSimpleName();
 
     private final CurrentSession mCurrentSession = GoodtimeApplication.getInstance().getCurrentSession();
-    private AlertDialog mDialog;
+    private AlertDialog mDialogSessionFinished;
     private FullscreenHelper mFullscreenHelper;
     private long mBackPressedAt;
 
@@ -267,8 +267,8 @@ public class TimerActivity
                     || o instanceof Constants.FinishLongBreakEvent) {
                 showFinishDialog(SessionType.BREAK);
             } else if (o instanceof Constants.ClearFinishDialogEvent) {
-                if (mDialog != null) {
-                    mDialog.cancel();
+                if (mDialogSessionFinished != null) {
+                    mDialogSessionFinished.cancel();
                 }
             }
         }
@@ -420,9 +420,9 @@ public class TimerActivity
                     });
         }
 
-        mDialog = builder.create();
-        mDialog.setCanceledOnTouchOutside(false);
-        mDialog.show();
+        mDialogSessionFinished = builder.create();
+        mDialogSessionFinished.setCanceledOnTouchOutside(false);
+        mDialogSessionFinished.show();
     }
 
     private void toggleFullscreenMode() {
