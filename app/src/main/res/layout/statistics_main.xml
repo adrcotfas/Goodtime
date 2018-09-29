@@ -106,20 +106,12 @@
                 </LinearLayout>
             </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/label_checkboxes"
+        <RadioGroup
+            android:id="@+id/label_radio_group"
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-
-            <CheckBox
-                android:id="@+id/label_checkbox_total"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Total"
-                android:checked="true"/>
-
-        </LinearLayout>
+        </RadioGroup>
 
             <Button
                 android:id="@+id/allEntriesButton"

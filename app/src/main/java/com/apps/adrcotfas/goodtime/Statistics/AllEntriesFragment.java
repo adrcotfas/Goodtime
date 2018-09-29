@@ -257,7 +257,8 @@ public class AllEntriesFragment extends Fragment {
                                 final long duration = Math.min(Long.parseLong(input), 120);
                                 if (duration > 0) {
                                     AsyncTask.execute(() -> AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel()
-                                            .addSession(new Session(0, picker.getDate().getTime(), duration, "")));
+                                            //TODO: extract to string
+                                            .addSession(new Session(0, picker.getDate().getTime(), duration, "unlabeled")));
                                     dialog.dismiss();
                                 } else {
                                     Toast.makeText(getActivity(), "Please enter a valid duration", Toast.LENGTH_LONG).show();

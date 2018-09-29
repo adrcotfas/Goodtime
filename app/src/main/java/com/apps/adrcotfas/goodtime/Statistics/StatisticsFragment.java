@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.goodtime.Statistics;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,9 +42,7 @@ import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import androidx.annotation.Nullable;
@@ -89,12 +88,8 @@ public class StatisticsFragment extends Fragment {
 
     private List<LocalDate> xValues = new ArrayList<>();
 
-    private LinearLayout mLayoutLabelCheckboxes;
-    private CheckBox mCheckBoxTotal;
-
-    private List<Session> mSessionsDataTotal;
-    private Map<String, List<Session>> mSessionsData = new HashMap<>();
-    private Stats mStats;
+    private RadioGroup mLayoutLabelRadioGroup;
+    private LabelAndColor mCurrentLabel;
 
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -102,7 +97,6 @@ public class StatisticsFragment extends Fragment {
         StatisticsMainBinding binding = DataBindingUtil.inflate(
                 inflater, R.layout.statistics_main, container, false);
         View view = binding.getRoot();
-
         mChart = binding.chart;
         mStatsToday = binding.statsToday;
         mStatsThisWeek = binding.statsWeek;
@@ -111,8 +105,7 @@ public class StatisticsFragment extends Fragment {
 
         mStatsTypeSpinner = binding.statsTypeSpinner;
         mRangeTypeSpinner = binding.rangeTypeSpinner;
-        mLayoutLabelCheckboxes = binding.labelCheckboxes;
-        mCheckBoxTotal = binding.labelCheckboxTotal;
+        mLayoutLabelRadioGroup = binding.labelRadioGroup;
 
         binding.allEntriesButton.setOnClickListener(view12 -> {
             Intent intent = new Intent(getActivity(), AllEntriesActivity.class);
@@ -164,64 +157,49 @@ public class StatisticsFragment extends Fragment {
             }
         });
 
-
-        setupLabelCheckboxes();
+        setupLabelRadioGroup();
         setupSpinners();
         setupChart();
-        setupSessionsObserver();
+        refreshUi();
         return view;
     }
 
-    private void setupLabelCheckboxes() {
+    private void setupLabelRadioGroup() {
+
+        //TODO: extract to string
+        mCurrentLabel = new LabelAndColor("total", getActivity().getResources().getColor(R.color.classicAccent));
+        //TODO: find a better way to set the ids. Without explicitly setting them here, they would increment
+        RadioButton totalButton = new RadioButton(getActivity());
+        totalButton.setText("total");
+        totalButton.setId(0);
+        final int color = getActivity().getResources().getColor(R.color.classicAccent);
+        totalButton.setTag(color);
+        totalButton.setButtonTintList(ColorStateList.valueOf(color));
+        totalButton.setHighlightColor(getActivity().getResources().getColor(R.color.classicAccent));
+        mLayoutLabelRadioGroup.addView(totalButton);
+        mLayoutLabelRadioGroup.check(totalButton.getId());
+
         AppDatabase.getDatabase(getActivity().getApplicationContext()).labelAndColor().getLabels().observe(this, labels -> {
-            for (LabelAndColor label : labels) {
-                CheckBox checkBox = new CheckBox(getActivity());
-                checkBox.setText(label.label);
-                checkBox.setTextColor(label.color);
-                mLayoutLabelCheckboxes.addView(checkBox);
+            for (int i = 0; i < labels.size(); ++i) {
+                RadioButton button = new RadioButton(getActivity());
+                button.setText(labels.get(i).label);
+                button.setButtonTintList(ColorStateList.valueOf(labels.get(i).color));
+                button.setHighlightColor(labels.get(i).color);
+                button.setId(i + 1);
+                button.setTag(labels.get(i).color);
+                mLayoutLabelRadioGroup.addView(button);
             }
+        });
 
-            // uncheck all when "Total" is clicked
-            mCheckBoxTotal.setOnClickListener(view -> {
-                for (int i = 0; i < mLayoutLabelCheckboxes.getChildCount(); ++i) {
-                    CheckBox c = (CheckBox) mLayoutLabelCheckboxes.getChildAt(i);
-
-                    if (c.equals(mCheckBoxTotal)) {
-                        continue;
-                    }
-                    c.setChecked(false);
-                    mSessionsData.remove(c.getText().toString());
-                }
-                refreshStats();
-            });
-
-            for (int i = 0; i < mLayoutLabelCheckboxes.getChildCount(); ++i) {
-                CheckBox c = (CheckBox) mLayoutLabelCheckboxes.getChildAt(i);
-
-                if (c.equals(mCheckBoxTotal)) {
-                    continue;
-                }
-
-                c.setOnClickListener(view -> {
-                    if (c.isChecked()) {
-                        // uncheck "Total" when any other label checkbox is checked
-                        mCheckBoxTotal.setChecked(false);
-                        AppDatabase.getDatabase(StatisticsFragment.this.getActivity().getApplicationContext())
-                                .sessionModel().getSessions(c.getText().toString())
-                                .observe(StatisticsFragment.this, sessions -> {
-                                    mSessionsData.put(c.getText().toString(), sessions);
-                                    refreshStats();
-                                });
-                    } else {
-                        mSessionsData.remove(c.getText().toString());
-                        refreshStats();
-                    }
-                });
-            }
+        mLayoutLabelRadioGroup.setOnCheckedChangeListener((radioGroup, id) -> {
+            RadioButton button = ((RadioButton)mLayoutLabelRadioGroup.getChildAt(
+                    mLayoutLabelRadioGroup.getCheckedRadioButtonId()));
+            mCurrentLabel = new LabelAndColor(button.getText().toString(), (int)button.getTag());
+            refreshUi();
         });
     }
 
-    private void accumulateStatsForUi(List<Session> sessions) {
+    private void refreshStats(List<Session> sessions) {
         final boolean isDurationType = mStatsTypeSpinner.getSelectedItemPosition() == DURATION.ordinal();
 
         final LocalDate today          = new LocalDate();
@@ -230,61 +208,48 @@ public class StatisticsFragment extends Fragment {
         final LocalDate thisMonthStart = today.dayOfMonth().withMinimumValue().minusDays(1);
         final LocalDate thisMonthEnd   = today.dayOfMonth().withMaximumValue().plusDays(1);
 
+        Stats stats = new Stats(0, 0,0,0);
+
         for (Session s : sessions) {
             final long increment = isDurationType ? s.totalTime : 1;
 
             final LocalDate crt = new LocalDate(new Date(s.endTime));
             if (crt.isEqual(today)) {
-                mStats.today += increment;
+                stats.today += increment;
             }
             if (crt.isAfter(thisWeekStart) && crt.isBefore(thisWeekEnd)) {
-                mStats.thisWeek += increment;
+                stats.thisWeek += increment;
             }
             if (crt.isAfter(thisMonthStart) && crt.isBefore(thisMonthEnd)) {
-                mStats.thisMonth += increment;
+                stats.thisMonth += increment;
             }
             if (isDurationType) {
-                mStats.total += increment;
+                stats.total += increment;
             }
         }
         if (!isDurationType) {
-            mStats.total += sessions.size();
-        }
-    }
-
-    private void refreshStats() {
-        final boolean isDurationType = mStatsTypeSpinner.getSelectedItemPosition() == DURATION.ordinal();
-
-        mStats = new Stats(0, 0, 0, 0);
-
-        //TODO: if "total" checkbox is checked
-        if (mCheckBoxTotal.isChecked()) {
-            accumulateStatsForUi(mSessionsDataTotal);
-        } else {
-            for(Map.Entry<String, List<Session>> sessions : mSessionsData.entrySet()) {
-                accumulateStatsForUi(sessions.getValue());
-            }
+            stats.total += sessions.size();
         }
 
-        mStatsToday.setText(isDurationType || mStats.today == 0
-                ? formatMinutes(mStats.today)
-                : Long.toString(mStats.today));
-        mStatsThisWeek.setText(isDurationType || mStats.thisWeek == 0
-                ? formatMinutes(mStats.thisWeek)
-                : Long.toString(mStats.thisWeek));
-        mStatsThisMonth.setText(isDurationType || mStats.thisMonth == 0
-                ? formatMinutes(mStats.thisMonth)
-                : Long.toString(mStats.thisMonth));
-        mStatsTotal.setText(isDurationType || mStats.total == 0 ?
-                formatMinutes(mStats.total)
-                : Long.toString(mStats.total));
+        mStatsToday.setText(isDurationType || stats.today == 0
+                ? formatMinutes(stats.today)
+                : Long.toString(stats.today));
+        mStatsThisWeek.setText(isDurationType || stats.thisWeek == 0
+                ? formatMinutes(stats.thisWeek)
+                : Long.toString(stats.thisWeek));
+        mStatsThisMonth.setText(isDurationType || stats.thisMonth == 0
+                ? formatMinutes(stats.thisMonth)
+                : Long.toString(stats.thisMonth));
+        mStatsTotal.setText(isDurationType || stats.total == 0 ?
+                formatMinutes(stats.total)
+                : Long.toString(stats.total));
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 123) {
             //TODO: verify if the file is valid, and only after that copy
-            //TODO: after the copy is done, call setupSessionsObserver to reset the graph
+            //TODO: after the copy is done, call refreshUi to reset the graph
             //TODO: clean-up
             if (resultCode == RESULT_OK) {
                 try {
@@ -294,7 +259,7 @@ public class StatisticsFragment extends Fragment {
                     //TODO: copy should be done on a background thread
                     copy(inputStream, destinationPath);
                     //TODO: refresh checkboxes (labels were probably changed)
-                    setupSessionsObserver();
+                    refreshUi();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -341,8 +306,8 @@ public class StatisticsFragment extends Fragment {
 
         mStatsTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                setupSessionsObserver();
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                refreshUi();
             }
 
             @Override
@@ -356,9 +321,9 @@ public class StatisticsFragment extends Fragment {
         mRangeTypeSpinner.setAdapter(rangeTypeAdapter);
         mRangeTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mXAxisFormatter.setRangeType(SpinnerRangeType.values()[i]);
-                setupSessionsObserver();
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                mXAxisFormatter.setRangeType(SpinnerRangeType.values()[position]);
+                refreshUi();
             }
 
             @Override
@@ -368,18 +333,26 @@ public class StatisticsFragment extends Fragment {
         });
     }
 
-    private void setupSessionsObserver() {
-        AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
-                .observe(this, sessions -> {
-            mSessionsDataTotal = sessions;
-            refreshStats();
-            refreshGraph();
-        });
+    private void refreshUi() {
+        //TODO: adapt string when translating
+        if (mCurrentLabel.label.equals("total")) {
+            AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
+                    .observe(this, sessions -> {
+                        refreshStats(sessions);
+                        refreshGraph(sessions);
+                    });
+        } else {
+            AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getSessions(mCurrentLabel.label)
+                    .observe(this, sessions -> {
+                        refreshStats(sessions);
+                        refreshGraph(sessions);
+                    });
+        }
     }
 
-    private void refreshGraph() {
-        final LineData data = generateChartData(mSessionsDataTotal);
+    private void refreshGraph(List<Session> sessions) {
 
+        final LineData data = generateChartData(sessions);
         final boolean isDurationType = mStatsTypeSpinner.getSelectedItemPosition() == DURATION.ordinal();
 
         mChart.moveViewToX(data.getXMax());
@@ -394,7 +367,7 @@ public class StatisticsFragment extends Fragment {
         mChart.setVisibleXRangeMinimum(visibleXRange);
         mChart.getXAxis().setLabelCount(visibleXRange);
 
-        if (mSessionsDataTotal.size() > 0 && data.getYMax() >= (isDurationType ? 60 : 6f)) {
+        if (sessions.size() > 0 && data.getYMax() >= (isDurationType ? 60 : 6f)) {
             mChart.getAxisLeft().resetAxisMaximum();
         }
 
@@ -550,12 +523,14 @@ public class StatisticsFragment extends Fragment {
                 previousTime = crt;
             }
         }
-        return new LineData(generateLineDataSet(yVals, getActivity().getResources().getColor(R.color.cyan)));
+        return new LineData(generateLineDataSet(yVals));
     }
 
-    private LineDataSet generateLineDataSet(List<Entry> entries, int color) {
-        LineDataSet set = new LineDataSet(entries, "");
-        set.setColor(color);
+    private LineDataSet generateLineDataSet(List<Entry> entries) {
+        LineDataSet set = new LineDataSet(entries, mCurrentLabel.label);
+        set.setColor(mCurrentLabel.color);
+        set.setCircleColor(mCurrentLabel.color);
+        set.setFillColor(mCurrentLabel.color);
         set.setLineWidth(3f);
         set.setCircleRadius(3f);
         set.setDrawCircleHole(false);
