@@ -41,6 +41,7 @@ import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -49,7 +50,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 
 import static android.app.Activity.RESULT_OK;
 import static com.apps.adrcotfas.goodtime.Statistics.SpinnerStatsType.DURATION;
@@ -71,13 +71,6 @@ public class StatisticsFragment extends Fragment {
             this.thisMonth = thisMonth;
             this.total = total;
         }
-
-        Stats() {
-            this.today = 0;
-            this.thisWeek = 0;
-            this.thisMonth = 0;
-            this.total = 0;
-        }
     }
 
     private LineChart mChart;
@@ -96,9 +89,11 @@ public class StatisticsFragment extends Fragment {
 
     private List<LocalDate> xValues = new ArrayList<>();
 
-    private LinearLayout mLabelCheckboxes;
+    private LinearLayout mLayoutLabelCheckboxes;
+    private CheckBox mCheckBoxTotal;
+
     private List<Session> mSessionsDataTotal;
-    private Map<String, List<Session>> mSessionsData;
+    private Map<String, List<Session>> mSessionsData = new HashMap<>();
     private Stats mStats;
 
     public View onCreateView(LayoutInflater inflater,
@@ -116,7 +111,8 @@ public class StatisticsFragment extends Fragment {
 
         mStatsTypeSpinner = binding.statsTypeSpinner;
         mRangeTypeSpinner = binding.rangeTypeSpinner;
-        mLabelCheckboxes = binding.labelCheckboxes;
+        mLayoutLabelCheckboxes = binding.labelCheckboxes;
+        mCheckBoxTotal = binding.labelCheckboxTotal;
 
         binding.allEntriesButton.setOnClickListener(view12 -> {
             Intent intent = new Intent(getActivity(), AllEntriesActivity.class);
@@ -182,27 +178,44 @@ public class StatisticsFragment extends Fragment {
                 CheckBox checkBox = new CheckBox(getActivity());
                 checkBox.setText(label.label);
                 checkBox.setTextColor(label.color);
-                mLabelCheckboxes.addView(checkBox);
+                mLayoutLabelCheckboxes.addView(checkBox);
             }
 
-            for (int i = 0; i < mLabelCheckboxes.getChildCount(); ++i) {
-                CheckBox c = (CheckBox) mLabelCheckboxes.getChildAt(i);
+            // uncheck all when "Total" is clicked
+            mCheckBoxTotal.setOnClickListener(view -> {
+                for (int i = 0; i < mLayoutLabelCheckboxes.getChildCount(); ++i) {
+                    CheckBox c = (CheckBox) mLayoutLabelCheckboxes.getChildAt(i);
+
+                    if (c.equals(mCheckBoxTotal)) {
+                        continue;
+                    }
+                    c.setChecked(false);
+                    mSessionsData.remove(c.getText().toString());
+                }
+                refreshStats();
+            });
+
+            for (int i = 0; i < mLayoutLabelCheckboxes.getChildCount(); ++i) {
+                CheckBox c = (CheckBox) mLayoutLabelCheckboxes.getChildAt(i);
+
+                if (c.equals(mCheckBoxTotal)) {
+                    continue;
+                }
+
                 c.setOnClickListener(view -> {
                     if (c.isChecked()) {
-                        LiveData<List<Session>> sessions =
-                                AppDatabase.getDatabase(getActivity().getApplicationContext())
-                                        .sessionModel().getSessions(c.getText().toString());
-                        sessions.observe(this, sessions1 -> {
-                            //TODO: observe and add to mSessionsData
-                        });
-
-
+                        // uncheck "Total" when any other label checkbox is checked
+                        mCheckBoxTotal.setChecked(false);
+                        AppDatabase.getDatabase(StatisticsFragment.this.getActivity().getApplicationContext())
+                                .sessionModel().getSessions(c.getText().toString())
+                                .observe(StatisticsFragment.this, sessions -> {
+                                    mSessionsData.put(c.getText().toString(), sessions);
+                                    refreshStats();
+                                });
                     } else {
-                        //TODO: remove from mSessionsData
+                        mSessionsData.remove(c.getText().toString());
+                        refreshStats();
                     }
-                    //refreshStats();
-                    //TODO: refresh stats
-                    //TODO: refresh graph
                 });
             }
         });
@@ -242,10 +255,10 @@ public class StatisticsFragment extends Fragment {
     private void refreshStats() {
         final boolean isDurationType = mStatsTypeSpinner.getSelectedItemPosition() == DURATION.ordinal();
 
-        mStats = new Stats();
+        mStats = new Stats(0, 0, 0, 0);
 
         //TODO: if "total" checkbox is checked
-        if (true) {
+        if (mCheckBoxTotal.isChecked()) {
             accumulateStatsForUi(mSessionsDataTotal);
         } else {
             for(Map.Entry<String, List<Session>> sessions : mSessionsData.entrySet()) {
@@ -358,32 +371,34 @@ public class StatisticsFragment extends Fragment {
     private void setupSessionsObserver() {
         AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
                 .observe(this, sessions -> {
-
-            final boolean isDurationType = mStatsTypeSpinner.getSelectedItemPosition() == DURATION.ordinal();
-
             mSessionsDataTotal = sessions;
             refreshStats();
-
-            final LineData data = generateChartData(sessions);
-
-            mChart.moveViewToX(data.getXMax());
-            mChart.setData(data);
-            mChart.getData().setHighlightEnabled(false);
-
-            mChart.getAxisLeft().setAxisMinimum(0f);
-            mChart.getAxisLeft().setAxisMaximum(isDurationType ? 60f : 6f);
-
-            final int visibleXRange = pxToDp(mChart.getWidth()) / 46;
-            mChart.setVisibleXRangeMaximum(visibleXRange);
-            mChart.setVisibleXRangeMinimum(visibleXRange);
-            mChart.getXAxis().setLabelCount(visibleXRange);
-
-            if (sessions.size() > 0 && data.getYMax() >= (isDurationType ? 60 : 6f)) {
-                mChart.getAxisLeft().resetAxisMaximum();
-            }
-
-            mChart.notifyDataSetChanged();
+            refreshGraph();
         });
+    }
+
+    private void refreshGraph() {
+        final LineData data = generateChartData(mSessionsDataTotal);
+
+        final boolean isDurationType = mStatsTypeSpinner.getSelectedItemPosition() == DURATION.ordinal();
+
+        mChart.moveViewToX(data.getXMax());
+        mChart.setData(data);
+        mChart.getData().setHighlightEnabled(false);
+
+        mChart.getAxisLeft().setAxisMinimum(0f);
+        mChart.getAxisLeft().setAxisMaximum(isDurationType ? 60f : 6f);
+
+        final int visibleXRange = pxToDp(mChart.getWidth()) / 46;
+        mChart.setVisibleXRangeMaximum(visibleXRange);
+        mChart.setVisibleXRangeMinimum(visibleXRange);
+        mChart.getXAxis().setLabelCount(visibleXRange);
+
+        if (mSessionsDataTotal.size() > 0 && data.getYMax() >= (isDurationType ? 60 : 6f)) {
+            mChart.getAxisLeft().resetAxisMaximum();
+        }
+
+        mChart.notifyDataSetChanged();
     }
 
     private void setupChart() {

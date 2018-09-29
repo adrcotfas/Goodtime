@@ -113,6 +113,7 @@
             android:layout_height="wrap_content">
 
             <CheckBox
+                android:id="@+id/label_checkbox_total"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="Total"
