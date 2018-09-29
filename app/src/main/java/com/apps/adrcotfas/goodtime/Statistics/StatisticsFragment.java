@@ -42,10 +42,10 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -57,6 +57,28 @@ import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatDateAndTime;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatMinutes;
 
 public class StatisticsFragment extends Fragment {
+
+    //TODO: move to separate file
+    private class Stats {
+        long today;
+        long thisWeek;
+        long thisMonth;
+        long total;
+
+        Stats(long today, long thisWeek, long thisMonth, long total) {
+            this.today = today;
+            this.thisWeek = thisWeek;
+            this.thisMonth = thisMonth;
+            this.total = total;
+        }
+
+        Stats() {
+            this.today = 0;
+            this.thisWeek = 0;
+            this.thisMonth = 0;
+            this.total = 0;
+        }
+    }
 
     private LineChart mChart;
 
@@ -75,6 +97,9 @@ public class StatisticsFragment extends Fragment {
     private List<LocalDate> xValues = new ArrayList<>();
 
     private LinearLayout mLabelCheckboxes;
+    private List<Session> mSessionsDataTotal;
+    private Map<String, List<Session>> mSessionsData;
+    private Stats mStats;
 
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -159,7 +184,87 @@ public class StatisticsFragment extends Fragment {
                 checkBox.setTextColor(label.color);
                 mLabelCheckboxes.addView(checkBox);
             }
+
+            for (int i = 0; i < mLabelCheckboxes.getChildCount(); ++i) {
+                CheckBox c = (CheckBox) mLabelCheckboxes.getChildAt(i);
+                c.setOnClickListener(view -> {
+                    if (c.isChecked()) {
+                        LiveData<List<Session>> sessions =
+                                AppDatabase.getDatabase(getActivity().getApplicationContext())
+                                        .sessionModel().getSessions(c.getText().toString());
+                        sessions.observe(this, sessions1 -> {
+                            //TODO: observe and add to mSessionsData
+                        });
+
+
+                    } else {
+                        //TODO: remove from mSessionsData
+                    }
+                    //refreshStats();
+                    //TODO: refresh stats
+                    //TODO: refresh graph
+                });
+            }
         });
+    }
+
+    private void accumulateStatsForUi(List<Session> sessions) {
+        final boolean isDurationType = mStatsTypeSpinner.getSelectedItemPosition() == DURATION.ordinal();
+
+        final LocalDate today          = new LocalDate();
+        final LocalDate thisWeekStart  = today.dayOfWeek().withMinimumValue().minusDays(1);
+        final LocalDate thisWeekEnd    = today.dayOfWeek().withMaximumValue().plusDays(1);
+        final LocalDate thisMonthStart = today.dayOfMonth().withMinimumValue().minusDays(1);
+        final LocalDate thisMonthEnd   = today.dayOfMonth().withMaximumValue().plusDays(1);
+
+        for (Session s : sessions) {
+            final long increment = isDurationType ? s.totalTime : 1;
+
+            final LocalDate crt = new LocalDate(new Date(s.endTime));
+            if (crt.isEqual(today)) {
+                mStats.today += increment;
+            }
+            if (crt.isAfter(thisWeekStart) && crt.isBefore(thisWeekEnd)) {
+                mStats.thisWeek += increment;
+            }
+            if (crt.isAfter(thisMonthStart) && crt.isBefore(thisMonthEnd)) {
+                mStats.thisMonth += increment;
+            }
+            if (isDurationType) {
+                mStats.total += increment;
+            }
+        }
+        if (!isDurationType) {
+            mStats.total += sessions.size();
+        }
+    }
+
+    private void refreshStats() {
+        final boolean isDurationType = mStatsTypeSpinner.getSelectedItemPosition() == DURATION.ordinal();
+
+        mStats = new Stats();
+
+        //TODO: if "total" checkbox is checked
+        if (true) {
+            accumulateStatsForUi(mSessionsDataTotal);
+        } else {
+            for(Map.Entry<String, List<Session>> sessions : mSessionsData.entrySet()) {
+                accumulateStatsForUi(sessions.getValue());
+            }
+        }
+
+        mStatsToday.setText(isDurationType || mStats.today == 0
+                ? formatMinutes(mStats.today)
+                : Long.toString(mStats.today));
+        mStatsThisWeek.setText(isDurationType || mStats.thisWeek == 0
+                ? formatMinutes(mStats.thisWeek)
+                : Long.toString(mStats.thisWeek));
+        mStatsThisMonth.setText(isDurationType || mStats.thisMonth == 0
+                ? formatMinutes(mStats.thisMonth)
+                : Long.toString(mStats.thisMonth));
+        mStatsTotal.setText(isDurationType || mStats.total == 0 ?
+                formatMinutes(mStats.total)
+                : Long.toString(mStats.total));
     }
 
     @Override
@@ -175,6 +280,7 @@ public class StatisticsFragment extends Fragment {
                     File destinationPath = getContext().getDatabasePath("goodtime-db");
                     //TODO: copy should be done on a background thread
                     copy(inputStream, destinationPath);
+                    //TODO: refresh checkboxes (labels were probably changed)
                     setupSessionsObserver();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -250,59 +356,15 @@ public class StatisticsFragment extends Fragment {
     }
 
     private void setupSessionsObserver() {
-        LiveData<List<Session>> sessions =
-                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime();
-
-        sessions.observe(this, sessions1 -> {
+        AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
+                .observe(this, sessions -> {
 
             final boolean isDurationType = mStatsTypeSpinner.getSelectedItemPosition() == DURATION.ordinal();
 
-            final LocalDate today          = new LocalDate();
-            final LocalDate thisWeekStart  = today.dayOfWeek().withMinimumValue().minusDays(1);
-            final LocalDate thisWeekEnd    = today.dayOfWeek().withMaximumValue().plusDays(1);
-            final LocalDate thisMonthStart = today.dayOfMonth().withMinimumValue().minusDays(1);
-            final LocalDate thisMonthEnd   = today.dayOfMonth().withMaximumValue().plusDays(1);;
+            mSessionsDataTotal = sessions;
+            refreshStats();
 
-            long statsToday = 0;
-            long statsThisWeek = 0;
-            long statsThisMonth = 0;
-            long statsTotal = 0;
-
-            for (Session s : sessions1) {
-                final long increment = isDurationType ? s.totalTime : 1;
-
-                final LocalDate crt = new LocalDate(new Date(s.endTime));
-                if (crt.isEqual(today)) {
-                    statsToday += increment;
-                }
-                if (crt.isAfter(thisWeekStart) && crt.isBefore(thisWeekEnd)) {
-                    statsThisWeek += increment;
-                }
-                if (crt.isAfter(thisMonthStart) && crt.isBefore(thisMonthEnd)) {
-                    statsThisMonth += increment;
-                }
-                if (isDurationType) {
-                    statsTotal += increment;
-                }
-            }
-            if (!isDurationType) {
-                statsTotal = sessions1.size();
-            }
-
-            mStatsToday.setText(isDurationType || statsToday == 0
-                    ? formatMinutes(statsToday)
-                    : Long.toString(statsToday));
-            mStatsThisWeek.setText(isDurationType || statsToday == 0
-                    ? formatMinutes(statsThisWeek)
-                    : Long.toString(statsThisWeek));
-            mStatsThisMonth.setText(isDurationType || statsToday == 0
-                    ? formatMinutes(statsThisMonth)
-                    : Long.toString(statsThisMonth));
-            mStatsTotal.setText(isDurationType || statsToday == 0 ?
-                    formatMinutes(statsTotal)
-                    : Long.toString(statsTotal));
-
-            final LineData data = generateChartData(sessions1);
+            final LineData data = generateChartData(sessions);
 
             mChart.moveViewToX(data.getXMax());
             mChart.setData(data);
@@ -316,7 +378,7 @@ public class StatisticsFragment extends Fragment {
             mChart.setVisibleXRangeMinimum(visibleXRange);
             mChart.getXAxis().setLabelCount(visibleXRange);
 
-            if (sessions1.size() > 0 && data.getYMax() >= (isDurationType ? 60 : 6f)) {
+            if (sessions.size() > 0 && data.getYMax() >= (isDurationType ? 60 : 6f)) {
                 mChart.getAxisLeft().resetAxisMaximum();
             }
 
@@ -473,7 +535,7 @@ public class StatisticsFragment extends Fragment {
                 previousTime = crt;
             }
         }
-        return new LineData(generateLineDataSet(yVals, ContextCompat.getColor(getContext(), R.color.cyan)));
+        return new LineData(generateLineDataSet(yVals, getActivity().getResources().getColor(R.color.cyan)));
     }
 
     private LineDataSet generateLineDataSet(List<Entry> entries, int color) {
