@@ -9,17 +9,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsAllEntriesBinding;
-import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.Nullable;
@@ -140,7 +136,17 @@ public class AllEntriesFragment extends Fragment {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_edit:
-                    showEditEntry(mAdapter.mSelectedEntries.get(0));
+                    final Long sessionId = mAdapter.mSelectedEntries.get(0);
+                    AppDatabase.getDatabase(getActivity()).labelAndColor().getLabels()
+                            .observe(getActivity(), labels -> {
+                                AddEditEntryDialog d = new AddEditEntryDialog(
+                                        AllEntriesFragment.this,
+                                        labels,
+                                        true,
+                                        sessionId,
+                                        mActionMode);
+                                d.show();
+                            });
                     break;
                 case R.id.action_delete:
                     new AlertDialog.Builder(getActivity())
@@ -162,50 +168,6 @@ public class AllEntriesFragment extends Fragment {
         }
     };
 
-    public void showEditEntry(Long sessionId) {
-        View promptView = getLayoutInflater().inflate(R.layout.dialog_add_entry, null);
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity()).setTitle("Edit session");
-        alertDialogBuilder.setView(promptView);
-
-        final EditText durationEditText = promptView.findViewById(R.id.duration);
-        final SingleDateAndTimePicker picker = promptView.findViewById(R.id.single_day_picker);
-
-        AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getSession(sessionId)
-                .observe(this, session -> {
-            durationEditText.setText(Long.toString(session.totalTime));
-            picker.setDefaultDate(new Date(session.endTime));
-        });
-
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("OK", (dialog, id) -> {
-                            String input = durationEditText.getText().toString();
-                            if (input.isEmpty()) {
-                                Toast.makeText(getActivity(), "Please enter a valid duration", Toast.LENGTH_LONG).show();
-                            }
-                            else {
-                                final long duration = Math.min(Long.parseLong(input), 120);
-                                if (duration > 0) {
-
-                                    //TODO: replace AsyncTask everywhere with a ViewModel
-                                    AsyncTask.execute(() ->
-                                    AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel()
-                                            .editSession(sessionId, picker.getDate().getTime(), duration, ""));
-                                    dialog.dismiss();
-                                    mActionMode.finish();
-                                } else {
-                                    Toast.makeText(getActivity(), "Please enter a valid duration", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        }
-                )
-                .setNegativeButton("Cancel",
-                        (dialog, id) -> { dialog.cancel(); mActionMode.finish();});
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -213,7 +175,16 @@ public class AllEntriesFragment extends Fragment {
                 getActivity().onBackPressed();
                 break;
             case R.id.action_add:
-                showAddEntryDialog();
+                AppDatabase.getDatabase(getActivity()).labelAndColor().getLabels()
+                        .observe(getActivity(), labels -> {
+                            AddEditEntryDialog d = new AddEditEntryDialog(
+                                    AllEntriesFragment.this,
+                                    labels,
+                                    false,
+                                    null,
+                                    mActionMode);
+                            d.show();
+                        });
                 break;
             case R.id.action_sort_by_date:
                 AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByDuration()
@@ -236,41 +207,4 @@ public class AllEntriesFragment extends Fragment {
         inflater.inflate(R.menu.menu_all_entries, menu);
         super.onCreateOptionsMenu(menu,inflater);
     }
-
-    // TODO: clean-up
-    public void showAddEntryDialog() {
-        View promptView = getLayoutInflater().inflate(R.layout.dialog_add_entry, null);
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity()).setTitle("Add entry");
-        alertDialogBuilder.setView(promptView);
-
-        final EditText durationEditText = promptView.findViewById(R.id.duration);
-        final SingleDateAndTimePicker picker = promptView.findViewById(R.id.single_day_picker);
-
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("OK", (dialog, id) -> {
-                            String input = durationEditText.getText().toString();
-                            if (input.isEmpty()) {
-                                Toast.makeText(getActivity(), "Please enter a valid duration", Toast.LENGTH_LONG).show();
-                            }
-                            else {
-                                final long duration = Math.min(Long.parseLong(input), 120);
-                                if (duration > 0) {
-                                    AsyncTask.execute(() -> AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel()
-                                            //TODO: extract to string
-                                            .addSession(new Session(0, picker.getDate().getTime(), duration, "unlabeled")));
-                                    dialog.dismiss();
-                                } else {
-                                    Toast.makeText(getActivity(), "Please enter a valid duration", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        }
-                )
-                .setNegativeButton("Cancel",
-                        (dialog, id) -> dialog.cancel());
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-    }
-
 }

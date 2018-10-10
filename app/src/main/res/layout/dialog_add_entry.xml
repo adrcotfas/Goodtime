@@ -38,4 +38,11 @@
         android:padding="8dp"
         app:picker_visibleItemCount="5" />
 
+    <TextView
+        android:id="@+id/edit_label"
+        android:text="Edit label"
+        android:clickable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>
