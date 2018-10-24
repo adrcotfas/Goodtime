@@ -1,13 +1,14 @@
 package com.apps.adrcotfas.goodtime;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import static androidx.room.ForeignKey.CASCADE;
-import static androidx.room.ForeignKey.SET_DEFAULT;
+import static androidx.room.ForeignKey.SET_NULL;
 
 @Entity(indices  = {@Index("label")},
         foreignKeys = @ForeignKey(
@@ -15,7 +16,7 @@ import static androidx.room.ForeignKey.SET_DEFAULT;
         parentColumns = "label",
         childColumns = "label",
         onUpdate = CASCADE,
-        onDelete = SET_DEFAULT))
+        onDelete = SET_NULL))
 public class Session {
     @PrimaryKey(autoGenerate = true)
     public long id;
@@ -33,6 +34,7 @@ public class Session {
     @NonNull
     public long totalTime;
 
-    @NonNull
+    @Nullable
+    //TODO: fix "unlabeled" entries in AllEntriesFragment
     public String label;
 }

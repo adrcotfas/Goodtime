@@ -23,7 +23,7 @@ import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.BL.TimerService;
 import com.apps.adrcotfas.goodtime.BL.TimerState;
-import com.apps.adrcotfas.goodtime.Database.AppDatabase;
+import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.Statistics.StatisticsActivity;
@@ -33,6 +33,7 @@ import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -45,6 +46,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 import de.greenrobot.event.EventBus;
 
@@ -68,6 +70,9 @@ public class TimerActivity
     private AlertDialog mDialogSessionFinished;
     private FullscreenHelper mFullscreenHelper;
     private long mBackPressedAt;
+    private LabelsViewModel mLabelsViewModel;
+    //TODO: find an alternative to loading these in onCreate; before of this the Edit Label dialog was recreated multiple times because of the observable
+    private List<LabelAndColor> mLabels;
 
     public void onStartButtonClick(View view) {
         start(SessionType.WORK);
@@ -113,6 +118,13 @@ public class TimerActivity
         mTimeLabel        = binding.timeLabel;
         mAddSecondsButton = binding.add60Seconds;
         mStatusButton     = binding.status;
+
+        mStatusButton.setEnabled(false);
+        mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
+        mLabelsViewModel.getLabels().observe(this, labelAndColors -> {
+            mLabels = labelAndColors;
+            mStatusButton.setEnabled(true);
+        });
 
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle(null);
@@ -326,16 +338,11 @@ public class TimerActivity
     }
 
     public void showEditLabelDialog(View view1) {
-        AppDatabase.getDatabase(this).labelAndColor()
-            .getLabels().observe(this, labels -> {
-
-                String crtLabel = GoodtimeApplication.getCurrentSessionManager().getCurrentSession().getLabel().getValue();
-
-                final EditLabelDialog dialog = new EditLabelDialog(this, labels, crtLabel);
-                dialog.setOnPositiveButtonClickListener((dialogInterface, i) ->
-                        GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(dialog.getLabel()));
-                dialog.show();
-            });
+        String crtLabel = GoodtimeApplication.getCurrentSessionManager().getCurrentSession().getLabel().getValue();
+        EditLabelDialog dialog = new EditLabelDialog(this, mLabels, crtLabel);
+        dialog.setOnPositiveButtonClickListener((dialogInterface, i) ->
+                GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(dialog.getLabel()));
+        dialog.show();
     }
 
     //TODO: extract strings

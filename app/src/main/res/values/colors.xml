@@ -25,4 +25,16 @@
         <item>@color/pref_red</item>
     </array>
 
+    <integer-array name="labelColors">
+        <item>@color/white</item>
+        <item>@color/light_blue</item>
+        <item>@color/lime</item>
+        <item>@color/orange</item>
+    </integer-array>
+
+    <color name="light_blue">#00A6F6</color>
+    <color name="lime">#CCDD1E</color>
+    <color name="orange">#FF9800</color>
+
+
 </resources>

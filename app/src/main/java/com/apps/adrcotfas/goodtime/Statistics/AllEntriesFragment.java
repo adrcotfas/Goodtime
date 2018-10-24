@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
+import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsAllEntriesBinding;
@@ -22,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +37,9 @@ public class AllEntriesFragment extends Fragment {
     private List<Long> mSelectedEntries = new ArrayList<>();
     private boolean mIsMultiSelect = false;
     private Menu mMenu;
+    private LabelsViewModel mLabelsViewModel;
+    //TODO: maybe find an alternative to loading these in onCreateView
+    private List<LabelAndColor> mLabels;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +51,10 @@ public class AllEntriesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.statistics_all_entries, container, false);
+
+        mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
+        mLabelsViewModel.getLabels().observe(this, labelAndColors -> mLabels = labelAndColors);
+
         View view = binding.getRoot();
         ((AllEntriesActivity) getActivity()).setSupportActionBar(binding.toolbar);
         if (((AllEntriesActivity) getActivity()).getSupportActionBar() != null) {
@@ -137,16 +147,14 @@ public class AllEntriesFragment extends Fragment {
             switch (item.getItemId()) {
                 case R.id.action_edit:
                     final Long sessionId = mAdapter.mSelectedEntries.get(0);
-                    AppDatabase.getDatabase(getActivity()).labelAndColor().getLabels()
-                            .observe(getActivity(), labels -> {
-                                AddEditEntryDialog d = new AddEditEntryDialog(
-                                        AllEntriesFragment.this,
-                                        labels,
-                                        true,
-                                        sessionId,
-                                        mActionMode);
-                                d.show();
-                            });
+
+                    AddEditEntryDialog d = new AddEditEntryDialog(
+                            AllEntriesFragment.this,
+                            mLabels,
+                            true,
+                            sessionId,
+                            mActionMode);
+                    d.show();
                     break;
                 case R.id.action_delete:
                     new AlertDialog.Builder(getActivity())
@@ -175,16 +183,13 @@ public class AllEntriesFragment extends Fragment {
                 getActivity().onBackPressed();
                 break;
             case R.id.action_add:
-                AppDatabase.getDatabase(getActivity()).labelAndColor().getLabels()
-                        .observe(getActivity(), labels -> {
-                            AddEditEntryDialog d = new AddEditEntryDialog(
-                                    AllEntriesFragment.this,
-                                    labels,
-                                    false,
-                                    null,
-                                    mActionMode);
-                            d.show();
-                        });
+                    AddEditEntryDialog d = new AddEditEntryDialog(
+                            AllEntriesFragment.this,
+                            mLabels,
+                            false,
+                            null,
+                            mActionMode);
+                    d.show();
                 break;
             case R.id.action_sort_by_date:
                 AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByDuration()

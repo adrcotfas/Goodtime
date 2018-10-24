@@ -51,7 +51,10 @@ public class AddEditEntryDialog {
                     fragment.getActivity(),
                     labels,
                     isEditDialog ? editLabel.getText().toString() : "unlabeled");
-            dialog.setOnPositiveButtonClickListener((dialogInterface, i) -> editLabel.setText(dialog.getLabel()));
+            dialog.setOnPositiveButtonClickListener((dialogInterface, i) -> {
+                //TODO: fix bug when pressing cancel and the current label was deleted
+                editLabel.setText(dialog.getLabel());
+            });
             dialog.show();
         });
 

@@ -23,6 +23,12 @@ public interface LabelAndColorDao {
     @Query("select color from LabelAndColor where label = :label")
     int getColor(String label);
 
+    @Query("update LabelAndColor SET label = :label WHERE label = :id")
+    void editLabelName(String id, String label);
+
+    @Query("update LabelAndColor SET color = :color WHERE label = :id")
+    void editLabelColor(String id, int color);
+
     @Query("delete from LabelAndColor where label = :label")
     void deleteLabel(String label);
 

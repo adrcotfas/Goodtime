@@ -1,12 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <RadioButton
-        android:id="@+id/radio_button"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:focusable="false"
-        android:paddingVertical="16dp"
-        android:layout_marginStart="16dp"/>
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:id="@+id/dialog_edit_label_row"
+        android:focusable="true"
+        android:clickable="true">
+
+        <RadioButton
+            android:id="@+id/dialog_edit_label_row_radio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:focusable="false"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textSize="16dp"
+            android:textStyle="normal"
+            android:maxLines="1"
+            android:layout_marginStart="16dp"/>
+
+        <ImageButton
+            android:id="@+id/dialog_edit_label_row_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:focusable="true"
+            android:clickable="true"
+            android:src="@drawable/ic_dots_vertical"
+            android:layout_marginEnd="16dp"
+            android:padding="4dp"
+            android:background="?selectableItemBackgroundBorderless"/>
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/dialog_edit_label_row_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent"
+        android:visibility="invisible" />
+
+</FrameLayout>
