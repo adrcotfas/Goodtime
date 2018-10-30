@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.Statistics;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.net.Uri;
@@ -164,28 +165,43 @@ public class StatisticsFragment extends Fragment {
         return view;
     }
 
+    @SuppressLint("ResourceType")
     private void setupLabelRadioGroup() {
-
         //TODO: extract to string
-        mCurrentLabel = new LabelAndColor("total", getActivity().getResources().getColor(R.color.classicAccent));
+        final int totalColor = getActivity().getResources().getColor(R.color.classicAccent);
+        mCurrentLabel = new LabelAndColor("total", totalColor);
         //TODO: find a better way to set the ids. Without explicitly setting them here, they would increment
         RadioButton totalButton = new RadioButton(getActivity());
         totalButton.setText("total");
         totalButton.setId(0);
-        final int color = getActivity().getResources().getColor(R.color.classicAccent);
-        totalButton.setTag(color);
-        totalButton.setButtonTintList(ColorStateList.valueOf(color));
-        totalButton.setHighlightColor(getActivity().getResources().getColor(R.color.classicAccent));
+        totalButton.setTag(totalColor);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            totalButton.setButtonTintList(ColorStateList.valueOf(totalColor));
+        }
+        totalButton.setHighlightColor(totalColor);
         mLayoutLabelRadioGroup.addView(totalButton);
         mLayoutLabelRadioGroup.check(totalButton.getId());
+
+        RadioButton unlabeledButton = new RadioButton(getActivity());
+        unlabeledButton.setText("unlabeled");
+        unlabeledButton.setId(1);
+        final int unlabeledColor = getActivity().getResources().getColor(R.color.white);
+        unlabeledButton.setTag(unlabeledColor);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            unlabeledButton.setButtonTintList(ColorStateList.valueOf(unlabeledColor));
+        }
+        unlabeledButton.setHighlightColor(unlabeledColor);
+        mLayoutLabelRadioGroup.addView(unlabeledButton);
 
         AppDatabase.getDatabase(getActivity().getApplicationContext()).labelAndColor().getLabels().observe(this, labels -> {
             for (int i = 0; i < labels.size(); ++i) {
                 RadioButton button = new RadioButton(getActivity());
                 button.setText(labels.get(i).label);
-                button.setButtonTintList(ColorStateList.valueOf(labels.get(i).color));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    button.setButtonTintList(ColorStateList.valueOf(labels.get(i).color));
+                }
                 button.setHighlightColor(labels.get(i).color);
-                button.setId(i + 1);
+                button.setId(i + 2);
                 button.setTag(labels.get(i).color);
                 mLayoutLabelRadioGroup.addView(button);
             }
@@ -341,12 +357,18 @@ public class StatisticsFragment extends Fragment {
                         refreshStats(sessions);
                         refreshGraph(sessions);
                     });
-        } else {
-            AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getSessions(mCurrentLabel.label)
+        } else if (mCurrentLabel.label.equals("unlabeled")) {
+            AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsUnlabeled()
                     .observe(this, sessions -> {
                         refreshStats(sessions);
                         refreshGraph(sessions);
                     });
+        } else {
+                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getSessions(mCurrentLabel.label)
+                        .observe(this, sessions -> {
+                            refreshStats(sessions);
+                            refreshGraph(sessions);
+                        });
         }
     }
 

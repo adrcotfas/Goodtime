@@ -21,7 +21,7 @@ public class Session {
     @PrimaryKey(autoGenerate = true)
     public long id;
 
-    public Session(long id, long endTime, long totalTime, String label) {
+    public Session(long id, long endTime, long totalTime, @Nullable String label) {
         this.id = id;
         this.endTime = endTime;
         this.totalTime = totalTime;
@@ -35,6 +35,5 @@ public class Session {
     public long totalTime;
 
     @Nullable
-    //TODO: fix "unlabeled" entries in AllEntriesFragment
     public String label;
 }

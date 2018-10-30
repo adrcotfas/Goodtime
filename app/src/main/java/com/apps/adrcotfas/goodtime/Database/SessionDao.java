@@ -23,6 +23,9 @@ public interface SessionDao {
     @Query("select * from Session ORDER BY totalTime DESC")
     LiveData<List<Session>> getAllSessionsByDuration();
 
+    @Query("select * from Session where label is NULL")
+    LiveData<List<Session>> getAllSessionsUnlabeled();
+
     @Query("select * from Session where label = :label ORDER BY endTime DESC")
     LiveData<List<Session>> getSessions(String label);
 

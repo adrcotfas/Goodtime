@@ -15,28 +15,32 @@
             android:id="@+id/dialog_edit_label_row_radio_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:focusable="false"
             android:singleLine="true"
             android:ellipsize="end"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:textStyle="normal"
             android:maxLines="1"
-            android:layout_marginStart="16dp"/>
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp" />
 
         <ImageButton
             android:id="@+id/dialog_edit_label_row_more"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:focusable="true"
             android:clickable="true"
             android:src="@drawable/ic_dots_vertical"
+            android:layout_marginRight="16dp"
             android:layout_marginEnd="16dp"
             android:padding="4dp"
-            android:background="?selectableItemBackgroundBorderless"/>
+            android:background="?selectableItemBackgroundBorderless" />
     </RelativeLayout>
 
     <View

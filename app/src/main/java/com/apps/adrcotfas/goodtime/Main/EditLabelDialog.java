@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
@@ -36,8 +37,8 @@ public class EditLabelDialog {
     private String mCurrentLabel;
     private AlertDialog mDialog;
     private AlertDialog.Builder mBuilder;
-    private ListView mListView;
     private ArrayAdapter<LabelAndColor> mAdapter;
+    private List<LabelAndColor> mLabels;
 
     public EditLabelDialog(Context context, List<LabelAndColor> labels, String crtLabel) {
         mContext = context;
@@ -46,22 +47,27 @@ public class EditLabelDialog {
         mBuilder.setTitle("Select label");
         mBuilder.setPositiveButton("OK", null);
         mBuilder.setNegativeButton("Cancel", (dialogInterface, which) -> mDialog.dismiss());
+        mLabels = labels;
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View dialogLayout = inflater.inflate(R.layout.dialog_edit_label, null);
-
         EditText editTextRow = dialogLayout.findViewById(R.id.add_label_row_text);
         ImageButton done = dialogLayout.findViewById(R.id.add_label_row_done);
         editTextRow.setOnTouchListener((view, motionEvent) -> {
+            editTextRow.setFocusable(true);
+            editTextRow.setFocusableInTouchMode(true);
             done.setVisibility(View.VISIBLE);
             return false;
         });
+
         done.setOnClickListener(v -> {
-            //TODO: fix duplicate code
+            //TODO: remove duplicate code
+            editTextRow.setFocusable(false);
+            editTextRow.setFocusableInTouchMode(false);
             final String enteredString = editTextRow.getText().toString();
             if (enteredString.equals("")) {
                 Toast.makeText(mContext, "Please enter a valid name", Toast.LENGTH_SHORT).show();
-            } else if (containsLabel(labels, enteredString)) {
+            } else if (EditLabelDialog.this.containsLabel(enteredString)) {
                 Toast.makeText(mContext, "Label already exists", Toast.LENGTH_SHORT).show();
             } else {
                 final LabelAndColor newLabel = new LabelAndColor(editTextRow.getText().toString(), mContext.getResources().getColor(R.color.white));
@@ -77,12 +83,14 @@ public class EditLabelDialog {
             editTextRow.clearFocus();
         });
         editTextRow.setOnEditorActionListener((v, actionId, event) -> {
-            if(actionId== EditorInfo.IME_ACTION_DONE){
-                //TODO: fix duplicate code
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                //TODO: remove duplicate code
+                editTextRow.setFocusable(false);
+                editTextRow.setFocusableInTouchMode(false);
                 final String enteredString = editTextRow.getText().toString();
                 if (enteredString.equals("")) {
                     Toast.makeText(mContext, "Please enter a valid name", Toast.LENGTH_SHORT).show();
-                } else if (containsLabel(labels, enteredString)) {
+                } else if (EditLabelDialog.this.containsLabel(enteredString)) {
                     Toast.makeText(mContext, "Label already exists", Toast.LENGTH_SHORT).show();
                 } else {
                     final LabelAndColor newLabel = new LabelAndColor(editTextRow.getText().toString(), mContext.getResources().getColor(R.color.white));
@@ -100,11 +108,17 @@ public class EditLabelDialog {
             return false;
         });
 
-        mListView = dialogLayout.findViewById(R.id.label_list);
+        ListView mListView = dialogLayout.findViewById(R.id.label_list);
         //TODO move "Add label" as a list item in "labels" to fix scrolling problems
+
+        final LabelAndColor unlabeledLabel = new LabelAndColor("unlabeled", mContext.getResources().getColor(R.color.white));
+        if (!containsLabel("unlabeled")) {
+            labels.add(0, unlabeledLabel);
+        }
+
         mAdapter = new ArrayAdapter<LabelAndColor>(mContext, R.layout.dialog_edit_label_row, R.id.dialog_edit_label_row_radio_button, labels) {
 
-            int selectedPosition = getLabelIndex(labels, crtLabel);
+            int selectedPosition = getLabelIndex(crtLabel);
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -113,15 +127,15 @@ public class EditLabelDialog {
                     LayoutInflater vi = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     v = vi.inflate(R.layout.dialog_edit_label_row, parent, false);
                 }
-
-                final String crtLabel = labels.get(position).label;
+                final String crtLabel = mLabels.get(position).label;
 
                 RadioButton r = v.findViewById(R.id.dialog_edit_label_row_radio_button);
                 r.setChecked(position == selectedPosition);
-
-                //TODO: clean-up
                 ImageView moreButton = v.findViewById(R.id.dialog_edit_label_row_more);
-                if (!crtLabel.equals("unlabeled")) {
+
+                if (crtLabel.equals("unlabeled")) {
+                    moreButton.setVisibility(View.GONE);
+                } else {
                     moreButton.setVisibility(View.VISIBLE);
                     moreButton.setOnClickListener(view -> {
                         PopupMenu popup = new PopupMenu(mContext, view);
@@ -140,8 +154,8 @@ public class EditLabelDialog {
                                     final int margin = mContext.getResources().getDimensionPixelSize(R.dimen.dialog_margin);
                                     params.setMargins(margin, margin, margin, margin);
                                     input.setLayoutParams(params);
-                                    input.setText(labels.get(position).label);
-                                    input.setSelection(0, labels.get(position).label.length());
+                                    input.setText(mLabels.get(position).label);
+                                    input.setSelection(0, mLabels.get(position).label.length());
                                     container.addView(input);
 
                                     new AlertDialog.Builder(mContext)
@@ -149,7 +163,7 @@ public class EditLabelDialog {
                                             .setPositiveButton("OK", (dialogInterface, which) -> {
                                                 AsyncTask.execute(() ->
                                                         AppDatabase.getDatabase(mContext).labelAndColor().editLabelName(crtLabel, input.getText().toString()));
-                                                labels.get(position).label = input.getText().toString();
+                                                mLabels.get(position).label = input.getText().toString();
                                                 if (mCurrentLabel.equals(crtLabel)) {
                                                     mCurrentLabel = input.getText().toString();
                                                 }
@@ -162,10 +176,10 @@ public class EditLabelDialog {
                                 case R.id.label_row_menu_change_color:
                                     final ColorPickerDialog.Params p = new ColorPickerDialog.Params.Builder(mContext)
                                             .setColors(mContext.getResources().getIntArray(R.array.labelColors))
-                                            .setSelectedColor(labels.get(position).color)
+                                            .setSelectedColor(mLabels.get(position).color)
                                             .build();
                                     ColorPickerDialog dialog = new ColorPickerDialog(mContext, color -> {
-                                        labels.get(position).color = color;
+                                        mLabels.get(position).color = color;
                                         AsyncTask.execute(() ->
                                                 AppDatabase.getDatabase(mContext).labelAndColor().editLabelColor(crtLabel, color));
                                         notifyDataSetChanged();
@@ -179,14 +193,13 @@ public class EditLabelDialog {
                                             .setPositiveButton("OK", (dialogInterface, which) -> {
                                                 if (selectedPosition == position) {
                                                     selectedPosition = 0;
-                                                    mCurrentLabel = (labels.get(selectedPosition).label);
                                                 }
-                                                mAdapter.remove(labels.get(position));
+                                                mAdapter.remove(mLabels.get(position));
                                                 AsyncTask.execute(() ->
                                                         AppDatabase.getDatabase(mContext).labelAndColor().deleteLabel(crtLabel));
                                             })
                                             .setTitle("Delete label?")
-                                            .setMessage("Are you sure you want to delete " + labels.get(position).label + "?")
+                                            .setMessage("Are you sure you want to delete " + mLabels.get(position).label + "?")
                                             .create().show();
                                     return true;
                                 default:
@@ -195,20 +208,19 @@ public class EditLabelDialog {
                         });
                         popup.show();
                     });
-                } else {
-                    moreButton.setVisibility(View.INVISIBLE);
                 }
 
-                r.setText(labels.get(position).label);
-                r.setButtonTintList(ColorStateList.valueOf(labels.get(position).color));
-                r.setHighlightColor(labels.get(position).color);
+                r.setText(mLabels.get(position).label);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    r.setButtonTintList(ColorStateList.valueOf(mLabels.get(position).color));
+                }
+                r.setHighlightColor(mLabels.get(position).color);
                 r.setTag(position);
                 r.setOnClickListener(view -> {
                     selectedPosition = (Integer) view.getTag();
-                    mCurrentLabel = (labels.get(position).label);
+                    mCurrentLabel = (mLabels.get(position).label);
                     notifyDataSetChanged();
                 });
-
                 return v;
             }
         };
@@ -221,8 +233,16 @@ public class EditLabelDialog {
         return mCurrentLabel;
     }
 
-    public void setOnPositiveButtonClickListener(DialogInterface.OnClickListener listener) {
+    public boolean isCurrentLabelValid() {
+        return containsLabel(getLabel());
+    }
+
+    public void setPositiveButtonClickListener(DialogInterface.OnClickListener listener) {
         mBuilder.setPositiveButton("OK", listener);
+    }
+
+    public void setNegativeButtonClickListener(DialogInterface.OnClickListener listener) {
+        mBuilder.setNegativeButton("Cancel", listener);
     }
 
     public void show() {
@@ -230,10 +250,10 @@ public class EditLabelDialog {
         mDialog.show();
     }
 
-    private int getLabelIndex(List<LabelAndColor> labels, String label) {
+    private int getLabelIndex(String label) {
         int currentLabelIdx = 0;
-        for (int i = 0; i < labels.size(); ++i) {
-            if (labels.get(i).label.equals(label)) {
+        for (int i = 0; i < mLabels.size(); ++i) {
+            if (mLabels.get(i).label.equals(label)) {
                 currentLabelIdx = i;
                 break;
             }
@@ -241,10 +261,10 @@ public class EditLabelDialog {
         return currentLabelIdx;
     }
 
-    private boolean containsLabel(List<LabelAndColor> labels, String label) {
+    private boolean containsLabel(String label) {
         boolean result = false;
-        for (int i = 0; i < labels.size(); ++i) {
-            if (labels.get(i).label.equals(label)) {
+        for (int i = 0; i < mLabels.size(); ++i) {
+            if (mLabels.get(i).label.equals(label)) {
                 result = true;
                 break;
             }

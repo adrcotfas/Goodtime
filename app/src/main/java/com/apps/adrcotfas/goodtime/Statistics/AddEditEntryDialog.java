@@ -1,6 +1,5 @@
 package com.apps.adrcotfas.goodtime.Statistics;
 
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.view.ActionMode;
 import android.view.View;
@@ -50,8 +49,8 @@ public class AddEditEntryDialog {
             final EditLabelDialog dialog = new EditLabelDialog(
                     fragment.getActivity(),
                     labels,
-                    isEditDialog ? editLabel.getText().toString() : "unlabeled");
-            dialog.setOnPositiveButtonClickListener((dialogInterface, i) -> {
+                    isEditDialog ? editLabel.getText().toString() : null);
+            dialog.setPositiveButtonClickListener((dialogInterface, i) -> {
                 //TODO: fix bug when pressing cancel and the current label was deleted
                 editLabel.setText(dialog.getLabel());
             });
@@ -75,7 +74,7 @@ public class AddEditEntryDialog {
                             } else {
                                 AsyncTask.execute(() -> AppDatabase.getDatabase(fragment.getActivity().getApplicationContext()).sessionModel()
                                         //TODO: extract to string
-                                        .addSession(new Session(0, picker.getDate().getTime(), duration, !label.equals("Edit label") ? label : "unlabeled")));
+                                        .addSession(new Session(0, picker.getDate().getTime(), duration, !label.equals("Edit label") ? label : null)));
                             }
                             mAlertDialog.dismiss();
                             if (isEditDialog) {

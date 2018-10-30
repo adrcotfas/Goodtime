@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.Main;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -208,6 +209,7 @@ public class TimerActivity
         });
     }
 
+    @SuppressLint("WrongConstant")
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -340,8 +342,15 @@ public class TimerActivity
     public void showEditLabelDialog(View view1) {
         String crtLabel = GoodtimeApplication.getCurrentSessionManager().getCurrentSession().getLabel().getValue();
         EditLabelDialog dialog = new EditLabelDialog(this, mLabels, crtLabel);
-        dialog.setOnPositiveButtonClickListener((dialogInterface, i) ->
-                GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(dialog.getLabel()));
+        dialog.setPositiveButtonClickListener((dialogInterface, i) -> {
+                    String label = dialog.getLabel();
+                    GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(label.equals("unlabeled") ? null : label);
+                });
+        dialog.setNegativeButtonClickListener((dialogInterface, i) -> {
+            if (!dialog.isCurrentLabelValid()) {
+                GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
+            }
+        });
         dialog.show();
     }
 
@@ -444,6 +453,7 @@ public class TimerActivity
         }
     }
 
+    @SuppressLint("WrongConstant")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {

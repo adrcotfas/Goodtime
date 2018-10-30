@@ -36,11 +36,6 @@ public class GoodtimeApplication extends Application {
                         .getInt(WORK_DURATION, 25))));
 
         mPreferences = getSharedPreferences(getPackageName() + "_private_preferences", MODE_PRIVATE);
-
-        //TODO: move this somewhere else?
-        AsyncTask.execute(() -> AppDatabase.getDatabase(getApplicationContext()).labelAndColor()
-                //TODO: extract string, beware when the language is changed
-                .addLabel(new LabelAndColor("unlabeled", getResources().getColor(R.color.white))));
     }
 
     public CurrentSession getCurrentSession() {
