@@ -70,7 +70,7 @@ public class AddEditEntryDialog {
                             if (isEditDialog) {
                                 AsyncTask.execute(() ->
                                         AppDatabase.getDatabase(fragment.getActivity().getApplicationContext()).sessionModel()
-                                                .editSession(sessionToEditId, picker.getDate().getTime(), duration, editLabel.getText().toString()));
+                                                .editSession(sessionToEditId, picker.getDate().getTime(), duration, label.equals("unlabeled") ? null : label));
                             } else {
                                 AsyncTask.execute(() -> AppDatabase.getDatabase(fragment.getActivity().getApplicationContext()).sessionModel()
                                         //TODO: extract to string

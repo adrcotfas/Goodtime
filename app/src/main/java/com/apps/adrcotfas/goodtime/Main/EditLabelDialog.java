@@ -95,13 +95,13 @@ public class EditLabelDialog {
                     LayoutInflater vi = LayoutInflater.from(mContext);
                     v = vi.inflate(R.layout.dialog_edit_label_row, parent, false);
                 }
-                final String crtLabel = mLabels.get(position).label;
+                final String selectedLabel = mLabels.get(position).label;
 
                 RadioButton r = v.findViewById(R.id.dialog_edit_label_row_radio_button);
                 r.setChecked(position == selectedPosition);
                 ImageView moreButton = v.findViewById(R.id.dialog_edit_label_row_more);
 
-                if (crtLabel.equals("unlabeled")) {
+                if (selectedLabel.equals("unlabeled")) {
                     moreButton.setVisibility(View.GONE);
                 } else {
                     moreButton.setVisibility(View.VISIBLE);
@@ -124,9 +124,9 @@ public class EditLabelDialog {
                                             .setNegativeButton("Cancel", null)
                                             .setPositiveButton("OK", (dialogInterface, which) -> {
                                                 AsyncTask.execute(() ->
-                                                        AppDatabase.getDatabase(mContext).labelAndColor().editLabelName(crtLabel, input.getText().toString()));
+                                                        AppDatabase.getDatabase(mContext).labelAndColor().editLabelName(selectedLabel, input.getText().toString()));
                                                 mLabels.get(position).label = input.getText().toString();
-                                                if (mCurrentLabel != null && mCurrentLabel.equals(crtLabel)) {
+                                                if (mCurrentLabel != null && mCurrentLabel.equals(selectedLabel)) {
                                                     mCurrentLabel = input.getText().toString();
                                                 }
                                                 notifyDataSetChanged();
@@ -143,7 +143,7 @@ public class EditLabelDialog {
                                     ColorPickerDialog dialog = new ColorPickerDialog(mContext, color -> {
                                         mLabels.get(position).color = color;
                                         AsyncTask.execute(() ->
-                                                AppDatabase.getDatabase(mContext).labelAndColor().editLabelColor(crtLabel, color));
+                                                AppDatabase.getDatabase(mContext).labelAndColor().editLabelColor(selectedLabel, color));
                                         notifyDataSetChanged();
                                     }, p);
                                     dialog.show();
@@ -158,7 +158,7 @@ public class EditLabelDialog {
                                                 }
                                                 mAdapter.remove(mLabels.get(position));
                                                 AsyncTask.execute(() ->
-                                                        AppDatabase.getDatabase(mContext).labelAndColor().deleteLabel(crtLabel));
+                                                        AppDatabase.getDatabase(mContext).labelAndColor().deleteLabel(selectedLabel));
                                             })
                                             .setTitle("Delete label?")
                                             .setMessage("Are you sure you want to delete " + mLabels.get(position).label + "?")
