@@ -40,6 +40,9 @@ public class EditLabelDialog {
     private ArrayAdapter<LabelAndColor> mAdapter;
     private List<LabelAndColor> mLabels;
 
+    private EditText    mAddLabelEditText;
+    private ImageButton mDoneButton;
+
     public EditLabelDialog(Context context, List<LabelAndColor> labels, String crtLabel) {
         mContext = context;
         mCurrentLabel = crtLabel;
@@ -51,65 +54,31 @@ public class EditLabelDialog {
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View dialogLayout = inflater.inflate(R.layout.dialog_edit_label, null);
-        EditText editTextRow = dialogLayout.findViewById(R.id.add_label_row_text);
-        ImageButton done = dialogLayout.findViewById(R.id.add_label_row_done);
-        editTextRow.setOnTouchListener((view, motionEvent) -> {
-            editTextRow.setFocusable(true);
-            editTextRow.setFocusableInTouchMode(true);
-            done.setVisibility(View.VISIBLE);
+        mAddLabelEditText = dialogLayout.findViewById(R.id.add_label_row_text);
+        mDoneButton = dialogLayout.findViewById(R.id.add_label_row_done);
+
+        mAddLabelEditText.setOnTouchListener((view, motionEvent) -> {
+            mAddLabelEditText.setFocusable(true);
+            mAddLabelEditText.setFocusableInTouchMode(true);
+            mDoneButton.setVisibility(View.VISIBLE);
             return false;
         });
 
-        done.setOnClickListener(v -> {
-            //TODO: remove duplicate code
-            editTextRow.setFocusable(false);
-            editTextRow.setFocusableInTouchMode(false);
-            final String enteredString = editTextRow.getText().toString();
-            if (enteredString.equals("")) {
-                Toast.makeText(mContext, "Please enter a valid name", Toast.LENGTH_SHORT).show();
-            } else if (EditLabelDialog.this.containsLabel(enteredString)) {
-                Toast.makeText(mContext, "Label already exists", Toast.LENGTH_SHORT).show();
-            } else {
-                final LabelAndColor newLabel = new LabelAndColor(editTextRow.getText().toString(), mContext.getResources().getColor(R.color.white));
-                if (mAdapter != null) {
-                    mAdapter.insert(newLabel, mAdapter.getCount());
-                }
-                AsyncTask.execute(() -> AppDatabase.getDatabase(mContext).labelAndColor().addLabel(newLabel));
-            }
-            done.setVisibility(View.INVISIBLE);
-            InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-            editTextRow.setText("");
-            editTextRow.clearFocus();
+        mDoneButton.setOnClickListener(v -> {
+            onDoneButtonClicked();
+            clearFocusOfAddLabelView();
+            hideKeyboard(v, context);
         });
-        editTextRow.setOnEditorActionListener((v, actionId, event) -> {
+        mAddLabelEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                //TODO: remove duplicate code
-                editTextRow.setFocusable(false);
-                editTextRow.setFocusableInTouchMode(false);
-                final String enteredString = editTextRow.getText().toString();
-                if (enteredString.equals("")) {
-                    Toast.makeText(mContext, "Please enter a valid name", Toast.LENGTH_SHORT).show();
-                } else if (EditLabelDialog.this.containsLabel(enteredString)) {
-                    Toast.makeText(mContext, "Label already exists", Toast.LENGTH_SHORT).show();
-                } else {
-                    final LabelAndColor newLabel = new LabelAndColor(editTextRow.getText().toString(), mContext.getResources().getColor(R.color.white));
-                    if (mAdapter != null) {
-                        mAdapter.insert(newLabel, mAdapter.getCount());
-                    }
-                    AsyncTask.execute(() -> AppDatabase.getDatabase(mContext).labelAndColor().addLabel(newLabel));
-                }
-                done.setVisibility(View.INVISIBLE);
-                InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                editTextRow.setText("");
-                editTextRow.clearFocus();
+                onDoneButtonClicked();
             }
+            clearFocusOfAddLabelView();
+            hideKeyboard(v, context);
             return false;
         });
 
         ListView mListView = dialogLayout.findViewById(R.id.label_list);
-        //TODO move "Add label" as a list item in "labels" to fix scrolling problems
 
         final LabelAndColor unlabeledLabel = new LabelAndColor("unlabeled", mContext.getResources().getColor(R.color.white));
         if (!containsLabel("unlabeled")) {
@@ -119,12 +88,11 @@ public class EditLabelDialog {
         mAdapter = new ArrayAdapter<LabelAndColor>(mContext, R.layout.dialog_edit_label_row, R.id.dialog_edit_label_row_radio_button, labels) {
 
             int selectedPosition = getLabelIndex(crtLabel);
-
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View v = convertView;
                 if (v == null) {
-                    LayoutInflater vi = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    LayoutInflater vi = LayoutInflater.from(mContext);
                     v = vi.inflate(R.layout.dialog_edit_label_row, parent, false);
                 }
                 final String crtLabel = mLabels.get(position).label;
@@ -146,17 +114,11 @@ public class EditLabelDialog {
                             switch (item.getItemId()) {
                                 case R.id.label_row_menu_rename:
 
-                                    // TODO: check if it can be extracted to layout file
-                                    final EditText input = new EditText(mContext);
-                                    input.setSingleLine();
-                                    FrameLayout container = new FrameLayout(mContext);
-                                    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                    final int margin = mContext.getResources().getDimensionPixelSize(R.dimen.dialog_margin);
-                                    params.setMargins(margin, margin, margin, margin);
-                                    input.setLayoutParams(params);
+                                    LayoutInflater vi = LayoutInflater.from(mContext);
+                                    View renameDialog = vi.inflate(R.layout.dialog_edit_label_rename_dialog, parent, false);
+
+                                    EditText input = renameDialog.findViewById(R.id.dialog_edit_label_rename_dialog_text);
                                     input.setText(mLabels.get(position).label);
-                                    input.setSelection(0, mLabels.get(position).label.length());
-                                    container.addView(input);
 
                                     new AlertDialog.Builder(mContext)
                                             .setNegativeButton("Cancel", null)
@@ -164,13 +126,13 @@ public class EditLabelDialog {
                                                 AsyncTask.execute(() ->
                                                         AppDatabase.getDatabase(mContext).labelAndColor().editLabelName(crtLabel, input.getText().toString()));
                                                 mLabels.get(position).label = input.getText().toString();
-                                                if (mCurrentLabel.equals(crtLabel)) {
+                                                if (mCurrentLabel != null && mCurrentLabel.equals(crtLabel)) {
                                                     mCurrentLabel = input.getText().toString();
                                                 }
                                                 notifyDataSetChanged();
                                             })
                                             .setTitle("Rename label")
-                                            .setView(container)
+                                            .setView(renameDialog)
                                             .create().show();
                                     return true;
                                 case R.id.label_row_menu_change_color:
@@ -217,6 +179,9 @@ public class EditLabelDialog {
                 r.setHighlightColor(mLabels.get(position).color);
                 r.setTag(position);
                 r.setOnClickListener(view -> {
+                    clearFocusOfAddLabelView();
+                    hideKeyboard(view, context);
+
                     selectedPosition = (Integer) view.getTag();
                     mCurrentLabel = (mLabels.get(position).label);
                     notifyDataSetChanged();
@@ -270,5 +235,35 @@ public class EditLabelDialog {
             }
         }
         return result;
+    }
+
+    private void hideKeyboard(View v, Context context) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
+    }
+
+    private void clearFocusOfAddLabelView() {
+        mAddLabelEditText.setFocusable(false);
+        mAddLabelEditText.setFocusableInTouchMode(false);
+        mAddLabelEditText.setText("");
+        mAddLabelEditText.clearFocus();
+        mDoneButton.setVisibility(View.INVISIBLE);
+    }
+
+    private void onDoneButtonClicked() {
+        final String enteredString = mAddLabelEditText.getText().toString();
+        if (enteredString.equals("")) {
+            Toast.makeText(mContext, "Please enter a valid name", Toast.LENGTH_SHORT).show();
+        } else if (EditLabelDialog.this.containsLabel(enteredString)) {
+            Toast.makeText(mContext, "Label already exists", Toast.LENGTH_SHORT).show();
+        } else {
+            final LabelAndColor newLabel = new LabelAndColor(mAddLabelEditText.getText().toString(), mContext.getResources().getColor(R.color.white));
+            if (mAdapter != null) {
+                mAdapter.insert(newLabel, mAdapter.getCount());
+            }
+            AsyncTask.execute(() -> AppDatabase.getDatabase(mContext).labelAndColor().addLabel(newLabel));
+        }
     }
 }

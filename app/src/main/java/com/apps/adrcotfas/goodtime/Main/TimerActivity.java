@@ -344,7 +344,7 @@ public class TimerActivity
         EditLabelDialog dialog = new EditLabelDialog(this, mLabels, crtLabel);
         dialog.setPositiveButtonClickListener((dialogInterface, i) -> {
                     String label = dialog.getLabel();
-                    GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(label.equals("unlabeled") ? null : label);
+                    GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(label);
                 });
         dialog.setNegativeButtonClickListener((dialogInterface, i) -> {
             if (!dialog.isCurrentLabelValid()) {
