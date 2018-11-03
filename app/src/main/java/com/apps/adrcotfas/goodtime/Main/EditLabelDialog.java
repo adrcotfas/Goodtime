@@ -155,6 +155,9 @@ public class EditLabelDialog {
                                             .setPositiveButton("OK", (dialogInterface, which) -> {
                                                 if (selectedPosition == position) {
                                                     selectedPosition = 0;
+                                                    mCurrentLabel = null;
+                                                } else if (selectedPosition > position) {
+                                                    --selectedPosition;
                                                 }
                                                 mAdapter.remove(mLabels.get(position));
                                                 AsyncTask.execute(() ->
