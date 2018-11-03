@@ -183,7 +183,8 @@ public class EditLabelDialog {
                     hideKeyboard(view, context);
 
                     selectedPosition = (Integer) view.getTag();
-                    mCurrentLabel = (mLabels.get(position).label);
+                    String label = mLabels.get(position).label;
+                    mCurrentLabel = label.equals("unlabeled") ? null : label;
                     notifyDataSetChanged();
                 });
                 return v;
