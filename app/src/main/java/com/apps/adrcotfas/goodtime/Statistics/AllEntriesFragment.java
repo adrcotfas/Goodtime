@@ -15,7 +15,7 @@ import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
-import com.apps.adrcotfas.goodtime.databinding.StatisticsAllEntriesBinding;
+import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentAllEntriesBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class AllEntriesFragment extends Fragment {
-    private StatisticsAllEntriesBinding binding;
+    private StatisticsFragmentAllEntriesBinding binding;
 
     private AllEntriesAdapter mAdapter;
     private ActionMode mActionMode;
@@ -50,7 +50,7 @@ public class AllEntriesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.statistics_all_entries, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.statistics_fragment_all_entries, container, false);
 
         mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
         mLabelsViewModel.getLabels().observe(this, labelAndColors -> mLabels = labelAndColors);
@@ -61,7 +61,7 @@ public class AllEntriesFragment extends Fragment {
             ((AllEntriesActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         RecyclerView recyclerView = binding.mainRecylcerView;
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         mAdapter = new AllEntriesAdapter();
         recyclerView.setAdapter(mAdapter);
 

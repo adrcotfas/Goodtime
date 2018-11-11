@@ -51,4 +51,36 @@
         <item name="background">?attr/colorPrimary</item>
     </style>
 
+    <style name="SectionCommon">
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:layout_marginLeft">3dp</item>
+        <item name="android:layout_marginRight">3dp</item>
+    </style>
+
+    <style name="SectionHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">20dp</item>
+        <item name="android:textSize">@dimen/regularTextSize</item>
+    </style>
+
+    <style name="Spinner" parent="@style/Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textSize">@dimen/smallTextSize</item>
+    </style>
+
+    <style name="OverviewTextValue">
+        <item name = "android:gravity">center</item>
+        <item name = "android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/smallerTextSize</item>
+    </style>
+
+    <style name="OverviewTextDescription">
+        <item name="android:textSize">@dimen/smallTextSize</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
 </resources>

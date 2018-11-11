@@ -12,8 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +20,7 @@ import com.apps.adrcotfas.goodtime.Database.AppDatabase;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
-import com.apps.adrcotfas.goodtime.databinding.StatisticsMainBinding;
+import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentMainBinding;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -30,6 +28,8 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import org.joda.time.LocalDate;
 
@@ -50,35 +50,47 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import static android.app.Activity.RESULT_OK;
 import static com.apps.adrcotfas.goodtime.Statistics.SpinnerStatsType.DURATION;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatDateAndTime;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatMinutes;
+import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatWeekRange;
 
 public class StatisticsFragment extends Fragment {
 
     //TODO: move to separate file
     private class Stats {
         long today;
-        long thisWeek;
-        long thisMonth;
+        long week;
+        long month;
         long total;
 
-        Stats(long today, long thisWeek, long thisMonth, long total) {
+        Stats(long today, long week, long month, long total) {
             this.today = today;
-            this.thisWeek = thisWeek;
-            this.thisMonth = thisMonth;
+            this.week  = week;
+            this.month = month;
+            this.total = total;
+        }
+    }
+
+    //TODO: move to separate file and remove duplicate code
+    private class StatsView {
+        TextView today;
+        TextView week;
+        TextView month;
+        TextView total;
+
+        StatsView(TextView today, TextView week, TextView month, TextView total) {
+            this.today = today;
+            this.week  = week;
+            this.month = month;
             this.total = total;
         }
     }
 
     private LineChart mChart;
-
-    private TextView mStatsToday;
-    private TextView mStatsThisWeek;
-    private TextView mStatsThisMonth;
-    private TextView mStatsTotal;
 
     private Spinner mStatsTypeSpinner;
     private Spinner mRangeTypeSpinner;
@@ -89,24 +101,36 @@ public class StatisticsFragment extends Fragment {
 
     private List<LocalDate> xValues = new ArrayList<>();
 
-    private RadioGroup mLayoutLabelRadioGroup;
-    private LabelAndColor mCurrentLabel;
+    private StatsView mOverview;
+    private StatsView mOverviewDescription;
+    private ChipGroup mLabelChipGroup;
+    private StatisticsViewModel mViewModel;
 
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        StatisticsMainBinding binding = DataBindingUtil.inflate(
-                inflater, R.layout.statistics_main, container, false);
+        StatisticsFragmentMainBinding binding = DataBindingUtil.inflate(
+                inflater, R.layout.statistics_fragment_main, container, false);
         View view = binding.getRoot();
         mChart = binding.chart;
-        mStatsToday = binding.statsToday;
-        mStatsThisWeek = binding.statsWeek;
-        mStatsThisMonth = binding.statsMonth;
-        mStatsTotal = binding.statsTotal;
 
+        mOverview = new StatsView(
+                binding.overviewTodayValue,
+                binding.overviewWeekValue,
+                binding.overviewMonthValue,
+                binding.overviewTotalValue);
+
+        mOverviewDescription = new StatsView(
+                binding.overviewTodayDescription,
+                binding.overviewWeekDescription,
+                binding.overviewMonthDescription,
+                binding.overviewTotalDescription
+        );
+
+        mLabelChipGroup = binding.labelRadioGroup;
+        mLabelChipGroup.setSingleSelection(true);
         mStatsTypeSpinner = binding.statsTypeSpinner;
         mRangeTypeSpinner = binding.rangeTypeSpinner;
-        mLayoutLabelRadioGroup = binding.labelRadioGroup;
 
         binding.allEntriesButton.setOnClickListener(view12 -> {
             Intent intent = new Intent(getActivity(), AllEntriesActivity.class);
@@ -146,72 +170,75 @@ public class StatisticsFragment extends Fragment {
             t.start();
         });
 
-        binding.importButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO: warn the user about loosing the data
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("*/*");
-                //TODO: add request code
-                startActivityForResult(intent, 123);
-            }
+        binding.importButton.setOnClickListener(view13 -> {
+            //TODO: warn the user about loosing the data
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            //TODO: add request code
+            startActivityForResult(intent, 123);
         });
 
+        mViewModel = ViewModelProviders.of(getActivity()).get(StatisticsViewModel.class);
         setupLabelRadioGroup();
+        mViewModel.currentLabel.observe(this, labelAndColor -> refreshUi());
+
         setupSpinners();
         setupChart();
-        refreshUi();
         return view;
     }
 
     @SuppressLint("ResourceType")
     private void setupLabelRadioGroup() {
+        mLabelChipGroup.setOnCheckedChangeListener((chipGroup, id) -> {
+            Chip chip = ((Chip) mLabelChipGroup.getChildAt(mLabelChipGroup.getCheckedChipId()));
+            if (chip != null) {
+                for (int i = 0; i < mLabelChipGroup.getChildCount(); ++i) {
+                    mLabelChipGroup.getChildAt(i).setClickable(true);
+                }
+                chip.setClickable(false);
+                mViewModel.currentLabel.setValue(new LabelAndColor(chip.getText().toString(), (int)chip.getTag()));
+            }
+        });
         //TODO: extract to string
-        final int totalColor = getActivity().getResources().getColor(R.color.classicAccent);
-        mCurrentLabel = new LabelAndColor("total", totalColor);
+        final int totalColor = getResources().getColor(R.color.classicAccent);
         //TODO: find a better way to set the ids. Without explicitly setting them here, they would increment
-        RadioButton totalButton = new RadioButton(getActivity());
-        totalButton.setText("total");
-        totalButton.setId(0);
-        totalButton.setTag(totalColor);
+        Chip chipTotal = new Chip(getActivity());
+        chipTotal.setText("total");
+        chipTotal.setId(0);
+        chipTotal.setTag(totalColor);
+        chipTotal.setCheckable(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            totalButton.setButtonTintList(ColorStateList.valueOf(totalColor));
+            chipTotal.setButtonTintList(ColorStateList.valueOf(totalColor));
         }
-        totalButton.setHighlightColor(totalColor);
-        mLayoutLabelRadioGroup.addView(totalButton);
-        mLayoutLabelRadioGroup.check(totalButton.getId());
-
-        RadioButton unlabeledButton = new RadioButton(getActivity());
-        unlabeledButton.setText("unlabeled");
-        unlabeledButton.setId(1);
-        final int unlabeledColor = getActivity().getResources().getColor(R.color.white);
-        unlabeledButton.setTag(unlabeledColor);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            unlabeledButton.setButtonTintList(ColorStateList.valueOf(unlabeledColor));
-        }
-        unlabeledButton.setHighlightColor(unlabeledColor);
-        mLayoutLabelRadioGroup.addView(unlabeledButton);
+        chipTotal.setChipBackgroundColor(ColorStateList.valueOf(totalColor));
+        mLabelChipGroup.addView(chipTotal);
+        mLabelChipGroup.check(chipTotal.getId());
 
         AppDatabase.getDatabase(getActivity().getApplicationContext()).labelAndColor().getLabels().observe(this, labels -> {
             for (int i = 0; i < labels.size(); ++i) {
-                RadioButton button = new RadioButton(getActivity());
-                button.setText(labels.get(i).label);
+                Chip chip = new Chip(getActivity());
+                chip.setText(labels.get(i).label);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    button.setButtonTintList(ColorStateList.valueOf(labels.get(i).color));
+                    chip.setButtonTintList(ColorStateList.valueOf(labels.get(i).color));
                 }
-                button.setHighlightColor(labels.get(i).color);
-                button.setId(i + 2);
-                button.setTag(labels.get(i).color);
-                mLayoutLabelRadioGroup.addView(button);
+                chip.setChipBackgroundColor(ColorStateList.valueOf(labels.get(i).color));
+                chip.setCheckable(true);
+                chip.setId(i + 1);
+                chip.setTag(labels.get(i).color);
+                mLabelChipGroup.addView(chip);
             }
-        });
-
-        mLayoutLabelRadioGroup.setOnCheckedChangeListener((radioGroup, id) -> {
-            RadioButton button = ((RadioButton)mLayoutLabelRadioGroup.getChildAt(
-                    mLayoutLabelRadioGroup.getCheckedRadioButtonId()));
-            mCurrentLabel = new LabelAndColor(button.getText().toString(), (int)button.getTag());
-            refreshUi();
+            Chip chipUnlabeled = new Chip(getActivity());
+            chipUnlabeled.setText("unlabeled");
+            chipUnlabeled.setId(mLabelChipGroup.getChildCount());
+            final int unlabeledColor = getResources().getColor(R.color.white);
+            chipUnlabeled.setTag(unlabeledColor);
+            chipUnlabeled.setCheckable(true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                chipUnlabeled.setButtonTintList(ColorStateList.valueOf(unlabeledColor));
+            }
+            chipUnlabeled.setChipBackgroundColor(ColorStateList.valueOf(unlabeledColor));
+            mLabelChipGroup.addView(chipUnlabeled);
         });
     }
 
@@ -219,25 +246,25 @@ public class StatisticsFragment extends Fragment {
         final boolean isDurationType = mStatsTypeSpinner.getSelectedItemPosition() == DURATION.ordinal();
 
         final LocalDate today          = new LocalDate();
-        final LocalDate thisWeekStart  = today.dayOfWeek().withMinimumValue().minusDays(1);
-        final LocalDate thisWeekEnd    = today.dayOfWeek().withMaximumValue().plusDays(1);
-        final LocalDate thisMonthStart = today.dayOfMonth().withMinimumValue().minusDays(1);
-        final LocalDate thisMonthEnd   = today.dayOfMonth().withMaximumValue().plusDays(1);
+        final LocalDate thisWeekStart  = today.dayOfWeek().withMinimumValue();
+        final LocalDate thisWeekEnd    = today.dayOfWeek().withMaximumValue();
+        final LocalDate thisMonthStart = today.dayOfMonth().withMinimumValue();
+        final LocalDate thisMonthEnd   = today.dayOfMonth().withMaximumValue();
 
-        Stats stats = new Stats(0, 0,0,0);
+        Stats stats = new Stats(0, 0, 0, 0);
 
         for (Session s : sessions) {
-            final long increment = isDurationType ? s.totalTime : 1;
+            final Long increment = isDurationType ? s.totalTime : 1L;
 
             final LocalDate crt = new LocalDate(new Date(s.endTime));
             if (crt.isEqual(today)) {
                 stats.today += increment;
             }
-            if (crt.isAfter(thisWeekStart) && crt.isBefore(thisWeekEnd)) {
-                stats.thisWeek += increment;
+            if (crt.isAfter(thisWeekStart.minusDays(1)) && crt.isBefore(thisWeekEnd.plusDays(1))) {
+                stats.week += increment;
             }
-            if (crt.isAfter(thisMonthStart) && crt.isBefore(thisMonthEnd)) {
-                stats.thisMonth += increment;
+            if (crt.isAfter(thisMonthStart.minusDays(1)) && crt.isBefore(thisMonthEnd.plusDays(1))) {
+                stats.month += increment;
             }
             if (isDurationType) {
                 stats.total += increment;
@@ -247,18 +274,21 @@ public class StatisticsFragment extends Fragment {
             stats.total += sessions.size();
         }
 
-        mStatsToday.setText(isDurationType || stats.today == 0
+        mOverview.today.setText(isDurationType || stats.today == 0
                 ? formatMinutes(stats.today)
                 : Long.toString(stats.today));
-        mStatsThisWeek.setText(isDurationType || stats.thisWeek == 0
-                ? formatMinutes(stats.thisWeek)
-                : Long.toString(stats.thisWeek));
-        mStatsThisMonth.setText(isDurationType || stats.thisMonth == 0
-                ? formatMinutes(stats.thisMonth)
-                : Long.toString(stats.thisMonth));
-        mStatsTotal.setText(isDurationType || stats.total == 0 ?
+        mOverview.week.setText(isDurationType || stats.week == 0
+                ? formatMinutes(stats.week)
+                : Long.toString(stats.week));
+        mOverview.month.setText(isDurationType || stats.month == 0
+                ? formatMinutes(stats.month)
+                : Long.toString(stats.month));
+        mOverview.total.setText(isDurationType || stats.total == 0 ?
                 formatMinutes(stats.total)
                 : Long.toString(stats.total));
+
+        mOverviewDescription.week.setText(formatWeekRange(thisWeekStart, thisWeekEnd));
+        mOverviewDescription.month.setText(thisMonthEnd.toString("MMM"));
     }
 
     @Override
@@ -316,8 +346,8 @@ public class StatisticsFragment extends Fragment {
 
     private void setupSpinners() {
         ArrayAdapter<CharSequence> statsTypeAdapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.spinner_stats_type, android.R.layout.simple_spinner_item);
-        statsTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                R.array.spinner_stats_type, R.layout.spinner_item);
+        statsTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mStatsTypeSpinner.setAdapter(statsTypeAdapter);
 
         mStatsTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -332,8 +362,8 @@ public class StatisticsFragment extends Fragment {
         });
 
         ArrayAdapter < CharSequence > rangeTypeAdapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.spinner_range_type, android.R.layout.simple_spinner_item);
-        rangeTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                R.array.spinner_range_type, R.layout.spinner_item);
+        rangeTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mRangeTypeSpinner.setAdapter(rangeTypeAdapter);
         mRangeTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -351,20 +381,20 @@ public class StatisticsFragment extends Fragment {
 
     private void refreshUi() {
         //TODO: adapt string when translating
-        if (mCurrentLabel.label.equals("total")) {
+        if (mViewModel.currentLabel.getValue().label.equals("total")) {
             AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
                     .observe(this, sessions -> {
                         refreshStats(sessions);
                         refreshGraph(sessions);
                     });
-        } else if (mCurrentLabel.label.equals("unlabeled")) {
+        } else if (mViewModel.currentLabel.getValue().label.equals("unlabeled")) {
             AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsUnlabeled()
                     .observe(this, sessions -> {
                         refreshStats(sessions);
                         refreshGraph(sessions);
                     });
         } else {
-                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getSessions(mCurrentLabel.label)
+                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getSessions(mViewModel.currentLabel.getValue().label)
                         .observe(this, sessions -> {
                             refreshStats(sessions);
                             refreshGraph(sessions);
@@ -409,14 +439,16 @@ public class StatisticsFragment extends Fragment {
                 ));
 
         YAxis yAxis = mChart.getAxisLeft();
-        yAxis.setTextColor(getActivity().getResources().getColor(R.color.white));
+        yAxis.setValueFormatter(new CustomYAxisFormatter());
+        yAxis.setTextColor(getResources().getColor(R.color.white));
         yAxis.setGranularity(1);
         yAxis.setTextSize(CHART_TEXT_SIZE);
         yAxis.setDrawAxisLine(false);
+        yAxis.setLabelCount(5);
 
         XAxis xAxis = mChart.getXAxis();
         xAxis.setGranularityEnabled(true);
-        xAxis.setTextColor(getActivity().getResources().getColor(R.color.white));
+        xAxis.setTextColor(getResources().getColor(R.color.white));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
 
         final SpinnerRangeType rangeType =
@@ -438,10 +470,8 @@ public class StatisticsFragment extends Fragment {
         mChart.setHardwareAccelerationEnabled(true);
         mChart.animateY(500, Easing.EasingOption.EaseOutCubic);
         mChart.getLegend().setEnabled(false);
-        mChart.setPinchZoom(false);
         mChart.setDoubleTapToZoomEnabled(false);
-        mChart.setScaleEnabled(true);
-        mChart.setDragEnabled(true);
+        mChart.setScaleEnabled(false);
         mChart.invalidate();
         mChart.notifyDataSetChanged();
     }
@@ -549,10 +579,11 @@ public class StatisticsFragment extends Fragment {
     }
 
     private LineDataSet generateLineDataSet(List<Entry> entries) {
-        LineDataSet set = new LineDataSet(entries, mCurrentLabel.label);
-        set.setColor(mCurrentLabel.color);
-        set.setCircleColor(mCurrentLabel.color);
-        set.setFillColor(mCurrentLabel.color);
+        LabelAndColor crtLabel = mViewModel.currentLabel.getValue();
+        LineDataSet set = new LineDataSet(entries, crtLabel.label);
+        set.setColor(crtLabel.color);
+        set.setCircleColor(crtLabel.color);
+        set.setFillColor(crtLabel.color);
         set.setLineWidth(3f);
         set.setCircleRadius(3f);
         set.setDrawCircleHole(false);
@@ -570,7 +601,7 @@ public class StatisticsFragment extends Fragment {
     }
 
     public int pxToDp(int px) {
-        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
         return dp;
     }

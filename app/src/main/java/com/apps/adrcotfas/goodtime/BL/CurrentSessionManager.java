@@ -176,6 +176,7 @@ public class CurrentSessionManager extends ContextWrapper{
     }
 
     public long getElapsedTime() {
+        // TODO: seconds to minutes
         return mElapsed;
     }
 

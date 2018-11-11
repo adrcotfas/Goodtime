@@ -14,7 +14,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -43,6 +42,7 @@ public class EditLabelDialog {
     private EditText    mAddLabelEditText;
     private ImageButton mDoneButton;
 
+    //TODO: separate UI from database stuff
     public EditLabelDialog(Context context, List<LabelAndColor> labels, String crtLabel) {
         mContext = context;
         mCurrentLabel = crtLabel;
