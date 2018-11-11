@@ -92,8 +92,8 @@ public class StatisticsFragment extends Fragment {
 
     private LineChart mChart;
 
-    private Spinner mStatsTypeSpinner;
-    private Spinner mRangeTypeSpinner;
+    private Spinner mStatsType;
+    private Spinner mRangeType;
 
     private CustomXAxisFormatter mXAxisFormatter;
 
@@ -103,7 +103,7 @@ public class StatisticsFragment extends Fragment {
 
     private StatsView mOverview;
     private StatsView mOverviewDescription;
-    private ChipGroup mLabelChipGroup;
+    private ChipGroup mChipGroupLabels;
     private StatisticsViewModel mViewModel;
 
     public View onCreateView(LayoutInflater inflater,
@@ -112,25 +112,24 @@ public class StatisticsFragment extends Fragment {
         StatisticsFragmentMainBinding binding = DataBindingUtil.inflate(
                 inflater, R.layout.statistics_fragment_main, container, false);
         View view = binding.getRoot();
-        mChart = binding.chart;
+        mChart = binding.history.chart;
 
         mOverview = new StatsView(
-                binding.overviewTodayValue,
-                binding.overviewWeekValue,
-                binding.overviewMonthValue,
-                binding.overviewTotalValue);
+                binding.overview.todayValue,
+                binding.overview.weekValue,
+                binding.overview.monthValue,
+                binding.overview.totalValue);
 
         mOverviewDescription = new StatsView(
-                binding.overviewTodayDescription,
-                binding.overviewWeekDescription,
-                binding.overviewMonthDescription,
-                binding.overviewTotalDescription
+                binding.overview.todayDescription,
+                binding.overview.weekDescription,
+                binding.overview.monthDescription,
+                binding.overview.totalDescription
         );
 
-        mLabelChipGroup = binding.labelRadioGroup;
-        mLabelChipGroup.setSingleSelection(true);
-        mStatsTypeSpinner = binding.statsTypeSpinner;
-        mRangeTypeSpinner = binding.rangeTypeSpinner;
+        mChipGroupLabels = binding.labels.labels;
+        mStatsType = binding.overview.statsType;
+        mRangeType = binding.history.rangeType;
 
         binding.allEntriesButton.setOnClickListener(view12 -> {
             Intent intent = new Intent(getActivity(), AllEntriesActivity.class);
@@ -190,11 +189,11 @@ public class StatisticsFragment extends Fragment {
 
     @SuppressLint("ResourceType")
     private void setupLabelRadioGroup() {
-        mLabelChipGroup.setOnCheckedChangeListener((chipGroup, id) -> {
-            Chip chip = ((Chip) mLabelChipGroup.getChildAt(mLabelChipGroup.getCheckedChipId()));
+        mChipGroupLabels.setOnCheckedChangeListener((chipGroup, id) -> {
+            Chip chip = ((Chip) mChipGroupLabels.getChildAt(mChipGroupLabels.getCheckedChipId()));
             if (chip != null) {
-                for (int i = 0; i < mLabelChipGroup.getChildCount(); ++i) {
-                    mLabelChipGroup.getChildAt(i).setClickable(true);
+                for (int i = 0; i < mChipGroupLabels.getChildCount(); ++i) {
+                    mChipGroupLabels.getChildAt(i).setClickable(true);
                 }
                 chip.setClickable(false);
                 mViewModel.currentLabel.setValue(new LabelAndColor(chip.getText().toString(), (int)chip.getTag()));
@@ -212,8 +211,8 @@ public class StatisticsFragment extends Fragment {
             chipTotal.setButtonTintList(ColorStateList.valueOf(totalColor));
         }
         chipTotal.setChipBackgroundColor(ColorStateList.valueOf(totalColor));
-        mLabelChipGroup.addView(chipTotal);
-        mLabelChipGroup.check(chipTotal.getId());
+        mChipGroupLabels.addView(chipTotal);
+        mChipGroupLabels.check(chipTotal.getId());
 
         AppDatabase.getDatabase(getActivity().getApplicationContext()).labelAndColor().getLabels().observe(this, labels -> {
             for (int i = 0; i < labels.size(); ++i) {
@@ -226,11 +225,11 @@ public class StatisticsFragment extends Fragment {
                 chip.setCheckable(true);
                 chip.setId(i + 1);
                 chip.setTag(labels.get(i).color);
-                mLabelChipGroup.addView(chip);
+                mChipGroupLabels.addView(chip);
             }
             Chip chipUnlabeled = new Chip(getActivity());
             chipUnlabeled.setText("unlabeled");
-            chipUnlabeled.setId(mLabelChipGroup.getChildCount());
+            chipUnlabeled.setId(mChipGroupLabels.getChildCount());
             final int unlabeledColor = getResources().getColor(R.color.white);
             chipUnlabeled.setTag(unlabeledColor);
             chipUnlabeled.setCheckable(true);
@@ -238,12 +237,12 @@ public class StatisticsFragment extends Fragment {
                 chipUnlabeled.setButtonTintList(ColorStateList.valueOf(unlabeledColor));
             }
             chipUnlabeled.setChipBackgroundColor(ColorStateList.valueOf(unlabeledColor));
-            mLabelChipGroup.addView(chipUnlabeled);
+            mChipGroupLabels.addView(chipUnlabeled);
         });
     }
 
     private void refreshStats(List<Session> sessions) {
-        final boolean isDurationType = mStatsTypeSpinner.getSelectedItemPosition() == DURATION.ordinal();
+        final boolean isDurationType = mStatsType.getSelectedItemPosition() == DURATION.ordinal();
 
         final LocalDate today          = new LocalDate();
         final LocalDate thisWeekStart  = today.dayOfWeek().withMinimumValue();
@@ -348,9 +347,9 @@ public class StatisticsFragment extends Fragment {
         ArrayAdapter<CharSequence> statsTypeAdapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.spinner_stats_type, R.layout.spinner_item);
         statsTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        mStatsTypeSpinner.setAdapter(statsTypeAdapter);
+        mStatsType.setAdapter(statsTypeAdapter);
 
-        mStatsTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mStatsType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 refreshUi();
@@ -364,8 +363,8 @@ public class StatisticsFragment extends Fragment {
         ArrayAdapter < CharSequence > rangeTypeAdapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.spinner_range_type, R.layout.spinner_item);
         rangeTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        mRangeTypeSpinner.setAdapter(rangeTypeAdapter);
-        mRangeTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mRangeType.setAdapter(rangeTypeAdapter);
+        mRangeType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 mXAxisFormatter.setRangeType(SpinnerRangeType.values()[position]);
@@ -405,7 +404,7 @@ public class StatisticsFragment extends Fragment {
     private void refreshGraph(List<Session> sessions) {
 
         final LineData data = generateChartData(sessions);
-        final boolean isDurationType = mStatsTypeSpinner.getSelectedItemPosition() == DURATION.ordinal();
+        final boolean isDurationType = mStatsType.getSelectedItemPosition() == DURATION.ordinal();
 
         mChart.moveViewToX(data.getXMax());
         mChart.setData(data);
@@ -452,7 +451,7 @@ public class StatisticsFragment extends Fragment {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
 
         final SpinnerRangeType rangeType =
-                SpinnerRangeType.values()[mRangeTypeSpinner.getSelectedItemPosition()];
+                SpinnerRangeType.values()[mRangeType.getSelectedItemPosition()];
 
         mXAxisFormatter = new CustomXAxisFormatter(xValues, rangeType);
         xAxis.setValueFormatter(mXAxisFormatter);
@@ -479,9 +478,9 @@ public class StatisticsFragment extends Fragment {
     private LineData generateChartData(List<Session> sessions) {
 
         final SpinnerStatsType statsType =
-                SpinnerStatsType.values()[mStatsTypeSpinner.getSelectedItemPosition()];
+                SpinnerStatsType.values()[mStatsType.getSelectedItemPosition()];
         final SpinnerRangeType rangeType =
-                SpinnerRangeType.values()[mRangeTypeSpinner.getSelectedItemPosition()];
+                SpinnerRangeType.values()[mRangeType.getSelectedItemPosition()];
 
         final int DUMMY_INTERVAL_RANGE = 15;
 
