@@ -21,7 +21,7 @@ public class AboutActivity extends AppCompatActivity {
         ThemeHelper.setTheme(this);
 
         GenericMainBinding binding = DataBindingUtil.setContentView(this, R.layout.generic_main);
-        setSupportActionBar(binding.toolbar);
+        setSupportActionBar(binding.toolbarWrapper.toolbar);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

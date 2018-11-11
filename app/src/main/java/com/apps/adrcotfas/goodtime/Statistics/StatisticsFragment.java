@@ -8,6 +8,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -113,6 +116,7 @@ public class StatisticsFragment extends Fragment {
         StatisticsFragmentMainBinding binding = DataBindingUtil.inflate(
                 inflater, R.layout.statistics_fragment_main, container, false);
         View view = binding.getRoot();
+        setHasOptionsMenu(true);
         mChart = binding.history.chart;
 
         mOverview = new StatsView(
@@ -132,10 +136,10 @@ public class StatisticsFragment extends Fragment {
         mStatsType = binding.overview.statsType;
         mRangeType = binding.history.rangeType;
 
-        binding.allEntriesButton.setOnClickListener(view12 -> {
-            Intent intent = new Intent(getActivity(), AllEntriesActivity.class);
-            startActivity(intent);
-        });
+        ((StatisticsActivity) getActivity()).setSupportActionBar(binding.toolbarWrapper.toolbar);
+        if (((StatisticsActivity) getActivity()).getSupportActionBar() != null) {
+            ((StatisticsActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         binding.backupButton.setOnClickListener(view1 -> {
             //TODO: clean-up
@@ -588,5 +592,28 @@ public class StatisticsFragment extends Fragment {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
         return dp;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_statistics_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+            break;
+            case R.id.action_view_list:
+                Fragment fragment = new AllEntriesFragment();
+
+                getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment, fragment)
+                .addToBackStack(null)
+                .commitAllowingStateLoss();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

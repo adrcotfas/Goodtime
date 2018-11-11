@@ -22,7 +22,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         super.onCreate(savedInstanceState);
         ThemeHelper.setTheme(this);
         GenericMainBinding binding = DataBindingUtil.setContentView(this, R.layout.generic_main);
-        setSupportActionBar(binding.toolbar);
+        setSupportActionBar(binding.toolbarWrapper.toolbar);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

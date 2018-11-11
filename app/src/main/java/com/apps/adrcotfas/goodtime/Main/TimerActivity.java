@@ -124,10 +124,10 @@ public class TimerActivity
             mStatusButton.setEnabled(true);
         });
 
-        setSupportActionBar(binding.toolbar);
+        setSupportActionBar(binding.toolbarWrapper.toolbar);
         getSupportActionBar().setTitle(null);
 
-        setupDrawer(binding.toolbar);
+        setupDrawer(binding.toolbarWrapper.toolbar);
         setupEvents();
     }
 

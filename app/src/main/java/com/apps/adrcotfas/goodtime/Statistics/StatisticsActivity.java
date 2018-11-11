@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
-import com.apps.adrcotfas.goodtime.databinding.StatisticsActivityMainBinding;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,10 +16,7 @@ public class StatisticsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ThemeHelper.setTheme(this);
-
-        StatisticsActivityMainBinding binding =
-                DataBindingUtil.setContentView(this, R.layout.statistics_activity_main);
-        setSupportActionBar(binding.toolbar);
+        DataBindingUtil.setContentView(this, R.layout.statistics_activity_main);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -30,8 +26,18 @@ public class StatisticsActivity extends AppCompatActivity {
             Fragment fragment = new StatisticsFragment();
 
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment, fragment);
+            ft.add(R.id.fragment, fragment);
             ft.commitAllowingStateLoss();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(getFragmentManager().getBackStackEntryCount() == 0) {
+            super.onBackPressed();
+        }
+        else {
+            getFragmentManager().popBackStack();
         }
     }
 }

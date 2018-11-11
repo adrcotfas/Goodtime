@@ -17,16 +17,7 @@
             android:fitsSystemWindows="true"
             tools:context="com.apps.adrcotfas.goodtime.Main.TimerActivity">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:background="@null"
-                android:minHeight="?attr/actionBarSize"
-                android:visibility="visible"/>
+            <include android:id="@+id/toolbar_wrapper" layout="@layout/toolbar"/>
 
             <View
                 android:id="@+id/main"

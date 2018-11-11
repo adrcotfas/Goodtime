@@ -41,12 +41,6 @@ public class AllEntriesFragment extends Fragment {
     //TODO: maybe find an alternative to loading these in onCreateView
     private List<LabelAndColor> mLabels;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -56,9 +50,10 @@ public class AllEntriesFragment extends Fragment {
         mLabelsViewModel.getLabels().observe(this, labelAndColors -> mLabels = labelAndColors);
 
         View view = binding.getRoot();
-        ((AllEntriesActivity) getActivity()).setSupportActionBar(binding.toolbar);
-        if (((AllEntriesActivity) getActivity()).getSupportActionBar() != null) {
-            ((AllEntriesActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setHasOptionsMenu(true);
+        ((StatisticsActivity) getActivity()).setSupportActionBar(binding.toolbarWrapper.toolbar);
+        if (((StatisticsActivity) getActivity()).getSupportActionBar() != null) {
+            ((StatisticsActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         RecyclerView recyclerView = binding.mainRecylcerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
@@ -179,9 +174,6 @@ public class AllEntriesFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.home:
-                getActivity().onBackPressed();
-                break;
             case R.id.action_add:
                     AddEditEntryDialog d = new AddEditEntryDialog(
                             AllEntriesFragment.this,
@@ -210,6 +202,6 @@ public class AllEntriesFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_all_entries, menu);
-        super.onCreateOptionsMenu(menu,inflater);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }
