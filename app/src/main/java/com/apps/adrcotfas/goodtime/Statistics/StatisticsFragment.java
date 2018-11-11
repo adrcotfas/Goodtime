@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentMainBinding;
@@ -104,7 +105,7 @@ public class StatisticsFragment extends Fragment {
     private StatsView mOverview;
     private StatsView mOverviewDescription;
     private ChipGroup mChipGroupLabels;
-    private StatisticsViewModel mViewModel;
+    private LabelsViewModel mViewModel;
 
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -178,9 +179,9 @@ public class StatisticsFragment extends Fragment {
             startActivityForResult(intent, 123);
         });
 
-        mViewModel = ViewModelProviders.of(getActivity()).get(StatisticsViewModel.class);
+        mViewModel = ViewModelProviders.of(getActivity()).get(LabelsViewModel.class);
         setupLabelRadioGroup();
-        mViewModel.currentLabel.observe(this, labelAndColor -> refreshUi());
+        mViewModel.crtExtendedLabel.observe(this, labelAndColor -> refreshUi());
 
         setupSpinners();
         setupChart();
@@ -190,54 +191,36 @@ public class StatisticsFragment extends Fragment {
     @SuppressLint("ResourceType")
     private void setupLabelRadioGroup() {
         mChipGroupLabels.setOnCheckedChangeListener((chipGroup, id) -> {
-            Chip chip = ((Chip) mChipGroupLabels.getChildAt(mChipGroupLabels.getCheckedChipId()));
-            if (chip != null) {
-                for (int i = 0; i < mChipGroupLabels.getChildCount(); ++i) {
-                    mChipGroupLabels.getChildAt(i).setClickable(true);
-                }
-                chip.setClickable(false);
-                mViewModel.currentLabel.setValue(new LabelAndColor(chip.getText().toString(), (int)chip.getTag()));
-            }
-        });
-        //TODO: extract to string
-        final int totalColor = getResources().getColor(R.color.classicAccent);
-        //TODO: find a better way to set the ids. Without explicitly setting them here, they would increment
-        Chip chipTotal = new Chip(getActivity());
-        chipTotal.setText("total");
-        chipTotal.setId(0);
-        chipTotal.setTag(totalColor);
-        chipTotal.setCheckable(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            chipTotal.setButtonTintList(ColorStateList.valueOf(totalColor));
-        }
-        chipTotal.setChipBackgroundColor(ColorStateList.valueOf(totalColor));
-        mChipGroupLabels.addView(chipTotal);
-        mChipGroupLabels.check(chipTotal.getId());
 
-        AppDatabase.getDatabase(getActivity().getApplicationContext()).labelAndColor().getLabels().observe(this, labels -> {
+            // this is called on screen rotation; maybe find a cleaner way
+            if (id == -1) {
+                return;
+            }
+
+            Chip chip = ((Chip) chipGroup.getChildAt(id));
+            if (chip == null) {
+                chip = chipGroup.findViewById(id);
+            }
+
+            for (int i = 0; i < mChipGroupLabels.getChildCount(); ++i) {
+                mChipGroupLabels.getChildAt(i).setClickable(true);
+            }
+            chip.setClickable(false);
+            mViewModel.crtExtendedLabel.setValue(new LabelAndColor(chip.getText().toString(), chip.getChipBackgroundColor().getDefaultColor()));
+        });
+
+        mViewModel.getLabels().observe(this, labels -> {
             for (int i = 0; i < labels.size(); ++i) {
                 Chip chip = new Chip(getActivity());
                 chip.setText(labels.get(i).label);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    chip.setButtonTintList(ColorStateList.valueOf(labels.get(i).color));
-                }
                 chip.setChipBackgroundColor(ColorStateList.valueOf(labels.get(i).color));
                 chip.setCheckable(true);
                 chip.setId(i + 1);
-                chip.setTag(labels.get(i).color);
-                mChipGroupLabels.addView(chip);
+                mChipGroupLabels.addView(chip, i + 1);
+                if (mViewModel.crtExtendedLabel.getValue().label.equals(labels.get(i).label)) {
+                    chip.setChecked(true);
+                }
             }
-            Chip chipUnlabeled = new Chip(getActivity());
-            chipUnlabeled.setText("unlabeled");
-            chipUnlabeled.setId(mChipGroupLabels.getChildCount());
-            final int unlabeledColor = getResources().getColor(R.color.white);
-            chipUnlabeled.setTag(unlabeledColor);
-            chipUnlabeled.setCheckable(true);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                chipUnlabeled.setButtonTintList(ColorStateList.valueOf(unlabeledColor));
-            }
-            chipUnlabeled.setChipBackgroundColor(ColorStateList.valueOf(unlabeledColor));
-            mChipGroupLabels.addView(chipUnlabeled);
         });
     }
 
@@ -380,24 +363,26 @@ public class StatisticsFragment extends Fragment {
 
     private void refreshUi() {
         //TODO: adapt string when translating
-        if (mViewModel.currentLabel.getValue().label.equals("total")) {
-            AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
-                    .observe(this, sessions -> {
-                        refreshStats(sessions);
-                        refreshGraph(sessions);
-                    });
-        } else if (mViewModel.currentLabel.getValue().label.equals("unlabeled")) {
-            AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsUnlabeled()
-                    .observe(this, sessions -> {
-                        refreshStats(sessions);
-                        refreshGraph(sessions);
-                    });
-        } else {
-                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getSessions(mViewModel.currentLabel.getValue().label)
+        if (mViewModel.crtExtendedLabel.getValue() != null) {
+            if (mViewModel.crtExtendedLabel.getValue().label.equals("total")) {
+                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
                         .observe(this, sessions -> {
                             refreshStats(sessions);
                             refreshGraph(sessions);
                         });
+            } else if (mViewModel.crtExtendedLabel.getValue().label.equals("unlabeled")) {
+                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsUnlabeled()
+                        .observe(this, sessions -> {
+                            refreshStats(sessions);
+                            refreshGraph(sessions);
+                        });
+            } else {
+                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getSessions(mViewModel.crtExtendedLabel.getValue().label)
+                        .observe(this, sessions -> {
+                            refreshStats(sessions);
+                            refreshGraph(sessions);
+                        });
+            }
         }
     }
 
@@ -578,7 +563,7 @@ public class StatisticsFragment extends Fragment {
     }
 
     private LineDataSet generateLineDataSet(List<Entry> entries) {
-        LabelAndColor crtLabel = mViewModel.currentLabel.getValue();
+        LabelAndColor crtLabel = mViewModel.crtExtendedLabel.getValue();
         LineDataSet set = new LineDataSet(entries, crtLabel.label);
         set.setColor(crtLabel.color);
         set.setCircleColor(crtLabel.color);

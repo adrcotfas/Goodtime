@@ -25,6 +25,23 @@
                 app:singleSelection="true"
                 app:singleLine="true"
                 app:chipSpacingHorizontal="8dp">
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/label_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="total"
+                    android:checked="true"
+                    android:checkable="true"
+                    android:clickable="false"
+                    app:chipBackgroundColor="@color/classicAccent"/>
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/label_unlabeled"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="unlabeled"
+                    android:checkable="true"
+                    app:chipBackgroundColor="@color/white"/>
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
 
