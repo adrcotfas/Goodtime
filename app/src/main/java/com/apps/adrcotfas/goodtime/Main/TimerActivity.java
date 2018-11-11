@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.goodtime.Main;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -39,14 +38,12 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 import de.greenrobot.event.EventBus;
@@ -175,36 +172,25 @@ public class TimerActivity
     }
 
     private void setupEvents() {
-        mCurrentSession.getDuration().observe(TimerActivity.this, new Observer<Long>() {
-            @Override
-            public void onChanged(@Nullable Long millis) {
-                updateTime(millis);
-            }
-        });
-        mCurrentSession.getSessionType().observe(TimerActivity.this, new Observer<SessionType>() {
-            @Override
-            public void onChanged(@Nullable SessionType sessionType) {
-                if (sessionType == SessionType.WORK) {
-                    mStatusButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_status_goodtime));
-                } else {
-                    mStatusButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_break));
-                }
+        mCurrentSession.getDuration().observe(TimerActivity.this, millis -> updateTime(millis));
+        mCurrentSession.getSessionType().observe(TimerActivity.this, sessionType -> {
+            if (sessionType == SessionType.WORK) {
+                mStatusButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_status_goodtime));
+            } else {
+                mStatusButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_break));
             }
         });
 
-        mCurrentSession.getTimerState().observe(TimerActivity.this, new Observer<TimerState>() {
-            @Override
-            public void onChanged(@Nullable TimerState timerState) {
-                if (timerState == TimerState.INACTIVE) {
-                    mTimeLabel.clearAnimation();
-                    disableButtons();
-                } else if (timerState == TimerState.PAUSED) {
-                    mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
-                    enableButtons();
-                } else {
-                    mTimeLabel.clearAnimation();
-                    enableButtons();
-                }
+        mCurrentSession.getTimerState().observe(TimerActivity.this, timerState -> {
+            if (timerState == TimerState.INACTIVE) {
+                mTimeLabel.clearAnimation();
+                disableButtons();
+            } else if (timerState == TimerState.PAUSED) {
+                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
+                enableButtons();
+            } else {
+                mTimeLabel.clearAnimation();
+                enableButtons();
             }
         });
     }
@@ -263,6 +249,7 @@ public class TimerActivity
         mStopButton.animate().alpha(0.5f).setDuration(100);
         mAddSecondsButton.animate().alpha(0.5f).setDuration(100);
     }
+
     /**
      * Called when an event is posted to the EventBus
      * @param o holds the type of the Event
@@ -361,49 +348,18 @@ public class TimerActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         if (sessionType == SessionType.WORK) {
             builder.setTitle("Session complete")
-                    .setPositiveButton("Start break", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            start(SessionType.BREAK);
-                        }
-                    })
-                    .setNegativeButton("Add 60 seconds", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            add60Seconds();
-                        }
-                    })
-                    .setNeutralButton("Close", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            EventBus.getDefault().post(new Constants.ClearNotificationEvent());
-                        }
-                    })
-                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            // do nothing
-                        }
+                    .setPositiveButton("Start break", (dialog, which) -> start(SessionType.BREAK))
+                    .setNegativeButton("Add 60 seconds", (dialog, which) -> add60Seconds())
+                    .setNeutralButton("Close", (dialog, which) -> EventBus.getDefault().post(new Constants.ClearNotificationEvent()))
+                    .setOnCancelListener(dialog -> {
+                        // do nothing
                     });
         } else {
             builder.setTitle("Break complete")
-                    .setPositiveButton("Begin Session", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            start(SessionType.WORK);
-                        }
-                    })
-                    .setNeutralButton("Close", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            EventBus.getDefault().post(new Constants.ClearNotificationEvent());
-                        }
-                    })
-                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            // do nothing
-                        }
+                    .setPositiveButton("Begin Session", (dialog, which) -> start(SessionType.WORK))
+                    .setNeutralButton("Close", (dialog, which) -> EventBus.getDefault().post(new Constants.ClearNotificationEvent()))
+                    .setOnCancelListener(dialog -> {
+                        // do nothing
                     });
         }
 
