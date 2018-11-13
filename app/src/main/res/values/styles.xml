@@ -1,7 +1,7 @@
 <resources>
 
     <style name="BaseTheme" parent="@style/Theme.MaterialComponents.NoActionBar">
-
+        <item name="viewInflaterClass">androidx.appcompat.app.AppCompatViewInflater</item>
     </style>
 
     <style name="Classic" parent="@style/BaseTheme">
@@ -82,5 +82,4 @@
         <item name="android:textSize">@dimen/smallTextSize</item>
         <item name="android:singleLine">true</item>
     </style>
-
 </resources>

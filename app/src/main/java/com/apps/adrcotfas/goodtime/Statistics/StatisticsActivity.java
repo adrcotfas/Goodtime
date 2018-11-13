@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.goodtime.Statistics;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
@@ -33,11 +34,21 @@ public class StatisticsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(getFragmentManager().getBackStackEntryCount() == 0) {
+        if(getSupportFragmentManager().getBackStackEntryCount() == 0) {
             super.onBackPressed();
         }
         else {
-            getFragmentManager().popBackStack();
+            getSupportFragmentManager().popBackStack();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                super.onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

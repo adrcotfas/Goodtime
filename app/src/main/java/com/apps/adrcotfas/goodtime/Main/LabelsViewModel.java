@@ -39,6 +39,10 @@ public class LabelsViewModel extends AndroidViewModel {
         return mLabelsDao.getLabels();
     }
 
+    public LiveData<Integer> getColorOfLabel(String label) {
+        return mLabelsDao.getColor(label);
+    }
+
     public void editLabelName(String label, String newLabel) {
         mExecutorService.execute(() -> mLabelsDao.editLabelName(label, newLabel));
     }

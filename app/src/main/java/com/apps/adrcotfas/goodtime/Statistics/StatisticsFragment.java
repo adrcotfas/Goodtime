@@ -54,6 +54,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import static android.app.Activity.RESULT_OK;
@@ -474,7 +475,7 @@ public class StatisticsFragment extends Fragment {
         final int DUMMY_INTERVAL_RANGE = 15;
 
         List<Entry> yVals = new ArrayList<>();
-        TreeMap<LocalDate, Long> tree = new TreeMap<>();
+        TreeMap<LocalDate, Integer> tree = new TreeMap<>();
 
         // generate dummy data
         LocalDate dummyEnd = new LocalDate().plusDays(1);
@@ -482,19 +483,19 @@ public class StatisticsFragment extends Fragment {
             case DAYS:
                 LocalDate dummyBegin = dummyEnd.minusDays(DUMMY_INTERVAL_RANGE);
                 for (LocalDate i = dummyBegin; i.isBefore(dummyEnd); i = i.plusDays(1)) {
-                    tree.put(i, 0L);
+                    tree.put(i, 0);
                 }
                 break;
             case WEEKS:
                 dummyBegin = dummyEnd.minusWeeks(DUMMY_INTERVAL_RANGE).dayOfWeek().withMinimumValue();
                 for (LocalDate i = dummyBegin; i.isBefore(dummyEnd); i = i.plusWeeks(1)) {
-                    tree.put(i, 0L);
+                    tree.put(i, 0);
                 }
                 break;
             case MONTHS:
                 dummyBegin = dummyEnd.minusMonths(DUMMY_INTERVAL_RANGE);
                 for (LocalDate i = dummyBegin; i.isBefore(dummyEnd); i = i.plusMonths(1)) {
-                    tree.put(i, 0L);
+                    tree.put(i, 0);
                 }
                 break;
         }
@@ -603,13 +604,11 @@ public class StatisticsFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-            break;
             case R.id.action_view_list:
                 Fragment fragment = new AllEntriesFragment();
-
                 getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment, fragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
                 return true;

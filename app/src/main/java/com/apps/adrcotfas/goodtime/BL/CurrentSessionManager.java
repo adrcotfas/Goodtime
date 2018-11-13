@@ -33,7 +33,7 @@ public class CurrentSessionManager extends ContextWrapper{
     private AppCountDownTimer mTimer;
     private CurrentSession mCurrentSession;
     private long mRemaining;
-    private long mElapsed;
+    private int mElapsed;
     private AlarmReceiver mAlarmReceiver;
 
     public CurrentSessionManager(Context context, CurrentSession currentSession) {
@@ -175,7 +175,7 @@ public class CurrentSessionManager extends ContextWrapper{
         }
     }
 
-    public long getElapsedTime() {
+    public int getElapsedTime() {
         // TODO: seconds to minutes
         return mElapsed;
     }

@@ -21,7 +21,7 @@ public interface LabelAndColorDao {
     LiveData<List<LabelAndColor>> getLabels();
 
     @Query("select color from LabelAndColor where label = :label")
-    int getColor(String label);
+    LiveData<Integer> getColor(String label);
 
     @Query("update LabelAndColor SET label = :label WHERE label = :id")
     void editLabelName(String id, String label);

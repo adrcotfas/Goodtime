@@ -10,7 +10,8 @@ import java.util.TreeMap;
 
 public class StringUtils {
 
-    private static final DateTimeFormatter monthFormatter = DateTimeFormat.forPattern("EEEE', 'MMMM d', ' yyyy");
+    private static final DateTimeFormatter monthFormatter = DateTimeFormat.forPattern("EEE', 'MMM d', ' yyyy");
+    private static final DateTimeFormatter timeFormatter = DateTimeFormat.forPattern("HH:mm");
     private static final DateTimeFormatter backUpFormatter = DateTimeFormat.forPattern("yyyy-MM-dd-HH:mm");
 
     private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
@@ -62,6 +63,10 @@ public class StringUtils {
 
     public static String formatDate(long millis) {
         return monthFormatter.print(millis);
+    }
+
+    public static String formatTime(long millis) {
+        return timeFormatter.print(millis);
     }
 
     public static String formatDateAndTime(long millis) {

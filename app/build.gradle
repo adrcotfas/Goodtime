@@ -66,5 +66,7 @@ dependencies {
 
     implementation 'androidx.recyclerview:recyclerview-selection:1.0.0-rc02'
 
-    implementation 'com.github.florent37:singledateandtimepicker:2.0.7'
+    implementation ('com.wdullaer:materialdatetimepicker:4.0.1') {
+        exclude group: 'androidx.appcompat'
+    }
 }

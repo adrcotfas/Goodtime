@@ -24,13 +24,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class AllEntriesFragment extends Fragment {
-    private StatisticsFragmentAllEntriesBinding binding;
 
     private AllEntriesAdapter mAdapter;
     private ActionMode mActionMode;
@@ -44,10 +44,9 @@ public class AllEntriesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.statistics_fragment_all_entries, container, false);
+        StatisticsFragmentAllEntriesBinding binding = DataBindingUtil.inflate(inflater, R.layout.statistics_fragment_all_entries, container, false);
 
-        mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
-        mLabelsViewModel.getLabels().observe(this, labelAndColors -> mLabels = labelAndColors);
+        mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
 
         View view = binding.getRoot();
         setHasOptionsMenu(true);
@@ -141,15 +140,12 @@ public class AllEntriesFragment extends Fragment {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_edit:
-                    final Long sessionId = mAdapter.mSelectedEntries.get(0);
-
-                    AddEditEntryDialog d = new AddEditEntryDialog(
-                            AllEntriesFragment.this,
-                            mLabels,
-                            true,
-                            sessionId,
-                            mActionMode);
-                    d.show();
+                    if (mSessionToEdit != null) {
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        AddEditEntryDialog newFragment = AddEditEntryDialog.newInstance(mSessionToEdit);
+                        newFragment.show(fragmentManager, "");
+                        mActionMode.finish();
+                    }
                     break;
                 case R.id.action_delete:
                     new AlertDialog.Builder(getActivity())
@@ -175,13 +171,9 @@ public class AllEntriesFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-                    AddEditEntryDialog d = new AddEditEntryDialog(
-                            AllEntriesFragment.this,
-                            mLabels,
-                            false,
-                            null,
-                            mActionMode);
-                    d.show();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                AddEditEntryDialog newFragment = new AddEditEntryDialog();
+                newFragment.show(fragmentManager, "");
                 break;
             case R.id.action_sort_by_date:
                 AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByDuration()
