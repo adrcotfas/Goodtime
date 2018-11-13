@@ -21,7 +21,7 @@ public class Session {
     @PrimaryKey(autoGenerate = true)
     public long id;
 
-    public Session(long id, long endTime, long totalTime, @Nullable String label) {
+    public Session(long id, long endTime, int totalTime, @Nullable String label) {
         this.id = id;
         this.endTime = endTime;
         this.totalTime = totalTime;
@@ -32,7 +32,7 @@ public class Session {
     public long endTime;
 
     @NonNull
-    public long totalTime;
+    public int totalTime;
 
     @Nullable
     public String label;

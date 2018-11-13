@@ -37,9 +37,8 @@ public class AllEntriesFragment extends Fragment {
     private List<Long> mSelectedEntries = new ArrayList<>();
     private boolean mIsMultiSelect = false;
     private Menu mMenu;
-    private LabelsViewModel mLabelsViewModel;
-    //TODO: maybe find an alternative to loading these in onCreateView
-    private List<LabelAndColor> mLabels;
+    private SessionViewModel mSessionViewModel;
+    private Session mSessionToEdit;
 
     @Nullable
     @Override
@@ -107,6 +106,12 @@ public class AllEntriesFragment extends Fragment {
                     mActionMode.finish();
                 }
                 mAdapter.setSelectedItems(mSelectedEntries);
+
+                // hack bellow to avoid multiple dialogs because of observe but it works
+                if (mSelectedEntries.size() == 1) {
+                    final Long sessionId = mAdapter.mSelectedEntries.get(0);
+                    mSessionViewModel.getSession(sessionId).observe(AllEntriesFragment.this, session -> mSessionToEdit = session);
+                }
             }
         }
     }
