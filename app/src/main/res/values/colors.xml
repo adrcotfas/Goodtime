@@ -12,6 +12,7 @@
     <color name="transparent_white">#b4ffffff</color>
 
     <color name="transparent">#1effffff</color>
+    <color name="true_transparent">#00FFFFFF</color>
 
     <color name="pref_classic">#232323</color>
     <color name="pref_dark">#33344b</color>

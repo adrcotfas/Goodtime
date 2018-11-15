@@ -196,7 +196,6 @@ public class StatisticsFragment extends Fragment {
     @SuppressLint("ResourceType")
     private void setupLabelRadioGroup() {
         mChipGroupLabels.setOnCheckedChangeListener((chipGroup, id) -> {
-
             // this is called on screen rotation; maybe find a cleaner way
             if (id == -1) {
                 return;

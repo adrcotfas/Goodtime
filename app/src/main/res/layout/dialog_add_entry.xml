@@ -1,43 +1,103 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Duration"
-            android:textSize="14sp"/>
+            android:orientation="horizontal"
+            android:paddingTop="24dp"
+            android:paddingLeft="22dp"
+            android:paddingRight="16dp"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/duration_drawable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="24dp"
+                android:src ="@drawable/ic_duration"/>
 
-        <EditText
-            android:id="@+id/duration"
-            android:layout_width="match_parent"
+            <EditText
+                android:id="@+id/duration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:maxLength="3"
+                android:hint="Add duration (minutes)"
+                style="@style/DialogEditText"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:inputType="numberDecimal"
-            android:textSize="14sp"/>
+            android:orientation="horizontal"
+            android:paddingTop="24dp"
+            android:paddingLeft="22dp"
+            android:paddingRight="16dp"
+            android:gravity="center">
 
-        <TextView
-            android:id="@+id/edit_date"
-            android:text="Edit Date"
-            android:clickable="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            <ImageView
+                android:id="@+id/date_drawable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="24dp"
+                android:src ="@drawable/ic_clock"/>
 
-        <TextView
-            android:id="@+id/edit_time"
-            android:text="Edit Time"
-            android:clickable="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/edit_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="24dp"
+                android:text="Edit Date"
+                android:clickable="true"
+                style="@style/DialogEditText"/>
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/edit_label"
-            android:text="Edit label"
-            android:clickable="true"
+            <TextView
+                android:id="@+id/edit_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit Time"
+                android:clickable="true"
+                style="@style/DialogEditText"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="24dp"
+            android:paddingLeft="22dp"
+            android:paddingRight="16dp"
+            android:layout_marginBottom="24dp"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/label_drawable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="24dp"
+                android:src ="@drawable/ic_label_off"/>
+
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/labels"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true"
+                    app:singleLine="true"
+                    app:chipSpacingHorizontal="8dp">
+
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
+        </LinearLayout>
 
     </LinearLayout>
 </layout>

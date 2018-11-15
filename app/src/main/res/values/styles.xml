@@ -82,4 +82,12 @@
         <item name="android:textSize">@dimen/smallTextSize</item>
         <item name="android:singleLine">true</item>
     </style>
+
+    <style name="DialogEditText" parent="@android:style/TextAppearance.Widget.EditText">
+        <item name="android:background">@color/true_transparent</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/regularTextSize</item>
+    </style>
+
 </resources>
