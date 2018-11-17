@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.Statistics;
+package com.apps.adrcotfas.goodtime.Statistics.AllSessions;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,12 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class AllEntriesAdapter extends RecyclerView.Adapter<AllEntriesViewHolder> {
+public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHolder> {
     public List<Session> mEntries = new ArrayList<>();
     public List<Long> mSelectedEntries = new ArrayList<>();
     List<LabelAndColor> mLabels;
 
-    AllEntriesAdapter(List<LabelAndColor> labels) {
+    AllSessionsAdapter(List<LabelAndColor> labels) {
         // this and the override of getItemId are to avoid clipping in the view
         setHasStableIds(true);
         mLabels = labels;
@@ -29,15 +29,15 @@ public class AllEntriesAdapter extends RecyclerView.Adapter<AllEntriesViewHolder
 
     @NonNull
     @Override
-    public AllEntriesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AllSessionsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View statusContainer = inflater.inflate(R.layout.statistics_all_entries_row, parent, false);
-        return new AllEntriesViewHolder(statusContainer);
+        return new AllSessionsViewHolder(statusContainer);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AllEntriesViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AllSessionsViewHolder holder, int position) {
         Session session = mEntries.get(position);
         holder.bind(session, getColor(session.label));
         holder.rowOverlay.setVisibility(

@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.Statistics;
+package com.apps.adrcotfas.goodtime.Statistics.Main;
 
 public enum SpinnerRangeType {
     DAYS,

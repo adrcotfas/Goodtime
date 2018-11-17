@@ -60,7 +60,7 @@
         </activity>
 
         <activity
-            android:name=".Statistics.StatisticsActivity"
+            android:name=".Statistics.Main.StatisticsActivity"
             android:label="Statistics"
             android:showOnLockScreen="true"
             android:parentActivityName=".Main.TimerActivity">

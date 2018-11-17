@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.Statistics;
+package com.apps.adrcotfas.goodtime.Statistics.Main;
 
 import android.content.Context;
 import android.view.GestureDetector;

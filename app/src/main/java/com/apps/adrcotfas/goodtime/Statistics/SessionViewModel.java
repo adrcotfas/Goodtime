@@ -25,28 +25,28 @@ public class SessionViewModel extends AndroidViewModel {
         mExecutorService = Executors.newSingleThreadExecutor();
     }
 
-    LiveData<List<Session>> getAllSessionsByEndTime() {
+    public LiveData<List<Session>> getAllSessionsByEndTime() {
         return mSessionDao.getAllSessionsByEndTime();
     }
 
-    LiveData<List<Session>> getAllSessionsByDuration() {
+    public LiveData<List<Session>> getAllSessionsByDuration() {
         return mSessionDao.getAllSessionsByDuration();
     }
 
-    LiveData<Session> getSession(long id) {
+    public LiveData<Session> getSession(long id) {
         return mSessionDao.getSession(id);
     }
 
-    void addSession(Session session) {
+    public void addSession(Session session) {
         mExecutorService.execute(() -> mSessionDao.addSession(session));
     }
 
-    void editSession(Long id, long endTime, long totalTime, String label) {
+    public void editSession(Long id, long endTime, long totalTime, String label) {
         mExecutorService.execute(() -> mSessionDao.editSession(
                 id, endTime, totalTime, label));
     }
 
-    void deleteSession(long id) {
+    public void deleteSession(long id) {
         mExecutorService.execute(() -> mSessionDao.deleteSession(id));
     }
 }

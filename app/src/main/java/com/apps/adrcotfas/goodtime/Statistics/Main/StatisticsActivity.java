@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.Statistics;
+package com.apps.adrcotfas.goodtime.Statistics.Main;
 
 import android.os.Bundle;
 import android.view.MenuItem;

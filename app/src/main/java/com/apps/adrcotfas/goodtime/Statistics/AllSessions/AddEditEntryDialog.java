@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.Statistics;
+package com.apps.adrcotfas.goodtime.Statistics.AllSessions;
 
 import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
@@ -12,6 +12,8 @@ import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
+import com.apps.adrcotfas.goodtime.Statistics.Main.SelectLabelDialog;
+import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
 import com.apps.adrcotfas.goodtime.Util.StringUtils;
 import com.apps.adrcotfas.goodtime.databinding.DialogAddEntryBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -27,9 +29,9 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 
-import static com.apps.adrcotfas.goodtime.Statistics.AddEditEntryDialogViewModel.INVALID_SESSION_TO_EDIT_ID;
+import static com.apps.adrcotfas.goodtime.Statistics.AllSessions.AddEditEntryDialogViewModel.INVALID_SESSION_TO_EDIT_ID;
 
-public class AddEditEntryDialog extends BottomSheetDialogFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, SelectLabelDialog.OnLabelSelectedListener{
+public class AddEditEntryDialog extends BottomSheetDialogFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, SelectLabelDialog.OnLabelSelectedListener {
 
     private AddEditEntryDialogViewModel mViewModel;
     private SessionViewModel mSessionViewModel;

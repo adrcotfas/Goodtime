@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.Statistics;
+package com.apps.adrcotfas.goodtime.Statistics.AllSessions;
 
 import android.view.View;
 
@@ -8,11 +8,11 @@ import com.apps.adrcotfas.goodtime.databinding.StatisticsAllEntriesRowBinding;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class AllEntriesViewHolder extends RecyclerView.ViewHolder {
+public class AllSessionsViewHolder extends RecyclerView.ViewHolder {
     private StatisticsAllEntriesRowBinding binding;
     public View rowOverlay;
 
-    public AllEntriesViewHolder(View itemView) {
+    public AllSessionsViewHolder(View itemView) {
         super(itemView);
         binding = DataBindingUtil.bind(itemView);
         rowOverlay = binding.overlay;

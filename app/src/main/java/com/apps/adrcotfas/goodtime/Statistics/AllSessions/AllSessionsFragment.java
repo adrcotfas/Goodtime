@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.Statistics;
+package com.apps.adrcotfas.goodtime.Statistics.AllSessions;
 
 import android.os.Bundle;
 import android.view.ActionMode;
@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
+import com.apps.adrcotfas.goodtime.Statistics.Main.RecyclerItemClickListener;
+import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
+import com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentAllEntriesBinding;
 
 import java.util.ArrayList;
@@ -28,9 +31,9 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class AllEntriesFragment extends Fragment {
+public class AllSessionsFragment extends Fragment {
 
-    private AllEntriesAdapter mAdapter;
+    private AllSessionsAdapter mAdapter;
     private ActionMode mActionMode;
     private List<Long> mSelectedEntries = new ArrayList<>();
     private boolean mIsMultiSelect = false;
@@ -58,7 +61,7 @@ public class AllEntriesFragment extends Fragment {
 
         //TODO: this might be dangerous because view might be returned before this is executed
         labelsViewModel.getLabels().observe(this, labels -> {
-            mAdapter = new AllEntriesAdapter(labels);
+            mAdapter = new AllSessionsAdapter(labels);
             recyclerView.setAdapter(mAdapter);
 
             mSessionViewModel.getAllSessionsByEndTime().observe(getActivity(), sessions -> {
@@ -116,7 +119,7 @@ public class AllEntriesFragment extends Fragment {
                 // hack bellow to avoid multiple dialogs because of observe
                 if (mSelectedEntries.size() == 1) {
                     final Long sessionId = mAdapter.mSelectedEntries.get(0);
-                    mSessionViewModel.getSession(sessionId).observe(AllEntriesFragment.this, session -> mSessionToEdit = session);
+                    mSessionViewModel.getSession(sessionId).observe(AllSessionsFragment.this, session -> mSessionToEdit = session);
                 }
             }
         }

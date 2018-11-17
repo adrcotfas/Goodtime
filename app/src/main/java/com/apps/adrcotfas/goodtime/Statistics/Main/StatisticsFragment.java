@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.Statistics;
+package com.apps.adrcotfas.goodtime.Statistics.Main;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -24,6 +24,7 @@ import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
+import com.apps.adrcotfas.goodtime.Statistics.AllSessions.AllSessionsFragment;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentMainBinding;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
@@ -58,7 +59,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import static android.app.Activity.RESULT_OK;
-import static com.apps.adrcotfas.goodtime.Statistics.SpinnerStatsType.DURATION;
+import static com.apps.adrcotfas.goodtime.Statistics.Main.SpinnerStatsType.DURATION;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatDateAndTime;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatMinutes;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatWeekRange;
@@ -604,7 +605,7 @@ public class StatisticsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_view_list:
-                Fragment fragment = new AllEntriesFragment();
+                Fragment fragment = new AllSessionsFragment();
                 getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment, fragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
