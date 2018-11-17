@@ -1,6 +1,5 @@
 package com.apps.adrcotfas.goodtime.Statistics;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -10,8 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.apps.adrcotfas.goodtime.Database.AppDatabase;
-import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
@@ -20,6 +17,7 @@ import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentAllEntriesBindi
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
@@ -39,10 +37,11 @@ public class AllEntriesFragment extends Fragment {
     private Menu mMenu;
     private SessionViewModel mSessionViewModel;
     private Session mSessionToEdit;
+    private List<Session> mSessions;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         StatisticsFragmentAllEntriesBinding binding = DataBindingUtil.inflate(inflater, R.layout.statistics_fragment_all_entries, container, false);
 
         mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
@@ -62,8 +61,10 @@ public class AllEntriesFragment extends Fragment {
             mAdapter = new AllEntriesAdapter(labels);
             recyclerView.setAdapter(mAdapter);
 
-            AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
-                    .observe(getActivity(), entries -> mAdapter.setData(entries));
+            mSessionViewModel.getAllSessionsByEndTime().observe(getActivity(), sessions -> {
+                mAdapter.setData(sessions);
+                mSessions = sessions;
+            });
 
             recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
             recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
@@ -123,10 +124,30 @@ public class AllEntriesFragment extends Fragment {
 
     private void deleteSessions() {
         for (Long i : mAdapter.mSelectedEntries) {
-            AsyncTask.execute(() -> AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().deleteSession(i));
+            mSessionViewModel.deleteSession(i);
         }
         mAdapter.mSelectedEntries.clear();
         if (mActionMode != null) {
+            mActionMode.finish();
+        }
+    }
+
+    private void selectAll() {
+        mSelectedEntries.clear();
+        for (int i = 0; i < mSessions.size(); ++i) {
+            mSelectedEntries.add(i, mSessions.get(i).id);
+        }
+
+        if (mSelectedEntries.size() == 1) {
+            mMenu.getItem(0).setVisible(true);
+            mActionMode.setTitle(String.valueOf(mSelectedEntries.size()));
+            mAdapter.setSelectedItems(mSelectedEntries);
+        } else if (mSelectedEntries.size() > 1) {
+            mMenu.getItem(0).setVisible(false);
+            mActionMode.setTitle(String.valueOf(mSelectedEntries.size()));
+            mAdapter.setSelectedItems(mSelectedEntries);
+        }  else {
+            mActionMode.setTitle("");
             mActionMode.finish();
         }
     }
@@ -157,6 +178,9 @@ public class AllEntriesFragment extends Fragment {
                         mActionMode.finish();
                     }
                     break;
+                case R.id.action_select_all:
+                    selectAll();
+                    break;
                 case R.id.action_delete:
                     new AlertDialog.Builder(getActivity())
                             .setTitle("Delete selected entries?")
@@ -186,16 +210,12 @@ public class AllEntriesFragment extends Fragment {
                 newFragment.show(fragmentManager, "");
                 break;
             case R.id.action_sort_by_date:
-                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByDuration()
-                        .removeObservers(getActivity());
-                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
-                        .observe(getActivity(), entries -> mAdapter.setData(entries));
+                mSessionViewModel.getAllSessionsByDuration().removeObservers(getActivity());
+                mSessionViewModel.getAllSessionsByEndTime().observe(getActivity(), entries -> mAdapter.setData(entries));
                 break;
             case R.id.action_sort_by_duration:
-                        AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
-                        .removeObservers(getActivity());
-                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByDuration()
-                        .observe(getActivity(), entries -> mAdapter.setData(entries));
+                mSessionViewModel.getAllSessionsByEndTime().removeObservers(getActivity());
+                mSessionViewModel.getAllSessionsByDuration().observe(getActivity(), entries -> mAdapter.setData(entries));
                 break;
         }
         return super.onOptionsItemSelected(item);

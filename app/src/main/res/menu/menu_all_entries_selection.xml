@@ -6,11 +6,16 @@
         android:id="@+id/action_edit"
         android:icon="@drawable/ic_edit"
         android:title="Edit"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_select_all"
+        android:icon="@drawable/ic_select_all"
+        android:title="Select all"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_delete"
         android:icon="@drawable/ic_delete"
         android:title="Delete"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 </menu>
