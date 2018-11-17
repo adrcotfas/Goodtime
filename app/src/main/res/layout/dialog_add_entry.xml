@@ -51,7 +51,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_height="match_parent"
                 android:text="Edit Time"
-                style="@style/AllEntriesAddEditDialogRow"/>
+                style="@style/AllEntriesAddEditDialogRowEnd"/>
         </RelativeLayout>
 
         <RelativeLayout
