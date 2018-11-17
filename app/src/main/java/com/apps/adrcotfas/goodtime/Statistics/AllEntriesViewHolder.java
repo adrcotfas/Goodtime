@@ -15,10 +15,11 @@ public class AllEntriesViewHolder extends RecyclerView.ViewHolder {
     public AllEntriesViewHolder(View itemView) {
         super(itemView);
         binding = DataBindingUtil.bind(itemView);
-        rowOverlay = binding.rowOverlay;
+        rowOverlay = binding.overlay;
     }
 
-    public void bind(Session item) {
+    public void bind(Session item, int color) {
         binding.setItem(item);
+        binding.setColor(color);
     }
 }

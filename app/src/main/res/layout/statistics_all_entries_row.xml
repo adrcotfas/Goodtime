@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
             name="item"
             type="com.apps.adrcotfas.goodtime.Session"/>
+
+        <variable
+            name="color"
+            type="int"/>
+
+        <import type="android.view.View"/>
     </data>
 
     <RelativeLayout
@@ -13,34 +19,54 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/rowTotalTime"
+            android:id="@+id/duration"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
+            android:paddingLeft="16dp"
             android:layout_height="wrap_content"
+            android:singleLine="true"
             android:text="@{com.apps.adrcotfas.goodtime.Util.StringUtils.formatMinutes(item.totalTime)}"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/rowEndTime"
-            android:layout_alignParentRight="true"
+            android:id="@+id/date"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_toRightOf="@id/duration"
+            android:textSize="@dimen/smallerTextSize"
+            android:singleLine="true"
+            android:padding="16dp"
             android:text="@{com.apps.adrcotfas.goodtime.Util.StringUtils.formatDate(item.endTime)}"
             />
 
         <TextView
-            android:id="@+id/label"
-            android:layout_toRightOf="@id/rowTotalTime"
+            android:id="@+id/time"
+            android:layout_toRightOf="@id/date"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:padding="8dp"
+            android:textSize="@dimen/smallerTextSize"
+            android:text="@{com.apps.adrcotfas.goodtime.Util.StringUtils.formatTime(item.endTime)}"
+            />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/label"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="32dp"
+            android:clickable="false"
+            app:chipBackgroundColor="@{color}"
+            android:visibility="@{item.label == null ? View.INVISIBLE : View.VISIBLE}"
             android:text="@{item.label}" />
 
         <View
-            android:id="@+id/rowOverlay"
+            android:id="@+id/overlay"
             android:layout_height="50dp"
             android:layout_width="match_parent"
             android:background="@color/transparent"

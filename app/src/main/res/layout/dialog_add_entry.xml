@@ -3,101 +3,88 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="200dp"
+        app:layout_behavior="@string/bottom_sheet_behavior">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/header"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="24dp"
-            android:paddingLeft="22dp"
-            android:paddingRight="16dp"
-            android:gravity="center">
-            <ImageView
-                android:id="@+id/duration_drawable"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="24dp"
-                android:src ="@drawable/ic_duration"/>
+            android:layout_height="56dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="center"
+            android:text="Add session"
+            android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/duration"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
-                android:maxLength="3"
-                android:hint="Add duration (minutes)"
-                style="@style/DialogEditText"/>
+        <EditText
+            android:id="@+id/duration"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:drawableLeft="@drawable/ic_duration"
+            android:inputType="numberDecimal"
+            android:maxLength="3"
+            android:imeOptions="actionDone"
+            android:hint="Add duration (minutes)"
+            style="@style/AllEntriesAddEditDialogRowEdit" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="24dp"
-            android:paddingLeft="22dp"
-            android:paddingRight="16dp"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/date_drawable"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="24dp"
-                android:src ="@drawable/ic_clock"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal">
 
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:id="@+id/edit_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="24dp"
-                android:text="Edit Date"
-                android:clickable="true"
-                style="@style/DialogEditText"/>
+                android:drawableLeft="@drawable/ic_clock"
+                android:layout_alignParentLeft="true"
+                android:text="Edit date"
+                style="@style/AllEntriesAddEditDialogRow"/>
 
             <TextView
                 android:id="@+id/edit_time"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_height="match_parent"
                 android:text="Edit Time"
-                android:clickable="true"
-                style="@style/DialogEditText"/>
-        </LinearLayout>
+                style="@style/AllEntriesAddEditDialogRow"/>
+        </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
             android:orientation="horizontal"
-            android:paddingTop="24dp"
-            android:paddingLeft="22dp"
-            android:paddingRight="16dp"
-            android:layout_marginBottom="24dp"
-            android:gravity="center">
+            style="@style/AllEntriesAddEditDialogRow">
 
             <ImageView
                 android:id="@+id/label_drawable"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="24dp"
-                android:src ="@drawable/ic_label_off"/>
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:src="@drawable/ic_label_off"
+                android:layout_centerVertical="true"/>
 
-            <HorizontalScrollView
+            <com.google.android.material.chip.Chip
+                android:id="@+id/label_chip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:scrollbars="none">
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/labels"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:singleSelection="true"
-                    app:singleLine="true"
-                    app:chipSpacingHorizontal="8dp">
+                android:layout_toRightOf="@id/label_drawable"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="32dp"
+                android:text="add label" />
+        </RelativeLayout>
 
-                </com.google.android.material.chip.ChipGroup>
-            </HorizontalScrollView>
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/save"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:drawableLeft="@drawable/ic_floppy"
+            android:text="Save"
+            style="@style/AllEntriesAddEditDialogRow"/>
 
     </LinearLayout>
 </layout>

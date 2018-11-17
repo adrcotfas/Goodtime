@@ -13,6 +13,8 @@
 
         <item name="android:actionModeCloseDrawable">@drawable/ic_clear</item>
         <item name="actionModeStyle">@style/ActionModeStyle</item>
+
+        <item name="bottomSheetDialogTheme">@style/Theme.Design.BottomSheetDialog</item>
     </style>
 
     <style name="Dark" parent="@style/BaseTheme">
@@ -83,11 +85,27 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="DialogEditText" parent="@android:style/TextAppearance.Widget.EditText">
+    <style name="AllEntriesAddEditDialogRowEdit" parent="@android:style/TextAppearance.Widget.EditText">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:drawablePadding">32dp</item>
         <item name="android:background">@color/true_transparent</item>
+        <item name="android:clickable">true</item>
         <item name="android:maxLines">1</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/regularTextSize</item>
+    </style>
+
+    <style name="AllEntriesAddEditDialogRow">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:drawablePadding">32dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
 </resources>

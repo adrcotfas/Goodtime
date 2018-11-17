@@ -46,6 +46,7 @@ public class AllEntriesFragment extends Fragment {
         StatisticsFragmentAllEntriesBinding binding = DataBindingUtil.inflate(inflater, R.layout.statistics_fragment_all_entries, container, false);
 
         mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
+        LabelsViewModel labelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
 
         View view = binding.getRoot();
         setHasOptionsMenu(true);
@@ -55,34 +56,38 @@ public class AllEntriesFragment extends Fragment {
         }
         RecyclerView recyclerView = binding.mainRecylcerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-        mAdapter = new AllEntriesAdapter();
-        recyclerView.setAdapter(mAdapter);
 
-        AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
-                .observe(getActivity(), entries -> mAdapter.setData(entries));
+        //TODO: this might be dangerous because view might be returned before this is executed
+        labelsViewModel.getLabels().observe(this, labels -> {
+            mAdapter = new AllEntriesAdapter(labels);
+            recyclerView.setAdapter(mAdapter);
 
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
-        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                if (mIsMultiSelect) {
-                    multiSelect(position);
-                }
-            }
+            AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
+                    .observe(getActivity(), entries -> mAdapter.setData(entries));
 
-            @Override
-            public void onItemLongClick(View view, int position) {
-                if (!mIsMultiSelect) {
-                    mAdapter.setSelectedItems(new ArrayList<>());
-                    mIsMultiSelect = true;
-
-                    if (mActionMode == null) {
-                        mActionMode = getActivity().startActionMode(mActionModeCallback);
+            recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+            recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    if (mIsMultiSelect) {
+                        multiSelect(position);
                     }
                 }
-                multiSelect(position);
-            }
-        }));
+
+                @Override
+                public void onItemLongClick(View view, int position) {
+                    if (!mIsMultiSelect) {
+                        mAdapter.setSelectedItems(new ArrayList<>());
+                        mIsMultiSelect = true;
+
+                        if (mActionMode == null) {
+                            mActionMode = getActivity().startActionMode(mActionModeCallback);
+                        }
+                    }
+                    multiSelect(position);
+                }
+            }));
+        });
         return view;
     }
 
@@ -107,7 +112,7 @@ public class AllEntriesFragment extends Fragment {
                 }
                 mAdapter.setSelectedItems(mSelectedEntries);
 
-                // hack bellow to avoid multiple dialogs because of observe but it works
+                // hack bellow to avoid multiple dialogs because of observe
                 if (mSelectedEntries.size() == 1) {
                     final Long sessionId = mAdapter.mSelectedEntries.get(0);
                     mSessionViewModel.getSession(sessionId).observe(AllEntriesFragment.this, session -> mSessionToEdit = session);

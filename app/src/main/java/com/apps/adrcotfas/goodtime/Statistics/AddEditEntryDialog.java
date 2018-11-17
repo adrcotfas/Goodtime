@@ -1,47 +1,41 @@
 package com.apps.adrcotfas.goodtime.Statistics;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Util.StringUtils;
 import com.apps.adrcotfas.goodtime.databinding.DialogAddEntryBinding;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import org.joda.time.DateTime;
 
 import java.util.Calendar;
-import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 
 import static com.apps.adrcotfas.goodtime.Statistics.AddEditEntryDialogViewModel.INVALID_SESSION_TO_EDIT_ID;
 
-public class AddEditEntryDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+public class AddEditEntryDialog extends BottomSheetDialogFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, SelectLabelDialog.OnLabelSelectedListener{
 
     private AddEditEntryDialogViewModel mViewModel;
     private SessionViewModel mSessionViewModel;
 
-    private EditText mDurationView;
-    private ChipGroup mLabelView;
-    private TextView mDateView;
-    private TextView mTimeView;
     private Session mSessionToEdit;
+    private LabelsViewModel mLabelsViewModel;
 
     public AddEditEntryDialog() {
         // Empty constructor required for DialogFragment
@@ -59,84 +53,58 @@ public class AddEditEntryDialog extends DialogFragment implements DatePickerDial
     }
 
     @SuppressLint("ResourceType")
-    @NonNull
+    @Nullable
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
 
         DialogAddEntryBinding binding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.dialog_add_entry, null, false);
 
+        View view = binding.getRoot();
         mViewModel = ViewModelProviders.of(this).get(AddEditEntryDialogViewModel.class);
         mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
-        LabelsViewModel labelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
+        mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
 
-        mDurationView = binding.duration;
-        mDurationView.setSelection(mDurationView.getText().length());
-        mLabelView = binding.labels;
         // TODO: implement onClicks with DataBinding
-
-        mViewModel.duration.observe(this, duration -> mDurationView.setText(duration.toString()));
+        mViewModel.duration.observe(this, d -> {
+            String duration = d.toString();
+            binding.duration.setText(duration);
+            binding.duration.setSelection(duration.length());
+        });
         mViewModel.date.observe(this, date ->  {
-            mDateView.setText(StringUtils.formatDate(date.getMillis()));
-            mTimeView.setText(StringUtils.formatTime(date.getMillis()));
+            binding.editDate.setText(StringUtils.formatDate(date.getMillis()));
+            binding.editTime.setText(StringUtils.formatTime(date.getMillis()));
         });
 
-        mLabelView.setOnCheckedChangeListener((chipGroup, id) -> {
-            Chip chip = ((Chip) chipGroup.getChildAt(id));
-            if (chip == null) {
-                mViewModel.label.setValue(null);
-                binding.labelDrawable.setImageDrawable(getResources().getDrawable(R.drawable.ic_label_off));
-            } else {
-                mViewModel.label.setValue(chip.getText().toString());
+        mViewModel.label.observe(this, label -> {
+            if (label != null) {
+                binding.labelChip.setText(label);
+                mLabelsViewModel.getColorOfLabel(label).observe(this, color ->
+                        binding.labelChip.setChipBackgroundColor(ColorStateList.valueOf(color)));
                 binding.labelDrawable.setImageDrawable(getResources().getDrawable(R.drawable.ic_label));
+            } else {
+                binding.labelChip.setText("add label");
+                binding.labelChip.setChipBackgroundColor(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+                binding.labelDrawable.setImageDrawable(getResources().getDrawable(R.drawable.ic_label_off));
             }
         });
 
-        labelsViewModel.getLabels().observe(this, labels -> {
-            for (int i = 0; i < labels.size(); ++i) {
-                Chip chip = new Chip(Objects.requireNonNull(getActivity()));
-                chip.setText(labels.get(i).label);
-                chip.setChipBackgroundColor(ColorStateList.valueOf(labels.get(i).color));
-                chip.setCheckable(true);
-                chip.setId(i);
-                mLabelView.addView(chip, i);
+        binding.editDate.setOnClickListener(v -> onDateViewClick());
+        binding.editTime.setOnClickListener(v -> onTimeViewClick());
 
-                if (mViewModel.label.getValue() != null && mViewModel.label.getValue().equals(labels.get(i).label)) {
-                    // move the current selected label to the front
-                    for (int j = 0; j < chip.getId(); ++j) {
-                        mLabelView.getChildAt(j).setId(j + 1);
-                    }
-                    mLabelView.removeView(chip);
-                    mLabelView.addView(chip, 0);
-                    chip.setId(0);
-                    chip.setChecked(true);
-                }
-            }
+        binding.labelChip.setOnClickListener(c -> {
+            // open another dialog to select the chip
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            SelectLabelDialog.newInstance(this,mViewModel.label.getValue()).show(fragmentManager, "");
         });
 
-        mDateView = binding.editDate;
-        mDateView.setOnClickListener(dateView -> onDateViewClick());
-
-        mTimeView = binding.editTime;
-        mTimeView.setOnClickListener(view -> onTimeViewClick());
-
-        // this is for the edit dialog
-        if (mSessionToEdit != null) {
-            mViewModel.date.setValue(new DateTime(mSessionToEdit.endTime));
-            mViewModel.duration.setValue(mSessionToEdit.totalTime);
-            mViewModel.label.setValue(mSessionToEdit.label);
-            mViewModel.sessionToEditId = mSessionToEdit.id;
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
-        builder.setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_add_entry, null))
-                .setView(binding.getRoot())
-        .setTitle(mSessionToEdit == null ? "Add session" : "Edit session")
-        .setPositiveButton("OK", (dialog, which) -> {
-            if (mDurationView.getText().toString().isEmpty()) {
+        binding.save.setOnClickListener(v -> {
+            if (binding.duration.getText().toString().isEmpty()) {
                 Toast.makeText(getActivity(), "Enter a valid duration", Toast.LENGTH_LONG).show();
             }
             else {
-                final int duration = Math.min(Integer.parseInt(mDurationView.getText().toString()), 120);
+                final int duration = Math.min(Integer.parseInt(binding.duration.getText().toString()), 120);
                 final String label = mViewModel.label.getValue();
                 Session sessionToAdd = new Session(0, mViewModel.date.getValue().getMillis(), duration, label);
                 if (mViewModel.sessionToEditId != INVALID_SESSION_TO_EDIT_ID) {
@@ -146,13 +114,18 @@ public class AddEditEntryDialog extends DialogFragment implements DatePickerDial
                 }
                 dismiss();
             }
-        })
-        .setNegativeButton("Cancel", (dialog, which) -> {
-            if (dialog != null) {
-                dialog.dismiss();
-            }
         });
-        return builder.create();
+
+        // this is for the edit dialog
+        if (mSessionToEdit != null) {
+            mViewModel.date.setValue(new DateTime(mSessionToEdit.endTime));
+            mViewModel.duration.setValue(mSessionToEdit.totalTime);
+            mViewModel.label.setValue(mSessionToEdit.label);
+            mViewModel.sessionToEditId = mSessionToEdit.id;
+            binding.header.setText("Edit session");
+        }
+
+        return view;
     }
 
     private void onTimeViewClick() {
@@ -193,5 +166,14 @@ public class AddEditEntryDialog extends DialogFragment implements DatePickerDial
                 : mViewModel.date.getValue()
                 .withHourOfDay(hourOfDay)
                 .withMinuteOfHour(minute));
+    }
+
+    @Override
+    public void onLabelSelected(LabelAndColor labelAndColor) {
+        if (labelAndColor != null) {
+            mViewModel.label.setValue(labelAndColor.label);
+        } else {
+            mViewModel.label.setValue(null);
+        }
     }
 }

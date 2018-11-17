@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 
@@ -18,10 +19,12 @@ import androidx.recyclerview.widget.RecyclerView;
 public class AllEntriesAdapter extends RecyclerView.Adapter<AllEntriesViewHolder> {
     public List<Session> mEntries = new ArrayList<>();
     public List<Long> mSelectedEntries = new ArrayList<>();
+    List<LabelAndColor> mLabels;
 
-    AllEntriesAdapter() {
+    AllEntriesAdapter(List<LabelAndColor> labels) {
         // this and the override of getItemId are to avoid clipping in the view
         setHasStableIds(true);
+        mLabels = labels;
     }
 
     @NonNull
@@ -36,7 +39,7 @@ public class AllEntriesAdapter extends RecyclerView.Adapter<AllEntriesViewHolder
     @Override
     public void onBindViewHolder(@NonNull AllEntriesViewHolder holder, int position) {
         Session session = mEntries.get(position);
-        holder.bind(session);
+        holder.bind(session, getColor(session.label));
         holder.rowOverlay.setVisibility(
                 mSelectedEntries.contains(mEntries.get(position).id) ? View.VISIBLE : View.INVISIBLE);
     }
@@ -50,6 +53,17 @@ public class AllEntriesAdapter extends RecyclerView.Adapter<AllEntriesViewHolder
     public long getItemId(int position) {
         Session session = mEntries.get(position);
         return session.id;
+    }
+
+    private int getColor(String label) {
+        int color = 0;
+        for (LabelAndColor l : mLabels) {
+            if (l.label.equals(label)) {
+                color = l.color;
+                break;
+            }
+        }
+        return color;
     }
 
     public void setData(List<Session> newSessions) {
