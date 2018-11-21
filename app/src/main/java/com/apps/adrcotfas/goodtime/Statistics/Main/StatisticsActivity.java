@@ -134,14 +134,6 @@ public class StatisticsActivity extends AppCompatActivity {
 
             case R.id.action_add:
 
-                for (int i = 0; i < 10000; ++i) {
-                    Session session = new Session(
-                            0,
-                            System.currentTimeMillis(),
-                            42,
-                            "art");
-                    mSessionViewModel.addSession(session);
-                }
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 AddEditEntryDialog newFragment = new AddEditEntryDialog();
                 newFragment.show(fragmentManager, "");
