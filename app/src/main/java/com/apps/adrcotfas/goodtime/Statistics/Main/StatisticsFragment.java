@@ -1,16 +1,11 @@
 package com.apps.adrcotfas.goodtime.Statistics.Main;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,7 +19,7 @@ import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
-import com.apps.adrcotfas.goodtime.Statistics.AllSessions.AllSessionsFragment;
+import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentMainBinding;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
@@ -33,8 +28,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 
 import org.joda.time.LocalDate;
 
@@ -55,7 +48,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import static android.app.Activity.RESULT_OK;
@@ -109,8 +101,8 @@ public class StatisticsFragment extends Fragment {
 
     private StatsView mOverview;
     private StatsView mOverviewDescription;
-    private ChipGroup mChipGroupLabels;
-    private LabelsViewModel mViewModel;
+    private LabelsViewModel mLabelsViewModel;
+    private SessionViewModel mSessionViewModel;
 
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -134,14 +126,8 @@ public class StatisticsFragment extends Fragment {
                 binding.overview.totalDescription
         );
 
-        mChipGroupLabels = binding.labels.labels;
         mStatsType = binding.overview.statsType;
         mRangeType = binding.history.rangeType;
-
-        ((StatisticsActivity) getActivity()).setSupportActionBar(binding.toolbarWrapper.toolbar);
-        if (((StatisticsActivity) getActivity()).getSupportActionBar() != null) {
-            ((StatisticsActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
 
         binding.backupButton.setOnClickListener(view1 -> {
             //TODO: clean-up
@@ -185,48 +171,14 @@ public class StatisticsFragment extends Fragment {
             startActivityForResult(intent, 123);
         });
 
-        mViewModel = ViewModelProviders.of(getActivity()).get(LabelsViewModel.class);
-        setupLabelRadioGroup();
-        mViewModel.crtExtendedLabel.observe(this, labelAndColor -> refreshUi());
+        mLabelsViewModel = ViewModelProviders.of(getActivity()).get(LabelsViewModel.class);
+        mLabelsViewModel.crtExtendedLabel.observe(this, labelAndColor -> refreshUi());
+
+        mSessionViewModel = ViewModelProviders.of(getActivity()).get(SessionViewModel.class);
 
         setupSpinners();
         setupChart();
         return view;
-    }
-
-    @SuppressLint("ResourceType")
-    private void setupLabelRadioGroup() {
-        mChipGroupLabels.setOnCheckedChangeListener((chipGroup, id) -> {
-            // this is called on screen rotation; maybe find a cleaner way
-            if (id == -1) {
-                return;
-            }
-
-            Chip chip = ((Chip) chipGroup.getChildAt(id));
-            if (chip == null) {
-                chip = chipGroup.findViewById(id);
-            }
-
-            for (int i = 0; i < mChipGroupLabels.getChildCount(); ++i) {
-                mChipGroupLabels.getChildAt(i).setClickable(true);
-            }
-            chip.setClickable(false);
-            mViewModel.crtExtendedLabel.setValue(new LabelAndColor(chip.getText().toString(), chip.getChipBackgroundColor().getDefaultColor()));
-        });
-
-        mViewModel.getLabels().observe(this, labels -> {
-            for (int i = 0; i < labels.size(); ++i) {
-                Chip chip = new Chip(getActivity());
-                chip.setText(labels.get(i).label);
-                chip.setChipBackgroundColor(ColorStateList.valueOf(labels.get(i).color));
-                chip.setCheckable(true);
-                chip.setId(i + 1);
-                mChipGroupLabels.addView(chip, i + 1);
-                if (mViewModel.crtExtendedLabel.getValue().label.equals(labels.get(i).label)) {
-                    chip.setChecked(true);
-                }
-            }
-        });
     }
 
     private void refreshStats(List<Session> sessions) {
@@ -368,22 +320,19 @@ public class StatisticsFragment extends Fragment {
 
     private void refreshUi() {
         //TODO: adapt string when translating
-        if (mViewModel.crtExtendedLabel.getValue() != null) {
-            if (mViewModel.crtExtendedLabel.getValue().label.equals("total")) {
-                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsByEndTime()
-                        .observe(this, sessions -> {
+        if (mLabelsViewModel.crtExtendedLabel.getValue() != null) {
+            if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals("total")) {
+                mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
                             refreshStats(sessions);
                             refreshGraph(sessions);
                         });
-            } else if (mViewModel.crtExtendedLabel.getValue().label.equals("unlabeled")) {
-                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getAllSessionsUnlabeled()
-                        .observe(this, sessions -> {
+            } else if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals("unlabeled")) {
+                mSessionViewModel.getAllSessionsUnlabeled().observe(this, sessions -> {
                             refreshStats(sessions);
                             refreshGraph(sessions);
                         });
             } else {
-                AppDatabase.getDatabase(getActivity().getApplicationContext()).sessionModel().getSessions(mViewModel.crtExtendedLabel.getValue().label)
-                        .observe(this, sessions -> {
+                mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().label).observe(this, sessions -> {
                             refreshStats(sessions);
                             refreshGraph(sessions);
                         });
@@ -403,13 +352,14 @@ public class StatisticsFragment extends Fragment {
         mChart.getAxisLeft().setAxisMinimum(0f);
         mChart.getAxisLeft().setAxisMaximum(isDurationType ? 60f : 6f);
 
-        final int visibleXRange = pxToDp(mChart.getWidth()) / 46;
-        mChart.setVisibleXRangeMaximum(visibleXRange);
-        mChart.setVisibleXRangeMinimum(visibleXRange);
-        mChart.getXAxis().setLabelCount(visibleXRange);
+        final int visibleXCount = pxToDp(mChart.getWidth()) / 36;
+        mChart.setVisibleXRangeMaximum(visibleXCount);
+        mChart.setVisibleXRangeMinimum(visibleXCount);
+        mChart.getXAxis().setLabelCount(visibleXCount);
+        mChart.getAxisLeft().setLabelCount(5, true);
 
         if (sessions.size() > 0 && data.getYMax() >= (isDurationType ? 60 : 6f)) {
-            mChart.getAxisLeft().resetAxisMaximum();
+            mChart.getAxisLeft().setAxisMaximum(isDurationType ? (float) (Math.ceil((double)(data.getYMax() / 20)) * 20) : data.getYMax() + 5);
         }
 
         mChart.notifyDataSetChanged();
@@ -430,10 +380,10 @@ public class StatisticsFragment extends Fragment {
         YAxis yAxis = mChart.getAxisLeft();
         yAxis.setValueFormatter(new CustomYAxisFormatter());
         yAxis.setTextColor(getResources().getColor(R.color.white));
-        yAxis.setGranularity(1);
+        yAxis.setGranularity(10);
         yAxis.setTextSize(CHART_TEXT_SIZE);
         yAxis.setDrawAxisLine(false);
-        yAxis.setLabelCount(5);
+
 
         XAxis xAxis = mChart.getXAxis();
         xAxis.setGranularityEnabled(true);
@@ -568,7 +518,7 @@ public class StatisticsFragment extends Fragment {
     }
 
     private LineDataSet generateLineDataSet(List<Entry> entries) {
-        LabelAndColor crtLabel = mViewModel.crtExtendedLabel.getValue();
+        LabelAndColor crtLabel = mLabelsViewModel.crtExtendedLabel.getValue();
         LineDataSet set = new LineDataSet(entries, crtLabel.label);
         set.setColor(crtLabel.color);
         set.setCircleColor(crtLabel.color);
@@ -593,26 +543,5 @@ public class StatisticsFragment extends Fragment {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
         return dp;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_statistics_main, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_view_list:
-                Fragment fragment = new AllSessionsFragment();
-                getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment, fragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .addToBackStack(null)
-                .commitAllowingStateLoss();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

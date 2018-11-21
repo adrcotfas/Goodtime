@@ -12,9 +12,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <include android:id="@+id/toolbar_wrapper" layout="@layout/toolbar"/>
-
-            <include android:id="@+id/labels" layout="@layout/statistics_labels"/>
             <include android:id="@+id/overview" layout="@layout/statistics_overview"/>
             <include android:id="@+id/history" layout="@layout/statistics_history"/>
 

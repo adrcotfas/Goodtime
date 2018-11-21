@@ -14,7 +14,6 @@ import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Statistics.Main.RecyclerItemClickListener;
 import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
-import com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentAllEntriesBinding;
 
 import java.util.ArrayList;
@@ -39,6 +38,7 @@ public class AllSessionsFragment extends Fragment {
     private boolean mIsMultiSelect = false;
     private Menu mMenu;
     private SessionViewModel mSessionViewModel;
+    private LabelsViewModel mLabelsViewModel;
     private Session mSessionToEdit;
     private List<Session> mSessions;
 
@@ -48,26 +48,20 @@ public class AllSessionsFragment extends Fragment {
         StatisticsFragmentAllEntriesBinding binding = DataBindingUtil.inflate(inflater, R.layout.statistics_fragment_all_entries, container, false);
 
         mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
-        LabelsViewModel labelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
+        mLabelsViewModel = ViewModelProviders.of(getActivity()).get(LabelsViewModel.class);
 
         View view = binding.getRoot();
         setHasOptionsMenu(true);
-        ((StatisticsActivity) getActivity()).setSupportActionBar(binding.toolbarWrapper.toolbar);
-        if (((StatisticsActivity) getActivity()).getSupportActionBar() != null) {
-            ((StatisticsActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+
         RecyclerView recyclerView = binding.mainRecylcerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
 
         //TODO: this might be dangerous because view might be returned before this is executed
-        labelsViewModel.getLabels().observe(this, labels -> {
+        mLabelsViewModel.getLabels().observe(this, labels -> {
             mAdapter = new AllSessionsAdapter(labels);
             recyclerView.setAdapter(mAdapter);
 
-            mSessionViewModel.getAllSessionsByEndTime().observe(getActivity(), sessions -> {
-                mAdapter.setData(sessions);
-                mSessions = sessions;
-            });
+            mLabelsViewModel.crtExtendedLabel.observe(this, labelAndColor -> refreshCurrentLabel());
 
             recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
             recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
@@ -93,6 +87,27 @@ public class AllSessionsFragment extends Fragment {
             }));
         });
         return view;
+    }
+
+    private void refreshCurrentLabel() {
+        if (mLabelsViewModel.crtExtendedLabel.getValue() != null && mAdapter != null) {
+            if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals("total")) {
+                mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
+                    mAdapter.setData(sessions);
+                    mSessions = sessions;
+                });
+            } else if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals("unlabeled")) {
+                mSessionViewModel.getAllSessionsUnlabeled().observe(this, sessions -> {
+                    mAdapter.setData(sessions);
+                    mSessions = sessions;
+                });
+            } else {
+                mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().label).observe(this, sessions -> {
+                    mAdapter.setData(sessions);
+                    mSessions = sessions;
+                });
+            }
+        }
     }
 
     public void multiSelect(int position) {
@@ -203,30 +218,4 @@ public class AllSessionsFragment extends Fragment {
             mAdapter.setSelectedItems(new ArrayList<>());
         }
     };
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_add:
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                AddEditEntryDialog newFragment = new AddEditEntryDialog();
-                newFragment.show(fragmentManager, "");
-                break;
-            case R.id.action_sort_by_date:
-                mSessionViewModel.getAllSessionsByDuration().removeObservers(getActivity());
-                mSessionViewModel.getAllSessionsByEndTime().observe(getActivity(), entries -> mAdapter.setData(entries));
-                break;
-            case R.id.action_sort_by_duration:
-                mSessionViewModel.getAllSessionsByEndTime().removeObservers(getActivity());
-                mSessionViewModel.getAllSessionsByDuration().observe(getActivity(), entries -> mAdapter.setData(entries));
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_all_entries, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
 }

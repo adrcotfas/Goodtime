@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_add"
+        android:icon="@drawable/ic_add"
+        android:title="Add session"
+        android:visible="true"
+        app:showAsAction="always"/>
+    <item
         android:id="@+id/action_view_list"
         android:icon="@drawable/ic_show_list"
         android:title="View all entries"

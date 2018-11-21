@@ -27,11 +27,14 @@ public class LabelsViewModel extends AndroidViewModel {
      */
     public MutableLiveData<LabelAndColor> crtExtendedLabel = new MutableLiveData<>();
 
+    public MutableLiveData<Boolean> isMainPage = new MutableLiveData<>();
+
     public LabelsViewModel(@NonNull Application application) {
         super(application);
         mLabelsDao = AppDatabase.getDatabase(application).labelAndColor();
         mExecutorService = Executors.newSingleThreadExecutor();
         crtExtendedLabel.setValue(new LabelAndColor("total", application.getResources().getColor(R.color.classicAccent)));
+        isMainPage.setValue(true);
     }
 
     public LiveData<List<LabelAndColor>> getLabels() {

@@ -1,49 +1,39 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        style="@style/SectionCommon">
 
-        <TextView
-            android:id="@+id/header_labels"
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="8dp"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/labels"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Labels"
-            style="@style/SectionHeader"/>
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none">
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/labels"
+            app:singleSelection="true"
+            app:singleLine="true"
+            app:chipSpacingHorizontal="8dp">
+            <com.google.android.material.chip.Chip
+                android:id="@+id/label_total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:singleSelection="true"
-                app:singleLine="true"
-                app:chipSpacingHorizontal="8dp">
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/label_total"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="total"
-                    android:checked="true"
-                    android:checkable="true"
-                    android:clickable="false"
-                    app:chipBackgroundColor="@color/classicAccent"/>
+                android:text="total"
+                android:checked="true"
+                android:checkable="true"
+                android:clickable="false"
+                app:chipBackgroundColor="@color/classicAccent"/>
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/label_unlabeled"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="unlabeled"
-                    android:checkable="true"
-                    app:chipBackgroundColor="@color/white"/>
-            </com.google.android.material.chip.ChipGroup>
-        </HorizontalScrollView>
-
-    </LinearLayout>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/label_unlabeled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="unlabeled"
+                android:checkable="true"
+                app:chipBackgroundColor="@color/white"/>
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
 </layout>

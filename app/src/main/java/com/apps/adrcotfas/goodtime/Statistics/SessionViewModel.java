@@ -49,4 +49,12 @@ public class SessionViewModel extends AndroidViewModel {
     public void deleteSession(long id) {
         mExecutorService.execute(() -> mSessionDao.deleteSession(id));
     }
+
+    public LiveData<List<Session>> getSessions(String label) {
+        return mSessionDao.getSessions(label);
+    }
+
+    public LiveData<List<Session>> getAllSessionsUnlabeled() {
+        return mSessionDao.getAllSessionsUnlabeled();
+    }
 }
