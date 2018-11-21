@@ -24,7 +24,7 @@
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart"
             android:layout_width="fill_parent"
-            android:layout_height="200dp"
+            android:layout_height="160dp"
             android:layout_below="@+id/range_type"/>
     </RelativeLayout>
 </layout>
