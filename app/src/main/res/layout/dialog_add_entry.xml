@@ -65,16 +65,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:src="@drawable/ic_label_off"
-                android:layout_centerVertical="true"/>
+                android:layout_centerVertical="true" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/label_chip"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="24dp"
                 android:layout_toRightOf="@id/label_drawable"
+                android:layout_toEndOf="@id/label_drawable"
+
+                app:chipIconSize="20dp"
+                app:chipStartPadding="3dp"
+                app:chipCornerRadius="20dp"
+                app:textStartPadding="8dp"
+                app:textEndPadding="4dp"
+
+                android:textAppearance="@style/Chip"
+
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="32dp"
+                android:layout_marginStart="32dp"
                 android:text="add label" />
         </RelativeLayout>
 

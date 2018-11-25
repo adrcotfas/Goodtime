@@ -118,4 +118,14 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="ChipSmall" parent="Base.TextAppearance.AppCompat.Small">
+        <item name="android:textSize">@dimen/smallerTextSize</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="Chip" parent="Base.TextAppearance.AppCompat.Small">
+        <item name="android:textSize">@dimen/smallTextSize</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
 </resources>

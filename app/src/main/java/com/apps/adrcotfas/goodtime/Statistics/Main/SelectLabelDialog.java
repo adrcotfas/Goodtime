@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.DialogSelectLabelBinding;
 import com.google.android.material.chip.Chip;
 
@@ -60,10 +61,12 @@ public class SelectLabelDialog extends DialogFragment {
         mLabelsViewModel.getLabels().observe(this, labels -> {
             int i = 0;
             for (LabelAndColor label : labels) {
-                Chip chip = new Chip(getContext());
+                Chip chip = new Chip(getActivity());
                 chip.setText(label.label);
                 chip.setChipBackgroundColor(ColorStateList.valueOf(label.color));
                 chip.setCheckable(true);
+                ThemeHelper.styleChip(getActivity(), chip);
+
                 chip.setId(i++);
                 if (label.label.equals(mLabel)) {
                     chip.setChecked(true);

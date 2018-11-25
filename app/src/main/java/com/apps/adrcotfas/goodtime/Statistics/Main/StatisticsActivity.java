@@ -3,6 +3,7 @@ package com.apps.adrcotfas.goodtime.Statistics.Main;
 import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -106,6 +107,8 @@ public class StatisticsActivity extends AppCompatActivity {
                 chip.setText(labels.get(i).label);
                 chip.setChipBackgroundColor(ColorStateList.valueOf(labels.get(i).color));
                 chip.setCheckable(true);
+                ThemeHelper.styleChip(this, chip);
+
                 chip.setId(i + 1);
                 mChipGroupLabels.addView(chip, i + 1);
                 if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals(labels.get(i).label)) {

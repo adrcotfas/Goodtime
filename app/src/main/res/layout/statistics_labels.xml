@@ -13,7 +13,7 @@
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/labels"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="24dp"
             app:singleSelection="true"
             app:singleLine="true"
             app:chipSpacingHorizontal="8dp">
@@ -22,6 +22,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="total"
+                android:textAppearance="@style/Chip"
+
+                app:chipIconSize="20dp"
+                app:chipStartPadding="3dp"
+                app:chipCornerRadius="20dp"
+                app:textStartPadding="8dp"
+                app:textEndPadding="4dp"
+
                 android:checked="true"
                 android:checkable="true"
                 android:clickable="false"
@@ -32,6 +40,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="unlabeled"
+
+                android:textAppearance="@style/Chip"
+                app:chipIconSize="20dp"
+                app:chipStartPadding="3dp"
+                app:chipCornerRadius="20dp"
+                app:textStartPadding="8dp"
+                app:textEndPadding="4dp"
+
                 android:checkable="true"
                 app:chipBackgroundColor="@color/white"/>
         </com.google.android.material.chip.ChipGroup>

@@ -20,6 +20,7 @@ import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
+import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentMainBinding;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
@@ -352,7 +353,7 @@ public class StatisticsFragment extends Fragment {
         mChart.getAxisLeft().setAxisMinimum(0f);
         mChart.getAxisLeft().setAxisMaximum(isDurationType ? 60f : 6f);
 
-        final int visibleXCount = pxToDp(mChart.getWidth()) / 36;
+        final int visibleXCount = ThemeHelper.pxToDp(getContext(), mChart.getWidth()) / 36;
         mChart.setVisibleXRangeMaximum(visibleXCount);
         mChart.setVisibleXRangeMinimum(visibleXCount);
         mChart.getXAxis().setLabelCount(visibleXCount);
@@ -537,11 +538,5 @@ public class StatisticsFragment extends Fragment {
             set.setDrawCircleHole(true);
         }
         return set;
-    }
-
-    public int pxToDp(int px) {
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return dp;
     }
 }
