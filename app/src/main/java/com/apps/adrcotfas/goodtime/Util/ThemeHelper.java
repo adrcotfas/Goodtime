@@ -48,6 +48,6 @@ public class ThemeHelper {
         chip.setChipCornerRadius(ThemeHelper.dpToPx(context,20));
         chip.setTextStartPadding(ThemeHelper.dpToPx(context,8));
         chip.setTextEndPadding(ThemeHelper.dpToPx(context,4));
-        chip.setTextAppearance(R.style.Chip);
+        chip.setTextAppearance(R.style.ChipTextAppearance);
     }
 }

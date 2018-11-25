@@ -76,18 +76,11 @@
                 android:layout_toRightOf="@id/label_drawable"
                 android:layout_toEndOf="@id/label_drawable"
 
-                app:chipIconSize="20dp"
-                app:chipStartPadding="3dp"
-                app:chipCornerRadius="20dp"
-                app:textStartPadding="8dp"
-                app:textEndPadding="4dp"
-
-                android:textAppearance="@style/Chip"
-
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="32dp"
                 android:layout_marginStart="32dp"
-                android:text="add label" />
+                android:text="add label"
+                style="@style/Chip"/>
         </RelativeLayout>
 
         <TextView

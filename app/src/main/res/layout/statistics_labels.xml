@@ -22,18 +22,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="total"
-                android:textAppearance="@style/Chip"
-
-                app:chipIconSize="20dp"
-                app:chipStartPadding="3dp"
-                app:chipCornerRadius="20dp"
-                app:textStartPadding="8dp"
-                app:textEndPadding="4dp"
 
                 android:checked="true"
                 android:checkable="true"
                 android:clickable="false"
-                app:chipBackgroundColor="@color/classicAccent"/>
+                app:chipBackgroundColor="@color/classicAccent"
+                style="@style/Chip"/>
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/label_unlabeled"
@@ -41,15 +35,10 @@
                 android:layout_height="wrap_content"
                 android:text="unlabeled"
 
-                android:textAppearance="@style/Chip"
-                app:chipIconSize="20dp"
-                app:chipStartPadding="3dp"
-                app:chipCornerRadius="20dp"
-                app:textStartPadding="8dp"
-                app:textEndPadding="4dp"
-
                 android:checkable="true"
-                app:chipBackgroundColor="@color/white"/>
+                app:chipBackgroundColor="@color/white"
+                style="@style/Chip"/>
+
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
 </layout>
