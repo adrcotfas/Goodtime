@@ -8,7 +8,7 @@
         <item>@string/pref_profile_5217</item>
     </string-array>
 
-    <string name ="spinner_stats_duration">Duration</string>
+    <string name ="spinner_stats_duration">Time</string>
     <string name="spinner_stats_nr_of_sessions">Sessions</string>
 
     <string-array name="spinner_stats_type">
@@ -16,6 +16,7 @@
         <item>@string/spinner_stats_nr_of_sessions</item>
     </string-array>
 
+    <string name ="spinner_range_hours">Hours</string>
     <string name ="spinner_range_days">Days</string>
     <string name ="spinner_range_weeks">Weeks</string>
     <string name ="spinner_range_months">Months</string>
@@ -24,6 +25,11 @@
         <item>@string/spinner_range_days</item>
         <item>@string/spinner_range_weeks</item>
         <item>@string/spinner_range_months</item>
+    </string-array>
+
+    <string-array name="spinner_productive_time_type">
+        <item>@string/spinner_range_days</item>
+        <item>@string/spinner_range_hours</item>
     </string-array>
 
 </resources>

@@ -3,6 +3,7 @@ package com.apps.adrcotfas.goodtime.Util;
 import android.app.ActionBar;
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,13 +33,20 @@ public class ThemeHelper {
         }
     }
 
-    public static int pxToDp(Context context, int px) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    public static float pxToDp(Context context, int px) {
+        return px / context.getResources().getDisplayMetrics().density;
     }
 
-    public static int dpToPx(Context context, int dp) {
-        return (int) (dp * context.getResources().getDisplayMetrics().density + 0.5f);
+    public static int dpToPx(Context context, float dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+    }
+
+    public static int spToPx(Context context, float sp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
+    }
+
+    public static int dpToSp(Context context, float dp) {
+        return (int) (dpToPx(context, dp) / context.getResources().getDisplayMetrics().scaledDensity);
     }
 
     public static void styleChip(Context context, Chip chip) {

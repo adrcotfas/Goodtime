@@ -4,7 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
+import android.text.TextPaint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,19 +18,26 @@ import android.widget.Toast;
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
+import com.apps.adrcotfas.goodtime.Main.TimerActivity;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentMainBinding;
 import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.io.File;
@@ -41,6 +49,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
@@ -52,12 +61,17 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import static android.app.Activity.RESULT_OK;
+import static com.apps.adrcotfas.goodtime.Statistics.Main.SpinnerProductiveTimeType.DAY_OF_WEEK;
+import static com.apps.adrcotfas.goodtime.Statistics.Main.SpinnerProductiveTimeType.HOUR_OF_DAY;
 import static com.apps.adrcotfas.goodtime.Statistics.Main.SpinnerStatsType.DURATION;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatDateAndTime;
+import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatLong;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatMinutes;
-import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatWeekRange;
+import static com.apps.adrcotfas.goodtime.Util.StringUtils.toPercentage;
 
 public class StatisticsFragment extends Fragment {
+
+    private static final String TAG = StatisticsFragment.class.getSimpleName();
 
     //TODO: move to separate file
     private class Stats {
@@ -89,14 +103,18 @@ public class StatisticsFragment extends Fragment {
         }
     }
 
-    private LineChart mChart;
+    private LineChart mChartHistory;
+    private BarChart mChartProductiveHours;
 
     private Spinner mStatsType;
     private Spinner mRangeType;
+    private Spinner mProductiveTime;
+
+    private TextView mHeaderOverview;
+    private TextView mHeaderHistory;
+    private TextView mHeaderProductiveTime;
 
     private CustomXAxisFormatter mXAxisFormatter;
-
-    final private float CHART_TEXT_SIZE = 12f;
 
     private List<LocalDate> xValues = new ArrayList<>();
 
@@ -104,6 +122,7 @@ public class StatisticsFragment extends Fragment {
     private StatsView mOverviewDescription;
     private LabelsViewModel mLabelsViewModel;
     private SessionViewModel mSessionViewModel;
+    private float mDisplayDensity = 1;
 
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -111,8 +130,11 @@ public class StatisticsFragment extends Fragment {
         StatisticsFragmentMainBinding binding = DataBindingUtil.inflate(
                 inflater, R.layout.statistics_fragment_main, container, false);
         View view = binding.getRoot();
+        mDisplayDensity = getResources().getDisplayMetrics().density;
+
         setHasOptionsMenu(true);
-        mChart = binding.history.chart;
+        mChartHistory = binding.history.chart;
+        mChartProductiveHours = binding.productiveHours.barChart;
 
         mOverview = new StatsView(
                 binding.overview.todayValue,
@@ -129,6 +151,11 @@ public class StatisticsFragment extends Fragment {
 
         mStatsType = binding.overview.statsType;
         mRangeType = binding.history.rangeType;
+        mProductiveTime = binding.productiveHours.timeType;
+
+        mHeaderOverview = binding.overview.header;
+        mHeaderHistory = binding.history.headerHistory;
+        mHeaderProductiveTime = binding.productiveHours.headerProductiveTime;
 
         binding.backupButton.setOnClickListener(view1 -> {
             //TODO: clean-up
@@ -178,7 +205,8 @@ public class StatisticsFragment extends Fragment {
         mSessionViewModel = ViewModelProviders.of(getActivity()).get(SessionViewModel.class);
 
         setupSpinners();
-        setupChart();
+        setupHistoryChart();
+        setupProductiveTimeChart();
         return view;
     }
 
@@ -214,21 +242,32 @@ public class StatisticsFragment extends Fragment {
             stats.total += sessions.size();
         }
 
-        mOverview.today.setText(isDurationType || stats.today == 0
+        mOverview.today.setText(isDurationType
                 ? formatMinutes(stats.today)
-                : Long.toString(stats.today));
-        mOverview.week.setText(isDurationType || stats.week == 0
+                : formatLong(stats.today));
+        mOverview.week.setText(isDurationType
                 ? formatMinutes(stats.week)
-                : Long.toString(stats.week));
-        mOverview.month.setText(isDurationType || stats.month == 0
+                : formatLong(stats.week));
+        mOverview.month.setText(isDurationType
                 ? formatMinutes(stats.month)
-                : Long.toString(stats.month));
-        mOverview.total.setText(isDurationType || stats.total == 0 ?
-                formatMinutes(stats.total)
-                : Long.toString(stats.total));
+                : formatLong(stats.month));
+        mOverview.total.setText(isDurationType
+                ? formatMinutes(stats.total)
+                : formatLong(stats.total));
 
-        mOverviewDescription.week.setText(formatWeekRange(thisWeekStart, thisWeekEnd));
-        mOverviewDescription.month.setText(thisMonthEnd.toString("MMM"));
+        int color = mLabelsViewModel.crtExtendedLabel.getValue().color;
+        mOverview.today.setTextColor(color);
+        mOverview.week.setTextColor(color);
+        mOverview.month.setTextColor(color);
+        mOverview.total.setTextColor(color);
+
+        mHeaderOverview.setTextColor(color);
+        mHeaderHistory.setTextColor(color);
+        mHeaderProductiveTime.setTextColor(color);
+
+        // TODO: extract string resource
+        mOverviewDescription.week.setText("Week " + thisWeekStart.getWeekOfWeekyear());
+        mOverviewDescription.month.setText(thisMonthEnd.toString("MMMM"));
     }
 
     @Override
@@ -289,16 +328,13 @@ public class StatisticsFragment extends Fragment {
                 R.array.spinner_stats_type, R.layout.spinner_item);
         statsTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mStatsType.setAdapter(statsTypeAdapter);
-
         mStatsType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 refreshUi();
             }
-
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) { }
         });
 
         ArrayAdapter < CharSequence > rangeTypeAdapter = ArrayAdapter.createFromResource(getContext(),
@@ -311,12 +347,59 @@ public class StatisticsFragment extends Fragment {
                 mXAxisFormatter.setRangeType(SpinnerRangeType.values()[position]);
                 refreshUi();
             }
-
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) { }
         });
+
+        ArrayAdapter < CharSequence > timeTypeAdapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.spinner_productive_time_type, R.layout.spinner_item);
+        timeTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        mProductiveTime.setAdapter(timeTypeAdapter);
+        mProductiveTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                //TODO: optimize to not load the sessions at every spinner click when not necessary
+                refreshUi();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) { }
+        });
+    }
+
+    private void refreshProductiveTimeChart(List<Session> sessions) {
+        // generate according to spinner
+        if (mProductiveTime.getSelectedItemPosition() == HOUR_OF_DAY.ordinal()) {
+            generateProductiveTimeChart(sessions, HOUR_OF_DAY);
+
+            final int visibleXCount = (int) ThemeHelper.pxToDp(getContext(), mChartHistory.getWidth()) / 36;
+            mChartProductiveHours.setVisibleXRangeMaximum(visibleXCount);
+            mChartProductiveHours.setVisibleXRangeMinimum(visibleXCount);
+            mChartProductiveHours.getXAxis().setLabelCount(visibleXCount);
+
+        } else {
+            generateProductiveTimeChart(sessions, DAY_OF_WEEK);
+
+            mChartProductiveHours.setVisibleXRangeMaximum(7);
+            mChartProductiveHours.setVisibleXRangeMinimum(7);
+            mChartProductiveHours.getXAxis().setLabelCount(7);
+        }
+
+        mChartProductiveHours.getBarData().setDrawValues(false);
+        IBarDataSet b = mChartProductiveHours.getData().getDataSets().get(0);
+
+        float maxY = 0;
+        int maxIdx = 0;
+        for (int i = 0; i <  b.getEntryCount(); ++i) {
+            float crtY = b.getEntryForIndex(i).getY();
+            if (crtY > maxY) {
+                maxY = crtY;
+                maxIdx = i;
+            }
+        }
+
+        mChartProductiveHours.moveViewToX(maxIdx);
+        mChartProductiveHours.invalidate();
+        mChartProductiveHours.notifyDataSetChanged();
     }
 
     private void refreshUi() {
@@ -325,70 +408,71 @@ public class StatisticsFragment extends Fragment {
             if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals("total")) {
                 mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
                             refreshStats(sessions);
-                            refreshGraph(sessions);
+                            refreshHistoryChart(sessions);
+                            refreshProductiveTimeChart(sessions);
                         });
             } else if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals("unlabeled")) {
                 mSessionViewModel.getAllSessionsUnlabeled().observe(this, sessions -> {
                             refreshStats(sessions);
-                            refreshGraph(sessions);
+                            refreshHistoryChart(sessions);
+                            refreshProductiveTimeChart(sessions);
                         });
             } else {
                 mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().label).observe(this, sessions -> {
                             refreshStats(sessions);
-                            refreshGraph(sessions);
+                            refreshHistoryChart(sessions);
+                            refreshProductiveTimeChart(sessions);
                         });
             }
         }
     }
 
-    private void refreshGraph(List<Session> sessions) {
+    private void refreshHistoryChart(List<Session> sessions) {
 
-        final LineData data = generateChartData(sessions);
+        final LineData data = generateHistoryChartData(sessions);
         final boolean isDurationType = mStatsType.getSelectedItemPosition() == DURATION.ordinal();
 
-        mChart.moveViewToX(data.getXMax());
-        mChart.setData(data);
-        mChart.getData().setHighlightEnabled(false);
+        mChartHistory.moveViewToX(data.getXMax());
+        mChartHistory.setData(data);
+        mChartHistory.getData().setHighlightEnabled(false);
 
-        mChart.getAxisLeft().setAxisMinimum(0f);
-        mChart.getAxisLeft().setAxisMaximum(isDurationType ? 60f : 6f);
+        mChartHistory.getAxisLeft().setAxisMinimum(0f);
+        mChartHistory.getAxisLeft().setAxisMaximum(isDurationType ? 60f : 6f);
 
-        final int visibleXCount = ThemeHelper.pxToDp(getContext(), mChart.getWidth()) / 36;
-        mChart.setVisibleXRangeMaximum(visibleXCount);
-        mChart.setVisibleXRangeMinimum(visibleXCount);
-        mChart.getXAxis().setLabelCount(visibleXCount);
-        mChart.getAxisLeft().setLabelCount(5, true);
+        final int visibleXCount = (int) ThemeHelper.pxToDp(getContext(), mChartHistory.getWidth()) / 36;
+        mChartHistory.setVisibleXRangeMaximum(visibleXCount);
+        mChartHistory.setVisibleXRangeMinimum(visibleXCount);
+        mChartHistory.getXAxis().setLabelCount(visibleXCount);
+        mChartHistory.getAxisLeft().setLabelCount(5, true);
 
         if (sessions.size() > 0 && data.getYMax() >= (isDurationType ? 60 : 6f)) {
-            mChart.getAxisLeft().setAxisMaximum(isDurationType ? (float) (Math.ceil((double)(data.getYMax() / 20)) * 20) : data.getYMax() + 5);
+            mChartHistory.getAxisLeft().setAxisMaximum(isDurationType ? (float) (Math.ceil((double)(data.getYMax() / 20)) * 20) : data.getYMax() + 5);
         }
 
-        mChart.notifyDataSetChanged();
+        // this part is to align the history chart to the productive time chart by setting the same width
+        TextPaint p = new TextPaint();
+        p.setTextSize(getResources().getDimension(R.dimen.tinyTextSize));
+        int widthOfOtherChart = (int) ThemeHelper.pxToDp(getContext(), (int) p.measureText("100%"));
+        mChartHistory.getAxisLeft().setMinWidth(widthOfOtherChart);
+        mChartHistory.getAxisLeft().setMaxWidth(widthOfOtherChart);
+
+        mChartHistory.notifyDataSetChanged();
     }
 
-    private void setupChart() {
-        mChart.setXAxisRenderer(new CustomXAxisRenderer(
-                mChart.getViewPortHandler(),
-                mChart.getXAxis(),
-                mChart.getTransformer(YAxis.AxisDependency.LEFT)));
+    private void setupHistoryChart() {
+        mChartHistory.setXAxisRenderer(new CustomXAxisRenderer(
+                mChartHistory.getViewPortHandler(),
+                mChartHistory.getXAxis(),
+                mChartHistory.getTransformer(YAxis.AxisDependency.LEFT)));
 
-        mChart.setRendererLeftYAxis(new CustomYAxisRenderer(
-                mChart.getViewPortHandler(),
-                mChart.getAxisLeft(),
-                mChart.getTransformer(YAxis.AxisDependency.LEFT)
-                ));
-
-        YAxis yAxis = mChart.getAxisLeft();
+        YAxis yAxis = mChartHistory.getAxisLeft();
         yAxis.setValueFormatter(new CustomYAxisFormatter());
-        yAxis.setTextColor(getResources().getColor(R.color.white));
-        yAxis.setGranularity(10);
-        yAxis.setTextSize(CHART_TEXT_SIZE);
+        yAxis.setTextColor(getResources().getColor(R.color.grey_500));
+        yAxis.setTextSize(getResources().getDimension(R.dimen.tinyTextSize) / mDisplayDensity);
         yAxis.setDrawAxisLine(false);
 
-
-        XAxis xAxis = mChart.getXAxis();
-        xAxis.setGranularityEnabled(true);
-        xAxis.setTextColor(getResources().getColor(R.color.white));
+        XAxis xAxis = mChartHistory.getXAxis();
+        xAxis.setTextColor(getResources().getColor(R.color.grey_500));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
 
         final SpinnerRangeType rangeType =
@@ -397,26 +481,30 @@ public class StatisticsFragment extends Fragment {
         mXAxisFormatter = new CustomXAxisFormatter(xValues, rangeType);
         xAxis.setValueFormatter(mXAxisFormatter);
         xAxis.setAvoidFirstLastClipping(false);
-        xAxis.setTextSize(CHART_TEXT_SIZE);
+        xAxis.setTextSize(getResources().getDimension(R.dimen.tinyTextSize) / mDisplayDensity);
         xAxis.setDrawGridLines(false);
         xAxis.setDrawAxisLine(false);
 
-        mChart.setExtraTopOffset(30f);
-        mChart.setExtraBottomOffset(20f);
-        mChart.setExtraLeftOffset(-30);
-        mChart.getAxisRight().setEnabled(false);
-        mChart.getDescription().setEnabled(false);
-        mChart.setNoDataText("");
-        mChart.setHardwareAccelerationEnabled(true);
-        mChart.animateY(500, Easing.EasingOption.EaseOutCubic);
-        mChart.getLegend().setEnabled(false);
-        mChart.setDoubleTapToZoomEnabled(false);
-        mChart.setScaleEnabled(false);
-        mChart.invalidate();
-        mChart.notifyDataSetChanged();
+        xAxis.setYOffset(10f);
+
+        mChartHistory.getAxisLeft().setGridColor(getResources().getColor(R.color.transparent_dark));
+        mChartHistory.getAxisLeft().setGridLineWidth(1);
+
+        mChartHistory.setExtraBottomOffset(20f);
+        mChartHistory.setExtraLeftOffset(10f);
+        mChartHistory.getAxisRight().setEnabled(false);
+        mChartHistory.getDescription().setEnabled(false);
+        mChartHistory.setNoDataText("");
+        mChartHistory.setHardwareAccelerationEnabled(true);
+        mChartHistory.animateY(500, Easing.EasingOption.EaseOutCubic);
+        mChartHistory.getLegend().setEnabled(false);
+        mChartHistory.setDoubleTapToZoomEnabled(false);
+        mChartHistory.setScaleEnabled(false);
+        mChartHistory.invalidate();
+        mChartHistory.notifyDataSetChanged();
     }
 
-    private LineData generateChartData(List<Session> sessions) {
+    private LineData generateHistoryChartData(List<Session> sessions) {
 
         final SpinnerStatsType statsType =
                 SpinnerStatsType.values()[mStatsType.getSelectedItemPosition()];
@@ -538,5 +626,111 @@ public class StatisticsFragment extends Fragment {
             set.setDrawCircleHole(true);
         }
         return set;
+    }
+
+    private void setupProductiveTimeChart() {
+        YAxis yAxis = mChartProductiveHours.getAxisLeft();
+        yAxis.setValueFormatter((value, axis) -> toPercentage(value));
+        yAxis.setTextColor(getResources().getColor(R.color.grey_500));
+        yAxis.setGranularity(0.25f);
+        yAxis.setTextSize(getResources().getDimension(R.dimen.tinyTextSize) / mDisplayDensity);
+        yAxis.setAxisMaximum(1.F);
+        yAxis.setDrawGridLines(true);
+        yAxis.setDrawAxisLine(false);
+
+        XAxis xAxis = mChartProductiveHours.getXAxis();
+        xAxis.setTextColor(getResources().getColor(R.color.grey_500));
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        xAxis.setAvoidFirstLastClipping(false);
+        xAxis.setTextSize(getResources().getDimension(R.dimen.tinyTextSize) / mDisplayDensity);
+        xAxis.setDrawGridLines(false);
+        xAxis.setDrawAxisLine(false);
+
+        mChartProductiveHours.setXAxisRenderer(new CustomXAxisRenderer(
+                mChartProductiveHours.getViewPortHandler(),
+                xAxis,
+                mChartProductiveHours.getTransformer(YAxis.AxisDependency.LEFT)));
+
+        mChartProductiveHours.getAxisLeft().setGridColor(getResources().getColor(R.color.transparent_dark));
+        mChartProductiveHours.getAxisLeft().setGridLineWidth(1);
+
+
+        mChartProductiveHours.setExtraBottomOffset(20f);
+        mChartProductiveHours.getAxisRight().setEnabled(false);
+        mChartProductiveHours.getDescription().setEnabled(false);
+        mChartProductiveHours.setNoDataText("");
+        mChartProductiveHours.setHardwareAccelerationEnabled(true);
+        mChartProductiveHours.animateY(500, Easing.EasingOption.EaseOutCubic);
+        mChartProductiveHours.getLegend().setEnabled(false);
+        mChartProductiveHours.setDoubleTapToZoomEnabled(false);
+        mChartProductiveHours.setScaleEnabled(false);
+        mChartProductiveHours.invalidate();
+        mChartProductiveHours.notifyDataSetChanged();
+    }
+
+    private void generateProductiveTimeChart(List<Session> sessions, SpinnerProductiveTimeType type) {
+        ArrayList<BarEntry> yVals = new ArrayList<>();
+        if (type == HOUR_OF_DAY) {
+            List<Long> sessionsPerHour = Arrays.asList(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                    0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L);
+            // dummy values
+            for (int i = 0; i < sessionsPerHour.size(); ++i) {
+                yVals.add(new BarEntry(i, 0.F));
+            }
+
+            final long nrOfSessions = sessions.size();
+            if (nrOfSessions > 0) {
+                // hour of day
+                for (Session s : sessions) {
+                    int crtHourOfDay = new DateTime(s.endTime).getHourOfDay();
+                    sessionsPerHour.set(crtHourOfDay, sessionsPerHour.get(crtHourOfDay) + 1);
+                }
+
+                for (int i = 0; i < sessionsPerHour.size(); ++i) {
+                    yVals.set(i, new BarEntry(i, ((float)sessionsPerHour.get(i) / nrOfSessions)));
+                }
+            }
+        } else if (type == DAY_OF_WEEK){
+            List<Long> sessionsPerDay = Arrays.asList(0L, 0L, 0L, 0L, 0L, 0L, 0L);
+
+            // dummy values
+            for (int i = 0; i < sessionsPerDay.size(); ++i) {
+                yVals.add(new BarEntry(i, 0.F));
+            }
+
+            final long nrOfSessions = sessions.size();
+            if (nrOfSessions > 0) {
+                // day of week
+                for (Session s : sessions) {
+                    int crtDayOfWeek = new LocalDate(s.endTime).getDayOfWeek() - 1;
+                    sessionsPerDay.set(crtDayOfWeek, sessionsPerDay.get(crtDayOfWeek) + 1);
+                }
+
+                for (int i = 0; i < sessionsPerDay.size(); ++i) {
+                    yVals.set(i, new BarEntry(i, ((float)sessionsPerDay.get(i) / nrOfSessions)));
+                }
+            }
+        } else {
+            Log.wtf(TAG, "Something went wrong in generateProductiveTimeChart");
+            return;
+        }
+
+        BarDataSet set1 = new BarDataSet(yVals, "");
+        set1.setColor(mLabelsViewModel.crtExtendedLabel.getValue().color);
+        set1.setHighLightAlpha(0);
+        set1.setDrawIcons(false);
+
+        ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+        dataSets.add(set1);
+
+        BarData data = new BarData(dataSets);
+        data.setValueTextSize(10f);
+        data.setBarWidth(0.4f);
+        mChartProductiveHours.getXAxis().setValueFormatter(null);
+        mChartProductiveHours.setData(data);
+        mChartProductiveHours.getXAxis().setValueFormatter(new ProductiveTimeXAxisFormatter(HOUR_OF_DAY));
+        mChartProductiveHours.invalidate();
+        mChartProductiveHours.notifyDataSetChanged();
     }
 }

@@ -1,9 +1,11 @@
 package com.apps.adrcotfas.goodtime.Util;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -13,6 +15,9 @@ public class StringUtils {
     private static final DateTimeFormatter monthFormatter = DateTimeFormat.forPattern("EEE', 'MMM d', ' yyyy");
     private static final DateTimeFormatter timeFormatter = DateTimeFormat.forPattern("HH:mm");
     private static final DateTimeFormatter backUpFormatter = DateTimeFormat.forPattern("yyyy-MM-dd-HH:mm");
+    private static final DateTimeFormatter dayOfWeekFormatter = DateTimeFormat.forPattern("E");
+    private static final DateTimeFormatter hourOfDayFormatter = DateTimeFormat.forPattern("hh");
+    private static final DateTimeFormatter meridianFormatter = DateTimeFormat.forPattern("a");
 
     private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
     static {
@@ -26,11 +31,13 @@ public class StringUtils {
 
     /**
      * Shortens a value in minutes to a easier to read format of maximum 4 characters
+     * Do not use this for anything else than the History chart before removing the extra left padding hack
      * @param value the value in minutes to be formatted
      * @return the formatted value
      */
     public static String formatLong(long value) {
         //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
+
         if (value == Long.MIN_VALUE) return formatLong(Long.MIN_VALUE + 1);
         if (value < 0) return "-" + formatLong(-value);
         if (value < 1000) return Long.toString(value); //deal with easy case
@@ -41,6 +48,7 @@ public class StringUtils {
 
         long truncated = value / (divideBy / 10); //the number part of the output times 10
         boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
+
         return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
 
@@ -56,7 +64,7 @@ public class StringUtils {
                     + (hours != 0 ? "" + Long.toString(hours) + "h" : "")
                     + (remMin != 0 ? " " + Long.toString(remMin) + "m" : "");
         } else {
-            result = "-";
+            result = "0m";
         }
         return result;
     }
@@ -73,9 +81,16 @@ public class StringUtils {
         return backUpFormatter.print(millis);
     }
 
-    public static String formatWeekRange(LocalDate begin, LocalDate end) {
-        String beginMonth = begin.toString("MMM");
-        String endMonth = end.toString("MMM");
-        return beginMonth + " " + begin.getDayOfMonth() + "–" + (endMonth.equals(beginMonth) ? "" : endMonth + " ") + end.getDayOfMonth();
+    public static String toPercentage(float value) {
+        return Math.round(100 * value) + "%";
+    }
+
+    public static String toDayOfWeek(int value) {
+        return dayOfWeekFormatter.withLocale(Locale.getDefault()).print(new DateTime().withDayOfWeek(value));
+    }
+
+    public static String toHourOfDay(int value) {
+        DateTime date = new DateTime().withHourOfDay(value);
+        return hourOfDayFormatter.print(date) + "\n" + meridianFormatter.print(date);
     }
 }
