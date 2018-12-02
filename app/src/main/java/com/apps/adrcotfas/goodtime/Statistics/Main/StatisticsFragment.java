@@ -533,7 +533,7 @@ public class StatisticsFragment extends Fragment {
                 break;
             case MONTHS:
                 dummyBegin = dummyEnd.minusMonths(DUMMY_INTERVAL_RANGE);
-                for (LocalDate i = dummyBegin; i.isBefore(dummyEnd); i = i.plusMonths(1)) {
+                for (LocalDate i = dummyBegin; i.isBefore(dummyEnd); i = i.plusMonths(1).dayOfMonth().withMinimumValue()) {
                     tree.put(i, 0);
                 }
                 break;
@@ -729,7 +729,7 @@ public class StatisticsFragment extends Fragment {
         data.setBarWidth(0.4f);
         mChartProductiveHours.getXAxis().setValueFormatter(null);
         mChartProductiveHours.setData(data);
-        mChartProductiveHours.getXAxis().setValueFormatter(new ProductiveTimeXAxisFormatter(HOUR_OF_DAY));
+        mChartProductiveHours.getXAxis().setValueFormatter(new ProductiveTimeXAxisFormatter(type));
         mChartProductiveHours.invalidate();
         mChartProductiveHours.notifyDataSetChanged();
     }

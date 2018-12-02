@@ -157,7 +157,7 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements Dat
                 ? new DateTime()
                 : mViewModel.date.getValue()
                 .withYear(year)
-                .withMonthOfYear(monthOfYear)
+                .withMonthOfYear(monthOfYear + 1)
                 .withDayOfMonth(dayOfMonth));
     }
 
