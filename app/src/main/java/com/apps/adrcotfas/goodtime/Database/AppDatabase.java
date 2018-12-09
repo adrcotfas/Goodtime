@@ -20,16 +20,13 @@ public abstract class AppDatabase extends RoomDatabase{
             synchronized (LOCK) {
                 if (INSTANCE == null || !INSTANCE.isOpen()) {
                     INSTANCE =  Room.databaseBuilder(context.getApplicationContext(),
-                            AppDatabase.class, "goodtime-db").build();
+                            AppDatabase.class, "goodtime-db")
+                            .setJournalMode(JournalMode.TRUNCATE)
+                            .build();
                 }
             }
         }
         return INSTANCE;
-    }
-
-    public static void destroyInstance() {
-        closeInstance();
-        INSTANCE = null;
     }
 
     public static void closeInstance() {

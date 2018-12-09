@@ -35,9 +35,9 @@ dependencies {
 
     annotationProcessor "androidx.databinding:databinding-compiler:3.2.0-alpha16"
 
-    annotationProcessor 'androidx.room:room-compiler:2.0.0-rc01'
-    implementation 'androidx.room:room-runtime:2.0.0-rc01'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-rc01'
+    annotationProcessor 'androidx.room:room-compiler:2.1.0-alpha03'
+    implementation 'androidx.room:room-runtime:2.1.0-alpha03'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 
     // Preferences
     implementation 'androidx.preference:preference:1.0.0-rc02'

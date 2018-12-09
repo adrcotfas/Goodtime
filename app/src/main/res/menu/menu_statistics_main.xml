@@ -14,4 +14,15 @@
         android:visible="true"
         android:orderInCategory="1"
         app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_export_backup"
+        android:title="Export backup"
+        android:visible="true"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_import_backup"
+        android:title="Import backup"
+        android:visible="true"
+        app:showAsAction="never"/>
 </menu>

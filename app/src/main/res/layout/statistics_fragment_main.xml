@@ -16,27 +16,6 @@
             <include android:id="@+id/history" layout="@layout/statistics_history"/>
             <include android:id="@+id/productive_hours" layout="@layout/statistics_productive_hours"/>
 
-            <Button
-                android:id="@+id/allEntriesButton"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="All sessions" />
-
-            <Button
-                android:id="@+id/backupButton"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Back-up" />
-
-            <Button
-                android:id="@+id/importButton"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Import back-up" />
-
         </LinearLayout>
     </ScrollView>
 </layout>
