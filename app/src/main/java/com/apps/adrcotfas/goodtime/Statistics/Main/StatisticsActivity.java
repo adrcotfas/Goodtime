@@ -3,14 +3,10 @@ package com.apps.adrcotfas.goodtime.Statistics.Main;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.OpenableColumns;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
@@ -26,10 +22,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -74,13 +67,6 @@ public class StatisticsActivity extends AppCompatActivity {
         });
 
         setupLabelView();
-
-        if (savedInstanceState == null) {
-            Fragment fragment = new StatisticsFragment();
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.add(R.id.fragment, fragment);
-            ft.commitAllowingStateLoss();
-        }
     }
 
     @SuppressLint("ResourceType")
@@ -114,7 +100,6 @@ public class StatisticsActivity extends AppCompatActivity {
                         break;
                 }
             }
-
             mLabelsViewModel.crtExtendedLabel.setValue(new LabelAndColor(chip.getText().toString(), chip.getChipBackgroundColor().getDefaultColor()));
         });
 
@@ -128,7 +113,9 @@ public class StatisticsActivity extends AppCompatActivity {
 
                 chip.setId(i + 1);
                 mChipGroupLabels.addView(chip, i + 1);
-                if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals(labels.get(i).label)) {
+
+                LabelAndColor crtLabel = mLabelsViewModel.crtExtendedLabel.getValue();
+                if (crtLabel != null && crtLabel.label.equals(labels.get(i).label)) {
                     chip.setChecked(true);
                 }
             }

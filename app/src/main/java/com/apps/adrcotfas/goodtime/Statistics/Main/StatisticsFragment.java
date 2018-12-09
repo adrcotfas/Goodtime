@@ -1,7 +1,5 @@
 package com.apps.adrcotfas.goodtime.Statistics.Main;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextPaint;
@@ -13,9 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.apps.adrcotfas.goodtime.Database.AppDatabase;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
@@ -39,14 +35,6 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -54,16 +42,13 @@ import java.util.List;
 import java.util.TreeMap;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
-import static android.app.Activity.RESULT_OK;
 import static com.apps.adrcotfas.goodtime.Statistics.Main.SpinnerProductiveTimeType.DAY_OF_WEEK;
 import static com.apps.adrcotfas.goodtime.Statistics.Main.SpinnerProductiveTimeType.HOUR_OF_DAY;
 import static com.apps.adrcotfas.goodtime.Statistics.Main.SpinnerStatsType.DURATION;
-import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatDateAndTime;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatLong;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatMinutes;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.toPercentage;
@@ -122,6 +107,7 @@ public class StatisticsFragment extends Fragment {
     private LabelsViewModel mLabelsViewModel;
     private SessionViewModel mSessionViewModel;
     private float mDisplayDensity = 1;
+    private boolean mIsSpinnerFirstCall = true;
 
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -157,13 +143,14 @@ public class StatisticsFragment extends Fragment {
         mHeaderProductiveTime = binding.productiveHours.headerProductiveTime;
 
         mLabelsViewModel = ViewModelProviders.of(getActivity()).get(LabelsViewModel.class);
-        mLabelsViewModel.crtExtendedLabel.observe(this, labelAndColor -> refreshUi());
-
         mSessionViewModel = ViewModelProviders.of(getActivity()).get(SessionViewModel.class);
 
         setupSpinners();
         setupHistoryChart();
         setupProductiveTimeChart();
+
+        mLabelsViewModel.crtExtendedLabel.observe(this, labelAndColor -> StatisticsFragment.this.refreshUi());
+
         return view;
     }
 
@@ -235,7 +222,9 @@ public class StatisticsFragment extends Fragment {
         mStatsType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                refreshUi();
+                if (!mIsSpinnerFirstCall) {
+                    refreshUi();
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) { }
@@ -248,8 +237,10 @@ public class StatisticsFragment extends Fragment {
         mRangeType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                mXAxisFormatter.setRangeType(SpinnerRangeType.values()[position]);
-                refreshUi();
+                if (!mIsSpinnerFirstCall) {
+                    mXAxisFormatter.setRangeType(SpinnerRangeType.values()[position]);
+                    refreshUi();
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) { }
@@ -262,8 +253,9 @@ public class StatisticsFragment extends Fragment {
         mProductiveTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                //TODO: optimize to not load the sessions at every spinner click when not necessary
-                refreshUi();
+                if (!mIsSpinnerFirstCall) {
+                    refreshUi();
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) { }
@@ -306,27 +298,33 @@ public class StatisticsFragment extends Fragment {
         mChartProductiveHours.notifyDataSetChanged();
     }
 
+    //TODO: make more efficient when setting spinners to not refresh all of it if not needed
     private void refreshUi() {
+        mIsSpinnerFirstCall = false;
         //TODO: adapt string when translating
         if (mLabelsViewModel.crtExtendedLabel.getValue() != null) {
-            if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals("total")) {
-                mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
-                            refreshStats(sessions);
-                            refreshHistoryChart(sessions);
-                            refreshProductiveTimeChart(sessions);
-                        });
-            } else if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals("unlabeled")) {
-                mSessionViewModel.getAllSessionsUnlabeled().observe(this, sessions -> {
-                            refreshStats(sessions);
-                            refreshHistoryChart(sessions);
-                            refreshProductiveTimeChart(sessions);
-                        });
-            } else {
-                mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().label).observe(this, sessions -> {
-                            refreshStats(sessions);
-                            refreshHistoryChart(sessions);
-                            refreshProductiveTimeChart(sessions);
-                        });
+            switch (mLabelsViewModel.crtExtendedLabel.getValue().label) {
+                case "total":
+                    mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
+                        refreshStats(sessions);
+                        refreshHistoryChart(sessions);
+                        refreshProductiveTimeChart(sessions);
+                    });
+                    break;
+                case "unlabeled":
+                    mSessionViewModel.getAllSessionsUnlabeled().observe(this, sessions -> {
+                        refreshStats(sessions);
+                        refreshHistoryChart(sessions);
+                        refreshProductiveTimeChart(sessions);
+                    });
+                    break;
+                default:
+                    mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().label).observe(this, sessions -> {
+                        refreshStats(sessions);
+                        refreshHistoryChart(sessions);
+                        refreshProductiveTimeChart(sessions);
+                    });
+                    break;
             }
         }
     }
