@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.view.Menu;
@@ -41,7 +42,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
-import static android.widget.Toast.LENGTH_SHORT;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatDateAndTime;
 
 public class StatisticsActivity extends AppCompatActivity {
@@ -195,7 +195,6 @@ public class StatisticsActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == IMPORT_BACKUP_REQUEST) {
@@ -203,46 +202,6 @@ public class StatisticsActivity extends AppCompatActivity {
             if (uri != null && resultCode == RESULT_OK) {
                 onImportBackupResult(uri);
             }
-        }
-    }
-
-    private void onImportBackupResult(Uri uri) {
-        try {
-            InputStream tmpStream = getContentResolver().openInputStream(uri);
-            File tmpPath = new File(getFilesDir(), "tmp");
-            File tempFile = File.createTempFile("import", "", tmpPath);
-
-            String fileName = null;
-            tempFile.deleteOnExit();
-            FileUtils.copy(tmpStream, tempFile);
-
-            Cursor cursor = null;
-            try {
-                cursor = getContentResolver().query(uri, null, null, null, null);
-                if (cursor != null && cursor.moveToFirst()) {
-                    fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                }
-            } finally {
-                cursor.close();
-            }
-
-            // Walking on thin ice but this should suffice for now
-            if ((fileName != null && !fileName.contains("Goodtime")) || !FileUtils.isSQLite3File(tempFile)) {
-                Toast.makeText(getBaseContext(), "Invalid file", LENGTH_SHORT)
-                        .show();
-                return;
-            }
-
-            FileInputStream inStream = new FileInputStream(tempFile);
-            File destinationPath = getDatabasePath("goodtime-db");
-            //TODO: copy should be done on a background thread
-            FileUtils.copy(inStream, destinationPath);
-            //TODO: refresh checkboxes (labels were probably changed)
-            //refreshUi();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -271,25 +230,24 @@ public class StatisticsActivity extends AppCompatActivity {
                 try {
                     FileUtils.copyFile(file, destinationFile);
                     if (destinationFile.exists()) {
-                        Uri fileUri = FileProvider.getUriForFile(this, "com.apps.adrcotfas.goodtime", destinationFile);
+                        Uri fileUri = FileProvider.getUriForFile(StatisticsActivity.this, "com.apps.adrcotfas.goodtime", destinationFile);
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_SEND);
                         intent.setType("application/zip");
                         intent.putExtra(Intent.EXTRA_STREAM, fileUri);
                         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        startActivity(Intent.createChooser(intent, "ceva fin"));
-                    } else {
-                        Toast.makeText(this, "Dataabase invalid", Toast.LENGTH_SHORT).show();
+                        StatisticsActivity.this.startActivity(Intent.createChooser(intent, "Export backup"));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         };
-
         Thread t = new Thread(r);
         t.start();
     }
 
-
+    private void onImportBackupResult(Uri uri) {
+        new ImportBackupTask(mSessionViewModel.getmApplication().getApplicationContext()).execute(uri);
+    }
 }
