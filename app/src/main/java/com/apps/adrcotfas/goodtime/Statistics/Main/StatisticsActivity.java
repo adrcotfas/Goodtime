@@ -1,125 +1,115 @@
 package com.apps.adrcotfas.goodtime.Statistics.Main;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.apps.adrcotfas.goodtime.Database.AppDatabase;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Statistics.AllSessions.AddEditEntryDialog;
 import com.apps.adrcotfas.goodtime.Statistics.AllSessions.AllSessionsFragment;
-import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
-import com.apps.adrcotfas.goodtime.Util.FileUtils;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsActivityMainBinding;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
-
-import java.io.File;
-import java.io.IOException;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
+import androidx.core.view.MenuItemCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
-import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatDateAndTime;
+public class StatisticsActivity extends AppCompatActivity implements SelectLabelDialog.OnLabelSelectedListener {
 
-public class StatisticsActivity extends AppCompatActivity {
-
-    private static final int IMPORT_BACKUP_REQUEST = 0;
     private LabelsViewModel mLabelsViewModel;
-    private ChipGroup mChipGroupLabels;
-    private SessionViewModel mSessionViewModel;
+    private MenuItem mMenuItemCrtLabel;
+    private boolean mIsMainView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
+
         ThemeHelper.setTheme(this);
         StatisticsActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.statistics_activity_main);
-        mChipGroupLabels = binding.toolbarWrapper.labelView.labels;
-        mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
-        mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
 
         setSupportActionBar(binding.toolbarWrapper.toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        mLabelsViewModel.crtExtendedLabel.observe(this, labelAndColor -> refreshCurrentLabel());
 
-        mLabelsViewModel.isMainPage.observe(this, isMainPage -> {
-            Fragment fragment = isMainPage ? new StatisticsFragment() : new AllSessionsFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment, fragment)
-                    .commitAllowingStateLoss();
-            invalidateOptionsMenu();
-        });
-
-        setupLabelView();
+        mIsMainView = false;
+        toggleStatisticsView();
     }
 
-    @SuppressLint("ResourceType")
-    private void setupLabelView() {
-        mChipGroupLabels.setOnCheckedChangeListener((chipGroup, id) -> {
-            // this is called on screen rotation; maybe find a cleaner way
-            if (id == -1) {
-                return;
-            }
+    private void refreshCurrentLabel() {
+        if (mLabelsViewModel.crtExtendedLabel.getValue() != null && mMenuItemCrtLabel != null) {
+            MenuItemCompat.setIconTintList(mMenuItemCrtLabel, ColorStateList.valueOf(mLabelsViewModel.crtExtendedLabel.getValue().color));
+        }
+    }
 
-            Chip chip = ((Chip) chipGroup.getChildAt(id));
-            if (chip == null) {
-                chip = chipGroup.findViewById(id);
-            }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_statistics_main, menu);
 
-            for (int i = 0; i < mChipGroupLabels.getChildCount(); ++i) {
-                mChipGroupLabels.getChildAt(i).setClickable(true);
-            }
-            chip.setClickable(false);
+        mMenuItemCrtLabel = menu.findItem(R.id.action_select_label);
+        refreshCurrentLabel();
 
-            if (mLabelsViewModel.crtExtendedLabel.getValue() != null) {
-                switch (mLabelsViewModel.crtExtendedLabel.getValue().label) {
-                    case "total":
-                        mSessionViewModel.getAllSessionsByEndTime().removeObservers(this);
-                        break;
-                    case "unlabeled":
-                        mSessionViewModel.getAllSessionsUnlabeled().removeObservers(this);
-                        break;
-                    default:
-                        mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().label).removeObservers(this);
-                        break;
-                }
-            }
-            mLabelsViewModel.crtExtendedLabel.setValue(new LabelAndColor(chip.getText().toString(), chip.getChipBackgroundColor().getDefaultColor()));
-        });
+        menu.findItem(R.id.action_view_list).setIcon(ContextCompat.getDrawable(
+                this, mIsMainView ? R.drawable.ic_details : R.drawable.ic_show_list));
 
-        mLabelsViewModel.getLabels().observe(this, labels -> {
-            for (int i = 0; i < labels.size(); ++i) {
-                Chip chip = new Chip(this);
-                chip.setText(labels.get(i).label);
-                chip.setChipBackgroundColor(ColorStateList.valueOf(labels.get(i).color));
-                chip.setCheckable(true);
-                ThemeHelper.styleChip(this, chip);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-                chip.setId(i + 1);
-                mChipGroupLabels.addView(chip, i + 1);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                // TODO: remove this later
+//                for (int i = 0; i < 1000; ++i) {
+//                    Session session = new Session(
+//                            0,
+//                            System.currentTimeMillis(),
+//                            42,
+//                            null);
+//
+//                    mSessionViewModel.addSession(session);
+//                }
 
-                LabelAndColor crtLabel = mLabelsViewModel.crtExtendedLabel.getValue();
-                if (crtLabel != null && crtLabel.label.equals(labels.get(i).label)) {
-                    chip.setChecked(true);
-                }
-            }
-        });
+                AddEditEntryDialog newFragment = new AddEditEntryDialog();
+                newFragment.show(fragmentManager, "");
+                break;
+            case R.id.action_select_label:
+                SelectLabelDialog.newInstance(this, mLabelsViewModel.crtExtendedLabel.getValue().label, true)
+                        .show(fragmentManager, "");
+                break;
+            case R.id.action_view_list:
+                toggleStatisticsView();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void toggleStatisticsView() {
+        mIsMainView = !mIsMainView;
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment, mIsMainView ? new StatisticsFragment() : new AllSessionsFragment())
+                .commitAllowingStateLoss();
+    }
+
+    @Override
+    public void onLabelSelected(LabelAndColor labelAndColor) {
+        if (labelAndColor != null) {
+            mLabelsViewModel.crtExtendedLabel.setValue(labelAndColor);
+        } else {
+            mLabelsViewModel.crtExtendedLabel.setValue(null);
+        }
     }
 
     @Override
@@ -130,111 +120,5 @@ public class StatisticsActivity extends AppCompatActivity {
         else {
             getSupportFragmentManager().popBackStack();
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_view_list:
-                mLabelsViewModel.isMainPage.setValue(!mLabelsViewModel.isMainPage.getValue());
-                break;
-
-            case R.id.action_add:
-                // TODO: remove this later
-//                for (int i = 0; i < 10000; ++i) {
-//                    Session session = new Session(
-//                            0,
-//                            System.currentTimeMillis(),
-//                            42,
-//                            null);
-//
-//                    mSessionViewModel.addSession(session);
-//                }
-
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                AddEditEntryDialog newFragment = new AddEditEntryDialog();
-                newFragment.show(fragmentManager, "");
-                break;
-
-            case R.id.action_export_backup:
-                exportBackup();
-                break;
-
-            case R.id.action_import_backup:
-                importBackup();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_statistics_main, menu);
-
-        if (mLabelsViewModel.isMainPage.getValue()) {
-            menu.getItem(0).setVisible(false);
-            menu.getItem(1).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_details));
-        } else {
-            menu.getItem(0).setVisible(true);
-            menu.getItem(1).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_show_list));
-        }
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == IMPORT_BACKUP_REQUEST) {
-            Uri uri = data.getData();
-            if (uri != null && resultCode == RESULT_OK) {
-                onImportBackupResult(uri);
-            }
-        }
-    }
-
-    private void importBackup() {
-        new AlertDialog.Builder(this)
-                .setTitle("Import backup?")
-                .setMessage("The current entries will be lost.")
-                .setPositiveButton("OK", (dialog, id) -> {
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType("*/*");
-                    startActivityForResult(intent, IMPORT_BACKUP_REQUEST);
-                })
-                .setNegativeButton("Cancel", (dialog, id) -> dialog.cancel())
-                .show();
-    }
-
-    private void exportBackup() {
-        AppDatabase.closeInstance();
-        File file = getDatabasePath("goodtime-db");
-        File destinationPath = new File(getFilesDir(), "tmp");
-        File destinationFile = new File(destinationPath, "Goodtime-Backup-" + formatDateAndTime(System.currentTimeMillis()));
-
-        Runnable r = () -> {
-            if (file.exists()) {
-                try {
-                    FileUtils.copyFile(file, destinationFile);
-                    if (destinationFile.exists()) {
-                        Uri fileUri = FileProvider.getUriForFile(StatisticsActivity.this, "com.apps.adrcotfas.goodtime", destinationFile);
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_SEND);
-                        intent.setType("application/zip");
-                        intent.putExtra(Intent.EXTRA_STREAM, fileUri);
-                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        StatisticsActivity.this.startActivity(Intent.createChooser(intent, "Export backup"));
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        Thread t = new Thread(r);
-        t.start();
-    }
-
-    private void onImportBackupResult(Uri uri) {
-        new ImportBackupTask(mSessionViewModel.getmApplication().getApplicationContext()).execute(uri);
     }
 }

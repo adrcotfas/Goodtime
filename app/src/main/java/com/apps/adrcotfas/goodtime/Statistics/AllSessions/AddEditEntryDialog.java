@@ -98,7 +98,7 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements Dat
         binding.labelChip.setOnClickListener(c -> {
             // open another dialog to select the chip
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            SelectLabelDialog.newInstance(this,mViewModel.label.getValue()).show(fragmentManager, "");
+            SelectLabelDialog.newInstance(this, mViewModel.label.getValue(), false).show(fragmentManager, "");
         });
 
         binding.save.setOnClickListener(v -> {

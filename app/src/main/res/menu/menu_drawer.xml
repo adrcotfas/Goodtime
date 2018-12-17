@@ -32,8 +32,12 @@
             android:title="Settings" />
         <item
             android:id="@+id/action_feedback"
-            android:icon="@drawable/ic_feedback"
-            android:title="Feedback" />
+            android:icon="@drawable/ic_show_list"
+            android:title="Statistics" />
+        <item
+            android:id="@+id/action_backup"
+            android:icon="@drawable/ic_floppy"
+            android:title="Backup" />
     </group>
 
 </menu>

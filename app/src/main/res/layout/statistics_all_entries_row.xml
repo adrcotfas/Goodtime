@@ -97,19 +97,10 @@
             android:layout_marginRight="16dp"
             android:layout_marginEnd="16dp"
 
-            android:background="@drawable/shape_rectangle"
             android:backgroundTint="@{color}"
-
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:paddingLeft="8dp"
-            android:paddingTop="2dp"
-            android:paddingRight="8dp"
-            android:paddingBottom="3dp"
-            android:textColor="@color/black"
             android:text="@{item.label}"
-            android:textSize="@dimen/tinyTextSize"
-            android:visibility="@{item.label == null ? View.INVISIBLE : View.VISIBLE}" />
+            android:visibility="@{item.label == null ? View.INVISIBLE : View.VISIBLE}"
+            style="@style/SmallPseudoChip"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"

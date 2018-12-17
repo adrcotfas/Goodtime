@@ -26,6 +26,7 @@ import com.apps.adrcotfas.goodtime.BL.TimerState;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
+import com.apps.adrcotfas.goodtime.Backup.BackupFragment;
 import com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
@@ -44,6 +45,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 import de.greenrobot.event.EventBus;
@@ -429,6 +431,10 @@ public class TimerActivity
                 //TODO: move to proper place
                 Intent statisticsIntent = new Intent(this, StatisticsActivity.class);
                 startActivity(statisticsIntent);
+                break;
+            case R.id.action_backup:
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                new BackupFragment().show(fragmentManager, "");
                 break;
         }
 

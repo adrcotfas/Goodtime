@@ -16,6 +16,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceTotalLabel;
+
 public class LabelsViewModel extends AndroidViewModel {
 
     private LabelAndColorDao mLabelsDao;
@@ -27,14 +29,17 @@ public class LabelsViewModel extends AndroidViewModel {
      */
     public MutableLiveData<LabelAndColor> crtExtendedLabel = new MutableLiveData<>();
 
-    public MutableLiveData<Boolean> isMainPage = new MutableLiveData<>();
+    /**
+     * Used to signal the current visible fragment in StatisticsActivity
+     */
+    public MutableLiveData<Boolean> mIsMainView = new MutableLiveData<>();
 
     public LabelsViewModel(@NonNull Application application) {
         super(application);
         mLabelsDao = AppDatabase.getDatabase(application).labelAndColor();
         mExecutorService = Executors.newSingleThreadExecutor();
-        crtExtendedLabel.setValue(new LabelAndColor("total", application.getResources().getColor(R.color.classicAccent)));
-        isMainPage.setValue(true);
+        crtExtendedLabel.setValue(getInstanceTotalLabel(application.getBaseContext()));
+        mIsMainView.setValue(true);
     }
 
     public LiveData<List<LabelAndColor>> getLabels() {

@@ -1,5 +1,7 @@
 package com.apps.adrcotfas.goodtime.Statistics.Main;
 
+import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextPaint;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -31,6 +34,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -44,6 +49,7 @@ import java.util.TreeMap;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 
 import static com.apps.adrcotfas.goodtime.Statistics.Main.SpinnerProductiveTimeType.DAY_OF_WEEK;
@@ -87,6 +93,7 @@ public class StatisticsFragment extends Fragment {
         }
     }
 
+    private LiveData<List<Session>> mSessionsToObserve;
     private LineChart mChartHistory;
     private BarChart mChartProductiveHours;
 
@@ -118,6 +125,7 @@ public class StatisticsFragment extends Fragment {
         mDisplayDensity = getResources().getDisplayMetrics().density;
 
         setHasOptionsMenu(true);
+
         mChartHistory = binding.history.chart;
         mChartProductiveHours = binding.productiveHours.barChart;
 
@@ -303,29 +311,27 @@ public class StatisticsFragment extends Fragment {
         mIsSpinnerFirstCall = false;
         //TODO: adapt string when translating
         if (mLabelsViewModel.crtExtendedLabel.getValue() != null) {
+
+            if (mSessionsToObserve != null) {
+                mSessionsToObserve.removeObservers(this);
+            }
+
             switch (mLabelsViewModel.crtExtendedLabel.getValue().label) {
                 case "total":
-                    mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
-                        refreshStats(sessions);
-                        refreshHistoryChart(sessions);
-                        refreshProductiveTimeChart(sessions);
-                    });
+                    mSessionsToObserve = mSessionViewModel.getAllSessionsByEndTime();
                     break;
                 case "unlabeled":
-                    mSessionViewModel.getAllSessionsUnlabeled().observe(this, sessions -> {
-                        refreshStats(sessions);
-                        refreshHistoryChart(sessions);
-                        refreshProductiveTimeChart(sessions);
-                    });
+                    mSessionsToObserve = mSessionViewModel.getAllSessionsUnlabeled();
                     break;
                 default:
-                    mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().label).observe(this, sessions -> {
-                        refreshStats(sessions);
-                        refreshHistoryChart(sessions);
-                        refreshProductiveTimeChart(sessions);
-                    });
+                    mSessionsToObserve = mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().label);
                     break;
             }
+            mSessionsToObserve.observe(this, sessions -> {
+                refreshStats(sessions);
+                refreshHistoryChart(sessions);
+                refreshProductiveTimeChart(sessions);
+            });
         }
     }
 

@@ -13,8 +13,5 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize" />
-
-        <include android:id="@+id/label_view" layout="@layout/statistics_labels"/>
-
     </com.google.android.material.appbar.AppBarLayout>
 </layout>

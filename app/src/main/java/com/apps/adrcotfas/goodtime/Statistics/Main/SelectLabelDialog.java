@@ -22,6 +22,9 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceTotalLabel;
+import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceUnlabeledLabel;
+
 public class SelectLabelDialog extends DialogFragment {
 
     /**
@@ -38,15 +41,17 @@ public class SelectLabelDialog extends DialogFragment {
     private String mLabel;
     private LabelsViewModel mLabelsViewModel;
     private OnLabelSelectedListener mCallback;
+    private boolean mIsExtendedVersion;
 
     public SelectLabelDialog() {
         // Empty constructor required for DialogFragment
     }
 
-    public static SelectLabelDialog newInstance(OnLabelSelectedListener listener, String label) {
+    public static SelectLabelDialog newInstance(OnLabelSelectedListener listener, String label, boolean isExtendedVersion) {
         SelectLabelDialog dialog = new SelectLabelDialog();
         dialog.mCallback = listener;
         dialog.mLabel = label;
+        dialog.mIsExtendedVersion = isExtendedVersion;
         return dialog;
     }
 
@@ -59,7 +64,23 @@ public class SelectLabelDialog extends DialogFragment {
 
         mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
         mLabelsViewModel.getLabels().observe(this, labels -> {
+
             int i = 0;
+            if (mIsExtendedVersion) {
+                Chip chip = new Chip(getActivity());
+                LabelAndColor total = getInstanceTotalLabel(getActivity());
+                chip.setText(total.label);
+                chip.setChipBackgroundColor(ColorStateList.valueOf(total.color));
+                chip.setCheckable(true);
+                ThemeHelper.styleChip(getActivity(), chip);
+
+                chip.setId(i++);
+                if (chip.getText().toString().equals(mLabel)) {
+                    chip.setChecked(true);
+                }
+                binding.labels.addView(chip);
+            }
+
             for (LabelAndColor label : labels) {
                 Chip chip = new Chip(getActivity());
                 chip.setText(label.label);
@@ -85,7 +106,7 @@ public class SelectLabelDialog extends DialogFragment {
                         int color = chip.getChipBackgroundColor().getDefaultColor();
                         notifyLabelSelected(new LabelAndColor(mLabel, color));
                     } else {
-                        notifyLabelSelected(null);
+                        notifyLabelSelected(getInstanceUnlabeledLabel(getActivity()));
                     }
                     dismiss();
                 })

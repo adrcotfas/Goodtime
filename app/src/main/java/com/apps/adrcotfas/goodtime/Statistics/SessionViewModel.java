@@ -18,13 +18,11 @@ public class SessionViewModel extends AndroidViewModel {
 
     private SessionDao mSessionDao;
     private ExecutorService mExecutorService;
-    private Application mApplication;
 
     public SessionViewModel(@NonNull Application application) {
         super(application);
         mSessionDao = AppDatabase.getDatabase(application).sessionModel();
         mExecutorService = Executors.newSingleThreadExecutor();
-        mApplication = application;
     }
 
     public LiveData<List<Session>> getAllSessionsByEndTime() {
@@ -33,10 +31,6 @@ public class SessionViewModel extends AndroidViewModel {
 
     public LiveData<List<Session>> getAllSessionsByDuration() {
         return mSessionDao.getAllSessionsByDuration();
-    }
-
-    public Application getmApplication() {
-        return mApplication;
     }
 
     public LiveData<Session> getSession(long id) {

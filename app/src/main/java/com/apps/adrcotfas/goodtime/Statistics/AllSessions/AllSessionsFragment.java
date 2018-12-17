@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.Statistics.AllSessions;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -51,7 +52,6 @@ public class AllSessionsFragment extends Fragment {
         mLabelsViewModel = ViewModelProviders.of(getActivity()).get(LabelsViewModel.class);
 
         View view = binding.getRoot();
-        setHasOptionsMenu(true);
 
         RecyclerView recyclerView = binding.mainRecylcerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
