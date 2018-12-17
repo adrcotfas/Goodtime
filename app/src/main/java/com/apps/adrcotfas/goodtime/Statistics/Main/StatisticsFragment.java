@@ -1,7 +1,5 @@
 package com.apps.adrcotfas.goodtime.Statistics.Main;
 
-import android.annotation.SuppressLint;
-import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextPaint;
@@ -11,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -34,8 +31,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;

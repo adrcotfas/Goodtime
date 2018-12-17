@@ -65,6 +65,7 @@ public class CustomXAxisFormatter implements IAxisValueFormatter {
                     }
                     break;
                 case WEEKS:
+
                     LocalDate firstMondayOfThisMonth = crtDate.dayOfMonth().withMinimumValue();
                     while (firstMondayOfThisMonth.getDayOfWeek() != DateTimeConstants.MONDAY ) {
                         firstMondayOfThisMonth = firstMondayOfThisMonth.plusDays(1);
@@ -78,7 +79,7 @@ public class CustomXAxisFormatter implements IAxisValueFormatter {
                         }
                     }
                     else {
-                        result = Integer.toString(crtDay);
+                        result = Integer.toString(crtDate.getWeekOfWeekyear());
                     }
                     break;
                 case MONTHS:
