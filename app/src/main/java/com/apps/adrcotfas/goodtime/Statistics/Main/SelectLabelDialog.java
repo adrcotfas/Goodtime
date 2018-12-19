@@ -60,7 +60,11 @@ public class SelectLabelDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        DialogSelectLabelBinding binding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.dialog_select_label, null, false);
+        DialogSelectLabelBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(getContext()),
+                R.layout.dialog_select_label,
+                null,
+                false);
 
         mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
         mLabelsViewModel.getLabels().observe(this, labels -> {

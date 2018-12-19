@@ -50,8 +50,20 @@ public class LabelsViewModel extends AndroidViewModel {
         return mLabelsDao.getColor(label);
     }
 
+    public void addLabel(LabelAndColor labelAndColor) {
+        mExecutorService.execute(() -> mLabelsDao.addLabel(labelAndColor));
+    }
+
+    public void updateLabel(String label, String newLabel, int color) {
+        mExecutorService.execute(() -> mLabelsDao.updateLabel(label, newLabel, color));
+    }
+
     public void editLabelName(String label, String newLabel) {
         mExecutorService.execute(() -> mLabelsDao.editLabelName(label, newLabel));
+    }
+
+    public void editLabelColor(String label, int color) {
+        mExecutorService.execute(() -> mLabelsDao.editLabelColor(label, color));
     }
 
     public void deleteLabel(String label) {

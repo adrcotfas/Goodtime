@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include android:id="@+id/toolbar_wrapper" layout="@layout/toolbar"/>
+
+        <!-- this is a workaround for the auto focus of the first EditText when opening the activity -->
+        <View
+            android:focusableInTouchMode="true"
+            android:layout_width="0px"
+            android:layout_height="0px"/>
+
+        <include
+            android:id="@+id/add_label"
+            layout="@layout/activity_add_edit_labels_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar_wrapper"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/label_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/add_label">
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <TextView
+            android:id="@+id/empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/add_label"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="There are no labels yet (replace this with a nice illustration)"/>
+    </RelativeLayout>
+</layout>

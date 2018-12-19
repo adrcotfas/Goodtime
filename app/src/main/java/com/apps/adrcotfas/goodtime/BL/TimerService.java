@@ -272,12 +272,13 @@ public class TimerService extends Service {
     private void saveToDb() {
         //TODO: save session of at least one minute
         if (true /*getSessionManager().getElapsedTime() >= 60*/) {
+            String label = getSessionManager().getCurrentSession().getLabel().getValue();
             AsyncTask.execute(() -> {
                 Session session = new Session(
                         0,
                         System.currentTimeMillis(),
                         getSessionManager().getElapsedTime(),
-                        getSessionManager().getCurrentSession().getLabel().getValue());
+                        label);
                 AppDatabase.getDatabase(getApplicationContext()).sessionModel().addSession(session);
             });
         }

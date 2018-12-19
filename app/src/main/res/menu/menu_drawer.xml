@@ -18,9 +18,9 @@
             android:icon="@drawable/ic_share"
             android:title="Invite friends" />
         <item
-            android:id="@+id/about_upgrade"
-            android:icon="@drawable/ic_donate"
-            android:title="Support the developer"/>
+            android:id="@+id/edit_labels"
+            android:icon="@drawable/ic_label"
+            android:title="Labels"/>
     </group>
 
     <group

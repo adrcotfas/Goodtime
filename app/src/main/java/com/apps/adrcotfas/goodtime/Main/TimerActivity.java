@@ -27,6 +27,7 @@ import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.Backup.BackupFragment;
+import com.apps.adrcotfas.goodtime.Statistics.Main.SelectLabelDialog;
 import com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
@@ -62,7 +63,7 @@ import static java.lang.String.format;
 
 public class TimerActivity
         extends AppCompatActivity
-        implements SharedPreferences.OnSharedPreferenceChangeListener, NavigationView.OnNavigationItemSelectedListener{
+        implements SharedPreferences.OnSharedPreferenceChangeListener, NavigationView.OnNavigationItemSelectedListener, SelectLabelDialog.OnLabelSelectedListener {
 
     private static final String TAG = TimerActivity.class.getSimpleName();
 
@@ -329,18 +330,9 @@ public class TimerActivity
     }
 
     public void showEditLabelDialog(View view1) {
-        String crtLabel = GoodtimeApplication.getCurrentSessionManager().getCurrentSession().getLabel().getValue();
-        EditLabelDialog dialog = new EditLabelDialog(this, mLabels, crtLabel);
-        dialog.setPositiveButtonClickListener((dialogInterface, i) -> {
-                    String label = dialog.getLabel();
-                    GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(label);
-                });
-        dialog.setNegativeButtonClickListener((dialogInterface, i) -> {
-            if (!dialog.isCurrentLabelValid()) {
-                GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
-            }
-        });
-        dialog.show();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        SelectLabelDialog.newInstance(this, mLabelsViewModel.crtExtendedLabel.getValue().label, false)
+                .show(fragmentManager, "");
     }
 
     //TODO: extract strings
@@ -421,7 +413,10 @@ public class TimerActivity
                 break;
             case R.id.action_invite:
                 break;
-            case R.id.about_upgrade:
+            case R.id.edit_labels:
+                Intent intent = new Intent(this, AddEditLabelActivity.class);
+                startActivity(intent);
+
                 break;
             case R.id.action_settings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
@@ -441,5 +436,16 @@ public class TimerActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(Gravity.START);
         return true;
+    }
+
+    @Override
+    public void onLabelSelected(LabelAndColor labelAndColor) {
+        if (labelAndColor != null) {
+            mLabelsViewModel.crtExtendedLabel.setValue(labelAndColor);
+            GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(labelAndColor.label);
+        } else {
+            mLabelsViewModel.crtExtendedLabel.setValue(null);
+            GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
+        }
     }
 }

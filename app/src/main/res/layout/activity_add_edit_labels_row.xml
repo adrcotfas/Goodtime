@@ -1,0 +1,85 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_edit_label_row"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/image_left"
+        android:src="@drawable/ic_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+
+        android:focusable="false"
+        android:clickable="false"
+        android:background="?selectableItemBackgroundBorderless"/>
+
+    <EditText
+        android:id="@+id/text"
+        android:text="This is a label"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/image_left"
+        android:layout_toEndOf="@id/image_left"
+
+        android:layout_toLeftOf="@id/image_right"
+        android:layout_toStartOf="@id/image_right"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        style="@style/AllEntriesAddEditDialogRowEdit"/>
+
+    <ImageView
+        android:id="@+id/image_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/image_right"
+        android:layout_toStartOf="@id/image_right"
+        android:focusable="true"
+        android:clickable="true"
+        android:src="@drawable/ic_delete"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+
+        android:visibility="invisible"
+        android:background="?selectableItemBackgroundBorderless"/>
+
+    <ImageView
+        android:id="@+id/image_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:focusable="true"
+        android:clickable="true"
+        android:src="@drawable/ic_edit"
+
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+
+        android:background="?selectableItemBackgroundBorderless"/>
+</RelativeLayout>

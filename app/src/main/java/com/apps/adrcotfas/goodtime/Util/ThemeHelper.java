@@ -1,10 +1,14 @@
 package com.apps.adrcotfas.goodtime.Util;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -57,5 +61,20 @@ public class ThemeHelper {
         chip.setTextStartPadding(ThemeHelper.dpToPx(context,8));
         chip.setTextEndPadding(ThemeHelper.dpToPx(context,4));
         chip.setTextAppearance(R.style.ChipTextAppearance);
+    }
+
+    public static void clearFocusEditText(View v, Context context) {
+        v.clearFocus();
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
+    }
+
+    public static void requestFocusEditText(EditText v, Context context) {
+        v.setSelection(v.length());
+        v.requestFocus();
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
     }
 }
