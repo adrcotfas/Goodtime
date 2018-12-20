@@ -15,10 +15,10 @@
 
         <include
             android:id="@+id/add_label"
-            layout="@layout/activity_add_edit_labels_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/toolbar_wrapper"/>
+            android:layout_below="@+id/toolbar_wrapper"
+            layout="@layout/activity_add_edit_labels_header"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/label_list"
@@ -33,6 +33,6 @@
             android:layout_height="match_parent"
             android:layout_below="@id/add_label"
             android:gravity="center_horizontal|center_vertical"
-            android:text="There are no labels yet (replace this with a nice illustration)"/>
+            android:text="There are no sessions yet (replace this with a nice illustration)"/>
     </RelativeLayout>
 </layout>

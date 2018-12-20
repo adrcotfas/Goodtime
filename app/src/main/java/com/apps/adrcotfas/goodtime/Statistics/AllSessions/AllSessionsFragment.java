@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
@@ -41,6 +42,8 @@ public class AllSessionsFragment extends Fragment {
     private LabelsViewModel mLabelsViewModel;
     private Session mSessionToEdit;
     private List<Session> mSessions;
+    private TextView mEmptyState;
+    private RecyclerView mRecyclerView;
 
     @Nullable
     @Override
@@ -50,20 +53,23 @@ public class AllSessionsFragment extends Fragment {
         mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
         mLabelsViewModel = ViewModelProviders.of(getActivity()).get(LabelsViewModel.class);
 
+        mEmptyState = binding.emptyState;
+
         View view = binding.getRoot();
 
-        RecyclerView recyclerView = binding.mainRecylcerView;
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+        mRecyclerView = binding.mainRecylcerView;
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
 
         //TODO: this might be dangerous because view might be returned before this is executed
         mLabelsViewModel.getLabels().observe(this, labels -> {
             mAdapter = new AllSessionsAdapter(labels);
-            recyclerView.setAdapter(mAdapter);
+            mRecyclerView.setAdapter(mAdapter);
 
             mLabelsViewModel.crtExtendedLabel.observe(this, labelAndColor -> refreshCurrentLabel());
 
-            recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
-            recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+            mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+            mRecyclerView.addOnItemTouchListener(
+                    new RecyclerItemClickListener(getActivity(), mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
                     if (mIsMultiSelect) {
@@ -94,16 +100,19 @@ public class AllSessionsFragment extends Fragment {
                 mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
                     mAdapter.setData(sessions);
                     mSessions = sessions;
+                    updateRecyclerViewVisibility();
                 });
             } else if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals("unlabeled")) {
                 mSessionViewModel.getAllSessionsUnlabeled().observe(this, sessions -> {
                     mAdapter.setData(sessions);
                     mSessions = sessions;
+                    updateRecyclerViewVisibility();
                 });
             } else {
                 mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().label).observe(this, sessions -> {
                     mAdapter.setData(sessions);
                     mSessions = sessions;
+                    updateRecyclerViewVisibility();
                 });
             }
         }
@@ -217,4 +226,16 @@ public class AllSessionsFragment extends Fragment {
             mAdapter.setSelectedItems(new ArrayList<>());
         }
     };
+
+    public void updateRecyclerViewVisibility() {
+        if (mSessions != null && mSessions.isEmpty()) {
+            mRecyclerView.setVisibility(View.GONE);
+            mEmptyState.setVisibility(View.VISIBLE);
+        }
+        else {
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mEmptyState.setVisibility(View.GONE);
+        }
+    }
+
 }

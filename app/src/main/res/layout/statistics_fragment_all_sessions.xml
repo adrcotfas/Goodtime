@@ -2,7 +2,7 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -12,7 +12,14 @@
             android:layout_height="match_parent"
             android:id="@+id/main_recylcer_view"
             android:scrollbars="vertical">
-
         </androidx.recyclerview.widget.RecyclerView>
-    </LinearLayout>
+
+        <TextView
+            android:id="@+id/empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/add_label"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="There are no labels yet (replace this with a nice illustration)"/>
+    </RelativeLayout>
 </layout>
