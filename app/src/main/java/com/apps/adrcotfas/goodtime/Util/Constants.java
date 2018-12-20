@@ -2,8 +2,8 @@ package com.apps.adrcotfas.goodtime.Util;
 
 public class Constants {
 
-    public static int DEFAULT_WORK_DURATION_POMODORO     = 25;
-    public static int DEFAULT_BREAK_DURATION_POMODORO    = 5;
+    public static int DEFAULT_WORK_DURATION_DEFAULT = 25;
+    public static int DEFAULT_BREAK_DURATION_DEFAULT = 5;
     public static int DEFAULT_LONG_BREAK_DURATION        = 15;
     public static int DEFAULT_SESSIONS_BEFORE_LONG_BREAK = 4;
     public static int DEFAULT_WORK_DURATION_5217         = 52;

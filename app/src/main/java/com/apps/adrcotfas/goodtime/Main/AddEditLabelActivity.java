@@ -2,6 +2,7 @@ package com.apps.adrcotfas.goodtime.Main;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -136,6 +137,16 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
     @Override
     public void onEditColor(String label, int color) {
         mLabelsViewModel.editLabelColor(label, color);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

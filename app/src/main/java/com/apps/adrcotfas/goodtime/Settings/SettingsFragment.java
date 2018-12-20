@@ -192,11 +192,11 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
     }
 
     private void switchProfile(CharSequence newValue) {
-        if (newValue.equals(getResources().getText(R.string.pref_profile_pomodoro))) {
-            mPrefWorkDuration.setValue(Constants.DEFAULT_WORK_DURATION_POMODORO);
-            mPrefBreakDuration.setValue(Constants.DEFAULT_BREAK_DURATION_POMODORO);
-            mPrefEnableLongBreak.setChecked(true);
-            toggleLongBreakPreference(true);
+        if (newValue.equals(getResources().getText(R.string.pref_profile_default))) {
+            mPrefWorkDuration.setValue(Constants.DEFAULT_WORK_DURATION_DEFAULT);
+            mPrefBreakDuration.setValue(Constants.DEFAULT_BREAK_DURATION_DEFAULT);
+            mPrefEnableLongBreak.setChecked(false);
+            toggleLongBreakPreference(false);
             mPrefLongBreakDuration.setValue(Constants.DEFAULT_LONG_BREAK_DURATION);
             mPrefSessionsBeforeLongBreak.setValue(Constants.DEFAULT_SESSIONS_BEFORE_LONG_BREAK);
         } else if (newValue.equals(getResources().getText(R.string.pref_profile_5217))) {

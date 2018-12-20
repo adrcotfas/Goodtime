@@ -2,11 +2,14 @@ package com.apps.adrcotfas.goodtime.Statistics.Main;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 
 import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Main.AddEditLabelActivity;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
@@ -22,6 +25,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import static android.content.Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP;
 import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceTotalLabel;
 import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceUnlabeledLabel;
 
@@ -118,6 +122,10 @@ public class SelectLabelDialog extends DialogFragment {
                     if (dialog != null) {
                         dialog.dismiss();
                     }
+                })
+                .setNeutralButton("Edit labels", (dialog, i) -> {
+                    Intent intent = new Intent(getActivity(), AddEditLabelActivity.class);
+                    startActivity(intent);
                 });
         return builder.create();
     }

@@ -11,7 +11,7 @@
             android:dialogTitle="Profile"
             android:key="pref_profile"
             android:entries="@array/pref_profiles"
-            android:defaultValue="@string/pref_profile_pomodoro"
+            android:defaultValue="@string/pref_profile_default"
             android:entryValues="@array/pref_profiles"
             android:persistent="true"
             android:summary="%s"
@@ -24,7 +24,7 @@
             app:min="1"
             app:unitOfMeasurement="m"
             app:dialogTitle="@string/pref_work_duration"
-            android:defaultValue="25"
+            android:defaultValue="30"
             android:max="120"
             app:iconSpaceReserved="false"/>
 

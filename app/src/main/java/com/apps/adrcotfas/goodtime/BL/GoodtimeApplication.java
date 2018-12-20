@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import androidx.preference.PreferenceManager;
 
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
+import static com.apps.adrcotfas.goodtime.Util.Constants.DEFAULT_WORK_DURATION_DEFAULT;
 
 /**
  * Maintains a global state of the app and the {@link CurrentSession}
@@ -33,7 +34,7 @@ public class GoodtimeApplication extends Application {
 
         mCurrentSessionManager = new CurrentSessionManager(this, new CurrentSession(TimeUnit.MINUTES.toMillis(
                 PreferenceManager.getDefaultSharedPreferences(this)
-                        .getInt(WORK_DURATION, 25))));
+                        .getInt(WORK_DURATION, DEFAULT_WORK_DURATION_DEFAULT))));
 
         mPreferences = getSharedPreferences(getPackageName() + "_private_preferences", MODE_PRIVATE);
     }
