@@ -29,7 +29,7 @@
             android:maxLength="3"
             android:imeOptions="actionDone"
             android:hint="Add duration (minutes)"
-            style="@style/AllEntriesAddEditDialogRowEdit" />
+            style="@style/AllSessionsAddEditDialogRowEdit" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -43,7 +43,7 @@
                 android:drawableLeft="@drawable/ic_clock"
                 android:layout_alignParentLeft="true"
                 android:text="Edit date"
-                style="@style/AllEntriesAddEditDialogRow"/>
+                style="@style/AllSessionsAddEditDialogRow"/>
 
             <TextView
                 android:id="@+id/edit_time"
@@ -51,14 +51,14 @@
                 android:layout_alignParentRight="true"
                 android:layout_height="match_parent"
                 android:text="Edit Time"
-                style="@style/AllEntriesAddEditDialogRowEnd"/>
+                style="@style/AllSessionsAddEditDialogRowEnd"/>
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:orientation="horizontal"
-            style="@style/AllEntriesAddEditDialogRow">
+            style="@style/AllSessionsAddEditDialogRow">
 
             <ImageView
                 android:id="@+id/label_drawable"
@@ -89,7 +89,7 @@
             android:layout_height="48dp"
             android:drawableLeft="@drawable/ic_floppy"
             android:text="Save"
-            style="@style/AllEntriesAddEditDialogRow"/>
+            style="@style/AllSessionsAddEditDialogRow"/>
 
     </LinearLayout>
 </layout>

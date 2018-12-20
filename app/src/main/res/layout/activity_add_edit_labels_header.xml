@@ -36,7 +36,7 @@
 
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
-            style="@style/AllEntriesAddEditDialogRowEdit"/>
+            style="@style/AllSessionsAddEditDialogRowEdit"/>
 
         <ImageButton
             android:id="@+id/image_right"

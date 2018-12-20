@@ -3,13 +3,13 @@ package com.apps.adrcotfas.goodtime.Statistics.AllSessions;
 import android.view.View;
 
 import com.apps.adrcotfas.goodtime.Session;
-import com.apps.adrcotfas.goodtime.databinding.StatisticsAllEntriesRowBinding;
+import com.apps.adrcotfas.goodtime.databinding.StatisticsAllSessionsRowBinding;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class AllSessionsViewHolder extends RecyclerView.ViewHolder {
-    private StatisticsAllEntriesRowBinding binding;
+    private StatisticsAllSessionsRowBinding binding;
     public View rowOverlay;
 
     public AllSessionsViewHolder(View itemView) {

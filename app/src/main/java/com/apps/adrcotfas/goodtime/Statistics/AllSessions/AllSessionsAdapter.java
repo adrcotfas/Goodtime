@@ -32,7 +32,7 @@ public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHold
     public AllSessionsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View statusContainer = inflater.inflate(R.layout.statistics_all_entries_row, parent, false);
+        View statusContainer = inflater.inflate(R.layout.statistics_all_sessions_row, parent, false);
         return new AllSessionsViewHolder(statusContainer);
     }
 

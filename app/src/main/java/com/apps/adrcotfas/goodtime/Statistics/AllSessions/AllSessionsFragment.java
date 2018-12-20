@@ -1,6 +1,5 @@
 package com.apps.adrcotfas.goodtime.Statistics.AllSessions;
 
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -15,7 +14,7 @@ import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Statistics.Main.RecyclerItemClickListener;
 import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
-import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentAllEntriesBinding;
+import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentAllSessionsBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +45,7 @@ public class AllSessionsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        StatisticsFragmentAllEntriesBinding binding = DataBindingUtil.inflate(inflater, R.layout.statistics_fragment_all_entries, container, false);
+        StatisticsFragmentAllSessionsBinding binding = DataBindingUtil.inflate(inflater, R.layout.statistics_fragment_all_sessions, container, false);
 
         mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
         mLabelsViewModel = ViewModelProviders.of(getActivity()).get(LabelsViewModel.class);

@@ -86,7 +86,7 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="AllEntriesAddEditDialogRowEdit" parent="@android:style/TextAppearance.Widget.EditText">
+    <style name="AllSessionsAddEditDialogRowEdit" parent="@android:style/TextAppearance.Widget.EditText">
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">16dp</item>
@@ -100,7 +100,7 @@
         <item name="android:imeOptions">actionDone</item>
     </style>
 
-    <style name="AllEntriesAddEditDialogRow">
+    <style name="AllSessionsAddEditDialogRow">
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">30dp</item>
@@ -111,7 +111,7 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="AllEntriesAddEditDialogRowEnd">
+    <style name="AllSessionsAddEditDialogRowEnd">
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">30dp</item>
         <item name="android:paddingRight">30dp</item>
