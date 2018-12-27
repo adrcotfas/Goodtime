@@ -9,9 +9,10 @@ import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,19 +24,19 @@ import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.BL.TimerService;
 import com.apps.adrcotfas.goodtime.BL.TimerState;
+import com.apps.adrcotfas.goodtime.Backup.BackupFragment;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
-import com.apps.adrcotfas.goodtime.Backup.BackupFragment;
 import com.apps.adrcotfas.goodtime.Statistics.Main.SelectLabelDialog;
 import com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
+import com.apps.adrcotfas.goodtime.Util.OnSwipeTouchListener;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationView;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -72,19 +73,17 @@ public class TimerActivity
     private FullscreenHelper mFullscreenHelper;
     private long mBackPressedAt;
     private LabelsViewModel mLabelsViewModel;
-    //TODO: find an alternative to loading these in onCreate; before of this the Edit Label dialog was recreated multiple times because of the observable
-    private List<LabelAndColor> mLabels;
 
-    public void onStartButtonClick(View view) {
+    public void onStartButtonClick() {
         start(SessionType.WORK);
     }
-    public void onStopButtonClick(View view) {
+    public void onStopButtonClick() {
         stop();
     }
-    public void onSkipButtonClick(View view) {
+    public void onSkipButtonClick() {
         skip();
     }
-    public void onAdd60SecondsButtonClick(View view) {
+    public void onAdd60SecondsButtonClick() {
         add60Seconds();
     }
 
@@ -100,12 +99,10 @@ public class TimerActivity
         }
     }
 
-    ImageButton mStopButton;
-    ImageButton mSkipButton;
-    ImageButton mAddSecondsButton;
-    ImageButton mStatusButton;
+    MenuItem mStatusButton;
     TextView mTimeLabel;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,23 +111,55 @@ public class TimerActivity
 
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        mStopButton       = binding.stop;
-        mSkipButton       = binding.skip;
         mTimeLabel        = binding.timeLabel;
-        mAddSecondsButton = binding.add60Seconds;
-        mStatusButton     = binding.status;
-
-        mStatusButton.setEnabled(false);
         mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
-        mLabelsViewModel.getLabels().observe(this, labelAndColors -> {
-            mLabels = labelAndColors;
-            mStatusButton.setEnabled(true);
+
+        mTimeLabel.setOnTouchListener(new OnSwipeTouchListener(TimerActivity.this)
+        {
+            @Override
+            public void onSwipeRight(View view) {
+                if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
+                    onSkipButtonClick();
+                }
+            }
+
+            @Override
+            public void onSwipeLeft(View view) {
+                if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
+                    onSkipButtonClick();
+                }
+            }
+
+            @Override
+            public void onSwipeBottom(View view) {
+                if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
+                    onStopButtonClick();
+                }
+            }
+
+            @Override
+            public void onSwipeTop(View view) {
+                if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
+                    onAdd60SecondsButtonClick();
+                }
+            }
+
+            @Override
+            public void onClick(View view) {
+                onStartButtonClick();
+            }
+
+            @Override
+            public boolean onLongClick(View view) {
+                showEditLabelDialog();
+                return true;
+            }
         });
 
-        setSupportActionBar(binding.toolbarWrapper.toolbar);
+        setSupportActionBar(binding.bar);
         getSupportActionBar().setTitle(null);
 
-        setupDrawer(binding.toolbarWrapper.toolbar);
+        setupDrawer(binding.bar);
         setupEvents();
     }
 
@@ -163,6 +192,15 @@ public class TimerActivity
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_main, menu);
+        mStatusButton = menu.findItem(R.id.action_state);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
@@ -177,23 +215,22 @@ public class TimerActivity
     private void setupEvents() {
         mCurrentSession.getDuration().observe(TimerActivity.this, millis -> updateTime(millis));
         mCurrentSession.getSessionType().observe(TimerActivity.this, sessionType -> {
-            if (sessionType == SessionType.WORK) {
-                mStatusButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_status_goodtime));
-            } else {
-                mStatusButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_break));
+            if (mStatusButton != null) {
+                if (sessionType == SessionType.WORK) {
+                    mStatusButton.setIcon(getResources().getDrawable(R.drawable.ic_status_goodtime));
+                } else {
+                    mStatusButton.setIcon(getResources().getDrawable(R.drawable.ic_break));
+                }
             }
         });
 
         mCurrentSession.getTimerState().observe(TimerActivity.this, timerState -> {
             if (timerState == TimerState.INACTIVE) {
                 mTimeLabel.clearAnimation();
-                disableButtons();
             } else if (timerState == TimerState.PAUSED) {
                 mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
-                enableButtons();
             } else {
                 mTimeLabel.clearAnimation();
-                enableButtons();
             }
         });
     }
@@ -231,26 +268,6 @@ public class TimerActivity
         toggle.syncState();
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-    }
-
-    private void enableButtons() {
-        mStopButton.setEnabled(true);
-        mSkipButton.setEnabled(true);
-        mAddSecondsButton.setEnabled(true);
-
-        mAddSecondsButton.animate().alpha(1f).setDuration(100);
-        mSkipButton.animate().alpha(1f).setDuration(100);
-        mStopButton.animate().alpha(1f).setDuration(100);
-    }
-
-    private void disableButtons() {
-        mStopButton.setEnabled(false);
-        mSkipButton.setEnabled(false);
-        mAddSecondsButton.setEnabled(false);
-
-        mSkipButton.animate().alpha(0.5f).setDuration(100);
-        mStopButton.animate().alpha(0.5f).setDuration(100);
-        mAddSecondsButton.animate().alpha(0.5f).setDuration(100);
     }
 
     /**
@@ -329,7 +346,7 @@ public class TimerActivity
         }
     }
 
-    public void showEditLabelDialog(View view1) {
+    public void showEditLabelDialog() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         SelectLabelDialog.newInstance(this, mLabelsViewModel.crtExtendedLabel.getValue().label, false)
                 .show(fragmentManager, "");

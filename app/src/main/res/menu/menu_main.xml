@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_state"
+        android:icon="@drawable/ic_status_goodtime"
+        android:title="State"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_fullscreen"
+        android:title="Fullscreen mode"
+        app:showAsAction="never"/>
+
+</menu>

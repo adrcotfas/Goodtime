@@ -13,11 +13,18 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            tools:context="com.apps.adrcotfas.goodtime.Main.TimerActivity">
+            android:layout_height="match_parent">
 
-            <include android:id="@+id/toolbar_wrapper" layout="@layout/toolbar"/>
+            <com.google.android.material.bottomappbar.BottomAppBar
+                android:id="@+id/bar"
+                style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                app:navigationIcon="@drawable/ic_menu"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
 
             <View
                 android:id="@+id/main"
@@ -48,56 +55,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.45" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <ImageButton
-                    android:id="@+id/status"
-                    android:background="@null"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_status_goodtime"
-                    android:onClick="showEditLabelDialog"/>
-
-                <ImageButton
-                    android:id="@+id/add60Seconds"
-                    android:background="@null"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_add"
-                    android:onClick="onAdd60SecondsButtonClick"/>
-
-                <ImageButton
-                    android:id="@+id/skip"
-                    android:background="@null"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_next"
-                    android:onClick="onSkipButtonClick"/>
-
-                <ImageButton
-                    android:id="@+id/stop"
-                    android:background="@null"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_stop"
-                    android:onClick="onStopButtonClick"/>
-            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.navigation.NavigationView
