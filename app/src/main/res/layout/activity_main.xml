@@ -86,7 +86,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_notification_skip"
+                    android:src="@drawable/ic_next"
                     android:onClick="onSkipButtonClick"/>
 
                 <ImageButton
@@ -95,7 +95,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_notification_stop"
+                    android:src="@drawable/ic_stop"
                     android:onClick="onStopButtonClick"/>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
