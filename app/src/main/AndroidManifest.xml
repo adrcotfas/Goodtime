@@ -26,12 +26,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Classic"
+        android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning,InnerclassSeparator">
         <activity
             android:name="com.apps.adrcotfas.goodtime.Main.TimerActivity"
             android:showOnLockScreen="true"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

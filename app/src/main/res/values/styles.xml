@@ -1,43 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="BaseTheme" parent="@style/Theme.MaterialComponents.NoActionBar">
-        <item name="viewInflaterClass">androidx.appcompat.app.AppCompatViewInflater</item>
-    </style>
-
-    <style name="Classic" parent="@style/BaseTheme">
-        <item name="windowActionModeOverlay">true</item>
-        <item name="colorPrimary">@color/black</item>
-        <item name="colorPrimaryDark">@color/black</item>
-        <item name="colorAccent">@color/classicAccent</item>
-        <item name="android:windowBackground">@color/black</item>
-
-        <item name="android:actionModeCloseDrawable">@drawable/ic_clear</item>
-        <item name="actionModeStyle">@style/ActionModeStyle</item>
-
-        <item name="bottomSheetDialogTheme">@style/Theme.Design.BottomSheetDialog</item>
-    </style>
-
-    <style name="Dark" parent="@style/BaseTheme">
-        <item name="colorPrimary">@color/darkIndigo900</item>
-        <item name="colorPrimaryDark">@color/darkIndigo900</item>
-        <item name="android:windowBackground">@color/darkIndigo900</item>
-        <item name="colorAccent">@color/classicAccent</item>
-    </style>
-
-    <style name="Blue" parent="@style/BaseTheme">
-        <item name="colorPrimary">@color/blue_a700</item>
-        <item name="colorPrimaryDark">@color/blue_a700</item>
-        <item name="android:windowBackground">@color/blue_a700</item>
-        <item name="colorAccent">@color/classicAccent</item>
-    </style>
-
-    <style name="Red" parent="@style/BaseTheme">
-        <item name="colorPrimary">@color/red900</item>
-        <item name="colorPrimaryDark">@color/red900</item>
-        <item name="android:windowBackground">@color/red900</item>
-        <item name="colorAccent">@color/classicAccent</item>
-    </style>
-
     <declare-styleable name="ProperSeekBarPreference">
         <attr format="integer" name="min"/>
         <attr name="android:max"/>
@@ -159,6 +121,32 @@
         <item name="android:minHeight">52dp</item>
         <item name="android:textSize">14sp</item>
         <item name="cornerRadius">32dp</item>
+    </style>
+
+    <style name="ActionBarTheme" parent="Widget.MaterialComponents.BottomAppBar">
+        <item name="backgroundTint">@color/black</item>
+    </style>
+
+    <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
+        <item name="android:itemBackground">@android:color/black</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar" >
+
+        <item name="viewInflaterClass">androidx.appcompat.app.AppCompatViewInflater</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:actionModeCloseDrawable">@drawable/ic_clear</item>
+
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryDark">@color/black</item>
+        <item name="colorAccent">@color/classicAccent</item>
+        <item name="android:windowBackground">@color/black</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+
+        <item name="alertDialogTheme">@style/Theme.MaterialComponents.DayNight.Dialog</item>
+        <item name="android:panelBackground">@color/black</item>
+        <item name="android:panelFullBackground">@color/black</item>
     </style>
 
 </resources>

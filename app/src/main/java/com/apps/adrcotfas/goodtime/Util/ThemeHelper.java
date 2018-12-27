@@ -17,6 +17,8 @@ import com.apps.adrcotfas.goodtime.R;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES;
+
 public class ThemeHelper {
 
     public static void setTheme(AppCompatActivity activity) {
@@ -25,16 +27,19 @@ public class ThemeHelper {
         final int blue = activity.getResources().getColor(R.color.pref_blue);
         final int red = activity.getResources().getColor(R.color.pref_red);
 
-        int i = PreferenceHelper.getTheme();
-        if (i == dark) {
-            activity.setTheme(R.style.Dark);
-        } else if (i == blue) {
-            activity.setTheme(R.style.Blue);
-        } else if (i == red) {
-            activity.setTheme(R.style.Red);
-        } else {
-            activity.setTheme(R.style.Classic);
-        }
+        activity.getDelegate().setLocalNightMode(MODE_NIGHT_YES);
+
+        //TODO: re-enable
+//        int i = PreferenceHelper.getTheme();
+//        if (i == dark) {
+//            activity.setTheme(R.style.Dark);
+//        } else if (i == blue) {
+//            activity.setTheme(R.style.Blue);
+//        } else if (i == red) {
+//            activity.setTheme(R.style.Red);
+//        } else {
+//            activity.setTheme(R.style.Classic);
+//        }
     }
 
     public static float pxToDp(Context context, int px) {
