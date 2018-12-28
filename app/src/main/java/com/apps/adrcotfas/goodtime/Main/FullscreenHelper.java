@@ -3,7 +3,6 @@ package com.apps.adrcotfas.goodtime.Main;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import androidx.appcompat.app.ActionBar;
-import android.view.MotionEvent;
 import android.view.View;
 
 class FullscreenHelper {
@@ -34,12 +33,7 @@ class FullscreenHelper {
             mActionBar.show();
         }
     };
-    private final Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
+    private final Runnable mHideRunnable = () -> hide();
 
     FullscreenHelper(View contentView, ActionBar actionBar) {
 
@@ -47,20 +41,12 @@ class FullscreenHelper {
         mContentView = contentView;
         mActionBar = actionBar;
 
-        mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
+        mContentView.setOnClickListener(view -> toggle());
+        mContentView.setOnTouchListener((view, motionEvent) -> {
+            if (AUTO_HIDE) {
+                delayedHide(AUTO_HIDE_DELAY_MILLIS);
             }
-        });
-        mContentView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (AUTO_HIDE) {
-                    delayedHide(AUTO_HIDE_DELAY_MILLIS);
-                }
-                return false;
-            }
+            return false;
         });
 
         hide();

@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -112,6 +114,7 @@ public class TimerActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+
         ThemeHelper.setTheme(this);
 
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
@@ -123,6 +126,7 @@ public class TimerActivity
 
         setSupportActionBar(binding.bar);
         getSupportActionBar().setTitle(null);
+        toggleFullscreenMode();
 
         setupDrawer(binding.bar);
         setupEvents();
@@ -231,8 +235,6 @@ public class TimerActivity
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.registerOnSharedPreferenceChangeListener(this);
         toggleKeepScreenOn(PreferenceHelper.isScreenOnEnabled());
-
-        toggleFullscreenMode();
     }
 
     @Override
