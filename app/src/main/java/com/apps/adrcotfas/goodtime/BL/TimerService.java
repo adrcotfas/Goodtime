@@ -10,6 +10,7 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
+import com.apps.adrcotfas.goodtime.Main.TimerActivity;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
@@ -169,6 +170,8 @@ public class TimerService extends Service {
     private void onFinishEvent(SessionType sessionType) {
         Log.d(TAG, TimerService.this.hashCode() + " onFinishEvent " + sessionType.toString());
 
+        bringActivityToFront();
+
         acquireScreenLock();
         if (sessionType == SessionType.WORK) {
             if (PreferenceHelper.isWiFiDisabled()) {
@@ -282,6 +285,12 @@ public class TimerService extends Service {
                 AppDatabase.getDatabase(getApplicationContext()).sessionModel().addSession(session);
             });
         }
+    }
+
+    private void bringActivityToFront() {
+        Intent activityIntent = new Intent(this, TimerActivity.class);
+        activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getApplication().startActivity(activityIntent);
     }
 
     @Override

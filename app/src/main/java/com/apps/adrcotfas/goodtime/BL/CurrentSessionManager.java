@@ -12,10 +12,10 @@ import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.apps.adrcotfas.goodtime.Main.TimerActivity;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;
+
 import de.greenrobot.event.EventBus;
 
 import static com.apps.adrcotfas.goodtime.Util.Constants.ACTION.FINISHED;
@@ -97,38 +97,17 @@ public class CurrentSessionManager extends ContextWrapper{
             getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     triggerAtMillis, getAlarmPendingIntent(sessionType));
 
-            //TODO: find a more elegant solution for the second alarm
-            //which just brings the main activity on top in a smooth way.
-            //Starting it from the service lags
-
-            getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    triggerAtMillis, getAlarmActivityIntent());
-
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getAlarmManager().setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     triggerAtMillis, getAlarmPendingIntent(sessionType));
-
-            getAlarmManager().setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    triggerAtMillis, getAlarmActivityIntent());
         } else {
             getAlarmManager().set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     triggerAtMillis, getAlarmPendingIntent(sessionType));
-
-            getAlarmManager().set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    triggerAtMillis, getAlarmActivityIntent());
         }
     }
-
-    private PendingIntent getAlarmActivityIntent() {
-        Intent activityIntent = new Intent(this, TimerActivity.class);
-        activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        return PendingIntent.getActivity(this, 0,
-                activityIntent, 0);
-    }
-
+    
     private void cancelAlarm() {
         getAlarmManager().cancel(getAlarmPendingIntent(mCurrentSession.getSessionType().getValue()));
-        getAlarmManager().cancel(getAlarmActivityIntent());
         unregisterAlarmReceiver();
     }
 

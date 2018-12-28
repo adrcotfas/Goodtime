@@ -1,11 +1,6 @@
 package com.apps.adrcotfas.goodtime.BL;
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
-
-import com.apps.adrcotfas.goodtime.Database.AppDatabase;
-import com.apps.adrcotfas.goodtime.LabelAndColor;
-import com.apps.adrcotfas.goodtime.R;
 
 import java.util.concurrent.TimeUnit;
 
