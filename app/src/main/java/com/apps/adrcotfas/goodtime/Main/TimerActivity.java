@@ -160,7 +160,7 @@ public class TimerActivity
             messages.add("Swipe up to add one more minute");
             messages.add("Swipe down on the timer to stop");
 
-            Snackbar s = Snackbar.make(mTimeLabel, messages.get(PreferenceHelper.getLastIntroStep()), Snackbar.LENGTH_INDEFINITE)
+            Snackbar s = Snackbar.make(mToolbar, messages.get(PreferenceHelper.getLastIntroStep()), Snackbar.LENGTH_INDEFINITE)
                     .setAction("OK", view -> {
                         int nextStep = i + 1;
                         PreferenceHelper.setLastIntroStep(nextStep);
