@@ -10,10 +10,12 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
+import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.TimerActivity;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
@@ -274,9 +276,28 @@ public class TimerService extends Service {
 
     private void saveToDb() {
         //TODO: save session of at least one minute
+        //TODO: refactor this mess
         if (true /*getSessionManager().getElapsedTime() >= 60*/) {
-            String label = getSessionManager().getCurrentSession().getLabel().getValue();
             AsyncTask.execute(() -> {
+
+                String label = getSessionManager().getCurrentSession().getLabel().getValue();
+                boolean found = false;
+                List<LabelAndColor> labels = AppDatabase.getDatabase(getApplicationContext()).labelAndColor().getLabels().getValue();
+                if (labels != null) {
+                    for (LabelAndColor l : labels) {
+                        if (label.equals(l.label)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                } else {
+                    label = null;
+                }
+
+                if (found) {
+                    label = null;
+                }
+
                 Session session = new Session(
                         0,
                         System.currentTimeMillis(),
