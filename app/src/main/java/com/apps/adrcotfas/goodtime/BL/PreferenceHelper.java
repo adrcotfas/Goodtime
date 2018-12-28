@@ -43,7 +43,7 @@ public class PreferenceHelper {
         switch (sessionType) {
             case WORK:
                 duration = getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                        .getInt(WORK_DURATION, 42);
+                        .getInt(WORK_DURATION, 25);
                 break;
             case BREAK:
                 duration = getDefaultSharedPreferences(GoodtimeApplication.getInstance())
@@ -51,7 +51,7 @@ public class PreferenceHelper {
                 break;
             case LONG_BREAK:
                 duration = getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                        .getInt(LONG_BREAK_DURATION, 5);
+                        .getInt(LONG_BREAK_DURATION, 15);
                 break;
             default:
                 duration = 42;
@@ -62,7 +62,7 @@ public class PreferenceHelper {
 
     public static boolean isLongBreakEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getBoolean(ENABLE_LONG_BREAK, true);
+                .getBoolean(ENABLE_LONG_BREAK, false);
     }
 
     public static int getSessionsBeforeLongBreak() {
