@@ -17,6 +17,11 @@ public abstract class OnSwipeTouchListener implements View.OnTouchListener {
     @Override
     public boolean onTouch(View view, MotionEvent event) {
         this.view = view;
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            onPress(view);
+        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            onRelease(view);
+        }
         return gestureDetector.onTouchEvent(event);
     }
 
@@ -26,6 +31,8 @@ public abstract class OnSwipeTouchListener implements View.OnTouchListener {
     public abstract void onSwipeTop(View view);
     public abstract void onClick(View view);
     public abstract boolean onLongClick(View view);
+    public abstract void onPress(View view);
+    public abstract void onRelease(View view);
 
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
 

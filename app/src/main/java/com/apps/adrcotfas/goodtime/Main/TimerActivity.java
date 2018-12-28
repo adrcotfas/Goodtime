@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
@@ -14,8 +15,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -167,6 +166,21 @@ public class TimerActivity
                 showEditLabelDialog();
                 return true;
             }
+
+            @Override
+            public void onPress(View view) {
+                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.scale_reversed));
+            }
+
+            @Override
+            public void onRelease(View view) {
+                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.scale));
+                if (mCurrentSession.getTimerState().getValue() == TimerState.PAUSED) {
+                    final Handler handler = new Handler();
+                    handler.postDelayed(() -> mTimeLabel.startAnimation(
+                            loadAnimation(getApplicationContext(), R.anim.blink)), 300);
+                }
+            }
         });
     }
 
@@ -280,11 +294,15 @@ public class TimerActivity
 
         mCurrentSession.getTimerState().observe(TimerActivity.this, timerState -> {
             if (timerState == TimerState.INACTIVE) {
-                mTimeLabel.clearAnimation();
+                final Handler handler = new Handler();
+                handler.postDelayed(() -> mTimeLabel.clearAnimation(), 300);
             } else if (timerState == TimerState.PAUSED) {
-                mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink));
+                final Handler handler = new Handler();
+                handler.postDelayed(() -> mTimeLabel.startAnimation(
+                        loadAnimation(getApplicationContext(), R.anim.blink)), 300);
             } else {
-                mTimeLabel.clearAnimation();
+                final Handler handler = new Handler();
+                handler.postDelayed(() -> mTimeLabel.clearAnimation(), 300);
             }
         });
     }
