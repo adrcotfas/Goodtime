@@ -35,6 +35,8 @@ public class PreferenceHelper {
     private static final String DO_NOT_SHOW_DIALOG_SKIP    = "pref_do_not_show_dialog_skip";
     private static final String DO_NOT_SHOW_DIALOG_STOP    = "pref_do_not_show_dialog_stop";
 
+    private static final String CURRENT_SESSION_LABEL      = "pref_current_session_label";
+
     public static long getSessionDuration(SessionType sessionType) {
 
         final long duration;
@@ -202,5 +204,14 @@ public class PreferenceHelper {
 
     public static boolean getDoNotShowDialogStop() {
         return GoodtimeApplication.getSharedPreferences().getBoolean(DO_NOT_SHOW_DIALOG_STOP, false);
+    }
+
+    public static String getCurrentSessionLabel() {
+        return GoodtimeApplication.getSharedPreferences().getString(CURRENT_SESSION_LABEL, null);
+    }
+
+    public static void setCurrentSessionLabel(String label) {
+        GoodtimeApplication.getSharedPreferences().edit()
+                .putString(CURRENT_SESSION_LABEL, label).apply();
     }
 }

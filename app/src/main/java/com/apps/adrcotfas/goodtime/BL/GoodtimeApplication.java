@@ -27,11 +27,12 @@ public class GoodtimeApplication extends Application {
         super.onCreate();
         INSTANCE = this;
 
+        mPreferences = getSharedPreferences(getPackageName() + "_private_preferences", MODE_PRIVATE);
+
         mCurrentSessionManager = new CurrentSessionManager(this, new CurrentSession(TimeUnit.MINUTES.toMillis(
                 PreferenceManager.getDefaultSharedPreferences(this)
                         .getInt(WORK_DURATION, DEFAULT_WORK_DURATION_DEFAULT))));
 
-        mPreferences = getSharedPreferences(getPackageName() + "_private_preferences", MODE_PRIVATE);
     }
 
     public CurrentSession getCurrentSession() {

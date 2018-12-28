@@ -402,7 +402,7 @@ public class TimerActivity
 
     public void showEditLabelDialog() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        SelectLabelDialog.newInstance(this, mLabelsViewModel.crtExtendedLabel.getValue().label, false)
+        SelectLabelDialog.newInstance(this, PreferenceHelper.getCurrentSessionLabel(), false)
                 .show(fragmentManager, "");
     }
 
@@ -514,6 +514,7 @@ public class TimerActivity
         if (labelAndColor != null) {
             mLabelsViewModel.crtExtendedLabel.setValue(labelAndColor);
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(labelAndColor.label);
+            PreferenceHelper.setCurrentSessionLabel(labelAndColor.label);
         } else {
             mLabelsViewModel.crtExtendedLabel.setValue(null);
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
