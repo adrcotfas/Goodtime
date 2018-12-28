@@ -8,7 +8,7 @@ buildscript {
         maven { url "https://dl.bintray.com/takisoft/android" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.0-beta01'
+        classpath 'com.android.tools.build:gradle:3.3.0-rc03'
     }
 }
 
