@@ -157,8 +157,8 @@ public class TimerActivity
             //TODO: extract strings
             messages.add("Tap the timer to start");
             messages.add("Swipe left or right to skip the current session");
-            messages.add("Swipe down on the timer to stop");
             messages.add("Swipe up to add one more minute");
+            messages.add("Swipe down on the timer to stop");
 
             Snackbar s = Snackbar.make(mTimeLabel, messages.get(PreferenceHelper.getLastIntroStep()), Snackbar.LENGTH_INDEFINITE)
                     .setAction("OK", view -> {
@@ -233,49 +233,13 @@ public class TimerActivity
 
     private void onSkipSession() {
         if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(TimerActivity.this);
-
-            if (!PreferenceHelper.shouldNotShowDialogSkip()) {
-                LayoutInflater adbInflater = LayoutInflater.from(TimerActivity.this);
-                View v = adbInflater.inflate(R.layout.dialog_skip_stop_session, null);
-                CheckBox c = v.findViewById(R.id.checkbox);
-                builder.setView(v)
-                        .setMessage("Skip the current session?")
-                        .setPositiveButton("Skip", (dialog, which) -> {
-                            if (c.isChecked()) {
-                                PreferenceHelper.setDoNotShowDialogSkip();
-                            }
-                            onSkipButtonClick();
-                        })
-                        .setNegativeButton("Cancel", (dialog, which) -> {})
-                        .show();
-            } else {
-                onSkipButtonClick();
-            }
+            onSkipButtonClick();
         }
     }
 
     private void onStopSession() {
         if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(TimerActivity.this);
-
-            if (!PreferenceHelper.shouldNotShowDialogStop()) {
-                LayoutInflater adbInflater = LayoutInflater.from(TimerActivity.this);
-                View v = adbInflater.inflate(R.layout.dialog_skip_stop_session, null);
-                CheckBox c = v.findViewById(R.id.checkbox);
-                builder.setView(v)
-                        .setMessage("Stop the current session?")
-                        .setPositiveButton("Stop", (dialog, which) -> {
-                            if (c.isChecked()) {
-                                PreferenceHelper.setDoNotShowDialogStop();
-                            }
-                            onStopButtonClick();
-                        })
-                        .setNegativeButton("Cancel", (dialog, which) -> {})
-                        .show();
-            } else {
-                onStopButtonClick();
-            }
+            onStopButtonClick();
         }
     }
 

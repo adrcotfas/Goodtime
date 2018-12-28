@@ -34,9 +34,6 @@ public class PreferenceHelper {
     public final static String LAST_WORK_FINISHED_AT       = "pref_last_work_finished_at";
     private static final String ADDED_60_SECONDS_STATE     = "pref_added_60_seconds_State";
 
-    private static final String DO_NOT_SHOW_DIALOG_SKIP    = "pref_do_not_show_dialog_skip";
-    private static final String DO_NOT_SHOW_DIALOG_STOP    = "pref_do_not_show_dialog_stop";
-
     private static final String CURRENT_SESSION_LABEL      = "pref_current_session_label";
     private static final String INTRO_SNACKBAR_STEP        = "pref_intro_snackbar_step";
 
@@ -191,24 +188,6 @@ public class PreferenceHelper {
         return GoodtimeApplication.getSharedPreferences().getBoolean(ADDED_60_SECONDS_STATE, false);
     }
 
-    public static void setDoNotShowDialogSkip() {
-        GoodtimeApplication.getSharedPreferences().edit()
-                .putBoolean(DO_NOT_SHOW_DIALOG_SKIP, true).apply();
-    }
-
-    public static void setDoNotShowDialogStop() {
-        GoodtimeApplication.getSharedPreferences().edit()
-                .putBoolean(DO_NOT_SHOW_DIALOG_STOP, true).apply();
-    }
-
-    public static boolean shouldNotShowDialogSkip() {
-        return GoodtimeApplication.getSharedPreferences().getBoolean(DO_NOT_SHOW_DIALOG_SKIP, false);
-    }
-
-    public static boolean shouldNotShowDialogStop() {
-        return GoodtimeApplication.getSharedPreferences().getBoolean(DO_NOT_SHOW_DIALOG_STOP, false);
-    }
-
     public static String getCurrentSessionLabel() {
         return GoodtimeApplication.getSharedPreferences().getString(CURRENT_SESSION_LABEL, null);
     }
@@ -224,7 +203,7 @@ public class PreferenceHelper {
 
     public static void consumeFirstRun() {
         GoodtimeApplication.getSharedPreferences().edit()
-                .putBoolean(CURRENT_SESSION_LABEL, true).apply();
+                .putBoolean(FIRST_RUN, true).apply();
     }
 
     public static int getLastIntroStep() {
