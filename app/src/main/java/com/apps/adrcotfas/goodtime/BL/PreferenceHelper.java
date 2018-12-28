@@ -8,6 +8,8 @@ import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class PreferenceHelper {
 
+    private final static String FIRST_RUN = "pref_first_run";
+
     public final static String PROFILE                     = "pref_profile";
     public final static String WORK_DURATION               = "pref_work_duration";
     public final static String BREAK_DURATION              = "pref_break_duration";
@@ -214,4 +216,14 @@ public class PreferenceHelper {
         GoodtimeApplication.getSharedPreferences().edit()
                 .putString(CURRENT_SESSION_LABEL, label).apply();
     }
+
+    public static boolean isFirstRun() {
+        return GoodtimeApplication.getSharedPreferences().getBoolean(FIRST_RUN, true);
+    }
+
+    public static void consumeFirstRun() {
+        GoodtimeApplication.getSharedPreferences().edit()
+                .putBoolean(CURRENT_SESSION_LABEL, true).apply();
+    }
+
 }

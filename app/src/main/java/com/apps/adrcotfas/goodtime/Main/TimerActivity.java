@@ -114,6 +114,11 @@ public class TimerActivity
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
 
+        if (PreferenceHelper.isFirstRun()) {
+            // do first run stuff
+            PreferenceHelper.consumeFirstRun();
+        }
+
         ThemeHelper.setTheme(this);
 
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
