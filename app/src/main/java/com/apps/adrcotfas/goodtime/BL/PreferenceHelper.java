@@ -32,6 +32,9 @@ public class PreferenceHelper {
     public final static String LAST_WORK_FINISHED_AT       = "pref_last_work_finished_at";
     private static final String ADDED_60_SECONDS_STATE     = "pref_added_60_seconds_State";
 
+    private static final String DO_NOT_SHOW_DIALOG_SKIP    = "pref_do_not_show_dialog_skip";
+    private static final String DO_NOT_SHOW_DIALOG_STOP    = "pref_do_not_show_dialog_stop";
+
     public static long getSessionDuration(SessionType sessionType) {
 
         final long duration;
@@ -181,5 +184,23 @@ public class PreferenceHelper {
      */
     public static boolean isInAdded60SecondsState() {
         return GoodtimeApplication.getSharedPreferences().getBoolean(ADDED_60_SECONDS_STATE, false);
+    }
+
+    public static void setDoNotShowDialogSkip() {
+        GoodtimeApplication.getSharedPreferences().edit()
+                .putBoolean(DO_NOT_SHOW_DIALOG_SKIP, true).apply();
+    }
+
+    public static void setDoNotShowDialogStop() {
+        GoodtimeApplication.getSharedPreferences().edit()
+                .putBoolean(DO_NOT_SHOW_DIALOG_STOP, true).apply();
+    }
+
+    public static boolean getDoNotShowDialogSkip() {
+        return GoodtimeApplication.getSharedPreferences().getBoolean(DO_NOT_SHOW_DIALOG_SKIP, false);
+    }
+
+    public static boolean getDoNotShowDialogStop() {
+        return GoodtimeApplication.getSharedPreferences().getBoolean(DO_NOT_SHOW_DIALOG_STOP, false);
     }
 }

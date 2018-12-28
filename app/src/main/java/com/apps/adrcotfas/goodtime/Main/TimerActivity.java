@@ -9,10 +9,12 @@ import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,8 +65,12 @@ import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
 import static java.lang.String.format;
 
 public class TimerActivity
-        extends AppCompatActivity
-        implements SharedPreferences.OnSharedPreferenceChangeListener, NavigationView.OnNavigationItemSelectedListener, SelectLabelDialog.OnLabelSelectedListener {
+        extends
+        AppCompatActivity
+        implements
+        SharedPreferences.OnSharedPreferenceChangeListener,
+        NavigationView.OnNavigationItemSelectedListener,
+        SelectLabelDialog.OnLabelSelectedListener {
 
     private static final String TAG = TimerActivity.class.getSimpleName();
 
@@ -102,7 +108,6 @@ public class TimerActivity
     MenuItem mStatusButton;
     TextView mTimeLabel;
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,27 +119,32 @@ public class TimerActivity
         mTimeLabel        = binding.timeLabel;
         mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
 
+        setupTimeLabelEvents();
+
+        setSupportActionBar(binding.bar);
+        getSupportActionBar().setTitle(null);
+
+        setupDrawer(binding.bar);
+        setupEvents();
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setupTimeLabelEvents() {
         mTimeLabel.setOnTouchListener(new OnSwipeTouchListener(TimerActivity.this)
         {
             @Override
             public void onSwipeRight(View view) {
-                if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
-                    onSkipButtonClick();
-                }
+                onSkipSession();
             }
 
             @Override
             public void onSwipeLeft(View view) {
-                if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
-                    onSkipButtonClick();
-                }
+                onSkipSession();
             }
 
             @Override
             public void onSwipeBottom(View view) {
-                if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
-                    onStopButtonClick();
-                }
+                onStopSession();
             }
 
             @Override
@@ -155,12 +165,54 @@ public class TimerActivity
                 return true;
             }
         });
+    }
 
-        setSupportActionBar(binding.bar);
-        getSupportActionBar().setTitle(null);
+    private void onSkipSession() {
+        if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(TimerActivity.this);
 
-        setupDrawer(binding.bar);
-        setupEvents();
+            if (!PreferenceHelper.getDoNotShowDialogSkip()) {
+                LayoutInflater adbInflater = LayoutInflater.from(TimerActivity.this);
+                View v = adbInflater.inflate(R.layout.dialog_skip_stop_session, null);
+                CheckBox c = v.findViewById(R.id.checkbox);
+                builder.setView(v)
+                        .setMessage("Skip the current session?")
+                        .setPositiveButton("Skip", (dialog, which) -> {
+                            if (c.isChecked()) {
+                                PreferenceHelper.setDoNotShowDialogSkip();
+                            }
+                            onSkipButtonClick();
+                        })
+                        .setNegativeButton("Cancel", (dialog, which) -> {})
+                        .show();
+            } else {
+                onSkipButtonClick();
+            }
+        }
+    }
+
+    private void onStopSession() {
+        if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(TimerActivity.this);
+
+            if (!PreferenceHelper.getDoNotShowDialogStop()) {
+                LayoutInflater adbInflater = LayoutInflater.from(TimerActivity.this);
+                View v = adbInflater.inflate(R.layout.dialog_skip_stop_session, null);
+                CheckBox c = v.findViewById(R.id.checkbox);
+                builder.setView(v)
+                        .setMessage("Stop the current session?")
+                        .setPositiveButton("Stop", (dialog, which) -> {
+                            if (c.isChecked()) {
+                                PreferenceHelper.setDoNotShowDialogStop();
+                            }
+                            onStopButtonClick();
+                        })
+                        .setNegativeButton("Cancel", (dialog, which) -> {})
+                        .show();
+            } else {
+                onStopButtonClick();
+            }
+        }
     }
 
     @Override
