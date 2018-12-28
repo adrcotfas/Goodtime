@@ -72,14 +72,15 @@
             android:title="@string/pref_fullscreen"
             app:iconSpaceReserved="false"/>
 
-        <ColorPickerPreference
-            android:defaultValue="@color/black"
-            android:dialogTitle="@string/pref_theme"
-            android:persistent="true"
+        <ListPreference
+            android:dialogTitle="Theme"
             android:key="pref_theme"
+            android:entries="@array/pref_theme"
+            android:defaultValue="@string/pref_theme_black"
+            android:entryValues="@array/pref_theme"
+            android:persistent="true"
+            android:summary="%s"
             android:title="Theme"
-            app:pref_colors="@array/themeColors"
-            app:pref_size="small"
             app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>

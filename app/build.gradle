@@ -41,12 +41,13 @@ dependencies {
 
     // Preferences
     implementation 'androidx.preference:preference:1.1.0-alpha02'
-    //implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
 
-    implementation 'com.takisoft.preferencex:preferencex:1.0.0-alpha2'
-    implementation 'com.takisoft.preferencex:preferencex-simplemenu:1.0.0-alpha2'
-    implementation 'com.takisoft.preferencex:preferencex-colorpicker:1.0.0-alpha2'
-    implementation 'com.takisoft.preferencex:preferencex-ringtone:1.0.0-alpha2'
+    implementation 'com.takisoft.preferencex:preferencex:1.0.0'
+    implementation 'com.takisoft.preferencex:preferencex-simplemenu:1.0.0'
+    implementation 'com.takisoft.preferencex:preferencex-ringtone:1.0.0'
+
+    // Color picker for the labels
+    implementation 'com.takisoft.colorpicker:colorpicker:1.0.0'
 
     // EventBus
     implementation 'de.greenrobot:eventbus:2.4.0'
@@ -65,8 +66,4 @@ dependencies {
     implementation 'joda-time:joda-time:2.10'
 
     implementation 'androidx.recyclerview:recyclerview-selection:1.1.0-alpha01'
-
-    implementation ('com.wdullaer:materialdatetimepicker:4.0.1') {
-        exclude group: 'androidx.appcompat'
-    }
 }

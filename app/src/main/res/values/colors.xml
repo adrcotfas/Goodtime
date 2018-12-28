@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="dayNightGray">#141414</color>
     <color name="classicAccent">#80CBC4</color>
 
     <color name="darkIndigo900">#262738</color>

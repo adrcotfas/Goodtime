@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.Constants;
-import com.takisoft.preferencex.ColorPickerPreference;
 import com.takisoft.preferencex.PreferenceFragmentCompat;
 
 import androidx.annotation.Nullable;
@@ -27,7 +26,7 @@ import androidx.preference.SwitchPreference;
 
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.DISABLE_SOUND_AND_VIBRATION;
 
-public class SettingsFragment extends PreferenceFragmentCompat  implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class SettingsFragment extends PreferenceFragmentCompat implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     // general
     private ListPreference mPrefProfile;
@@ -37,7 +36,7 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
     private ProperSeekBarPreference mPrefLongBreakDuration;
     private ProperSeekBarPreference mPrefSessionsBeforeLongBreak;
 
-    private ColorPickerPreference mPrefTheme;
+    private ListPreference mPrefTheme;
 
     private SwitchPreference mPrefEnableRingtone;
     private CheckBoxPreference mPrefDisableSoundCheckbox;
@@ -47,25 +46,25 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
         setPreferencesFromResource(R.xml.settings, rootKey);
 
         // general
-        mPrefProfile = (ListPreference) findPreference(PreferenceHelper.PROFILE);
+        mPrefProfile = findPreference(PreferenceHelper.PROFILE);
         mPrefProfile.setOnPreferenceChangeListener((preference, newValue) -> {
             switchProfile((CharSequence) newValue);
             return true;
         });
-        mPrefWorkDuration = (ProperSeekBarPreference) findPreference(PreferenceHelper.WORK_DURATION);
-        mPrefBreakDuration = (ProperSeekBarPreference) findPreference(PreferenceHelper.BREAK_DURATION);
-        mPrefEnableLongBreak = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_LONG_BREAK);
+        mPrefWorkDuration = findPreference(PreferenceHelper.WORK_DURATION);
+        mPrefBreakDuration = findPreference(PreferenceHelper.BREAK_DURATION);
+        mPrefEnableLongBreak = findPreference(PreferenceHelper.ENABLE_LONG_BREAK);
         toggleLongBreakPreference(mPrefEnableLongBreak.isChecked());
         mPrefEnableLongBreak.setOnPreferenceChangeListener((preference, newValue) -> {
             toggleLongBreakPreference((Boolean) newValue);
             return true;
         });
-        mPrefLongBreakDuration = (ProperSeekBarPreference) findPreference(PreferenceHelper.LONG_BREAK_DURATION);
-        mPrefSessionsBeforeLongBreak = (ProperSeekBarPreference) findPreference(PreferenceHelper.SESSIONS_BEFORE_LONG_BREAK);
+        mPrefLongBreakDuration = findPreference(PreferenceHelper.LONG_BREAK_DURATION);
+        mPrefSessionsBeforeLongBreak = findPreference(PreferenceHelper.SESSIONS_BEFORE_LONG_BREAK);
 
-        mPrefTheme = (ColorPickerPreference) findPreference(PreferenceHelper.THEME);
+        mPrefTheme = findPreference(PreferenceHelper.THEME);
         mPrefTheme.setOnPreferenceChangeListener((preference, newValue) -> {
-            if (mPrefTheme.getColor() != (int) newValue) {
+            if (mPrefTheme.getValue() != newValue) {
                 if (getActivity() != null) {
                     getActivity().recreate();
                 }
@@ -73,7 +72,7 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
             return true;
         });
 
-        mPrefEnableRingtone = (SwitchPreference) findPreference(PreferenceHelper.ENABLE_RINGTONE);
+        mPrefEnableRingtone = findPreference(PreferenceHelper.ENABLE_RINGTONE);
         mPrefEnableRingtone.setVisible(true);
         toggleEnableRingtonePreference(mPrefEnableRingtone.isChecked());
         mPrefEnableRingtone.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -103,7 +102,7 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
 
         // Continuous mode versus insistent notification
         findPreference(PreferenceHelper.ENABLE_CONTINUOUS_MODE).setOnPreferenceChangeListener((preference, newValue) -> {
-            final CheckBoxPreference pref = (CheckBoxPreference) findPreference(PreferenceHelper.INSISTENT_RINGTONE);
+            final CheckBoxPreference pref = findPreference(PreferenceHelper.INSISTENT_RINGTONE);
             if (pref.isChecked()) {
                 pref.setChecked(false);
             }
@@ -111,7 +110,7 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
         });
 
         findPreference(PreferenceHelper.INSISTENT_RINGTONE).setOnPreferenceChangeListener((preference, newValue) -> {
-            final CheckBoxPreference pref = (CheckBoxPreference) findPreference(PreferenceHelper.ENABLE_CONTINUOUS_MODE);
+            final CheckBoxPreference pref = findPreference(PreferenceHelper.ENABLE_CONTINUOUS_MODE);
             if (pref.isChecked()) {
                 pref.setChecked(false);
             }
@@ -127,8 +126,7 @@ public class SettingsFragment extends PreferenceFragmentCompat  implements Activ
     @Override
     public void onResume() {
         super.onResume();
-        mPrefDisableSoundCheckbox = (CheckBoxPreference)
-                findPreference(DISABLE_SOUND_AND_VIBRATION);
+        mPrefDisableSoundCheckbox = findPreference(DISABLE_SOUND_AND_VIBRATION);
         setupDisableSoundCheckBox();
 
         final Preference disableBatteryOptimizationPref = findPreference(PreferenceHelper.DISABLE_BATTERY_OPTIMIZATION);

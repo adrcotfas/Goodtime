@@ -8,6 +8,18 @@
         <item>@string/pref_profile_5217</item>
     </string-array>
 
+    <string name="pref_theme_black">Black</string>
+    <string name="pref_theme_dark">Dark</string>
+    <string name="pref_theme_blue">Blue</string>
+    <string name="pref_theme_red">Red</string>
+
+    <string-array name="pref_theme">
+        <item>@string/pref_theme_black</item>
+        <item>@string/pref_theme_dark</item>
+        <item>@string/pref_theme_blue</item>
+        <item>@string/pref_theme_red</item>
+    </string-array>
+
     <string name ="spinner_stats_duration">Time</string>
     <string name="spinner_stats_nr_of_sessions">Sessions</string>
 

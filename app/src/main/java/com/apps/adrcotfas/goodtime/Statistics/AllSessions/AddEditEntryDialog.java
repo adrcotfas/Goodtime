@@ -1,11 +1,15 @@
 package com.apps.adrcotfas.goodtime.Statistics.AllSessions;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.LabelAndColor;
@@ -14,11 +18,11 @@ import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Statistics.Main.SelectLabelDialog;
 import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
+import com.apps.adrcotfas.goodtime.Util.DatePickerFragment;
+import com.apps.adrcotfas.goodtime.Util.TimePickerFragment;
 import com.apps.adrcotfas.goodtime.Util.StringUtils;
 import com.apps.adrcotfas.goodtime.databinding.DialogAddEntryBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
-import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import org.joda.time.DateTime;
 
@@ -26,6 +30,7 @@ import java.util.Calendar;
 
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -130,44 +135,48 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements Dat
         return view;
     }
 
+    private Calendar getCalendar() {
+        Calendar calendar = Calendar.getInstance();
+        DateTime date = mViewModel.date.getValue();
+        if (date != null) {
+            calendar.setTime(date.toDate());
+        }
+        return calendar;
+    }
+
     private void onTimeViewClick() {
-        TimePickerDialog tpd = TimePickerDialog.newInstance(
-                AddEditEntryDialog.this, 9, 0, true);
-        tpd.setThemeDark(true);
-        tpd.setVersion(TimePickerDialog.Version.VERSION_2);
-        tpd.show(requireFragmentManager(), "timepickerdialog");
+        TimePickerFragment d = TimePickerFragment.newInstance(AddEditEntryDialog.this, getCalendar());
+        FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager != null) {
+            d.show(fragmentManager, "");
+        }
     }
 
     private void onDateViewClick() {
-        Calendar now = Calendar.getInstance();
-        DatePickerDialog dpd = DatePickerDialog.newInstance(
-                AddEditEntryDialog.this,
-                now.get(Calendar.YEAR),
-                now.get(Calendar.MONTH),
-                now.get(Calendar.DAY_OF_MONTH)
-        );
-        dpd.setThemeDark(true);
-        dpd.setVersion(DatePickerDialog.Version.VERSION_2);
-        dpd.show(requireFragmentManager(), "Datepickerdialog");
+        DialogFragment d = DatePickerFragment.newInstance(AddEditEntryDialog.this, getCalendar());
+        FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager != null) {
+            d.show(fragmentManager, "");
+        }
     }
 
     @Override
-    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        mViewModel.date.setValue((mViewModel.date.getValue() == null)
+                ? new DateTime()
+                : mViewModel.date.getValue()
+                .withHourOfDay(hourOfDay)
+                .withMinuteOfHour(minute));
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         mViewModel.date.setValue((mViewModel.date.getValue() == null)
                 ? new DateTime()
                 : mViewModel.date.getValue()
                 .withYear(year)
                 .withMonthOfYear(monthOfYear + 1)
                 .withDayOfMonth(dayOfMonth));
-    }
-
-    @Override
-    public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
-        mViewModel.date.setValue((mViewModel.date.getValue() == null)
-                ? new DateTime()
-                : mViewModel.date.getValue()
-                .withHourOfDay(hourOfDay)
-                .withMinuteOfHour(minute));
     }
 
     @Override

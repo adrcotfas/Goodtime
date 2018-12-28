@@ -127,8 +127,8 @@
         <item name="backgroundTint">@color/black</item>
     </style>
 
-    <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
-        <item name="android:itemBackground">@android:color/black</item>
+    <style name="DialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog" >
+        <item name="android:backgroundTint" tools:ignore="NewApi">@color/dayNightGray</item>
     </style>
 
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar" >
@@ -140,13 +140,10 @@
         <item name="actionModeStyle">@style/ActionModeStyle</item>
         <item name="colorPrimary">@color/black</item>
         <item name="colorPrimaryDark">@color/black</item>
-        <item name="colorAccent">@color/classicAccent</item>
         <item name="android:windowBackground">@color/black</item>
         <item name="android:textColorPrimary">@android:color/white</item>
 
         <item name="alertDialogTheme">@style/Theme.MaterialComponents.DayNight.Dialog</item>
-        <item name="android:panelBackground">@color/black</item>
-        <item name="android:panelFullBackground">@color/black</item>
     </style>
 
 </resources>
