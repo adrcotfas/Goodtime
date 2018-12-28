@@ -193,7 +193,7 @@ public class TimerActivity
         if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
             AlertDialog.Builder builder = new AlertDialog.Builder(TimerActivity.this);
 
-            if (!PreferenceHelper.getDoNotShowDialogSkip()) {
+            if (!PreferenceHelper.shouldNotShowDialogSkip()) {
                 LayoutInflater adbInflater = LayoutInflater.from(TimerActivity.this);
                 View v = adbInflater.inflate(R.layout.dialog_skip_stop_session, null);
                 CheckBox c = v.findViewById(R.id.checkbox);
@@ -217,7 +217,7 @@ public class TimerActivity
         if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
             AlertDialog.Builder builder = new AlertDialog.Builder(TimerActivity.this);
 
-            if (!PreferenceHelper.getDoNotShowDialogStop()) {
+            if (!PreferenceHelper.shouldNotShowDialogStop()) {
                 LayoutInflater adbInflater = LayoutInflater.from(TimerActivity.this);
                 View v = adbInflater.inflate(R.layout.dialog_skip_stop_session, null);
                 CheckBox c = v.findViewById(R.id.checkbox);

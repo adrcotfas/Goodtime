@@ -200,11 +200,11 @@ public class PreferenceHelper {
                 .putBoolean(DO_NOT_SHOW_DIALOG_STOP, true).apply();
     }
 
-    public static boolean getDoNotShowDialogSkip() {
+    public static boolean shouldNotShowDialogSkip() {
         return GoodtimeApplication.getSharedPreferences().getBoolean(DO_NOT_SHOW_DIALOG_SKIP, false);
     }
 
-    public static boolean getDoNotShowDialogStop() {
+    public static boolean shouldNotShowDialogStop() {
         return GoodtimeApplication.getSharedPreferences().getBoolean(DO_NOT_SHOW_DIALOG_STOP, false);
     }
 
