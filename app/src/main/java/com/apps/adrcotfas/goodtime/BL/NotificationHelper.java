@@ -129,16 +129,21 @@ public class NotificationHelper extends ContextWrapper {
                 .setContentIntent(createActivityIntent())
                 .setOngoing(false)
                 .setShowWhen(false);
+        NotificationCompat.WearableExtender extender = new NotificationCompat.WearableExtender();
         if (sessionType == SessionType.WORK) {
             builder.setContentTitle("Work session finished")
                     .setContentText("Continue?")
                     .addAction(buildStartBreakAction(this))
                     .addAction(buildSkipBreakAction(this));
+            extender.addAction(buildStartBreakAction(this));
+            extender.addAction(buildSkipBreakAction(this));
         } else {
             builder.setContentTitle("Break finished")
                     .setContentText("Continue?")
                     .addAction(buildStartWorkAction(this));
+            extender.addAction(buildStartWorkAction(this));
         }
+        builder.extend(extender);
         return builder;
     }
 
@@ -154,7 +159,7 @@ public class NotificationHelper extends ContextWrapper {
                 new IntentWithAction(context, TimerService.class, Constants.ACTION.STOP), 0);
 
         return new NotificationCompat.Action.Builder(
-                R.drawable.ic_notification_stop,
+                R.drawable.ic_stop,
                 "STOP",
                 stopPendingIntent).build();
     }
