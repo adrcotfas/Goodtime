@@ -38,6 +38,7 @@ public class PreferenceHelper {
     private static final String DO_NOT_SHOW_DIALOG_STOP    = "pref_do_not_show_dialog_stop";
 
     private static final String CURRENT_SESSION_LABEL      = "pref_current_session_label";
+    private static final String INTRO_SNACKBAR_STEP        = "pref_intro_snackbar_step";
 
     public static long getSessionDuration(SessionType sessionType) {
 
@@ -226,4 +227,12 @@ public class PreferenceHelper {
                 .putBoolean(CURRENT_SESSION_LABEL, true).apply();
     }
 
+    public static int getLastIntroStep() {
+        return GoodtimeApplication.getSharedPreferences().getInt(INTRO_SNACKBAR_STEP, 0);
+    }
+
+    public static void setLastIntroStep(int step) {
+        GoodtimeApplication.getSharedPreferences().edit()
+                .putInt(INTRO_SNACKBAR_STEP, step).apply();
+    }
 }

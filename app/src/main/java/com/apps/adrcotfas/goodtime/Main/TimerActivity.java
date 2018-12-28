@@ -39,7 +39,10 @@ import com.apps.adrcotfas.goodtime.Util.OnSwipeTouchListener;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -48,6 +51,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
@@ -108,6 +112,7 @@ public class TimerActivity
 
     MenuItem mStatusButton;
     TextView mTimeLabel;
+    Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +120,7 @@ public class TimerActivity
         EventBus.getDefault().register(this);
 
         if (PreferenceHelper.isFirstRun()) {
-            // do first run stuff
+            // show app intro
             PreferenceHelper.consumeFirstRun();
         }
 
@@ -123,16 +128,53 @@ public class TimerActivity
 
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
+        mToolbar = binding.bar;
         mTimeLabel        = binding.timeLabel;
         mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
 
         setupTimeLabelEvents();
 
-        setSupportActionBar(binding.bar);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(null);
 
         setupDrawer(binding.bar);
         setupEvents();
+
+        showTutorialSnackbars();
+    }
+
+    /**
+     * Shows the tutorial snackbars
+     */
+    private void showTutorialSnackbars() {
+
+        final int MESSAGE_SIZE = 4;
+        int i = PreferenceHelper.getLastIntroStep();
+
+        if (i < MESSAGE_SIZE) {
+
+            List<String> messages = new ArrayList<>();
+            //TODO: extract strings
+            messages.add("Tap the timer to start");
+            messages.add("Swipe left or right to skip the current session");
+            messages.add("Swipe down on the timer to stop");
+            messages.add("Swipe up to add one more minute");
+
+            Snackbar s = Snackbar.make(mTimeLabel, messages.get(PreferenceHelper.getLastIntroStep()), Snackbar.LENGTH_INDEFINITE)
+                    .setAction("OK", view -> {
+                        int nextStep = i + 1;
+                        PreferenceHelper.setLastIntroStep(nextStep);
+                        showTutorialSnackbars();
+                    })
+                    .setAnchorView(mToolbar)
+                    .setActionTextColor(getResources().getColor(R.color.dayNightTeal));
+            s.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.dayNightGray));
+            TextView tv = s.getView().findViewById(com.google.android.material.R.id.snackbar_text);
+            if (tv != null) {
+                tv.setTextColor(ContextCompat.getColor(this, R.color.white));
+            }
+            s.show();
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")

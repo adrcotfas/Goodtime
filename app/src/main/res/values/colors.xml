@@ -2,6 +2,9 @@
 <resources>
 
     <color name="dayNightGray">#141414</color>
+    <color name="dayNightViolet">#BB86FC</color>
+    <color name="dayNightTeal">#03DAC6</color>
+
     <color name="classicAccent">#80CBC4</color>
 
     <color name="darkIndigo900">#262738</color>
