@@ -126,7 +126,6 @@ public class TimerActivity
 
         setSupportActionBar(binding.bar);
         getSupportActionBar().setTitle(null);
-        toggleFullscreenMode();
 
         setupDrawer(binding.bar);
         setupEvents();
@@ -235,6 +234,7 @@ public class TimerActivity
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.registerOnSharedPreferenceChangeListener(this);
         toggleKeepScreenOn(PreferenceHelper.isScreenOnEnabled());
+        toggleFullscreenMode();
     }
 
     @Override
