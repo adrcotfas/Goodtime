@@ -137,7 +137,7 @@ public class BackupFragment extends BottomSheetDialogFragment {
                 exportRunnable = () -> {
                     try {
                         File destinationPath = new File(getActivity().getFilesDir(), "tmp");
-                        File output = new File(destinationPath, "Goodtime-Backup-" + formatDateAndTime(System.currentTimeMillis()));
+                        File output = new File(destinationPath, "Goodtime-CSV-" + formatDateAndTime(System.currentTimeMillis()));
                         output.deleteOnExit();
 
                         if (!output.getParentFile().exists())
