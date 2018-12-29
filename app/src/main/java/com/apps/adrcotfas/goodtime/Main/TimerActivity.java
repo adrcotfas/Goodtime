@@ -540,11 +540,9 @@ public class TimerActivity
     @Override
     public void onLabelSelected(LabelAndColor labelAndColor) {
         if (labelAndColor != null) {
-            mLabelsViewModel.crtExtendedLabel.setValue(labelAndColor);
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(labelAndColor.label);
             PreferenceHelper.setCurrentSessionLabel(labelAndColor.label);
         } else {
-            mLabelsViewModel.crtExtendedLabel.setValue(null);
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
         }
     }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
@@ -18,6 +19,8 @@ import com.apps.adrcotfas.goodtime.Util.Constants;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import androidx.lifecycle.LifecycleService;
+import androidx.lifecycle.LiveData;
 import de.greenrobot.event.EventBus;
 
 import static android.media.AudioManager.RINGER_MODE_SILENT;
@@ -27,7 +30,7 @@ import static com.apps.adrcotfas.goodtime.Util.Constants.SESSION_TYPE;
 /**
  * Class representing the foreground service which triggers the countdown timer and handles events.
  */
-public class TimerService extends Service {
+public class TimerService extends LifecycleService {
 
     private static final String TAG = TimerService.class.getSimpleName();
 
@@ -56,6 +59,7 @@ public class TimerService extends Service {
 
     @Override
     public synchronized int onStartCommand(final Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
 
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
@@ -278,33 +282,29 @@ public class TimerService extends Service {
         //TODO: save session of at least one minute
         //TODO: refactor this mess
         if (true /*getSessionManager().getElapsedTime() >= 60*/) {
-            AsyncTask.execute(() -> {
 
-                String label = getSessionManager().getCurrentSession().getLabel().getValue();
-                boolean found = false;
-                List<LabelAndColor> labels = AppDatabase.getDatabase(getApplicationContext()).labelAndColor().getLabels().getValue();
-                if (labels != null) {
-                    for (LabelAndColor l : labels) {
-                        if (label.equals(l.label)) {
-                            found = true;
-                            break;
-                        }
-                    }
-                } else {
-                    label = null;
+            Handler handler = new Handler();
+            Runnable r = () -> {
+                try {
+                    Session session = new Session(
+                            0,
+                            System.currentTimeMillis(),
+                            getSessionManager().getElapsedTime(),
+                            getSessionManager().getCurrentSession().getLabel().getValue());
+                    AppDatabase.getDatabase(getApplicationContext()).sessionModel().addSession(session);
+                } catch (Exception e) {
+                    // the label was deleted in the meantime so set it to null and save the unlabeled session
+                    handler.post(() -> getSessionManager().getCurrentSession().setLabel(null));
+                    Session session = new Session(
+                            0,
+                            System.currentTimeMillis(),
+                            getSessionManager().getElapsedTime(),
+                            null);
+                    AppDatabase.getDatabase(getApplicationContext()).sessionModel().addSession(session);
                 }
-
-                if (found) {
-                    label = null;
-                }
-
-                Session session = new Session(
-                        0,
-                        System.currentTimeMillis(),
-                        getSessionManager().getElapsedTime(),
-                        label);
-                AppDatabase.getDatabase(getApplicationContext()).sessionModel().addSession(session);
-            });
+            };
+            Thread t = new Thread(r);
+            t.start();
         }
     }
 
@@ -316,6 +316,6 @@ public class TimerService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return super.onBind(intent);
     }
 }
