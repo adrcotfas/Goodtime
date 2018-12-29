@@ -12,7 +12,7 @@
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/labels"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="38dp"
                 app:chipSpacingHorizontal="10dp"
                 app:chipSpacingVertical="10dp"
                 app:singleSelection="true">

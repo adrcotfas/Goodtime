@@ -129,8 +129,9 @@ public class TimerActivity
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         mToolbar = binding.bar;
-        mTimeLabel        = binding.timeLabel;
+        mTimeLabel = binding.timeLabel;
         mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
+        showTutorialSnackbars();
 
         setupTimeLabelEvents();
 
@@ -139,8 +140,6 @@ public class TimerActivity
 
         setupDrawer(binding.bar);
         setupEvents();
-
-        showTutorialSnackbars();
     }
 
     /**

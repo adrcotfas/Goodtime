@@ -85,7 +85,7 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements Dat
         });
 
         mViewModel.label.observe(this, label -> {
-            if (label != null) {
+            if (label != null && !label.equals("unlabeled")) {
                 binding.labelChip.setText(label);
                 mLabelsViewModel.getColorOfLabel(label).observe(this, color ->
                         binding.labelChip.setChipBackgroundColor(ColorStateList.valueOf(color)));
@@ -181,7 +181,7 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements Dat
 
     @Override
     public void onLabelSelected(LabelAndColor labelAndColor) {
-        if (labelAndColor != null) {
+        if (labelAndColor != null && labelAndColor.label != "unlabeled") {
             mViewModel.label.setValue(labelAndColor.label);
         } else {
             mViewModel.label.setValue(null);
