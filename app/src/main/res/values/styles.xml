@@ -50,8 +50,8 @@
 
     <style name="AllSessionsAddEditDialogRowEdit" parent="@android:style/TextAppearance.Widget.EditText">
         <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
         <item name="android:drawablePadding">32dp</item>
         <item name="android:background">@color/true_transparent</item>
         <item name="android:inputType">textNoSuggestions</item>
@@ -64,12 +64,12 @@
 
     <style name="AllSessionsAddEditDialogRow">
         <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">30dp</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
         <item name="android:drawablePadding">32dp</item>
         <item name="android:background">?attr/selectableItemBackground</item>
         <item name="android:clickable">true</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/regularTextSize</item>
         <item name="android:textColor">@color/white</item>
     </style>
 
@@ -80,6 +80,15 @@
         <item name="android:background">?attr/selectableItemBackground</item>
         <item name="android:clickable">true</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="BackupRow">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:textSize">@dimen/regularTextSize</item>
         <item name="android:textColor">@color/white</item>
     </style>
 

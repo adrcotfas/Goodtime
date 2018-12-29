@@ -14,8 +14,8 @@
             android:id="@+id/header"
             android:layout_width="wrap_content"
             android:layout_height="56dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
             android:gravity="center"
             android:text="Add session"
             android:textSize="16sp" />
@@ -87,6 +87,7 @@
             android:id="@+id/save"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:layout_marginBottom="24dp"
             android:drawableLeft="@drawable/ic_floppy"
             android:text="Save"
             style="@style/AllSessionsAddEditDialogRow"/>
