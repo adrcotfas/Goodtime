@@ -109,7 +109,6 @@ public class StatisticsFragment extends Fragment {
     private LabelsViewModel mLabelsViewModel;
     private SessionViewModel mSessionViewModel;
     private float mDisplayDensity = 1;
-    private boolean mIsSpinnerFirstCall = true;
 
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -148,11 +147,11 @@ public class StatisticsFragment extends Fragment {
         mLabelsViewModel = ViewModelProviders.of(getActivity()).get(LabelsViewModel.class);
         mSessionViewModel = ViewModelProviders.of(getActivity()).get(SessionViewModel.class);
 
+        mLabelsViewModel.crtExtendedLabel.observe(this, labelAndColor -> StatisticsFragment.this.refreshUi());
+
         setupSpinners();
         setupHistoryChart();
         setupProductiveTimeChart();
-
-        mLabelsViewModel.crtExtendedLabel.observe(this, labelAndColor -> StatisticsFragment.this.refreshUi());
 
         return view;
     }
@@ -222,12 +221,11 @@ public class StatisticsFragment extends Fragment {
                 R.array.spinner_stats_type, R.layout.spinner_item);
         statsTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mStatsType.setAdapter(statsTypeAdapter);
+        mStatsType.setSelection(0, false);
         mStatsType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                if (!mIsSpinnerFirstCall) {
-                    refreshUi();
-                }
+                refreshUi();
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) { }
@@ -237,13 +235,12 @@ public class StatisticsFragment extends Fragment {
                 R.array.spinner_range_type, R.layout.spinner_item);
         rangeTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mRangeType.setAdapter(rangeTypeAdapter);
+        mRangeType.setSelection(0, false);
         mRangeType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                if (!mIsSpinnerFirstCall) {
-                    mXAxisFormatter.setRangeType(SpinnerRangeType.values()[position]);
-                    refreshUi();
-                }
+                mXAxisFormatter.setRangeType(SpinnerRangeType.values()[position]);
+                refreshUi();
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) { }
@@ -253,12 +250,11 @@ public class StatisticsFragment extends Fragment {
                 R.array.spinner_productive_time_type, R.layout.spinner_item);
         timeTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mProductiveTime.setAdapter(timeTypeAdapter);
+        mProductiveTime.setSelection(0, false);
         mProductiveTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (!mIsSpinnerFirstCall) {
-                    refreshUi();
-                }
+                refreshUi();
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) { }
@@ -303,7 +299,6 @@ public class StatisticsFragment extends Fragment {
 
     //TODO: make more efficient when setting spinners to not refresh all of it if not needed
     private void refreshUi() {
-        mIsSpinnerFirstCall = false;
         //TODO: adapt string when translating
         if (mLabelsViewModel.crtExtendedLabel.getValue() != null) {
 
