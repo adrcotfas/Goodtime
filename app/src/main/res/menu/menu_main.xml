@@ -8,9 +8,8 @@
         android:title="State"
         app:showAsAction="always"/>
 
-    <item
-        android:id="@+id/action_fullscreen"
-        android:title="Fullscreen mode"
+    <item android:id="@+id/action_current_label"
+        android:title="Current label"
         app:showAsAction="never"/>
 
 </menu>

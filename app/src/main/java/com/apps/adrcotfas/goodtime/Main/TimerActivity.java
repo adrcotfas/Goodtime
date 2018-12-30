@@ -197,7 +197,8 @@ public class TimerActivity
 
             @Override
             public boolean onLongClick(View view) {
-                showEditLabelDialog();
+                Intent settingsIntent = new Intent(TimerActivity.this, SettingsActivity.class);
+                startActivity(settingsIntent);
                 return true;
             }
 
@@ -270,14 +271,14 @@ public class TimerActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == android.R.id.home) {
-            BottomNavigationDrawerFragment bottomNavigationDrawerFragment = new BottomNavigationDrawerFragment();
-            bottomNavigationDrawerFragment.show(getSupportFragmentManager(), bottomNavigationDrawerFragment.getTag());
-        }
-        else if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-            return true;
+        switch (id) {
+            case android.R.id.home:
+                BottomNavigationDrawerFragment bottomNavigationDrawerFragment = new BottomNavigationDrawerFragment();
+                bottomNavigationDrawerFragment.show(getSupportFragmentManager(), bottomNavigationDrawerFragment.getTag());
+                break;
+            case R.id.action_current_label:
+                showEditLabelDialog();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
