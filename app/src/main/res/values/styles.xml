@@ -73,6 +73,18 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="UpgradeButton">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">22dp</item>
+        <item name="android:drawablePadding">24dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:textSize">@dimen/smallTextSize</item>
+        <item name="android:textColor">#CFB53B</item>
+        <item name="android:textStyle">bold</item>
+
+    </style>
+
     <style name="AllSessionsAddEditDialogRowEnd">
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">30dp</item>
@@ -153,6 +165,11 @@
         <item name="android:textColorPrimary">@android:color/white</item>
 
         <item name="alertDialogTheme">@style/Theme.MaterialComponents.DayNight.Dialog</item>
+    </style>
+
+    <style name="NavigationDrawerStyle">
+        <item name="android:textSize">@dimen/smallTextSize</item><!-- text size in menu-->
+        <item name="android:listDivider">@color/transparent_dark</item>
     </style>
 
 </resources>

@@ -18,7 +18,7 @@
     <color name="transparent">#1effffff</color>
     <color name="true_transparent">#00FFFFFF</color>
     <color name="grey_500">#9E9E9E</color>
-    <color name="transparent_dark">#26FFFFFF</color>
+    <color name="transparent_dark">#1AFFFFFF</color>
 
     <color name="pref_classic">#232323</color>
     <color name="pref_dark">#33344b</color>
@@ -42,6 +42,5 @@
     <color name="light_blue">#00A6F6</color>
     <color name="lime">#CCDD1E</color>
     <color name="orange">#FF9800</color>
-
 
 </resources>

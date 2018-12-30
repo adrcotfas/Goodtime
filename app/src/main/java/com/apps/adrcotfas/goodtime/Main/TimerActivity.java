@@ -9,17 +9,13 @@ import android.os.Handler;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.apps.adrcotfas.goodtime.About.AboutActivity;
 import com.apps.adrcotfas.goodtime.BL.CurrentSession;
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
 import com.apps.adrcotfas.goodtime.BL.NotificationHelper;
@@ -27,18 +23,15 @@ import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.BL.TimerService;
 import com.apps.adrcotfas.goodtime.BL.TimerState;
-import com.apps.adrcotfas.goodtime.Backup.BackupFragment;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.Statistics.Main.SelectLabelDialog;
-import com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 import com.apps.adrcotfas.goodtime.Util.OnSwipeTouchListener;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding;
-import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -46,14 +39,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
@@ -74,7 +64,6 @@ public class TimerActivity
         AppCompatActivity
         implements
         SharedPreferences.OnSharedPreferenceChangeListener,
-        NavigationView.OnNavigationItemSelectedListener,
         SelectLabelDialog.OnLabelSelectedListener {
 
     private static final String TAG = TimerActivity.class.getSimpleName();
@@ -138,7 +127,6 @@ public class TimerActivity
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(null);
 
-        setupDrawer(binding.bar);
         setupEvents();
     }
 
@@ -282,7 +270,11 @@ public class TimerActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == android.R.id.home) {
+            BottomNavigationDrawerFragment bottomNavigationDrawerFragment = new BottomNavigationDrawerFragment();
+            bottomNavigationDrawerFragment.show(getSupportFragmentManager(), bottomNavigationDrawerFragment.getTag());
+        }
+        else if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
@@ -320,11 +312,6 @@ public class TimerActivity
     @SuppressLint("WrongConstant")
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(Gravity.START)) {
-            drawer.closeDrawer(Gravity.START);
-        }
-
         if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
             moveTaskToBack(true);
         } else {
@@ -340,16 +327,6 @@ public class TimerActivity
             }
             mBackPressedAt = System.currentTimeMillis();
         }
-    }
-
-    private void setupDrawer(Toolbar toolbar) {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, 0, 0);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
     /**
@@ -500,41 +477,6 @@ public class TimerActivity
             default:
                 break;
         }
-    }
-
-    @SuppressLint("WrongConstant")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_about:
-                Intent aboutIntent = new Intent(this, AboutActivity.class);
-                startActivity(aboutIntent);
-                break;
-            case R.id.action_invite:
-                break;
-            case R.id.edit_labels:
-                Intent intent = new Intent(this, AddEditLabelActivity.class);
-                startActivity(intent);
-
-                break;
-            case R.id.action_settings:
-                Intent settingsIntent = new Intent(this, SettingsActivity.class);
-                startActivity(settingsIntent);
-                break;
-            case R.id.action_feedback:
-                //TODO: move to proper place
-                Intent statisticsIntent = new Intent(this, StatisticsActivity.class);
-                startActivity(statisticsIntent);
-                break;
-            case R.id.action_backup:
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                new BackupFragment().show(fragmentManager, "");
-                break;
-        }
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(Gravity.START);
-        return true;
     }
 
     @Override

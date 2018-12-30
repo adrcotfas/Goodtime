@@ -43,7 +43,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/smallerTextSize"
-                android:textColor="@color/white"
                 android:text="The file can be imported back"/>
         </LinearLayout>
 
@@ -68,7 +67,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/smallerTextSize"
-                android:textColor="@color/white"
                 android:text="The file cannot be imported back"/>
         </LinearLayout>
 

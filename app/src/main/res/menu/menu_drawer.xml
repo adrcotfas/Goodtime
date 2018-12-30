@@ -2,37 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group
-        android:id="@+id/menu_top"
+        android:id="@+id/group3"
         android:checkableBehavior="none">
-        <item
-            android:id="@+id/action_about"
-            android:icon="@drawable/ic_about"
-            android:title="About" />
-    </group>
-
-    <group
-        android:id="@+id/menu_middle"
-        android:checkableBehavior="none">
-        <item
-            android:id="@+id/action_invite"
-            android:icon="@drawable/ic_share"
-            android:title="Invite friends" />
         <item
             android:id="@+id/edit_labels"
             android:icon="@drawable/ic_label"
             android:title="Labels"/>
-    </group>
-
-    <group
-        android:id="@+id/menu_bottom"
-        android:checkableBehavior="none">
         <item
-            android:id="@+id/action_settings"
-            android:icon="@drawable/ic_settings"
-            android:title="Settings" />
-        <item
-            android:id="@+id/action_feedback"
-            android:icon="@drawable/ic_show_list"
+            android:id="@+id/action_statistics"
+            android:icon="@drawable/ic_history"
             android:title="Statistics" />
         <item
             android:id="@+id/action_backup"
@@ -40,4 +18,12 @@
             android:title="Backup" />
     </group>
 
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/action_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="Settings" />
+    </group>
 </menu>
