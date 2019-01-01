@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.Constants;
+import com.takisoft.preferencex.ColorPickerPreference;
 import com.takisoft.preferencex.PreferenceFragmentCompat;
 
 import androidx.annotation.Nullable;
@@ -36,7 +37,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     private ProperSeekBarPreference mPrefLongBreakDuration;
     private ProperSeekBarPreference mPrefSessionsBeforeLongBreak;
 
-    private ListPreference mPrefTheme;
+    private ColorPickerPreference mPrefTheme;
 
     private SwitchPreference mPrefEnableRingtone;
     private CheckBoxPreference mPrefDisableSoundCheckbox;
@@ -63,13 +64,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         mPrefSessionsBeforeLongBreak = findPreference(PreferenceHelper.SESSIONS_BEFORE_LONG_BREAK);
 
         mPrefTheme = findPreference(PreferenceHelper.THEME);
-        mPrefTheme.setOnPreferenceChangeListener((preference, newValue) -> {
-            if (mPrefTheme.getValue() != newValue) {
-                if (getActivity() != null) {
-                    getActivity().recreate();
+        mPrefTheme.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if (mPrefTheme.getColor() != (int) newValue) {
+                    if (SettingsFragment.this.getActivity() != null) {
+                        SettingsFragment.this.getActivity().recreate();
+                    }
                 }
+                return true;
             }
-            return true;
         });
 
         mPrefEnableRingtone = findPreference(PreferenceHelper.ENABLE_RINGTONE);

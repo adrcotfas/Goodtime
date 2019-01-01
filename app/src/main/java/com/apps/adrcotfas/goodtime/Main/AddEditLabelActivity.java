@@ -103,7 +103,7 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
                         .setColors(getResources().getIntArray(R.array.labelColors))
                         .setSelectedColor(mLabelToAdd.color)
                         .build();
-                ColorPickerDialog dialog = new ColorPickerDialog(AddEditLabelActivity.this, c
+                ColorPickerDialog dialog = new ColorPickerDialog(AddEditLabelActivity.this, R.style.DialogTheme, c
                         -> {
                     mLabelToAdd.color = c;
                     mImageLeft.setColorFilter(c);

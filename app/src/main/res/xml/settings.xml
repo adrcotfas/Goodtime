@@ -78,15 +78,14 @@
             android:title="@string/pref_keep_screen_on"
             app:iconSpaceReserved="false"/>
 
-        <ListPreference
-            android:dialogTitle="Theme"
-            android:key="pref_theme"
-            android:entries="@array/pref_theme"
-            android:defaultValue="@string/pref_theme_black"
-            android:entryValues="@array/pref_theme"
+        <ColorPickerPreference
+            android:defaultValue="@color/black"
+            android:dialogTitle="@string/pref_theme"
             android:persistent="true"
-            android:summary="%s"
+            android:key="pref_theme"
             android:title="Theme"
+            app:pref_colors="@array/themeColors"
+            app:pref_size="small"
             app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>

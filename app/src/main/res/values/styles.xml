@@ -121,7 +121,7 @@
 
     <style name="SmallPseudoChip">
         <item name="android:background">@drawable/shape_rectangle</item>
-        <item name="android:backgroundTint" tools:targetApi="lollipop">@color/classicAccent</item>
+        <item name="android:backgroundTint" tools:targetApi="lollipop">@color/dayNightTeal</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
 
@@ -145,7 +145,7 @@
     </style>
 
     <style name="ActionBarTheme" parent="Widget.MaterialComponents.BottomAppBar">
-        <item name="backgroundTint">@color/black</item>
+        <item name="backgroundTint">?appBarColor</item>
     </style>
 
     <style name="DialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog" >
@@ -154,14 +154,52 @@
 
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar" >
 
+        <item name="colorAccent">@color/dayNightTeal</item>
+        <item name="android:colorAccent" tools:targetApi="lollipop">@color/dayNightTeal</item>
         <item name="viewInflaterClass">androidx.appcompat.app.AppCompatViewInflater</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionModeCloseDrawable">@drawable/ic_clear</item>
 
+        <item name="appBarColor">@color/black</item>
         <item name="actionModeStyle">@style/ActionModeStyle</item>
         <item name="colorPrimary">@color/black</item>
         <item name="colorPrimaryDark">@color/black</item>
         <item name="android:windowBackground">@color/black</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="alertDialogTheme">@style/Theme.MaterialComponents.DayNight.Dialog</item>
+    </style>
+
+    <style name="AppThemeDark" parent="Theme.MaterialComponents.DayNight.NoActionBar" >
+
+        <item name="colorAccent">@color/dayNightTeal</item>
+        <item name="android:colorAccent" tools:targetApi="lollipop">@color/dayNightTeal</item>
+        <item name="viewInflaterClass">androidx.appcompat.app.AppCompatViewInflater</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:actionModeCloseDrawable">@drawable/ic_clear</item>
+
+        <item name="appBarColor">@color/darkIndigo1000</item>
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
+        <item name="colorPrimary">@color/darkIndigo1000</item>
+        <item name="colorPrimaryDark">@color/darkIndigo1100</item>
+        <item name="android:windowBackground">@color/darkIndigo900</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+
+        <item name="alertDialogTheme">@style/Theme.MaterialComponents.DayNight.Dialog</item>
+    </style>
+
+    <style name="AppThemeBlue" parent="Theme.MaterialComponents.DayNight.NoActionBar" >
+
+        <item name="colorAccent">@color/dayNightTeal</item>
+        <item name="android:colorAccent" tools:targetApi="lollipop">@color/dayNightTeal</item>
+        <item name="viewInflaterClass">androidx.appcompat.app.AppCompatViewInflater</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:actionModeCloseDrawable">@drawable/ic_clear</item>
+
+        <item name="appBarColor">@color/blue1000</item>
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
+        <item name="colorPrimary">@color/blue1000</item>
+        <item name="colorPrimaryDark">@color/blue1100</item>
+        <item name="android:windowBackground">@color/blue900</item>
         <item name="android:textColorPrimary">@android:color/white</item>
 
         <item name="alertDialogTheme">@style/Theme.MaterialComponents.DayNight.Dialog</item>

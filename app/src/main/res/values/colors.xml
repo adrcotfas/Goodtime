@@ -3,33 +3,29 @@
 
     <color name="dayNightGray">#141414</color>
     <color name="dayNightViolet">#BB86FC</color>
-    <color name="dayNightTeal">#03DAC6</color>
-
-    <color name="classicAccent">#80CBC4</color>
+    <color name="dayNightTeal">#80CBC4</color>
 
     <color name="darkIndigo900">#262738</color>
-    <color name="blue_a700">#0D47A1</color>
-    <color name="red900">#b71c1c</color>
+    <color name="darkIndigo1000">#222332</color>
+    <color name="darkIndigo1100">#1c1d2b</color>
+
+    <color name="blue900">#131a6b</color>
+    <color name="blue1000">#0f1561</color>
+    <color name="blue1100">#080c4e</color>
 
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
-    <color name="transparent_white">#b4ffffff</color>
 
+    <color name="transparent_dark">#1AFFFFFF</color>
+    <color name="transparent_light">#b4ffffff</color>
     <color name="transparent">#1effffff</color>
     <color name="true_transparent">#00FFFFFF</color>
     <color name="grey_500">#9E9E9E</color>
-    <color name="transparent_dark">#1AFFFFFF</color>
-
-    <color name="pref_classic">#232323</color>
-    <color name="pref_dark">#33344b</color>
-    <color name="pref_blue">#1057c6</color>
-    <color name="pref_red">#df2626</color>
 
     <array name="themeColors">
-        <item>@color/pref_classic</item>
-        <item>@color/pref_dark</item>
-        <item>@color/pref_blue</item>
-        <item>@color/pref_red</item>
+        <item>#232323</item>
+        <item>@color/darkIndigo1100</item>
+        <item>@color/blue1100</item>
     </array>
 
     <integer-array name="labelColors">

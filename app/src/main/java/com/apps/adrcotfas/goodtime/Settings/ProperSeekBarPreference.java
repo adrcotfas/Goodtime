@@ -154,7 +154,7 @@ public class ProperSeekBarPreference extends Preference {
         mSeekBarValueTextView.setClickable(true);
         mSeekBarValueTextView.setPaintFlags(UNDERLINE_TEXT_FLAG);
         mSeekBarValueTextView.setTextSize(14);
-        mSeekBarValueTextView.setTextColor(getContext().getResources().getColor(R.color.transparent_white));
+        mSeekBarValueTextView.setTextColor(getContext().getResources().getColor(R.color.transparent_light));
 
         mSeekBarValueTextView.setOnClickListener(view1 -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());

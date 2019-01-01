@@ -44,6 +44,7 @@ dependencies {
 
     implementation 'com.takisoft.preferencex:preferencex:1.0.0'
     implementation 'com.takisoft.preferencex:preferencex-simplemenu:1.0.0'
+    implementation 'com.takisoft.preferencex:preferencex-colorpicker:1.0.0'
     implementation 'com.takisoft.preferencex:preferencex-ringtone:1.0.0'
 
     // Color picker for the labels

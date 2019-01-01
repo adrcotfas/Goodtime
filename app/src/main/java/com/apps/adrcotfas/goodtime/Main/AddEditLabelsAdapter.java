@@ -139,7 +139,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
                         .setColors(mContext.getResources().getIntArray(R.array.labelColors))
                         .setSelectedColor(crtLabel.color)
                         .build();
-                ColorPickerDialog dialog = new ColorPickerDialog(mContext, c
+                ColorPickerDialog dialog = new ColorPickerDialog(mContext, R.style.DialogTheme, c
                         -> {
                     mCallback.onEditColor(crtLabel.label, c);
                     imageLeft.setColorFilter(c);

@@ -23,7 +23,7 @@ import androidx.fragment.app.FragmentManager;
 
 public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
 
-    NavigationView navigationView;
+    private NavigationView navigationView;
 
     public BottomNavigationDrawerFragment() {
 

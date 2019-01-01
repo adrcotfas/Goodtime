@@ -1,12 +1,9 @@
 package com.apps.adrcotfas.goodtime.Util;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -23,23 +20,19 @@ public class ThemeHelper {
 
     public static void setTheme(AppCompatActivity activity) {
 
-        final int dark = activity.getResources().getColor(R.color.pref_dark);
-        final int blue = activity.getResources().getColor(R.color.pref_blue);
-        final int red = activity.getResources().getColor(R.color.pref_red);
+        final int dark = activity.getResources().getColor(R.color.darkIndigo1100);
+        final int blue = activity.getResources().getColor(R.color.blue1100);
 
         activity.getDelegate().setLocalNightMode(MODE_NIGHT_YES);
 
-        //TODO: re-enable
-//        int i = PreferenceHelper.getTheme();
-//        if (i == dark) {
-//            activity.setTheme(R.style.Dark);
-//        } else if (i == blue) {
-//            activity.setTheme(R.style.Blue);
-//        } else if (i == red) {
-//            activity.setTheme(R.style.Red);
-//        } else {
-//            activity.setTheme(R.style.Classic);
-//        }
+        int i = PreferenceHelper.getTheme();
+        if (i == dark) {
+            activity.setTheme(R.style.AppThemeDark);
+        } else if (i == blue) {
+            activity.setTheme(R.style.AppThemeBlue);
+        } else {
+            activity.setTheme(R.style.AppTheme);
+        }
     }
 
     public static float pxToDp(Context context, int px) {
