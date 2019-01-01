@@ -29,14 +29,19 @@
     </array>
 
     <integer-array name="labelColors">
-        <item>@color/white</item>
-        <item>@color/light_blue</item>
-        <item>@color/lime</item>
-        <item>@color/orange</item>
+        <item>@color/c1</item>
+        <item>@color/c2</item>
+        <item>@color/c3</item>
+        <item>@color/c4</item>
+        <item>@color/c5</item>
+        <item>@color/c6</item>
     </integer-array>
 
-    <color name="light_blue">#00A6F6</color>
-    <color name="lime">#CCDD1E</color>
-    <color name="orange">#FF9800</color>
+    <color name="c1">#EF9A9A</color>
+    <color name="c2">#CE93D8</color>
+    <color name="c3">#81D4FA</color>
+    <color name="c4">#C5E1A5</color>
+    <color name="c5">#FFF59D</color>
+    <color name="c6">#FFCC80</color>
 
 </resources>
