@@ -142,7 +142,7 @@ public class TimerActivity
 
             List<String> messages = new ArrayList<>();
             //TODO: extract strings
-            messages.add("Tap the timer to start");
+            messages.add("Tap the timer to start and pause");
             messages.add("Swipe left or right to skip the current session");
             messages.add("Swipe up to add one more minute");
             messages.add("Swipe down on the timer to stop");
