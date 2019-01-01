@@ -10,7 +10,8 @@
         app:showAsAction="always"/>
 
     <item android:id="@+id/action_current_label"
+        android:icon="@drawable/ic_dots"
         android:title="Current label"
-        app:showAsAction="never"/>
+        app:showAsAction="always"/>
 
 </menu>
