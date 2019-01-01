@@ -6,6 +6,7 @@
         android:id="@+id/action_state"
         android:icon="@drawable/ic_status_goodtime"
         android:title="State"
+        android:visible="false"
         app:showAsAction="always"/>
 
     <item android:id="@+id/action_current_label"

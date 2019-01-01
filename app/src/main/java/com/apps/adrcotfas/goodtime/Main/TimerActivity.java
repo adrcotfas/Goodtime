@@ -72,7 +72,6 @@ public class TimerActivity
     private AlertDialog mDialogSessionFinished;
     private FullscreenHelper mFullscreenHelper;
     private long mBackPressedAt;
-    private LabelsViewModel mLabelsViewModel;
 
     public void onStartButtonClick() {
         start(SessionType.WORK);
@@ -119,7 +118,6 @@ public class TimerActivity
 
         mToolbar = binding.bar;
         mTimeLabel = binding.timeLabel;
-        mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
         showTutorialSnackbars();
 
         setupTimeLabelEvents();
@@ -297,13 +295,22 @@ public class TimerActivity
 
         mCurrentSession.getTimerState().observe(TimerActivity.this, timerState -> {
             if (timerState == TimerState.INACTIVE) {
+                if (mStatusButton != null) {
+                    mStatusButton.setVisible(false);
+                }
                 final Handler handler = new Handler();
                 handler.postDelayed(() -> mTimeLabel.clearAnimation(), 300);
             } else if (timerState == TimerState.PAUSED) {
+                if (mStatusButton != null) {
+                    mStatusButton.setVisible(true);
+                }
                 final Handler handler = new Handler();
                 handler.postDelayed(() -> mTimeLabel.startAnimation(
                         loadAnimation(getApplicationContext(), R.anim.blink)), 300);
             } else {
+                if (mStatusButton != null) {
+                    mStatusButton.setVisible(true);
+                }
                 final Handler handler = new Handler();
                 handler.postDelayed(() -> mTimeLabel.clearAnimation(), 300);
             }
