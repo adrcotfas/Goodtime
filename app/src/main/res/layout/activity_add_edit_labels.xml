@@ -33,6 +33,6 @@
             android:layout_height="match_parent"
             android:layout_below="@id/add_label"
             android:gravity="center_horizontal|center_vertical"
-            android:text="There are no sessions yet (replace this with a nice illustration)"/>
+            android:text="No items"/>
     </RelativeLayout>
 </layout>
