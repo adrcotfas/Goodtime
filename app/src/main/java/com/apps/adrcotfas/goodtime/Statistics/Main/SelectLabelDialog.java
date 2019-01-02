@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.AddEditLabelActivity;
@@ -44,6 +46,7 @@ public class SelectLabelDialog extends DialogFragment {
 
     private String mLabel;
     private LabelsViewModel mLabelsViewModel;
+    private TextView mEmptyState;
     private OnLabelSelectedListener mCallback;
     private boolean mIsExtendedVersion;
 
@@ -87,6 +90,12 @@ public class SelectLabelDialog extends DialogFragment {
                     chip.setChecked(true);
                 }
                 binding.labels.addView(chip);
+            }
+
+            if (labels.isEmpty()) {
+                binding.emptyState.setVisibility(View.VISIBLE);
+            } else {
+                binding.emptyState.setVisibility(View.GONE);
             }
 
             for (LabelAndColor label : labels) {

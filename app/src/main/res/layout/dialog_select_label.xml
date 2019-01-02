@@ -6,6 +6,14 @@
         android:layout_height="match_parent"
         android:minWidth="300dp">
 
+        <TextView
+            android:id="@+id/empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="32dp"
+            android:gravity="center"
+            android:text="No items"/>
+
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
