@@ -2,6 +2,8 @@ package com.apps.adrcotfas.goodtime.BL;
 
 import android.os.SystemClock;
 
+import com.apps.adrcotfas.goodtime.LabelAndColor;
+
 import java.util.concurrent.TimeUnit;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
@@ -36,6 +38,7 @@ public class PreferenceHelper {
     private static final String ADDED_60_SECONDS_STATE     = "pref_added_60_seconds_State";
 
     private static final String CURRENT_SESSION_LABEL      = "pref_current_session_label";
+    private static final String CURRENT_SESSION_COLOR      = "pref_current_session_color";
     private static final String INTRO_SNACKBAR_STEP        = "pref_intro_snackbar_step";
 
     public static long getSessionDuration(SessionType sessionType) {
@@ -194,13 +197,17 @@ public class PreferenceHelper {
         return GoodtimeApplication.getSharedPreferences().getBoolean(ADDED_60_SECONDS_STATE, false);
     }
 
-    public static String getCurrentSessionLabel() {
-        return GoodtimeApplication.getSharedPreferences().getString(CURRENT_SESSION_LABEL, null);
+    public static LabelAndColor getCurrentSessionLabel() {
+        return new LabelAndColor(
+                GoodtimeApplication.getSharedPreferences().getString(CURRENT_SESSION_LABEL, null),
+                GoodtimeApplication.getSharedPreferences().getInt(CURRENT_SESSION_COLOR, 0));
     }
 
-    public static void setCurrentSessionLabel(String label) {
+    public static void setCurrentSessionLabel(LabelAndColor label) {
         GoodtimeApplication.getSharedPreferences().edit()
-                .putString(CURRENT_SESSION_LABEL, label).apply();
+                .putString(CURRENT_SESSION_LABEL, label.label).apply();
+        GoodtimeApplication.getSharedPreferences().edit()
+                .putInt(CURRENT_SESSION_COLOR, label.color).apply();
     }
 
     public static boolean isFirstRun() {

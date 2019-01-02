@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
+import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
@@ -163,6 +164,11 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
         String crtSessionLabel = GoodtimeApplication.getCurrentSessionManager().getCurrentSession().getLabel().getValue();
         if (crtSessionLabel != null && crtSessionLabel.equals(labelAndColor.label)) {
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
+        }
+
+        // the current session label was deleted
+        if (labelAndColor.label.equals(PreferenceHelper.getCurrentSessionLabel().label)) {
+            PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(null, 0));
         }
 
         updateRecyclerViewVisibility();

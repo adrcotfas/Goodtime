@@ -3,6 +3,7 @@ package com.apps.adrcotfas.goodtime.Main;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,7 +46,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 import de.greenrobot.event.EventBus;
 
@@ -261,7 +261,6 @@ public class TimerActivity
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_main, menu);
         mStatusButton = menu.findItem(R.id.action_state);
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -290,6 +289,7 @@ public class TimerActivity
                 } else {
                     mStatusButton.setIcon(getResources().getDrawable(R.drawable.ic_break));
                 }
+                setStatusIconColor();
             }
         });
 
@@ -413,7 +413,7 @@ public class TimerActivity
 
     public void showEditLabelDialog() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        SelectLabelDialog.newInstance(this, PreferenceHelper.getCurrentSessionLabel(), false)
+        SelectLabelDialog.newInstance(this, PreferenceHelper.getCurrentSessionLabel().label, false)
                 .show(fragmentManager, "");
     }
 
@@ -485,13 +485,26 @@ public class TimerActivity
         }
     }
 
+    private void setStatusIconColor() {
+        LabelAndColor labelAndColor = PreferenceHelper.getCurrentSessionLabel();
+
+        if (mStatusButton != null) {
+            if (labelAndColor.label != null) {
+                mStatusButton.getIcon().setColorFilter(labelAndColor.color, PorterDuff.Mode.SRC_ATOP);
+            } else {
+                mStatusButton.getIcon().setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_ATOP);
+            }
+        }
+    }
+
     @Override
     public void onLabelSelected(LabelAndColor labelAndColor) {
         if (labelAndColor != null) {
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(labelAndColor.label);
-            PreferenceHelper.setCurrentSessionLabel(labelAndColor.label);
+            PreferenceHelper.setCurrentSessionLabel(labelAndColor);
         } else {
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
         }
+        setStatusIconColor();
     }
 }

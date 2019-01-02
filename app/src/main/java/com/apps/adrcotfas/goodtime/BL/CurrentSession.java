@@ -16,7 +16,7 @@ public class CurrentSession {
         this.mDuration.setValue(duration);
         this.mTimerState.setValue(TimerState.INACTIVE);
         this.mSessionType.setValue(SessionType.WORK);
-        this.mLabel.setValue(PreferenceHelper.getCurrentSessionLabel());
+        this.mLabel.setValue(PreferenceHelper.getCurrentSessionLabel().label);
     }
 
     public LiveData<Long> getDuration() {
