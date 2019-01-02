@@ -102,20 +102,6 @@
 
         <RingtonePreference
             android:defaultValue="content://settings/system/notification_sound"
-            android:key="pref_ringtone"
-            android:persistent="true"
-            android:ringtoneType="notification"
-            android:showDefault="true"
-            android:showSilent="false"
-            android:summary="pref_ringtone_summary"
-            android:title="@string/pref_ringtone"
-            android:dependency="pref_enable_ringtone"
-            app:pref_showAdd="true"
-            app:pref_summaryHasRingtone="%s"
-            app:iconSpaceReserved="false"/>
-
-        <RingtonePreference
-            android:defaultValue="content://settings/system/notification_sound"
             android:key="pref_ringtone_break"
             android:persistent="true"
             android:ringtoneType="notification"
@@ -123,6 +109,20 @@
             android:showSilent="false"
             android:summary="@string/pref_ringtone_summary"
             android:title="@string/pref_ringtone_break"
+            android:dependency="pref_enable_ringtone"
+            app:pref_showAdd="true"
+            app:pref_summaryHasRingtone="%s"
+            app:iconSpaceReserved="false"/>
+        
+        <RingtonePreference
+            android:defaultValue="content://settings/system/notification_sound"
+            android:key="pref_ringtone"
+            android:persistent="true"
+            android:ringtoneType="notification"
+            android:showDefault="true"
+            android:showSilent="false"
+            android:summary="pref_ringtone_summary"
+            android:title="@string/pref_ringtone"
             android:dependency="pref_enable_ringtone"
             app:pref_showAdd="true"
             app:pref_summaryHasRingtone="%s"
@@ -161,10 +161,16 @@
 
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="pref_continuous_mode"
-            android:summary="@string/pref_continuous_mode_summary"
-            android:title="@string/pref_continuous_mode"
+            android:key="pref_auto_start_break"
+            android:title="@string/pref_auto_start_break"
             app:iconSpaceReserved="false"/>
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_auto_start_work"
+            android:title="@string/pref_auto_start_work"
+            app:iconSpaceReserved="false"/>
+
         <Preference
             android:key="pref_disable_battery_optimization"
             android:title="Accurate alarms"

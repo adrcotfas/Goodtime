@@ -24,7 +24,7 @@ public class RingtoneAndVibrationPlayer extends ContextWrapper{
             mVibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
 
             final Uri uri = Uri.parse( sessionType == SessionType.WORK ?
-                    PreferenceHelper.getNotificationSound() : PreferenceHelper.getNotificationSoundBreak());
+                    PreferenceHelper.getNotificationSoundBreak() : PreferenceHelper.getNotificationSound());
 
             mMediaPlayer.setDataSource(this, uri);
             if (PreferenceHelper.isRingtoneEnabled()) {

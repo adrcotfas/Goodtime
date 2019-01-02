@@ -194,8 +194,10 @@ public class TimerService extends LifecycleService {
         updateLongBreakStreak(sessionType);
         PreferenceHelper.toggleAdded60SecondsState(false);
 
-        if (PreferenceHelper.isContinuousModeEnabled()) {
-            onStartEvent(sessionType == SessionType.WORK ? SessionType.BREAK : SessionType.WORK);
+        if (PreferenceHelper.isAutoStartBreak() && sessionType == SessionType.WORK) {
+            onStartEvent(SessionType.BREAK);
+        } else if (PreferenceHelper.isAutoStartWork() && sessionType != SessionType.WORK) {
+            onStartEvent(SessionType.WORK);
         } else {
             mNotificationHelper.notifyFinished(sessionType);
         }

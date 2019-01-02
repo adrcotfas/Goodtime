@@ -342,16 +342,14 @@ public class TimerActivity
      * @param o holds the type of the Event
      */
     public void onEventMainThread(Object o) {
-        if (!PreferenceHelper.isContinuousModeEnabled()) {
-            if (o instanceof Constants.FinishWorkEvent) {
-                showFinishDialog(SessionType.WORK);
-            } else if (o instanceof Constants.FinishBreakEvent
-                    || o instanceof Constants.FinishLongBreakEvent) {
-                showFinishDialog(SessionType.BREAK);
-            } else if (o instanceof Constants.ClearFinishDialogEvent) {
-                if (mDialogSessionFinished != null) {
-                    mDialogSessionFinished.cancel();
-                }
+        if (!PreferenceHelper.isAutoStartBreak() && o instanceof Constants.FinishWorkEvent) {
+            showFinishDialog(SessionType.WORK);
+        } else if (!PreferenceHelper.isAutoStartWork() && (o instanceof Constants.FinishBreakEvent
+                || o instanceof Constants.FinishLongBreakEvent)) {
+            showFinishDialog(SessionType.BREAK);
+        } else if (o instanceof Constants.ClearFinishDialogEvent) {
+            if (mDialogSessionFinished != null) {
+                mDialogSessionFinished.cancel();
             }
         }
     }

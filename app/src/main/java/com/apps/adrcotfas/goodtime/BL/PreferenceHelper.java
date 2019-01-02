@@ -25,7 +25,8 @@ public class PreferenceHelper {
     public final static String DISABLE_SOUND_AND_VIBRATION = "pref_disable_sound_and_vibration";
     public final static String DISABLE_WIFI                = "pref_disable_wifi";
     public final static String ENABLE_SCREEN_ON            = "pref_keep_screen_on";
-    public final static String ENABLE_CONTINUOUS_MODE      = "pref_continuous_mode";
+    public final static String AUTO_START_BREAK            = "pref_auto_start_break";
+    public final static String AUTO_START_WORK             = "pref_auto_start_work";
     public final static String THEME                       = "pref_theme";
 
     public final static String DISABLE_BATTERY_OPTIMIZATION = "pref_disable_battery_optimization";
@@ -115,9 +116,14 @@ public class PreferenceHelper {
                 .getBoolean(ENABLE_SCREEN_ON, false);
     }
 
-    public static boolean isContinuousModeEnabled() {
+    public static boolean isAutoStartBreak() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getBoolean(ENABLE_CONTINUOUS_MODE, false);
+                .getBoolean(AUTO_START_BREAK, false);
+    }
+
+    public static boolean isAutoStartWork() {
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getBoolean(AUTO_START_WORK, false);
     }
 
     public static int getTheme() {

@@ -22,22 +22,18 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         GoodtimeApplication.getInstance().getCurrentSession().setTimerState(TimerState.INACTIVE);
 
-        final Object o;
         switch (sessionType) {
             case WORK:
-                o = new Constants.FinishWorkEvent();
+                EventBus.getDefault().post(new Constants.FinishWorkEvent());
                 break;
             case BREAK:
-                o = new Constants.FinishBreakEvent();
+                EventBus.getDefault().post(new Constants.FinishBreakEvent());
                 break;
             case LONG_BREAK:
-                o = new Constants.FinishLongBreakEvent();
+                EventBus.getDefault().post(new Constants.FinishLongBreakEvent());
                 break;
             default:
-                o = null;
                 break;
         }
-
-        EventBus.getDefault().post(o);
     }
 }

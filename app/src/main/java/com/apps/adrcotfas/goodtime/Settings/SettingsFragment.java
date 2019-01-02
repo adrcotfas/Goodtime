@@ -64,16 +64,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         mPrefSessionsBeforeLongBreak = findPreference(PreferenceHelper.SESSIONS_BEFORE_LONG_BREAK);
 
         mPrefTheme = findPreference(PreferenceHelper.THEME);
-        mPrefTheme.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (mPrefTheme.getColor() != (int) newValue) {
-                    if (SettingsFragment.this.getActivity() != null) {
-                        SettingsFragment.this.getActivity().recreate();
-                    }
+        mPrefTheme.setOnPreferenceChangeListener((preference, newValue) -> {
+            if (mPrefTheme.getColor() != (int) newValue) {
+                if (SettingsFragment.this.getActivity() != null) {
+                    SettingsFragment.this.getActivity().recreate();
                 }
-                return true;
             }
+            return true;
         });
 
         mPrefEnableRingtone = findPreference(PreferenceHelper.ENABLE_RINGTONE);
@@ -104,8 +101,19 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
 //            });
 //        }
 
+        setupAutoStartSessionVsInsistentNotification();
+    }
+
+    private void setupAutoStartSessionVsInsistentNotification() {
         // Continuous mode versus insistent notification
-        findPreference(PreferenceHelper.ENABLE_CONTINUOUS_MODE).setOnPreferenceChangeListener((preference, newValue) -> {
+        findPreference(PreferenceHelper.AUTO_START_WORK).setOnPreferenceChangeListener((preference, newValue) -> {
+            final CheckBoxPreference pref = findPreference(PreferenceHelper.INSISTENT_RINGTONE);
+            if (pref.isChecked()) {
+                pref.setChecked(false);
+            }
+            return true;
+        });
+        findPreference(PreferenceHelper.AUTO_START_BREAK).setOnPreferenceChangeListener((preference, newValue) -> {
             final CheckBoxPreference pref = findPreference(PreferenceHelper.INSISTENT_RINGTONE);
             if (pref.isChecked()) {
                 pref.setChecked(false);
@@ -114,9 +122,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         });
 
         findPreference(PreferenceHelper.INSISTENT_RINGTONE).setOnPreferenceChangeListener((preference, newValue) -> {
-            final CheckBoxPreference pref = findPreference(PreferenceHelper.ENABLE_CONTINUOUS_MODE);
-            if (pref.isChecked()) {
-                pref.setChecked(false);
+            final CheckBoxPreference p1 = findPreference(PreferenceHelper.AUTO_START_BREAK);
+            if (p1.isChecked()) {
+                p1.setChecked(false);
+            }
+            final CheckBoxPreference p2 = findPreference(PreferenceHelper.AUTO_START_WORK);
+            if (p2.isChecked()) {
+                p2.setChecked(false);
             }
             return true;
         });
