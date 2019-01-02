@@ -32,5 +32,7 @@
     <string name="pref_notification_channels">Notification Settings</string>
 
     <string name="about_no_email">"There are no email clients installed."</string>
+    <string name="pref_auto_start_break_summary">Start the break after a work session without user interaction</string>
+    <string name="pref_auto_start_work_summary">Start the work sessions after a break without user interaction</string>
 
 </resources>
