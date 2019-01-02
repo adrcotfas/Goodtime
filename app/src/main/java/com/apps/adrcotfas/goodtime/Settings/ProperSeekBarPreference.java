@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -164,6 +165,10 @@ public class ProperSeekBarPreference extends Preference {
             input.setInputType(TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_DECIMAL);
             input.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             input.setSingleLine();
+
+            InputFilter[] FilterArray = new InputFilter[1];
+            FilterArray[0] = new InputFilter.LengthFilter(3);
+            input.setFilters(FilterArray);
 
             layout.addView(input);
             layout.setPadding((int)(19*dpi), (int)(5*dpi), (int)(19*dpi), (int)(5*dpi));
