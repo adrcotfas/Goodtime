@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.About.AboutActivity;
 import com.apps.adrcotfas.goodtime.Backup.BackupFragment;
+import com.apps.adrcotfas.goodtime.BuildConfig;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity;
+import com.apps.adrcotfas.goodtime.Util.DeviceInfo;
 import com.apps.adrcotfas.goodtime.databinding.DrawerMainBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.navigation.NavigationView;
@@ -45,16 +48,11 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
             startActivity(aboutIntent);
         });
 
-        binding.rateThisApp.setOnClickListener(v -> {
+        binding.feedback.setOnClickListener(v -> {
             if (getDialog() != null) {
                 getDialog().dismiss();
             }
-            final String appPackageName = getActivity().getPackageName();
-            try {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-            } catch (android.content.ActivityNotFoundException anfe) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-            }
+            openFeedback();
         });
 
         return binding.getRoot();
@@ -88,4 +86,19 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
             return false;
         });
     }
+
+    private void openFeedback() {
+        Intent email = new Intent(Intent.ACTION_SENDTO);
+        email.setData(new Uri.Builder().scheme("mailto").build());
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{"goodtime-app@googlegroups.com"});
+        email.putExtra(Intent.EXTRA_SUBJECT, "[Goodtime] Feedback");
+        email.putExtra(Intent.EXTRA_TEXT, "\nMy device info: \n" + DeviceInfo.getDeviceInfo()
+                + "\nApp version: " + BuildConfig.VERSION_NAME);
+        try {
+            startActivity(Intent.createChooser(email, "Send feedback"));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(getActivity(), R.string.about_no_email, Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

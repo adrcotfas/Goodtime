@@ -127,10 +127,10 @@
                 android:textSize="@dimen/smallerTextSize"/>
 
             <TextView
-                android:id="@+id/rate_this_app"
+                android:id="@+id/feedback"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Rate this app"
+                android:text="Feedback"
                 android:gravity="center"
                 android:textSize="@dimen/smallerTextSize"
                 android:clickable="true"
