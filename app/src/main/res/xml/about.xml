@@ -6,7 +6,7 @@
         <me.jfenn.attribouter.wedges.link.LinkWedge
             name="Translate this app"
             icon="@drawable/ic_web"
-            url="https://google.com" />
+            url="https://crowdin.com/project/goodtime" />
 
         <me.jfenn.attribouter.wedges.link.LinkWedge id="github" />
         <me.jfenn.attribouter.wedges.link.LinkWedge
