@@ -155,7 +155,9 @@ public class CurrentSessionManager extends ContextWrapper{
 
         cancelAlarm();
         mTimer.cancel();
-        mRemaining += extra;
+
+        mRemaining = Math.min(mRemaining + extra, TimeUnit.MINUTES.toMillis(120));
+
         mTimer = new AppCountDownTimer(mRemaining);
 
         if (mCurrentSession.getTimerState().getValue() != TimerState.PAUSED) {
