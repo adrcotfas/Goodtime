@@ -114,6 +114,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
 //            });
 //        }
 
+        findPreference(PreferenceHelper.ENABLE_SCREEN_ON).setOnPreferenceChangeListener((preference, newValue) -> {
+            if (!((boolean) newValue)) {
+                final CheckBoxPreference pref = SettingsFragment.this.findPreference(PreferenceHelper.ENABLE_SCREENSAVER_MODE);
+                if (pref.isChecked()) {
+                    pref.setChecked(false);
+                }
+            }
+            return true;
+        });
+
         setupAutoStartSessionVsInsistentNotification();
     }
 

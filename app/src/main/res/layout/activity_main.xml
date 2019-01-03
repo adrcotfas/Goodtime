@@ -42,7 +42,6 @@
             android:gravity="center"
             android:onClick="onStartButtonClick"
             android:singleLine="true"
-            android:text="25:00"
             android:fontFamily="sans-serif-thin"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="65sp"

@@ -390,7 +390,7 @@ public class TimerActivity
         mTimeLabel.setText(currentFormattedTick);
         Log.v(TAG, "drawing the time label.");
 
-        if (PreferenceHelper.isScreensaverEnabled() && seconds == 1) {
+        if (PreferenceHelper.isScreensaverEnabled() && seconds == 1 && mCurrentSession.getTimerState().getValue() != TimerState.PAUSED) {
             teleportTimeView();
         }
 
