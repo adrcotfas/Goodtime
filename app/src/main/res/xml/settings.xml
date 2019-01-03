@@ -63,7 +63,7 @@
             app:unitOfMeasurement=""
             app:dialogTitle="@string/pref_sessions_before_long_break"
             android:defaultValue="4"
-            android:max="8"
+            android:max="10"
             app:iconSpaceReserved="false"/>
 
         <CheckBoxPreference
