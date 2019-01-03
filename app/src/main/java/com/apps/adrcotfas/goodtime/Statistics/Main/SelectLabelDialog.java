@@ -104,12 +104,6 @@ public class SelectLabelDialog extends DialogFragment {
                 binding.labels.addView(chip);
             }
 
-            if (binding.labels.getChildCount() == 0) {
-                binding.emptyState.setVisibility(View.VISIBLE);
-            } else {
-                binding.emptyState.setVisibility(View.GONE);
-            }
-
             for (LabelAndColor label : labels) {
                 Chip chip = new Chip(getActivity());
                 chip.setText(label.label);
@@ -122,6 +116,12 @@ public class SelectLabelDialog extends DialogFragment {
                     chip.setChecked(true);
                 }
                 binding.labels.addView(chip);
+            }
+
+            if (binding.labels.getChildCount() == 0) {
+                binding.emptyState.setVisibility(View.VISIBLE);
+            } else {
+                binding.emptyState.setVisibility(View.GONE);
             }
         });
 
