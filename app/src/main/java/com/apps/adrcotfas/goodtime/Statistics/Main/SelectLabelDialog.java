@@ -59,7 +59,6 @@ public class SelectLabelDialog extends DialogFragment {
 
     private String mLabel;
     private LabelsViewModel mLabelsViewModel;
-    private TextView mEmptyState;
     private OnLabelSelectedListener mCallback;
     private boolean mIsExtendedVersion;
 
@@ -105,7 +104,7 @@ public class SelectLabelDialog extends DialogFragment {
                 binding.labels.addView(chip);
             }
 
-            if (labels.isEmpty()) {
+            if (binding.labels.getChildCount() == 0) {
                 binding.emptyState.setVisibility(View.VISIBLE);
             } else {
                 binding.emptyState.setVisibility(View.GONE);
