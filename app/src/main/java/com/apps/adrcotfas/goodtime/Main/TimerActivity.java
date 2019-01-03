@@ -137,8 +137,6 @@ public class TimerActivity
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(null);
-
-        setupEvents();
     }
 
     /**
@@ -255,6 +253,9 @@ public class TimerActivity
         // initialize notification channels on the first run
         new NotificationHelper(this);
 
+        // this is to refresh the current status icon color
+        invalidateOptionsMenu();
+
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.registerOnSharedPreferenceChangeListener(this);
         toggleKeepScreenOn(PreferenceHelper.isScreenOnEnabled());
@@ -274,6 +275,7 @@ public class TimerActivity
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_main, menu);
         mStatusButton = menu.findItem(R.id.action_state);
+        setupEvents();
         return super.onCreateOptionsMenu(menu);
     }
 
