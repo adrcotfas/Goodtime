@@ -40,6 +40,7 @@ public class PreferenceHelper {
     public final static String DISABLE_SOUND_AND_VIBRATION = "pref_disable_sound_and_vibration";
     public final static String DISABLE_WIFI                = "pref_disable_wifi";
     public final static String ENABLE_SCREEN_ON            = "pref_keep_screen_on";
+    public final static String ENABLE_SCREENSAVER_MODE     = "pref_screen_saver";
     public final static String AUTO_START_BREAK            = "pref_auto_start_break";
     public final static String AUTO_START_WORK             = "pref_auto_start_work";
     public final static String THEME                       = "pref_theme";
@@ -130,6 +131,11 @@ public class PreferenceHelper {
     public static boolean isScreenOnEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(ENABLE_SCREEN_ON, false);
+    }
+
+    public static boolean isScreensaverEnabled() {
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getBoolean(ENABLE_SCREENSAVER_MODE, false);
     }
 
     public static boolean isAutoStartBreak() {

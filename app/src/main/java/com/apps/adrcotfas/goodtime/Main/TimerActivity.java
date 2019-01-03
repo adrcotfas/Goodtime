@@ -51,6 +51,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AlertDialog;
@@ -112,6 +113,7 @@ public class TimerActivity
     }
 
     MenuItem mStatusButton;
+    View mBoundsView;
     TextView mTimeLabel;
     Toolbar mToolbar;
 
@@ -131,6 +133,8 @@ public class TimerActivity
 
         mToolbar = binding.bar;
         mTimeLabel = binding.timeLabel;
+
+        mBoundsView = binding.main;
         showTutorialSnackbars();
 
         setupTimeLabelEvents();
@@ -237,6 +241,7 @@ public class TimerActivity
     private void onStopSession() {
         if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
             onStopButtonClick();
+            recreate();
         }
     }
 
@@ -384,6 +389,11 @@ public class TimerActivity
 
         mTimeLabel.setText(currentFormattedTick);
         Log.v(TAG, "drawing the time label.");
+
+        if (PreferenceHelper.isScreensaverEnabled() && seconds == 1) {
+            teleportTimeView();
+        }
+
     }
 
     public void start(SessionType sessionType) {
@@ -521,5 +531,22 @@ public class TimerActivity
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
         }
         setStatusIconColor();
+    }
+
+    private void teleportTimeView() {
+
+        int margin = ThemeHelper.dpToPx(this, 48);
+        int maxX = mBoundsView.getWidth() - mTimeLabel.getWidth() - margin;
+        int maxY = mBoundsView.getHeight() - mTimeLabel.getHeight() - margin;
+
+        int boundX = maxX - margin;
+        int boundY = maxY - margin;
+
+        if (boundX > 0 && boundY > 0) {
+            Random r = new Random();
+            int newX = r.nextInt(boundX) + margin;
+            int newY = r.nextInt(boundY) + margin;
+            mTimeLabel.animate().x(newX).y(newY).setDuration(100);
+        }
     }
 }

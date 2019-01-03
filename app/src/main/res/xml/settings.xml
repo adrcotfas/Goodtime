@@ -78,6 +78,14 @@
             android:title="@string/pref_keep_screen_on"
             app:iconSpaceReserved="false"/>
 
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="pref_keep_screen_on"
+            android:key="pref_screen_saver"
+            android:title="Screensaver mode"
+            android:summary="Moves the timer while the screen is on"
+            app:iconSpaceReserved="false"/>
+
         <ColorPickerPreference
             android:defaultValue="@color/black"
             android:dialogTitle="@string/pref_theme"
