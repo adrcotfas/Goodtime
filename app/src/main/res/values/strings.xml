@@ -50,6 +50,7 @@
     <string name="dialog_select_label">Select label</string>
     <string name="dialog_edit_label">Edit labels</string>
     <string name="label_add">Add label</string>
+    <string name="label_all">all</string>
 
     <string name="message_stop">STOP</string>
     <string name="message_resume">RESUME</string>
@@ -114,8 +115,6 @@
     <string name="toggle_view">Toggle view</string>
     <string name="translate_this_app">Translate this app</string>
     <string name="open_source_licences">Open Source Licences</string>
-
-
 
 
 

@@ -109,7 +109,7 @@ public class AllSessionsFragment extends Fragment {
 
     private void refreshCurrentLabel() {
         if (mLabelsViewModel.crtExtendedLabel.getValue() != null && mAdapter != null) {
-            if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals("total")) {
+            if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals(R.string.label_all)) {
                 mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
                     mAdapter.setData(sessions);
                     mSessions = sessions;
