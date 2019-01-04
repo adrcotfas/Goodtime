@@ -108,7 +108,7 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
         email.putExtra(Intent.EXTRA_TEXT, "\nMy device info: \n" + DeviceInfo.getDeviceInfo()
                 + "\nApp version: " + BuildConfig.VERSION_NAME);
         try {
-            startActivity(Intent.createChooser(email, "Send feedback"));
+            startActivity(Intent.createChooser(email, getActivity().getResources().getString(R.string.feedback_title)));
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(getActivity(), R.string.about_no_email, Toast.LENGTH_SHORT).show();
         }

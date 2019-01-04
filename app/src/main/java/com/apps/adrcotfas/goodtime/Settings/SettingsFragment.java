@@ -186,7 +186,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         if (notificationPolicyAccessGranted) {
             mPrefDisableSoundCheckbox.setSummary("");
         } else {
-            mPrefDisableSoundCheckbox.setSummary("Click to grant permission");
+            mPrefDisableSoundCheckbox.setSummary(R.string.settings_grant_permission);
         }
     }
 

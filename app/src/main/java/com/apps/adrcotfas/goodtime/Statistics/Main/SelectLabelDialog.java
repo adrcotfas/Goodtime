@@ -127,8 +127,8 @@ public class SelectLabelDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()))
                 .setView(binding.getRoot())
-                .setTitle("Select label")
-                .setPositiveButton("OK", (dialog, which) -> {
+                .setTitle(R.string.dialog_select_label)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     if (binding.labels.getCheckedChipId() != -1) {
                         Chip chip = (Chip) (binding.labels.getChildAt(binding.labels.getCheckedChipId()));
                         mLabel = chip.getText().toString();
@@ -139,12 +139,12 @@ public class SelectLabelDialog extends DialogFragment {
                     }
                     dismiss();
                 })
-                .setNegativeButton("Cancel", (dialog, which) -> {
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> {
                     if (dialog != null) {
                         dialog.dismiss();
                     }
                 })
-                .setNeutralButton("Edit labels", (dialog, i) -> {
+                .setNeutralButton(R.string.dialog_edit_label, (dialog, i) -> {
                     Intent intent = new Intent(getActivity(), AddEditLabelActivity.class);
                     startActivity(intent);
                 });

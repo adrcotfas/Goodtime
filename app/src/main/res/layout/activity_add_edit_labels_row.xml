@@ -25,7 +25,6 @@
 
     <EditText
         android:id="@+id/text"
-        android:text="This is a label"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/image_left"
         android:layout_toEndOf="@id/image_left"

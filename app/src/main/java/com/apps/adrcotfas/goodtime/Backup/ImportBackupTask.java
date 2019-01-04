@@ -20,6 +20,7 @@ import android.os.AsyncTask;
 import android.provider.OpenableColumns;
 import android.widget.Toast;
 
+import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.FileUtils;
 
 import java.io.File;
@@ -28,6 +29,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+
+import androidx.core.content.ContextCompat;
 
 public class ImportBackupTask extends AsyncTask<Uri, Void, Boolean> {
 
@@ -77,6 +80,8 @@ public class ImportBackupTask extends AsyncTask<Uri, Void, Boolean> {
     //TODO: extract strings
     @Override
     protected void onPostExecute(Boolean result) {
-        Toast.makeText(mContext.get(), result ? "Import successful" : "Import failed", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext.get(), result ?
+                mContext.get().getResources().getString(R.string.backup_import_success) :
+                mContext.get().getResources().getString(R.string.backup_import_failed), Toast.LENGTH_SHORT).show();
     }
 }

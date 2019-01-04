@@ -122,7 +122,7 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
                     mLabelToAdd.color = c;
                     mImageLeft.setColorFilter(c);
                 }, p);
-                dialog.setTitle("Select color");
+                dialog.setTitle(R.string.select_color_for_label);
                 dialog.show();
             } : v -> requestFocusEditText(mAddLabelView, this));
             mImageLeft.setColorFilter(hasFocus ? mLabelToAdd.color : getResources().getColor(R.color.white));
@@ -230,7 +230,7 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
                 }
             }
             if (duplicateFound) {
-                Toast.makeText(context, "Label already exists", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.label_already_exists, Toast.LENGTH_SHORT).show();
                 result = false;
             }
         }

@@ -222,9 +222,9 @@ public class AllSessionsFragment extends Fragment {
                     break;
                 case R.id.action_delete:
                     new AlertDialog.Builder(getActivity())
-                            .setTitle("Delete selected entries?")
-                            .setPositiveButton("OK", (dialog, id) -> deleteSessions())
-                            .setNegativeButton("Cancel", (dialog, id) -> dialog.cancel())
+                            .setTitle(R.string.delete_selected_entries)
+                            .setPositiveButton(android.R.string.ok, (dialog, id) -> deleteSessions())
+                            .setNegativeButton(android.R.string.cancel, (dialog, id) -> dialog.cancel())
                     .show();
                     break;
             }

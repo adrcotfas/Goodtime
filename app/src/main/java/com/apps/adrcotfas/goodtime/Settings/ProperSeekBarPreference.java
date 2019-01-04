@@ -196,7 +196,7 @@ public class ProperSeekBarPreference extends Preference {
                     setValueInternal(Integer.parseInt(name), true);
                 }
             });
-            builder.setNegativeButton("Cancel", (di, i) -> {
+            builder.setNegativeButton(android.R.string.cancel, (di, i) -> {
             });
             AlertDialog dialog = builder.create();
             dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
