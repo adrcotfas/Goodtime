@@ -451,7 +451,6 @@ public class TimerActivity
         if (sessionType == SessionType.WORK) {
             builder.setTitle("Session complete")
                     .setPositiveButton("Start break", (dialog, which) -> start(SessionType.BREAK))
-                    .setNegativeButton("Add 60 seconds", (dialog, which) -> add60Seconds())
                     .setNeutralButton("Close", (dialog, which) -> EventBus.getDefault().post(new Constants.ClearNotificationEvent()))
                     .setOnCancelListener(dialog -> {
                         // do nothing
