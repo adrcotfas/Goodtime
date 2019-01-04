@@ -4,7 +4,7 @@
         repo="goodtime-productivity/Goodtime"
         description="^@null">
         <me.jfenn.attribouter.wedges.link.LinkWedge
-            name="Translate this app"
+            name="@string/translate_this_app"
             icon="@drawable/ic_web"
             url="https://crowdin.com/project/goodtime" />
 
@@ -25,7 +25,7 @@
     </me.jfenn.attribouter.wedges.TranslatorsWedge>
 
     <me.jfenn.attribouter.wedges.LicensesWedge
-        title="Open Source Licences"
+        title="@string/open_source_licences"
         showDefaults="false"
         overflow="0">
         <me.jfenn.attribouter.wedges.LicenseWedge repo="TheAndroidMaster/Attribouter"/>

@@ -112,6 +112,11 @@
     <string name="state">State</string>
     <string name="current_label">Current label</string>
     <string name="toggle_view">Toggle view</string>
+    <string name="translate_this_app">Translate this app</string>
+    <string name="open_source_licences">Open Source Licences</string>
+
+
+
 
 
 </resources>
