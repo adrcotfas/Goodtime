@@ -26,7 +26,9 @@
     <string name="pref_auto_start_break">"Auto start break"</string>
     <string name="pref_auto_start_work">"Auto start work"</string>
     <string name="pref_auto_start_break_summary">Start the break after a work session without user interaction</string>
-    <string name="pref_auto_start_work_summary">Start the work sessions after a break without user interaction</string>
+    <string name="pref_auto_start_work_summary">Start the work session after a break without user interaction</string>
+    <string name="pref_disable_battery_optimization">Accurate alarms</string>
+    <string name="pref_disable_battery_optimization_summary">Disable battery optimization for this app</string>
 
     <string name="about">About</string>
     <string name="about_translate">Translate this app</string>
