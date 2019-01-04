@@ -23,8 +23,10 @@ import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class PreferenceHelper {
 
-    private final static String FIRST_RUN = "pref_first_run";
+    private final static int PREFERENCES_VERSION = 1;
+    private final static String PREFERENCES_VERSION_INTERNAL  = "pref_version";
 
+    private final static String FIRST_RUN = "pref_first_run";
     public final static String PROFILE                     = "pref_profile";
     public final static String WORK_DURATION               = "pref_work_duration";
     public final static String BREAK_DURATION              = "pref_break_duration";
@@ -55,8 +57,15 @@ public class PreferenceHelper {
     private static final String CURRENT_SESSION_COLOR      = "pref_current_session_color";
     private static final String INTRO_SNACKBAR_STEP        = "pref_intro_snackbar_step";
 
-    public static long getSessionDuration(SessionType sessionType) {
+    public static void migratePreferences() {
+        if (getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getInt(PREFERENCES_VERSION_INTERNAL, 0) == 0) {
+            getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit().clear().apply();
+            getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit().putInt(PREFERENCES_VERSION_INTERNAL, PREFERENCES_VERSION).apply();
+        }
+    }
 
+    public static long getSessionDuration(SessionType sessionType) {
         final long duration;
         switch (sessionType) {
             case WORK:

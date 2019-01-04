@@ -41,6 +41,7 @@ public class GoodtimeApplication extends Application {
         INSTANCE = this;
 
         mPreferences = getSharedPreferences(getPackageName() + "_private_preferences", MODE_PRIVATE);
+        PreferenceHelper.migratePreferences();
 
         mCurrentSessionManager = new CurrentSessionManager(this, new CurrentSession(TimeUnit.MINUTES.toMillis(
                 PreferenceManager.getDefaultSharedPreferences(this)
