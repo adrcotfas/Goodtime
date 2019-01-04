@@ -12,7 +12,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:text="Overview"
+            android:text="@string/statistics_overview"
             style="@style/SectionHeader"/>
 
         <Spinner
@@ -48,7 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="OverviewTextDescription"
-                    android:text="Today"/>
+                    android:text="@string/statistics_today"/>
 
             </LinearLayout>
 
@@ -70,7 +70,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="OverviewTextDescription"
-                    android:text="This week"/>
+                    android:text="@string/statistics_this_week"/>
 
             </LinearLayout>
 
@@ -92,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="OverviewTextDescription"
-                    android:text="This month"/>
+                    android:text="@string/statistics_this_month"/>
 
             </LinearLayout>
 
@@ -114,7 +114,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="OverviewTextDescription"
-                    android:text="Total"/>
+                    android:text="@string/statistics_total"/>
             </LinearLayout>
 
         </LinearLayout>

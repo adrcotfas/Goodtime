@@ -5,19 +5,19 @@
     <item
         android:id="@+id/action_add"
         android:icon="@drawable/ic_add"
-        android:title="Add session"
+        android:title="@string/add_session"
         android:visible="true"
         app:showAsAction="always"/>
 
     <item
         android:id="@+id/action_view_list"
-        android:title="Toggle view"
+        android:title="@string/toggle_view"
         android:icon="@drawable/ic_show_list"
         app:showAsAction="always"/>
 
     <item
         android:id="@+id/action_select_label"
-        android:title="Select label"
+        android:title="@string/label_dialog_select"
         android:icon="@drawable/ic_label"
         app:iconTint="@color/dayNightTeal"
         app:showAsAction="ifRoom"/>

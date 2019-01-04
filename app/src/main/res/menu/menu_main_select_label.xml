@@ -3,6 +3,6 @@
     <item
         android:id="@+id/action_edit_labels"
         android:icon="@drawable/ic_feedback"
-        android:title="Edit labels"
+        android:title="@string/label_dialog_edit"
         android:orderInCategory="-1"/>
 </menu>
