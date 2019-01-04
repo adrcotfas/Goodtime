@@ -218,6 +218,9 @@ public class TimerService extends LifecycleService {
         // store what was done to the database
         if (sessionType == SessionType.WORK) {
             saveToDb();
+        } else {
+            getSessionManager().getCurrentSession().setDuration(
+                    TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)));
         }
     }
 
@@ -317,6 +320,8 @@ public class TimerService extends LifecycleService {
                             null);
                     AppDatabase.getDatabase(getApplicationContext()).sessionModel().addSession(session);
                 }
+                handler.post(() -> getSessionManager().getCurrentSession().setDuration(
+                        TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK))));
             };
             Thread t = new Thread(r);
             t.start();

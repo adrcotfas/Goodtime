@@ -24,7 +24,7 @@
             app:min="1"
             app:unitOfMeasurement="m"
             app:dialogTitle="@string/pref_work_duration"
-            android:defaultValue="30"
+            android:defaultValue="25"
             android:max="120"
             app:iconSpaceReserved="false"/>
 
@@ -39,7 +39,7 @@
             app:iconSpaceReserved="false"/>
 
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="pref_enable_long_break"
             android:title="@string/pref_enable_long_break"
             app:iconSpaceReserved="false"/>

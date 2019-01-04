@@ -195,6 +195,7 @@ public class TimerActivity
             @Override
             public void onSwipeBottom(View view) {
                 onStopSession();
+                recreate();
             }
 
             @Override
@@ -242,7 +243,6 @@ public class TimerActivity
     private void onStopSession() {
         if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
             onStopButtonClick();
-            recreate();
         }
     }
 
@@ -370,7 +370,7 @@ public class TimerActivity
             showFinishDialog(SessionType.BREAK);
         } else if (o instanceof Constants.ClearFinishDialogEvent) {
             if (mDialogSessionFinished != null) {
-                mDialogSessionFinished.cancel();
+                mDialogSessionFinished.dismiss();
             }
         }
     }
@@ -496,7 +496,7 @@ public class TimerActivity
             case WORK_DURATION:
                 if (GoodtimeApplication.getInstance().getCurrentSession().getTimerState().getValue()
                         == TimerState.INACTIVE) {
-                    updateTime(TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)));
+                    mCurrentSession.setDuration(TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)));
                 }
                 break;
             case ENABLE_SCREEN_ON:
