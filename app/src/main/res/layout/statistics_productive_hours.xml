@@ -10,7 +10,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:text="Productive time"
+            android:text="@string/productive_time"
             style="@style/SectionHeader"/>
 
         <Spinner

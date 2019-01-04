@@ -27,7 +27,7 @@
 
         <EditText
             android:id="@+id/text"
-            android:hint="Add label"
+            android:hint="@string/label_add"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/image_left"
             android:layout_toEndOf="@id/image_left"

@@ -17,7 +17,7 @@
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
             android:gravity="center"
-            android:text="Add session"
+            android:text="@string/add_session"
             android:textSize="16sp" />
 
         <EditText
@@ -28,7 +28,7 @@
             android:inputType="numberDecimal"
             android:maxLength="3"
             android:imeOptions="actionDone"
-            android:hint="Add duration (minutes)"
+            android:hint="@string/add_duration_minutes"
             style="@style/AllSessionsAddEditDialogRowEdit" />
 
         <RelativeLayout
@@ -42,7 +42,7 @@
                 android:id="@+id/edit_date"
                 android:drawableLeft="@drawable/ic_clock"
                 android:layout_alignParentLeft="true"
-                android:text="Edit date"
+                android:text="@string/edit_date"
                 style="@style/AllSessionsAddEditDialogRow"/>
 
             <TextView
@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_height="match_parent"
-                android:text="Edit Time"
+                android:text="@string/edit_time"
                 style="@style/AllSessionsAddEditDialogRowEnd"/>
         </RelativeLayout>
 
@@ -79,7 +79,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="32dp"
                 android:layout_marginStart="32dp"
-                android:text="add label"
+                android:text="@string/label_add"
                 style="@style/Chip"/>
         </RelativeLayout>
 
@@ -89,7 +89,7 @@
             android:layout_height="48dp"
             android:layout_marginBottom="24dp"
             android:drawableLeft="@drawable/ic_floppy"
-            android:text="Save"
+            android:text="@string/save"
             style="@style/AllSessionsAddEditDialogRow"/>
 
     </LinearLayout>

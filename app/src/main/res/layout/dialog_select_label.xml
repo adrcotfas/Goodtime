@@ -12,7 +12,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="32dp"
             android:gravity="center"
-            android:text="No items"/>
+            android:text="@string/empty_state_no_items"/>
 
         <ScrollView
             android:layout_width="wrap_content"

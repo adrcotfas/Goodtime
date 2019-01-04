@@ -190,7 +190,7 @@ public class ProperSeekBarPreference extends Preference {
 
             builder.setTitle(mDialogTitle)
                     .setView(layout);
-            builder.setPositiveButton("OK", (di, i) -> {
+            builder.setPositiveButton(android.R.string.ok, (di, i) -> {
                 final String name = input.getText().toString();
                 if (!TextUtils.isEmpty(name)) {
                     setValueInternal(Integer.parseInt(name), true);
