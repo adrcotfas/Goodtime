@@ -122,7 +122,7 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
                     mLabelToAdd.color = c;
                     mImageLeft.setColorFilter(c);
                 }, p);
-                dialog.setTitle(R.string.select_color_for_label);
+                dialog.setTitle(R.string.label_select_color);
                 dialog.show();
             } : v -> requestFocusEditText(mAddLabelView, this));
             mImageLeft.setColorFilter(hasFocus ? mLabelToAdd.color : getResources().getColor(R.color.white));

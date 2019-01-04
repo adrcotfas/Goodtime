@@ -187,7 +187,6 @@ public class BackupFragment extends BottomSheetDialogFragment {
                             intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             BackupFragment.this.getActivity().startActivity(Intent.createChooser(intent, getResources().getString(R.string.backup_export_CSV)));
 
-
                             // run this on the UI thread
                             handler.post(() -> {
                                 sessionsLiveData.removeObservers(BackupFragment.this);

@@ -15,13 +15,11 @@ package com.apps.adrcotfas.goodtime.Statistics.Main;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
 
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.AddEditLabelActivity;
@@ -40,7 +38,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
 
-import static android.content.Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP;
 import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceTotalLabel;
 import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceUnlabeledLabel;
 
@@ -127,7 +124,7 @@ public class SelectLabelDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()))
                 .setView(binding.getRoot())
-                .setTitle(R.string.dialog_select_label)
+                .setTitle(R.string.label_dialog_select)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     if (binding.labels.getCheckedChipId() != -1) {
                         Chip chip = (Chip) (binding.labels.getChildAt(binding.labels.getCheckedChipId()));
@@ -144,7 +141,7 @@ public class SelectLabelDialog extends DialogFragment {
                         dialog.dismiss();
                     }
                 })
-                .setNeutralButton(R.string.dialog_edit_label, (dialog, i) -> {
+                .setNeutralButton(R.string.label_dialog_edit, (dialog, i) -> {
                     Intent intent = new Intent(getActivity(), AddEditLabelActivity.class);
                     startActivity(intent);
                 });

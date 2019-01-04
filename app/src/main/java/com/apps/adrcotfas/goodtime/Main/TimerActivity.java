@@ -348,7 +348,7 @@ public class TimerActivity
                 super.onBackPressed();
             } else {
                 try {
-                    Toast.makeText(getBaseContext(), R.string.timer_activity_press_back_button_exit, LENGTH_SHORT)
+                    Toast.makeText(getBaseContext(), R.string.action_press_back_button, LENGTH_SHORT)
                             .show();
                 } catch (Throwable th) {
                     // ignoring this exception
@@ -449,15 +449,15 @@ public class TimerActivity
         Log.i(TAG, "Showing the finish dialog.");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         if (sessionType == SessionType.WORK) {
-            builder.setTitle(R.string.timer_activity_session_complete)
-                    .setPositiveButton(R.string.timer_activity_start_break, (dialog, which) -> start(SessionType.BREAK))
+            builder.setTitle(R.string.action_finished_session)
+                    .setPositiveButton(R.string.action_start_break, (dialog, which) -> start(SessionType.BREAK))
                     .setNeutralButton(R.string.dialog_close, (dialog, which) -> EventBus.getDefault().post(new Constants.ClearNotificationEvent()))
                     .setOnCancelListener(dialog -> {
                         // do nothing
                     });
         } else {
-            builder.setTitle(R.string.break_complete)
-                    .setPositiveButton(R.string.begin_session, (dialog, which) -> start(SessionType.WORK))
+            builder.setTitle(R.string.action_finished_break)
+                    .setPositiveButton(R.string.action_start_work, (dialog, which) -> start(SessionType.WORK))
                     .setNeutralButton(android.R.string.cancel, (dialog, which) -> EventBus.getDefault().post(new Constants.ClearNotificationEvent()))
                     .setOnCancelListener(dialog -> {
                         // do nothing

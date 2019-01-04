@@ -80,8 +80,9 @@ public class ImportBackupTask extends AsyncTask<Uri, Void, Boolean> {
     //TODO: extract strings
     @Override
     protected void onPostExecute(Boolean result) {
-        Toast.makeText(mContext.get(), result ?
-                mContext.get().getResources().getString(R.string.backup_import_success) :
-                mContext.get().getResources().getString(R.string.backup_import_failed), Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext.get(),
+                mContext.get().getResources().getString(
+                        result ? R.string.backup_import_success : R.string.backup_import_failed),
+                Toast.LENGTH_SHORT).show();
     }
 }

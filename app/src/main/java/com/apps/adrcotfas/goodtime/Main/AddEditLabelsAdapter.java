@@ -158,7 +158,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
                     imageLeft.setColorFilter(c);
                     crtLabel.color = c;
                 }, p);
-                dialog.setTitle(R.string.select_color_for_label);
+                dialog.setTitle(R.string.label_select_color);
                 dialog.show();
             });
 

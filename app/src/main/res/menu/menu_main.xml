@@ -11,7 +11,7 @@
 
     <item android:id="@+id/action_current_label"
         android:icon="@drawable/ic_dots"
-        android:title="@string/current_label"
+        android:title="@string/label_current"
         app:showAsAction="always"/>
 
 </menu>
