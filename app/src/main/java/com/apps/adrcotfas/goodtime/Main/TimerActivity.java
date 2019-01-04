@@ -195,7 +195,9 @@ public class TimerActivity
             @Override
             public void onSwipeBottom(View view) {
                 onStopSession();
-                recreate();
+                if (PreferenceHelper.isScreensaverEnabled()) {
+                    recreate();
+                }
             }
 
             @Override
