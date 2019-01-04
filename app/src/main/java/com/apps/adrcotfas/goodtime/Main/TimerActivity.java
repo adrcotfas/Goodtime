@@ -156,10 +156,10 @@ public class TimerActivity
 
             List<String> messages = new ArrayList<>();
             //TODO: extract strings
-            messages.add("Tap the timer to start and pause");
-            messages.add("Swipe left or right to skip the current session");
-            messages.add("Swipe up to add one more minute");
-            messages.add("Swipe down on the timer to stop");
+            messages.add(getResources().getString(R.string.tutorial_tap));
+            messages.add(getResources().getString(R.string.tutorial_swipe_left));
+            messages.add(getResources().getString(R.string.tutorial_swipe_up));
+            messages.add(getResources().getString(R.string.tutorial_swipe_down));
 
             Snackbar s = Snackbar.make(mToolbar, messages.get(PreferenceHelper.getLastIntroStep()), Snackbar.LENGTH_INDEFINITE)
                     .setAction("OK", view -> {
@@ -350,7 +350,7 @@ public class TimerActivity
                 super.onBackPressed();
             } else {
                 try {
-                    Toast.makeText(getBaseContext(), "Press the back button again to exit", LENGTH_SHORT)
+                    Toast.makeText(getBaseContext(), R.string.action_press_back_button, LENGTH_SHORT)
                             .show();
                 } catch (Throwable th) {
                     // ignoring this exception
@@ -451,16 +451,16 @@ public class TimerActivity
         Log.i(TAG, "Showing the finish dialog.");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         if (sessionType == SessionType.WORK) {
-            builder.setTitle("Session complete")
-                    .setPositiveButton("Start break", (dialog, which) -> start(SessionType.BREAK))
-                    .setNeutralButton("Close", (dialog, which) -> EventBus.getDefault().post(new Constants.ClearNotificationEvent()))
+            builder.setTitle(R.string.action_finished_session)
+                    .setPositiveButton(R.string.action_start_break, (dialog, which) -> start(SessionType.BREAK))
+                    .setNeutralButton(R.string.dialog_close, (dialog, which) -> EventBus.getDefault().post(new Constants.ClearNotificationEvent()))
                     .setOnCancelListener(dialog -> {
                         // do nothing
                     });
         } else {
-            builder.setTitle("Break complete")
-                    .setPositiveButton("Begin Session", (dialog, which) -> start(SessionType.WORK))
-                    .setNeutralButton("Close", (dialog, which) -> EventBus.getDefault().post(new Constants.ClearNotificationEvent()))
+            builder.setTitle(R.string.action_finished_break)
+                    .setPositiveButton(R.string.action_start_work, (dialog, which) -> start(SessionType.WORK))
+                    .setNeutralButton(android.R.string.cancel, (dialog, which) -> EventBus.getDefault().post(new Constants.ClearNotificationEvent()))
                     .setOnCancelListener(dialog -> {
                         // do nothing
                     });

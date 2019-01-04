@@ -5,13 +5,13 @@
     <item
         android:id="@+id/action_state"
         android:icon="@drawable/ic_status_goodtime"
-        android:title="State"
+        android:title="@string/state"
         android:visible="false"
         app:showAsAction="always"/>
 
     <item android:id="@+id/action_current_label"
         android:icon="@drawable/ic_dots"
-        android:title="Current label"
+        android:title="@string/label_current"
         app:showAsAction="always"/>
 
 </menu>

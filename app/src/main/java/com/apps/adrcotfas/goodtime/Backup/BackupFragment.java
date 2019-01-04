@@ -82,15 +82,15 @@ public class BackupFragment extends BottomSheetDialogFragment {
 
     private void importBackup() {
         new AlertDialog.Builder(getActivity())
-                .setTitle("Import backup?")
-                .setMessage("The current entries will be lost.")
-                .setPositiveButton("OK", (dialog, id) -> {
+                .setTitle(R.string.backup_import_title)
+                .setMessage(R.string.backup_import_message)
+                .setPositiveButton(android.R.string.ok, (dialog, id) -> {
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
                     intent.setType("*/*");
                     startActivityForResult(intent, IMPORT_BACKUP_REQUEST);
                 })
-                .setNegativeButton("Cancel", (dialog, id) -> dialog.cancel())
+                .setNegativeButton(android.R.string.cancel, (dialog, id) -> dialog.cancel())
                 .show();
     }
 
@@ -100,7 +100,7 @@ public class BackupFragment extends BottomSheetDialogFragment {
         LiveData<List<Session>> sessionsLiveData = mSessionViewModel.getAllSessionsByEndTime();
         sessionsLiveData.observe(this, sessions -> {
             if (sessions.isEmpty()) {
-                handler.post(() -> Toast.makeText(getActivity(), "There are no completed sessions", Toast.LENGTH_SHORT).show());
+                handler.post(() -> Toast.makeText(getActivity(), R.string.backup_no_completed_sessions, Toast.LENGTH_SHORT).show());
                 dismiss();
             } else {
                 exportRunnable = () -> {
@@ -119,7 +119,7 @@ public class BackupFragment extends BottomSheetDialogFragment {
                                 intent.setType("application/zip");
                                 intent.putExtra(Intent.EXTRA_STREAM, fileUri);
                                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                getActivity().startActivity(Intent.createChooser(intent, "Export backup"));
+                                getActivity().startActivity(Intent.createChooser(intent, getResources().getString(R.string.backup_export_title)));
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -144,7 +144,7 @@ public class BackupFragment extends BottomSheetDialogFragment {
         LiveData<List<Session>> sessionsLiveData = mSessionViewModel.getAllSessionsByEndTime();
         sessionsLiveData.observe(this, sessions -> {
             if (sessions.isEmpty()) {
-                handler.post(() -> Toast.makeText(getActivity(), "There are no completed sessions", Toast.LENGTH_SHORT).show());
+                handler.post(() -> Toast.makeText(getActivity(), R.string.backup_no_completed_sessions, Toast.LENGTH_SHORT).show());
                 dismiss();
             } else {
                 exportRunnable = () -> {
@@ -179,13 +179,13 @@ public class BackupFragment extends BottomSheetDialogFragment {
                         fos.flush();
                         fos.close();
                         if (output.exists()) {
-                            Uri fileUri = FileProvider.getUriForFile(BackupFragment.this.getActivity(), "com.apps.adrcotfas.goodtime", output);
+                            Uri fileUri = FileProvider.getUriForFile(BackupFragment.this.getActivity(),"com.apps.adrcotfas.goodtime", output);
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_SEND);
                             intent.setType("text/csv");
                             intent.putExtra(Intent.EXTRA_STREAM, fileUri);
                             intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            BackupFragment.this.getActivity().startActivity(Intent.createChooser(intent, "Export CSV backup"));
+                            BackupFragment.this.getActivity().startActivity(Intent.createChooser(intent, getResources().getString(R.string.backup_export_CSV)));
 
                             // run this on the UI thread
                             handler.post(() -> {

@@ -109,7 +109,7 @@ public class AllSessionsFragment extends Fragment {
 
     private void refreshCurrentLabel() {
         if (mLabelsViewModel.crtExtendedLabel.getValue() != null && mAdapter != null) {
-            if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals("total")) {
+            if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals(R.string.label_all)) {
                 mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
                     mAdapter.setData(sessions);
                     mSessions = sessions;
@@ -222,9 +222,9 @@ public class AllSessionsFragment extends Fragment {
                     break;
                 case R.id.action_delete:
                     new AlertDialog.Builder(getActivity())
-                            .setTitle("Delete selected entries?")
-                            .setPositiveButton("OK", (dialog, id) -> deleteSessions())
-                            .setNegativeButton("Cancel", (dialog, id) -> dialog.cancel())
+                            .setTitle(R.string.delete_selected_entries)
+                            .setPositiveButton(android.R.string.ok, (dialog, id) -> deleteSessions())
+                            .setNegativeButton(android.R.string.cancel, (dialog, id) -> dialog.cancel())
                     .show();
                     break;
             }

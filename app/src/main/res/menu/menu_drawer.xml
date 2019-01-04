@@ -7,15 +7,15 @@
         <item
             android:id="@+id/edit_labels"
             android:icon="@drawable/ic_label"
-            android:title="Labels"/>
+            android:title="@string/labels"/>
         <item
             android:id="@+id/action_statistics"
             android:icon="@drawable/ic_history"
-            android:title="Statistics" />
+            android:title="@string/statistics" />
         <item
             android:id="@+id/action_backup"
             android:icon="@drawable/ic_cloud"
-            android:title="Backup" />
+            android:title="@string/backup" />
     </group>
 
     <group
@@ -24,6 +24,6 @@
         <item
             android:id="@+id/action_settings"
             android:icon="@drawable/ic_settings"
-            android:title="Settings" />
+            android:title="@string/settings" />
     </group>
 </menu>

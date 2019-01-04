@@ -127,12 +127,12 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
                 int position = getAdapterPosition();
                 clearFocusEditText(text, mContext);
                 new AlertDialog.Builder(mContext)
-                        .setNegativeButton("Cancel", null)
-                        .setPositiveButton("Delete", (dialogInterface, which) -> {
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .setPositiveButton(R.string.dialog_delete, (dialogInterface, which) -> {
                             mCallback.onDeleteLabel(mLabels.get(position), position);
                         })
-                        .setTitle("Delete label?")
-                        .setMessage("Deleting this label will remove it from all finished sessions. The sessions will not be removed.")
+                        .setTitle(R.string.label_delete_title)
+                        .setMessage(R.string.label_delete_message)
                         .create().show();
             });
 
@@ -158,7 +158,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
                     imageLeft.setColorFilter(c);
                     crtLabel.color = c;
                 }, p);
-                dialog.setTitle("Select color");
+                dialog.setTitle(R.string.label_select_color);
                 dialog.show();
             });
 

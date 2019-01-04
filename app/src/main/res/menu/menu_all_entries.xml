@@ -4,6 +4,6 @@
     <item
         android:id="@+id/action_add"
         android:icon="@drawable/ic_add"
-        android:title="Add session"
+        android:title="@string/add_session"
         app:showAsAction="always"/>
 </menu>

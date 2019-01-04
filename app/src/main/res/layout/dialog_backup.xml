@@ -19,7 +19,7 @@
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
             android:gravity="center"
-            android:text="Backup"
+            android:text="@string/backup"
             android:textSize="16sp" />
 
         <LinearLayout
@@ -37,13 +37,13 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/regularTextSize"
                 android:textColor="@color/white"
-                android:text="Export backup" />
+                android:text="@string/backup_export_title" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/smallerTextSize"
-                android:text="The file can be imported back"/>
+                android:text="@string/backup_file_can_be_imported_back"/>
         </LinearLayout>
 
         <LinearLayout
@@ -61,13 +61,13 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/regularTextSize"
                 android:textColor="@color/white"
-                android:text="Export to CSV" />
+                android:text="@string/backup_export_CSV" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/smallerTextSize"
-                android:text="The file cannot be imported back"/>
+                android:text="@string/backup_file_cannot_be_imported_back"/>
         </LinearLayout>
 
         <TextView
@@ -75,7 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginBottom="24dp"
-            android:text="Import backup"
+            android:text="@string/backup_import_title"
             style="@style/BackupRow"/>
 
     </LinearLayout>
