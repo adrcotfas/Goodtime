@@ -20,7 +20,7 @@ import com.apps.adrcotfas.goodtime.R;
 
 public class Utils {
     public static LabelAndColor getInstanceTotalLabel(Context context) {
-        return new LabelAndColor(context.getResources().getString(R.string.label_all),
+        return new LabelAndColor(context.getString(R.string.label_all),
                 context.getResources().getColor(R.color.dayNightTeal));
     }
 

@@ -156,10 +156,10 @@ public class TimerActivity
 
             List<String> messages = new ArrayList<>();
             //TODO: extract strings
-            messages.add(getResources().getString(R.string.tutorial_tap));
-            messages.add(getResources().getString(R.string.tutorial_swipe_left));
-            messages.add(getResources().getString(R.string.tutorial_swipe_up));
-            messages.add(getResources().getString(R.string.tutorial_swipe_down));
+            messages.add(getString(R.string.tutorial_tap));
+            messages.add(getString(R.string.tutorial_swipe_left));
+            messages.add(getString(R.string.tutorial_swipe_up));
+            messages.add(getString(R.string.tutorial_swipe_down));
 
             Snackbar s = Snackbar.make(mToolbar, messages.get(PreferenceHelper.getLastIntroStep()), Snackbar.LENGTH_INDEFINITE)
                     .setAction("OK", view -> {

@@ -86,7 +86,7 @@ public class NotificationHelper extends ContextWrapper {
     @TargetApi(Build.VERSION_CODES.O)
     private void initChannels() {
         NotificationChannel channelInProgress = new NotificationChannel(
-                GOODTIME_NOTIFICATION, getResources().getString(R.string.notification_channel_name),
+                GOODTIME_NOTIFICATION, getString(R.string.notification_channel_name),
                 NotificationManager.IMPORTANCE_LOW);
         channelInProgress.setBypassDnd(true);
         channelInProgress.setShowBadge(false);
@@ -115,17 +115,17 @@ public class NotificationHelper extends ContextWrapper {
             if (currentSession.getTimerState().getValue() == TimerState.PAUSED) {
                 builder.addAction(buildStopAction(this))
                         .addAction(buildResumeAction(this))
-                        .setContentTitle(getResources().getString(R.string.action_paused_title))
-                        .setContentText(getResources().getString(R.string.action_continue));
+                        .setContentTitle(getString(R.string.action_paused_title))
+                        .setContentText(getString(R.string.action_continue));
             } else {
                 builder.addAction(buildStopAction(this))
                         .addAction(buildPauseAction(this))
-                        .setContentTitle(getResources().getString(R.string.action_progress_work))
+                        .setContentTitle(getString(R.string.action_progress_work))
                         .setContentText(buildProgressText(currentSession.getDuration().getValue()));
             }
         } else {
             builder.addAction(buildStopAction(this))
-                    .setContentTitle(getResources().getString(R.string.action_progress_break))
+                    .setContentTitle(getString(R.string.action_progress_break))
                     .setContentText(buildProgressText(currentSession.getDuration().getValue()));
         }
 
@@ -144,15 +144,15 @@ public class NotificationHelper extends ContextWrapper {
                 .setShowWhen(false);
         NotificationCompat.WearableExtender extender = new NotificationCompat.WearableExtender();
         if (sessionType == SessionType.WORK) {
-            builder.setContentTitle(getResources().getString(R.string.action_finished_session))
-                    .setContentText(getResources().getString(R.string.action_continue))
+            builder.setContentTitle(getString(R.string.action_finished_session))
+                    .setContentText(getString(R.string.action_continue))
                     .addAction(buildStartBreakAction(this))
                     .addAction(buildSkipBreakAction(this));
             extender.addAction(buildStartBreakAction(this));
             extender.addAction(buildSkipBreakAction(this));
         } else {
-            builder.setContentTitle(getResources().getString(R.string.action_finished_break))
-                    .setContentText(getResources().getString(R.string.action_continue))
+            builder.setContentTitle(getString(R.string.action_finished_break))
+                    .setContentText(getString(R.string.action_continue))
                     .addAction(buildStartWorkAction(this));
             extender.addAction(buildStartWorkAction(this));
         }
@@ -173,7 +173,7 @@ public class NotificationHelper extends ContextWrapper {
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_stop,
-                context.getResources().getString(R.string.action_stop),
+                context.getString(R.string.action_stop),
                 stopPendingIntent).build();
     }
 
@@ -183,7 +183,7 @@ public class NotificationHelper extends ContextWrapper {
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_resume,
-                context.getResources().getString(R.string.action_resume),
+                context.getString(R.string.action_resume),
                 togglePendingIntent).build();
     }
 
@@ -194,7 +194,7 @@ public class NotificationHelper extends ContextWrapper {
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_pause,
-                context.getResources().getString(R.string.action_pause),
+                context.getString(R.string.action_pause),
                 togglePendingIntent).build();
     }
 
@@ -204,7 +204,7 @@ public class NotificationHelper extends ContextWrapper {
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_resume,
-                context.getResources().getString(R.string.action_start_work),
+                context.getString(R.string.action_start_work),
                 togglePendingIntent).build();
     }
 
@@ -214,7 +214,7 @@ public class NotificationHelper extends ContextWrapper {
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_resume,
-                context.getResources().getString(R.string.action_start_break),
+                context.getString(R.string.action_start_break),
                 togglePendingIntent).build();
     }
 
@@ -224,7 +224,7 @@ public class NotificationHelper extends ContextWrapper {
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_skip,
-                context.getResources().getString(R.string.action_skip_break),
+                context.getString(R.string.action_skip_break),
                 togglePendingIntent).build();
     }
 }

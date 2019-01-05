@@ -319,16 +319,15 @@ public class StatisticsFragment extends Fragment {
                 mSessionsToObserve.removeObservers(this);
             }
 
-            switch (mLabelsViewModel.crtExtendedLabel.getValue().label) {
-                case "total":
-                    mSessionsToObserve = mSessionViewModel.getAllSessionsByEndTime();
-                    break;
-                case "unlabeled":
-                    mSessionsToObserve = mSessionViewModel.getAllSessionsUnlabeled();
-                    break;
-                default:
-                    mSessionsToObserve = mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().label);
-                    break;
+            String s = mLabelsViewModel.crtExtendedLabel.getValue().label;
+            if (getString(R.string.label_all).equals(s)) {
+                mSessionsToObserve = mSessionViewModel.getAllSessionsByEndTime();
+
+            } else if ("unlabeled".equals(s)) {
+                mSessionsToObserve = mSessionViewModel.getAllSessionsUnlabeled();
+
+            } else {
+                mSessionsToObserve = mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().label);
             }
             mSessionsToObserve.observe(this, sessions -> {
                 refreshStats(sessions);
