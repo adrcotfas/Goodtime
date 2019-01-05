@@ -136,12 +136,12 @@ public class TimerActivity
         mTimeLabel = binding.timeLabel;
 
         mBoundsView = binding.main;
-        showTutorialSnackbars();
 
         setupTimeLabelEvents();
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(null);
+        showTutorialSnackbars();
     }
 
     /**
