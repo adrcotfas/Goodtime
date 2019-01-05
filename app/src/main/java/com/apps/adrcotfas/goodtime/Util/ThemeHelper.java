@@ -27,7 +27,6 @@ import com.apps.adrcotfas.goodtime.R;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
-import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES;
 
 public class ThemeHelper {
 
@@ -36,9 +35,8 @@ public class ThemeHelper {
         final int dark = activity.getResources().getColor(R.color.darkIndigo1100);
         final int blue = activity.getResources().getColor(R.color.blue1100);
 
-        activity.getDelegate().setLocalNightMode(MODE_NIGHT_YES);
-
         int i = PreferenceHelper.getTheme();
+
         if (i == dark) {
             activity.setTheme(R.style.AppThemeDark);
         } else if (i == blue) {

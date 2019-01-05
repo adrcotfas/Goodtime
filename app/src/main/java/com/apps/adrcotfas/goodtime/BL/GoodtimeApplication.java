@@ -17,8 +17,10 @@ import android.content.SharedPreferences;
 
 import java.util.concurrent.TimeUnit;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
 import static com.apps.adrcotfas.goodtime.Util.Constants.DEFAULT_WORK_DURATION_DEFAULT;
 
@@ -34,6 +36,8 @@ public class GoodtimeApplication extends Application {
     public static GoodtimeApplication getInstance() {
         return INSTANCE;
     }
+
+    static { AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES); }
 
     @Override
     public void onCreate() {
