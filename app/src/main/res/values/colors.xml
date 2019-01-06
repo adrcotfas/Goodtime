@@ -2,9 +2,10 @@
 <resources>
 
     <color name="dayNightGray">#141414</color>
-    <color name="dayNightViolet">#BB86FC</color>
-    <color name="dayNightTeal">#80CBC4</color>
-    <color name="dayNightTealDarker">#4DB6AC</color>
+
+    <color name="teal200">#80CBC4</color>
+    <color name="teal300">#4DB6AC</color>
+    <color name="teal400">#26A69A</color>
 
     <color name="darkIndigo900">#262738</color>
     <color name="darkIndigo1000">#222332</color>

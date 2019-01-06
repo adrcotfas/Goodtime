@@ -19,6 +19,6 @@
         android:id="@+id/action_select_label"
         android:title="@string/label_dialog_select"
         android:icon="@drawable/ic_label"
-        app:iconTint="@color/dayNightTeal"
+        app:iconTint="@color/teal200"
         app:showAsAction="ifRoom"/>
 </menu>

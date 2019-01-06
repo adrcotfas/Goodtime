@@ -90,6 +90,15 @@
             android:value=".Main.TimerActivity" />
         </activity>
 
+        <activity android:name=".Main.MainIntroActivity"
+            android:theme="@style/Theme.Intro"            android:parentActivityName=".Main.TimerActivity"
+            >
+        <!-- Parent activity meta-data to support 4.0 and lower -->
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".Main.TimerActivity" />
+        </activity>
+
         <service
             android:name="com.apps.adrcotfas.goodtime.BL.TimerService"
             android:enabled="true"

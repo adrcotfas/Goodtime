@@ -71,4 +71,7 @@ dependencies {
     // icons
     implementation "com.mikepenz:iconics-core:3.1.0"
     implementation 'com.mikepenz:community-material-typeface:2.0.46.1@aar'
+
+    // intro
+    implementation 'com.github.adrcotfas:material-intro:e1228'
 }

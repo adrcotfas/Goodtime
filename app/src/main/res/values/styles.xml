@@ -121,7 +121,7 @@
 
     <style name="SmallPseudoChip">
         <item name="android:background">@drawable/shape_rectangle</item>
-        <item name="android:backgroundTint" tools:targetApi="lollipop">@color/dayNightTeal</item>
+        <item name="android:backgroundTint" tools:targetApi="lollipop">@color/teal200</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
 
@@ -154,8 +154,8 @@
 
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar" >
 
-        <item name="colorAccent">@color/dayNightTeal</item>
-        <item name="android:colorAccent" tools:targetApi="lollipop">@color/dayNightTeal</item>
+        <item name="colorAccent">@color/teal200</item>
+        <item name="android:colorAccent" tools:targetApi="lollipop">@color/teal200</item>
         <item name="viewInflaterClass">androidx.appcompat.app.AppCompatViewInflater</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionModeCloseDrawable">@drawable/ic_clear</item>
@@ -171,8 +171,8 @@
 
     <style name="AppThemeDark" parent="Theme.MaterialComponents.DayNight.NoActionBar" >
 
-        <item name="colorAccent">@color/dayNightTeal</item>
-        <item name="android:colorAccent" tools:targetApi="lollipop">@color/dayNightTeal</item>
+        <item name="colorAccent">@color/teal200</item>
+        <item name="android:colorAccent" tools:targetApi="lollipop">@color/teal200</item>
         <item name="viewInflaterClass">androidx.appcompat.app.AppCompatViewInflater</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionModeCloseDrawable">@drawable/ic_clear</item>
@@ -189,8 +189,8 @@
 
     <style name="AppThemeBlue" parent="Theme.MaterialComponents.DayNight.NoActionBar" >
 
-        <item name="colorAccent">@color/dayNightTeal</item>
-        <item name="android:colorAccent" tools:targetApi="lollipop">@color/dayNightTeal</item>
+        <item name="colorAccent">@color/teal200</item>
+        <item name="android:colorAccent" tools:targetApi="lollipop">@color/teal200</item>
         <item name="viewInflaterClass">androidx.appcompat.app.AppCompatViewInflater</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionModeCloseDrawable">@drawable/ic_clear</item>
@@ -211,9 +211,9 @@
     </style>
 
     <style name="AppTheme.MaterialAboutActivity" parent="Theme.Mal.Light.DarkActionBar">
-        <item name="colorPrimary">@color/dayNightTeal</item>
-        <item name="colorPrimaryDark">@color/dayNightTealDarker</item>
-        <item name="colorAccent">@color/dayNightTeal</item>
+        <item name="colorPrimary">@color/teal200</item>
+        <item name="colorPrimaryDark">@color/teal300</item>
+        <item name="colorAccent">@color/teal200</item>
     </style>
 
 </resources>

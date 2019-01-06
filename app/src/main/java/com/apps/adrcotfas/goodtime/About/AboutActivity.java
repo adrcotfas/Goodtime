@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.BuildConfig;
+import com.apps.adrcotfas.goodtime.Main.MainIntroActivity;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.DeviceInfo;
 import com.danielstone.materialaboutlibrary.ConvenienceBuilder;
@@ -38,7 +39,7 @@ public class AboutActivity extends MaterialAboutActivity {
     @NonNull
     protected MaterialAboutList getMaterialAboutList(@NonNull Context c) {
         MaterialAboutCard.Builder builder1 = new MaterialAboutCard.Builder();
-        int colorIcon = R.color.dayNightTeal;
+        int colorIcon = R.color.teal200;
         builder1.addItem(new MaterialAboutTitleItem.Builder()
                 .text(getString(R.string.app_name))
                 .icon(R.mipmap.ic_launcher)
@@ -81,7 +82,8 @@ public class AboutActivity extends MaterialAboutActivity {
                         .color(ContextCompat.getColor(c, colorIcon))
                         .sizeDp(18))
                 .setOnClickAction(() -> {
-                    // start intro activity
+                    Intent i = new Intent(AboutActivity.this, MainIntroActivity.class);
+                    startActivity(i);
                 })
                 .build());
 

@@ -34,6 +34,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ThemeHelper.setTheme(this);
+
         GenericMainBinding binding = DataBindingUtil.setContentView(this, R.layout.generic_main);
         setSupportActionBar(binding.toolbarWrapper.toolbar);
 

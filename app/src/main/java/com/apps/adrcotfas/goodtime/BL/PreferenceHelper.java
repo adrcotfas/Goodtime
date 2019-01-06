@@ -244,7 +244,7 @@ public class PreferenceHelper {
 
     public static void consumeFirstRun() {
         GoodtimeApplication.getSharedPreferences().edit()
-                .putBoolean(FIRST_RUN, true).apply();
+                .putBoolean(FIRST_RUN, false).apply();
     }
 
     public static int getLastIntroStep() {

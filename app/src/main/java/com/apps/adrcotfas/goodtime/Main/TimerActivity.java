@@ -125,6 +125,9 @@ public class TimerActivity
 
         if (PreferenceHelper.isFirstRun()) {
             // show app intro
+            Intent i = new Intent(TimerActivity.this, MainIntroActivity.class);
+            startActivity(i);
+
             PreferenceHelper.consumeFirstRun();
         }
 
@@ -169,7 +172,7 @@ public class TimerActivity
                         showTutorialSnackbars();
                     })
                     .setAnchorView(mToolbar)
-                    .setActionTextColor(getResources().getColor(R.color.dayNightTeal));
+                    .setActionTextColor(getResources().getColor(R.color.teal200));
             s.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.dayNightGray));
             TextView tv = s.getView().findViewById(com.google.android.material.R.id.snackbar_text);
             if (tv != null) {
