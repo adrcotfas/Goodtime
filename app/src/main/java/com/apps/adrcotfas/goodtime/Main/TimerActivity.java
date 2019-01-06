@@ -149,7 +149,7 @@ public class TimerActivity
      */
     private void showTutorialSnackbars() {
 
-        final int MESSAGE_SIZE = 4;
+        final int MESSAGE_SIZE = 5;
         int i = PreferenceHelper.getLastIntroStep();
 
         if (i < MESSAGE_SIZE) {
@@ -160,6 +160,7 @@ public class TimerActivity
             messages.add(getString(R.string.tutorial_swipe_left));
             messages.add(getString(R.string.tutorial_swipe_up));
             messages.add(getString(R.string.tutorial_swipe_down));
+            messages.add(getString(R.string.tutorial_long_click));
 
             Snackbar s = Snackbar.make(mToolbar, messages.get(PreferenceHelper.getLastIntroStep()), Snackbar.LENGTH_INDEFINITE)
                     .setAction("OK", view -> {

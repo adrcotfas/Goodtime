@@ -58,7 +58,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0-alpha02'
 
     // About
-    implementation 'me.jfenn:attribouter:0.1.5'
+    compile 'com.github.daniel-stoneuk:material-about-library:2.4.2'
 
     // Statistics
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
@@ -67,4 +67,8 @@ dependencies {
     implementation 'joda-time:joda-time:2.10'
 
     implementation 'androidx.recyclerview:recyclerview-selection:1.1.0-alpha01'
+
+    // icons
+    implementation "com.mikepenz:iconics-core:3.1.0"
+    implementation 'com.mikepenz:community-material-typeface:2.0.46.1@aar'
 }

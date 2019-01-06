@@ -51,11 +51,23 @@
         <activity
             android:name=".About.AboutActivity"
             android:label="About"
+            android:theme="@style/AppTheme.MaterialAboutActivity"
             android:parentActivityName=".Main.TimerActivity">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Main.TimerActivity" />
+        </activity>
+
+        <activity
+            android:name=".About.LicencesActivity"
+            android:label="About"
+            android:theme="@style/AppTheme.MaterialAboutActivity"
+            android:parentActivityName=".About.AboutActivity">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".About.AboutActivity" />
         </activity>
 
         <activity

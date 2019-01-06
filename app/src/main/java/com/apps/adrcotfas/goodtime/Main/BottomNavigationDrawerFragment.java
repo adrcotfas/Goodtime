@@ -13,34 +13,34 @@
 
 package com.apps.adrcotfas.goodtime.Main;
 
+import android.app.Dialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.About.AboutActivity;
 import com.apps.adrcotfas.goodtime.Backup.BackupFragment;
-import com.apps.adrcotfas.goodtime.BuildConfig;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity;
-import com.apps.adrcotfas.goodtime.Util.DeviceInfo;
 import com.apps.adrcotfas.goodtime.databinding.DrawerMainBinding;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.widget.NestedScrollView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
 
 public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
 
     private NavigationView navigationView;
-
+    private NestedScrollView layout;
     public BottomNavigationDrawerFragment() {
 
     }
@@ -52,23 +52,31 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
         DrawerMainBinding binding = DataBindingUtil.inflate(inflater, R.layout.drawer_main, container, false);
 
         navigationView = binding.navigationView;
-
-        binding.about.setOnClickListener(v -> {
-            if (getDialog() != null) {
-                getDialog().dismiss();
-            }
-            Intent aboutIntent = new Intent(getActivity(), AboutActivity.class);
-            startActivity(aboutIntent);
-        });
-
-        binding.feedback.setOnClickListener(v -> {
-            if (getDialog() != null) {
-                getDialog().dismiss();
-            }
-            openFeedback();
-        });
-
+        layout = binding.layout;
         return binding.getRoot();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Dialog dialog = getDialog();
+
+        if (dialog != null) {
+
+            layout.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+        }
+        View view = getView();
+        if (view != null) {
+            view.post(() -> {
+                View parent = (View) view.getParent();
+                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) (parent).getLayoutParams();
+                CoordinatorLayout.Behavior behavior = params.getBehavior();
+                BottomSheetBehavior bottomSheetBehavior = (BottomSheetBehavior) behavior;
+                if (bottomSheetBehavior != null) {
+                    bottomSheetBehavior.setPeekHeight(view.getMeasuredHeight());
+                }
+            });
+        }
     }
 
     @Override
@@ -92,6 +100,10 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     new BackupFragment().show(fragmentManager, "");
                     break;
+                case R.id.action_about:
+                    Intent aboutIntent = new Intent(getActivity(), AboutActivity.class);
+                    startActivity(aboutIntent);
+                    break;
             }
             if (getDialog() != null) {
                 getDialog().dismiss();
@@ -99,19 +111,4 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
             return false;
         });
     }
-
-    private void openFeedback() {
-        Intent email = new Intent(Intent.ACTION_SENDTO);
-        email.setData(new Uri.Builder().scheme("mailto").build());
-        email.putExtra(Intent.EXTRA_EMAIL, new String[]{"goodtime-app@googlegroups.com"});
-        email.putExtra(Intent.EXTRA_SUBJECT, "[Goodtime] Feedback");
-        email.putExtra(Intent.EXTRA_TEXT, "\nMy device info: \n" + DeviceInfo.getDeviceInfo()
-                + "\nApp version: " + BuildConfig.VERSION_NAME);
-        try {
-            startActivity(Intent.createChooser(email, getActivity().getString(R.string.feedback_title)));
-        } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(getActivity(), R.string.about_no_email, Toast.LENGTH_SHORT).show();
-        }
-    }
-
 }

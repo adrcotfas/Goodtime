@@ -2,6 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scrollbars="none">
@@ -49,27 +50,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title" />
 
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/navigation_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/separator1"
-            app:itemIconPadding="24dp"
-            app:menu="@menu/menu_drawer"
-            app:theme="@style/NavigationDrawerStyle" />
-
-        <View
-            android:id="@+id/separator2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/transparent_dark"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/navigation_view" />
-
         <TextView
             android:id="@+id/upgrade"
             android:layout_width="match_parent"
@@ -80,11 +60,11 @@
             android:text="@string/upgrade"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/separator2"
+            app:layout_constraintTop_toBottomOf="@+id/separator1"
             style="@style/UpgradeButton"/>
 
         <View
-            android:id="@+id/separator3"
+            android:id="@+id/separator2"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="8dp"
@@ -93,50 +73,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/upgrade" />
 
-        <LinearLayout
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigation_view"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:gravity="center"
-            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/separator3">
-
-            <TextView
-                android:id="@+id/about"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/about"
-                android:textSize="@dimen/smallerTextSize"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:background="?selectableItemBackgroundBorderless"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginEnd="16dp"
-                android:gravity="center"
-                android:text="·"
-                android:textSize="@dimen/smallerTextSize"/>
-
-            <TextView
-                android:id="@+id/feedback"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/feedback"
-                android:gravity="center"
-                android:textSize="@dimen/smallerTextSize"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?selectableItemBackgroundBorderless"/>
-        </LinearLayout>
+            app:layout_constraintTop_toBottomOf="@+id/separator2"
+            app:itemIconPadding="24dp"
+            app:menu="@menu/menu_drawer"
+            app:theme="@style/NavigationDrawerStyle" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

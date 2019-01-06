@@ -9,12 +9,6 @@
         <item>@string/pref_profile_5217</item>
     </string-array>
 
-    <string-array name="pref_theme">
-        <item>@string/pref_theme_black</item>
-        <item>@string/pref_theme_dark</item>
-        <item>@string/pref_theme_blue</item>
-    </string-array>
-
     <string-array name="spinner_stats_type">
         <item>@string/spinner_stats_duration</item>
         <item>@string/spinner_stats_nr_of_sessions</item>

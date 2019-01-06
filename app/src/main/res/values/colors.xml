@@ -4,6 +4,7 @@
     <color name="dayNightGray">#141414</color>
     <color name="dayNightViolet">#BB86FC</color>
     <color name="dayNightTeal">#80CBC4</color>
+    <color name="dayNightTealDarker">#4DB6AC</color>
 
     <color name="darkIndigo900">#262738</color>
     <color name="darkIndigo1000">#222332</color>
@@ -23,7 +24,7 @@
     <color name="grey_500">#9E9E9E</color>
 
     <array name="themeColors">
-        <item>#232323</item>
+        <item>@color/dayNightGray</item>
         <item>@color/darkIndigo1100</item>
         <item>@color/blue1100</item>
     </array>

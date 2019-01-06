@@ -210,4 +210,10 @@
         <item name="android:listDivider">@color/transparent_dark</item>
     </style>
 
+    <style name="AppTheme.MaterialAboutActivity" parent="Theme.Mal.Light.DarkActionBar">
+        <item name="colorPrimary">@color/dayNightTeal</item>
+        <item name="colorPrimaryDark">@color/dayNightTealDarker</item>
+        <item name="colorAccent">@color/dayNightTeal</item>
+    </style>
+
 </resources>
