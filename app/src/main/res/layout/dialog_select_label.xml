@@ -22,6 +22,13 @@
                 android:id="@+id/labels"
                 android:layout_width="wrap_content"
                 android:layout_height="38dp"
+
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+
                 app:chipSpacingHorizontal="10dp"
                 app:chipSpacingVertical="10dp"
                 app:singleSelection="true">
