@@ -158,7 +158,7 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
         mLabelsViewModel.editLabelColor(label, color);
 
         LabelAndColor crtLabel = PreferenceHelper.getCurrentSessionLabel();
-        if (crtLabel.label.equals(label)) {
+        if (crtLabel.label != null && crtLabel.label.equals(label)) {
             PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(label, color));
         }
     }
