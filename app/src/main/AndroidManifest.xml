@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.apps.adrcotfas.goodtime">
 
@@ -18,6 +19,9 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <!-- For the option of removing the app from the battery optimization -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+
+    <!--For the IAP-->
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
         android:name="com.apps.adrcotfas.goodtime.BL.GoodtimeApplication"
@@ -40,63 +44,46 @@
         </activity>
         <activity
             android:name=".Settings.SettingsActivity"
-            android:label="Settings"
+            android:label="@string/settings"
             android:parentActivityName=".Main.TimerActivity">
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Main.TimerActivity" />
         </activity>
 
         <activity
             android:name=".About.AboutActivity"
-            android:label="About"
+            android:label="@string/about"
             android:theme="@style/AppTheme.MaterialAboutActivity"
             android:parentActivityName=".Main.TimerActivity">
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Main.TimerActivity" />
         </activity>
 
         <activity
             android:name=".About.LicencesActivity"
-            android:label="About"
+            android:label="@string/about_open_source_licences"
             android:theme="@style/AppTheme.MaterialAboutActivity"
             android:parentActivityName=".About.AboutActivity">
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".About.AboutActivity" />
         </activity>
 
         <activity
             android:name=".Statistics.Main.StatisticsActivity"
-            android:label="Statistics"
+            android:label="@string/statistics"
             android:parentActivityName=".Main.TimerActivity">
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Main.TimerActivity" />
         </activity>
 
-        <activity android:name=".Main.AddEditLabelActivity"
-            android:label="Edit Labels"
+        <activity
+            android:name=".Main.AddEditLabelActivity"
+            android:label="@string/label_dialog_edit"
+            android:parentActivityName=".Main.TimerActivity">
+        </activity>
+
+        <activity
+            android:name=".Main.MainIntroActivity"
+            android:theme="@style/Theme.Intro"
+            android:parentActivityName=".Main.TimerActivity">
+        </activity>
+
+        <activity
+            android:name=".Upgrade.UpgradeActivity"
             android:parentActivityName=".Main.TimerActivity"
-            >
-        <!-- Parent activity meta-data to support 4.0 and lower -->
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".Main.TimerActivity" />
-        </activity>
-
-        <activity android:name=".Main.MainIntroActivity"
-            android:theme="@style/Theme.Intro"            android:parentActivityName=".Main.TimerActivity"
-            >
-        <!-- Parent activity meta-data to support 4.0 and lower -->
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".Main.TimerActivity" />
+            android:label="@string/upgrade">
         </activity>
 
         <service

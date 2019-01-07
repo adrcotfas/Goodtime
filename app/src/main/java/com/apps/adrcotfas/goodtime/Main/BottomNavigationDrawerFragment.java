@@ -25,6 +25,7 @@ import com.apps.adrcotfas.goodtime.Backup.BackupFragment;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity;
+import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
 import com.apps.adrcotfas.goodtime.databinding.DrawerMainBinding;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -52,6 +53,15 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
         DrawerMainBinding binding = DataBindingUtil.inflate(inflater, R.layout.drawer_main, container, false);
 
         navigationView = binding.navigationView;
+
+        binding.upgrade.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), UpgradeActivity.class);
+            startActivity(intent);
+            if (getDialog() != null) {
+                getDialog().dismiss();
+            }
+        });
+
         layout = binding.layout;
         return binding.getRoot();
     }

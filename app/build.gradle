@@ -6,7 +6,7 @@ android {
         applicationId "com.apps.adrcotfas.goodtime"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 1
+        versionCode 63
         versionName "2.0a"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -74,4 +74,7 @@ dependencies {
 
     // intro
     implementation 'com.github.adrcotfas:material-intro:e1228'
+
+    // IAP
+    implementation 'com.anjlab.android.iab.v3:library:1.0.44'
 }
