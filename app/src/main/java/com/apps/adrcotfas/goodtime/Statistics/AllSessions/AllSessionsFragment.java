@@ -23,11 +23,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Statistics.Main.RecyclerItemClickListener;
 import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
+import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentAllSessionsBinding;
 
 import java.util.ArrayList;
@@ -210,11 +212,15 @@ public class AllSessionsFragment extends Fragment {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_edit:
-                    if (mSessionToEdit != null) {
-                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        AddEditEntryDialog newFragment = AddEditEntryDialog.newInstance(mSessionToEdit);
-                        newFragment.show(fragmentManager, "");
-                        mActionMode.finish();
+                    if (PreferenceHelper.isPro()) {
+                        if (mSessionToEdit != null) {
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            AddEditEntryDialog newFragment = AddEditEntryDialog.newInstance(mSessionToEdit);
+                            newFragment.show(fragmentManager, "");
+                            mActionMode.finish();
+                        }
+                    } else {
+                        UpgradeActivity.launchUpgradeActivity(getActivity());
                     }
                     break;
                 case R.id.action_select_all:

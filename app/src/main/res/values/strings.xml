@@ -11,7 +11,7 @@
     <string name="pref_keep_screen_on">"Keep the screen on"</string>
     <string name="pref_landscape">"Landscape mode"</string>
     <string name="pref_long_break_duration">"Long break duration"</string>
-    <string name="pref_ringtone">"Notification sound for work"</string>
+    <string name="pref_ringtone">"Finished work notification"</string>
     <string name="pref_ringtone_summary">"Set the notification sound"</string>
     <string name="pref_work_duration">"Work session duration"</string>
     <string name="pref_sessions_before_long_break">"Sessions before a long break"</string>
@@ -22,7 +22,7 @@
     <string name="pref_enable_ringtone">"Notification sound"</string>
     <string name="pref_ringtone_insistent">"Insistent notification"</string>
     <string name="pref_ringtone_insistent_summary">"Repeat the notification until it's cancelled"</string>
-    <string name="pref_ringtone_break">Notification sound for break</string>
+    <string name="pref_ringtone_break">Finished break notification</string>
     <string name="pref_auto_start_break">"Auto start break"</string>
     <string name="pref_auto_start_work">"Auto start work"</string>
     <string name="pref_auto_start_break_summary">Start the break after a work session without user interaction</string>
@@ -135,6 +135,7 @@
     <string name="update_pro_9">Insistent notifications</string>
     <string name="update_pro_10">Remove the upgrade button</string>
     <string name="update_pro_11">All future features for free</string>
+    <string name="upgrade_enjoy">Enjoy the pro version!</string>
 
     <string-array name="update_pro">
         <item>@string/update_pro_1</item>

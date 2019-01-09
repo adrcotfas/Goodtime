@@ -23,6 +23,8 @@ import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class PreferenceHelper {
 
+    private static final String PRO = "pref_blana";
+
     private final static int PREFERENCES_VERSION = 1;
     private final static String PREFERENCES_VERSION_INTERNAL  = "pref_version";
 
@@ -35,8 +37,9 @@ public class PreferenceHelper {
     public final static String SESSIONS_BEFORE_LONG_BREAK  = "pref_sessions_before_long_break";
     public final static String ENABLE_RINGTONE             = "pref_enable_ringtone";
     public final static String INSISTENT_RINGTONE          = "pref_ringtone_insistent";
-    public final static String RINGTONE_WORK               = "pref_ringtone";
-    public final static String RINGTONE_BREAK              = "pref_ringtone_break";
+    public final static String RINGTONE_WORK_FINISHED      = "pref_ringtone";
+    public final static String RINGTONE_BREAK_FINISHED     = "pref_ringtone_break";
+    public final static String RINGTONE_BREAK_FINISHED_DUMMY = "pref_ringtone_break_dummy";
     public final static String ENABLE_VIBRATE              = "pref_vibrate";
     public final static String ENABLE_FULLSCREEN           = "pref_fullscreen";
     public final static String DISABLE_SOUND_AND_VIBRATION = "pref_disable_sound_and_vibration";
@@ -46,6 +49,7 @@ public class PreferenceHelper {
     public final static String AUTO_START_BREAK            = "pref_auto_start_break";
     public final static String AUTO_START_WORK             = "pref_auto_start_work";
     public final static String THEME                       = "pref_theme";
+    public final static String THEME_DUMMY                 = "pref_theme_dummy";
 
     public final static String DISABLE_BATTERY_OPTIMIZATION = "pref_disable_battery_optimization";
 
@@ -107,14 +111,14 @@ public class PreferenceHelper {
                 .getBoolean(INSISTENT_RINGTONE, false);
     }
 
-    public static String getNotificationSound() {
+    public static String getNotificationSoundWorkFinished() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getString(RINGTONE_WORK, "");
+                .getString(RINGTONE_WORK_FINISHED, "");
     }
 
-    public static String getNotificationSoundBreak() {
+    public static String getNotificationSoundBreakFinished() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getString(RINGTONE_BREAK, "");
+                .getString(RINGTONE_BREAK_FINISHED, "");
     }
 
     public static boolean isVibrationEnabled() {
@@ -254,5 +258,14 @@ public class PreferenceHelper {
     public static void setLastIntroStep(int step) {
         GoodtimeApplication.getSharedPreferences().edit()
                 .putInt(INTRO_SNACKBAR_STEP, step).apply();
+    }
+
+    public static void setPro() {
+        GoodtimeApplication.getSharedPreferences().edit()
+                .putBoolean(PRO, true).apply();
+    }
+
+    public static boolean isPro() {
+        return GoodtimeApplication.getSharedPreferences().getBoolean(PRO, false);
     }
 }

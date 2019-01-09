@@ -17,6 +17,7 @@ import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -27,9 +28,11 @@ import android.view.ViewGroup;
 
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.takisoft.preferencex.ColorPickerPreference;
 import com.takisoft.preferencex.PreferenceFragmentCompat;
+import com.takisoft.preferencex.RingtonePreference;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -42,29 +45,54 @@ import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.DISABLE_SOUND_AND_
 
 public class SettingsFragment extends PreferenceFragmentCompat implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    // general
-    private ListPreference mPrefProfile;
     private ProperSeekBarPreference mPrefWorkDuration;
     private ProperSeekBarPreference mPrefBreakDuration;
     private SwitchPreference mPrefEnableLongBreak;
     private ProperSeekBarPreference mPrefLongBreakDuration;
     private ProperSeekBarPreference mPrefSessionsBeforeLongBreak;
 
-    private ColorPickerPreference mPrefTheme;
-
-    private SwitchPreference mPrefEnableRingtone;
     private CheckBoxPreference mPrefDisableSoundCheckbox;
 
     @Override
     public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
 
-        // general
-        mPrefProfile = findPreference(PreferenceHelper.PROFILE);
-        mPrefProfile.setOnPreferenceChangeListener((preference, newValue) -> {
-            switchProfile((CharSequence) newValue);
-            return true;
-        });
+        mPrefDisableSoundCheckbox = findPreference(DISABLE_SOUND_AND_VIBRATION);
+
+        setupProfile();
+        setupDurations();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        setupTheme();
+        setupRingtone();
+        setupScreensaver();
+        setupAutoStartSessionVsInsistentNotification();
+        setupDisableSoundCheckBox();
+
+        final Preference disableBatteryOptimizationPref = findPreference(PreferenceHelper.DISABLE_BATTERY_OPTIMIZATION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isIgnoringBatteryOptimizations()) {
+            disableBatteryOptimizationPref.setVisible(true);
+            disableBatteryOptimizationPref.setOnPreferenceClickListener(preference -> {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                startActivity(intent);
+                return true;
+            });
+        } else {
+            disableBatteryOptimizationPref.setVisible(false);
+        }
+    }
+
+    private void setupDurations() {
         mPrefWorkDuration = findPreference(PreferenceHelper.WORK_DURATION);
         mPrefBreakDuration = findPreference(PreferenceHelper.BREAK_DURATION);
         mPrefEnableLongBreak = findPreference(PreferenceHelper.ENABLE_LONG_BREAK);
@@ -75,56 +103,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         });
         mPrefLongBreakDuration = findPreference(PreferenceHelper.LONG_BREAK_DURATION);
         mPrefSessionsBeforeLongBreak = findPreference(PreferenceHelper.SESSIONS_BEFORE_LONG_BREAK);
+    }
 
-        mPrefTheme = findPreference(PreferenceHelper.THEME);
-        mPrefTheme.setOnPreferenceChangeListener((preference, newValue) -> {
-            if (mPrefTheme.getColor() != (int) newValue) {
-                if (SettingsFragment.this.getActivity() != null) {
-                    SettingsFragment.this.getActivity().recreate();
-                }
-            }
+    private void setupProfile() {
+        ListPreference mPrefProfile = findPreference(PreferenceHelper.PROFILE);
+        mPrefProfile.setOnPreferenceChangeListener((preference, newValue) -> {
+            switchProfile((CharSequence) newValue);
             return true;
         });
-
-        mPrefEnableRingtone = findPreference(PreferenceHelper.ENABLE_RINGTONE);
-        mPrefEnableRingtone.setVisible(true);
-        toggleEnableRingtonePreference(mPrefEnableRingtone.isChecked());
-        mPrefEnableRingtone.setOnPreferenceChangeListener((preference, newValue) -> {
-            toggleEnableRingtonePreference((Boolean) newValue);
-            return true;
-        });
-
-        //TODO: handle with IAP
-//        final RingtonePreference prefWork = (RingtonePreference) findPreference(PreferenceHelper.RINGTONE_WORK);
-//        final RingtonePreference prefBreak = (RingtonePreference) findPreference(PreferenceHelper.RINGTONE_BREAK);
-//
-//        if (true) {
-//            prefBreak.setEnabled(true);
-//            prefWork.setOnPreferenceChangeListener(null);
-//
-//        } else {
-//            prefBreak.setEnabled(false);
-//            prefBreak.setRingtone(prefWork.getRingtone());
-//            prefWork.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-//                @Override
-//                public boolean onPreferenceChange(Preference preference, Object newValue) {
-//                    prefBreak.setRingtone((Uri) newValue);
-//                    return true;
-//                }
-//            });
-//        }
-
-        findPreference(PreferenceHelper.ENABLE_SCREEN_ON).setOnPreferenceChangeListener((preference, newValue) -> {
-            if (!((boolean) newValue)) {
-                final CheckBoxPreference pref = SettingsFragment.this.findPreference(PreferenceHelper.ENABLE_SCREENSAVER_MODE);
-                if (pref.isChecked()) {
-                    pref.setChecked(false);
-                }
-            }
-            return true;
-        });
-
-        setupAutoStartSessionVsInsistentNotification();
     }
 
     private void setupAutoStartSessionVsInsistentNotification() {
@@ -144,7 +130,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
             return true;
         });
 
-        findPreference(PreferenceHelper.INSISTENT_RINGTONE).setOnPreferenceChangeListener((preference, newValue) -> {
+        final CheckBoxPreference insistentRingPref = findPreference(PreferenceHelper.INSISTENT_RINGTONE);
+        insistentRingPref.setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
+            UpgradeActivity.launchUpgradeActivity(getActivity());
+            insistentRingPref.setChecked(false);
+            return true;
+        });
+        insistentRingPref.setOnPreferenceChangeListener(PreferenceHelper.isPro() ? null : (preference, newValue) -> {
             final CheckBoxPreference p1 = findPreference(PreferenceHelper.AUTO_START_BREAK);
             if (p1.isChecked()) {
                 p1.setChecked(false);
@@ -157,29 +149,84 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         });
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
+    private void setupRingtone() {
+        final SwitchPreference prefEnableRingtone = findPreference(PreferenceHelper.ENABLE_RINGTONE);
+        prefEnableRingtone.setVisible(true);
+        toggleEnableRingtonePreference(prefEnableRingtone.isChecked());
+        prefEnableRingtone.setOnPreferenceChangeListener((preference, newValue) -> {
+            toggleEnableRingtonePreference((Boolean) newValue);
+            return true;
+        });
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mPrefDisableSoundCheckbox = findPreference(DISABLE_SOUND_AND_VIBRATION);
-        setupDisableSoundCheckBox();
+        final RingtonePreference prefWork = findPreference(PreferenceHelper.RINGTONE_WORK_FINISHED);
+        final RingtonePreference prefBreak = findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED);
+        final Preference prefBreakDummy = findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED_DUMMY);
+        prefBreakDummy.setOnPreferenceClickListener(preference -> {
+            UpgradeActivity.launchUpgradeActivity(getActivity());
+            return true;
+        });
 
-        final Preference disableBatteryOptimizationPref = findPreference(PreferenceHelper.DISABLE_BATTERY_OPTIMIZATION);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isIgnoringBatteryOptimizations()) {
-            disableBatteryOptimizationPref.setVisible(true);
-            disableBatteryOptimizationPref.setOnPreferenceClickListener(preference -> {
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                startActivity(intent);
+        if (PreferenceHelper.isPro()) {
+            prefBreakDummy.setVisible(false);
+            prefBreak.setVisible(true);
+            prefWork.setOnPreferenceChangeListener(null);
+        } else {
+            prefBreakDummy.setVisible(true);
+            prefBreak.setVisible(false);
+            prefBreakDummy.setSummary(prefBreak.getSummary());
+
+            prefBreak.setRingtone(prefWork.getRingtone());
+            prefWork.setOnPreferenceChangeListener((preference, newValue) -> {
+                prefBreak.setRingtone((Uri) newValue);
+                prefBreakDummy.setSummary(prefBreak.getSummary());
                 return true;
             });
-        } else {
-            disableBatteryOptimizationPref.setVisible(false);
         }
+    }
+
+    private void setupScreensaver() {
+        final CheckBoxPreference screensaverPref = SettingsFragment.this.findPreference(PreferenceHelper.ENABLE_SCREENSAVER_MODE);
+        findPreference(PreferenceHelper.ENABLE_SCREENSAVER_MODE).setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
+            UpgradeActivity.launchUpgradeActivity(getActivity());
+            screensaverPref.setChecked(false);
+            return true;
+        });
+
+        findPreference(PreferenceHelper.ENABLE_SCREEN_ON).setOnPreferenceChangeListener((preference, newValue) -> {
+            if (!((boolean) newValue)) {
+                if (screensaverPref.isChecked()) {
+                    screensaverPref.setChecked(false);
+                }
+            }
+            return true;
+        });
+    }
+
+    private void setupTheme() {
+        ColorPickerPreference prefTheme = findPreference(PreferenceHelper.THEME);
+        final Preference dummy = findPreference(PreferenceHelper.THEME_DUMMY);
+
+        if (PreferenceHelper.isPro()) {
+            prefTheme.setVisible(true);
+            dummy.setVisible(false);
+        } else {
+            prefTheme.setVisible(false);
+            dummy.setVisible(true);
+        }
+
+        prefTheme.setOnPreferenceChangeListener((preference, newValue) -> {
+            if (prefTheme.getColor() != (int) newValue) {
+                if (SettingsFragment.this.getActivity() != null) {
+                    SettingsFragment.this.getActivity().recreate();
+                }
+            }
+            return true;
+        });
+
+        dummy.setOnPreferenceClickListener(preference -> {
+            UpgradeActivity.launchUpgradeActivity(getActivity());
+            return true;
+        });
     }
 
     private void updateDisableSoundCheckBoxSummary(boolean notificationPolicyAccessGranted) {
@@ -245,8 +292,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     }
 
     private void toggleEnableRingtonePreference(Boolean newValue) {
-        findPreference(PreferenceHelper.RINGTONE_WORK).setVisible(newValue);
-        findPreference(PreferenceHelper.RINGTONE_BREAK).setVisible(newValue);
+        findPreference(PreferenceHelper.RINGTONE_WORK_FINISHED).setVisible(newValue);
+        findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED).setVisible(newValue);
     }
 
     private void toggleLongBreakPreference(Boolean newValue) {
@@ -254,3 +301,4 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         findPreference(PreferenceHelper.SESSIONS_BEFORE_LONG_BREAK).setVisible(newValue);
     }
 }
+

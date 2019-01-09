@@ -19,11 +19,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Statistics.AllSessions.AddEditEntryDialog;
 import com.apps.adrcotfas.goodtime.Statistics.AllSessions.AllSessionsFragment;
+import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsActivityMainBinding;
 
@@ -84,6 +86,14 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
         FragmentManager fragmentManager = getSupportFragmentManager();
         switch (item.getItemId()) {
             case R.id.action_add:
+
+                if (PreferenceHelper.isPro()) {
+                    AddEditEntryDialog newFragment = new AddEditEntryDialog();
+                    newFragment.show(fragmentManager, "");
+                } else {
+                    UpgradeActivity.launchUpgradeActivity(this);
+                }
+
                 // TODO: remove this later
 //                for (int i = 0; i < 1000; ++i) {
 //                    Session session = new Session(
@@ -95,12 +105,15 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
 //                    mSessionViewModel.addSession(session);
 //                }
 
-                AddEditEntryDialog newFragment = new AddEditEntryDialog();
-                newFragment.show(fragmentManager, "");
                 break;
             case R.id.action_select_label:
-                SelectLabelDialog.newInstance(this, mLabelsViewModel.crtExtendedLabel.getValue().label, true)
-                        .show(fragmentManager, "");
+                if (PreferenceHelper.isPro()) {
+                    SelectLabelDialog.newInstance(this, mLabelsViewModel.crtExtendedLabel.getValue().label, true)
+                            .show(fragmentManager, "");
+                } else {
+                    UpgradeActivity.launchUpgradeActivity(this);
+                }
+
                 break;
             case R.id.action_view_list:
                 toggleStatisticsView();

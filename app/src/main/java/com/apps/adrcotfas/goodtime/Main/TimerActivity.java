@@ -30,6 +30,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.anjlab.android.iab.v3.BillingProcessor;
+import com.anjlab.android.iab.v3.TransactionDetails;
 import com.apps.adrcotfas.goodtime.BL.CurrentSession;
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
 import com.apps.adrcotfas.goodtime.BL.NotificationHelper;
@@ -41,6 +43,7 @@ import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.Statistics.Main.SelectLabelDialog;
+import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 import com.apps.adrcotfas.goodtime.Util.OnSwipeTouchListener;
@@ -79,13 +82,15 @@ public class TimerActivity
         AppCompatActivity
         implements
         SharedPreferences.OnSharedPreferenceChangeListener,
-        SelectLabelDialog.OnLabelSelectedListener {
+        SelectLabelDialog.OnLabelSelectedListener,
+        BillingProcessor.IBillingHandler {
 
     private static final String TAG = TimerActivity.class.getSimpleName();
 
     private final CurrentSession mCurrentSession = GoodtimeApplication.getInstance().getCurrentSession();
     private AlertDialog mDialogSessionFinished;
     private FullscreenHelper mFullscreenHelper;
+    private BillingProcessor mBillingProcessor;
     private long mBackPressedAt;
 
     public void onStartButtonClick() {
@@ -145,6 +150,9 @@ public class TimerActivity
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(null);
         showTutorialSnackbars();
+
+        mBillingProcessor = BillingProcessor.newBillingProcessor(this, getString(R.string.licence_key), getString(R.string.merchant_id),  this);
+        mBillingProcessor.initialize();
     }
 
     /**
@@ -272,6 +280,18 @@ public class TimerActivity
         pref.registerOnSharedPreferenceChangeListener(this);
         toggleKeepScreenOn(PreferenceHelper.isScreenOnEnabled());
         toggleFullscreenMode();
+
+        if (mBillingProcessor != null) {
+            mBillingProcessor.loadOwnedPurchasesFromGoogle();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mBillingProcessor != null) {
+            mBillingProcessor.loadOwnedPurchasesFromGoogle();
+        }
     }
 
     @Override
@@ -279,6 +299,10 @@ public class TimerActivity
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.unregisterOnSharedPreferenceChangeListener(this);
         EventBus.getDefault().unregister(this);
+
+        if (mBillingProcessor != null)
+            mBillingProcessor.release();
+
         super.onDestroy();
     }
 
@@ -301,7 +325,11 @@ public class TimerActivity
                 bottomNavigationDrawerFragment.show(getSupportFragmentManager(), bottomNavigationDrawerFragment.getTag());
                 break;
             case R.id.action_current_label:
-                showEditLabelDialog();
+                if (PreferenceHelper.isPro()) {
+                    showEditLabelDialog();
+                } else {
+                    UpgradeActivity.launchUpgradeActivity(this);
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -558,5 +586,39 @@ public class TimerActivity
             int newY = r.nextInt(boundY) + margin;
             mTimeLabel.animate().x(newX).y(newY).setDuration(100);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (!mBillingProcessor.handleActivityResult(requestCode, resultCode, data))
+            super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onProductPurchased(String productId, TransactionDetails details) {
+        // do nothing here
+    }
+
+    @Override
+    public void onPurchaseHistoryRestored() {
+        boolean found = false;
+        for(String sku : mBillingProcessor.listOwnedProducts()) {
+            if (sku.equals(UpgradeActivity.sku)) {
+                found = true;
+            }
+        }
+        if (found) {
+            PreferenceHelper.setPro();
+        }
+    }
+
+    @Override
+    public void onBillingError(int errorCode, Throwable error) {
+        // do nothing here
+    }
+
+    @Override
+    public void onBillingInitialized() {
+        mBillingProcessor.loadOwnedPurchasesFromGoogle();
     }
 }

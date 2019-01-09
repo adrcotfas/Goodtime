@@ -13,61 +13,64 @@
 
 package com.apps.adrcotfas.goodtime.Upgrade;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.SkuDetails;
 import com.anjlab.android.iab.v3.TransactionDetails;
+import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
+import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityUpgradeBinding;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 public class UpgradeActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler{
 
-    private static String sku = "android.test.purchased";
+    public static String sku = "android.test.purchased";
     private boolean readyToPurchase = false;
     private Button buy;
-    private BillingProcessor bp;
+    private BillingProcessor mBillingProcessor;
+
+    public static void launchUpgradeActivity(Context ctx) {
+        Intent intent = new Intent(ctx, UpgradeActivity.class);
+        ctx.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ThemeHelper.setTheme(this);
 
-        bp = BillingProcessor.newBillingProcessor(this, getString(R.string.licence_key), getString(R.string.merchant_id),  this);
-        bp.initialize();
-
         ActivityUpgradeBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_upgrade);
         buy = binding.buttonPro;
         buy.setOnClickListener(v -> {
             if (!readyToPurchase) {
-                // ("Billing not initialized.");
+                Toast.makeText(
+                        UpgradeActivity.this,
+                        "Billing not initialized",
+                        Toast.LENGTH_LONG).show();
             }
             else {
-                bp.purchase(UpgradeActivity.this, sku);
+                mBillingProcessor.purchase(UpgradeActivity.this, sku);
             }
         });
 
-        binding.buttonConsume.setOnClickListener(v -> bp.consumePurchase(sku));
-        if (bp.isPurchased(sku)) {
-            binding.buttonPro.setBackgroundColor(getResources().getColor(R.color.red));
-            binding.buttonPro.setText(R.string.about_version);
-        }
-
-        if(!BillingProcessor.isIabServiceAvailable(this)) {
-            // ("In-app billing service is unavailable, please upgrade Android Market/Play to version >= 3.9.16");
-        }
-
-        setSupportActionBar(binding.toolbarWrapper.toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        binding.buttonConsume.setOnClickListener(v -> {
+            mBillingProcessor.consumePurchase(sku);
+            GoodtimeApplication.getSharedPreferences().edit()
+                    .putBoolean("pref_blana", false).apply();
+        });
 
         String checkMark = getString(R.string.check_mark) + " ";
 
@@ -78,48 +81,83 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
 
         binding.contentPro.setText(content);
 
+        setSupportActionBar(binding.toolbarWrapper.toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        mBillingProcessor = BillingProcessor.newBillingProcessor(this, getString(R.string.licence_key), getString(R.string.merchant_id),  this);
+        mBillingProcessor.initialize();
+
+        if(!BillingProcessor.isIabServiceAvailable(this)) {
+            Toast.makeText(
+                    UpgradeActivity.this,
+                    "In-app billing service is unavailable, please upgrade Android Market/Play to version >= 3.9.16",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!bp.handleActivityResult(requestCode, resultCode, data))
+        if (!mBillingProcessor.handleActivityResult(requestCode, resultCode, data))
             super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     public void onDestroy() {
-        if (bp != null)
-            bp.release();
+        if (mBillingProcessor != null)
+            mBillingProcessor.release();
         super.onDestroy();
     }
 
     @Override
-    public void onProductPurchased(String productId, TransactionDetails details) {
-        // activate pro in preferences
-        // deactivate buy button
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onProductPurchased(@NonNull String productId, TransactionDetails details) {
+        PreferenceHelper.setPro();
+        buy.setEnabled(false);
+        Toast.makeText(UpgradeActivity.this, getString(R.string.upgrade_enjoy), Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onPurchaseHistoryRestored() {
-        for(String sku : bp.listOwnedProducts()) {
+        boolean found = false;
+        for(String sku : mBillingProcessor.listOwnedProducts()) {
             if (sku.equals(UpgradeActivity.sku)) {
-                // activate PRO in preferences
-                // deactivate buy button
+                buy.setEnabled(false);
+                PreferenceHelper.setPro();
+                found = true;
             }
+        }
+        if (found) {
+            PreferenceHelper.setPro();
         }
     }
 
     @Override
     public void onBillingError(int errorCode, Throwable error) {
-        // show an error on the screen
-        // log
+        // do nothing here
     }
 
     @Override
     public void onBillingInitialized() {
         readyToPurchase = true;
-        bp.loadOwnedPurchasesFromGoogle();
-        SkuDetails details = bp.getPurchaseListingDetails(sku);
-        buy.setText(details.priceText);
+        mBillingProcessor.loadOwnedPurchasesFromGoogle();
+        if (mBillingProcessor.isPurchased(sku)) {
+            buy.setVisibility(View.GONE);
+        } else {
+            SkuDetails details = mBillingProcessor.getPurchaseListingDetails(sku);
+            if (details != null) {
+                buy.setText(details.priceText);
+            }
+        }
     }
 }

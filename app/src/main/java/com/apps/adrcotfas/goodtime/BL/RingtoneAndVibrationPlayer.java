@@ -37,7 +37,7 @@ public class RingtoneAndVibrationPlayer extends ContextWrapper{
             mVibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
 
             final Uri uri = Uri.parse( sessionType == SessionType.WORK ?
-                    PreferenceHelper.getNotificationSoundBreak() : PreferenceHelper.getNotificationSound());
+                    PreferenceHelper.getNotificationSoundWorkFinished() : PreferenceHelper.getNotificationSoundBreakFinished());
 
             mMediaPlayer.setDataSource(this, uri);
             if (PreferenceHelper.isRingtoneEnabled()) {
@@ -46,14 +46,11 @@ public class RingtoneAndVibrationPlayer extends ContextWrapper{
                 mMediaPlayer.prepareAsync();
             }
 
-            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    // TODO: check duration of custom ringtones which may be much longer than notification sounds.
-                    // If it's n seconds long and we're in continuous mode,
-                    // schedule a stop after x seconds.
-                    mMediaPlayer.start();
-                }
+            mMediaPlayer.setOnPreparedListener(mp -> {
+                // TODO: check duration of custom ringtones which may be much longer than notification sounds.
+                // If it's n seconds long and we're in continuous mode,
+                // schedule a stop after x seconds.
+                mMediaPlayer.start();
             });
 
             if (PreferenceHelper.isVibrationEnabled()) {

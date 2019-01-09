@@ -91,6 +91,22 @@ public class LicencesActivity extends MaterialAboutActivity {
                 "Joda-Time", "2019", "JodaOrg",
                 OpenSourceLicense.APACHE_2);
 
+        MaterialAboutCard cardIap = ConvenienceBuilder.createLicenseCard(c,
+                new IconicsDrawable(c)
+                        .icon(CommunityMaterial.Icon.cmd_book)
+                        .color(ContextCompat.getColor(c, colorIcon))
+                        .sizeDp(18),
+                "material-intro", "2017", "Jan Heinrich Reimer",
+                OpenSourceLicense.MIT);
+
+        MaterialAboutCard cardIntro = ConvenienceBuilder.createLicenseCard(c,
+                new IconicsDrawable(c)
+                        .icon(CommunityMaterial.Icon.cmd_book)
+                        .color(ContextCompat.getColor(c, colorIcon))
+                        .sizeDp(18),
+                "Android In-App Billing v3", "2014", "AnjLab",
+                OpenSourceLicense.APACHE_2);
+
         return new MaterialAboutList(
                 cardMpAndroidChart,
                 cardPreferenceX,
@@ -98,7 +114,9 @@ public class LicencesActivity extends MaterialAboutActivity {
                 cardEventBus,
                 materialAboutLIbraryLicenseCard,
                 androidIconicsLicenseCard,
-                cardJodaOrg
+                cardJodaOrg,
+                cardIap,
+                cardIntro
                 );
     }
 
