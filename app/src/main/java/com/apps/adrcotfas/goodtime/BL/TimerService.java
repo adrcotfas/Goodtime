@@ -146,6 +146,7 @@ public class TimerService extends LifecycleService {
             }
         }
 
+        mRingtoneAndVibrationPlayer.stop();
         mNotificationHelper.clearNotification();
         startForeground(GOODTIME_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
                 getSessionManager().getCurrentSession()).build());
@@ -331,6 +332,7 @@ public class TimerService extends LifecycleService {
     private void bringActivityToFront() {
         Intent activityIntent = new Intent(this, TimerActivity.class);
         activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activityIntent.putExtra("42", 42);
         getApplication().startActivity(activityIntent);
     }
 
