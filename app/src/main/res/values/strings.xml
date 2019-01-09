@@ -29,6 +29,8 @@
     <string name="pref_auto_start_work_summary">Start the work session after a break without user interaction</string>
     <string name="pref_disable_battery_optimization">Accurate alarms</string>
     <string name="pref_disable_battery_optimization_summary">Disable battery optimization for this app</string>
+    <string name="pref_screen_saver">Screensaver mode</string>
+    <string name="pref_screen_saver_summary">Moves the timer while the screen is on</string>
 
     <string name="about">About</string>
     <string name="about_translate">Translate this app</string>
@@ -124,17 +126,19 @@
     <string name="spinner_range_weeks">Weeks</string>
     <string name="spinner_range_months">Months</string>
 
-    <string name="update_pro_1">Colored labels for work sessions</string>
+    <string name="update_pro_1">Colored labels</string>
     <string name="update_pro_2">Retain the statistics forever</string>
-    <string name="update_pro_3">Manual adding of completed session</string>
-    <string name="update_pro_4">Backup export and import</string>
-    <string name="update_pro_5">Export statistics to CSV</string>
-    <string name="update_pro_6">Themes</string>
-    <string name="update_pro_7">Screensaver mode</string>
-    <string name="update_pro_8">Separate notification sound for work and break</string>
-    <string name="update_pro_9">Insistent notifications</string>
-    <string name="update_pro_10">Remove the upgrade button</string>
-    <string name="update_pro_11">All future features for free</string>
+    <string name="update_pro_3">Manually add sessions</string>
+    <string name="update_pro_4">Edit completed sessions</string>
+    <string name="update_pro_5">Backup export and import</string>
+    <string name="update_pro_6">Export statistics to CSV</string>
+    <string name="update_pro_7">Themes</string>
+    <string name="update_pro_8">@string/pref_screen_saver</string>
+    <string name="update_pro_9">Separate notification sound for work and break</string>
+    <string name="update_pro_10">Insistent notifications</string>
+    <string name="update_pro_11">Remove the upgrade button</string>
+    <string name="update_pro_12">All future features for free</string>
+
     <string name="upgrade_enjoy">Enjoy the pro version!</string>
 
     <string-array name="update_pro">
@@ -149,6 +153,7 @@
         <item>@string/update_pro_9</item>
         <item>@string/update_pro_10</item>
         <item>@string/update_pro_11</item>
+        <item>@string/update_pro_12</item>
     </string-array>
 
 </resources>
