@@ -101,15 +101,17 @@ public class SelectLabelDialog extends DialogFragment {
                 binding.labels.addView(chip);
             }
 
-            for (LabelAndColor label : labels) {
+            for (int j = labels.size() - 1; j >= 0; --j) {
+
+                LabelAndColor crt = labels.get(j);
                 Chip chip = new Chip(getActivity());
-                chip.setText(label.label);
-                chip.setChipBackgroundColor(ColorStateList.valueOf(label.color));
+                chip.setText(crt.label);
+                chip.setChipBackgroundColor(ColorStateList.valueOf(crt.color));
                 chip.setCheckable(true);
                 ThemeHelper.styleChip(getActivity(), chip);
 
                 chip.setId(i++);
-                if (label.label.equals(mLabel)) {
+                if (crt.label.equals(mLabel)) {
                     chip.setChecked(true);
                 }
                 binding.labels.addView(chip);
