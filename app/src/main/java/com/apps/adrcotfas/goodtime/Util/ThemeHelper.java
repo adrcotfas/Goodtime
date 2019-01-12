@@ -67,9 +67,11 @@ public class ThemeHelper {
         chip.setChipIconSize(ThemeHelper.dpToPx(context,20));
         chip.setChipStartPadding(ThemeHelper.dpToPx(context,3));
         chip.setChipCornerRadius(ThemeHelper.dpToPx(context,20));
-        chip.setTextStartPadding(ThemeHelper.dpToPx(context,8));
+        chip.setTextStartPadding(ThemeHelper.dpToPx(context,4));
         chip.setTextEndPadding(ThemeHelper.dpToPx(context,4));
         chip.setTextAppearance(R.style.ChipTextAppearance);
+        chip.setChipIcon(context.getResources().getDrawable(R.drawable.ic_check_off));
+        chip.setCheckedIcon(context.getResources().getDrawable(R.drawable.ic_check));
     }
 
     public static void clearFocusEditText(View v, Context context) {
