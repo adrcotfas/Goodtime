@@ -42,8 +42,8 @@
             android:gravity="center"
             android:onClick="onStartButtonClick"
             android:singleLine="true"
-            android:fontFamily="sans-serif-thin"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            style="@style/TimerStyle"
+
             android:textSize="65sp"
             android:adjustViewBounds="true"
             app:layout_constraintBottom_toBottomOf="parent"

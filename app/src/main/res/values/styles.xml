@@ -168,6 +168,8 @@
         <item name="alertDialogTheme">@style/Theme.MaterialComponents.DayNight.Dialog</item>
 
         <item name="palette">@array/lightPalette</item>
+
+        <item name="fontFamily">@font/app_font</item>
     </style>
 
     <style name="AppThemeDark" parent="Theme.MaterialComponents.DayNight.NoActionBar" >
@@ -217,6 +219,10 @@
         <item name="colorPrimary">@color/teal200</item>
         <item name="colorPrimaryDark">@color/teal300</item>
         <item name="colorAccent">@color/teal200</item>
+    </style>
+
+    <style name="TimerStyle">
+        <item name="fontFamily">@font/timer_font</item>
     </style>
 
 </resources>
