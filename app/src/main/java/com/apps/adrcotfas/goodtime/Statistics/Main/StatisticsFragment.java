@@ -214,7 +214,8 @@ public class StatisticsFragment extends Fragment {
                 ? formatMinutes(stats.total)
                 : formatLong(stats.total));
 
-        int color = mLabelsViewModel.crtExtendedLabel.getValue().color;
+        // TODO: move this from here to the refrehs ui part
+        int color = ThemeHelper.getColor(getActivity(), mLabelsViewModel.crtExtendedLabel.getValue().color);
         mOverview.today.setTextColor(color);
         mOverview.week.setTextColor(color);
         mOverview.month.setTextColor(color);
@@ -517,11 +518,14 @@ public class StatisticsFragment extends Fragment {
     }
 
     private LineDataSet generateLineDataSet(List<Entry> entries) {
+        // TODO: maybe send color as parameter when UI is refreshed
         LabelAndColor crtLabel = mLabelsViewModel.crtExtendedLabel.getValue();
+        int color = ThemeHelper.getColor(getActivity(), crtLabel.color);
+
         LineDataSet set = new LineDataSet(entries, crtLabel.label);
-        set.setColor(crtLabel.color);
-        set.setCircleColor(crtLabel.color);
-        set.setFillColor(crtLabel.color);
+        set.setColor(color);
+        set.setCircleColor(color);
+        set.setFillColor(color);
         set.setLineWidth(3f);
         set.setCircleRadius(3f);
         set.setDrawCircleHole(false);
@@ -627,7 +631,8 @@ public class StatisticsFragment extends Fragment {
         }
 
         BarDataSet set1 = new BarDataSet(yVals, "");
-        set1.setColor(mLabelsViewModel.crtExtendedLabel.getValue().color);
+        // TODO: maybe send color as parameter when UI is refreshed
+        set1.setColor(ThemeHelper.getColor(getActivity(), mLabelsViewModel.crtExtendedLabel.getValue().color));
         set1.setHighLightAlpha(0);
         set1.setDrawIcons(false);
 

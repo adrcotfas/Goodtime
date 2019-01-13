@@ -32,6 +32,7 @@ import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Statistics.Main.SelectLabelDialog;
 import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
 import com.apps.adrcotfas.goodtime.Util.DatePickerFragment;
+import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.Util.TimePickerFragment;
 import com.apps.adrcotfas.goodtime.Util.StringUtils;
 import com.apps.adrcotfas.goodtime.databinding.DialogAddEntryBinding;
@@ -48,6 +49,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 
 import static com.apps.adrcotfas.goodtime.Statistics.AllSessions.AddEditEntryDialogViewModel.INVALID_SESSION_TO_EDIT_ID;
+import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_UNLABELED;
 
 public class AddEditEntryDialog extends BottomSheetDialogFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, SelectLabelDialog.OnLabelSelectedListener {
 
@@ -101,11 +103,11 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements Dat
             if (label != null && !label.equals("unlabeled")) {
                 binding.labelChip.setText(label);
                 mLabelsViewModel.getColorOfLabel(label).observe(this, color ->
-                        binding.labelChip.setChipBackgroundColor(ColorStateList.valueOf(color)));
+                        binding.labelChip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), color))));
                 binding.labelDrawable.setImageDrawable(getResources().getDrawable(R.drawable.ic_label));
             } else {
                 binding.labelChip.setText("add label");
-                binding.labelChip.setChipBackgroundColor(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+                binding.labelChip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), COLOR_INDEX_UNLABELED)));
                 binding.labelDrawable.setImageDrawable(getResources().getDrawable(R.drawable.ic_label_off));
             }
         });
@@ -121,7 +123,7 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements Dat
 
         binding.save.setOnClickListener(v -> {
             if (binding.duration.getText().toString().isEmpty()) {
-                Toast.makeText(getActivity(), "Enter a valid duration", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.session_enter_valid_duration), Toast.LENGTH_LONG).show();
             }
             else {
                 final int duration = Math.min(Integer.parseInt(binding.duration.getText().toString()), 120);
@@ -142,7 +144,7 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements Dat
             mViewModel.duration.setValue(mSessionToEdit.totalTime);
             mViewModel.label.setValue(mSessionToEdit.label);
             mViewModel.sessionToEditId = mSessionToEdit.id;
-            binding.header.setText("Edit session");
+            binding.header.setText(getString(R.string.session_edit_session));
         }
 
         return view;
@@ -194,7 +196,7 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements Dat
 
     @Override
     public void onLabelSelected(LabelAndColor labelAndColor) {
-        if (labelAndColor != null && labelAndColor.label != "unlabeled") {
+        if (labelAndColor != null && !labelAndColor.label.equals("unlabeled")) {
             mViewModel.label.setValue(labelAndColor.label);
         } else {
             mViewModel.label.setValue(null);

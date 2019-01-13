@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
+import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +31,10 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHolder> {
+    private Context mContext;
     public List<Session> mEntries = new ArrayList<>();
     public List<Long> mSelectedEntries = new ArrayList<>();
-    List<LabelAndColor> mLabels;
+    private List<LabelAndColor> mLabels;
 
     AllSessionsAdapter(List<LabelAndColor> labels) {
         // this and the override of getItemId are to avoid clipping in the view
@@ -43,8 +45,8 @@ public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHold
     @NonNull
     @Override
     public AllSessionsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+        mContext = parent.getContext();
+        LayoutInflater inflater = LayoutInflater.from(mContext);
         View statusContainer = inflater.inflate(R.layout.statistics_all_sessions_row, parent, false);
         return new AllSessionsViewHolder(statusContainer);
     }
@@ -72,7 +74,7 @@ public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHold
         int color = 0;
         for (LabelAndColor l : mLabels) {
             if (l.label.equals(label)) {
-                color = l.color;
+                color = ThemeHelper.getColor(mContext, l.color);
                 break;
             }
         }

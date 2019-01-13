@@ -166,7 +166,7 @@ public class TimerActivity
         if (i < MESSAGE_SIZE) {
 
             List<String> messages = new ArrayList<>();
-            //TODO: extract strings
+
             messages.add(getString(R.string.tutorial_tap));
             messages.add(getString(R.string.tutorial_swipe_left));
             messages.add(getString(R.string.tutorial_swipe_up));
@@ -180,6 +180,7 @@ public class TimerActivity
                         showTutorialSnackbars();
                     })
                     .setAnchorView(mToolbar)
+                    // TODO: style this elsewhere
                     .setActionTextColor(getResources().getColor(R.color.teal200));
             s.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.dayNightGray));
             TextView tv = s.getView().findViewById(com.google.android.material.R.id.snackbar_text);
@@ -553,9 +554,11 @@ public class TimerActivity
 
         if (mStatusButton != null) {
             if (labelAndColor.label != null) {
-                mStatusButton.getIcon().setColorFilter(labelAndColor.color, PorterDuff.Mode.SRC_ATOP);
+                mStatusButton.getIcon().setColorFilter(
+                        ThemeHelper.getColor(this, labelAndColor.color), PorterDuff.Mode.SRC_ATOP);
             } else {
-                mStatusButton.getIcon().setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_ATOP);
+                mStatusButton.getIcon().setColorFilter(
+                        ThemeHelper.getColor(this, -1), PorterDuff.Mode.SRC_ATOP);
             }
         }
     }

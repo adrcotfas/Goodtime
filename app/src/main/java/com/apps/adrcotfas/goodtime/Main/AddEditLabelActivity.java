@@ -43,6 +43,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_UNLABELED;
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.clearFocusEditText;
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.requestFocusEditText;
 
@@ -99,7 +100,7 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
             labels.removeObservers(AddEditLabelActivity.this);
         });
 
-        mLabelToAdd = new LabelAndColor("", getResources().getColor(R.color.white));
+        mLabelToAdd = new LabelAndColor("", ThemeHelper.getColor(this, COLOR_INDEX_UNLABELED));
 
         mImageRight.setOnClickListener(view -> {
             addLabel();
@@ -114,20 +115,20 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
             mImageLeft.setImageDrawable(getResources().getDrawable(hasFocus ? R.drawable.ic_palette : R.drawable.ic_add));
             mImageLeft.setOnClickListener(hasFocus ? v -> {
                 final ColorPickerDialog.Params p = new ColorPickerDialog.Params.Builder(AddEditLabelActivity.this)
-                        .setColors(getResources().getIntArray(R.array.labelColors))
-                        .setSelectedColor(mLabelToAdd.color)
+                        .setColors(ThemeHelper.getPalette(this))
+                        .setSelectedColor(ThemeHelper.getColor(this, mLabelToAdd.color))
                         .build();
                 ColorPickerDialog dialog = new ColorPickerDialog(AddEditLabelActivity.this, R.style.DialogTheme, c
                         -> {
-                    mLabelToAdd.color = c;
+                    mLabelToAdd.color = ThemeHelper.getIndexOfColor(this, c);
                     mImageLeft.setColorFilter(c);
                 }, p);
                 dialog.setTitle(R.string.label_select_color);
                 dialog.show();
             } : v -> requestFocusEditText(mAddLabelView, this));
-            mImageLeft.setColorFilter(hasFocus ? mLabelToAdd.color : getResources().getColor(R.color.white));
+            mImageLeft.setColorFilter(ThemeHelper.getColor(this, hasFocus ? mLabelToAdd.color : COLOR_INDEX_UNLABELED) );
             if (!hasFocus) {
-                mLabelToAdd = new LabelAndColor("", getResources().getColor(R.color.white));
+                mLabelToAdd = new LabelAndColor("", ThemeHelper.getColor(this, COLOR_INDEX_UNLABELED));
                 mAddLabelView.setText("");
             }
         });
@@ -191,7 +192,7 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
 
         // the current session label was deleted
         if (labelAndColor.label.equals(PreferenceHelper.getCurrentSessionLabel().label)) {
-            PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(null, 0));
+            PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(null, COLOR_INDEX_UNLABELED));
         }
 
         updateRecyclerViewVisibility();
@@ -246,7 +247,7 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
             mRecyclerView.scrollToPosition(mLabelAndColors.size() - 1);
 
             mLabelsViewModel.addLabel(mLabelToAdd);
-            mLabelToAdd = new LabelAndColor("", getResources().getColor(R.color.white));
+            mLabelToAdd = new LabelAndColor("", COLOR_INDEX_UNLABELED);
             mAddLabelView.setText("");
         }
     }

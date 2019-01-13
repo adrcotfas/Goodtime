@@ -63,7 +63,8 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
 
     private void refreshCurrentLabel() {
         if (mLabelsViewModel.crtExtendedLabel.getValue() != null && mMenuItemCrtLabel != null) {
-            MenuItemCompat.setIconTintList(mMenuItemCrtLabel, ColorStateList.valueOf(mLabelsViewModel.crtExtendedLabel.getValue().color));
+            MenuItemCompat.setIconTintList(mMenuItemCrtLabel,
+                    ColorStateList.valueOf(ThemeHelper.getColor(this, mLabelsViewModel.crtExtendedLabel.getValue().color)));
         }
     }
 

@@ -15,11 +15,13 @@ package com.apps.adrcotfas.goodtime.Util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import androidx.annotation.AttrRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
@@ -29,6 +31,9 @@ import com.google.android.material.chip.ChipGroup;
 
 
 public class ThemeHelper {
+
+    public static int COLOR_INDEX_UNLABELED = -1;
+    public static int COLOR_INDEX_ALL_LABELS = 42;
 
     public static void setTheme(AppCompatActivity activity) {
 
@@ -88,4 +93,60 @@ public class ThemeHelper {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
     }
+
+    public static int[] getPalette(Context context)
+    {
+        int resourceId = getResource(R.attr.palette, context);
+        if (resourceId < 0) throw new RuntimeException("resource not found");
+
+        return context.getResources().getIntArray(resourceId);
+    }
+
+    public static int getResource(@AttrRes int attrId, Context context)
+    {
+        TypedArray ta = getTypedArray(attrId, context);
+        int resourceId = ta.getResourceId(0, -1);
+        ta.recycle();
+
+        return resourceId;
+    }
+
+    private static TypedArray getTypedArray(@AttrRes int attrId, Context context)
+    {
+        int[] attrs = new int[]{ attrId };
+        return context.obtainStyledAttributes(attrs);
+    }
+
+    public static int getColor(Context context, int colorIndex) {
+        if (colorIndex == COLOR_INDEX_UNLABELED) {
+            return context.getResources().getColor(R.color.white);
+        }
+        if (colorIndex == COLOR_INDEX_ALL_LABELS) {
+            return context.getResources().getColor(R.color.teal200);
+        }
+        int colors[] = getPalette(context);
+        if (colorIndex < colors.length) {
+            return colors[colorIndex];
+        }
+
+        return context.getResources().getColor(R.color.white);
+    }
+
+    public static int getIndexOfColor(Context context, int color) {
+        if (color == context.getResources().getColor(R.color.white)) {
+            return COLOR_INDEX_UNLABELED;
+        }
+        if (color == context.getResources().getColor(R.color.teal200)) {
+            return COLOR_INDEX_ALL_LABELS;
+        }
+
+        int colors[] = getPalette(context);
+        for (int i = 0; i <colors.length; ++i) {
+            if (color == colors[i]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 }

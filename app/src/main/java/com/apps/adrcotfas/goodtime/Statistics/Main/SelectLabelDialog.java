@@ -40,6 +40,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceTotalLabel;
 import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceUnlabeledLabel;
+import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_ALL_LABELS;
 
 public class SelectLabelDialog extends DialogFragment {
 
@@ -90,7 +91,7 @@ public class SelectLabelDialog extends DialogFragment {
                 Chip chip = new Chip(getActivity());
                 LabelAndColor total = getInstanceTotalLabel(getActivity());
                 chip.setText(total.label);
-                chip.setChipBackgroundColor(ColorStateList.valueOf(total.color));
+                chip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), COLOR_INDEX_ALL_LABELS)));
                 chip.setCheckable(true);
                 ThemeHelper.styleChip(getActivity(), chip);
 
@@ -106,7 +107,7 @@ public class SelectLabelDialog extends DialogFragment {
                 LabelAndColor crt = labels.get(j);
                 Chip chip = new Chip(getActivity());
                 chip.setText(crt.label);
-                chip.setChipBackgroundColor(ColorStateList.valueOf(crt.color));
+                chip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), crt.color)));
                 chip.setCheckable(true);
                 ThemeHelper.styleChip(getActivity(), chip);
 
@@ -132,9 +133,9 @@ public class SelectLabelDialog extends DialogFragment {
                         Chip chip = (Chip) (binding.labels.getChildAt(binding.labels.getCheckedChipId()));
                         mLabel = chip.getText().toString();
                         int color = chip.getChipBackgroundColor().getDefaultColor();
-                        notifyLabelSelected(new LabelAndColor(mLabel, color));
+                        notifyLabelSelected(new LabelAndColor(mLabel, ThemeHelper.getIndexOfColor(getActivity(), color)));
                     } else {
-                        notifyLabelSelected(getInstanceUnlabeledLabel(getActivity()));
+                        notifyLabelSelected(getInstanceUnlabeledLabel());
                     }
                     dismiss();
                 })

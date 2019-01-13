@@ -18,13 +18,16 @@ import android.content.Context;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
 
+import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_ALL_LABELS;
+import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_UNLABELED;
+
 public class Utils {
     public static LabelAndColor getInstanceTotalLabel(Context context) {
         return new LabelAndColor(context.getString(R.string.label_all),
-                context.getResources().getColor(R.color.teal200));
+                COLOR_INDEX_ALL_LABELS);
     }
 
-    public static LabelAndColor getInstanceUnlabeledLabel(Context context) {
-        return new LabelAndColor("unlabeled", context.getResources().getColor(R.color.white));
+    public static LabelAndColor getInstanceUnlabeledLabel() {
+        return new LabelAndColor("unlabeled", COLOR_INDEX_UNLABELED);
     }
 }

@@ -98,6 +98,9 @@
     <string name="save">Save</string>
     <string name="select_all">Select all</string>
     <string name="add_session">Add session</string>>
+    <string name="session_enter_valid_duration">Enter a valid duration</string>
+    <string name="session_edit_session">Edit session</string>
+
     <string name="add_duration_minutes">Add duration (minutes)</string>
     <string name="feedback_title">Send feedback</string>
     <string name="settings_grant_permission">Click to grant permission</string>

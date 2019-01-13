@@ -23,6 +23,7 @@ import android.widget.ImageView;
 
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.takisoft.colorpicker.ColorPickerDialog;
 
 import java.util.List;
@@ -66,7 +67,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.text.setText(mLabels.get(position).label);
-        holder.imageLeft.setColorFilter(mLabels.get(position).color);
+        holder.imageLeft.setColorFilter(ThemeHelper.getColor(mContext, mLabels.get(position).color));
         holder.imageLeft.setClickable(false);
     }
 
@@ -98,7 +99,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
                 imageLeft.setImageDrawable(ContextCompat.getDrawable(
                         mContext, hasFocus ? R.drawable.ic_palette : R.drawable.ic_label));
                 imageLeft.setClickable(hasFocus);
-                imageLeft.setColorFilter(crtLabel.color);
+                imageLeft.setColorFilter(ThemeHelper.getColor(mContext, crtLabel.color));
 
                 imageDelete.setVisibility(hasFocus ? View.VISIBLE : View.INVISIBLE);
 
@@ -149,14 +150,14 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
             imageLeft.setOnClickListener(v -> {
                 LabelAndColor crtLabel = mLabels.get(getAdapterPosition());
                 final ColorPickerDialog.Params p = new ColorPickerDialog.Params.Builder(mContext)
-                        .setColors(mContext.getResources().getIntArray(R.array.labelColors))
-                        .setSelectedColor(crtLabel.color)
+                        .setColors(ThemeHelper.getPalette(mContext))
+                        .setSelectedColor(ThemeHelper.getColor(mContext, crtLabel.color))
                         .build();
                 ColorPickerDialog dialog = new ColorPickerDialog(mContext, R.style.DialogTheme, c
                         -> {
-                    mCallback.onEditColor(crtLabel.label, c);
+                    mCallback.onEditColor(crtLabel.label, ThemeHelper.getIndexOfColor(mContext, c));
                     imageLeft.setColorFilter(c);
-                    crtLabel.color = c;
+                    crtLabel.color = ThemeHelper.getIndexOfColor(mContext, c);
                 }, p);
                 dialog.setTitle(R.string.label_select_color);
                 dialog.show();
