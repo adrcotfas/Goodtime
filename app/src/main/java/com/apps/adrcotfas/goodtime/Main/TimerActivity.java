@@ -73,7 +73,7 @@ import static android.view.animation.AnimationUtils.loadAnimation;
 import static android.widget.Toast.LENGTH_SHORT;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREENSAVER_MODE;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREEN_ON;
-import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.THEME;
+import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.AMOLED;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
 import static java.lang.String.format;
 
@@ -149,7 +149,6 @@ public class TimerActivity
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(null);
-        showTutorialSnackbars();
 
         mBillingProcessor = BillingProcessor.newBillingProcessor(this, getString(R.string.licence_key), getString(R.string.merchant_id),  this);
         mBillingProcessor.initialize();
@@ -182,7 +181,7 @@ public class TimerActivity
                     .setAnchorView(mToolbar)
                     // TODO: style this elsewhere
                     .setActionTextColor(getResources().getColor(R.color.teal200));
-            s.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.dayNightGray));
+            s.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.gray1000));
             TextView tv = s.getView().findViewById(com.google.android.material.R.id.snackbar_text);
             if (tv != null) {
                 tv.setTextColor(ContextCompat.getColor(this, R.color.white));
@@ -285,6 +284,7 @@ public class TimerActivity
         if (mBillingProcessor != null) {
             mBillingProcessor.loadOwnedPurchasesFromGoogle();
         }
+        showTutorialSnackbars();
     }
 
     @Override
@@ -416,12 +416,12 @@ public class TimerActivity
         long minutes = TimeUnit.SECONDS.toMinutes(seconds);
         seconds -= (minutes * 60);
 
-        String currentTick = (minutes > 0 ? minutes : " ") + "." +
+        String currentTick = (minutes > 0 ? minutes : " ") + "\u2009" +
                 format(Locale.US, "%02d", seconds);
 
         SpannableString currentFormattedTick = new SpannableString(currentTick);
         currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0,
-                currentTick.indexOf("."), 0);
+                currentTick.indexOf("\u2009"), 0);
 
         mTimeLabel.setText(currentFormattedTick);
         Log.v(TAG, "drawing the time label.");
@@ -537,7 +537,7 @@ public class TimerActivity
             case ENABLE_SCREEN_ON:
                 toggleKeepScreenOn(PreferenceHelper.isScreenOnEnabled());
                 break;
-            case THEME:
+            case AMOLED:
                 recreate();
             case ENABLE_SCREENSAVER_MODE:
                 if (!PreferenceHelper.isScreensaverEnabled()) {

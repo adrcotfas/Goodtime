@@ -27,8 +27,8 @@ public class MainIntroActivity extends IntroActivity {
                 .title(R.string.intro_avoid_distractions)
                 .description(R.string.intro_avoid_distractions_description)
                 .image(R.drawable.ic_umbrella_outline)
-                .background(R.color.dayNightGray)
-                .backgroundDark(R.color.dayNightGray)
+                .background(R.color.gray1000)
+                .backgroundDark(R.color.gray1000)
                 .layout(R.layout.activity_main_intro)
                 .build());
 
@@ -36,8 +36,8 @@ public class MainIntroActivity extends IntroActivity {
                 .title(R.string.intro_clear_mind)
                 .description(R.string.intro_clear_mind_description)
                 .image(R.drawable.ic_break)
-                .background(R.color.dayNightGray)
-                .backgroundDark(R.color.dayNightGray)
+                .background(R.color.gray1000)
+                .backgroundDark(R.color.gray1000)
                 .layout(R.layout.activity_main_intro)
                 .build());
 
@@ -45,8 +45,8 @@ public class MainIntroActivity extends IntroActivity {
                 .title(R.string.intro_get_started)
                 .description(R.string.intro_get_started_description)
                 .image(R.drawable.ic_status_goodtime)
-                .background(R.color.dayNightGray)
-                .backgroundDark(R.color.dayNightGray)
+                .background(R.color.gray1000)
+                .backgroundDark(R.color.gray1000)
                 .layout(R.layout.activity_main_intro)
                 .build());
     }

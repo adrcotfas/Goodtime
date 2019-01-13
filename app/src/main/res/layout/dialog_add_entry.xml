@@ -78,7 +78,7 @@
                 android:layout_marginLeft="32dp"
                 android:layout_marginStart="32dp"
                 android:text="@string/label_add"
-                style="@style/Chip"/>
+                style="@style/ChipStyle"/>
         </RelativeLayout>
 
         <TextView

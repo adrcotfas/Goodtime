@@ -48,8 +48,7 @@ public class PreferenceHelper {
     public final static String ENABLE_SCREENSAVER_MODE     = "pref_screen_saver";
     public final static String AUTO_START_BREAK            = "pref_auto_start_break";
     public final static String AUTO_START_WORK             = "pref_auto_start_work";
-    public final static String THEME                       = "pref_theme";
-    public final static String THEME_DUMMY                 = "pref_theme_dummy";
+    public final static String AMOLED                      = "pref_amoled";
 
     public final static String DISABLE_BATTERY_OPTIMIZATION = "pref_disable_battery_optimization";
 
@@ -161,9 +160,9 @@ public class PreferenceHelper {
                 .getBoolean(AUTO_START_WORK, false);
     }
 
-    public static int getTheme() {
+    public static boolean isAmoledTheme() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getInt(THEME, 0);
+                .getBoolean(AMOLED, true);
     }
 
     /**

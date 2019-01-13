@@ -86,19 +86,11 @@
             android:summary="@string/pref_screen_saver_summary"
             app:iconSpaceReserved="false"/>
 
-        <ColorPickerPreference
-            android:defaultValue="@color/black"
-            android:dialogTitle="@string/pref_theme"
+        <SwitchPreference
+            android:defaultValue="true"
             android:persistent="true"
-            android:key="pref_theme"
-            android:title="@string/pref_theme"
-            app:pref_colors="@array/themeColors"
-            app:pref_size="small"
-            app:iconSpaceReserved="false"/>
-
-        <Preference
-            android:key="pref_theme_dummy"
-            android:title="@string/pref_theme"
+            android:key="pref_amoled"
+            android:title="@string/pref_amoled"
             app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>

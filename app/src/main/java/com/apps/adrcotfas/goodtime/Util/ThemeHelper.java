@@ -29,25 +29,16 @@ import com.apps.adrcotfas.goodtime.R;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
-
 public class ThemeHelper {
 
     public static int COLOR_INDEX_UNLABELED = -1;
     public static int COLOR_INDEX_ALL_LABELS = 42;
 
     public static void setTheme(AppCompatActivity activity) {
-
-        final int dark = activity.getResources().getColor(R.color.darkIndigo1100);
-        final int blue = activity.getResources().getColor(R.color.blue1100);
-
-        int i = PreferenceHelper.getTheme();
-
-        if (i == dark) {
-            activity.setTheme(R.style.AppThemeDark);
-        } else if (i == blue) {
-            activity.setTheme(R.style.AppThemeBlue);
-        } else {
+        if (PreferenceHelper.isAmoledTheme()) {
             activity.setTheme(R.style.AppTheme);
+        } else {
+            activity.setTheme(R.style.AppThemeDark);
         }
     }
 

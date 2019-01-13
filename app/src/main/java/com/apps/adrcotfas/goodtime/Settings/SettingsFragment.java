@@ -30,7 +30,6 @@ import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
 import com.apps.adrcotfas.goodtime.Util.Constants;
-import com.takisoft.preferencex.ColorPickerPreference;
 import com.takisoft.preferencex.PreferenceFragmentCompat;
 import com.takisoft.preferencex.RingtonePreference;
 
@@ -203,30 +202,20 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     }
 
     private void setupTheme() {
-        ColorPickerPreference prefTheme = findPreference(PreferenceHelper.THEME);
-        final Preference dummy = findPreference(PreferenceHelper.THEME_DUMMY);
-
-        if (PreferenceHelper.isPro()) {
-            prefTheme.setVisible(true);
-            dummy.setVisible(false);
-        } else {
-            prefTheme.setVisible(false);
-            dummy.setVisible(true);
-        }
-
-        prefTheme.setOnPreferenceChangeListener((preference, newValue) -> {
-            if (prefTheme.getColor() != (int) newValue) {
+        SwitchPreference prefAmoled = findPreference(PreferenceHelper.AMOLED);
+        prefAmoled.setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
+            UpgradeActivity.launchUpgradeActivity(getActivity());
+            prefAmoled.setChecked(true);
+            return true;
+        });
+        prefAmoled.setOnPreferenceChangeListener(PreferenceHelper.isPro() ? (preference, newValue) -> {
+            if (prefAmoled.isChecked() != (boolean) newValue) {
                 if (SettingsFragment.this.getActivity() != null) {
                     SettingsFragment.this.getActivity().recreate();
                 }
             }
             return true;
-        });
-
-        dummy.setOnPreferenceClickListener(preference -> {
-            UpgradeActivity.launchUpgradeActivity(getActivity());
-            return true;
-        });
+        } : null);
     }
 
     private void updateDisableSoundCheckBoxSummary(boolean notificationPolicyAccessGranted) {

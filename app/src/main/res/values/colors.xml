@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="dayNightGray">#141414</color>
-
     <color name="teal200">#80CBC4</color>
     <color name="teal300">#4DB6AC</color>
     <color name="teal400">#26A69A</color>
+
+    <color name="gray700">#616161</color>
+    <color name="gray800">#424242</color>
+    <color name="gray850">#323232</color>
+    <color name="gray900">#212121</color>
+    <color name="gray950">#171717</color>
+    <color name="gray1000">#141414</color>
 
     <color name="darkIndigo900">#262738</color>
     <color name="darkIndigo1000">#222332</color>
@@ -24,12 +29,6 @@
     <color name="true_transparent">#00FFFFFF</color>
     <color name="grey_500">#9E9E9E</color>
 
-    <array name="themeColors">
-        <item>@color/dayNightGray</item>
-        <item>@color/darkIndigo1100</item>
-        <item>@color/blue1100</item>
-    </array>
-
     <integer-array name="lightPalette">
         <item>@color/c1</item>
         <item>@color/c2</item>
@@ -39,27 +38,11 @@
         <item>@color/c6</item>
     </integer-array>
 
-    <integer-array name="darkPalette">
-        <item>@color/c1_dark</item>
-        <item>@color/c2_dark</item>
-        <item>@color/c3_dark</item>
-        <item>@color/c4_dark</item>
-        <item>@color/c5_dark</item>
-        <item>@color/c6_dark</item>
-    </integer-array>
-
     <color name="c1">#EF9A9A</color>
     <color name="c2">#CE93D8</color>
     <color name="c3">#81D4FA</color>
     <color name="c4">#C5E1A5</color>
     <color name="c5">#FFF59D</color>
     <color name="c6">#FFCC80</color>
-
-    <color name="c1_dark">#E53935</color>
-    <color name="c2_dark">#8E24AA</color>
-    <color name="c3_dark">#1E88E5</color>
-    <color name="c4_dark">#43A047</color>
-    <color name="c5_dark">#FDD835</color>
-    <color name="c6_dark">#FB8C00</color>
 
 </resources>

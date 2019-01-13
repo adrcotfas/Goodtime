@@ -1,122 +1,132 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
-    <RelativeLayout
+
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        style="@style/SectionCommon">
+        android:layout_height="wrap_content"
+        style="@style/CardViewStyle">
 
-        <TextView
-            android:id="@+id/header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:text="@string/statistics_overview"
-            style="@style/SectionHeader"/>
-
-        <Spinner
-            android:id="@+id/stats_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"/>
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/header"
-            android:gravity="bottom"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            style="@style/SectionCommon">
+
+            <TextView
+                android:id="@+id/header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="@string/statistics_overview"
+                style="@style/SectionHeader"/>
+
+            <Spinner
+                android:id="@+id/stats_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"/>
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:orientation="vertical"
-                android:gravity="center">
+                android:layout_below="@+id/header"
+                android:gravity="bottom"
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/today_value"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    style="@style/OverviewTextValue"/>
+                    android:layout_weight="4"
+                    android:orientation="vertical"
+                    android:gravity="center">
 
-                <TextView
-                    android:id="@+id/today_description"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/today_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/OverviewTextValue"/>
+
+                    <TextView
+                        android:id="@+id/today_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/OverviewTextDescription"
+                        android:text="@string/statistics_today"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    style="OverviewTextDescription"
-                    android:text="@string/statistics_today"/>
+                    android:layout_weight="4"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/week_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/OverviewTextValue"/>
+
+                    <TextView
+                        android:id="@+id/week_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="style/OverviewTextDescription"
+                        android:text="@string/statistics_this_week"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/month_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/OverviewTextValue"/>
+
+                    <TextView
+                        android:id="@+id/month_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="style/OverviewTextDescription"
+                        android:text="@string/statistics_this_month"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/total_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/OverviewTextValue"/>
+
+                    <TextView
+                        android:id="@+id/total_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="style/OverviewTextDescription"
+                        android:text="@string/statistics_total"/>
+                </LinearLayout>
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:orientation="vertical"
-                android:gravity="center">
+        </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/week_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/OverviewTextValue"/>
+    </com.google.android.material.card.MaterialCardView>
 
-                <TextView
-                    android:id="@+id/week_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="OverviewTextDescription"
-                    android:text="@string/statistics_this_week"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/month_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/OverviewTextValue"/>
-
-                <TextView
-                    android:id="@+id/month_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="OverviewTextDescription"
-                    android:text="@string/statistics_this_month"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/total_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/OverviewTextValue"/>
-
-                <TextView
-                    android:id="@+id/total_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="OverviewTextDescription"
-                    android:text="@string/statistics_total"/>
-            </LinearLayout>
-
-        </LinearLayout>
-    </RelativeLayout>
 </layout>
