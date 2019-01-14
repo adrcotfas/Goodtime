@@ -35,6 +35,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
+import static com.anjlab.android.iab.v3.Constants.BILLING_RESPONSE_RESULT_BILLING_UNAVAILABLE;
+import static com.anjlab.android.iab.v3.Constants.BILLING_RESPONSE_RESULT_SERVICE_UNAVAILABLE;
+
 public class UpgradeActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler{
 
     public static String sku = "android.test.purchased";
@@ -145,6 +148,20 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
     @Override
     public void onBillingError(int errorCode, Throwable error) {
         // do nothing here
+        switch (errorCode) {
+            case BILLING_RESPONSE_RESULT_BILLING_UNAVAILABLE:
+                Toast.makeText(
+                    UpgradeActivity.this,
+                    "Billing API version is not supported for the type requested",
+                    Toast.LENGTH_LONG).show();
+                break;
+            case BILLING_RESPONSE_RESULT_SERVICE_UNAVAILABLE:
+                Toast.makeText(
+                        UpgradeActivity.this,
+                        "Network connection is down",
+                        Toast.LENGTH_LONG).show();
+                break;
+        }
     }
 
     @Override
