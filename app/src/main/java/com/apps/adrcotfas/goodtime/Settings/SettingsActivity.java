@@ -28,7 +28,8 @@ import androidx.preference.PreferenceScreen;
 
 import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
 
-public class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
+public class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback{
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

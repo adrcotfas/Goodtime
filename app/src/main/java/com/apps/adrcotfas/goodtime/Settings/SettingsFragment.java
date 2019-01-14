@@ -13,6 +13,8 @@
 
 package com.apps.adrcotfas.goodtime.Settings;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -20,11 +22,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
@@ -34,11 +39,12 @@ import com.takisoft.preferencex.PreferenceFragmentCompat;
 import com.takisoft.preferencex.RingtonePreference;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
-import androidx.preference.SwitchPreference;
+import androidx.preference.SwitchPreferenceCompat;
 
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.DISABLE_SOUND_AND_VIBRATION;
 
@@ -46,7 +52,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
 
     private ProperSeekBarPreference mPrefWorkDuration;
     private ProperSeekBarPreference mPrefBreakDuration;
-    private SwitchPreference mPrefEnableLongBreak;
+    private SwitchPreferenceCompat mPrefEnableLongBreak;
     private ProperSeekBarPreference mPrefLongBreakDuration;
     private ProperSeekBarPreference mPrefSessionsBeforeLongBreak;
 
@@ -149,7 +155,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     }
 
     private void setupRingtone() {
-        final SwitchPreference prefEnableRingtone = findPreference(PreferenceHelper.ENABLE_RINGTONE);
+        final SwitchPreferenceCompat prefEnableRingtone = findPreference(PreferenceHelper.ENABLE_RINGTONE);
         prefEnableRingtone.setVisible(true);
         toggleEnableRingtonePreference(prefEnableRingtone.isChecked());
         prefEnableRingtone.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -202,18 +208,49 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     }
 
     private void setupTheme() {
-        SwitchPreference prefAmoled = findPreference(PreferenceHelper.AMOLED);
+        SwitchPreferenceCompat prefAmoled = findPreference(PreferenceHelper.AMOLED);
         prefAmoled.setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
             UpgradeActivity.launchUpgradeActivity(getActivity());
             prefAmoled.setChecked(true);
             return true;
         });
         prefAmoled.setOnPreferenceChangeListener(PreferenceHelper.isPro() ? (preference, newValue) -> {
-            if (prefAmoled.isChecked() != (boolean) newValue) {
-                if (SettingsFragment.this.getActivity() != null) {
-                    SettingsFragment.this.getActivity().recreate();
-                }
+            int amoledColor = getActivity().getResources().getColor(android.R.color.black);
+            int darkColor = getActivity().getResources().getColor(R.color.gray900);
+            int darkColorToolbar = getActivity().getResources().getColor(R.color.gray1000);
+
+            //TODO: maybe do this for Kitkat too
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                final Handler handler = new Handler();
+                handler.postDelayed(() -> {
+                    Window window = getActivity().getWindow();
+                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                    window.setStatusBarColor((boolean) newValue ? amoledColor : darkColorToolbar);
+                }, 300);
             }
+
+            ObjectAnimator toolbarFade = ObjectAnimator.ofObject(
+                    (Toolbar)getActivity().findViewById(R.id.toolbar),
+                    "backgroundColor",
+                    new ArgbEvaluator(),
+                    (boolean) newValue ? darkColorToolbar : amoledColor,
+                    (boolean) newValue ? amoledColor : darkColorToolbar);
+
+            ObjectAnimator backgroundFade = ObjectAnimator.ofObject(
+                    getView(),
+                    "backgroundColor",
+                    new ArgbEvaluator(),
+                    (boolean) newValue ? darkColor : amoledColor,
+                    (boolean) newValue ? amoledColor : darkColor);
+
+            backgroundFade.setDuration(500);
+            backgroundFade.setStartDelay(100);
+            toolbarFade.setDuration(500);
+            toolbarFade.setStartDelay(100);
+            backgroundFade.start();
+            toolbarFade.start();
+
             return true;
         } : null);
     }

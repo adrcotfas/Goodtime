@@ -115,9 +115,9 @@
         <item name="android:textSize">@dimen/smallTextSize</item>
         <item name="android:textColor">@color/black</item>
         <item name="chipIconSize">20dp</item>
-        <item name="chipStartPadding">6dp</item>
-        <item name="chipCornerRadius">20dp</item>
+        <item name="chipStartPadding">4dp</item>
         <item name="textEndPadding">4dp</item>
+        <item name="chipCornerRadius">12dp</item>
     </style>
 
     <style name="SmallPseudoChip">

@@ -525,12 +525,12 @@ public class StatisticsFragment extends Fragment {
         LineDataSet set = new LineDataSet(entries, crtLabel.label);
         set.setColor(color);
         set.setCircleColor(color);
+        set.setDrawFilled(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT);
         set.setFillColor(color);
         set.setLineWidth(3f);
         set.setCircleRadius(3f);
         set.setDrawCircleHole(false);
         set.disableDashedLine();
-        set.setDrawFilled(true);
         set.setDrawValues(false);
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2) {

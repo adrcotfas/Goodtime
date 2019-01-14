@@ -38,7 +38,7 @@
             android:max="30"
             app:iconSpaceReserved="false"/>
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="pref_enable_long_break"
             android:title="@string/pref_enable_long_break"
@@ -86,7 +86,7 @@
             android:summary="@string/pref_screen_saver_summary"
             app:iconSpaceReserved="false"/>
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:persistent="true"
             android:key="pref_amoled"
@@ -99,7 +99,7 @@
         android:title="@string/pref_header_notifications"
         app:iconSpaceReserved="false">
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="pref_enable_ringtone"
             android:title="@string/pref_enable_ringtone"
@@ -140,7 +140,7 @@
             app:pref_summaryHasRingtone="%s"
             app:iconSpaceReserved="false"/>
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="pref_vibrate"
             android:title="@string/pref_vibrate"
