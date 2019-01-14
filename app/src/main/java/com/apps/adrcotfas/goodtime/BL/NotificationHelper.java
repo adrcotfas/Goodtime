@@ -13,6 +13,7 @@
 
 package com.apps.adrcotfas.goodtime.BL;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -46,6 +47,7 @@ public class NotificationHelper extends ContextWrapper {
     public static int GOODTIME_NOTIFICATION_ID = 42;
 
     private NotificationManager mManager;
+    private NotificationCompat.Builder mBuilder;
 
     public NotificationHelper(Context context) {
         super(context);
@@ -53,6 +55,13 @@ public class NotificationHelper extends ContextWrapper {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             initChannels();
         }
+        mBuilder = new NotificationCompat.Builder(this, GOODTIME_NOTIFICATION)
+                .setSmallIcon(R.drawable.ic_status_goodtime)
+                .setCategory(NotificationCompat.CATEGORY_PROGRESS)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setContentIntent(createActivityIntent())
+                .setOngoing(true)
+                .setShowWhen(false);
     }
 
     public void notifyFinished(SessionType sessionType) {
@@ -100,36 +109,30 @@ public class NotificationHelper extends ContextWrapper {
      * @param currentSession the current session
      * @return the builder
      */
+    @SuppressLint("RestrictedApi")
     public NotificationCompat.Builder getInProgressBuilder(CurrentSession currentSession) {
         Log.v(TAG, "createNotification");
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, GOODTIME_NOTIFICATION)
-                .setSmallIcon(R.drawable.ic_status_goodtime)
-                .setCategory(NotificationCompat.CATEGORY_PROGRESS)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setContentIntent(createActivityIntent())
-                .setOngoing(true)
-                .setShowWhen(false);
-
+        mBuilder.mActions.clear();
         if (currentSession.getSessionType().getValue() == SessionType.WORK) {
             if (currentSession.getTimerState().getValue() == TimerState.PAUSED) {
-                builder.addAction(buildStopAction(this))
+                mBuilder.addAction(buildStopAction(this))
                         .addAction(buildResumeAction(this))
                         .setContentTitle(getString(R.string.action_paused_title))
                         .setContentText(getString(R.string.action_continue));
             } else {
-                builder.addAction(buildStopAction(this))
+                mBuilder.addAction(buildStopAction(this))
                         .addAction(buildPauseAction(this))
                         .setContentTitle(getString(R.string.action_progress_work))
                         .setContentText(buildProgressText(currentSession.getDuration().getValue()));
             }
         } else {
-            builder.addAction(buildStopAction(this))
+            mBuilder.addAction(buildStopAction(this))
                     .setContentTitle(getString(R.string.action_progress_break))
                     .setContentText(buildProgressText(currentSession.getDuration().getValue()));
         }
 
-        return builder;
+        return mBuilder;
     }
 
     public NotificationCompat.Builder getFinishedSessionBuilder(SessionType sessionType) {
