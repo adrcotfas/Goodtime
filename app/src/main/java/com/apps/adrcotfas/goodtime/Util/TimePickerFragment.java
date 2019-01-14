@@ -13,8 +13,10 @@
 
 package com.apps.adrcotfas.goodtime.Util;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.os.Build;
 import android.os.Bundle;
 import com.apps.adrcotfas.goodtime.R;
 
@@ -42,7 +44,11 @@ public class TimePickerFragment extends DialogFragment {
         int hour = calendar.get(Calendar.HOUR);
         int minute = calendar.get(Calendar.MINUTE);
 
-        return new TimePickerDialog(getActivity(), R.style.DialogTheme, listener, hour, minute, true);
+        return new TimePickerDialog(
+                getActivity(),
+                (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                        ? R.style.DialogTheme : AlertDialog.THEME_HOLO_DARK,
+                listener, hour, minute, true);
     }
 }
 
