@@ -6,9 +6,6 @@
         <variable
             name="item"
             type="com.apps.adrcotfas.goodtime.Session"/>
-        <variable
-            name="color"
-            type="int"/>
         <import type="android.view.View"/>
     </data>
 
@@ -98,7 +95,6 @@
             android:layout_marginRight="16dp"
             android:layout_marginEnd="16dp"
 
-            android:backgroundTint="@{color}"
             android:text="@{item.label}"
             android:visibility="@{item.label == null ? View.INVISIBLE : View.VISIBLE}"
             style="@style/SmallPseudoChip"/>

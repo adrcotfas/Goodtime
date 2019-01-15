@@ -227,7 +227,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
                     window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                     window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
                     window.setStatusBarColor((boolean) newValue ? amoledColor : darkColorToolbar);
-                }, 300);
+                }, 400);
             }
 
             ObjectAnimator toolbarFade = ObjectAnimator.ofObject(
