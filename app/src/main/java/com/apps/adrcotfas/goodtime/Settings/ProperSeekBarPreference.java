@@ -22,10 +22,10 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -35,10 +35,6 @@ import com.apps.adrcotfas.goodtime.R;
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceViewHolder;
-
-import static android.graphics.Paint.UNDERLINE_TEXT_FLAG;
-import static android.text.InputType.TYPE_CLASS_NUMBER;
-import static android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL;
 
 /**
  * Preference based on android.preference.SeekBarPreference but uses support v7 preference as base.
@@ -162,35 +158,20 @@ public class ProperSeekBarPreference extends Preference {
         mSeekBar = (SeekBar) view.findViewById(R.id.seekbar);
         float dpi = getContext().getResources().getDisplayMetrics().density;
 
+
         mSeekBar.setPadding(0,(int)(5 * dpi),(int)(16 * dpi),(int)(5 * dpi));
         mSeekBarValueTextView = (TextView) view.findViewById(R.id.seekbar_value);
 
-        mSeekBarValueTextView.setClickable(true);
-        mSeekBarValueTextView.setPaintFlags(UNDERLINE_TEXT_FLAG);
-        mSeekBarValueTextView.setTextSize(14);
-        mSeekBarValueTextView.setTextColor(getContext().getResources().getColor(R.color.white));
-
-        mSeekBarValueTextView.setOnClickListener(view1 -> {
+        view.itemView.setOnClickListener(view1 -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-            LinearLayout layout = new LinearLayout(getContext());
-            final EditText input = new EditText(getContext());
-            input.setInputType(TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_DECIMAL);
-            input.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            input.setSingleLine();
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            View dialogView = inflater.inflate(R.layout.dialog_set_seekbar_value, null);
+            builder.setView(dialogView);
 
-            InputFilter[] FilterArray = new InputFilter[1];
-            FilterArray[0] = new InputFilter.LengthFilter(3);
-            input.setFilters(FilterArray);
-
-            layout.addView(input);
-            layout.setPadding((int)(19*dpi), (int)(5*dpi), (int)(19*dpi), (int)(5*dpi));
-            layout.setOrientation(LinearLayout.VERTICAL);
-            layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-            builder.setTitle(mDialogTitle)
-                    .setView(layout);
+            builder.setTitle(mDialogTitle);
             builder.setPositiveButton(android.R.string.ok, (di, i) -> {
+                final EditText input = dialogView.findViewById(R.id.wtf);
                 final String name = input.getText().toString();
                 if (!TextUtils.isEmpty(name)) {
                     setValueInternal(Integer.parseInt(name), true);
