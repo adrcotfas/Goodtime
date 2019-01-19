@@ -10,8 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="22dp"
+        android:layout_marginRight="32dp"
         android:inputType="numberDecimal"
         android:singleLine="true"
         android:maxLength="3"/>

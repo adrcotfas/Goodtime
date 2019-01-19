@@ -10,7 +10,7 @@
             android:title="@string/labels"/>
         <item
             android:id="@+id/action_statistics"
-            android:icon="@drawable/ic_history"
+            android:icon="@drawable/ic_trending"
             android:title="@string/statistics" />
         <item
             android:id="@+id/action_backup"

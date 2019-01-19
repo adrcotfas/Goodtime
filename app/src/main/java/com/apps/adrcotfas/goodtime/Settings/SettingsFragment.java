@@ -120,16 +120,19 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
 
     private void setupAutoStartSessionVsInsistentNotification() {
         // Continuous mode versus insistent notification
-        findPreference(PreferenceHelper.AUTO_START_WORK).setOnPreferenceChangeListener((preference, newValue) -> {
+        CheckBoxPreference autoWork = findPreference(PreferenceHelper.AUTO_START_WORK);
+        autoWork.setOnPreferenceChangeListener((preference, newValue) -> {
             final CheckBoxPreference pref = findPreference(PreferenceHelper.INSISTENT_RINGTONE);
-            if (pref.isChecked()) {
+            if ((boolean)newValue) {
                 pref.setChecked(false);
             }
             return true;
         });
-        findPreference(PreferenceHelper.AUTO_START_BREAK).setOnPreferenceChangeListener((preference, newValue) -> {
+
+        CheckBoxPreference autoBreak = findPreference(PreferenceHelper.AUTO_START_BREAK);
+        autoBreak.setOnPreferenceChangeListener((preference, newValue) -> {
             final CheckBoxPreference pref = findPreference(PreferenceHelper.INSISTENT_RINGTONE);
-            if (pref.isChecked()) {
+            if ((boolean)newValue) {
                 pref.setChecked(false);
             }
             return true;
@@ -141,27 +144,18 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
             insistentRingPref.setChecked(false);
             return true;
         });
-        insistentRingPref.setOnPreferenceChangeListener(PreferenceHelper.isPro() ? null : (preference, newValue) -> {
+        insistentRingPref.setOnPreferenceChangeListener(PreferenceHelper.isPro() ? (preference, newValue) -> {
             final CheckBoxPreference p1 = findPreference(PreferenceHelper.AUTO_START_BREAK);
-            if (p1.isChecked()) {
-                p1.setChecked(false);
-            }
             final CheckBoxPreference p2 = findPreference(PreferenceHelper.AUTO_START_WORK);
-            if (p2.isChecked()) {
+            if ((boolean)newValue) {
+                p1.setChecked(false);
                 p2.setChecked(false);
             }
             return true;
-        });
+        } : null);
     }
 
     private void setupRingtone() {
-        final SwitchPreferenceCompat prefEnableRingtone = findPreference(PreferenceHelper.ENABLE_RINGTONE);
-        prefEnableRingtone.setVisible(true);
-        toggleEnableRingtonePreference(prefEnableRingtone.isChecked());
-        prefEnableRingtone.setOnPreferenceChangeListener((preference, newValue) -> {
-            toggleEnableRingtonePreference((Boolean) newValue);
-            return true;
-        });
 
         final RingtonePreference prefWork = findPreference(PreferenceHelper.RINGTONE_WORK_FINISHED);
         final RingtonePreference prefBreak = findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED);
@@ -187,6 +181,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
                 return true;
             });
         }
+
+        final SwitchPreferenceCompat prefEnableRingtone = findPreference(PreferenceHelper.ENABLE_RINGTONE);
+        toggleEnableRingtonePreference(prefEnableRingtone.isChecked());
+        prefEnableRingtone.setOnPreferenceChangeListener((preference, newValue) -> {
+            toggleEnableRingtonePreference((Boolean) newValue);
+            return true;
+        });
     }
 
     private void setupScreensaver() {
@@ -319,7 +320,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
 
     private void toggleEnableRingtonePreference(Boolean newValue) {
         findPreference(PreferenceHelper.RINGTONE_WORK_FINISHED).setVisible(newValue);
-        findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED).setVisible(newValue);
+        if (PreferenceHelper.isPro()) {
+            findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED).setVisible(newValue);
+        } else {
+            findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED_DUMMY).setVisible(newValue);
+        }
     }
 
     private void toggleLongBreakPreference(Boolean newValue) {

@@ -15,6 +15,7 @@ package com.apps.adrcotfas.goodtime.Statistics.Main;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextPaint;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -121,6 +124,9 @@ public class StatisticsFragment extends Fragment {
     private StatsView mOverviewDescription;
     private LabelsViewModel mLabelsViewModel;
     private SessionViewModel mSessionViewModel;
+    private LinearLayout mParentView;
+    private ProgressBar mProgressBar;
+
     private float mDisplayDensity = 1;
 
     public View onCreateView(LayoutInflater inflater,
@@ -132,6 +138,9 @@ public class StatisticsFragment extends Fragment {
         mDisplayDensity = getResources().getDisplayMetrics().density;
 
         setHasOptionsMenu(true);
+
+        mParentView = binding.parentLayout;
+        mProgressBar = binding.progressBar;
 
         mChartHistory = binding.history.chart;
         mChartProductiveHours = binding.productiveHours.barChart;
@@ -165,6 +174,17 @@ public class StatisticsFragment extends Fragment {
         setupSpinners();
         setupHistoryChart();
         setupProductiveTimeChart();
+
+        // TODO: remove this later
+//        for (int i = 0; i < 1000; ++i) {
+//            Session session = new Session(
+//                    0,
+//                    System.currentTimeMillis(),
+//                    42,
+//                    null);
+//
+//            mSessionViewModel.addSession(session);
+//        }
 
         return view;
     }
@@ -313,9 +333,7 @@ public class StatisticsFragment extends Fragment {
 
     //TODO: make more efficient when setting spinners to not refresh all of it if not needed
     private void refreshUi() {
-        //TODO: adapt string when translating
         if (mLabelsViewModel.crtExtendedLabel.getValue() != null) {
-
             if (mSessionsToObserve != null) {
                 mSessionsToObserve.removeObservers(this);
             }
@@ -334,6 +352,12 @@ public class StatisticsFragment extends Fragment {
                 refreshStats(sessions);
                 refreshHistoryChart(sessions);
                 refreshProductiveTimeChart(sessions);
+
+                final Handler handler = new Handler();
+                handler.postDelayed(() -> {
+                    mProgressBar.setVisibility(View.GONE);
+                    mParentView.setVisibility(View.VISIBLE);
+                }, 200);
             });
         }
     }

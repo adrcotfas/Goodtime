@@ -41,6 +41,10 @@ public class TimePickerFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // TODO: delete this after fixing the bug with orientation change
+        if (calendar == null) {
+            calendar = Calendar.getInstance();
+        }
         int hour = calendar.get(Calendar.HOUR);
         int minute = calendar.get(Calendar.MINUTE);
 

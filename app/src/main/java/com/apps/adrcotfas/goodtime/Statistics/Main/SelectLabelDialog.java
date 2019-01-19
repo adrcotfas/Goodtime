@@ -118,10 +118,12 @@ public class SelectLabelDialog extends DialogFragment {
                 binding.labels.addView(chip);
             }
 
+            binding.progressBar.setVisibility(View.GONE);
             if (binding.labels.getChildCount() == 0) {
                 binding.emptyState.setVisibility(View.VISIBLE);
             } else {
                 binding.emptyState.setVisibility(View.GONE);
+                binding.labelsView.setVisibility(View.VISIBLE);
             }
         });
 

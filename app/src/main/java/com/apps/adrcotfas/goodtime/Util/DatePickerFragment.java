@@ -41,6 +41,10 @@ public class DatePickerFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // TODO: delete this after fixing the bug with orientation change
+        if (calendar == null) {
+            calendar = Calendar.getInstance();
+        }
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);

@@ -26,7 +26,8 @@
             android:id="@+id/label_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/add_label">
+            android:layout_below="@id/add_label"
+            android:visibility="gone">
         </androidx.recyclerview.widget.RecyclerView>
 
         <TextView
@@ -35,6 +36,16 @@
             android:layout_height="match_parent"
             android:layout_below="@id/add_label"
             android:gravity="center_horizontal|center_vertical"
+            android:visibility="gone"
             android:text="@string/empty_state_no_items"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/add_label"
+            android:gravity="center_horizontal|center_vertical"
+            style="?android:attr/progressBarStyle"/>
+
     </RelativeLayout>
 </layout>

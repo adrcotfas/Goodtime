@@ -4,7 +4,15 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:minWidth="300dp">
+        android:minWidth="350dp">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="32dp"/>
 
         <TextView
             android:id="@+id/empty_state"
@@ -12,12 +20,15 @@
             android:layout_height="match_parent"
             android:layout_marginTop="32dp"
             android:gravity="center"
+            android:visibility="gone"
             android:text="@string/empty_state_no_items"/>
 
         <ScrollView
+            android:id="@+id/labels_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp">
+            android:layout_margin="16dp"
+            android:visibility="invisible">
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/labels"
                 android:layout_width="wrap_content"

@@ -14,6 +14,7 @@
 package com.apps.adrcotfas.goodtime.Statistics.AllSessions;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,13 +22,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
+import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Statistics.Main.RecyclerItemClickListener;
+import com.apps.adrcotfas.goodtime.Statistics.Main.SelectLabelDialog;
 import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
 import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentAllSessionsBinding;
@@ -46,7 +50,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class AllSessionsFragment extends Fragment {
+public class AllSessionsFragment extends Fragment implements SelectLabelDialog.OnLabelSelectedListener {
 
     private AllSessionsAdapter mAdapter;
     private ActionMode mActionMode;
@@ -59,6 +63,7 @@ public class AllSessionsFragment extends Fragment {
     private List<Session> mSessions;
     private TextView mEmptyState;
     private RecyclerView mRecyclerView;
+    private ProgressBar mProgressBar;
 
     @Nullable
     @Override
@@ -69,6 +74,7 @@ public class AllSessionsFragment extends Fragment {
         mLabelsViewModel = ViewModelProviders.of(getActivity()).get(LabelsViewModel.class);
 
         mEmptyState = binding.emptyState;
+        mProgressBar = binding.progressBar;
 
         View view = binding.getRoot();
 
@@ -143,10 +149,10 @@ public class AllSessionsFragment extends Fragment {
                     mSelectedEntries.add(s.id);
                 }
                 if (mSelectedEntries.size() == 1) {
-                    mMenu.getItem(0).setVisible(true);
+                    mMenu.getItem(0).setIcon(R.drawable.ic_edit);
                     mActionMode.setTitle(String.valueOf(mSelectedEntries.size()));
                 } else if (mSelectedEntries.size() > 1) {
-                    mMenu.getItem(0).setVisible(false);
+                    mMenu.getItem(0).setIcon(R.drawable.ic_label);
                     mActionMode.setTitle(String.valueOf(mSelectedEntries.size()));
                 }  else {
                     mActionMode.setTitle("");
@@ -180,11 +186,11 @@ public class AllSessionsFragment extends Fragment {
         }
 
         if (mSelectedEntries.size() == 1) {
-            mMenu.getItem(0).setVisible(true);
+            mMenu.getItem(0).setIcon(R.drawable.ic_edit);
             mActionMode.setTitle(String.valueOf(mSelectedEntries.size()));
             mAdapter.setSelectedItems(mSelectedEntries);
         } else if (mSelectedEntries.size() > 1) {
-            mMenu.getItem(0).setVisible(false);
+            mMenu.getItem(0).setIcon(R.drawable.ic_label);
             mActionMode.setTitle(String.valueOf(mSelectedEntries.size()));
             mAdapter.setSelectedItems(mSelectedEntries);
         }  else {
@@ -213,7 +219,14 @@ public class AllSessionsFragment extends Fragment {
             switch (item.getItemId()) {
                 case R.id.action_edit:
                     if (PreferenceHelper.isPro()) {
-                        if (mSessionToEdit != null) {
+                        if (mSelectedEntries.size() > 1) {
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            SelectLabelDialog.newInstance(
+                                    AllSessionsFragment.this,
+                                    null, false)
+                                    .show(fragmentManager, "");
+
+                        } else if (mSessionToEdit != null) {
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                             AddEditEntryDialog newFragment = AddEditEntryDialog.newInstance(mSessionToEdit);
                             newFragment.show(fragmentManager, "");
@@ -247,14 +260,28 @@ public class AllSessionsFragment extends Fragment {
     };
 
     public void updateRecyclerViewVisibility() {
-        if (mSessions != null && mSessions.isEmpty()) {
-            mRecyclerView.setVisibility(View.GONE);
-            mEmptyState.setVisibility(View.VISIBLE);
-        }
-        else {
-            mRecyclerView.setVisibility(View.VISIBLE);
-            mEmptyState.setVisibility(View.GONE);
-        }
+        final Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            mProgressBar.setVisibility(View.GONE);
+            if (mSessions != null && mSessions.isEmpty()) {
+                mRecyclerView.setVisibility(View.GONE);
+                mEmptyState.setVisibility(View.VISIBLE);
+            }
+            else {
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mEmptyState.setVisibility(View.GONE);
+            }
+        }, 200);
     }
 
+    @Override
+    public void onLabelSelected(LabelAndColor labelAndColor) {
+        final String label = labelAndColor.label.equals("unlabeled") ? null : labelAndColor.label;
+        for (Long i : mSelectedEntries) {
+            mSessionViewModel.editLabel(i, label);
+        }
+        if (mActionMode != null) {
+            mActionMode.finish();
+        }
+    }
 }

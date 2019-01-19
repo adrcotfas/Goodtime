@@ -7,11 +7,19 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            style="?android:attr/progressBarStyle"/>
+
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/main_recylcer_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/main_recylcer_view"
-            android:scrollbars="vertical">
+            android:scrollbars="vertical"
+            android:visibility="invisible">
         </androidx.recyclerview.widget.RecyclerView>
 
         <TextView
@@ -20,6 +28,7 @@
             android:layout_height="match_parent"
             android:layout_below="@id/add_label"
             android:gravity="center_horizontal|center_vertical"
-            android:text="@string/empty_state_no_items"/>
+            android:text="@string/empty_state_no_items"
+            android:visibility="invisible"/>
     </RelativeLayout>
 </layout>

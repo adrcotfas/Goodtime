@@ -88,7 +88,6 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
 
             mCustomAdapter = new AddEditLabelsAdapter(this, mLabelAndColors, this);
             mRecyclerView.setAdapter(mCustomAdapter);
-            updateRecyclerViewVisibility();
 
             LinearLayoutManager lm = new LinearLayoutManager(this);
             lm.setReverseLayout(true);
@@ -98,6 +97,9 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
             labels.removeObservers(AddEditLabelActivity.this);
+
+            binding.progressBar.setVisibility(View.GONE);
+            updateRecyclerViewVisibility();
         });
 
         mLabelToAdd = new LabelAndColor("", ThemeHelper.getColor(this, COLOR_INDEX_UNLABELED));

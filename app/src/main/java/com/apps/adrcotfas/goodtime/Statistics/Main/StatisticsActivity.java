@@ -23,6 +23,7 @@ import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Statistics.AllSessions.AddEditEntryDialog;
 import com.apps.adrcotfas.goodtime.Statistics.AllSessions.AllSessionsFragment;
 import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
@@ -77,7 +78,7 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
         refreshCurrentLabel();
 
         menu.findItem(R.id.action_view_list).setIcon(ContextCompat.getDrawable(
-                this, mIsMainView ? R.drawable.ic_details : R.drawable.ic_show_list));
+                this, mIsMainView ? R.drawable.ic_list : R.drawable.ic_trending));
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -94,17 +95,6 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
                 } else {
                     UpgradeActivity.launchUpgradeActivity(this);
                 }
-
-                // TODO: remove this later
-//                for (int i = 0; i < 1000; ++i) {
-//                    Session session = new Session(
-//                            0,
-//                            System.currentTimeMillis(),
-//                            42,
-//                            null);
-//
-//                    mSessionViewModel.addSession(session);
-//                }
 
                 break;
             case R.id.action_select_label:

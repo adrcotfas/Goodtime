@@ -48,6 +48,9 @@ public interface SessionDao {
     @Query("update Session SET endTime = :endTime, totalTime = :totalTime, label = :label WHERE id = :id")
     void editSession(long id, long endTime, long totalTime, String label);
 
+    @Query("update Session SET label = :label WHERE id = :id")
+    void editLabel(long id, String label);
+
     @Query("delete from Session where id = :id")
     void deleteSession(long id);
 

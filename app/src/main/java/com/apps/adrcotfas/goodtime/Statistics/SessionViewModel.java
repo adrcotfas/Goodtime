@@ -59,6 +59,11 @@ public class SessionViewModel extends AndroidViewModel {
                 id, endTime, totalTime, label));
     }
 
+    public void editLabel(Long id, String label) {
+        mExecutorService.execute(() -> mSessionDao.editLabel(
+                id, label));
+    }
+
     public void deleteSession(long id) {
         mExecutorService.execute(() -> mSessionDao.deleteSession(id));
     }

@@ -86,7 +86,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginBottom="24dp"
-            android:drawableLeft="@drawable/ic_floppy"
+            android:drawableLeft="@drawable/ic_done"
             android:text="@string/save"
             style="@style/AllSessionsAddEditDialogRow"/>
 
