@@ -62,6 +62,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 import de.greenrobot.event.EventBus;
@@ -92,6 +93,8 @@ public class TimerActivity
     private FullscreenHelper mFullscreenHelper;
     private BillingProcessor mBillingProcessor;
     private long mBackPressedAt;
+
+    private static String DIALOG_SELECT_LABEL_TAG = "dialogSelectLabel";
 
     public void onStartButtonClick() {
         start(SessionType.WORK);
@@ -152,6 +155,12 @@ public class TimerActivity
 
         mBillingProcessor = BillingProcessor.newBillingProcessor(this, getString(R.string.licence_key), getString(R.string.merchant_id),  this);
         mBillingProcessor.initialize();
+
+        // dismiss it at orientation change
+        DialogFragment selectLabelDialog = ((DialogFragment)getSupportFragmentManager().findFragmentByTag(DIALOG_SELECT_LABEL_TAG));
+        if (selectLabelDialog != null) {
+            selectLabelDialog.dismiss();
+        }
     }
 
     /**
@@ -475,7 +484,7 @@ public class TimerActivity
     public void showEditLabelDialog() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         SelectLabelDialog.newInstance(this, PreferenceHelper.getCurrentSessionLabel().label, false)
-                .show(fragmentManager, "");
+                .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
     }
 
     //TODO: extract strings

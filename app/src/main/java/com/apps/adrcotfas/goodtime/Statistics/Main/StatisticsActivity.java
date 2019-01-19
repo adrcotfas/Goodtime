@@ -23,7 +23,6 @@ import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
-import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Statistics.AllSessions.AddEditEntryDialog;
 import com.apps.adrcotfas.goodtime.Statistics.AllSessions.AllSessionsFragment;
 import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
@@ -35,10 +34,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuItemCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 
 public class StatisticsActivity extends AppCompatActivity implements SelectLabelDialog.OnLabelSelectedListener {
+
+    public static final String DIALOG_ADD_ENTRY_TAG = "dialogAddEntry";
+    public  static final String DIALOG_SELECT_LABEL_TAG = "dialogSelectLabel";
+    public static final String DIALOG_DATE_PICKER_TAG = "datePickerDialog";
+    public static final String DIALOG_TIME_PICKER_TAG = "timePickerDialog";
 
     private LabelsViewModel mLabelsViewModel;
     private MenuItem mMenuItemCrtLabel;
@@ -60,6 +65,32 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
 
         mIsMainView = false;
         toggleStatisticsView();
+
+        // dismiss at orientation changes
+        dismissDialogs();
+    }
+
+    private void dismissDialogs() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        DialogFragment dialogAddEntry = (DialogFragment) fragmentManager.findFragmentByTag(DIALOG_ADD_ENTRY_TAG);
+        if (dialogAddEntry != null) {
+            dialogAddEntry.dismiss();
+        }
+
+        DialogFragment dialogSelectLabel = (DialogFragment) fragmentManager.findFragmentByTag(DIALOG_SELECT_LABEL_TAG);
+        if (dialogSelectLabel != null) {
+            dialogSelectLabel.dismiss();
+        }
+
+        DialogFragment dialogDate = (DialogFragment) fragmentManager.findFragmentByTag(DIALOG_DATE_PICKER_TAG);
+        if (dialogDate != null) {
+            dialogDate.dismiss();
+        }
+
+        DialogFragment dialogTime = (DialogFragment) fragmentManager.findFragmentByTag(DIALOG_TIME_PICKER_TAG);
+        if (dialogTime != null) {
+            dialogTime.dismiss();
+        }
     }
 
     private void refreshCurrentLabel() {
@@ -91,7 +122,7 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
 
                 if (PreferenceHelper.isPro()) {
                     AddEditEntryDialog newFragment = new AddEditEntryDialog();
-                    newFragment.show(fragmentManager, "");
+                    newFragment.show(fragmentManager, DIALOG_ADD_ENTRY_TAG);
                 } else {
                     UpgradeActivity.launchUpgradeActivity(this);
                 }
@@ -100,7 +131,7 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
             case R.id.action_select_label:
                 if (PreferenceHelper.isPro()) {
                     SelectLabelDialog.newInstance(this, mLabelsViewModel.crtExtendedLabel.getValue().label, true)
-                            .show(fragmentManager, "");
+                            .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
                 } else {
                     UpgradeActivity.launchUpgradeActivity(this);
                 }

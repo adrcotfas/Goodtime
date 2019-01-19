@@ -50,6 +50,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity.DIALOG_SELECT_LABEL_TAG;
+
 public class AllSessionsFragment extends Fragment implements SelectLabelDialog.OnLabelSelectedListener {
 
     private AllSessionsAdapter mAdapter;
@@ -224,12 +226,12 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
                             SelectLabelDialog.newInstance(
                                     AllSessionsFragment.this,
                                     null, false)
-                                    .show(fragmentManager, "");
+                                    .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
 
                         } else if (mSessionToEdit != null) {
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                             AddEditEntryDialog newFragment = AddEditEntryDialog.newInstance(mSessionToEdit);
-                            newFragment.show(fragmentManager, "");
+                            newFragment.show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
                             mActionMode.finish();
                         }
                     } else {

@@ -49,9 +49,15 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 
 import static com.apps.adrcotfas.goodtime.Statistics.AllSessions.AddEditEntryDialogViewModel.INVALID_SESSION_TO_EDIT_ID;
+import static com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity.DIALOG_DATE_PICKER_TAG;
+import static com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity.DIALOG_SELECT_LABEL_TAG;
+import static com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity.DIALOG_TIME_PICKER_TAG;
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_UNLABELED;
 
-public class AddEditEntryDialog extends BottomSheetDialogFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, SelectLabelDialog.OnLabelSelectedListener {
+public class AddEditEntryDialog extends BottomSheetDialogFragment implements
+        DatePickerDialog.OnDateSetListener,
+        TimePickerDialog.OnTimeSetListener,
+        SelectLabelDialog.OnLabelSelectedListener {
 
     private AddEditEntryDialogViewModel mViewModel;
     private SessionViewModel mSessionViewModel;
@@ -118,7 +124,7 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements Dat
         binding.labelChip.setOnClickListener(c -> {
             // open another dialog to select the chip
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            SelectLabelDialog.newInstance(this, mViewModel.label.getValue(), false).show(fragmentManager, "");
+            SelectLabelDialog.newInstance(this, mViewModel.label.getValue(), false).show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
         });
 
         binding.save.setOnClickListener(v -> {
@@ -163,7 +169,7 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements Dat
         TimePickerFragment d = TimePickerFragment.newInstance(AddEditEntryDialog.this, getCalendar());
         FragmentManager fragmentManager = getFragmentManager();
         if (fragmentManager != null) {
-            d.show(fragmentManager, "");
+            d.show(fragmentManager, DIALOG_TIME_PICKER_TAG);
         }
     }
 
@@ -171,7 +177,7 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements Dat
         DialogFragment d = DatePickerFragment.newInstance(AddEditEntryDialog.this, getCalendar());
         FragmentManager fragmentManager = getFragmentManager();
         if (fragmentManager != null) {
-            d.show(fragmentManager, "");
+            d.show(fragmentManager, DIALOG_DATE_PICKER_TAG);
         }
     }
 
