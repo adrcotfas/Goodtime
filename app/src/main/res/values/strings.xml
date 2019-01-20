@@ -135,7 +135,6 @@
     <string name="update_pro_5">Backup export and import</string>
     <string name="update_pro_6">Export statistics to CSV</string>
     <string name="update_pro_7">Themes</string>
-    <string name="update_pro_8">@string/pref_screen_saver</string>
     <string name="update_pro_9">Separate notification sound for work and break</string>
     <string name="update_pro_10">Insistent notifications</string>
     <string name="update_pro_11">Remove the upgrade button</string>
@@ -143,20 +142,5 @@
 
     <string name="upgrade_enjoy">Enjoy the pro version!</string>
     <string name="upgrade_extra_features">Extra features</string>
-
-    <string-array name="update_pro">
-        <item>@string/update_pro_1</item>
-        <item>@string/update_pro_2</item>
-        <item>@string/update_pro_3</item>
-        <item>@string/update_pro_4</item>
-        <item>@string/update_pro_5</item>
-        <item>@string/update_pro_6</item>
-        <item>@string/update_pro_7</item>
-        <item>@string/update_pro_8</item>
-        <item>@string/update_pro_9</item>
-        <item>@string/update_pro_10</item>
-        <item>@string/update_pro_11</item>
-        <item>@string/update_pro_12</item>
-    </string-array>
 
 </resources>
