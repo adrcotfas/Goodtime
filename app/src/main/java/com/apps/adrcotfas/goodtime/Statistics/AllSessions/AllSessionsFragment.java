@@ -217,18 +217,17 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             switch (item.getItemId()) {
                 case R.id.action_edit:
                     if (PreferenceHelper.isPro()) {
                         if (mSelectedEntries.size() > 1) {
-                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                             SelectLabelDialog.newInstance(
                                     AllSessionsFragment.this,
                                     null, false)
                                     .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
 
                         } else if (mSessionToEdit != null) {
-                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                             AddEditEntryDialog newFragment = AddEditEntryDialog.newInstance(mSessionToEdit);
                             newFragment.show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
                             mActionMode.finish();

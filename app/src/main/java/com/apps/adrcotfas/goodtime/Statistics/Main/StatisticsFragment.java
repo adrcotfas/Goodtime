@@ -57,6 +57,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -129,7 +130,7 @@ public class StatisticsFragment extends Fragment {
 
     private float mDisplayDensity = 1;
 
-    public View onCreateView(LayoutInflater inflater,
+    public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         StatisticsFragmentMainBinding binding = DataBindingUtil.inflate(

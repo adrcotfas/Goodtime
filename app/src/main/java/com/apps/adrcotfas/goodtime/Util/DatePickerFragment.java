@@ -22,6 +22,7 @@ import com.apps.adrcotfas.goodtime.R;
 
 import java.util.Calendar;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 public class DatePickerFragment extends DialogFragment {
@@ -39,6 +40,7 @@ public class DatePickerFragment extends DialogFragment {
         return dialog;
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (calendar == null) {

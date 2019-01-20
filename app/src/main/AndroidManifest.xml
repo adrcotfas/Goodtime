@@ -36,7 +36,8 @@
             android:name="com.apps.adrcotfas.goodtime.Main.TimerActivity"
             android:showOnLockScreen="true"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            tools:targetApi="jelly_bean_mr1">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -89,7 +90,7 @@
         <service
             android:name="com.apps.adrcotfas.goodtime.BL.TimerService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

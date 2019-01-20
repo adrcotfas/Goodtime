@@ -57,6 +57,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -101,7 +102,7 @@ public class TimerActivity
 
     private static final String DIALOG_SELECT_LABEL_TAG = "dialogSelectLabel";
 
-    public void onStartButtonClick() {
+    public void onStartButtonClick(View view) {
         start(SessionType.WORK);
     }
     public void onStopButtonClick() {
@@ -230,7 +231,7 @@ public class TimerActivity
 
             @Override
             public void onClick(View view) {
-                onStartButtonClick();
+                onStartButtonClick(view);
             }
 
             @Override
@@ -605,7 +606,7 @@ public class TimerActivity
     }
 
     @Override
-    public void onProductPurchased(String productId, TransactionDetails details) {
+    public void onProductPurchased(@NonNull String productId, TransactionDetails details) {
         // do nothing here
     }
 
@@ -631,4 +632,5 @@ public class TimerActivity
     public void onBillingInitialized() {
         mBillingProcessor.loadOwnedPurchasesFromGoogle();
     }
+
 }

@@ -65,7 +65,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         holder.text.setText(mLabels.get(position).label);
         holder.imageLeft.setColorFilter(ThemeHelper.getColor(mContext, mLabels.get(position).color));
         holder.imageLeft.setClickable(false);

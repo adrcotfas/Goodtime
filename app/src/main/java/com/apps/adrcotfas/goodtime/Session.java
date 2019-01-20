@@ -41,10 +41,8 @@ public class Session {
         this.label = label;
     }
 
-    @NonNull
     public final long endTime;
 
-    @NonNull
     public final int totalTime;
 
     @Nullable

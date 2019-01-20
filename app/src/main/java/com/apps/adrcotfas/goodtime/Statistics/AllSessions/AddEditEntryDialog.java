@@ -42,6 +42,7 @@ import org.joda.time.DateTime;
 
 import java.util.Calendar;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
@@ -83,7 +84,7 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements
     @SuppressLint("ResourceType")
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater,
+    public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
