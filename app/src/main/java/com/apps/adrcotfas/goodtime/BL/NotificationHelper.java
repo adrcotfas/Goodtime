@@ -33,8 +33,6 @@ import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 
 import java.util.concurrent.TimeUnit;
 
-//TODO: extract to strings
-
 /**
  * Class responsible with creating and updating notifications for the foreground {@link TimerService}
  * and triggering notifications for events like finishing a session or updating the remaining time.
@@ -168,7 +166,6 @@ public class NotificationHelper extends ContextWrapper {
         return PendingIntent.getActivity(this, 0, openMainIntent, 0);
     }
 
-    //TODO: add string resources
     private static NotificationCompat.Action buildStopAction(Context context) {
 
         PendingIntent stopPendingIntent = PendingIntent.getService(context, 0,

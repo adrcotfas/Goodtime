@@ -220,7 +220,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
             int darkColor = getActivity().getResources().getColor(R.color.gray900);
             int darkColorToolbar = getActivity().getResources().getColor(R.color.gray1000);
 
-            //TODO: maybe do this for Kitkat too
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 final Handler handler = new Handler();
                 handler.postDelayed(() -> {

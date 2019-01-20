@@ -82,8 +82,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
 
         mRecyclerView = binding.mainRecylcerView;
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-
-        //TODO: this might be dangerous because view might be returned before this is executed
+        
         mLabelsViewModel.getLabels().observe(this, labels -> {
             mAdapter = new AllSessionsAdapter(labels);
             mRecyclerView.setAdapter(mAdapter);

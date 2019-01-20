@@ -234,19 +234,7 @@ public class StatisticsFragment extends Fragment {
                 ? formatMinutes(stats.total)
                 : formatLong(stats.total));
 
-        // TODO: move this from here to the refrehs ui part
-        int color = ThemeHelper.getColor(getActivity(), mLabelsViewModel.crtExtendedLabel.getValue().color);
-        mOverview.today.setTextColor(color);
-        mOverview.week.setTextColor(color);
-        mOverview.month.setTextColor(color);
-        mOverview.total.setTextColor(color);
-
-        mHeaderOverview.setTextColor(color);
-        mHeaderHistory.setTextColor(color);
-        mHeaderProductiveTime.setTextColor(color);
-
-        // TODO: extract string resource
-        mOverviewDescription.week.setText("Week " + thisWeekStart.getWeekOfWeekyear());
+        mOverviewDescription.week.setText(getResources().getString(R.string.statistics_week) + " " + thisWeekStart.getWeekOfWeekyear());
         mOverviewDescription.month.setText(thisMonthEnd.toString("MMMM"));
     }
     
@@ -295,10 +283,10 @@ public class StatisticsFragment extends Fragment {
         });
     }
 
-    private void refreshProductiveTimeChart(List<Session> sessions) {
+    private void refreshProductiveTimeChart(List<Session> sessions, int color) {
         // generate according to spinner
         if (mProductiveTime.getSelectedItemPosition() == HOUR_OF_DAY.ordinal()) {
-            generateProductiveTimeChart(sessions, HOUR_OF_DAY);
+            generateProductiveTimeChart(sessions, HOUR_OF_DAY, color);
 
             final int visibleXCount = (int) ThemeHelper.pxToDp(getContext(), mChartHistory.getWidth()) / 36;
             mChartProductiveHours.setVisibleXRangeMaximum(visibleXCount);
@@ -306,7 +294,7 @@ public class StatisticsFragment extends Fragment {
             mChartProductiveHours.getXAxis().setLabelCount(visibleXCount);
 
         } else {
-            generateProductiveTimeChart(sessions, DAY_OF_WEEK);
+            generateProductiveTimeChart(sessions, DAY_OF_WEEK, color);
 
             mChartProductiveHours.setVisibleXRangeMaximum(7);
             mChartProductiveHours.setVisibleXRangeMinimum(7);
@@ -333,12 +321,24 @@ public class StatisticsFragment extends Fragment {
 
     //TODO: make more efficient when setting spinners to not refresh all of it if not needed
     private void refreshUi() {
-        if (mLabelsViewModel.crtExtendedLabel.getValue() != null) {
+        final LabelAndColor labelAndColor = mLabelsViewModel.crtExtendedLabel.getValue();
+
+        if (labelAndColor != null) {
             if (mSessionsToObserve != null) {
                 mSessionsToObserve.removeObservers(this);
             }
 
-            String s = mLabelsViewModel.crtExtendedLabel.getValue().label;
+            final int color = ThemeHelper.getColor(getActivity(), labelAndColor.color);
+            mOverview.today.setTextColor(color);
+            mOverview.week.setTextColor(color);
+            mOverview.month.setTextColor(color);
+            mOverview.total.setTextColor(color);
+
+            mHeaderOverview.setTextColor(color);
+            mHeaderHistory.setTextColor(color);
+            mHeaderProductiveTime.setTextColor(color);
+
+            String s = labelAndColor.label;
             if (getString(R.string.label_all).equals(s)) {
                 mSessionsToObserve = mSessionViewModel.getAllSessionsByEndTime();
 
@@ -346,12 +346,12 @@ public class StatisticsFragment extends Fragment {
                 mSessionsToObserve = mSessionViewModel.getAllSessionsUnlabeled();
 
             } else {
-                mSessionsToObserve = mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().label);
+                mSessionsToObserve = mSessionViewModel.getSessions(labelAndColor.label);
             }
             mSessionsToObserve.observe(this, sessions -> {
                 refreshStats(sessions);
-                refreshHistoryChart(sessions);
-                refreshProductiveTimeChart(sessions);
+                refreshHistoryChart(sessions, color);
+                refreshProductiveTimeChart(sessions, color);
 
                 final Handler handler = new Handler();
                 handler.postDelayed(() -> {
@@ -362,9 +362,9 @@ public class StatisticsFragment extends Fragment {
         }
     }
 
-    private void refreshHistoryChart(List<Session> sessions) {
+    private void refreshHistoryChart(List<Session> sessions, int color) {
 
-        final LineData data = generateHistoryChartData(sessions);
+        final LineData data = generateHistoryChartData(sessions, color);
         final boolean isDurationType = mStatsType.getSelectedItemPosition() == DURATION.ordinal();
 
         mChartHistory.moveViewToX(data.getXMax());
@@ -439,7 +439,7 @@ public class StatisticsFragment extends Fragment {
         mChartHistory.notifyDataSetChanged();
     }
 
-    private LineData generateHistoryChartData(List<Session> sessions) {
+    private LineData generateHistoryChartData(List<Session> sessions, int color) {
 
         final SpinnerStatsType statsType =
                 SpinnerStatsType.values()[mStatsType.getSelectedItemPosition()];
@@ -538,15 +538,12 @@ public class StatisticsFragment extends Fragment {
                 previousTime = crt;
             }
         }
-        return new LineData(generateLineDataSet(yVals));
+        return new LineData(generateLineDataSet(yVals, color));
     }
 
-    private LineDataSet generateLineDataSet(List<Entry> entries) {
-        // TODO: maybe send color as parameter when UI is refreshed
-        LabelAndColor crtLabel = mLabelsViewModel.crtExtendedLabel.getValue();
-        int color = ThemeHelper.getColor(getActivity(), crtLabel.color);
+    private LineDataSet generateLineDataSet(List<Entry> entries, int color) {
 
-        LineDataSet set = new LineDataSet(entries, crtLabel.label);
+        LineDataSet set = new LineDataSet(entries, null);
         set.setColor(color);
         set.setCircleColor(color);
         set.setDrawFilled(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT);
@@ -607,7 +604,7 @@ public class StatisticsFragment extends Fragment {
         mChartProductiveHours.notifyDataSetChanged();
     }
 
-    private void generateProductiveTimeChart(List<Session> sessions, SpinnerProductiveTimeType type) {
+    private void generateProductiveTimeChart(List<Session> sessions, SpinnerProductiveTimeType type, int color) {
         ArrayList<BarEntry> yVals = new ArrayList<>();
         if (type == HOUR_OF_DAY) {
             List<Long> sessionsPerHour = Arrays.asList(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -655,8 +652,7 @@ public class StatisticsFragment extends Fragment {
         }
 
         BarDataSet set1 = new BarDataSet(yVals, "");
-        // TODO: maybe send color as parameter when UI is refreshed
-        set1.setColor(ThemeHelper.getColor(getActivity(), mLabelsViewModel.crtExtendedLabel.getValue().color));
+        set1.setColor(color);
         set1.setHighLightAlpha(0);
         set1.setDrawIcons(false);
 

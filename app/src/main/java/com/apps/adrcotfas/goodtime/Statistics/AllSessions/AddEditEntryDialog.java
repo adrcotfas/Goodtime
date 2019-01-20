@@ -94,7 +94,6 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements
         mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
         mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
 
-        // TODO: implement onClicks with DataBinding
         mViewModel.duration.observe(this, d -> {
             String duration = d.toString();
             binding.duration.setText(duration);

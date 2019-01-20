@@ -77,7 +77,6 @@ public class ImportBackupTask extends AsyncTask<Uri, Void, Boolean> {
         return true;
     }
 
-    //TODO: extract strings
     @Override
     protected void onPostExecute(Boolean result) {
         Toast.makeText(mContext.get(),

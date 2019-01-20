@@ -81,7 +81,6 @@
             android:text="@{com.apps.adrcotfas.goodtime.Util.StringUtils.formatTime(item.endTime)}"
             android:textSize="@dimen/smallerTextSize" />
 
-        <!--TODO: find solution for older versions-->
         <TextView
             android:id="@+id/status"
             android:layout_width="wrap_content"

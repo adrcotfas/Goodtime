@@ -147,7 +147,6 @@ public class TimerService extends LifecycleService {
                 getSessionManager().getCurrentSession()).build());
     }
 
-    //TODO: an improvement would be to stop the service when the timer is paused
     private void onToggleEvent() {
         getSessionManager().toggleTimer();
         startForeground(GOODTIME_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(

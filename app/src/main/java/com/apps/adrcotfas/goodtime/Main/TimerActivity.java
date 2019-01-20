@@ -188,7 +188,7 @@ public class TimerActivity
                         showTutorialSnackbars();
                     })
                     .setAnchorView(mToolbar)
-                    // TODO: style this elsewhere
+                    // TODO: extract style to xml
                     .setActionTextColor(getResources().getColor(R.color.teal200));
             s.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.gray1000));
             TextView tv = s.getView().findViewById(com.google.android.material.R.id.snackbar_text);
@@ -487,7 +487,6 @@ public class TimerActivity
                 .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
     }
 
-    //TODO: extract strings
     public void showFinishDialog(SessionType sessionType) {
 
         Log.i(TAG, "Showing the finish dialog.");
