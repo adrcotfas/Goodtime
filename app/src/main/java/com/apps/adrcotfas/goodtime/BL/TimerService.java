@@ -13,27 +13,22 @@
 
 package com.apps.adrcotfas.goodtime.BL;
 
-import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
-import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.Main.TimerActivity;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import androidx.lifecycle.LifecycleService;
-import androidx.lifecycle.LiveData;
 import de.greenrobot.event.EventBus;
 
 import static android.media.AudioManager.RINGER_MODE_SILENT;
@@ -240,7 +235,6 @@ public class TimerService extends LifecycleService {
         Log.d(TAG, TimerService.this.hashCode() + " onSkipEvent " + sessionType.toString());
 
         getSessionManager().stopTimer();
-        // TODO: store what was done of the session to ROOM
         stopForeground(true);
         updateLongBreakStreak(sessionType);
         onStartEvent(sessionType == SessionType.WORK ? SessionType.BREAK : SessionType.WORK);
@@ -298,9 +292,8 @@ public class TimerService extends LifecycleService {
     }
 
     private void saveToDb() {
-        //TODO: save session of at least one minute
         //TODO: refactor this mess
-        if (true /*getSessionManager().getElapsedTime() >= 60*/) {
+        if (getSessionManager().getElapsedTime() >= 1) {
 
             Handler handler = new Handler();
             Runnable r = () -> {

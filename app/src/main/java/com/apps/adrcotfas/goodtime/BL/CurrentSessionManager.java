@@ -58,7 +58,6 @@ public class CurrentSessionManager extends ContextWrapper{
     public void startTimer(SessionType sessionType) {
         Log.v(TAG, "startTimer: " + sessionType.toString());
 
-        // TODO modify to minutes
         final long duration = TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(sessionType));
         mElapsed = 0;
 
@@ -170,8 +169,7 @@ public class CurrentSessionManager extends ContextWrapper{
     }
 
     public int getElapsedTime() {
-        // TODO: seconds to minutes
-        return mElapsed;
+        return (int)TimeUnit.SECONDS.toMinutes(mElapsed);
     }
 
     private class AppCountDownTimer extends CountDownTimer {
