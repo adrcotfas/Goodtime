@@ -25,7 +25,7 @@ import static com.apps.adrcotfas.goodtime.Util.Constants.SESSION_TYPE;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
-    private String TAG = AlarmReceiver.class.getSimpleName();
+    private final String TAG = AlarmReceiver.class.getSimpleName();
 
     @Override
     public void onReceive(Context context, Intent intent) {

@@ -13,11 +13,11 @@
 
 package com.apps.adrcotfas.goodtime.Settings;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -59,16 +59,15 @@ public class ProperSeekBarPreference extends Preference {
     private SeekBar mSeekBar;
     private TextView mSeekBarValueTextView;
     private boolean mAdjustable; // whether the seekbar should respond to the left/right keys
-    private boolean mShowSeekBarValue; // whether to show the seekbar value TextView next to the bar
-    private String mUnit;
-    private String mDialogTitle;
+    private final boolean mShowSeekBarValue; // whether to show the seekbar value TextView next to the bar
+    private final String mDialogTitle;
 
     private static final String TAG = "ProperSeekBarPreference";
 
     /**
      * Listener reacting to the SeekBar changing value by the user
      */
-    private OnSeekBarChangeListener mSeekBarChangeListener = new OnSeekBarChangeListener() {
+    private final OnSeekBarChangeListener mSeekBarChangeListener = new OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser) {
@@ -90,7 +89,7 @@ public class ProperSeekBarPreference extends Preference {
      * adjustable} attribute is set to true; it transfers the key presses to the SeekBar
      * to be handled accordingly.
      */
-    private View.OnKeyListener mSeekBarKeyListener = new View.OnKeyListener() {
+    private final View.OnKeyListener mSeekBarKeyListener = new View.OnKeyListener() {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
             if (event.getAction() != KeyEvent.ACTION_DOWN) {
@@ -134,7 +133,6 @@ public class ProperSeekBarPreference extends Preference {
         setSeekBarIncrement(a.getInt(R.styleable.ProperSeekBarPreference_seekBarIncrement, 0));
         mAdjustable = a.getBoolean(R.styleable.ProperSeekBarPreference_adjustable, true);
         mShowSeekBarValue = a.getBoolean(R.styleable.ProperSeekBarPreference_showSeekBarValue, true);
-        mUnit = a.getString(R.styleable.ProperSeekBarPreference_unitOfMeasurement);
         mDialogTitle = a.getString(R.styleable.ProperSeekBarPreference_dialogTitle);
         a.recycle();
     }
@@ -166,12 +164,13 @@ public class ProperSeekBarPreference extends Preference {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
             LayoutInflater inflater = LayoutInflater.from(getContext());
+            @SuppressLint("InflateParams")
             View dialogView = inflater.inflate(R.layout.dialog_set_seekbar_value, null);
             builder.setView(dialogView);
 
             builder.setTitle(mDialogTitle);
             builder.setPositiveButton(android.R.string.ok, (di, i) -> {
-                final EditText input = dialogView.findViewById(R.id.wtf);
+                final EditText input = dialogView.findViewById(R.id.value);
                 final String name = input.getText().toString();
                 if (!TextUtils.isEmpty(name)) {
                     setValueInternal(Integer.parseInt(name), true);
@@ -209,7 +208,7 @@ public class ProperSeekBarPreference extends Preference {
 
         mSeekBar.setProgress(mSeekBarValue - mMin);
         if (mSeekBarValueTextView != null) {
-            mSeekBarValueTextView.setText(String.valueOf(mSeekBarValue) + mUnit);
+            mSeekBarValueTextView.setText(String.valueOf(mSeekBarValue));
         }
         mSeekBar.setEnabled(isEnabled());
     }
@@ -239,7 +238,7 @@ public class ProperSeekBarPreference extends Preference {
         return mMin;
     }
 
-    public final void setMax(int max) {
+    private void setMax(int max) {
         if (max < mMin) {
             max = mMin;
         }
@@ -264,7 +263,7 @@ public class ProperSeekBarPreference extends Preference {
      * @param seekBarIncrement The amount to increment or decrement when the user presses an
      *                         arrow key.
      */
-    public final void setSeekBarIncrement(int seekBarIncrement) {
+    private void setSeekBarIncrement(int seekBarIncrement) {
         if (seekBarIncrement != mSeekBarIncrement) {
             mSeekBarIncrement =  Math.min(mMax - mMin, Math.abs(seekBarIncrement));
             notifyChanged();
@@ -298,7 +297,7 @@ public class ProperSeekBarPreference extends Preference {
         if (seekBarValue != mSeekBarValue) {
             mSeekBarValue = seekBarValue;
             if (mSeekBarValueTextView != null) {
-                mSeekBarValueTextView.setText(String.valueOf(mSeekBarValue) + mUnit);
+                mSeekBarValueTextView.setText(String.valueOf(mSeekBarValue));
             }
             persistInt(seekBarValue);
             if (notifyChanged) {
@@ -370,7 +369,7 @@ public class ProperSeekBarPreference extends Preference {
         int min;
         int max;
 
-        public SavedState(Parcel source) {
+        SavedState(Parcel source) {
             super(source);
 
             // Restore the click counter
@@ -389,7 +388,7 @@ public class ProperSeekBarPreference extends Preference {
             dest.writeInt(max);
         }
 
-        public SavedState(Parcelable superState) {
+        SavedState(Parcelable superState) {
             super(superState);
         }
 

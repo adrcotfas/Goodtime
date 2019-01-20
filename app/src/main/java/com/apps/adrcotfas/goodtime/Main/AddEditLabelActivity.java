@@ -200,7 +200,7 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
         updateRecyclerViewVisibility();
     }
 
-    public void updateRecyclerViewVisibility() {
+    private void updateRecyclerViewVisibility() {
         if (mCustomAdapter.getItemCount() == 0) {
             mRecyclerView.setVisibility(View.GONE);
             mEmptyState.setVisibility(View.VISIBLE);

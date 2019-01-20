@@ -38,14 +38,14 @@ public abstract class OnSwipeTouchListener implements View.OnTouchListener {
         return gestureDetector.onTouchEvent(event);
     }
 
-    public abstract void onSwipeRight(View view);
-    public abstract void onSwipeLeft(View view);
-    public abstract void onSwipeBottom(View view);
-    public abstract void onSwipeTop(View view);
-    public abstract void onClick(View view);
-    public abstract boolean onLongClick(View view);
-    public abstract void onPress(View view);
-    public abstract void onRelease(View view);
+    protected abstract void onSwipeRight(View view);
+    protected abstract void onSwipeLeft(View view);
+    protected abstract void onSwipeBottom(View view);
+    protected abstract void onSwipeTop(View view);
+    protected abstract void onClick(View view);
+    protected abstract void onLongClick(View view);
+    protected abstract void onPress(View view);
+    protected abstract void onRelease(View view);
 
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
 

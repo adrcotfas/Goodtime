@@ -27,6 +27,7 @@
 
             <ImageView
                 android:id="@+id/imageView"
+                android:contentDescription="@string/app_name"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:background="@mipmap/ic_launcher"/>
@@ -57,6 +58,7 @@
             android:layout_marginTop="8dp"
             android:gravity="center_vertical"
             android:drawableLeft="@drawable/ic_crown"
+            android:drawableStart="@drawable/ic_crown"
             android:text="@string/upgrade"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

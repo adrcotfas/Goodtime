@@ -24,10 +24,10 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class AllSessionsViewHolder extends RecyclerView.ViewHolder {
-    private StatisticsAllSessionsRowBinding binding;
-    public View rowOverlay;
+    private final StatisticsAllSessionsRowBinding binding;
+    final View rowOverlay;
 
-    public AllSessionsViewHolder(View itemView) {
+    AllSessionsViewHolder(View itemView) {
         super(itemView);
         binding = DataBindingUtil.bind(itemView);
         rowOverlay = binding.overlay;

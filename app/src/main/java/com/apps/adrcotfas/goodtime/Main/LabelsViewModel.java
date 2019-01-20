@@ -18,7 +18,6 @@ import android.app.Application;
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
 import com.apps.adrcotfas.goodtime.Database.LabelAndColorDao;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
-import com.apps.adrcotfas.goodtime.R;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -33,25 +32,23 @@ import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceTotalLabel
 
 public class LabelsViewModel extends AndroidViewModel {
 
-    private LabelAndColorDao mLabelsDao;
-    private ExecutorService mExecutorService;
+    private final LabelAndColorDao mLabelsDao;
+    private final ExecutorService mExecutorService;
 
     /**
      * The current selected label in the Statistics view
      * "extended" because it might be "total" or "unlabeled"
      */
-    public MutableLiveData<LabelAndColor> crtExtendedLabel = new MutableLiveData<>();
-
-    /**
-     * Used to signal the current visible fragment in StatisticsActivity
-     */
-    public MutableLiveData<Boolean> mIsMainView = new MutableLiveData<>();
+    public final MutableLiveData<LabelAndColor> crtExtendedLabel = new MutableLiveData<>();
 
     public LabelsViewModel(@NonNull Application application) {
         super(application);
         mLabelsDao = AppDatabase.getDatabase(application).labelAndColor();
         mExecutorService = Executors.newSingleThreadExecutor();
         crtExtendedLabel.setValue(getInstanceTotalLabel(application.getBaseContext()));
+
+        //Used to signal the current visible fragment in StatisticsActivity
+        MutableLiveData<Boolean> mIsMainView = new MutableLiveData<>();
         mIsMainView.setValue(true);
     }
 

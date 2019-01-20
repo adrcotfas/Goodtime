@@ -41,11 +41,11 @@ import java.util.concurrent.TimeUnit;
 public class NotificationHelper extends ContextWrapper {
 
     private static final String TAG = NotificationHelper.class.getSimpleName();
-    public static final String GOODTIME_NOTIFICATION = "goodtime.notification";
-    public static int GOODTIME_NOTIFICATION_ID = 42;
+    private static final String GOODTIME_NOTIFICATION = "goodtime.notification";
+    public static final int GOODTIME_NOTIFICATION_ID = 42;
 
-    private NotificationManager mManager;
-    private NotificationCompat.Builder mBuilder;
+    private final NotificationManager mManager;
+    private final NotificationCompat.Builder mBuilder;
 
     public NotificationHelper(Context context) {
         super(context);
@@ -133,7 +133,7 @@ public class NotificationHelper extends ContextWrapper {
         return mBuilder;
     }
 
-    public NotificationCompat.Builder getFinishedSessionBuilder(SessionType sessionType) {
+    private NotificationCompat.Builder getFinishedSessionBuilder(SessionType sessionType) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, GOODTIME_NOTIFICATION)
                 .setSmallIcon(R.drawable.ic_status_goodtime)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)

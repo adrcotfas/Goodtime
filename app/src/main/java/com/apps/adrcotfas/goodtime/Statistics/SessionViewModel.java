@@ -29,8 +29,8 @@ import androidx.lifecycle.LiveData;
 
 public class SessionViewModel extends AndroidViewModel {
 
-    private SessionDao mSessionDao;
-    private ExecutorService mExecutorService;
+    private final SessionDao mSessionDao;
+    private final ExecutorService mExecutorService;
 
     public SessionViewModel(@NonNull Application application) {
         super(application);

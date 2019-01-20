@@ -129,9 +129,8 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
                 clearFocusEditText(text, mContext);
                 new AlertDialog.Builder(mContext)
                         .setNegativeButton(android.R.string.cancel, null)
-                        .setPositiveButton(R.string.dialog_delete, (dialogInterface, which) -> {
-                            mCallback.onDeleteLabel(mLabels.get(position), position);
-                        })
+                        .setPositiveButton(R.string.dialog_delete, (dialogInterface, which)
+                                -> mCallback.onDeleteLabel(mLabels.get(position), position))
                         .setTitle(R.string.label_delete_title)
                         .setMessage(R.string.label_delete_message)
                         .create().show();

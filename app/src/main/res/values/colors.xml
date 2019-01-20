@@ -3,28 +3,14 @@
 
     <color name="teal200">#80CBC4</color>
     <color name="teal300">#4DB6AC</color>
-    <color name="teal400">#26A69A</color>
 
-    <color name="gray700">#616161</color>
-    <color name="gray800">#424242</color>
-    <color name="gray850">#323232</color>
     <color name="gray900">#212121</color>
-    <color name="gray950">#171717</color>
     <color name="gray1000">#141414</color>
-
-    <color name="darkIndigo900">#262738</color>
-    <color name="darkIndigo1000">#222332</color>
-    <color name="darkIndigo1100">#1c1d2b</color>
-
-    <color name="blue900">#131a6b</color>
-    <color name="blue1000">#0f1561</color>
-    <color name="blue1100">#080c4e</color>
 
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
 
     <color name="transparent_dark">#1AFFFFFF</color>
-    <color name="transparent_light">#b4ffffff</color>
     <color name="transparent">#1effffff</color>
     <color name="true_transparent">#00FFFFFF</color>
     <color name="grey_500">#9E9E9E</color>

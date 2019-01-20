@@ -24,8 +24,8 @@ class FullscreenHelper {
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
-    private View mContentView;
-    private ActionBar mActionBar;
+    private final View mContentView;
+    private final ActionBar mActionBar;
 
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
@@ -46,7 +46,7 @@ class FullscreenHelper {
             mActionBar.show();
         }
     };
-    private final Runnable mHideRunnable = () -> hide();
+    private final Runnable mHideRunnable = this::hide;
 
     FullscreenHelper(View contentView, ActionBar actionBar) {
 
@@ -57,8 +57,9 @@ class FullscreenHelper {
         mContentView.setOnClickListener(view -> toggle());
         mContentView.setOnTouchListener((view, motionEvent) -> {
             if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
+                delayedHide();
             }
+            view.performClick();
             return false;
         });
 
@@ -73,7 +74,7 @@ class FullscreenHelper {
         }
     }
 
-    public void hide() {
+    private void hide() {
         // Hide UI first
         if (mActionBar != null) {
             mActionBar.hide();
@@ -100,9 +101,9 @@ class FullscreenHelper {
      * Schedules a call to hide() in [delay] milliseconds, canceling any
      * previously scheduled calls.
      */
-    void delayedHide(int delayMillis) {
+    private void delayedHide() {
         mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, delayMillis);
+        mHideHandler.postDelayed(mHideRunnable, FullscreenHelper.AUTO_HIDE_DELAY_MILLIS);
     }
 
     void disable() {

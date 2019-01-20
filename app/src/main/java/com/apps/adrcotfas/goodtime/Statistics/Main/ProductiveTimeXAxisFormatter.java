@@ -24,9 +24,9 @@ import static com.apps.adrcotfas.goodtime.Statistics.Main.SpinnerProductiveTimeT
 /**
  * Custom formatter used to print the day of the week or the hour of the day.
  */
-public class ProductiveTimeXAxisFormatter implements IAxisValueFormatter {
+class ProductiveTimeXAxisFormatter implements IAxisValueFormatter {
 
-    private SpinnerProductiveTimeType mType;
+    private final SpinnerProductiveTimeType mType;
     ProductiveTimeXAxisFormatter(SpinnerProductiveTimeType type) {
         mType = type;
     }

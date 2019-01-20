@@ -8,6 +8,7 @@
 
         <ImageView
             android:id="@+id/image_left"
+            android:contentDescription="@string/label_add"
             android:src="@drawable/ic_add"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
@@ -36,6 +37,7 @@
 
         <ImageButton
             android:id="@+id/image_right"
+            android:contentDescription="@android:string/ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 

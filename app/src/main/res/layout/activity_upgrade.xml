@@ -29,7 +29,7 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
@@ -44,7 +44,7 @@
                             android:id="@+id/title_pro"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pro"
+                            android:text="@string/upgrade_extra_features"
                             android:textColor="@color/teal200"
                             android:textStyle="bold"
 
@@ -72,7 +72,7 @@
                             android:layout_marginBottom="24dp"
                             android:layout_marginStart="24dp"
                             android:layout_marginLeft="24dp"
-                            android:text="buy"
+                            android:text="@string/upgrade"
 
                             app:layout_constraintTop_toBottomOf="@id/content_pro"
                             app:layout_constraintStart_toStartOf="parent"
@@ -85,7 +85,7 @@
                             android:layout_marginBottom="24dp"
                             android:layout_marginEnd="24dp"
                             android:layout_marginRight="24dp"
-                            android:text="consume"
+                            android:text="consume(delete this button)"
                             app:layout_constraintTop_toBottomOf="@id/content_pro"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent" />

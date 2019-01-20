@@ -44,7 +44,7 @@ public class FileUtils {
         copy(inStream, outStream);
     }
 
-    public static void copy(InputStream in, OutputStream out) throws IOException
+    private static void copy(InputStream in, OutputStream out) throws IOException
     {
         int numBytes;
         byte[] buffer = new byte[1024];

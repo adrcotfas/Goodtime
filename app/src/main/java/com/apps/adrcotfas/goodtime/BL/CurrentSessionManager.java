@@ -41,13 +41,13 @@ import static com.apps.adrcotfas.goodtime.Util.Constants.SESSION_TYPE;
  */
 public class CurrentSessionManager extends ContextWrapper{
 
-    private static String TAG = CurrentSessionManager.class.getSimpleName();
+    private static final String TAG = CurrentSessionManager.class.getSimpleName();
 
     private AppCountDownTimer mTimer;
-    private CurrentSession mCurrentSession;
+    private final CurrentSession mCurrentSession;
     private long mRemaining;
     private int mElapsed;
-    private AlarmReceiver mAlarmReceiver;
+    private final AlarmReceiver mAlarmReceiver;
 
     public CurrentSessionManager(Context context, CurrentSession currentSession) {
         super(context);
@@ -123,7 +123,7 @@ public class CurrentSessionManager extends ContextWrapper{
         unregisterAlarmReceiver();
     }
 
-    public void unregisterAlarmReceiver() {
+    private void unregisterAlarmReceiver() {
         Log.v(TAG, "unregisterAlarmReceiver");
         try {
             this.unregisterReceiver(mAlarmReceiver);
@@ -174,13 +174,13 @@ public class CurrentSessionManager extends ContextWrapper{
 
     private class AppCountDownTimer extends CountDownTimer {
 
-        private String TAG = AppCountDownTimer.class.getSimpleName();
+        private final String TAG = AppCountDownTimer.class.getSimpleName();
         /**
          * @param millisInFuture    The number of millis in the future from the call
          *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
          *                          is called.
          */
-        public AppCountDownTimer(long millisInFuture) {
+        private AppCountDownTimer(long millisInFuture) {
             super(millisInFuture, 1000);
         }
 

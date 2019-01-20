@@ -20,10 +20,10 @@ import androidx.lifecycle.MutableLiveData;
  * @see GoodtimeApplication
  */
 public class CurrentSession {
-    private MutableLiveData<Long> mDuration = new MutableLiveData<>();
-    private MutableLiveData<TimerState> mTimerState = new MutableLiveData<>();
-    private MutableLiveData<SessionType> mSessionType = new MutableLiveData<>();
-    private MutableLiveData<String> mLabel = new MutableLiveData<>();
+    private final MutableLiveData<Long> mDuration = new MutableLiveData<>();
+    private final MutableLiveData<TimerState> mTimerState = new MutableLiveData<>();
+    private final MutableLiveData<SessionType> mSessionType = new MutableLiveData<>();
+    private final MutableLiveData<String> mLabel = new MutableLiveData<>();
 
     public CurrentSession(long duration) {
         this.mDuration.setValue(duration);

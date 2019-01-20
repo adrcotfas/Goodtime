@@ -7,7 +7,6 @@
         <attr format="integer" name="seekBarIncrement"/>
         <attr format="boolean" name="adjustable"/>
         <attr format="boolean" name="showSeekBarValue"/>
-        <attr format="string" name="unitOfMeasurement"/>
         <attr format="string" name="dialogTitle"/>
     </declare-styleable>
 
@@ -150,9 +149,9 @@
     </style>
 
     <style name="CardViewStyle" parent="Widget.MaterialComponents.CardView">
-        <item name="android:layout_marginLeft">@dimen/mtrl_card_spacing</item>
-        <item name="android:layout_marginTop">@dimen/mtrl_card_spacing</item>
-        <item name="android:layout_marginRight">@dimen/mtrl_card_spacing</item>
+        <item name="android:layout_marginLeft">@dimen/card_spacing</item>
+        <item name="android:layout_marginTop">@dimen/card_spacing</item>
+        <item name="android:layout_marginRight">@dimen/card_spacing</item>
         <item name="cardBackgroundColor">?attr/cardViewColor</item>
     </style>
 

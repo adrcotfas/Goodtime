@@ -82,7 +82,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
 
         mRecyclerView = binding.mainRecylcerView;
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-        
+
         mLabelsViewModel.getLabels().observe(this, labels -> {
             mAdapter = new AllSessionsAdapter(labels);
             mRecyclerView.setAdapter(mAdapter);
@@ -140,7 +140,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
         }
     }
 
-    public void multiSelect(int position) {
+    private void multiSelect(int position) {
         Session s = mAdapter.mEntries.get(position);
         if (s != null) {
             if (mActionMode != null) {
@@ -200,7 +200,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
         }
     }
 
-    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+    private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -260,7 +260,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
         }
     };
 
-    public void updateRecyclerViewVisibility() {
+    private void updateRecyclerViewVisibility() {
         final Handler handler = new Handler();
         handler.postDelayed(() -> {
             mProgressBar.setVisibility(View.GONE);

@@ -234,7 +234,8 @@ public class StatisticsFragment extends Fragment {
                 ? formatMinutes(stats.total)
                 : formatLong(stats.total));
 
-        mOverviewDescription.week.setText(getResources().getString(R.string.statistics_week) + " " + thisWeekStart.getWeekOfWeekyear());
+        mOverviewDescription.week.setText(
+                getResources().getString(R.string.statistics_week) + " " + thisWeekStart.getWeekOfWeekyear());
         mOverviewDescription.month.setText(thisMonthEnd.toString("MMMM"));
     }
     
@@ -557,7 +558,7 @@ public class StatisticsFragment extends Fragment {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             set.setDrawFilled(false);
             set.setLineWidth(2f);
-            set.setCircleSize(4f);
+            set.setCircleRadius(4f);
             set.setDrawCircleHole(true);
         }
         return set;

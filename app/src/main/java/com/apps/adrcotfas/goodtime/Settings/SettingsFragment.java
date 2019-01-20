@@ -69,11 +69,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
 

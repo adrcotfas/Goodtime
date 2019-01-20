@@ -6,12 +6,15 @@
     android:minWidth="300dp">
 
     <EditText
-        android:id="@+id/wtf"
+        android:id="@+id/value"
+        android:autofillHints=""
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:layout_marginLeft="22dp"
+        android:layout_marginStart="22dp"
         android:layout_marginRight="32dp"
+        android:layout_marginEnd="32dp"
         android:inputType="numberDecimal"
         android:singleLine="true"
         android:maxLength="3"/>

@@ -111,7 +111,7 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements
                         binding.labelChip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), color))));
                 binding.labelDrawable.setImageDrawable(getResources().getDrawable(R.drawable.ic_label));
             } else {
-                binding.labelChip.setText("add label");
+                binding.labelChip.setText(getResources().getString(R.string.label_add));
                 binding.labelChip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), COLOR_INDEX_UNLABELED)));
                 binding.labelDrawable.setImageDrawable(getResources().getDrawable(R.drawable.ic_label_off));
             }

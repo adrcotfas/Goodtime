@@ -94,7 +94,12 @@ public class TimerActivity
     private BillingProcessor mBillingProcessor;
     private long mBackPressedAt;
 
-    private static String DIALOG_SELECT_LABEL_TAG = "dialogSelectLabel";
+    private MenuItem mStatusButton;
+    private View mBoundsView;
+    private TextView mTimeLabel;
+    private Toolbar mToolbar;
+
+    private static final String DIALOG_SELECT_LABEL_TAG = "dialogSelectLabel";
 
     public void onStartButtonClick() {
         start(SessionType.WORK);
@@ -120,11 +125,6 @@ public class TimerActivity
             }
         }
     }
-
-    MenuItem mStatusButton;
-    View mBoundsView;
-    TextView mTimeLabel;
-    Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -234,10 +234,9 @@ public class TimerActivity
             }
 
             @Override
-            public boolean onLongClick(View view) {
+            public void onLongClick(View view) {
                 Intent settingsIntent = new Intent(TimerActivity.this, SettingsActivity.class);
                 startActivity(settingsIntent);
-                return true;
             }
 
             @Override
@@ -346,7 +345,7 @@ public class TimerActivity
     }
 
     private void setupEvents() {
-        mCurrentSession.getDuration().observe(TimerActivity.this, millis -> updateTime(millis));
+        mCurrentSession.getDuration().observe(TimerActivity.this, this::updateTime);
         mCurrentSession.getSessionType().observe(TimerActivity.this, sessionType -> {
             if (mStatusButton != null) {
                 if (sessionType == SessionType.WORK) {
@@ -419,7 +418,7 @@ public class TimerActivity
         }
     }
 
-    public void updateTime(Long millis) {
+    private void updateTime(Long millis) {
 
         long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
         long minutes = TimeUnit.SECONDS.toMinutes(seconds);
@@ -441,7 +440,7 @@ public class TimerActivity
 
     }
 
-    public void start(SessionType sessionType) {
+    private void start(SessionType sessionType) {
         Intent startIntent = new Intent();
         switch (mCurrentSession.getTimerState().getValue()) {
             case INACTIVE:
@@ -463,7 +462,7 @@ public class TimerActivity
         }
     }
 
-    public void stop() {
+    private void stop() {
         Intent stopIntent = new IntentWithAction(TimerActivity.this, TimerService.class, Constants.ACTION.STOP);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(stopIntent);
@@ -481,13 +480,13 @@ public class TimerActivity
         }
     }
 
-    public void showEditLabelDialog() {
+    private void showEditLabelDialog() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         SelectLabelDialog.newInstance(this, PreferenceHelper.getCurrentSessionLabel().label, false)
                 .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
     }
 
-    public void showFinishDialog(SessionType sessionType) {
+    private void showFinishDialog(SessionType sessionType) {
 
         Log.i(TAG, "Showing the finish dialog.");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -525,7 +524,7 @@ public class TimerActivity
         }
     }
 
-    public void toggleKeepScreenOn(boolean enabled) {
+    private void toggleKeepScreenOn(boolean enabled) {
         if (enabled) {
             getWindow().addFlags(FLAG_KEEP_SCREEN_ON);
         } else {

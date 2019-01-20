@@ -35,7 +35,7 @@ public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHold
     private Context mContext;
     public List<Session> mEntries = new ArrayList<>();
     public List<Long> mSelectedEntries = new ArrayList<>();
-    private List<LabelAndColor> mLabels;
+    private final List<LabelAndColor> mLabels;
 
     AllSessionsAdapter(List<LabelAndColor> labels) {
         // this and the override of getItemId are to avoid clipping in the view
@@ -108,7 +108,7 @@ public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHold
 
         private final List<Session> oldSessions, newSessions;
 
-        public PostDiffCallback(List<Session> oldSessions, List<Session> newSessions) {
+        private PostDiffCallback(List<Session> oldSessions, List<Session> newSessions) {
             this.oldSessions = oldSessions;
             this.newSessions = newSessions;
         }

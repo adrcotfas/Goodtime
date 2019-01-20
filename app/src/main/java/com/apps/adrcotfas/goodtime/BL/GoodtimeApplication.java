@@ -31,7 +31,7 @@ public class GoodtimeApplication extends Application {
 
     private static volatile GoodtimeApplication INSTANCE;
     private static CurrentSessionManager mCurrentSessionManager;
-    public static SharedPreferences mPreferences;
+    private static SharedPreferences mPreferences;
 
     public static GoodtimeApplication getInstance() {
         return INSTANCE;

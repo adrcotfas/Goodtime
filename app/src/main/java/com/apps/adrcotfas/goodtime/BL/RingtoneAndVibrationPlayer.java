@@ -22,7 +22,7 @@ import android.os.Vibrator;
 
 import java.io.IOException;
 
-public class RingtoneAndVibrationPlayer extends ContextWrapper{
+class RingtoneAndVibrationPlayer extends ContextWrapper{
 
     private MediaPlayer mMediaPlayer;
     private Vibrator mVibrator;

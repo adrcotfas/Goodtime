@@ -254,7 +254,7 @@ public class TimerService extends LifecycleService {
         }
     }
 
-    CurrentSessionManager getSessionManager() {
+    private CurrentSessionManager getSessionManager() {
         return GoodtimeApplication.getCurrentSessionManager();
     }
 
@@ -326,10 +326,5 @@ public class TimerService extends LifecycleService {
         activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activityIntent.putExtra("42", 42);
         getApplication().startActivity(activityIntent);
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return super.onBind(intent);
     }
 }

@@ -40,10 +40,10 @@ public class PreferenceHelper {
     public final static String RINGTONE_WORK_FINISHED      = "pref_ringtone";
     public final static String RINGTONE_BREAK_FINISHED     = "pref_ringtone_break";
     public final static String RINGTONE_BREAK_FINISHED_DUMMY = "pref_ringtone_break_dummy";
-    public final static String ENABLE_VIBRATE              = "pref_vibrate";
-    public final static String ENABLE_FULLSCREEN           = "pref_fullscreen";
+    private final static String ENABLE_VIBRATE              = "pref_vibrate";
+    private final static String ENABLE_FULLSCREEN           = "pref_fullscreen";
     public final static String DISABLE_SOUND_AND_VIBRATION = "pref_disable_sound_and_vibration";
-    public final static String DISABLE_WIFI                = "pref_disable_wifi";
+    private final static String DISABLE_WIFI                = "pref_disable_wifi";
     public final static String ENABLE_SCREEN_ON            = "pref_keep_screen_on";
     public final static String ENABLE_SCREENSAVER_MODE     = "pref_screen_saver";
     public final static String AUTO_START_BREAK            = "pref_auto_start_break";
@@ -52,15 +52,15 @@ public class PreferenceHelper {
 
     public final static String DISABLE_BATTERY_OPTIMIZATION = "pref_disable_battery_optimization";
 
-    public final static String WORK_STREAK                 = "pref_WORK_STREAK";
-    public final static String LAST_WORK_FINISHED_AT       = "pref_last_work_finished_at";
+    private final static String WORK_STREAK                 = "pref_WORK_STREAK";
+    private final static String LAST_WORK_FINISHED_AT       = "pref_last_work_finished_at";
     private static final String ADDED_60_SECONDS_STATE     = "pref_added_60_seconds_State";
 
     private static final String CURRENT_SESSION_LABEL      = "pref_current_session_label";
     private static final String CURRENT_SESSION_COLOR      = "pref_current_session_color";
     private static final String INTRO_SNACKBAR_STEP        = "pref_intro_snackbar_step";
 
-    public static void migratePreferences() {
+    static void migratePreferences() {
         if (getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getInt(PREFERENCES_VERSION_INTERNAL, 0) == 0) {
             getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit().clear().apply();
@@ -90,37 +90,37 @@ public class PreferenceHelper {
         return duration;
     }
 
-    public static boolean isLongBreakEnabled() {
+    static boolean isLongBreakEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(ENABLE_LONG_BREAK, false);
     }
 
-    public static int getSessionsBeforeLongBreak() {
+    private static int getSessionsBeforeLongBreak() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getInt(SESSIONS_BEFORE_LONG_BREAK, 4);
     }
 
-    public static boolean isRingtoneEnabled() {
+    static boolean isRingtoneEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(ENABLE_RINGTONE, true);
     }
 
-    public static boolean isRingtoneInsistent() {
+    static boolean isRingtoneInsistent() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(INSISTENT_RINGTONE, false);
     }
 
-    public static String getNotificationSoundWorkFinished() {
+    static String getNotificationSoundWorkFinished() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getString(RINGTONE_WORK_FINISHED, "");
     }
 
-    public static String getNotificationSoundBreakFinished() {
+    static String getNotificationSoundBreakFinished() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getString(RINGTONE_BREAK_FINISHED, "");
     }
 
-    public static boolean isVibrationEnabled() {
+    static boolean isVibrationEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(ENABLE_VIBRATE, true);
     }
@@ -130,12 +130,12 @@ public class PreferenceHelper {
                 .getBoolean(ENABLE_FULLSCREEN, false);
     }
 
-    public static boolean isSoundAndVibrationDisabled() {
+    static boolean isSoundAndVibrationDisabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(DISABLE_SOUND_AND_VIBRATION, false);
     }
 
-    public static boolean isWiFiDisabled() {
+    static boolean isWiFiDisabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(DISABLE_WIFI, false);
     }
@@ -170,7 +170,7 @@ public class PreferenceHelper {
      * in a reasonable time frame comparing with the last completed work session,
      * else it considers this session the first completed one in the streak.
      */
-    public static void incrementCurrentStreak() {
+    static void incrementCurrentStreak() {
 
         // Add an extra 10 minutes to a work and break sessions duration
         // If the user did not complete another session in this time frame, just increment from 0.
@@ -189,22 +189,22 @@ public class PreferenceHelper {
                 .putLong(LAST_WORK_FINISHED_AT, increment ? currentMillis: 0).apply();
     }
 
-    public static int getCurrentStreak() {
+    static int getCurrentStreak() {
         return GoodtimeApplication.getSharedPreferences().getInt(WORK_STREAK, 0);
     }
 
-    public static long lastWorkFinishedAt() {
+    static long lastWorkFinishedAt() {
         return GoodtimeApplication.getSharedPreferences().getLong(LAST_WORK_FINISHED_AT, 0);
     }
 
-    public static void resetCurrentStreak() {
+    static void resetCurrentStreak() {
         GoodtimeApplication.getSharedPreferences().edit()
                 .putInt(WORK_STREAK, 0).apply();
         GoodtimeApplication.getSharedPreferences().edit()
                 .putLong(LAST_WORK_FINISHED_AT, 0).apply();
     }
 
-    public static boolean itsTimeForLongBreak() {
+    static boolean itsTimeForLongBreak() {
         return getCurrentStreak() >= getSessionsBeforeLongBreak();
     }
 
@@ -215,7 +215,7 @@ public class PreferenceHelper {
      * It should be set to false when a session is stopped by a "stop" event and when a session is finished.
      * @param enable specifies the new state.
      */
-    public static void toggleAdded60SecondsState(boolean enable) {
+    static void toggleAdded60SecondsState(boolean enable) {
         GoodtimeApplication.getSharedPreferences().edit()
                 .putBoolean(ADDED_60_SECONDS_STATE, enable).apply();
     }
@@ -224,7 +224,7 @@ public class PreferenceHelper {
      * This is used to identify when not to increase the current finished session streak.
      * @return the state of the "added 60 seconds" state.
      */
-    public static boolean isInAdded60SecondsState() {
+    static boolean isInAdded60SecondsState() {
         return GoodtimeApplication.getSharedPreferences().getBoolean(ADDED_60_SECONDS_STATE, false);
     }
 

@@ -56,7 +56,6 @@ public class SelectLabelDialog extends DialogFragment {
     }
 
     private String mLabel;
-    private LabelsViewModel mLabelsViewModel;
     private OnLabelSelectedListener mCallback;
     private boolean mIsExtendedVersion;
 
@@ -83,7 +82,7 @@ public class SelectLabelDialog extends DialogFragment {
                 null,
                 false);
 
-        mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
+        LabelsViewModel mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
         mLabelsViewModel.getLabels().observe(this, labels -> {
 
             int i = 0;

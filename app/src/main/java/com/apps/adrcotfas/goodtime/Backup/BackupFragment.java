@@ -65,9 +65,7 @@ public class BackupFragment extends BottomSheetDialogFragment {
         binding.exportBackup.setOnClickListener(view -> exportBackup());
         binding.importBackup.setOnClickListener(view -> importBackup());
         binding.exportCsv.setOnClickListener(view -> exportCsv());
-
-        View view = binding.getRoot();
-        return view;
+        return binding.getRoot();
     }
 
     @Override

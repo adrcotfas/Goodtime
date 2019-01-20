@@ -30,11 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
-import androidx.core.content.ContextCompat;
-
 public class ImportBackupTask extends AsyncTask<Uri, Void, Boolean> {
 
-    private WeakReference<Context> mContext;
+    private final WeakReference<Context> mContext;
 
     ImportBackupTask(Context context) {
         mContext = new WeakReference<>(context);
@@ -51,14 +49,11 @@ public class ImportBackupTask extends AsyncTask<Uri, Void, Boolean> {
             tempFile.deleteOnExit();
             FileUtils.copy(tmpStream, tempFile);
 
-            Cursor cursor = null;
-            try {
-                cursor = mContext.get().getContentResolver().query(uris[0], null, null, null, null);
+            try (Cursor cursor = mContext.get().getContentResolver().query(
+                    uris[0], null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
                     fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                 }
-            } finally {
-                cursor.close();
             }
 
             // Walking on thin ice but this should suffice for now

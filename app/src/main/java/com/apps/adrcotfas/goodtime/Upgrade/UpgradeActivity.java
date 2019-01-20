@@ -40,7 +40,7 @@ import static com.anjlab.android.iab.v3.Constants.BILLING_RESPONSE_RESULT_SERVIC
 
 public class UpgradeActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler{
 
-    public static String sku = "android.test.purchased";
+    public static final String sku = "android.test.purchased";
     private boolean readyToPurchase = false;
     private Button buy;
     private BillingProcessor mBillingProcessor;

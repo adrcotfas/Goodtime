@@ -31,8 +31,8 @@ import com.google.android.material.chip.ChipGroup;
 
 public class ThemeHelper {
 
-    public static int COLOR_INDEX_UNLABELED = -1;
-    public static int COLOR_INDEX_ALL_LABELS = 42;
+    public static final int COLOR_INDEX_UNLABELED = -1;
+    public static final int COLOR_INDEX_ALL_LABELS = 42;
 
     public static void setTheme(AppCompatActivity activity) {
         if (PreferenceHelper.isAmoledTheme()) {
@@ -93,7 +93,7 @@ public class ThemeHelper {
         return context.getResources().getIntArray(resourceId);
     }
 
-    public static int getResource(@AttrRes int attrId, Context context)
+    private static int getResource(@AttrRes int attrId, Context context)
     {
         TypedArray ta = getTypedArray(attrId, context);
         int resourceId = ta.getResourceId(0, -1);

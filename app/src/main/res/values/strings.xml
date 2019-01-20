@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="pref_break_duration">"Break duration"</string>
-    <string name="pref_counter">"Sessions counter"</string>
     <string name="pref_disable_sound_and_vibration">"Disable sound and vibration"</string>
     <string name="pref_disable_wifi">"Disable Wi-Fi"</string>
     <string name="pref_fullscreen">"Fullscreen mode"</string>
-    <string name="pref_grant_permission">"Click to grant permission"</string>
     <string name="pref_header_notifications">"Notifications"</string>
     <string name="pref_header_general">"General"</string>
     <string name="pref_keep_screen_on">"Keep the screen on"</string>
-    <string name="pref_landscape">"Landscape mode"</string>
     <string name="pref_long_break_duration">"Long break duration"</string>
     <string name="pref_ringtone">"Finished work notification"</string>
     <string name="pref_ringtone_summary">"Set the notification sound"</string>
@@ -55,6 +52,7 @@
 
     <string name="labels">Labels</string>
     <string name="label_current">Current label</string>
+    <string name="label_name">Label name</string>
     <string name="label_already_exists">Label already exists</string>
     <string name="label_select_color">Select color</string>
     <string name="label_delete_title">Delete label?</string>
@@ -144,6 +142,7 @@
     <string name="update_pro_12">All future features for free</string>
 
     <string name="upgrade_enjoy">Enjoy the pro version!</string>
+    <string name="upgrade_extra_features">Extra features</string>
 
     <string-array name="update_pro">
         <item>@string/update_pro_1</item>

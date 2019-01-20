@@ -32,7 +32,7 @@ import static androidx.room.ForeignKey.SET_NULL;
         onDelete = SET_NULL))
 public class Session {
     @PrimaryKey(autoGenerate = true)
-    public long id;
+    public final long id;
 
     public Session(long id, long endTime, int totalTime, @Nullable String label) {
         this.id = id;
@@ -42,11 +42,11 @@ public class Session {
     }
 
     @NonNull
-    public long endTime;
+    public final long endTime;
 
     @NonNull
-    public int totalTime;
+    public final int totalTime;
 
     @Nullable
-    public String label;
+    public final String label;
 }

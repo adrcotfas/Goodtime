@@ -1,4 +1,5 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,6 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:drawableLeft="@drawable/ic_duration"
+            android:drawableStart="@drawable/ic_duration"
             android:inputType="numberDecimal"
             android:maxLength="3"
             android:imeOptions="actionDone"
@@ -41,15 +43,19 @@
                 android:layout_height="match_parent"
                 android:id="@+id/edit_date"
                 android:drawableLeft="@drawable/ic_clock"
+                android:drawableStart="@drawable/ic_clock"
                 android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 style="@style/AllSessionsAddEditDialogRow"/>
 
             <TextView
                 android:id="@+id/edit_time"
                 android:layout_width="wrap_content"
                 android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_height="match_parent"
-                style="@style/AllSessionsAddEditDialogRowEnd"/>
+                style="@style/AllSessionsAddEditDialogRowEnd"
+                tools:ignore="RelativeOverlap" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -60,6 +66,7 @@
 
             <ImageView
                 android:id="@+id/label_drawable"
+                android:contentDescription="@string/labels"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
@@ -87,6 +94,7 @@
             android:layout_height="48dp"
             android:layout_marginBottom="24dp"
             android:drawableLeft="@drawable/ic_done"
+            android:drawableStart="@drawable/ic_done"
             android:text="@string/save"
             style="@style/AllSessionsAddEditDialogRow"/>
 

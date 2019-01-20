@@ -7,6 +7,7 @@
     <ImageView
         android:id="@+id/image_left"
         android:src="@drawable/ic_label"
+        android:contentDescription="@string/labels"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
@@ -24,6 +25,7 @@
 
     <EditText
         android:id="@+id/text"
+        android:hint="@string/label_name"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/image_left"
         android:layout_toEndOf="@id/image_left"
@@ -41,6 +43,7 @@
 
     <ImageView
         android:id="@+id/image_delete"
+        android:contentDescription="@string/dialog_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
@@ -59,6 +62,7 @@
 
     <ImageView
         android:id="@+id/image_right"
+        android:contentDescription="@string/edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
