@@ -56,6 +56,9 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
         ThemeHelper.setTheme(this);
 
         ActivityUpgradeBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_upgrade);
+
+        // TODO: remove this in the final version
+        //--------------
         buy = binding.buttonPro;
         buy.setOnClickListener(v -> {
             if (!readyToPurchase) {
@@ -68,8 +71,10 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
                 mBillingProcessor.purchase(UpgradeActivity.this, sku);
             }
         });
+        //--------------
 
-        binding.buttonConsume.setOnClickListener(v -> {
+        binding.titlePro.setClickable(true);
+        binding.titlePro.setOnClickListener(v -> {
             mBillingProcessor.consumePurchase(sku);
             GoodtimeApplication.getSharedPreferences().edit()
                     .putBoolean("pref_blana", false).apply();

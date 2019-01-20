@@ -12,7 +12,8 @@
   ~ either express or implied. See the License for the specific language governing permissions and limitations under the License.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
@@ -45,7 +46,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/upgrade_extra_features"
-                            android:textColor="@color/teal200"
+                            android:textColor="@color/gold"
                             android:textStyle="bold"
 
                             app:layout_constraintTop_toTopOf="parent"
@@ -56,7 +57,7 @@
 
                         <TextView
                             android:id="@+id/content_pro"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="24dp"
                             android:lineSpacingMultiplier="1.5"
@@ -65,30 +66,29 @@
                             app:layout_constraintTop_toBottomOf="@id/title_pro"
                             app:layout_constraintStart_toStartOf="parent" />
 
-                        <Button
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/button_pro"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+
                             android:layout_marginBottom="24dp"
                             android:layout_marginStart="24dp"
+                            android:layout_marginEnd="24dp"
                             android:layout_marginLeft="24dp"
+                            android:layout_marginRight="24dp"
+
                             android:text="@string/upgrade"
+
+                            app:backgroundTint="@color/gold"
+                            app:icon="@drawable/ic_crown"
+                            app:iconTint="@color/white"
+                            style="@style/Widget.MaterialComponents.Button.Icon"
 
                             app:layout_constraintTop_toBottomOf="@id/content_pro"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"/>
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            tools:targetApi="lollipop" />
 
-                        <Button
-                            android:id="@+id/button_consume"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="24dp"
-                            android:layout_marginEnd="24dp"
-                            android:layout_marginRight="24dp"
-                            android:text="consume(delete this button)"
-                            app:layout_constraintTop_toBottomOf="@id/content_pro"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
