@@ -26,6 +26,7 @@ import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.takisoft.colorpicker.ColorPickerDialog;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -47,12 +48,12 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
 
     private LayoutInflater inflater;
     private List<LabelAndColor> mLabels;
-    private Context mContext;
+    private WeakReference<Context> mContext;
     private OnEditLabelListener mCallback;
 
     public AddEditLabelsAdapter(Context ctx, List<LabelAndColor> labels, OnEditLabelListener callback){
         inflater = LayoutInflater.from(ctx);
-        mContext = ctx;
+        mContext = new WeakReference<>(ctx);
         mLabels = labels;
         mCallback = callback;
     }
@@ -67,7 +68,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         holder.text.setText(mLabels.get(position).label);
-        holder.imageLeft.setColorFilter(ThemeHelper.getColor(mContext, mLabels.get(position).color));
+        holder.imageLeft.setColorFilter(ThemeHelper.getColor(mContext.get(), mLabels.get(position).color));
         holder.imageLeft.setClickable(false);
     }
 
@@ -97,23 +98,23 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
                 int position = getAdapterPosition();
                 LabelAndColor crtLabel = mLabels.get(position);
                 imageLeft.setImageDrawable(ContextCompat.getDrawable(
-                        mContext, hasFocus ? R.drawable.ic_palette : R.drawable.ic_label));
+                        mContext.get(), hasFocus ? R.drawable.ic_palette : R.drawable.ic_label));
                 imageLeft.setClickable(hasFocus);
-                imageLeft.setColorFilter(ThemeHelper.getColor(mContext, crtLabel.color));
+                imageLeft.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.color));
 
                 imageDelete.setVisibility(hasFocus ? View.VISIBLE : View.INVISIBLE);
 
                 imageRight.setImageDrawable(ContextCompat.getDrawable(
-                        mContext, hasFocus ? R.drawable.ic_done : R.drawable.ic_edit));
+                        mContext.get(), hasFocus ? R.drawable.ic_done : R.drawable.ic_edit));
                 // the done button or the edit button (depending on focus)
                 imageRight.setOnClickListener(hasFocus
-                        ? v -> clearFocusEditText(text, mContext)
-                        : v -> requestFocusEditText(text, mContext));
+                        ? v -> clearFocusEditText(text, mContext.get())
+                        : v -> requestFocusEditText(text, mContext.get()));
 
                 if (!hasFocus) {
                     String newLabelName = text.getText().toString();
                     // save a label when losing focus if any changes were made
-                    if (labelIsGoodToAdd(mContext, mLabels, newLabelName, crtLabel.label)) {
+                    if (labelIsGoodToAdd(mContext.get(), mLabels, newLabelName, crtLabel.label)) {
                         mCallback.onEditLabel(crtLabel.label, newLabelName);
                         crtLabel.label = newLabelName;
                         notifyItemChanged(position);
@@ -126,8 +127,8 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
             // delete a label
             imageDelete.setOnClickListener(v -> {
                 int position = getAdapterPosition();
-                clearFocusEditText(text, mContext);
-                new AlertDialog.Builder(mContext)
+                clearFocusEditText(text, mContext.get());
+                new AlertDialog.Builder(mContext.get())
                         .setNegativeButton(android.R.string.cancel, null)
                         .setPositiveButton(R.string.dialog_delete, (dialogInterface, which)
                                 -> mCallback.onDeleteLabel(mLabels.get(position), position))
@@ -139,7 +140,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
             // save the changes by clearing the focus
             text.setOnEditorActionListener((v, actionId, event) -> {
                 if(actionId == EditorInfo.IME_ACTION_DONE){
-                    clearFocusEditText(text, mContext);
+                    clearFocusEditText(text, mContext.get());
                     return true;
                 }
                 return false;
@@ -148,22 +149,22 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
             // changing the color of a label
             imageLeft.setOnClickListener(v -> {
                 LabelAndColor crtLabel = mLabels.get(getAdapterPosition());
-                final ColorPickerDialog.Params p = new ColorPickerDialog.Params.Builder(mContext)
-                        .setColors(ThemeHelper.getPalette(mContext))
-                        .setSelectedColor(ThemeHelper.getColor(mContext, crtLabel.color))
+                final ColorPickerDialog.Params p = new ColorPickerDialog.Params.Builder(mContext.get())
+                        .setColors(ThemeHelper.getPalette(mContext.get()))
+                        .setSelectedColor(ThemeHelper.getColor(mContext.get(), crtLabel.color))
                         .build();
-                ColorPickerDialog dialog = new ColorPickerDialog(mContext, R.style.DialogTheme, c
+                ColorPickerDialog dialog = new ColorPickerDialog(mContext.get(), R.style.DialogTheme, c
                         -> {
-                    mCallback.onEditColor(crtLabel.label, ThemeHelper.getIndexOfColor(mContext, c));
+                    mCallback.onEditColor(crtLabel.label, ThemeHelper.getIndexOfColor(mContext.get(), c));
                     imageLeft.setColorFilter(c);
-                    crtLabel.color = ThemeHelper.getIndexOfColor(mContext, c);
+                    crtLabel.color = ThemeHelper.getIndexOfColor(mContext.get(), c);
                 }, p);
                 dialog.setTitle(R.string.label_select_color);
                 dialog.show();
             });
 
             // the edit button
-            imageRight.setOnClickListener(v -> requestFocusEditText(text, mContext));
+            imageRight.setOnClickListener(v -> requestFocusEditText(text, mContext.get()));
         }
     }
 }

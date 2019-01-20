@@ -24,6 +24,7 @@ import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHolder> {
-    private Context mContext;
+    private WeakReference<Context> mContext;
     public List<Session> mEntries = new ArrayList<>();
     public List<Long> mSelectedEntries = new ArrayList<>();
     private final List<LabelAndColor> mLabels;
@@ -46,8 +47,8 @@ public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHold
     @NonNull
     @Override
     public AllSessionsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        mContext = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(mContext);
+        mContext = new WeakReference<>(parent.getContext());
+        LayoutInflater inflater = LayoutInflater.from(mContext.get());
         View statusContainer = inflater.inflate(R.layout.statistics_all_sessions_row, parent, false);
         return new AllSessionsViewHolder(statusContainer);
     }
@@ -56,7 +57,7 @@ public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHold
     public void onBindViewHolder(@NonNull AllSessionsViewHolder holder, int position) {
         Session session = mEntries.get(position);
 
-        Drawable d = mContext.getResources().getDrawable(R.drawable.shape_rectangle);
+        Drawable d = mContext.get().getResources().getDrawable(R.drawable.shape_rectangle);
         holder.bind(session, getColor(session.label), d);
 
         holder.rowOverlay.setVisibility(
@@ -78,7 +79,7 @@ public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHold
         int color = 0;
         for (LabelAndColor l : mLabels) {
             if (l.label.equals(label)) {
-                color = ThemeHelper.getColor(mContext, l.color);
+                color = ThemeHelper.getColor(mContext.get(), l.color);
                 break;
             }
         }

@@ -30,6 +30,7 @@ import com.apps.adrcotfas.goodtime.databinding.DialogSelectLabelBinding;
 import com.google.android.material.chip.Chip;
 
 
+import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -56,7 +57,7 @@ public class SelectLabelDialog extends DialogFragment {
     }
 
     private String mLabel;
-    private OnLabelSelectedListener mCallback;
+    private WeakReference<OnLabelSelectedListener> mCallback;
     private boolean mIsExtendedVersion;
 
     public SelectLabelDialog() {
@@ -65,7 +66,7 @@ public class SelectLabelDialog extends DialogFragment {
 
     public static SelectLabelDialog newInstance(OnLabelSelectedListener listener, String label, boolean isExtendedVersion) {
         SelectLabelDialog dialog = new SelectLabelDialog();
-        dialog.mCallback = listener;
+        dialog.mCallback = new WeakReference<>(listener);
         dialog.mLabel = label;
         dialog.mIsExtendedVersion = isExtendedVersion;
         return dialog;
@@ -154,7 +155,7 @@ public class SelectLabelDialog extends DialogFragment {
 
     private void notifyLabelSelected(LabelAndColor labelAndColor) {
         if (mCallback != null) {
-            mCallback.onLabelSelected(labelAndColor);
+            mCallback.get().onLabelSelected(labelAndColor);
         }
     }
 }
