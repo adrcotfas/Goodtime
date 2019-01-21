@@ -22,13 +22,29 @@
             android:visibility="invisible">
         </androidx.recyclerview.widget.RecyclerView>
 
-        <TextView
+        <LinearLayout
             android:id="@+id/empty_state"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/add_label"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="@string/empty_state_no_items"
-            android:visibility="invisible"/>
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <ImageView
+                android:id="@id/imageView"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_list"
+                android:tint="@color/grey_500"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/empty_state_no_items"
+                android:textSize="@dimen/largeTextSize"
+                android:gravity="center"/>
+        </LinearLayout>
+
     </RelativeLayout>
 </layout>

@@ -18,6 +18,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -118,13 +119,16 @@ public class SelectLabelDialog extends DialogFragment {
                 binding.labels.addView(chip);
             }
 
-            binding.progressBar.setVisibility(View.GONE);
-            if (binding.labels.getChildCount() == 0) {
-                binding.emptyState.setVisibility(View.VISIBLE);
-            } else {
-                binding.emptyState.setVisibility(View.GONE);
-                binding.labelsView.setVisibility(View.VISIBLE);
-            }
+            final Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                binding.progressBar.setVisibility(View.GONE);
+                if (binding.labels.getChildCount() == 0) {
+                    binding.emptyState.setVisibility(View.VISIBLE);
+                } else {
+                    binding.emptyState.setVisibility(View.GONE);
+                    binding.labelsView.setVisibility(View.VISIBLE);
+                }
+            }, 200);
         });
 
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()))

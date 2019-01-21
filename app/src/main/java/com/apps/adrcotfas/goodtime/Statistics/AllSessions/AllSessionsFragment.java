@@ -22,8 +22,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
@@ -63,7 +63,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
     private LabelsViewModel mLabelsViewModel;
     private Session mSessionToEdit;
     private List<Session> mSessions;
-    private TextView mEmptyState;
+    private LinearLayout mEmptyState;
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
 

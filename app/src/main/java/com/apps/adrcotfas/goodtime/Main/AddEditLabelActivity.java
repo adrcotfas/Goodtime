@@ -21,7 +21,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
@@ -57,7 +57,7 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
 
     private LabelAndColor mLabelToAdd;
 
-    private TextView mEmptyState;
+    private LinearLayout mEmptyState;
     private EditText mAddLabelView;
     private ImageButton mImageRight;
     private ImageView mImageLeft;
