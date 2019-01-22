@@ -9,6 +9,11 @@
         <item>@string/pref_profile_5217</item>
     </string-array>
 
+    <string-array name="pref_timer_style">
+        <item>@string/pref_timer_style_default</item>
+        <item>@string/pref_timer_style_classic</item>
+    </string-array>
+
     <string-array name="spinner_stats_type">
         <item>@string/spinner_stats_duration</item>
         <item>@string/spinner_stats_nr_of_sessions</item>

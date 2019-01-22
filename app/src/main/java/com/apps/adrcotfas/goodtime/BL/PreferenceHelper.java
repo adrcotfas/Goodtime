@@ -60,6 +60,9 @@ public class PreferenceHelper {
     private static final String CURRENT_SESSION_COLOR      = "pref_current_session_color";
     private static final String INTRO_SNACKBAR_STEP        = "pref_intro_snackbar_step";
 
+    public static final String TIMER_STYLE                = "pref_timer_style";
+    public static final String TIMER_STYLE_DUMMY          = "pref_timer_style_dummy";
+
     static void migratePreferences() {
         if (getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getInt(PREFERENCES_VERSION_INTERNAL, 0) == 0) {
@@ -257,6 +260,15 @@ public class PreferenceHelper {
     public static void setLastIntroStep(int step) {
         GoodtimeApplication.getSharedPreferences().edit()
                 .putInt(INTRO_SNACKBAR_STEP, step).apply();
+    }
+
+    public static void setTimerStyle(String style) {
+        GoodtimeApplication.getSharedPreferences().edit()
+                .putString(TIMER_STYLE, style).apply();
+    }
+
+    public static String getTimerStyle() {
+        return GoodtimeApplication.getSharedPreferences().getString(TIMER_STYLE, "v1");
     }
 
     public static void setPro() {

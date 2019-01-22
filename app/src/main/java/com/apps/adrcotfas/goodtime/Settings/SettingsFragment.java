@@ -25,9 +25,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.Settings;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -90,6 +87,31 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         } else {
             disableBatteryOptimizationPref.setVisible(false);
         }
+
+        setupTimerStyle();
+    }
+
+    private void setupTimerStyle() {
+        final ListPreference timerStyle = findPreference(PreferenceHelper.TIMER_STYLE);
+        final Preference timerStyleDummy = findPreference(PreferenceHelper.TIMER_STYLE_DUMMY);
+
+        if (PreferenceHelper.isPro()) {
+            timerStyle.setVisible(true);
+            timerStyleDummy.setVisible(false);
+        } else {
+            timerStyle.setVisible(false);
+            timerStyleDummy.setVisible(true);
+        }
+
+        timerStyleDummy.setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
+            UpgradeActivity.launchUpgradeActivity(getActivity());
+            return true;
+        });
+
+        timerStyle.setOnPreferenceChangeListener((preference, newValue) -> {
+            PreferenceHelper.setTimerStyle((String) newValue);
+            return true;
+        });
     }
 
     private void setupDurations() {

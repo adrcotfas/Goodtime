@@ -8,14 +8,14 @@
         app:iconSpaceReserved="false">
 
         <ListPreference
-            android:dialogTitle="Profile"
+            android:dialogTitle="@string/Profile"
             android:key="pref_profile"
             android:entries="@array/pref_profiles"
             android:defaultValue="@string/pref_profile_default"
             android:entryValues="@array/pref_profiles"
             android:persistent="true"
             android:summary="%s"
-            android:title="Profile"
+            android:title="@string/Profile"
             app:iconSpaceReserved="false"/>
 
         <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
@@ -87,6 +87,24 @@
             android:persistent="true"
             android:key="pref_amoled"
             android:title="@string/pref_amoled"
+            app:iconSpaceReserved="false"/>
+
+        <Preference
+            android:dialogTitle="@string/pref_timer_style"
+            android:key="pref_timer_style_dummy"
+            android:summary="@string/pref_timer_style_default"
+            android:title="@string/pref_timer_style"
+            app:iconSpaceReserved="false"/>
+
+        <ListPreference
+            android:dialogTitle="@string/pref_timer_style"
+            android:key="pref_timer_style"
+            android:entries="@array/pref_timer_style"
+            android:defaultValue="@string/pref_timer_style_default"
+            android:entryValues="@array/pref_timer_style"
+            android:persistent="true"
+            android:summary="%s"
+            android:title="@string/pref_timer_style"
             app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>

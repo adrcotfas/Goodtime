@@ -294,6 +294,7 @@ public class TimerActivity
             mBillingProcessor.loadOwnedPurchasesFromGoogle();
         }
         showTutorialSnackbars();
+        setTimeLabelColor();
     }
 
     @Override
@@ -346,7 +347,7 @@ public class TimerActivity
     }
 
     private void setupEvents() {
-        mCurrentSession.getDuration().observe(TimerActivity.this, this::updateTime);
+        mCurrentSession.getDuration().observe(TimerActivity.this, this::updateTimeLabel);
         mCurrentSession.getSessionType().observe(TimerActivity.this, sessionType -> {
             if (mStatusButton != null) {
                 if (sessionType == SessionType.WORK) {
@@ -419,18 +420,24 @@ public class TimerActivity
         }
     }
 
-    private void updateTime(Long millis) {
+    private void updateTimeLabel(Long millis) {
 
         long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
         long minutes = TimeUnit.SECONDS.toMinutes(seconds);
         seconds -= (minutes * 60);
 
-        String currentTick = (minutes > 0 ? minutes : " ") + "\u2009" +
+        boolean isV1Style = PreferenceHelper.getTimerStyle().equals(getResources().getString(R.string.pref_timer_style_default));
+        final String separator =  isV1Style ? "." : ":";
+
+
+        String currentTick = (minutes > 0 ? minutes + separator : "") +
                 format(Locale.US, "%02d", seconds);
 
         SpannableString currentFormattedTick = new SpannableString(currentTick);
-        currentFormattedTick.setSpan(new RelativeSizeSpan(2f), 0,
-                currentTick.indexOf("\u2009"), 0);
+        if (minutes > 0) {
+            currentFormattedTick.setSpan(new RelativeSizeSpan(isV1Style ? 2f : 1.5f), 0,
+                    isV1Style ? currentTick.indexOf(separator) : currentTick.length(), 0);
+        }
 
         mTimeLabel.setText(currentFormattedTick);
         Log.v(TAG, "drawing the time label.");
@@ -581,7 +588,18 @@ public class TimerActivity
                         ThemeHelper.getColor(this, labelAndColor.color), PorterDuff.Mode.SRC_ATOP);
             } else {
                 mStatusButton.getIcon().setColorFilter(
-                        ThemeHelper.getColor(this, -1), PorterDuff.Mode.SRC_ATOP);
+                        ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_UNLABELED), PorterDuff.Mode.SRC_ATOP);
+            }
+        }
+    }
+
+    private void setTimeLabelColor() {
+        LabelAndColor labelAndColor = PreferenceHelper.getCurrentSessionLabel();
+        if (mTimeLabel != null) {
+            if (labelAndColor.label != null) {
+                mTimeLabel.setTextColor(ThemeHelper.getColor(this, labelAndColor.color));
+            } else {
+                mTimeLabel.setTextColor(ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_UNLABELED));
             }
         }
     }
@@ -595,6 +613,7 @@ public class TimerActivity
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
         }
         setStatusIconColor();
+        setTimeLabelColor();
     }
 
     private void teleportTimeView() {
