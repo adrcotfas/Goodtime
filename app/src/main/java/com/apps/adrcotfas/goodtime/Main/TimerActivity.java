@@ -493,18 +493,26 @@ public class TimerActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         if (sessionType == SessionType.WORK) {
             builder.setTitle(R.string.action_finished_session)
-                    .setPositiveButton(R.string.action_start_break, (dialog, which) -> start(SessionType.BREAK))
-                    .setNeutralButton(R.string.dialog_close, (dialog, which) -> EventBus.getDefault().post(new Constants.ClearNotificationEvent()))
-                    .setOnCancelListener(dialog -> {
-                        // do nothing
-                    });
+                    .setPositiveButton(R.string.action_start_break, (dialog, which) -> {
+                        start(SessionType.BREAK);
+                        delayToggleFullscreenMode();
+                    })
+                    .setNeutralButton(R.string.dialog_close, (dialog, which) -> {
+                        EventBus.getDefault().post(new Constants.ClearNotificationEvent());
+                        delayToggleFullscreenMode();
+                    })
+                    .setOnCancelListener(dialog -> toggleFullscreenMode());
         } else {
             builder.setTitle(R.string.action_finished_break)
-                    .setPositiveButton(R.string.action_start_work, (dialog, which) -> start(SessionType.WORK))
-                    .setNeutralButton(android.R.string.cancel, (dialog, which) -> EventBus.getDefault().post(new Constants.ClearNotificationEvent()))
-                    .setOnCancelListener(dialog -> {
-                        // do nothing
-                    });
+                    .setPositiveButton(R.string.action_start_work, (dialog, which) -> {
+                        start(SessionType.WORK);
+                        delayToggleFullscreenMode();
+                    })
+                    .setNeutralButton(android.R.string.cancel, (dialog, which) -> {
+                        EventBus.getDefault().post(new Constants.ClearNotificationEvent());
+                        delayToggleFullscreenMode();
+                    })
+                    .setOnCancelListener(dialog -> toggleFullscreenMode());
         }
 
         mDialogSessionFinished = builder.create();
@@ -516,6 +524,8 @@ public class TimerActivity
         if (PreferenceHelper.isFullscreenEnabled()) {
             if (mFullscreenHelper == null) {
                 mFullscreenHelper = new FullscreenHelper(findViewById(R.id.main), getSupportActionBar());
+            } else {
+                mFullscreenHelper.hide();
             }
         } else {
             if (mFullscreenHelper != null) {
@@ -523,6 +533,11 @@ public class TimerActivity
                 mFullscreenHelper = null;
             }
         }
+    }
+
+    private void delayToggleFullscreenMode() {
+        final Handler handler = new Handler();
+        handler.postDelayed(this::toggleFullscreenMode, 300);
     }
 
     private void toggleKeepScreenOn(boolean enabled) {

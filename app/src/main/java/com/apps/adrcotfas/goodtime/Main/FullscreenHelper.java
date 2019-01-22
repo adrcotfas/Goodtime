@@ -59,7 +59,6 @@ class FullscreenHelper {
             if (AUTO_HIDE) {
                 delayedHide();
             }
-            view.performClick();
             return false;
         });
 
@@ -74,7 +73,7 @@ class FullscreenHelper {
         }
     }
 
-    private void hide() {
+    public void hide() {
         // Hide UI first
         if (mActionBar != null) {
             mActionBar.hide();
