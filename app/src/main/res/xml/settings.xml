@@ -33,7 +33,7 @@
             app:min="1"
             app:dialogTitle="@string/pref_break_duration"
             android:defaultValue="5"
-            android:max="30"
+            android:max="60"
             app:iconSpaceReserved="false"/>
 
         <SwitchPreferenceCompat
@@ -49,7 +49,7 @@
             app:min="1"
             app:dialogTitle="@string/pref_long_break_duration"
             android:defaultValue="15"
-            android:max="30"
+            android:max="60"
             app:iconSpaceReserved="false"/>
 
         <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
