@@ -31,7 +31,7 @@ import com.google.android.material.chip.ChipGroup;
 
 public class ThemeHelper {
 
-    public static final int COLOR_INDEX_UNLABELED = -1;
+    public static final int COLOR_INDEX_UNLABELED = 0;
     public static final int COLOR_INDEX_ALL_LABELS = 42;
 
     public static void setTheme(AppCompatActivity activity) {
@@ -109,7 +109,7 @@ public class ThemeHelper {
     }
 
     public static int getColor(Context context, int colorIndex) {
-        if (colorIndex == COLOR_INDEX_UNLABELED) {
+        if (colorIndex == COLOR_INDEX_UNLABELED || colorIndex == -1) {
             return context.getResources().getColor(R.color.white);
         }
         if (colorIndex == COLOR_INDEX_ALL_LABELS) {
@@ -137,7 +137,7 @@ public class ThemeHelper {
                 return i;
             }
         }
-        return -1;
+        return COLOR_INDEX_UNLABELED;
     }
 
 }

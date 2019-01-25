@@ -102,7 +102,7 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
             updateRecyclerViewVisibility();
         });
 
-        mLabelToAdd = new LabelAndColor("", ThemeHelper.getColor(this, COLOR_INDEX_UNLABELED));
+        mLabelToAdd = new LabelAndColor("", COLOR_INDEX_UNLABELED);
 
         mImageRight.setOnClickListener(view -> {
             addLabel();

@@ -16,20 +16,26 @@
     <color name="grey_500">#9E9E9E</color>
 
     <integer-array name="lightPalette">
-        <item>@color/c1</item>
-        <item>@color/c2</item>
-        <item>@color/c3</item>
-        <item>@color/c4</item>
-        <item>@color/c5</item>
-        <item>@color/c6</item>
+        <item>@color/white</item>
+        <item>@color/cyan_200</item>
+        <item>@color/light_blue_200</item>
+        <item>@color/green_200</item>
+        <item>@color/yellow_200</item>
+        <item>@color/orange_200</item>
+        <item>@color/red_200</item>
+        <item>@color/pink_200</item>
+        <item>@color/purple_200</item>
     </integer-array>
 
-    <color name="c1">#EF9A9A</color>
-    <color name="c2">#CE93D8</color>
-    <color name="c3">#81D4FA</color>
-    <color name="c4">#C5E1A5</color>
-    <color name="c5">#FFF59D</color>
-    <color name="c6">#FFCC80</color>
+    <color name="cyan_200">#80DEEA</color>
+    <color name="light_blue_200">#81D4FA</color>
+    <color name="green_200">#A5D6A7</color>
+    <color name="yellow_200">#FFF59D</color>
+    <color name="orange_200">#FFCC80</color>
+    <color name="red_200">#ef9a9a</color>
+    <color name="pink_200">#F48FB1</color>
+    <color name="purple_200">#CE93D8</color>
+
     <color name="gold">#CFB53B</color>
 
 </resources>
