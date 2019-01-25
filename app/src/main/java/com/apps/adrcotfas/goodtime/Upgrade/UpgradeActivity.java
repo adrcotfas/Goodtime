@@ -76,7 +76,7 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
         binding.titlePro.setClickable(true);
         binding.titlePro.setOnClickListener(v -> {
             mBillingProcessor.consumePurchase(sku);
-            GoodtimeApplication.getSharedPreferences().edit()
+            GoodtimeApplication.getPrivatePreferences().edit()
                     .putBoolean("pref_blana", false).apply();
         });
 

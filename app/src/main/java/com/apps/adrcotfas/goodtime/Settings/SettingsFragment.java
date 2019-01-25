@@ -107,11 +107,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
             UpgradeActivity.launchUpgradeActivity(getActivity());
             return true;
         });
-
-        timerStyle.setOnPreferenceChangeListener((preference, newValue) -> {
-            PreferenceHelper.setTimerStyle((String) newValue);
-            return true;
-        });
     }
 
     private void setupDurations() {

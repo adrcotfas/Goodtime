@@ -61,7 +61,7 @@ public class GoodtimeApplication extends Application {
         return mCurrentSessionManager;
     }
 
-    public static SharedPreferences getSharedPreferences() {
+    public static SharedPreferences getPrivatePreferences() {
         return mPreferences;
     }
 }

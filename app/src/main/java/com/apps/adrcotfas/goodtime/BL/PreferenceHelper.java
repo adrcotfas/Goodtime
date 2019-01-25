@@ -187,25 +187,25 @@ public class PreferenceHelper {
         final boolean increment = lastWorkFinishedAt() == 0
                 || currentMillis - lastWorkFinishedAt() < maxDifference;
 
-        GoodtimeApplication.getSharedPreferences().edit()
+        GoodtimeApplication.getPrivatePreferences().edit()
                 .putInt(WORK_STREAK, increment ? getCurrentStreak() + 1 : 1).apply();
 
-        GoodtimeApplication.getSharedPreferences().edit()
+        GoodtimeApplication.getPrivatePreferences().edit()
                 .putLong(LAST_WORK_FINISHED_AT, increment ? currentMillis: 0).apply();
     }
 
     static int getCurrentStreak() {
-        return GoodtimeApplication.getSharedPreferences().getInt(WORK_STREAK, 0);
+        return GoodtimeApplication.getPrivatePreferences().getInt(WORK_STREAK, 0);
     }
 
     static long lastWorkFinishedAt() {
-        return GoodtimeApplication.getSharedPreferences().getLong(LAST_WORK_FINISHED_AT, 0);
+        return GoodtimeApplication.getPrivatePreferences().getLong(LAST_WORK_FINISHED_AT, 0);
     }
 
     static void resetCurrentStreak() {
-        GoodtimeApplication.getSharedPreferences().edit()
+        GoodtimeApplication.getPrivatePreferences().edit()
                 .putInt(WORK_STREAK, 0).apply();
-        GoodtimeApplication.getSharedPreferences().edit()
+        GoodtimeApplication.getPrivatePreferences().edit()
                 .putLong(LAST_WORK_FINISHED_AT, 0).apply();
     }
 
@@ -221,7 +221,7 @@ public class PreferenceHelper {
      * @param enable specifies the new state.
      */
     static void toggleAdded60SecondsState(boolean enable) {
-        GoodtimeApplication.getSharedPreferences().edit()
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
                 .putBoolean(ADDED_60_SECONDS_STATE, enable).apply();
     }
 
@@ -230,55 +230,50 @@ public class PreferenceHelper {
      * @return the state of the "added 60 seconds" state.
      */
     static boolean isInAdded60SecondsState() {
-        return GoodtimeApplication.getSharedPreferences().getBoolean(ADDED_60_SECONDS_STATE, false);
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getBoolean(ADDED_60_SECONDS_STATE, false);
     }
 
     public static LabelAndColor getCurrentSessionLabel() {
         return new LabelAndColor(
-                GoodtimeApplication.getSharedPreferences().getString(CURRENT_SESSION_LABEL, null),
-                GoodtimeApplication.getSharedPreferences().getInt(CURRENT_SESSION_COLOR, 0));
+                getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getString(CURRENT_SESSION_LABEL, null),
+                getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getInt(CURRENT_SESSION_COLOR, 0));
     }
 
     public static void setCurrentSessionLabel(LabelAndColor label) {
-        GoodtimeApplication.getSharedPreferences().edit()
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
                 .putString(CURRENT_SESSION_LABEL, label.label).apply();
-        GoodtimeApplication.getSharedPreferences().edit()
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
                 .putInt(CURRENT_SESSION_COLOR, label.color).apply();
     }
 
     public static boolean isFirstRun() {
-        return GoodtimeApplication.getSharedPreferences().getBoolean(FIRST_RUN, true);
+        return GoodtimeApplication.getPrivatePreferences().getBoolean(FIRST_RUN, true);
     }
 
     public static void consumeFirstRun() {
-        GoodtimeApplication.getSharedPreferences().edit()
+        GoodtimeApplication.getPrivatePreferences().edit()
                 .putBoolean(FIRST_RUN, false).apply();
     }
 
     public static int getLastIntroStep() {
-        return GoodtimeApplication.getSharedPreferences().getInt(INTRO_SNACKBAR_STEP, 0);
+        return GoodtimeApplication.getPrivatePreferences().getInt(INTRO_SNACKBAR_STEP, 0);
     }
 
     public static void setLastIntroStep(int step) {
-        GoodtimeApplication.getSharedPreferences().edit()
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
                 .putInt(INTRO_SNACKBAR_STEP, step).apply();
     }
 
-    public static void setTimerStyle(String style) {
-        GoodtimeApplication.getSharedPreferences().edit()
-                .putString(TIMER_STYLE, style).apply();
-    }
-
     public static String getTimerStyle() {
-        return GoodtimeApplication.getSharedPreferences().getString(TIMER_STYLE, "Default");
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getString(TIMER_STYLE, "Default");
     }
 
     public static boolean isSessionsCounterEnabled() {
-        return GoodtimeApplication.getSharedPreferences().getBoolean(SESSIONS_COUNTER, true);
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getBoolean(SESSIONS_COUNTER, true);
     }
 
     public static void setPro() {
-        GoodtimeApplication.getSharedPreferences().edit()
+        GoodtimeApplication.getPrivatePreferences().edit()
                 .putBoolean(PRO, true).apply();
     }
 
