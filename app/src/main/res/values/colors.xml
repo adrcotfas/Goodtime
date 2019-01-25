@@ -17,7 +17,6 @@
 
     <integer-array name="lightPalette">
         <item>@color/white</item>
-        <item>@color/cyan_200</item>
         <item>@color/light_blue_200</item>
         <item>@color/green_200</item>
         <item>@color/yellow_200</item>
