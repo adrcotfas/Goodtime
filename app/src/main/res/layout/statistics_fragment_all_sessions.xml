@@ -34,7 +34,7 @@
                 android:id="@id/imageView"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/ic_list"
+                android:src="@drawable/ic_list_large"
                 android:tint="@color/grey_500"
                 android:gravity="center"/>
 

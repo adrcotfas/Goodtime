@@ -28,7 +28,7 @@
                 android:id="@id/imageView"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/ic_label"
+                android:src="@drawable/ic_label_outline_large"
                 android:tint="@color/grey_500"
                 android:gravity="center"/>
 
