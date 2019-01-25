@@ -12,6 +12,7 @@
     <string-array name="pref_timer_style">
         <item>@string/pref_timer_style_default</item>
         <item>@string/pref_timer_style_classic</item>
+        <item>@string/pref_timer_style_minutes</item>
     </string-array>
 
     <string-array name="spinner_stats_type">

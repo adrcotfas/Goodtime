@@ -421,25 +421,34 @@ public class TimerActivity
     }
 
     private void updateTimeLabel(Long millis) {
-
         long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
         long minutes = TimeUnit.SECONDS.toMinutes(seconds);
         seconds -= (minutes * 60);
 
-        boolean isV1Style = PreferenceHelper.getTimerStyle().equals(getResources().getString(R.string.pref_timer_style_default));
-        final String separator =  isV1Style ? "." : ":";
+        SpannableString currentFormattedTick;
+        boolean isMinutesStyle = PreferenceHelper.getTimerStyle().equals(getResources().getString(R.string.pref_timer_style_minutes));
+        if (isMinutesStyle) {
+            String currentTick = String.valueOf(TimeUnit.SECONDS.toMinutes((minutes * 60) + seconds + 59));
+            currentFormattedTick = new SpannableString(currentTick);
+            currentFormattedTick.setSpan(new RelativeSizeSpan(1.5f), 0,
+                    currentTick.length(), 0);
 
+        } else {
+            boolean isV1Style = PreferenceHelper.getTimerStyle().equals(getResources().getString(R.string.pref_timer_style_default));
+            final String separator =  isV1Style ? "." : ":";
 
-        String currentTick = (minutes > 0 ? minutes + separator : "") +
-                format(Locale.US, "%02d", seconds);
+            String currentTick = (minutes > 0 ? minutes + separator : "") +
+                    format(Locale.US, "%02d", seconds);
 
-        SpannableString currentFormattedTick = new SpannableString(currentTick);
-        if (minutes > 0) {
-            currentFormattedTick.setSpan(new RelativeSizeSpan(isV1Style ? 2f : 1.5f), 0,
-                    isV1Style ? currentTick.indexOf(separator) : currentTick.length(), 0);
+            currentFormattedTick = new SpannableString(currentTick);
+            if (minutes > 0) {
+                currentFormattedTick.setSpan(new RelativeSizeSpan(isV1Style ? 2f : 1.5f), 0,
+                        isV1Style ? currentTick.indexOf(separator) : currentTick.length(), 0);
+            }
         }
 
         mTimeLabel.setText(currentFormattedTick);
+
         Log.v(TAG, "drawing the time label.");
 
         if (PreferenceHelper.isScreensaverEnabled() && seconds == 1 && mCurrentSession.getTimerState().getValue() != TimerState.PAUSED) {
