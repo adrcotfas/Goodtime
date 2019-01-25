@@ -255,7 +255,7 @@ public class StatisticsFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> adapterView) { }
         });
 
-        ArrayAdapter < CharSequence > rangeTypeAdapter = ArrayAdapter.createFromResource(getContext(),
+        ArrayAdapter <CharSequence> rangeTypeAdapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.spinner_range_type, R.layout.spinner_item);
         rangeTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mRangeType.setAdapter(rangeTypeAdapter);
@@ -270,7 +270,7 @@ public class StatisticsFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> adapterView) { }
         });
 
-        ArrayAdapter < CharSequence > timeTypeAdapter = ArrayAdapter.createFromResource(getContext(),
+        ArrayAdapter <CharSequence> timeTypeAdapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.spinner_productive_time_type, R.layout.spinner_item);
         timeTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mProductiveTime.setAdapter(timeTypeAdapter);

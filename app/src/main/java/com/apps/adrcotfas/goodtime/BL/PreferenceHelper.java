@@ -63,6 +63,8 @@ public class PreferenceHelper {
     public static final String TIMER_STYLE                = "pref_timer_style";
     public static final String TIMER_STYLE_DUMMY          = "pref_timer_style_dummy";
 
+    private static final String SESSIONS_COUNTER          = "pref_sessions_counter";
+
     static void migratePreferences() {
         if (getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getInt(PREFERENCES_VERSION_INTERNAL, 0) == 0) {
@@ -268,7 +270,11 @@ public class PreferenceHelper {
     }
 
     public static String getTimerStyle() {
-        return GoodtimeApplication.getSharedPreferences().getString(TIMER_STYLE, "v1");
+        return GoodtimeApplication.getSharedPreferences().getString(TIMER_STYLE, "Default");
+    }
+
+    public static boolean isSessionsCounterEnabled() {
+        return GoodtimeApplication.getSharedPreferences().getBoolean(SESSIONS_COUNTER, true);
     }
 
     public static void setPro() {

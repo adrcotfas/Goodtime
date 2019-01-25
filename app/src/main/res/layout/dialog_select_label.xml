@@ -9,8 +9,8 @@
 
         <ProgressBar
             android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_margin="32dp"
             style="?android:attr/progressBarStyle"/>
@@ -26,8 +26,8 @@
 
             <ImageView
                 android:id="@id/imageView"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:src="@drawable/ic_label"
                 android:tint="@color/grey_500"
                 android:gravity="center"/>
@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/empty_state_no_items"
-                android:textSize="@dimen/largeTextSize"
+                android:textSize="@dimen/regularTextSize"
                 android:gravity="center"/>
         </LinearLayout>
 

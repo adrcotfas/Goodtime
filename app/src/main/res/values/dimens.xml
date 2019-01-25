@@ -6,4 +6,7 @@
     <dimen name="tinyTextSize">10sp</dimen>
 
     <dimen name="card_spacing">8dp</dimen>
+    <dimen name="menu_item_icon_size">32dp</dimen>
+    <dimen name="menu_item_size">48dp</dimen>
+    <dimen name="menu_item_ripple_size">48dp</dimen>
 </resources>

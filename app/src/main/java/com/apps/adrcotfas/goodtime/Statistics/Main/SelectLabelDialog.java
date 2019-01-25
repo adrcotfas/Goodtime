@@ -128,7 +128,7 @@ public class SelectLabelDialog extends DialogFragment {
                     binding.emptyState.setVisibility(View.GONE);
                     binding.labelsView.setVisibility(View.VISIBLE);
                 }
-            }, 200);
+            }, 100);
         });
 
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()))

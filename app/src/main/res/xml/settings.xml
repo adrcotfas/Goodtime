@@ -107,6 +107,14 @@
             android:title="@string/pref_timer_style"
             app:iconSpaceReserved="false"/>
 
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_sessions_counter"
+            android:persistent="true"
+            android:title="@string/pref_session_counter"
+            android:summary="@string/pref_session_counter_summary"
+            app:iconSpaceReserved="false"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory

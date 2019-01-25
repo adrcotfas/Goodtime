@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,8 +42,11 @@ import com.apps.adrcotfas.goodtime.BL.TimerService;
 import com.apps.adrcotfas.goodtime.BL.TimerState;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.Statistics.Main.SelectLabelDialog;
+import com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity;
+import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
 import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
@@ -51,7 +55,10 @@ import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.joda.time.LocalDate;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -65,6 +72,7 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 import de.greenrobot.event.EventBus;
 
@@ -99,6 +107,10 @@ public class TimerActivity
     private View mBoundsView;
     private TextView mTimeLabel;
     private Toolbar mToolbar;
+    private SessionViewModel mSessionViewModel;
+
+    private FrameLayout mSessionsCounter;
+    private TextView mSessionsCounterText;
 
     private static final String DIALOG_SELECT_LABEL_TAG = "dialogSelectLabel";
 
@@ -169,7 +181,7 @@ public class TimerActivity
      */
     private void showTutorialSnackbars() {
 
-        final int MESSAGE_SIZE = 5;
+        final int MESSAGE_SIZE = 4;
         int i = PreferenceHelper.getLastIntroStep();
 
         if (i < MESSAGE_SIZE) {
@@ -180,7 +192,6 @@ public class TimerActivity
             messages.add(getString(R.string.tutorial_swipe_left));
             messages.add(getString(R.string.tutorial_swipe_up));
             messages.add(getString(R.string.tutorial_swipe_down));
-            messages.add(getString(R.string.tutorial_long_click));
 
             Snackbar s = Snackbar.make(mToolbar, messages.get(PreferenceHelper.getLastIntroStep()), Snackbar.LENGTH_INDEFINITE)
                     .setAction("OK", view -> {
@@ -342,6 +353,10 @@ public class TimerActivity
                     UpgradeActivity.launchUpgradeActivity(this);
                 }
                 break;
+            case R.id.activity_main_alerts_menu_item:
+                Intent statisticsIntent = new Intent(this, StatisticsActivity.class);
+                startActivity(statisticsIntent);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -403,6 +418,38 @@ public class TimerActivity
         }
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        final MenuItem alertMenuItem = menu.findItem(R.id.activity_main_alerts_menu_item);
+        alertMenuItem.setVisible(false);
+        boolean sessionsCounterEnabled = PreferenceHelper.isSessionsCounterEnabled();
+        if (sessionsCounterEnabled) {
+            mSessionsCounter = (FrameLayout) alertMenuItem.getActionView();
+            mSessionsCounterText = mSessionsCounter.findViewById(R.id.view_alert_count_textview);
+            mSessionsCounter.setOnClickListener(v -> onOptionsItemSelected(alertMenuItem));
+
+            mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
+            mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
+                final LocalDate today = new LocalDate();
+                int statsToday = 0;
+                for (Session s : sessions) {
+                    final LocalDate crt = new LocalDate(new Date(s.endTime));
+                    if (crt.isEqual(today)) {
+                        statsToday++;
+                    }
+                    if (crt.isBefore(today)) {
+                        break;
+                    }
+                }
+                if (mSessionsCounterText != null) {
+                    mSessionsCounterText.setText(Integer.toString(statsToday));
+                }
+                alertMenuItem.setVisible(true);
+            });
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     /**
      * Called when an event is posted to the EventBus
      * @param o holds the type of the Event
@@ -432,14 +479,11 @@ public class TimerActivity
             currentFormattedTick = new SpannableString(currentTick);
             currentFormattedTick.setSpan(new RelativeSizeSpan(1.5f), 0,
                     currentTick.length(), 0);
-
         } else {
             boolean isV1Style = PreferenceHelper.getTimerStyle().equals(getResources().getString(R.string.pref_timer_style_default));
             final String separator =  isV1Style ? "." : ":";
-
             String currentTick = (minutes > 0 ? minutes + separator : "") +
                     format(Locale.US, "%02d", seconds);
-
             currentFormattedTick = new SpannableString(currentTick);
             if (minutes > 0) {
                 currentFormattedTick.setSpan(new RelativeSizeSpan(isV1Style ? 2f : 1.5f), 0,
