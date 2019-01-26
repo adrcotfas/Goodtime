@@ -28,7 +28,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"/>
+                android:layout_alignParentEnd="true"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"/>
 
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/bar_chart"

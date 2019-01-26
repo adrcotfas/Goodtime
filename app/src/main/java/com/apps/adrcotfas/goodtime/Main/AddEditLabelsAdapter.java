@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.apps.adrcotfas.goodtime.LabelAndColor;
@@ -69,7 +70,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         holder.text.setText(mLabels.get(position).label);
         holder.imageLeft.setColorFilter(ThemeHelper.getColor(mContext.get(), mLabels.get(position).color));
-        holder.imageLeft.setClickable(false);
+        holder.imageLeftContainer.setClickable(false);
     }
 
     @Override
@@ -82,15 +83,20 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
         private EditText  text;
         private ImageView imageLeft;
         private ImageView imageRight;
-        private ImageView imageDelete;
+
+        private FrameLayout imageLeftContainer;
+        private FrameLayout imageRightContainer;
+        private FrameLayout imageDeleteContainer;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             text = itemView.findViewById(R.id.text);
             imageLeft = itemView.findViewById(R.id.image_left); // can have the label or the palette icon
-            imageDelete = itemView.findViewById(R.id.image_delete);
             imageRight = itemView.findViewById(R.id.image_right); // can have the edit or the done icon
+            imageLeftContainer = itemView.findViewById(R.id.image_left_container);
+            imageRightContainer = itemView.findViewById(R.id.image_right_container);
+            imageDeleteContainer = itemView.findViewById(R.id.image_delete_container);
 
             // switch the focus to a different row
             text.setOnFocusChangeListener((view, hasFocus) -> {
@@ -99,15 +105,15 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
                 LabelAndColor crtLabel = mLabels.get(position);
                 imageLeft.setImageDrawable(ContextCompat.getDrawable(
                         mContext.get(), hasFocus ? R.drawable.ic_palette : R.drawable.ic_label));
-                imageLeft.setClickable(hasFocus);
+                imageLeftContainer.setClickable(hasFocus);
                 imageLeft.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.color));
 
-                imageDelete.setVisibility(hasFocus ? View.VISIBLE : View.INVISIBLE);
+                imageDeleteContainer.setVisibility(hasFocus ? View.VISIBLE : View.INVISIBLE);
 
                 imageRight.setImageDrawable(ContextCompat.getDrawable(
                         mContext.get(), hasFocus ? R.drawable.ic_done : R.drawable.ic_edit));
                 // the done button or the edit button (depending on focus)
-                imageRight.setOnClickListener(hasFocus
+                imageRightContainer.setOnClickListener(hasFocus
                         ? v -> clearFocusEditText(text, mContext.get())
                         : v -> requestFocusEditText(text, mContext.get()));
 
@@ -125,7 +131,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
             });
 
             // delete a label
-            imageDelete.setOnClickListener(v -> {
+            imageDeleteContainer.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 clearFocusEditText(text, mContext.get());
                 new AlertDialog.Builder(mContext.get())
@@ -147,7 +153,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
             });
 
             // changing the color of a label
-            imageLeft.setOnClickListener(v -> {
+            imageLeftContainer.setOnClickListener(v -> {
                 LabelAndColor crtLabel = mLabels.get(getAdapterPosition());
                 final ColorPickerDialog.Params p = new ColorPickerDialog.Params.Builder(mContext.get())
                         .setColors(ThemeHelper.getPalette(mContext.get()))
@@ -164,7 +170,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
             });
 
             // the edit button
-            imageRight.setOnClickListener(v -> requestFocusEditText(text, mContext.get()));
+            imageRightContainer.setOnClickListener(v -> requestFocusEditText(text, mContext.get()));
         }
     }
 }

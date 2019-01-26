@@ -19,7 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -59,8 +59,9 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
 
     private LinearLayout mEmptyState;
     private EditText mAddLabelView;
-    private ImageButton mImageRight;
+    private FrameLayout mImageRightContainer;
     private ImageView mImageLeft;
+    private FrameLayout mImageLeftContainer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,8 +79,9 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
         mRecyclerView = binding.labelList;
         mEmptyState = binding.emptyState;
         mAddLabelView = binding.addLabel.text;
-        mImageRight = binding.addLabel.imageRight;
+        mImageRightContainer = binding.addLabel.imageRightContainer;
         mImageLeft = binding.addLabel.imageLeft;
+        mImageLeftContainer = binding.addLabel.imageLeftContainer;
 
         final LiveData<List<LabelAndColor>> labels = mLabelsViewModel.getLabels();
         labels.observe(this, labelAndColors -> {
@@ -104,18 +106,18 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
 
         mLabelToAdd = new LabelAndColor("", COLOR_INDEX_UNLABELED);
 
-        mImageRight.setOnClickListener(view -> {
+        mImageRightContainer.setOnClickListener(view -> {
             addLabel();
             updateRecyclerViewVisibility();
             clearFocusEditText(mAddLabelView, this);
         });
 
-        mImageLeft.setOnClickListener(v -> requestFocusEditText(mAddLabelView, this));
+        mImageLeftContainer.setOnClickListener(v -> requestFocusEditText(mAddLabelView, this));
 
         mAddLabelView.setOnFocusChangeListener((view, hasFocus) -> {
-            mImageRight.setVisibility(hasFocus ? View.VISIBLE : View.INVISIBLE);
+            mImageRightContainer.setVisibility(hasFocus ? View.VISIBLE : View.INVISIBLE);
             mImageLeft.setImageDrawable(getResources().getDrawable(hasFocus ? R.drawable.ic_palette : R.drawable.ic_add));
-            mImageLeft.setOnClickListener(hasFocus ? v -> {
+            mImageLeftContainer.setOnClickListener(hasFocus ? v -> {
                 final ColorPickerDialog.Params p = new ColorPickerDialog.Params.Builder(AddEditLabelActivity.this)
                         .setColors(ThemeHelper.getPalette(this))
                         .setSelectedColor(ThemeHelper.getColor(this, mLabelToAdd.color))
@@ -151,7 +153,7 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
         mLabelsViewModel.editLabelName(label, newLabel);
 
         LabelAndColor crtLabel = PreferenceHelper.getCurrentSessionLabel();
-        if (crtLabel.label.equals(label)) {
+        if (crtLabel.label != null && crtLabel.label.equals(label)) {
             PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(newLabel, crtLabel.color));
         }
     }
