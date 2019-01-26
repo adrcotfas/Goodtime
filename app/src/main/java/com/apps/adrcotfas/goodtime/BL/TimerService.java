@@ -169,8 +169,6 @@ public class TimerService extends LifecycleService {
             PreferenceHelper.resetCurrentStreak();
         }
 
-        PreferenceHelper.toggleAdded60SecondsState(false);
-
         stopForeground(true);
         stopSelf();
 
@@ -178,7 +176,6 @@ public class TimerService extends LifecycleService {
         if (sessionType == SessionType.WORK) {
             saveToDb();
         }
-
     }
 
     private void onFinishEvent(SessionType sessionType) {
@@ -200,7 +197,6 @@ public class TimerService extends LifecycleService {
         stopForeground(true);
 
         updateLongBreakStreak(sessionType);
-        PreferenceHelper.toggleAdded60SecondsState(false);
 
         if (PreferenceHelper.isAutoStartBreak() && sessionType == SessionType.WORK) {
             onStartEvent(SessionType.BREAK);
@@ -224,7 +220,6 @@ public class TimerService extends LifecycleService {
         if (getSessionManager().getCurrentSession().getTimerState().getValue() == TimerState.INACTIVE) {
             startForeground(GOODTIME_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
                     getSessionManager().getCurrentSession()).build());
-            PreferenceHelper.toggleAdded60SecondsState(true);
         }
         getSessionManager().add60Seconds();
     }
@@ -236,19 +231,22 @@ public class TimerService extends LifecycleService {
         getSessionManager().stopTimer();
         stopForeground(true);
         updateLongBreakStreak(sessionType);
+
+        if (sessionType == SessionType.WORK) {
+            saveToDb();
+        }
+
         onStartEvent(sessionType == SessionType.WORK ? SessionType.BREAK : SessionType.WORK);
     }
 
     private void updateLongBreakStreak(SessionType sessionType) {
 
-        final boolean isIn60AddedSecondsState = PreferenceHelper.isInAdded60SecondsState();
         if (PreferenceHelper.isLongBreakEnabled()) {
             if (sessionType == SessionType.LONG_BREAK) {
                 PreferenceHelper.resetCurrentStreak();
-            } else if (sessionType == SessionType.WORK && !isIn60AddedSecondsState){
+            } else if (sessionType == SessionType.WORK){
                 PreferenceHelper.incrementCurrentStreak();
             }
-            Log.d(TAG, "PreferenceHelper.isInAdded60SecondsState: " + isIn60AddedSecondsState);
             Log.d(TAG, "PreferenceHelper.getCurrentStreak: " + PreferenceHelper.getCurrentStreak());
             Log.d(TAG, "PreferenceHelper.lastWorkFinishedAt: " + PreferenceHelper.lastWorkFinishedAt());
         }

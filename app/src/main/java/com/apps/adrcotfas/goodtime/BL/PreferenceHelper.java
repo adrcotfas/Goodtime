@@ -54,7 +54,6 @@ public class PreferenceHelper {
 
     private final static String WORK_STREAK                 = "pref_WORK_STREAK";
     private final static String LAST_WORK_FINISHED_AT       = "pref_last_work_finished_at";
-    private static final String ADDED_60_SECONDS_STATE     = "pref_added_60_seconds_State";
 
     private static final String CURRENT_SESSION_LABEL      = "pref_current_session_label";
     private static final String CURRENT_SESSION_COLOR      = "pref_current_session_color";
@@ -211,26 +210,6 @@ public class PreferenceHelper {
 
     static boolean itsTimeForLongBreak() {
         return getCurrentStreak() >= getSessionsBeforeLongBreak();
-    }
-
-    /**
-     * Persists the state of a session prolonged by the "Add 60 seconds" action.
-     * It should be set to true when a session is started from an inactive state with the
-     * "add 60 seconds" action.
-     * It should be set to false when a session is stopped by a "stop" event and when a session is finished.
-     * @param enable specifies the new state.
-     */
-    static void toggleAdded60SecondsState(boolean enable) {
-        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
-                .putBoolean(ADDED_60_SECONDS_STATE, enable).apply();
-    }
-
-    /**
-     * This is used to identify when not to increase the current finished session streak.
-     * @return the state of the "added 60 seconds" state.
-     */
-    static boolean isInAdded60SecondsState() {
-        return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getBoolean(ADDED_60_SECONDS_STATE, false);
     }
 
     public static LabelAndColor getCurrentSessionLabel() {
