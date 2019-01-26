@@ -255,15 +255,6 @@ public class PreferenceHelper {
                 .putBoolean(FIRST_RUN, false).apply();
     }
 
-    public static int getLastIntroStep() {
-        return GoodtimeApplication.getPrivatePreferences().getInt(INTRO_SNACKBAR_STEP, 0);
-    }
-
-    public static void setLastIntroStep(int step) {
-        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
-                .putInt(INTRO_SNACKBAR_STEP, step).apply();
-    }
-
     public static String getTimerStyle() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getString(TIMER_STYLE, "Default");
     }
@@ -272,12 +263,21 @@ public class PreferenceHelper {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getBoolean(SESSIONS_COUNTER, true);
     }
 
+    public static int getLastIntroStep() {
+        return GoodtimeApplication.getPrivatePreferences().getInt(INTRO_SNACKBAR_STEP, 0);
+    }
+
+    public static void setLastIntroStep(int step) {
+        GoodtimeApplication.getPrivatePreferences().edit()
+                .putInt(INTRO_SNACKBAR_STEP, step).apply();
+    }
+
     public static void setPro() {
         GoodtimeApplication.getPrivatePreferences().edit()
                 .putBoolean(PRO, true).apply();
     }
 
     public static boolean isPro() {
-        return GoodtimeApplication.getSharedPreferences().getBoolean(PRO, false);
+        return GoodtimeApplication.getPrivatePreferences().getBoolean(PRO, false);
     }
 }
