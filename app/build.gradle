@@ -6,7 +6,7 @@ android {
         applicationId "com.apps.adrcotfas.goodtime"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 64
+        versionCode 66
         versionName "2.0a"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
