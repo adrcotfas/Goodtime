@@ -29,14 +29,13 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"/>
+                style="@style/SpinnerStyle"/>
 
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/bar_chart"
                 android:layout_width="fill_parent"
                 android:layout_height="160dp"
-                android:layout_below="@+id/header_productive_time"/>
+                android:layout_below="@+id/time_type"/>
 
         </RelativeLayout>
 

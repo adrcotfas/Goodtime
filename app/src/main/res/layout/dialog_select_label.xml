@@ -15,30 +15,15 @@
             android:layout_margin="32dp"
             style="?android:attr/progressBarStyle"/>
 
-        <LinearLayout
+        <TextView
             android:id="@+id/empty_state"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:layout_margin="32dp"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@id/imageView"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ic_label_outline_large"
-                android:tint="@color/grey_500"
-                android:gravity="center"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/empty_state_no_items"
-                android:textSize="@dimen/regularTextSize"
-                android:gravity="center"/>
-        </LinearLayout>
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_marginTop="48dp"
+            android:text="@string/empty_state_no_items"
+            android:textSize="@dimen/regularTextSize" />
 
         <ScrollView
             android:id="@+id/labels_view"

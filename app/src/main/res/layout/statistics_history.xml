@@ -28,14 +28,13 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"/>
+                style="@style/SpinnerStyle"/>
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/chart"
                 android:layout_width="fill_parent"
                 android:layout_height="160dp"
-                android:layout_below="@+id/header_history"/>
+                android:layout_below="@+id/range_type"/>
         </RelativeLayout>
 
     </com.google.android.material.card.MaterialCardView>

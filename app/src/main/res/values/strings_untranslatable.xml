@@ -25,6 +25,7 @@
         <item>@string/update_pro_10</item>
         <item>@string/update_pro_11</item>
         <item>@string/update_pro_12</item>
+        <item>@string/update_pro_13</item>
     </string-array>
 
 </resources>

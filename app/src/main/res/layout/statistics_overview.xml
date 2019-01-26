@@ -8,7 +8,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             style="@style/SectionCommon">
 
@@ -30,13 +30,12 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"/>
+                style="@style/SpinnerStyle"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/header"
+                android:layout_below="@+id/stats_type"
                 android:gravity="bottom"
                 android:orientation="horizontal"
                 android:baselineAligned="false">
