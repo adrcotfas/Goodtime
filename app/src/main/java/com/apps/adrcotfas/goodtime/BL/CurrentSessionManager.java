@@ -46,7 +46,6 @@ public class CurrentSessionManager extends ContextWrapper{
     private AppCountDownTimer mTimer;
     private final CurrentSession mCurrentSession;
     private long mRemaining;
-    private int mElapsed;
     private final AlarmReceiver mAlarmReceiver;
 
     public CurrentSessionManager(Context context, CurrentSession currentSession) {
@@ -59,8 +58,6 @@ public class CurrentSessionManager extends ContextWrapper{
         Log.v(TAG, "startTimer: " + sessionType.toString());
 
         final long duration = TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(sessionType));
-        mElapsed = 0;
-
         mCurrentSession.setTimerState(TimerState.ACTIVE);
         mCurrentSession.setSessionType(sessionType);
         mCurrentSession.setDuration(duration);
@@ -95,9 +92,6 @@ public class CurrentSessionManager extends ContextWrapper{
         cancelAlarm();
         mTimer.cancel();
         mCurrentSession.setTimerState(TimerState.INACTIVE);
-        long workDuration = TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK));
-        mCurrentSession.setDuration(workDuration);
-        mCurrentSession.setSessionType(SessionType.WORK);
     }
 
     private void scheduleAlarm(SessionType sessionType, long duration) {
@@ -168,10 +162,6 @@ public class CurrentSessionManager extends ContextWrapper{
         }
     }
 
-    public int getElapsedTime() {
-        return (int)TimeUnit.SECONDS.toMinutes(mElapsed);
-    }
-
     private class AppCountDownTimer extends CountDownTimer {
 
         private final String TAG = AppCountDownTimer.class.getSimpleName();
@@ -189,14 +179,7 @@ public class CurrentSessionManager extends ContextWrapper{
             Log.v(TAG, "is Ticking: " + millisUntilFinished + " millis remaining.");
             mCurrentSession.setDuration(millisUntilFinished);
             mRemaining = millisUntilFinished;
-            ++mElapsed;
-
-            // update notification only if the screen is on
-            PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH && powerManager.isInteractive()) ||
-                    (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH && powerManager.isScreenOn())) {
-                EventBus.getDefault().post(new Constants.UpdateTimerProgressEvent());
-            }
+            EventBus.getDefault().post(new Constants.UpdateTimerProgressEvent());
         }
 
         @Override

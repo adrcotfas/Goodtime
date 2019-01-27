@@ -24,7 +24,6 @@ import android.widget.Toast;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.SkuDetails;
 import com.anjlab.android.iab.v3.TransactionDetails;
-import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
@@ -40,7 +39,8 @@ import static com.anjlab.android.iab.v3.Constants.BILLING_RESPONSE_RESULT_SERVIC
 
 public class UpgradeActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler{
 
-    public static final String sku = "upgraded_version";
+    //TODO: change at release
+    public static final String sku = "android.test.purchased";//"upgraded_version";
     private boolean readyToPurchase = false;
     private Button buy;
     private BillingProcessor mBillingProcessor;

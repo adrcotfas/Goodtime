@@ -63,6 +63,7 @@ public class PreferenceHelper {
     public static final String TIMER_STYLE_DUMMY          = "pref_timer_style_dummy";
 
     private static final String SESSIONS_COUNTER          = "pref_sessions_counter";
+    private static final String ADD_60_SECONDS_COUNTER    = "pref_add_60_seconds_times";
 
     static void migratePreferences() {
         if (getDefaultSharedPreferences(GoodtimeApplication.getInstance())
@@ -249,6 +250,23 @@ public class PreferenceHelper {
     public static void setLastIntroStep(int step) {
         GoodtimeApplication.getPrivatePreferences().edit()
                 .putInt(INTRO_SNACKBAR_STEP, step).apply();
+    }
+
+    /**
+     * @return the number of times the current session timer was increased with "Add 60 seconds"
+     */
+    public static int getAdd60SecondsCounter() {
+        return GoodtimeApplication.getPrivatePreferences().getInt(ADD_60_SECONDS_COUNTER, 0);
+    }
+
+    public static void resetAdd60SecondsCounter() {
+        GoodtimeApplication.getPrivatePreferences().edit()
+                .putInt(ADD_60_SECONDS_COUNTER, 0).apply();
+    }
+
+    public static void increment60SecondsCounter() {
+        GoodtimeApplication.getPrivatePreferences().edit()
+                .putInt(ADD_60_SECONDS_COUNTER, getAdd60SecondsCounter() + 1).apply();
     }
 
     public static void setPro() {

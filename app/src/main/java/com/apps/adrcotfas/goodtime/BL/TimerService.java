@@ -17,7 +17,6 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
@@ -34,6 +33,7 @@ import de.greenrobot.event.EventBus;
 import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static com.apps.adrcotfas.goodtime.BL.NotificationHelper.GOODTIME_NOTIFICATION_ID;
 import static com.apps.adrcotfas.goodtime.Util.Constants.SESSION_TYPE;
+import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatTime;
 
 /**
  * Class representing the foreground service which triggers the countdown timer and handles events.
@@ -165,6 +165,7 @@ public class TimerService extends LifecycleService {
         }
 
         SessionType sessionType = getSessionManager().getCurrentSession().getSessionType().getValue();
+        Log.d(TAG, "onStopEvent, sessionType: " + sessionType);
         if (sessionType == SessionType.LONG_BREAK) {
             PreferenceHelper.resetCurrentStreak();
         }
@@ -172,10 +173,7 @@ public class TimerService extends LifecycleService {
         stopForeground(true);
         stopSelf();
 
-        // store what was done to the database
-        if (sessionType == SessionType.WORK) {
-            saveToDb();
-        }
+        finalizeSession(sessionType);
     }
 
     private void onFinishEvent(SessionType sessionType) {
@@ -207,16 +205,12 @@ public class TimerService extends LifecycleService {
         }
 
         // store what was done to the database
-        if (sessionType == SessionType.WORK) {
-            saveToDb();
-        } else {
-            getSessionManager().getCurrentSession().setDuration(
-                    TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)));
-        }
+        finalizeSession(sessionType);
     }
 
     private void onAdd60Seconds() {
         Log.d(TAG, TimerService.this.hashCode() + " onAdd60Seconds ");
+        PreferenceHelper.increment60SecondsCounter();
         if (getSessionManager().getCurrentSession().getTimerState().getValue() == TimerState.INACTIVE) {
             startForeground(GOODTIME_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
                     getSessionManager().getCurrentSession()).build());
@@ -232,9 +226,7 @@ public class TimerService extends LifecycleService {
         stopForeground(true);
         updateLongBreakStreak(sessionType);
 
-        if (sessionType == SessionType.WORK) {
-            saveToDb();
-        }
+        finalizeSession(sessionType);
 
         onStartEvent(sessionType == SessionType.WORK ? SessionType.BREAK : SessionType.WORK);
     }
@@ -288,35 +280,58 @@ public class TimerService extends LifecycleService {
         }
     }
 
-    private void saveToDb() {
-        //TODO: refactor this mess
-        if (getSessionManager().getElapsedTime() >= 1) {
+    private void finalizeSession(SessionType sessionType) {
+        if (sessionType != SessionType.WORK) {
+            getSessionManager().getCurrentSession().setDuration(
+                    TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)));
+            PreferenceHelper.resetAdd60SecondsCounter();
+            return;
+        }
 
-            Handler handler = new Handler();
-            Runnable r = () -> {
+        Handler handler = new Handler();
+
+        final long endTime = System.currentTimeMillis();
+        final String label = getSessionManager().getCurrentSession().getLabel().getValue();
+
+        Runnable r = () -> {
+            long minutesLeft = 0;
+            Long millisLeft = getSessionManager().getCurrentSession().getDuration().getValue();
+            if (millisLeft != null) {
+                minutesLeft = TimeUnit.MILLISECONDS.toMinutes(millisLeft + 30000);
+            }
+
+            final int minutes = (int) (PreferenceHelper.getSessionDuration(sessionType)
+                    + PreferenceHelper.getAdd60SecondsCounter()
+                    - minutesLeft);
+
+            Log.d(TAG, "finalizeSession, elapsed minutes: " + minutes);
+            if (minutes > 0) {
                 try {
                     Session session = new Session(
                             0,
-                            System.currentTimeMillis(),
-                            getSessionManager().getElapsedTime(),
-                            getSessionManager().getCurrentSession().getLabel().getValue());
+                            endTime,
+                            minutes,
+                            label);
                     AppDatabase.getDatabase(getApplicationContext()).sessionModel().addSession(session);
+                    Log.d(TAG, "finalizeSession, saving session finished at" + formatTime(endTime));
                 } catch (Exception e) {
                     // the label was deleted in the meantime so set it to null and save the unlabeled session
                     handler.post(() -> getSessionManager().getCurrentSession().setLabel(null));
                     Session session = new Session(
                             0,
-                            System.currentTimeMillis(),
-                            getSessionManager().getElapsedTime(),
+                            endTime,
+                            minutes,
                             null);
                     AppDatabase.getDatabase(getApplicationContext()).sessionModel().addSession(session);
                 }
-                handler.post(() -> getSessionManager().getCurrentSession().setDuration(
-                        TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK))));
-            };
-            Thread t = new Thread(r);
-            t.start();
-        }
+            }
+            handler.post(() -> getSessionManager().getCurrentSession().setDuration(
+                    TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK))));
+            PreferenceHelper.resetAdd60SecondsCounter();
+        };
+        Thread t = new Thread(r);
+        Log.d(TAG, "finalizeSession, start thread");
+        t.start();
     }
 
     private void bringActivityToFront() {
