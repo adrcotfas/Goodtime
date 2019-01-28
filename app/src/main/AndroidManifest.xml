@@ -35,9 +35,8 @@
         <activity
             android:name="com.apps.adrcotfas.goodtime.Main.TimerActivity"
             android:showOnLockScreen="true"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme"
-            tools:targetApi="jelly_bean_mr1">
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
