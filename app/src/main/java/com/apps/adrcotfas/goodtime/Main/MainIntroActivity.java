@@ -26,27 +26,27 @@ public class MainIntroActivity extends IntroActivity {
         addSlide(new SimpleSlide.Builder()
                 .title(R.string.intro_avoid_distractions)
                 .description(R.string.intro_avoid_distractions_description)
-                .image(R.drawable.ic_umbrella_outline)
-                .background(R.color.gray1000)
-                .backgroundDark(R.color.gray1000)
+                .image(R.drawable.intro1)
+                .background(R.color.gray50)
+                .backgroundDark(R.color.gray50)
                 .layout(R.layout.activity_main_intro)
                 .build());
 
         addSlide(new SimpleSlide.Builder()
                 .title(R.string.intro_clear_mind)
                 .description(R.string.intro_clear_mind_description)
-                .image(R.drawable.ic_break)
-                .background(R.color.gray1000)
-                .backgroundDark(R.color.gray1000)
+                .image(R.drawable.intro2)
+                .background(R.color.gray50)
+                .backgroundDark(R.color.gray50)
                 .layout(R.layout.activity_main_intro)
                 .build());
 
         addSlide(new SimpleSlide.Builder()
                 .title(R.string.intro_get_started)
                 .description(R.string.intro_get_started_description)
-                .image(R.drawable.ic_status_goodtime)
-                .background(R.color.gray1000)
-                .backgroundDark(R.color.gray1000)
+                .image(R.drawable.intro3)
+                .background(R.color.gray50)
+                .backgroundDark(R.color.gray50)
                 .layout(R.layout.activity_main_intro)
                 .build());
     }

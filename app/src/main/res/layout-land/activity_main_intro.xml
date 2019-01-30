@@ -27,7 +27,7 @@
         <ImageView
             android:id="@id/mi_image"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:scaleType="fitCenter"
             android:layout_weight="1"
             android:layout_gravity="center"
@@ -56,7 +56,7 @@
                 app:layout_parallaxFactor="0.5"
                 android:gravity="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                android:fontFamily="sans-serif-medium"
+                android:fontFamily="@font/app_font"
                 tools:ignore="UnusedAttribute"
                 tools:text="Lorem ipsum" />
 
@@ -69,7 +69,7 @@
                 android:gravity="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 android:textSize="15sp"
-                android:fontFamily="sans-serif-medium"
+                android:fontFamily="@font/app_font"
                 tools:ignore="UnusedAttribute"
                 tools:text="Lorem ipsum dolor sit amet, consectetur, adipisci velit, …" />
 
