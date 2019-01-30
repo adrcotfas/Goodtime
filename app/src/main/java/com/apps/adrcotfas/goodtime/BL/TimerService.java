@@ -72,7 +72,13 @@ public class TimerService extends LifecycleService {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+
         int result = START_STICKY;
+
+        if (intent == null) {
+            return result;
+        }
+
         Log.d(TAG, "onStartCommand " + this.hashCode() + " " + intent.getAction());
         switch (intent.getAction()) {
             case Constants.ACTION.STOP:
