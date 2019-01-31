@@ -108,6 +108,7 @@ public class TimerActivity
     private TextView mTimeLabel;
     private Toolbar mToolbar;
     private SessionViewModel mSessionViewModel;
+    private TimerActivityViewModel mViewModel;
 
     private FrameLayout mSessionsCounter;
     private TextView mSessionsCounterText;
@@ -151,6 +152,8 @@ public class TimerActivity
 
             PreferenceHelper.consumeFirstRun();
         }
+
+        mViewModel = ViewModelProviders.of(this).get(TimerActivityViewModel.class);
 
         ThemeHelper.setTheme(this);
 
@@ -290,6 +293,12 @@ public class TimerActivity
     protected void onResume() {
         super.onResume();
 
+        mTimeLabel.setVisibility(View.VISIBLE);
+        mViewModel.isActive = true;
+        if (mViewModel.dialogPendingType != SessionType.INVALID) {
+            showFinishDialog(mViewModel.dialogPendingType);
+            mViewModel.dialogPendingType = SessionType.INVALID;
+        }
         // initialize notification channels on the first run
         new NotificationHelper(this);
 
@@ -314,6 +323,13 @@ public class TimerActivity
         if (mBillingProcessor != null) {
             mBillingProcessor.loadOwnedPurchasesFromGoogle();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mViewModel.isActive = false;
+        mTimeLabel.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -548,36 +564,39 @@ public class TimerActivity
     }
 
     private void showFinishDialog(SessionType sessionType) {
+        if (mViewModel.isActive) {
+            Log.i(TAG, "Showing the finish dialog.");
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            if (sessionType == SessionType.WORK) {
+                builder.setTitle(R.string.action_finished_session)
+                        .setPositiveButton(R.string.action_start_break, (dialog, which) -> {
+                            start(SessionType.BREAK);
+                            delayToggleFullscreenMode();
+                        })
+                        .setNeutralButton(R.string.dialog_close, (dialog, which) -> {
+                            EventBus.getDefault().post(new Constants.ClearNotificationEvent());
+                            delayToggleFullscreenMode();
+                        })
+                        .setOnCancelListener(dialog -> toggleFullscreenMode());
+            } else {
+                builder.setTitle(R.string.action_finished_break)
+                        .setPositiveButton(R.string.action_start_work, (dialog, which) -> {
+                            start(SessionType.WORK);
+                            delayToggleFullscreenMode();
+                        })
+                        .setNeutralButton(android.R.string.cancel, (dialog, which) -> {
+                            EventBus.getDefault().post(new Constants.ClearNotificationEvent());
+                            delayToggleFullscreenMode();
+                        })
+                        .setOnCancelListener(dialog -> toggleFullscreenMode());
+            }
 
-        Log.i(TAG, "Showing the finish dialog.");
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        if (sessionType == SessionType.WORK) {
-            builder.setTitle(R.string.action_finished_session)
-                    .setPositiveButton(R.string.action_start_break, (dialog, which) -> {
-                        start(SessionType.BREAK);
-                        delayToggleFullscreenMode();
-                    })
-                    .setNeutralButton(R.string.dialog_close, (dialog, which) -> {
-                        EventBus.getDefault().post(new Constants.ClearNotificationEvent());
-                        delayToggleFullscreenMode();
-                    })
-                    .setOnCancelListener(dialog -> toggleFullscreenMode());
+            mDialogSessionFinished = builder.create();
+            mDialogSessionFinished.setCanceledOnTouchOutside(false);
+            mDialogSessionFinished.show();
         } else {
-            builder.setTitle(R.string.action_finished_break)
-                    .setPositiveButton(R.string.action_start_work, (dialog, which) -> {
-                        start(SessionType.WORK);
-                        delayToggleFullscreenMode();
-                    })
-                    .setNeutralButton(android.R.string.cancel, (dialog, which) -> {
-                        EventBus.getDefault().post(new Constants.ClearNotificationEvent());
-                        delayToggleFullscreenMode();
-                    })
-                    .setOnCancelListener(dialog -> toggleFullscreenMode());
+            mViewModel.dialogPendingType = sessionType;
         }
-
-        mDialogSessionFinished = builder.create();
-        mDialogSessionFinished.setCanceledOnTouchOutside(false);
-        mDialogSessionFinished.show();
     }
 
     private void toggleFullscreenMode() {

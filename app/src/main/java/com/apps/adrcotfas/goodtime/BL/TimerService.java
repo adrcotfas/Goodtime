@@ -185,9 +185,9 @@ public class TimerService extends LifecycleService {
     private void onFinishEvent(SessionType sessionType) {
         Log.d(TAG, TimerService.this.hashCode() + " onFinishEvent " + sessionType.toString());
 
+        acquireScreenLock();
         bringActivityToFront();
 
-        acquireScreenLock();
         if (sessionType == SessionType.WORK) {
             if (PreferenceHelper.isWiFiDisabled()) {
                 toggleWifi(true);
@@ -258,7 +258,7 @@ public class TimerService extends LifecycleService {
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,
                 AlarmReceiver.class.getName());
-        wakeLock.acquire(TimeUnit.SECONDS.toMillis(1));
+        wakeLock.acquire(5000);
     }
 
     private void updateNotificationProgress() {
