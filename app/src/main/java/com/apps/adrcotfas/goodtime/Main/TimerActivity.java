@@ -293,14 +293,16 @@ public class TimerActivity
     protected void onResume() {
         super.onResume();
 
-        mTimeLabel.setVisibility(View.VISIBLE);
         mViewModel.isActive = true;
         if (mViewModel.dialogPendingType != SessionType.INVALID) {
             showFinishDialog(mViewModel.dialogPendingType);
             mViewModel.dialogPendingType = SessionType.INVALID;
         }
+
         // initialize notification channels on the first run
-        new NotificationHelper(this);
+        if (PreferenceHelper.isFirstRun()) {
+            new NotificationHelper(this);
+        }
 
         // this is to refresh the current status icon color
         invalidateOptionsMenu();
@@ -329,7 +331,6 @@ public class TimerActivity
     protected void onPause() {
         super.onPause();
         mViewModel.isActive = false;
-        mTimeLabel.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -594,6 +595,7 @@ public class TimerActivity
             mDialogSessionFinished = builder.create();
             mDialogSessionFinished.setCanceledOnTouchOutside(false);
             mDialogSessionFinished.show();
+            mViewModel.dialogPendingType = SessionType.INVALID;
         } else {
             mViewModel.dialogPendingType = sessionType;
         }

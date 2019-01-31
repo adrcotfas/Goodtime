@@ -32,5 +32,7 @@ public class TimerActivityViewModel extends AndroidViewModel {
     public SessionType dialogPendingType;
     public TimerActivityViewModel(@NonNull Application application) {
         super(application);
+        isActive = false;
+        dialogPendingType = SessionType.INVALID;
     }
 }
