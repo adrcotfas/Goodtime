@@ -61,7 +61,7 @@ public class BackupFragment extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         DialogBackupBinding binding = DataBindingUtil.inflate(inflater, R.layout.dialog_backup, container, false);
 
-        mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
+        mSessionViewModel = ViewModelProviders.of(getActivity()).get(SessionViewModel.class);
         binding.exportBackup.setOnClickListener(view -> exportBackup());
         binding.importBackup.setOnClickListener(view -> importBackup());
         binding.exportCsv.setOnClickListener(view -> exportCsv());
