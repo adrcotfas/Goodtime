@@ -15,7 +15,6 @@
     <string-array name="update_pro">
         <item>@string/update_pro_1</item>
         <item>@string/update_pro_2</item>
-        <item>@string/update_pro_3</item>
         <item>@string/update_pro_4</item>
         <item>@string/update_pro_5</item>
         <item>@string/update_pro_6</item>
@@ -24,7 +23,6 @@
         <item>@string/update_pro_9</item>
         <item>@string/update_pro_10</item>
         <item>@string/update_pro_11</item>
-        <item>@string/update_pro_12</item>
         <item>@string/update_pro_13</item>
     </string-array>
 
