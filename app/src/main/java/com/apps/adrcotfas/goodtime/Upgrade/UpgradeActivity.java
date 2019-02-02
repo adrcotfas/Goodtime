@@ -123,6 +123,7 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
         PreferenceHelper.setPro();
         buy.setEnabled(false);
         Toast.makeText(UpgradeActivity.this, getString(R.string.upgrade_enjoy), Toast.LENGTH_LONG).show();
+        finish();
     }
 
     @Override
