@@ -503,8 +503,10 @@ public class TimerActivity
                     format(Locale.US, "%02d", seconds);
             currentFormattedTick = new SpannableString(currentTick);
             if (minutes > 0) {
-                currentFormattedTick.setSpan(new RelativeSizeSpan(isV1Style ? 2f : 1.5f), 0,
+                currentFormattedTick.setSpan(new RelativeSizeSpan(isV1Style ? 2f : 1.25f), 0,
                         isV1Style ? currentTick.indexOf(separator) : currentTick.length(), 0);
+            } else {
+                currentFormattedTick.setSpan(new RelativeSizeSpan(1.25f), 0, currentTick.length(), 0);
             }
         }
 
