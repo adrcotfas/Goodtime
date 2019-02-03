@@ -147,7 +147,10 @@ public class TimerService extends LifecycleService {
             }
         }
 
-        mRingtoneAndVibrationPlayer.stop();
+        if (!PreferenceHelper.isAutoStartWork() && !PreferenceHelper.isAutoStartBreak()) {
+            mRingtoneAndVibrationPlayer.stop();
+        }
+
         mNotificationHelper.clearNotification();
         startForeground(GOODTIME_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
                 getSessionManager().getCurrentSession()).build());
@@ -179,7 +182,7 @@ public class TimerService extends LifecycleService {
         stopForeground(true);
         stopSelf();
 
-        finalizeSession(sessionType);
+        finalizeSession(sessionType, getSessionManager().getElapsedMinutesAtStop());
     }
 
     private void onFinishEvent(SessionType sessionType) {
@@ -202,6 +205,9 @@ public class TimerService extends LifecycleService {
 
         updateLongBreakStreak(sessionType);
 
+        // store what was done to the database
+        finalizeSession(sessionType, getSessionManager().getElapsedMinutesAtFinished());
+
         if (PreferenceHelper.isAutoStartBreak() && sessionType == SessionType.WORK) {
             onStartEvent(SessionType.BREAK);
         } else if (PreferenceHelper.isAutoStartWork() && sessionType != SessionType.WORK) {
@@ -209,9 +215,6 @@ public class TimerService extends LifecycleService {
         } else {
             mNotificationHelper.notifyFinished(sessionType);
         }
-
-        // store what was done to the database
-        finalizeSession(sessionType);
     }
 
     private void onAdd60Seconds() {
@@ -232,7 +235,7 @@ public class TimerService extends LifecycleService {
         stopForeground(true);
         updateLongBreakStreak(sessionType);
 
-        finalizeSession(sessionType);
+        finalizeSession(sessionType, getSessionManager().getElapsedMinutesAtStop());
 
         onStartEvent(sessionType == SessionType.WORK ? SessionType.BREAK : SessionType.WORK);
     }
@@ -286,31 +289,23 @@ public class TimerService extends LifecycleService {
         }
     }
 
-    private void finalizeSession(SessionType sessionType) {
+    //TODO: clean-up this mess
+    private void finalizeSession(SessionType sessionType, int minutes) {
+        PreferenceHelper.resetAdd60SecondsCounter();
+        getSessionManager().getCurrentSession().setDuration(
+                TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)));
+
         if (sessionType != SessionType.WORK) {
-            getSessionManager().getCurrentSession().setDuration(
-                    TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)));
-            PreferenceHelper.resetAdd60SecondsCounter();
             return;
         }
 
+        final String label = getSessionManager().getCurrentSession().getLabel().getValue();
+        final long endTime = System.currentTimeMillis();
+
         Handler handler = new Handler();
 
-        final long endTime = System.currentTimeMillis();
-        final String label = getSessionManager().getCurrentSession().getLabel().getValue();
-
         Runnable r = () -> {
-            long minutesLeft = 0;
-            Long millisLeft = getSessionManager().getCurrentSession().getDuration().getValue();
-            if (millisLeft != null) {
-                minutesLeft = TimeUnit.MILLISECONDS.toMinutes(millisLeft + 30000);
-            }
-
-            final int minutes = (int) (PreferenceHelper.getSessionDuration(sessionType)
-                    + PreferenceHelper.getAdd60SecondsCounter()
-                    - minutesLeft);
-
-            Log.d(TAG, "finalizeSession, elapsed minutes: " + minutes);
+            Log.d(TAG, "finalizeSession / elapsed minutes: " + minutes);
             if (minutes > 0) {
                 try {
                     Session session = new Session(
@@ -331,9 +326,6 @@ public class TimerService extends LifecycleService {
                     AppDatabase.getDatabase(getApplicationContext()).sessionModel().addSession(session);
                 }
             }
-            handler.post(() -> getSessionManager().getCurrentSession().setDuration(
-                    TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK))));
-            PreferenceHelper.resetAdd60SecondsCounter();
         };
         Thread t = new Thread(r);
         Log.d(TAG, "finalizeSession, start thread");

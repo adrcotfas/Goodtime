@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.CountDownTimer;
-import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -48,6 +47,8 @@ public class CurrentSessionManager extends ContextWrapper{
     private long mRemaining;
     private final AlarmReceiver mAlarmReceiver;
 
+    private long mSessionDuration;
+
     public CurrentSessionManager(Context context, CurrentSession currentSession) {
         super(context);
         mCurrentSession = currentSession;
@@ -57,13 +58,14 @@ public class CurrentSessionManager extends ContextWrapper{
     public void startTimer(SessionType sessionType) {
         Log.v(TAG, "startTimer: " + sessionType.toString());
 
-        final long duration = TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(sessionType));
+        mSessionDuration =  TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(sessionType));
+
         mCurrentSession.setTimerState(TimerState.ACTIVE);
         mCurrentSession.setSessionType(sessionType);
-        mCurrentSession.setDuration(duration);
+        mCurrentSession.setDuration(mSessionDuration);
 
-        scheduleAlarm(sessionType, duration);
-        mTimer = new AppCountDownTimer(duration);
+        scheduleAlarm(sessionType, mSessionDuration);
+        mTimer = new AppCountDownTimer(mSessionDuration);
         mTimer.start();
     }
 
@@ -94,6 +96,29 @@ public class CurrentSessionManager extends ContextWrapper{
         mCurrentSession.setTimerState(TimerState.INACTIVE);
     }
 
+    /**
+     * This is used to get the minutes that should be stored to the statistics
+     * To be called when the session is finished without user interaction
+     * @return the minutes elapsed
+     */
+    public int getElapsedMinutesAtFinished() {
+        int sessionMinutes = (int) TimeUnit.MILLISECONDS.toMinutes(mSessionDuration);
+        int extraMinutes = PreferenceHelper.getAdd60SecondsCounter();
+        return sessionMinutes + extraMinutes;
+    }
+
+    /**
+     * This is used to get the minutes that should be stored to the statistics
+     * To be called when the user manually stops an ongoing session (or skips)
+     * @return the minutes elapsed
+     */
+    public int getElapsedMinutesAtStop() {
+        int sessionMinutes = (int) TimeUnit.MILLISECONDS.toMinutes(mSessionDuration);
+        int extraMinutes = PreferenceHelper.getAdd60SecondsCounter();
+        int remainingMinutes = (int) TimeUnit.MILLISECONDS.toMinutes(mRemaining + 30000);
+        return sessionMinutes - remainingMinutes + extraMinutes;
+    }
+
     private void scheduleAlarm(SessionType sessionType, long duration) {
         this.registerReceiver(mAlarmReceiver, new IntentFilter(FINISHED));
         final long triggerAtMillis = duration + SystemClock.elapsedRealtime();
@@ -102,7 +127,6 @@ public class CurrentSessionManager extends ContextWrapper{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     triggerAtMillis, getAlarmPendingIntent(sessionType));
-
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getAlarmManager().setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     triggerAtMillis, getAlarmPendingIntent(sessionType));
@@ -144,7 +168,7 @@ public class CurrentSessionManager extends ContextWrapper{
     public void add60Seconds() {
         Log.v(TAG, "add60Seconds");
 
-        final long extra = TimeUnit.SECONDS.toMillis(60);
+        final long extra = 60000; //TimeUnit.SECONDS.toMillis(60);
 
         cancelAlarm();
         mTimer.cancel();
@@ -174,6 +198,11 @@ public class CurrentSessionManager extends ContextWrapper{
             super(millisInFuture, 1000);
         }
 
+        /**
+         * This is useful only when the screen is turned on. It seems that onTick is not called for every tick if the
+         * phone is locked and the app runs in the background.
+         * I found this the hard way when using the session duration(which is set here) in saving to statistics.
+         */
         @Override
         public void onTick(long millisUntilFinished) {
             Log.v(TAG, "is Ticking: " + millisUntilFinished + " millis remaining.");
