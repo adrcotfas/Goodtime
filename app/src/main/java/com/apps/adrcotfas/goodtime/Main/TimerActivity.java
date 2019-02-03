@@ -490,14 +490,14 @@ public class TimerActivity
         seconds -= (minutes * 60);
 
         SpannableString currentFormattedTick;
-        boolean isMinutesStyle = PreferenceHelper.getTimerStyle().equals(getResources().getString(R.string.pref_timer_style_minutes));
+        boolean isMinutesStyle = PreferenceHelper.getTimerStyle().equals(getResources().getString(R.string.pref_timer_style_minutes_value));
         if (isMinutesStyle) {
             String currentTick = String.valueOf(TimeUnit.SECONDS.toMinutes((minutes * 60) + seconds + 59));
             currentFormattedTick = new SpannableString(currentTick);
             currentFormattedTick.setSpan(new RelativeSizeSpan(1.5f), 0,
                     currentTick.length(), 0);
         } else {
-            boolean isV1Style = PreferenceHelper.getTimerStyle().equals(getResources().getString(R.string.pref_timer_style_default));
+            boolean isV1Style = PreferenceHelper.getTimerStyle().equals(getResources().getString(R.string.pref_timer_style_default_value));
             final String separator =  isV1Style ? "." : ":";
             String currentTick = (minutes > 0 ? minutes + separator : "") +
                     format(Locale.US, "%02d", seconds);

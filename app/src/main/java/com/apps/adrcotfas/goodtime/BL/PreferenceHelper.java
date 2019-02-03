@@ -236,7 +236,7 @@ public class PreferenceHelper {
     }
 
     public static String getTimerStyle() {
-        return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getString(TIMER_STYLE, "Default");
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getString(TIMER_STYLE, "0");
     }
 
     public static boolean isSessionsCounterEnabled() {
