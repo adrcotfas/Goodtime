@@ -32,6 +32,8 @@
             android:layout_marginBottom="@dimen/mi_baseline"
             android:gravity="center"
             android:adjustViewBounds="true"
+            android:paddingLeft="36dp"
+            android:paddingRight="36dp"
             tools:ignore="ContentDescription"
             tools:src="@android:drawable/sym_action_call" />
 
