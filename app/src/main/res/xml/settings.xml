@@ -3,6 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <Preference
+        android:key="pref_disable_battery_optimization"
+        android:title="@string/pref_disable_battery_optimization"
+        android:summary="@string/pref_disable_battery_optimization_summary"
+        android:icon="@drawable/ic_exclamation"
+        app:isPreferenceVisible="false"/>
+
     <PreferenceCategory
         android:title="@string/pref_header_general"
         app:iconSpaceReserved="false">
@@ -189,13 +196,6 @@
             android:title="@string/pref_ringtone_insistent"
             android:summary="@string/pref_ringtone_insistent_summary"
             app:iconSpaceReserved="false"/>
-
-        <Preference
-            android:key="pref_disable_battery_optimization"
-            android:title="@string/pref_disable_battery_optimization"
-            android:summary="@string/pref_disable_battery_optimization_summary"
-            app:iconSpaceReserved="false"/>
-
     </PreferenceCategory>
 
     <PreferenceCategory
