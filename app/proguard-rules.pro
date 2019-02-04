@@ -42,3 +42,5 @@
 -keep class * implements com.google.gson.JsonDeserializer
 
 ##---------------End: proguard configuration for Gson  ----------
+
+-dontwarn org.joda.**
