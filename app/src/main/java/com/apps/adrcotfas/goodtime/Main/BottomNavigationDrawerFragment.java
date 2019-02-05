@@ -15,6 +15,7 @@ package com.apps.adrcotfas.goodtime.Main;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +24,10 @@ import android.view.ViewGroup;
 import com.apps.adrcotfas.goodtime.About.AboutActivity;
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.Backup.BackupFragment;
+import com.apps.adrcotfas.goodtime.BuildConfig;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity;
-import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
 import com.apps.adrcotfas.goodtime.databinding.DrawerMainBinding;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -38,6 +39,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
+
+import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
 public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
 
@@ -53,12 +56,12 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
 
         DrawerMainBinding binding = DataBindingUtil.inflate(inflater, R.layout.drawer_main, container, false);
 
-        if (PreferenceHelper.isPro()) {
+        if (PreferenceHelper.isPro() && !BuildConfig.F_DROID) {
             binding.separator1.setVisibility(View.GONE);
             binding.upgrade.setVisibility(View.GONE);
         } else {
             binding.upgrade.setOnClickListener(v -> {
-                UpgradeActivity.launchUpgradeActivity(getActivity());
+                launchUpgradeActivity(getActivity());
                 if (getDialog() != null) {
                     getDialog().dismiss();
                 }
@@ -104,7 +107,7 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
                         Intent intent = new Intent(getActivity(), AddEditLabelActivity.class);
                         startActivity(intent);
                     } else {
-                        UpgradeActivity.launchUpgradeActivity(getContext());
+                        launchUpgradeActivity(getContext());
                     }
                     break;
                 case R.id.action_settings:
@@ -120,7 +123,7 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                         new BackupFragment().show(fragmentManager, "");
                     } else {
-                        UpgradeActivity.launchUpgradeActivity(getContext());
+                        launchUpgradeActivity(getContext());
                     }
                     break;
                 case R.id.action_about:

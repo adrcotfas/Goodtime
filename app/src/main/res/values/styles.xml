@@ -82,7 +82,6 @@
         <item name="android:textSize">@dimen/smallTextSize</item>
         <item name="android:textColor">#CFB53B</item>
         <item name="android:textStyle">bold</item>
-
     </style>
 
     <style name="AllSessionsAddEditDialogRowEnd">

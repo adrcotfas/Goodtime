@@ -15,6 +15,7 @@ package com.apps.adrcotfas.goodtime.BL;
 
 import android.os.SystemClock;
 
+import com.apps.adrcotfas.goodtime.BuildConfig;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 
 import java.util.concurrent.TimeUnit;
@@ -275,6 +276,10 @@ public class PreferenceHelper {
     }
 
     public static boolean isPro() {
-        return GoodtimeApplication.getPrivatePreferences().getBoolean(PRO, false);
+        if (BuildConfig.F_DROID) {
+            return true;
+        } else {
+            return GoodtimeApplication.getPrivatePreferences().getBoolean(PRO, false);
+        }
     }
 }

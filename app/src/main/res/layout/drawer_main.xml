@@ -1,5 +1,4 @@
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.core.widget.NestedScrollView
         android:id="@+id/layout"
@@ -52,20 +51,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title" />
 
-        <TextView
-            android:id="@+id/upgrade"
+        <include android:id="@+id/upgrade"
+            layout="@layout/view_upgrade"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:gravity="center_vertical"
-            android:drawableLeft="@drawable/ic_crown"
-            android:drawableStart="@drawable/ic_crown"
-            android:text="@string/upgrade"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/separator1"
-            style="@style/UpgradeButton"/>
+            app:layout_constraintTop_toBottomOf="@+id/separator1"/>
 
         <View
             android:id="@+id/separator2"

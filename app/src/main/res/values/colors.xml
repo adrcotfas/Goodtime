@@ -27,7 +27,6 @@
         <item>@color/purple_200</item>
     </integer-array>
 
-    <color name="cyan_200">#80DEEA</color>
     <color name="light_blue_200">#81D4FA</color>
     <color name="green_200">#A5D6A7</color>
     <color name="yellow_200">#FFF59D</color>

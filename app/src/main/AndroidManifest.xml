@@ -20,9 +20,6 @@
     <!-- For the option of removing the app from the battery optimization -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
 
-    <!--For the IAP-->
-    <uses-permission android:name="com.android.vending.BILLING" />
-
     <application
         android:name="com.apps.adrcotfas.goodtime.BL.GoodtimeApplication"
         android:allowBackup="true"
@@ -78,12 +75,6 @@
             android:name=".Main.MainIntroActivity"
             android:theme="@style/Theme.Intro"
             android:parentActivityName=".Main.TimerActivity">
-        </activity>
-
-        <activity
-            android:name=".Upgrade.UpgradeActivity"
-            android:parentActivityName=".Main.TimerActivity"
-            android:label="@string/upgrade">
         </activity>
 
         <service

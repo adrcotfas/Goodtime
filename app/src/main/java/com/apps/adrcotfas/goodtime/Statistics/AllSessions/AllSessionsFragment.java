@@ -51,6 +51,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity.DIALOG_SELECT_LABEL_TAG;
+import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
 public class AllSessionsFragment extends Fragment implements SelectLabelDialog.OnLabelSelectedListener {
 
@@ -238,7 +239,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
                             mActionMode.finish();
                         }
                     } else {
-                        UpgradeActivity.launchUpgradeActivity(getActivity());
+                        launchUpgradeActivity(getActivity());
                     }
                     break;
                 case R.id.action_select_all:

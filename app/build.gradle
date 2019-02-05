@@ -6,9 +6,8 @@ android {
         applicationId "com.apps.adrcotfas.goodtime"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 68
+        versionCode 70
         versionName "2.0a"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     dataBinding {
@@ -21,6 +20,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions("cevafin")
+
+    productFlavors {
+        google {
+            dimension "cevafin"
+            buildConfigField "boolean", "F_DROID", "false"
+        }
+        fdroid {
+            dimension "cevafin"
+            buildConfigField "boolean", "F_DROID", "true"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
@@ -28,7 +41,6 @@ android {
 }
 
 dependencies {
-
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
@@ -52,7 +64,6 @@ dependencies {
     implementation 'de.greenrobot:eventbus:2.4.0'
 
     // for the NavigationView of NavigationDrawer
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
     implementation 'com.google.android.material:material:1.1.0-alpha02'
 
     // About
@@ -74,5 +85,7 @@ dependencies {
     implementation 'com.github.adrcotfas:material-intro:e1228'
 
     // IAP
-    implementation 'com.anjlab.android.iab.v3:library:1.0.44'
+    googleImplementation 'com.anjlab.android.iab.v3:library:1.0.44'
+
+    fdroidImplementation 'org.sufficientlysecure:donations:2.6'
 }

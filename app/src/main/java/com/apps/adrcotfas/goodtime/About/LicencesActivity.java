@@ -16,6 +16,7 @@ package com.apps.adrcotfas.goodtime.About;
 import android.content.Context;
 import android.view.MenuItem;
 
+import com.apps.adrcotfas.goodtime.BuildConfig;
 import com.apps.adrcotfas.goodtime.R;
 import com.danielstone.materialaboutlibrary.ConvenienceBuilder;
 import com.danielstone.materialaboutlibrary.MaterialAboutActivity;
@@ -107,17 +108,28 @@ public class LicencesActivity extends MaterialAboutActivity {
                 "Android In-App Billing v3", "2014", "AnjLab",
                 OpenSourceLicense.APACHE_2);
 
-        return new MaterialAboutList(
-                cardMpAndroidChart,
-                cardPreferenceX,
-                cardColorPickerX,
-                cardEventBus,
-                materialAboutLIbraryLicenseCard,
-                androidIconicsLicenseCard,
-                cardJodaOrg,
-                cardIap,
-                cardIntro
-                );
+        MaterialAboutList result = new MaterialAboutList()
+                .addCard(cardMpAndroidChart)
+                .addCard(cardPreferenceX)
+                .addCard(cardColorPickerX)
+                .addCard(cardEventBus)
+                .addCard(materialAboutLIbraryLicenseCard)
+                .addCard(androidIconicsLicenseCard)
+                .addCard(cardJodaOrg)
+                .addCard(cardIap)
+                .addCard(cardIntro);
+
+        if (BuildConfig.F_DROID) {
+            MaterialAboutCard donationCard = ConvenienceBuilder.createLicenseCard(c,
+                    new IconicsDrawable(c)
+                            .icon(CommunityMaterial.Icon.cmd_book)
+                            .color(ContextCompat.getColor(c, colorIcon))
+                            .sizeDp(18),
+                    "Android Donations Lib", "2018", "SufficientlySecure",
+                    OpenSourceLicense.APACHE_2);
+            result.addCard(donationCard);
+        }
+        return result;
     }
 
     @Override

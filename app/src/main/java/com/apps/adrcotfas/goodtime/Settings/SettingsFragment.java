@@ -30,7 +30,6 @@ import android.view.WindowManager;
 
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
-import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.takisoft.preferencex.PreferenceFragmentCompat;
 import com.takisoft.preferencex.RingtonePreference;
@@ -44,6 +43,7 @@ import androidx.preference.Preference;
 import androidx.preference.SwitchPreferenceCompat;
 
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.DISABLE_SOUND_AND_VIBRATION;
+import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -104,7 +104,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         }
 
         timerStyleDummy.setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
-            UpgradeActivity.launchUpgradeActivity(getActivity());
+            launchUpgradeActivity(getActivity());
             return true;
         });
     }
@@ -152,7 +152,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
 
         final CheckBoxPreference insistentRingPref = findPreference(PreferenceHelper.INSISTENT_RINGTONE);
         insistentRingPref.setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
-            UpgradeActivity.launchUpgradeActivity(getActivity());
+            launchUpgradeActivity(getActivity());
             insistentRingPref.setChecked(false);
             return true;
         });
@@ -173,7 +173,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         final RingtonePreference prefBreak = findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED);
         final Preference prefBreakDummy = findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED_DUMMY);
         prefBreakDummy.setOnPreferenceClickListener(preference -> {
-            UpgradeActivity.launchUpgradeActivity(getActivity());
+            launchUpgradeActivity(getActivity());
             return true;
         });
 
@@ -205,7 +205,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     private void setupScreensaver() {
         final CheckBoxPreference screensaverPref = SettingsFragment.this.findPreference(PreferenceHelper.ENABLE_SCREENSAVER_MODE);
         findPreference(PreferenceHelper.ENABLE_SCREENSAVER_MODE).setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
-            UpgradeActivity.launchUpgradeActivity(getActivity());
+            launchUpgradeActivity(getActivity());
             screensaverPref.setChecked(false);
             return true;
         });
@@ -223,7 +223,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     private void setupTheme() {
         SwitchPreferenceCompat prefAmoled = findPreference(PreferenceHelper.AMOLED);
         prefAmoled.setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
-            UpgradeActivity.launchUpgradeActivity(getActivity());
+            launchUpgradeActivity(getActivity());
             prefAmoled.setChecked(true);
             return true;
         });

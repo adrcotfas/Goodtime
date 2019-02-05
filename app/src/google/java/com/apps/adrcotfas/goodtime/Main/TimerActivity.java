@@ -47,7 +47,6 @@ import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.Statistics.Main.SelectLabelDialog;
 import com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity;
 import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
-import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 import com.apps.adrcotfas.goodtime.Util.OnSwipeTouchListener;
@@ -81,12 +80,14 @@ import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
 import static android.view.WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON;
 import static android.view.animation.AnimationUtils.loadAnimation;
 import static android.widget.Toast.LENGTH_SHORT;
+import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.AMOLED;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREENSAVER_MODE;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREEN_ON;
-import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.AMOLED;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
+import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 import static java.lang.String.format;
 
+//TODO: remove duplicate from the other flavor
 public class TimerActivity
         extends
         AppCompatActivity
@@ -107,10 +108,8 @@ public class TimerActivity
     private View mBoundsView;
     private TextView mTimeLabel;
     private Toolbar mToolbar;
-    private SessionViewModel mSessionViewModel;
     private TimerActivityViewModel mViewModel;
 
-    private FrameLayout mSessionsCounter;
     private TextView mSessionsCounterText;
 
     private static final String DIALOG_SELECT_LABEL_TAG = "dialogSelectLabel";
@@ -167,7 +166,9 @@ public class TimerActivity
         setupTimeLabelEvents();
 
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle(null);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(null);
+        }
 
         mBillingProcessor = BillingProcessor.newBillingProcessor(this, getString(R.string.licence_key), getString(R.string.merchant_id),  this);
         mBillingProcessor.initialize();
@@ -315,6 +316,7 @@ public class TimerActivity
         if (mBillingProcessor != null) {
             mBillingProcessor.loadOwnedPurchasesFromGoogle();
         }
+
         showTutorialSnackbars();
         setTimeLabelColor();
     }
@@ -367,7 +369,7 @@ public class TimerActivity
                 if (PreferenceHelper.isPro()) {
                     showEditLabelDialog();
                 } else {
-                    UpgradeActivity.launchUpgradeActivity(this);
+                    launchUpgradeActivity(this);
                 }
                 break;
             case R.id.activity_main_alerts_menu_item:
@@ -441,11 +443,11 @@ public class TimerActivity
         alertMenuItem.setVisible(false);
         boolean sessionsCounterEnabled = PreferenceHelper.isSessionsCounterEnabled();
         if (sessionsCounterEnabled) {
-            mSessionsCounter = (FrameLayout) alertMenuItem.getActionView();
+            FrameLayout mSessionsCounter = (FrameLayout) alertMenuItem.getActionView();
             mSessionsCounterText = mSessionsCounter.findViewById(R.id.view_alert_count_textview);
             mSessionsCounter.setOnClickListener(v -> onOptionsItemSelected(alertMenuItem));
 
-            mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
+            SessionViewModel mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
             mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
                 final LocalDate today = new LocalDate();
                 int statsToday = 0;
@@ -724,7 +726,7 @@ public class TimerActivity
     public void onPurchaseHistoryRestored() {
         boolean found = false;
         for(String sku : mBillingProcessor.listOwnedProducts()) {
-            if (sku.equals(UpgradeActivity.sku)) {
+            if (sku.equals(Constants.sku)) {
                 found = true;
             }
         }

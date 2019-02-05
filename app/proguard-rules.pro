@@ -43,4 +43,18 @@
 
 ##---------------End: proguard configuration for Gson  ----------
 
+##---------------Begin: proguard configuration for Joda  ----------
 -dontwarn org.joda.**
+##---------------End: proguard configuration for Joda  ----------
+
+##---------------Begin: proguard configuration for EventBus  ----------
+-keepattributes *Annotation*
+-keepclassmembers class * {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+# Only required if you use AsyncExecutor
+-keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
+    <init>(java.lang.Throwable);
+}
+##---------------End: proguard configuration for EventBus  ----------

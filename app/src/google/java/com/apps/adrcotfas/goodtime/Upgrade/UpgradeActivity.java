@@ -13,7 +13,6 @@
 
 package com.apps.adrcotfas.goodtime.Upgrade;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -26,6 +25,7 @@ import com.anjlab.android.iab.v3.SkuDetails;
 import com.anjlab.android.iab.v3.TransactionDetails;
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityUpgradeBinding;
 
@@ -39,16 +39,9 @@ import static com.anjlab.android.iab.v3.Constants.BILLING_RESPONSE_RESULT_SERVIC
 
 public class UpgradeActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler{
 
-    //TODO: change at release
-    public static final String sku = "android.test.purchased";//"upgraded_version";
     private boolean readyToPurchase = false;
     private Button buy;
     private BillingProcessor mBillingProcessor;
-
-    public static void launchUpgradeActivity(Context ctx) {
-        Intent intent = new Intent(ctx, UpgradeActivity.class);
-        ctx.startActivity(intent);
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,7 +59,7 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
                         Toast.LENGTH_LONG).show();
             }
             else {
-                mBillingProcessor.purchase(UpgradeActivity.this, sku);
+                mBillingProcessor.purchase(UpgradeActivity.this, Constants.sku);
             }
         });
 
@@ -130,7 +123,7 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
     public void onPurchaseHistoryRestored() {
         boolean found = false;
         for(String sku : mBillingProcessor.listOwnedProducts()) {
-            if (sku.equals(UpgradeActivity.sku)) {
+            if (sku.equals(Constants.sku)) {
                 buy.setEnabled(false);
                 PreferenceHelper.setPro();
                 found = true;
@@ -164,10 +157,10 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
     public void onBillingInitialized() {
         readyToPurchase = true;
         mBillingProcessor.loadOwnedPurchasesFromGoogle();
-        if (mBillingProcessor.isPurchased(sku)) {
+        if (mBillingProcessor.isPurchased(Constants.sku)) {
             buy.setVisibility(View.GONE);
         } else {
-            SkuDetails details = mBillingProcessor.getPurchaseListingDetails(sku);
+            SkuDetails details = mBillingProcessor.getPurchaseListingDetails(Constants.sku);
             if (details != null) {
                 buy.setText(details.priceText);
             }

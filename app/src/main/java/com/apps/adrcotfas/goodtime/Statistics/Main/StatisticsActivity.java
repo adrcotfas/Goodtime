@@ -25,7 +25,6 @@ import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Statistics.AllSessions.AddEditEntryDialog;
 import com.apps.adrcotfas.goodtime.Statistics.AllSessions.AllSessionsFragment;
-import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsActivityMainBinding;
 
@@ -37,6 +36,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
+
+import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
 public class StatisticsActivity extends AppCompatActivity implements SelectLabelDialog.OnLabelSelectedListener {
 
@@ -124,7 +125,7 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
                     AddEditEntryDialog newFragment = new AddEditEntryDialog();
                     newFragment.show(fragmentManager, DIALOG_ADD_ENTRY_TAG);
                 } else {
-                    UpgradeActivity.launchUpgradeActivity(this);
+                    launchUpgradeActivity(this);
                 }
 
                 break;
@@ -133,7 +134,7 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
                     SelectLabelDialog.newInstance(this, mLabelsViewModel.crtExtendedLabel.getValue().label, true)
                             .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
                 } else {
-                    UpgradeActivity.launchUpgradeActivity(this);
+                    launchUpgradeActivity(this);
                 }
 
                 break;
