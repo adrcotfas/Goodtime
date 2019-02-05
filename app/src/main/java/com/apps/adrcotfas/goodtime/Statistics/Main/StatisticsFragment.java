@@ -237,7 +237,11 @@ public class StatisticsFragment extends Fragment {
 
         mOverviewDescription.week.setText(
                 getResources().getString(R.string.statistics_week) + " " + thisWeekStart.getWeekOfWeekyear());
-        mOverviewDescription.month.setText(thisMonthEnd.toString("MMMM"));
+        StringBuilder sb = new StringBuilder(thisMonthEnd.toString("MMMM"));
+        if (sb.length() > 0) {
+            sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
+        }
+        mOverviewDescription.month.setText(sb.toString());
     }
     
     private void setupSpinners() {
