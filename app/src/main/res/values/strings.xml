@@ -149,6 +149,6 @@
     <string name="pref_session_counter">Sessions counter</string>
     <string name="pref_session_counter_summary">"Shows today's number of completed sessions"</string>
 
-    <string name="donate" translatable="false">Support the developer</string>
+    <string name="donate">Support the developer</string>
 
 </resources>
