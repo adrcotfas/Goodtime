@@ -52,6 +52,10 @@
 -keepclassmembers class * {
     @org.greenrobot.eventbus.Subscribe <methods>;
 }
+-keepclassmembers class ** {
+    public void onEvent*(***);
+}
+
 -keep enum org.greenrobot.eventbus.ThreadMode { *; }
 # Only required if you use AsyncExecutor
 -keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
