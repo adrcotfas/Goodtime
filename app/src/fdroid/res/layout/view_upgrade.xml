@@ -2,5 +2,5 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:drawableLeft="@drawable/ic_heart"
     android:drawableStart="@drawable/ic_heart"
-    android:text="@string/donate"
+    android:text="@string/support_the_developer"
     style="@style/UpgradeButton"/>

@@ -134,4 +134,5 @@
     <string name="pref_timer_style_minutes">僅限分鐘</string>
     <string name="pref_session_counter">會話計數器</string>
     <string name="pref_session_counter_summary">"顯示今天已完成的會話數"</string>
+    <string name="support_the_developer">支持開發者</string>
 </resources>

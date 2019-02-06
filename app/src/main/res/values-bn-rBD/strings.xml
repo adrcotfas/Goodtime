@@ -134,4 +134,5 @@
     <string name="pref_timer_style_minutes">মাত্র মিনিট</string>
     <string name="pref_session_counter">সেশন কাউন্টার</string>
     <string name="pref_session_counter_summary">"সেশন সম্পন্ন আজকের এই সংখ্যা দেখা যাচ্ছে"</string>
+    <string name="support_the_developer">ডেভেলপারদের সহায়তা করুন</string>
 </resources>

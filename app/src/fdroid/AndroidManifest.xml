@@ -6,7 +6,7 @@
         <activity
             android:name=".Upgrade.UpgradeActivity"
             android:parentActivityName=".Main.TimerActivity"
-            android:label="@string/donate">
+            android:label="@string/support_the_developer">
         </activity>
     </application>
 

@@ -134,4 +134,5 @@
     <string name="pref_timer_style_minutes">Minút len</string>
     <string name="pref_session_counter">Počítadlo relácie</string>
     <string name="pref_session_counter_summary">"Zobrazí dnešný počet dokončených relácií"</string>
+    <string name="support_the_developer">Podporiť vývojára</string>
 </resources>

@@ -134,4 +134,5 @@
     <string name="pref_timer_style_minutes">Minutter kun</string>
     <string name="pref_session_counter">Sessionstælleren</string>
     <string name="pref_session_counter_summary">"Viser dagens antallet af udfyldte sessioner"</string>
+    <string name="support_the_developer">Støt udvikleren</string>
 </resources>

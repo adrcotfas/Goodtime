@@ -49,7 +49,7 @@ public class UpgradeActivity extends AppCompatActivity {
 
         uriBuilder.appendQueryParameter("business", PAYPAL_USER);
         uriBuilder.appendQueryParameter("lc", "US");
-        uriBuilder.appendQueryParameter("item_name", getString(R.string.donate));
+        uriBuilder.appendQueryParameter("item_name", getString(R.string.support_the_developer));
         uriBuilder.appendQueryParameter("no_note", "1");
         uriBuilder.appendQueryParameter("no_shipping", "1");
         uriBuilder.appendQueryParameter("currency_code", PAYPAL_CURRENCY_CODE);

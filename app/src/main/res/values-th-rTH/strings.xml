@@ -134,4 +134,5 @@
     <string name="pref_timer_style_minutes">นาทีเท่านั้น</string>
     <string name="pref_session_counter">เคาน์เตอร์ประชุม</string>
     <string name="pref_session_counter_summary">"แสดงจำนวนเซสชันที่เสร็จสมบูรณ์แล้ววันนี้"</string>
+    <string name="support_the_developer">ช่วยเหลือนักพัฒนา</string>
 </resources>

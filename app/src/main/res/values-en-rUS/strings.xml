@@ -134,4 +134,5 @@
     <string name="pref_timer_style_minutes">Minutes only</string>
     <string name="pref_session_counter">Sessions counter</string>
     <string name="pref_session_counter_summary">"Shows today's number of completed sessions"</string>
+    <string name="support_the_developer">Support the developer</string>
 </resources>

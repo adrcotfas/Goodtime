@@ -134,4 +134,5 @@
     <string name="pref_timer_style_minutes">Endast minuter</string>
     <string name="pref_session_counter">Sessionsräknare</string>
     <string name="pref_session_counter_summary">"Visar dagens antal avslutade sessioner"</string>
+    <string name="support_the_developer">Stöd utvecklaren</string>
 </resources>

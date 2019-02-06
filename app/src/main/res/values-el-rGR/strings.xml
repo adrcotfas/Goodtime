@@ -134,4 +134,5 @@
     <string name="pref_timer_style_minutes">Μόνο λεπτά</string>
     <string name="pref_session_counter">Συνεδρίες μετρητή</string>
     <string name="pref_session_counter_summary">"Δείχνει η σημερινή αριθμό των ολοκληρωθείσες επισκέψεις"</string>
+    <string name="support_the_developer">Στήριξε τον προγραμματιστή</string>
 </resources>

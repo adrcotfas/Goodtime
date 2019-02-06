@@ -134,4 +134,5 @@
     <string name="pref_timer_style_minutes">議事録のみ</string>
     <string name="pref_session_counter">セッションカウンタ</string>
     <string name="pref_session_counter_summary">"今日の完了したセッション数を表示します"</string>
+    <string name="support_the_developer">開発者を支援</string>
 </resources>

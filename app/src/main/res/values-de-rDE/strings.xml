@@ -134,4 +134,5 @@
     <string name="pref_timer_style_minutes">Nur Minuten</string>
     <string name="pref_session_counter">Sitzungsschalter</string>
     <string name="pref_session_counter_summary">"Zeigt die Anzahl der heute abgeschlossenen Sitzungen an"</string>
+    <string name="support_the_developer">Unterstütze den Entwickler</string>
 </resources>
