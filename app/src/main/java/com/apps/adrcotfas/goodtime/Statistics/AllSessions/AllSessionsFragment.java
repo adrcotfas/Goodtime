@@ -142,11 +142,6 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
     }
 
     private void multiSelect(int position) {
-        if (position == -1) {
-            if (mActionMode != null) {
-                mActionMode.finish();
-            }
-        }
         Session s = mAdapter.mEntries.get(position);
         if (s != null) {
             if (mActionMode != null) {
@@ -264,6 +259,14 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
             mAdapter.setSelectedItems(new ArrayList<>());
         }
     };
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mActionMode != null) {
+            mActionMode.finish();
+        }
+    }
 
     private void updateRecyclerViewVisibility() {
         final Handler handler = new Handler();
