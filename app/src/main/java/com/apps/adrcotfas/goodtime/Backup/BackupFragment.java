@@ -73,6 +73,7 @@ public class BackupFragment extends BottomSheetDialogFragment {
         if (requestCode == IMPORT_BACKUP_REQUEST && data != null) {
             Uri uri = data.getData();
             if (uri != null && resultCode == RESULT_OK) {
+                AppDatabase.getDatabase(getContext());
                 onImportBackupResult(uri);
             }
         }

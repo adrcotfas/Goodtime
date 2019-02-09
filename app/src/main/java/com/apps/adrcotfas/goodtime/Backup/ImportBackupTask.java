@@ -20,6 +20,7 @@ import android.os.AsyncTask;
 import android.provider.OpenableColumns;
 import android.widget.Toast;
 
+import com.apps.adrcotfas.goodtime.Database.AppDatabase;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.FileUtils;
 
@@ -33,6 +34,7 @@ import java.lang.ref.WeakReference;
 public class ImportBackupTask extends AsyncTask<Uri, Void, Boolean> {
 
     private final WeakReference<Context> mContext;
+    private boolean success = false;
 
     ImportBackupTask(Context context) {
         mContext = new WeakReference<>(context);
@@ -42,7 +44,7 @@ public class ImportBackupTask extends AsyncTask<Uri, Void, Boolean> {
     protected Boolean doInBackground(Uri... uris) {
         try {
             InputStream tmpStream = mContext.get().getContentResolver().openInputStream(uris[0]);
-            File tmpPath = new File(mContext.get().getFilesDir(), "tmp");
+            File tmpPath = new File(mContext.get().getFilesDir(), "");
             File tempFile = File.createTempFile("import", null, tmpPath);
 
             String fileName = null;
@@ -64,6 +66,8 @@ public class ImportBackupTask extends AsyncTask<Uri, Void, Boolean> {
             FileInputStream inStream = new FileInputStream(tempFile);
             File destinationPath = mContext.get().getDatabasePath("goodtime-db");
             FileUtils.copy(inStream, destinationPath);
+            AppDatabase.getDatabase(mContext.get());
+            success = true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -75,7 +79,7 @@ public class ImportBackupTask extends AsyncTask<Uri, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean result) {
         Toast.makeText(mContext.get(),
-                mContext.get().getString(result ? R.string.backup_import_success : R.string.backup_import_failed),
+                mContext.get().getString(result && success ? R.string.backup_import_success : R.string.backup_import_failed),
                 Toast.LENGTH_SHORT).show();
     }
 }
