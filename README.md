@@ -2,6 +2,8 @@
 
 # Goodtime
 
+<a href='https://play.google.com/store/apps/details?id=com.apps.adrcotfas.goodtime&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="30%" height="30%" /></a>
+
 A minimalist but powerful productivity timer designed to keep you focused and free of distractions.
 Alternate between focused work sessions and short breaks handled by the app.
 Get rid of procrastination and improve your time management!
@@ -40,7 +42,5 @@ Read more about this topic on <a href="https://dontkillmyapp.com/" target="_blan
 
 For any suggestions or questions, please contact me and I'll be glad to help!
 
-<a href='https://play.google.com/store/apps/details?id=com.apps.adrcotfas.goodtime&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="30%" height="30%" /></a>
-
-Copyright 2016-2018 Adrian Cotfas  
+Copyright 2016-2019 Adrian Cotfas  
 [Licensed](https://github.com/adrcotfas/Goodtime/blob/master/LICENCE.md) under the Apache License, Version 2.0
