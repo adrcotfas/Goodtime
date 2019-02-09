@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_add"
+        android:icon="@drawable/ic_add"
+        android:title="@string/add_session"
+        android:visible="true"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_view_list"
+        android:title="@string/toggle_view"
+        android:icon="@drawable/ic_show_list"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_select_label"
+        android:title="@string/label_dialog_select"
+        android:icon="@drawable/ic_label"
+        app:iconTint="@color/teal200"
+        app:showAsAction="ifRoom"/>
+</menu>

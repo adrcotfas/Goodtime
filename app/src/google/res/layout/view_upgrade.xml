@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:gravity="center_vertical"
+    android:drawableLeft="@drawable/ic_crown"
+    android:drawableStart="@drawable/ic_crown"
+    android:text="@string/upgrade"
+    style="@style/UpgradeButton"/>

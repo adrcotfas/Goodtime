@@ -1,24 +1,237 @@
-<resources>
-    <style name="Classic" parent="@style/PreferenceFixTheme.NoActionBar">
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <declare-styleable name="ProperSeekBarPreference">
+        <attr format="integer" name="min"/>
+        <attr name="android:max"/>
+        <attr name="android:layout"/>
+        <attr format="integer" name="seekBarIncrement"/>
+        <attr format="boolean" name="adjustable"/>
+        <attr format="boolean" name="showSeekBarValue"/>
+        <attr format="string" name="dialogTitle"/>
+    </declare-styleable>
+
+    <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="background">?attr/colorPrimary</item>
+    </style>
+
+    <style name="SectionCommon">
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_marginLeft">3dp</item>
+        <item name="android:layout_marginRight">3dp</item>
+    </style>
+
+    <style name="SectionHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">20dp</item>
+        <item name="android:textSize">@dimen/regularTextSize</item>
+        <item name="android:textColor">@color/grey_500</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Spinner" parent="@style/Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textSize">@dimen/smallTextSize</item>
+        <item name="android:textColor">@color/grey_500</item>
+    </style>
+
+    <style name="OverviewTextValue">
+        <item name = "android:gravity">center</item>
+        <item name="android:textSize">@dimen/smallerTextSize</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="OverviewTextDescription">
+        <item name="android:textSize">@dimen/smallTextSize</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="AllSessionsAddEditDialogRowEdit" parent="@android:style/TextAppearance.Widget.EditText">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
+        <item name="android:drawablePadding">32dp</item>
+        <item name="android:background">@color/true_transparent</item>
+        <item name="android:inputType">textNoSuggestions</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:maxLength">14</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/regularTextSize</item>
+        <item name="android:imeOptions">actionDone</item>
+    </style>
+
+    <style name="AllSessionsAddEditDialogRow">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
+        <item name="android:drawablePadding">32dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:textSize">@dimen/regularTextSize</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="UpgradeButton">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">22dp</item>
+        <item name="android:drawablePadding">24dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:textSize">@dimen/smallTextSize</item>
+        <item name="android:textColor">#CFB53B</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AllSessionsAddEditDialogRowEnd">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">30dp</item>
+        <item name="android:paddingRight">30dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="BackupRow">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:textSize">@dimen/regularTextSize</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ChipTextAppearance">
+        <item name="android:textSize">@dimen/smallTextSize</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="ChipStyle" parent="Widget.MaterialComponents.Chip.Action">
+        <item name="android:textSize">@dimen/smallTextSize</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="chipIconSize">20dp</item>
+        <item name="chipStartPadding">4dp</item>
+        <item name="textEndPadding">4dp</item>
+        <item name="chipCornerRadius">12dp</item>
+    </style>
+
+    <style name="SmallPseudoChip">
+        <item name="android:background">@drawable/shape_rectangle</item>
+        <item name="android:backgroundTint" tools:targetApi="lollipop">@color/teal200</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/tinyTextSize</item>
+    </style>
+
+    <style name="ActionBarTheme" parent="Widget.MaterialComponents.BottomAppBar">
+        <item name="backgroundTint">?appBarColor</item>
+    </style>
+
+    <style name="DialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog" >
+        <item name="android:backgroundTint" tools:ignore="NewApi">?attr/alertDialogColor</item>
+        <item name="colorPrimary">@color/teal200</item>
+        <item name="colorPrimaryVariant">@color/teal300</item>
+        <item name="colorSecondary">@color/teal200</item>
+        <item name="colorSecondaryVariant">@color/teal300</item>
+
+        <item name="buttonStyle">@style/Button</item>
+        <item name="materialButtonStyle">@style/Button</item>
+        <item name="android:buttonBarButtonStyle">@style/Button</item>
+    </style>
+
+    <style name="CardViewStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="android:layout_marginLeft">@dimen/card_spacing</item>
+        <item name="android:layout_marginTop">@dimen/card_spacing</item>
+        <item name="android:layout_marginRight">@dimen/card_spacing</item>
+        <item name="cardBackgroundColor">?attr/cardViewColor</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar" >
         <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryVariant">@color/black</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">@color/teal200</item>
+        <item name="colorSecondaryVariant">@color/teal300</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <item name="android:colorBackground">@color/gray1000</item>
+        <item name="colorOnBackground">@color/white</item>
+        <item name="colorSurface">@color/black</item>
+        <item name="colorOnSurface">@color/white</item>
+
         <item name="colorPrimaryDark">@color/black</item>
-        <item name="colorAccent">@color/classicAccent</item>
         <item name="android:windowBackground">@color/black</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+
+        <item name="appBarColor">@color/black</item>
+        <item name="cardViewColor">@color/black</item>
+        <item name="alertDialogColor">@color/gray1000</item>
+
+        <item name="viewInflaterClass">androidx.appcompat.app.AppCompatViewInflater</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:actionModeCloseDrawable">@drawable/ic_clear</item>
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
+
+        <item name="alertDialogTheme">@style/DialogTheme</item>
+
+        <item name="palette">@array/lightPalette</item>
+        <item name="fontFamily">@font/app_font</item>
+
     </style>
 
-    <style name="Dark" parent="@style/PreferenceFixTheme.NoActionBar">
-        <item name="colorPrimary">@color/darkPrimary</item>
-        <item name="colorPrimaryDark">@color/darkPrimaryDark</item>
-        <item name="colorAccent">@color/darkAccent</item>
-        <item name="android:windowBackground">@color/darkBackground</item>
+    <style name="AppThemeDark" parent="AppTheme" >
+        <item name="colorPrimary">@color/gray1000</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorSecondary">@color/teal200</item>
+        <item name="colorSecondaryVariant">@color/teal300</item>
+        <item name="colorOnSecondary">@color/gray900</item>
+
+        <item name="android:colorBackground">@color/gray1000</item>
+        <item name="colorOnBackground">@android:color/white</item>
+        <item name="colorSurface">@color/gray900</item>
+        <item name="colorOnSurface">@android:color/white</item>
+
+        <item name="colorPrimaryDark">@color/gray1000</item>
+        <item name="android:windowBackground">@color/gray900</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+
+        <item name="appBarColor">@color/gray1000</item>
+        <item name="cardViewColor">@color/gray1000</item>
+        <item name="alertDialogColor">@color/gray1000</item>
     </style>
 
-    <style name="Light" parent="@style/PreferenceFixTheme.Light.NoActionBar">
-        <item name="colorPrimary">@color/lightPrimary</item>
-        <item name="colorPrimaryDark">@color/lightPrimaryDark</item>
-        <item name="colorAccent">@color/lightPrimary</item>
-        <item name="android:windowBackground">@color/white</item>
+    <style name="NavigationDrawerStyle">
+        <item name="android:textSize">@dimen/smallTextSize</item><!-- text size in menu-->
+        <item name="android:listDivider">@color/transparent_dark</item>
     </style>
 
+    <style name="AppTheme.MaterialAboutActivity" parent="Theme.Mal.Light.DarkActionBar">
+        <item name="colorPrimary">@color/teal200</item>
+        <item name="colorPrimaryDark">@color/teal300</item>
+        <item name="colorAccent">@color/teal200</item>
+        <item name="fontFamily">@font/app_font</item>
+    </style>
 
+    <style name="TimerStyle">
+        <item name="android:textColor">@color/white</item>
+        <item name="fontFamily">@font/timer_font</item>
+    </style>
+
+    <style name="Button" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SpinnerStyle">
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+    </style>
 </resources>

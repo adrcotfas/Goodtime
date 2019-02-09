@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/edit_labels"
+            android:icon="@drawable/ic_label"
+            android:title="@string/labels"/>
+        <item
+            android:id="@+id/action_statistics"
+            android:icon="@drawable/ic_trending"
+            android:title="@string/statistics" />
+        <item
+            android:id="@+id/action_backup"
+            android:icon="@drawable/ic_cloud"
+            android:title="@string/backup" />
+    </group>
+
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/action_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/settings" />
+    </group>
+
+    <group
+        android:id="@+id/group3"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/action_about"
+            android:icon="@drawable/ic_about"
+            android:title="@string/about" />
+    </group>
+</menu>

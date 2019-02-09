@@ -1,3 +1,16 @@
+/*
+ * Copyright 2016-2019 Adrian Cotfas
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
 package com.apps.adrcotfas.goodtime.BL;
 
 import android.app.AlarmManager;
@@ -8,17 +21,17 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.CountDownTimer;
-import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.apps.adrcotfas.goodtime.Main.TimerActivity;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;
+
 import de.greenrobot.event.EventBus;
 
 import static com.apps.adrcotfas.goodtime.Util.Constants.ACTION.FINISHED;
+import static com.apps.adrcotfas.goodtime.Util.Constants.SESSION_TYPE;
 
 /**
  * This class manages and modifies the mutable members of {@link CurrentSession}
@@ -27,13 +40,14 @@ import static com.apps.adrcotfas.goodtime.Util.Constants.ACTION.FINISHED;
  */
 public class CurrentSessionManager extends ContextWrapper{
 
-    private static String TAG = CurrentSessionManager.class.getSimpleName();
-    public final static String SESSION_TYPE = "goodtime.session.type";
+    private static final String TAG = CurrentSessionManager.class.getSimpleName();
 
     private AppCountDownTimer mTimer;
-    private CurrentSession mCurrentSession;
+    private final CurrentSession mCurrentSession;
     private long mRemaining;
-    private AlarmReceiver mAlarmReceiver;
+    private final AlarmReceiver mAlarmReceiver;
+
+    private long mSessionDuration;
 
     public CurrentSessionManager(Context context, CurrentSession currentSession) {
         super(context);
@@ -42,17 +56,16 @@ public class CurrentSessionManager extends ContextWrapper{
     }
 
     public void startTimer(SessionType sessionType) {
-        // TODO: set the duration according to the settings. Also include long break
+        Log.v(TAG, "startTimer: " + sessionType.toString());
 
-        // TODO modify to minutes
-        long duration = TimeUnit.SECONDS.toMillis(PreferenceHelper.getSessionDuration(sessionType));
+        mSessionDuration =  TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(sessionType));
 
         mCurrentSession.setTimerState(TimerState.ACTIVE);
         mCurrentSession.setSessionType(sessionType);
-        mCurrentSession.setDuration(duration);
+        mCurrentSession.setDuration(mSessionDuration);
 
-        scheduleAlarm(sessionType, duration);
-        mTimer = new AppCountDownTimer(duration);
+        scheduleAlarm(sessionType, mSessionDuration);
+        mTimer = new AppCountDownTimer(mSessionDuration);
         mTimer.start();
     }
 
@@ -81,8 +94,29 @@ public class CurrentSessionManager extends ContextWrapper{
         cancelAlarm();
         mTimer.cancel();
         mCurrentSession.setTimerState(TimerState.INACTIVE);
-        long workDuration = TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK));
-        mCurrentSession.setDuration(workDuration);
+    }
+
+    /**
+     * This is used to get the minutes that should be stored to the statistics
+     * To be called when the session is finished without user interaction
+     * @return the minutes elapsed
+     */
+    public int getElapsedMinutesAtFinished() {
+        int sessionMinutes = (int) TimeUnit.MILLISECONDS.toMinutes(mSessionDuration);
+        int extraMinutes = PreferenceHelper.getAdd60SecondsCounter();
+        return sessionMinutes + extraMinutes;
+    }
+
+    /**
+     * This is used to get the minutes that should be stored to the statistics
+     * To be called when the user manually stops an ongoing session (or skips)
+     * @return the minutes elapsed
+     */
+    public int getElapsedMinutesAtStop() {
+        int sessionMinutes = (int) TimeUnit.MILLISECONDS.toMinutes(mSessionDuration);
+        int extraMinutes = PreferenceHelper.getAdd60SecondsCounter();
+        int remainingMinutes = (int) TimeUnit.MILLISECONDS.toMinutes(mRemaining + 30000);
+        return sessionMinutes - remainingMinutes + extraMinutes;
     }
 
     private void scheduleAlarm(SessionType sessionType, long duration) {
@@ -93,43 +127,21 @@ public class CurrentSessionManager extends ContextWrapper{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     triggerAtMillis, getAlarmPendingIntent(sessionType));
-
-            //TODO: find a more elegant solution for the second alarm
-            //which just brings the main activity on top in a smooth way.
-            //Starting it from the service lags
-
-            getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    triggerAtMillis, getAlarmActivityIntent());
-
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getAlarmManager().setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     triggerAtMillis, getAlarmPendingIntent(sessionType));
-
-            getAlarmManager().setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    triggerAtMillis, getAlarmActivityIntent());
         } else {
             getAlarmManager().set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     triggerAtMillis, getAlarmPendingIntent(sessionType));
-
-            getAlarmManager().set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    triggerAtMillis, getAlarmActivityIntent());
         }
     }
-
-    private PendingIntent getAlarmActivityIntent() {
-        Intent activityIntent = new Intent(this, TimerActivity.class);
-        activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        return PendingIntent.getActivity(this, 0,
-                activityIntent, 0);
-    }
-
+    
     private void cancelAlarm() {
         getAlarmManager().cancel(getAlarmPendingIntent(mCurrentSession.getSessionType().getValue()));
-        getAlarmManager().cancel(getAlarmActivityIntent());
         unregisterAlarmReceiver();
     }
 
-    public void unregisterAlarmReceiver() {
+    private void unregisterAlarmReceiver() {
         Log.v(TAG, "unregisterAlarmReceiver");
         try {
             this.unregisterReceiver(mAlarmReceiver);
@@ -153,30 +165,50 @@ public class CurrentSessionManager extends ContextWrapper{
         return mCurrentSession;
     }
 
+    public void add60Seconds() {
+        Log.v(TAG, "add60Seconds");
+
+        final long extra = 60000; //TimeUnit.SECONDS.toMillis(60);
+
+        cancelAlarm();
+        mTimer.cancel();
+
+        mRemaining = Math.min(mRemaining + extra, TimeUnit.MINUTES.toMillis(120));
+
+        mTimer = new AppCountDownTimer(mRemaining);
+
+        if (mCurrentSession.getTimerState().getValue() != TimerState.PAUSED) {
+            scheduleAlarm(mCurrentSession.getSessionType().getValue(), mRemaining);
+            mTimer.start();
+            mCurrentSession.setTimerState(TimerState.ACTIVE);
+        } else {
+            mCurrentSession.setDuration(mRemaining);
+        }
+    }
+
     private class AppCountDownTimer extends CountDownTimer {
 
-        private String TAG = AppCountDownTimer.class.getSimpleName();
+        private final String TAG = AppCountDownTimer.class.getSimpleName();
         /**
          * @param millisInFuture    The number of millis in the future from the call
          *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
          *                          is called.
          */
-        public AppCountDownTimer(long millisInFuture) {
+        private AppCountDownTimer(long millisInFuture) {
             super(millisInFuture, 1000);
         }
 
+        /**
+         * This is useful only when the screen is turned on. It seems that onTick is not called for every tick if the
+         * phone is locked and the app runs in the background.
+         * I found this the hard way when using the session duration(which is set here) in saving to statistics.
+         */
         @Override
         public void onTick(long millisUntilFinished) {
             Log.v(TAG, "is Ticking: " + millisUntilFinished + " millis remaining.");
             mCurrentSession.setDuration(millisUntilFinished);
             mRemaining = millisUntilFinished;
-
-            // update notification only if the screen is on
-            PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH && powerManager.isInteractive()) ||
-                    (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH && powerManager.isScreenOn())) {
-                EventBus.getDefault().post(new Constants.UpdateTimerProgressEvent());
-            }
+            EventBus.getDefault().post(new Constants.UpdateTimerProgressEvent());
         }
 
         @Override

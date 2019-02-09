@@ -1,25 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="classicAccent">#80CBC4</color>
-    <color name="darkPrimary">#111111</color>
-    <color name="darkPrimaryDark">#000000</color>
-    <color name="darkAccent">#80CBC4</color>
-    <color name="darkBackground">#212121</color>
-    <color name="lightPrimary">#009688</color>
-    <color name="lightPrimaryDark">#00796B</color>
+    <color name="teal200">#80CBC4</color>
+    <color name="teal300">#4DB6AC</color>
+
+    <color name="gray900">#212121</color>
+    <color name="gray1000">#141414</color>
 
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
+    <color name="gray50">#FAFAFA</color>
 
-    <color name="pref_classic">#0f0f0f</color>
-    <color name="pref_dark">#252525</color>
-    <color name="pref_light">#e0f2f1</color>
+    <color name="transparent_dark">#1AFFFFFF</color>
+    <color name="transparent">#1effffff</color>
+    <color name="true_transparent">#00FFFFFF</color>
+    <color name="grey_500">#9E9E9E</color>
 
-    <array name="themeColors">
-        <item>@color/pref_classic</item>
-        <item>@color/pref_dark</item>
-        <item>@color/pref_light</item>
-    </array>
+    <integer-array name="lightPalette">
+        <item>@color/white</item>
+        <item>@color/light_blue_200</item>
+        <item>@color/green_200</item>
+        <item>@color/yellow_200</item>
+        <item>@color/orange_200</item>
+        <item>@color/red_200</item>
+        <item>@color/pink_200</item>
+        <item>@color/purple_200</item>
+    </integer-array>
+
+    <color name="light_blue_200">#81D4FA</color>
+    <color name="green_200">#A5D6A7</color>
+    <color name="yellow_200">#FFF59D</color>
+    <color name="orange_200">#FFCC80</color>
+    <color name="red_200">#ef9a9a</color>
+    <color name="pink_200">#F48FB1</color>
+    <color name="purple_200">#CE93D8</color>
+
+    <color name="gold">#CFB53B</color>
 
 </resources>

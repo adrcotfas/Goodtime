@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="appBarColor" format="reference"/>
+    <attr name="alertDialogColor" format="reference"/>
+    <attr name="cardViewColor" format="reference"/>
+    <attr name="palette" format="reference"/>
+</resources>

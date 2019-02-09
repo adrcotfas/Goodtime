@@ -1,92 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="pref_testing_pro_version"
-        android:title="[testing] Pro version">
-    </SwitchPreference>
+    <Preference
+        android:key="pref_disable_battery_optimization"
+        android:title="@string/pref_disable_battery_optimization"
+        android:summary="@string/pref_disable_battery_optimization_summary"
+        android:icon="@drawable/ic_exclamation"
+        app:isPreferenceVisible="false"/>
 
-    <PreferenceCategory android:title="@string/pref_header_general">
+    <PreferenceCategory
+        android:title="@string/pref_header_general"
+        app:iconSpaceReserved="false">
 
         <ListPreference
-            android:dialogTitle="Profile"
+            android:dialogTitle="@string/Profile"
             android:key="pref_profile"
             android:entries="@array/pref_profiles"
-            android:defaultValue="@string/pref_profile_pomodoro"
+            android:defaultValue="@string/pref_profile_default"
             android:entryValues="@array/pref_profiles"
             android:persistent="true"
             android:summary="%s"
-            android:title="Profile" />
+            android:title="@string/Profile"
+            app:iconSpaceReserved="false"/>
 
-        <com.pavelsikun.seekbarpreference.SeekBarPreferenceCompat
-            android:defaultValue="25"
+        <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
             android:key="pref_work_duration"
             android:title="@string/pref_work_duration"
-            app:msbp_interval="1"
-            app:msbp_maxValue="120"
-            app:msbp_measurementUnit="@plurals/plural_minutes"
-            app:msbp_minValue="1" />
+            app:min="1"
+            app:dialogTitle="@string/pref_work_duration"
+            android:defaultValue="25"
+            android:max="120"
+            app:iconSpaceReserved="false"/>
 
-        <com.pavelsikun.seekbarpreference.SeekBarPreferenceCompat
-            android:defaultValue="5"
+        <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
             android:key="pref_break_duration"
             android:title="@string/pref_break_duration"
-            app:msbp_interval="1"
-            app:msbp_maxValue="30"
-            app:msbp_measurementUnit="@plurals/plural_minutes"
-            app:msbp_minValue="1" />
+            app:min="1"
+            app:dialogTitle="@string/pref_break_duration"
+            android:defaultValue="5"
+            android:max="60"
+            app:iconSpaceReserved="false"/>
 
-        <SwitchPreference
-            android:defaultValue="true"
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
             android:key="pref_enable_long_break"
-            android:title="@string/pref_enable_long_break">
-        </SwitchPreference>
+            android:title="@string/pref_enable_long_break"
+            app:iconSpaceReserved="false"/>
 
-        <com.pavelsikun.seekbarpreference.SeekBarPreferenceCompat
-            android:defaultValue="15"
+        <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
             android:key="pref_long_break_duration"
             android:title="@string/pref_long_break_duration"
             android:dependency="pref_enable_long_break"
-            app:msbp_interval="1"
-            app:msbp_maxValue="30"
-            app:msbp_measurementUnit="@plurals/plural_minutes"
-            app:msbp_minValue="1" />
+            app:min="1"
+            app:dialogTitle="@string/pref_long_break_duration"
+            android:defaultValue="15"
+            android:max="60"
+            app:iconSpaceReserved="false"/>
 
-        <com.pavelsikun.seekbarpreference.SeekBarPreferenceCompat
-            android:defaultValue="4"
+        <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
             android:key="pref_sessions_before_long_break"
             android:title="@string/pref_sessions_before_long_break"
             android:dependency="pref_enable_long_break"
-            app:msbp_interval="1"
-            app:msbp_maxValue="8"
-            app:msbp_measurementUnit="@plurals/plural_sessions"
-            app:msbp_minValue="1" />
+            app:min="2"
+            app:dialogTitle="@string/pref_sessions_before_long_break"
+            android:defaultValue="4"
+            android:max="10"
+            app:iconSpaceReserved="false"/>
 
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref_fullscreen"
-            android:title="@string/pref_fullscreen" />
+            android:title="@string/pref_fullscreen"
+            app:iconSpaceReserved="false"/>
 
-        <ColorPickerPreference
-            android:defaultValue="@color/black"
-            android:dialogTitle="@string/pref_theme"
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_keep_screen_on"
+            android:title="@string/pref_keep_screen_on"
+            app:iconSpaceReserved="false"/>
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="pref_keep_screen_on"
+            android:key="pref_screen_saver"
+            android:title="@string/pref_screen_saver"
+            android:summary="@string/pref_screen_saver_summary"
+            app:iconSpaceReserved="false"/>
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
             android:persistent="true"
-            android:key="pref_theme"
-            android:title="Theme"
-            app:pref_colors="@array/themeColors"
-            app:pref_size="small" />
+            android:key="pref_amoled"
+            android:title="@string/pref_amoled"
+            app:iconSpaceReserved="false"/>
+
+        <Preference
+            android:dialogTitle="@string/pref_timer_style"
+            android:key="pref_timer_style_dummy"
+            android:summary="@string/pref_timer_style_default"
+            android:title="@string/pref_timer_style"
+            app:iconSpaceReserved="false"/>
+
+        <ListPreference
+            android:dialogTitle="@string/pref_timer_style"
+            android:key="pref_timer_style"
+            android:entries="@array/pref_timer_style"
+            android:defaultValue="@string/pref_timer_style_default_value"
+            android:entryValues="@array/pref_timer_style_values"
+            android:persistent="true"
+            android:summary="%s"
+            android:title="@string/pref_timer_style"
+            app:iconSpaceReserved="false"/>
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_sessions_counter"
+            android:persistent="true"
+            android:title="@string/pref_session_counter"
+            android:summary="@string/pref_session_counter_summary"
+            app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_header_notifications">
+    <PreferenceCategory
+        android:title="@string/pref_header_notifications"
+        app:iconSpaceReserved="false">
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="pref_enable_ringtone"
-            android:title="@string/pref_enable_ringtone">
-        </SwitchPreference>
+            android:title="@string/pref_enable_ringtone"
+            app:iconSpaceReserved="false"/>
 
         <RingtonePreference
             android:defaultValue="content://settings/system/notification_sound"
@@ -99,7 +145,16 @@
             android:title="@string/pref_ringtone"
             android:dependency="pref_enable_ringtone"
             app:pref_showAdd="true"
-            app:pref_summaryHasRingtone="%s" />
+            app:pref_summaryHasRingtone="%s"
+            app:iconSpaceReserved="false"/>
+
+        <Preference
+            android:key="pref_ringtone_break_dummy"
+            android:persistent="true"
+            android:summary="@string/pref_ringtone_summary"
+            android:title="@string/pref_ringtone_break"
+            android:dependency="pref_enable_ringtone"
+            app:iconSpaceReserved="false"/>
 
         <RingtonePreference
             android:defaultValue="content://settings/system/notification_sound"
@@ -112,43 +167,52 @@
             android:title="@string/pref_ringtone_break"
             android:dependency="pref_enable_ringtone"
             app:pref_showAdd="true"
-            app:pref_summaryHasRingtone="%s" />
+            app:pref_summaryHasRingtone="%s"
+            app:iconSpaceReserved="false"/>
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="pref_vibrate"
-            android:title="@string/pref_vibrate" />
+            android:title="@string/pref_vibrate"
+            app:iconSpaceReserved="false"/>
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_auto_start_break"
+            android:title="@string/pref_auto_start_break"
+            android:summary="@string/pref_auto_start_break_summary"
+            app:iconSpaceReserved="false"/>
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_auto_start_work"
+            android:title="@string/pref_auto_start_work"
+            android:summary="@string/pref_auto_start_work_summary"
+            app:iconSpaceReserved="false"/>
 
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref_ringtone_insistent"
             android:title="@string/pref_ringtone_insistent"
-            android:summary="@string/pref_ringtone_insistent_summary"/>
-
+            android:summary="@string/pref_ringtone_insistent_summary"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_header_during_work_sessions">
+    <PreferenceCategory
+        android:title="@string/pref_header_during_work_sessions"
+        app:iconSpaceReserved="false">
+
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref_disable_sound_and_vibration"
-            android:title="@string/pref_disable_sound_and_vibration" />
+            android:title="@string/pref_disable_sound_and_vibration"
+            app:iconSpaceReserved="false"/>
 
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref_disable_wifi"
-            android:title="@string/pref_disable_wifi" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_keep_screen_on"
-            android:title="@string/pref_keep_screen_on" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_continuous_mode"
-            android:summary="@string/pref_continuous_mode_summary"
-            android:title="@string/pref_continuous_mode" />
-
+            android:title="@string/pref_disable_wifi"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -1,26 +1,44 @@
+/*
+ * Copyright 2016-2019 Adrian Cotfas
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
 package com.apps.adrcotfas.goodtime.BL;
 
-import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
-import android.os.IBinder;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.util.Log;
 
+import com.apps.adrcotfas.goodtime.Database.AppDatabase;
+import com.apps.adrcotfas.goodtime.Main.TimerActivity;
+import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;
 
+import androidx.lifecycle.LifecycleService;
 import de.greenrobot.event.EventBus;
 
 import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static com.apps.adrcotfas.goodtime.BL.NotificationHelper.GOODTIME_NOTIFICATION_ID;
+import static com.apps.adrcotfas.goodtime.Util.Constants.SESSION_TYPE;
+import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatTime;
 
 /**
  * Class representing the foreground service which triggers the countdown timer and handles events.
  */
-public class TimerService extends Service {
+public class TimerService extends LifecycleService {
 
     private static final String TAG = TimerService.class.getSimpleName();
 
@@ -49,17 +67,20 @@ public class TimerService extends Service {
 
     @Override
     public synchronized int onStartCommand(final Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
 
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+
         int result = START_STICKY;
+
+        if (intent == null) {
+            return result;
+        }
+
         Log.d(TAG, "onStartCommand " + this.hashCode() + " " + intent.getAction());
         switch (intent.getAction()) {
-            case Constants.ACTION.START_WORK:
-            case Constants.ACTION.SKIP_BREAK:
-                onStartEvent(SessionType.WORK);
-                break;
             case Constants.ACTION.STOP:
                 onStopEvent();
                 break;
@@ -67,11 +88,15 @@ public class TimerService extends Service {
                 onToggleEvent();
                 result = START_NOT_STICKY;
                 break;
-            case Constants.ACTION.START_BREAK:
-                onStartEvent(SessionType.BREAK);
+            case Constants.ACTION.START:
+                SessionType sessionType = SessionType.valueOf(intent.getStringExtra(SESSION_TYPE));
+                onStartEvent(sessionType);
                 break;
-            case Constants.ACTION.SKIP_WORK:
-                onSkipWorkEvent();
+            case Constants.ACTION.ADD_SECONDS:
+                onAdd60Seconds();
+                break;
+            case Constants.ACTION.SKIP:
+                onSkipEvent();
                 break;
             default:
                 break;
@@ -90,6 +115,8 @@ public class TimerService extends Service {
         } else if (o instanceof Constants.FinishBreakEvent) {
             Log.d(TAG, "onEvent " + o.getClass().getSimpleName());
             onFinishEvent(SessionType.BREAK);
+        } else if (o instanceof  Constants.FinishLongBreakEvent) {
+            onFinishEvent(SessionType.LONG_BREAK);
         } else if (o instanceof Constants.UpdateTimerProgressEvent) {
             updateNotificationProgress();
         } else if (o instanceof Constants.ClearNotificationEvent) {
@@ -100,7 +127,15 @@ public class TimerService extends Service {
     }
 
     private void onStartEvent(SessionType sessionType) {
+
         EventBus.getDefault().post(new Constants.ClearFinishDialogEvent());
+        if (sessionType != SessionType.WORK && PreferenceHelper.isLongBreakEnabled()
+                && PreferenceHelper.itsTimeForLongBreak()) {
+            sessionType = SessionType.LONG_BREAK;
+        }
+
+        Log.d(TAG, "onStartEvent: " + sessionType.toString());
+
         getSessionManager().startTimer(sessionType);
 
         if (sessionType == SessionType.WORK) {
@@ -112,12 +147,15 @@ public class TimerService extends Service {
             }
         }
 
+        if (!PreferenceHelper.isAutoStartWork() && !PreferenceHelper.isAutoStartBreak()) {
+            mRingtoneAndVibrationPlayer.stop();
+        }
+
         mNotificationHelper.clearNotification();
         startForeground(GOODTIME_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
                 getSessionManager().getCurrentSession()).build());
     }
 
-    //TODO: an improvement would be to stop the service when the timer is paused
     private void onToggleEvent() {
         getSessionManager().toggleTimer();
         startForeground(GOODTIME_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
@@ -135,15 +173,24 @@ public class TimerService extends Service {
             toggleSound(true);
         }
 
+        SessionType sessionType = getSessionManager().getCurrentSession().getSessionType().getValue();
+        Log.d(TAG, "onStopEvent, sessionType: " + sessionType);
+        if (sessionType == SessionType.LONG_BREAK) {
+            PreferenceHelper.resetCurrentStreak();
+        }
+
         stopForeground(true);
         stopSelf();
-        // TODO: store what was done of the session to ROOM
+
+        finalizeSession(sessionType, getSessionManager().getElapsedMinutesAtStop());
     }
 
     private void onFinishEvent(SessionType sessionType) {
         Log.d(TAG, TimerService.this.hashCode() + " onFinishEvent " + sessionType.toString());
 
         acquireScreenLock();
+        bringActivityToFront();
+
         if (sessionType == SessionType.WORK) {
             if (PreferenceHelper.isWiFiDisabled()) {
                 toggleWifi(true);
@@ -153,33 +200,68 @@ public class TimerService extends Service {
             }
         }
 
-        // TODO: store session statistics
-
         mRingtoneAndVibrationPlayer.play(sessionType);
         stopForeground(true);
 
-        if (PreferenceHelper.isContinuousModeEnabled()) {
-            // TODO: handle long breaks
-            onStartEvent(sessionType == SessionType.WORK ? SessionType.BREAK : SessionType.WORK);
+        updateLongBreakStreak(sessionType);
+
+        // store what was done to the database
+        finalizeSession(sessionType, getSessionManager().getElapsedMinutesAtFinished());
+
+        if (PreferenceHelper.isAutoStartBreak() && sessionType == SessionType.WORK) {
+            onStartEvent(SessionType.BREAK);
+        } else if (PreferenceHelper.isAutoStartWork() && sessionType != SessionType.WORK) {
+            onStartEvent(SessionType.WORK);
         } else {
             mNotificationHelper.notifyFinished(sessionType);
         }
     }
 
-    CurrentSessionManager getSessionManager() {
-        return GoodtimeApplication.getInstance().getCurrentSessionManager();
+    private void onAdd60Seconds() {
+        Log.d(TAG, TimerService.this.hashCode() + " onAdd60Seconds ");
+        PreferenceHelper.increment60SecondsCounter();
+        if (getSessionManager().getCurrentSession().getTimerState().getValue() == TimerState.INACTIVE) {
+            startForeground(GOODTIME_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
+                    getSessionManager().getCurrentSession()).build());
+        }
+        getSessionManager().add60Seconds();
+    }
+
+    private void onSkipEvent() {
+        final SessionType sessionType = getSessionManager().getCurrentSession().getSessionType().getValue();
+        Log.d(TAG, TimerService.this.hashCode() + " onSkipEvent " + sessionType.toString());
+
+        getSessionManager().stopTimer();
+        stopForeground(true);
+        updateLongBreakStreak(sessionType);
+
+        finalizeSession(sessionType, getSessionManager().getElapsedMinutesAtStop());
+
+        onStartEvent(sessionType == SessionType.WORK ? SessionType.BREAK : SessionType.WORK);
+    }
+
+    private void updateLongBreakStreak(SessionType sessionType) {
+
+        if (PreferenceHelper.isLongBreakEnabled()) {
+            if (sessionType == SessionType.LONG_BREAK) {
+                PreferenceHelper.resetCurrentStreak();
+            } else if (sessionType == SessionType.WORK){
+                PreferenceHelper.incrementCurrentStreak();
+            }
+            Log.d(TAG, "PreferenceHelper.getCurrentStreak: " + PreferenceHelper.getCurrentStreak());
+            Log.d(TAG, "PreferenceHelper.lastWorkFinishedAt: " + PreferenceHelper.lastWorkFinishedAt());
+        }
+    }
+
+    private CurrentSessionManager getSessionManager() {
+        return GoodtimeApplication.getCurrentSessionManager();
     }
 
     private void acquireScreenLock() {
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,
                 AlarmReceiver.class.getName());
-        wakeLock.acquire(TimeUnit.SECONDS.toMillis(1));
-    }
-
-    private void onSkipWorkEvent() {
-        // TODO: store what was done of the session to ROOM
-        onStartEvent(SessionType.BREAK);
+        wakeLock.acquire(5000);
     }
 
     private void updateNotificationProgress() {
@@ -207,8 +289,53 @@ public class TimerService extends Service {
         }
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    //TODO: clean-up this mess
+    private void finalizeSession(SessionType sessionType, int minutes) {
+        PreferenceHelper.resetAdd60SecondsCounter();
+        getSessionManager().getCurrentSession().setDuration(
+                TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)));
+
+        if (sessionType != SessionType.WORK) {
+            return;
+        }
+
+        final String label = getSessionManager().getCurrentSession().getLabel().getValue();
+        final long endTime = System.currentTimeMillis();
+
+        Handler handler = new Handler();
+
+        Runnable r = () -> {
+            Log.d(TAG, "finalizeSession / elapsed minutes: " + minutes);
+            if (minutes > 0) {
+                try {
+                    Session session = new Session(
+                            0,
+                            endTime,
+                            minutes,
+                            label);
+                    AppDatabase.getDatabase(getApplicationContext()).sessionModel().addSession(session);
+                    Log.d(TAG, "finalizeSession, saving session finished at" + formatTime(endTime));
+                } catch (Exception e) {
+                    // the label was deleted in the meantime so set it to null and save the unlabeled session
+                    handler.post(() -> getSessionManager().getCurrentSession().setLabel(null));
+                    Session session = new Session(
+                            0,
+                            endTime,
+                            minutes,
+                            null);
+                    AppDatabase.getDatabase(getApplicationContext()).sessionModel().addSession(session);
+                }
+            }
+        };
+        Thread t = new Thread(r);
+        Log.d(TAG, "finalizeSession, start thread");
+        t.start();
+    }
+
+    private void bringActivityToFront() {
+        Intent activityIntent = new Intent(this, TimerActivity.class);
+        activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activityIntent.putExtra("42", 42);
+        getApplication().startActivity(activityIntent);
     }
 }

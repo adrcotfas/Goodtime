@@ -5,6 +5,9 @@
 A productivity timer designed to keep you on track and free of distractions.  
 Get rid of procrastination and get your work done.  
 
+- split your work into sessions of focus and then reward yourself with a break
+- after more sessions of work, take a longer break
+  
 **Features:**
 - ad-free and open-source
 - battery friendly

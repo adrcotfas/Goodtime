@@ -1,0 +1,105 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_edit_label_row"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:id="@+id/image_left_container"
+        android:layout_width="@dimen/menu_item_size"
+        android:layout_height="@dimen/menu_item_size"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:focusable="false"
+        android:clickable="false">
+        <ImageView
+            android:id="@+id/image_left"
+            android:src="@drawable/ic_label"
+            android:contentDescription="@string/labels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+        </ImageView>
+        <View
+            android:layout_width="@dimen/menu_item_ripple_size"
+            android:layout_height="@dimen/menu_item_ripple_size"
+            android:layout_gravity="center"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:duplicateParentState="true">
+        </View>
+    </FrameLayout>
+
+    <EditText
+        android:id="@+id/text"
+        android:hint="@string/label_name"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/image_left_container"
+        android:layout_toEndOf="@id/image_left_container"
+
+        android:layout_toLeftOf="@id/image_right_container"
+        android:layout_toStartOf="@id/image_right_container"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+
+        style="@style/AllSessionsAddEditDialogRowEdit"/>
+
+    <FrameLayout
+        android:id="@+id/image_delete_container"
+        android:layout_width="@dimen/menu_item_size"
+        android:layout_height="@dimen/menu_item_size"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/image_right_container"
+        android:layout_toStartOf="@id/image_right_container"
+        android:focusable="false"
+        android:clickable="false"
+        android:visibility="invisible">
+        <ImageView
+            android:id="@+id/image_delete"
+            android:contentDescription="@string/dialog_delete"
+            android:src="@drawable/ic_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+        <View
+            android:layout_width="@dimen/menu_item_ripple_size"
+            android:layout_height="@dimen/menu_item_ripple_size"
+            android:layout_gravity="center"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:duplicateParentState="true">
+        </View>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/image_right_container"
+        android:layout_width="@dimen/menu_item_size"
+        android:layout_height="@dimen/menu_item_size"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="4dp"
+        android:layout_marginEnd="4dp"
+        android:focusable="false"
+        android:clickable="false">
+        <ImageView
+            android:id="@+id/image_right"
+            android:contentDescription="@string/edit"
+            android:src="@drawable/ic_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+        <View
+            android:layout_width="@dimen/menu_item_ripple_size"
+            android:layout_height="@dimen/menu_item_ripple_size"
+            android:layout_gravity="center"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:duplicateParentState="true">
+        </View>
+    </FrameLayout>
+</RelativeLayout>

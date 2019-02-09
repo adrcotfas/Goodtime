@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Goodtime</string>
+    <string name="app_url" translatable="false">https://github.com/goodtime-productivity/Goodtime</string>
+    <string name="app_translation_url" translatable="false">https://crowdin.com/project/goodtime</string>
+
+    <string name="check_mark" translatable="false">✅</string>
+
+    <string name="licence_key" translatable="false">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgH+Nj4oEbJKEnrds3qaDcdjti0hnL1hlYsOoX5hVNUs4CpTzVmiAtO3LHwLGJzvtDmagsszKgVFn3SmVeA7y+GS93I6FwsCEmXNGdaCJW4TftLqSxT9Q4Qn8R8hWk3OXgo1ZF2FxGuicwq9zt4W+6pW7QMhpoBA0DyCLhoCulINVTkEKBBWeCS4CDkhXrnXCoAbhmYn2R7Ifhn7voy1YR9Vr/G9tCHzvLM1k4bntyOebxdMwPy49Dsrzam1hgPhzmEMqwolchLx95DFXVfHcWSFtBpZwR4sPFhXny5CQ255CruCdQd8L5CHdRhrHyNkzBVrwoYg8WWZUQ3Ijcu2e5wIDAQAB</string>
+    <string name="merchant_id" translatable="false">08771553020832266627</string>
+
+    <string name="update_pro_2" translatable="false">@string/pref_timer_style</string>
+    <string name="update_pro_8" translatable="false">@string/pref_screen_saver</string>
+
+    <string-array name="update_pro">
+        <item>@string/update_pro_1</item>
+        <item>@string/update_pro_2</item>
+        <item>@string/update_pro_4</item>
+        <item>@string/update_pro_5</item>
+        <item>@string/update_pro_6</item>
+        <item>@string/update_pro_7</item>
+        <item>@string/update_pro_8</item>
+        <item>@string/update_pro_9</item>
+        <item>@string/update_pro_10</item>
+        <item>@string/update_pro_11</item>
+        <item>@string/update_pro_13</item>
+    </string-array>
+
+</resources>
