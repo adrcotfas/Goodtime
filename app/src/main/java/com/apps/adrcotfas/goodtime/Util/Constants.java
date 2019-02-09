@@ -22,8 +22,7 @@ public class Constants {
     public static final int DEFAULT_WORK_DURATION_5217         = 52;
     public static final int DEFAULT_BREAK_DURATION_5217        = 17;
 
-    //TODO: change at release
-    public static final String sku = "android.test.purchased";//"upgraded_version";
+    public static final String sku = "upgraded_version";
 
     public interface ACTION {
         String START       = "goodtime.action.start";
