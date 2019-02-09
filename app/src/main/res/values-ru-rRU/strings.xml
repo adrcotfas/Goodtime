@@ -29,7 +29,7 @@
     <string name="pref_disable_battery_optimization_summary">Отключить оптимизацию батареи для этого приложения</string>
     <string name="pref_screen_saver">Режим заставки</string>
     <string name="pref_screen_saver_summary">Перемещает таймер при включенном экране</string>
-    <string name="about">О</string>
+    <string name="about">Oколо</string>
     <string name="about_translate">Перевести это приложение</string>
     <string name="about_open_source_licences">Лицензии с открытым исходным кодом</string>
     <string name="about_no_email">"Там не установлены почтовые клиенты."</string>
@@ -78,7 +78,7 @@
     <string name="tutorial_swipe_down">Проведите пальцем вниз по таймеру, чтобы остановить</string>
     <string name="intro_avoid_distractions">"Не отвлекайтесь"</string>
     <string name="intro_avoid_distractions_description">"Выполняйте намеченные задачи, используя управляемые приложением временные сессии."</string>
-    <string name="intro_clear_mind">"\"Проясните голову"</string>
+    <string name="intro_clear_mind">"Проясните голову"</string>
     <string name="intro_clear_mind_description">"Награждайте себя короткими перерывами, чтобы взбодриться."</string>
     <string name="intro_get_started">"Начнем"</string>
     <string name="intro_get_started_description">"Оставайтесь продуктивными, избавьтесь от прокрастинации и улучшите свою производительность."</string>
