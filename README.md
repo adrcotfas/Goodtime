@@ -8,7 +8,7 @@
 
 A minimalist but powerful productivity timer designed to keep you focused and free of distractions.
 Alternate between focused work sessions and short breaks handled by the app.
-Get rid of procrastination and improve your time management!
+<br>Get rid of procrastination and improve your time management!
 
 <br>⏳ split your work into sessions of focus and then reward yourself with a break
 <br>☕ after more sessions of work, take a longer break
