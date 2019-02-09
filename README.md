@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/goodtime-productivity/Goodtime.svg?branch=master)](https://travis-ci.org/goodtime-productivity/Goodtime)
+[![Build Status](https://travis-ci.org/goodtime-productivity/Goodtime.svg?branch=master)](https://travis-ci.org/goodtime-productivity/Goodtime) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/goodtime/localized.svg)](https://crowdin.com/project/goodtime)
+
+
 
 # Goodtime
 
