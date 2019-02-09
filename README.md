@@ -6,9 +6,9 @@ A minimalist but powerful productivity timer designed to keep you focused and fr
 Alternate between focused work sessions and short breaks handled by the app.
 Get rid of procrastination and improve your time management!
 
-⏳ split your work into sessions of focus and then reward yourself with a break
-☕ after more sessions of work, take a longer break
-  
+<br>⏳ split your work into sessions of focus and then reward yourself with a break
+<br>☕ after more sessions of work, take a longer break
+
 **Features:**
 - Ad-free and open-source
 - Lightweight and battery friendly
