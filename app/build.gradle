@@ -6,8 +6,8 @@ android {
         applicationId "com.apps.adrcotfas.goodtime"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 76
-        versionName "2.0"
+        versionCode 77
+        versionName "2.0.1"
     }
 
     dataBinding {
