@@ -452,7 +452,7 @@ public class StatisticsFragment extends Fragment {
         final SpinnerRangeType rangeType =
                 SpinnerRangeType.values()[mRangeType.getSelectedItemPosition()];
 
-        final int DUMMY_INTERVAL_RANGE = 15;
+        final int DUMMY_INTERVAL_RANGE = (int) ThemeHelper.pxToDp(getContext(), mChartHistory.getWidth()) / 24;
 
         List<Entry> yVals = new ArrayList<>();
         TreeMap<LocalDate, Integer> tree = new TreeMap<>();
