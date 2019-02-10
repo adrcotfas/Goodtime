@@ -7,7 +7,7 @@
 <a href='https://play.google.com/store/apps/details?id=com.apps.adrcotfas.goodtime&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="30%" height="30%" /></a>
 
 A minimalist but powerful productivity timer designed to keep you focused and free of distractions.
-Alternate between focused work sessions and short breaks handled by the app.
+<br>Alternate between focused work sessions and short breaks handled by the app.
 <br>Get rid of procrastination and improve your time management!
 
 <br>⏳ split your work into sessions of focus and then reward yourself with a break
