@@ -15,11 +15,12 @@ package com.apps.adrcotfas.goodtime.Main;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.apps.adrcotfas.goodtime.About.AboutActivity;
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
@@ -67,6 +68,9 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
                 }
             });
         }
+
+        Window window = getDialog().getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 
         navigationView = binding.navigationView;
 
