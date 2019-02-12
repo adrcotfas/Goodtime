@@ -31,7 +31,7 @@
             app:min="1"
             app:dialogTitle="@string/pref_work_duration"
             android:defaultValue="25"
-            android:max="120"
+            android:max="240"
             app:iconSpaceReserved="false"/>
 
         <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
@@ -40,7 +40,7 @@
             app:min="1"
             app:dialogTitle="@string/pref_break_duration"
             android:defaultValue="5"
-            android:max="60"
+            android:max="240"
             app:iconSpaceReserved="false"/>
 
         <SwitchPreferenceCompat
@@ -56,7 +56,7 @@
             app:min="1"
             app:dialogTitle="@string/pref_long_break_duration"
             android:defaultValue="15"
-            android:max="60"
+            android:max="240"
             app:iconSpaceReserved="false"/>
 
         <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference

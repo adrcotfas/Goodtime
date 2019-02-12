@@ -173,7 +173,7 @@ public class CurrentSessionManager extends ContextWrapper{
         cancelAlarm();
         mTimer.cancel();
 
-        mRemaining = Math.min(mRemaining + extra, TimeUnit.MINUTES.toMillis(120));
+        mRemaining = Math.min(mRemaining + extra, TimeUnit.MINUTES.toMillis(240));
 
         mTimer = new AppCountDownTimer(mRemaining);
 

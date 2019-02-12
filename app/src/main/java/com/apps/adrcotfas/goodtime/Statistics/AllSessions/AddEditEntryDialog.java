@@ -132,7 +132,7 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements
                 Toast.makeText(getActivity(), getString(R.string.session_enter_valid_duration), Toast.LENGTH_LONG).show();
             }
             else {
-                final int duration = Math.min(Integer.parseInt(binding.duration.getText().toString()), 120);
+                final int duration = Math.min(Integer.parseInt(binding.duration.getText().toString()), 240);
                 final String label = mViewModel.label.getValue();
                 Session sessionToAdd = new Session(0, mViewModel.date.getValue().getMillis(), duration, label);
                 if (mViewModel.sessionToEditId != INVALID_SESSION_TO_EDIT_ID) {
