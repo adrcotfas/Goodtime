@@ -85,7 +85,7 @@
     <string name="dialog_close">Fermer</string>
     <string name="dialog_delete">Effacer</string>
     <string name="edit">Éditer</string>
-    <string name="upgrade">Améliorer</string>
+    <string name="upgrade">Version Premium</string>
     <string name="save">Sauvegarder</string>
     <string name="select_all">Tout sélectionner</string>
     <string name="add_session">Ajouter une session</string>
@@ -122,9 +122,9 @@
     <string name="update_pro_6">Importation et exportation de sauvegarde</string>
     <string name="update_pro_7">Statistiques d’exportation au format CSV</string>
     <string name="update_pro_9">Thèmes</string>
-    <string name="update_pro_10">Séparer le son de notification pour le travail et pause</string>
+    <string name="update_pro_10">Différencier le son des notifications pour le travail et les pauses</string>
     <string name="update_pro_11">Notifications persistantes</string>
-    <string name="update_pro_13">Tous les futur propose gratuitement</string>
+    <string name="update_pro_13">Futures fonctionnalités inclues gratuitement</string>
     <string name="upgrade_enjoy">Profitez de la version pro !</string>
     <string name="upgrade_extra_features">Fonctionnalités supplémentaires</string>
     <string name="Profile">Profil</string>
