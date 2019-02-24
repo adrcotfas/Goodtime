@@ -7,6 +7,7 @@
         android:icon="@drawable/ic_status_goodtime"
         android:title="@string/state"
         android:visible="false"
+        android:enabled="false"
         app:showAsAction="always"/>
 
     <item
