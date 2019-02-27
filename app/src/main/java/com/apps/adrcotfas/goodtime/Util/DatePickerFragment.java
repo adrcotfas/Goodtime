@@ -20,6 +20,8 @@ import android.os.Build;
 import android.os.Bundle;
 import com.apps.adrcotfas.goodtime.R;
 
+import org.joda.time.LocalDate;
+
 import java.util.Calendar;
 
 import androidx.annotation.NonNull;
@@ -50,10 +52,13 @@ public class DatePickerFragment extends DialogFragment {
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        return new DatePickerDialog(
+        DatePickerDialog d =  new DatePickerDialog(
                 getActivity(),
                 (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                         ? R.style.DialogTheme : AlertDialog.THEME_HOLO_DARK,
                 listener, year, month, day);
+        d.getDatePicker().setMaxDate(new LocalDate().toDateTimeAtStartOfDay().getMillis());
+
+        return  d;
     }
 }
