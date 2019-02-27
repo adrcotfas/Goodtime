@@ -39,7 +39,7 @@ public class AboutActivity extends MaterialAboutActivity {
     @NonNull
     protected MaterialAboutList getMaterialAboutList(@NonNull Context c) {
         MaterialAboutCard.Builder builder1 = new MaterialAboutCard.Builder();
-        int colorIcon = R.color.teal200;
+        int colorIcon = R.color.gray50;
         builder1.addItem(new MaterialAboutTitleItem.Builder()
                 .text(getString(R.string.app_name))
                 .icon(R.mipmap.ic_launcher)

@@ -34,7 +34,7 @@ public class LicencesActivity extends MaterialAboutActivity {
     @NonNull
     @Override
     protected MaterialAboutList getMaterialAboutList(@NonNull final Context c) {
-        int colorIcon = R.color.teal200;
+        int colorIcon = R.color.gray50;
 
         MaterialAboutCard cardMpAndroidChart = ConvenienceBuilder.createLicenseCard(c,
                 new IconicsDrawable(c)
