@@ -135,4 +135,6 @@
     <string name="pref_session_counter">เคาน์เตอร์ประชุม</string>
     <string name="pref_session_counter_summary">"แสดงจำนวนเซสชันที่เสร็จสมบูรณ์แล้ววันนี้"</string>
     <string name="support_the_developer">ช่วยเหลือนักพัฒนา</string>
+    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter_title">Reset?</string>
 </resources>

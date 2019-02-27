@@ -135,4 +135,6 @@
     <string name="pref_session_counter">Contatore di sessioni</string>
     <string name="pref_session_counter_summary">"Mostra il numero di sessioni completate di oggi"</string>
     <string name="support_the_developer">Supporta lo sviluppatore</string>
+    <string name="action_reset_counter">Questo ripristinerà le sessioni completate di oggi.</string>
+    <string name="action_reset_counter_title">Reimpostare?</string>
 </resources>

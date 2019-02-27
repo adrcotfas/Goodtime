@@ -135,4 +135,6 @@
     <string name="pref_session_counter">عداد الجلسات</string>
     <string name="pref_session_counter_summary">"يعرض عدد اليوم من الجلسات المكتملة"</string>
     <string name="support_the_developer">ادعم المطور</string>
+    <string name="action_reset_counter">هذا سوف تعيين جلسات تنتهي اليوم.</string>
+    <string name="action_reset_counter_title">هل تريد إعادة الضبط؟</string>
 </resources>

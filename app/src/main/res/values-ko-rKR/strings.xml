@@ -135,4 +135,6 @@
     <string name="pref_session_counter">세션 카운터</string>
     <string name="pref_session_counter_summary">"오늘의 완료 된 세션의 수를 표시"</string>
     <string name="support_the_developer">개발자 지원</string>
+    <string name="action_reset_counter">이 오늘날의 완성 된 세션을 다시 설정 됩니다.</string>
+    <string name="action_reset_counter_title">초기화하시겠습니까?</string>
 </resources>

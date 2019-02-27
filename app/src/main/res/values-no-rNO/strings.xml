@@ -135,4 +135,6 @@
     <string name="pref_session_counter">Økter counter</string>
     <string name="pref_session_counter_summary">"Viser dagens antall fullførte økter"</string>
     <string name="support_the_developer">Støtt utvikleren</string>
+    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter_title">Reset?</string>
 </resources>

@@ -136,4 +136,6 @@
     <string name="pref_session_counter">Лічильник сеансів</string>
     <string name="pref_session_counter_summary">"Показує сьогодні кількість завершених сесій"</string>
     <string name="support_the_developer">Підтримати розробника</string>
+    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter_title">Reset?</string>
 </resources>

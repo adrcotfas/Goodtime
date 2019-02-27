@@ -135,4 +135,6 @@
     <string name="pref_session_counter">מונה הפעלות</string>
     <string name="pref_session_counter_summary">"מראה של היום מספר פגישות שהושלמו"</string>
     <string name="support_the_developer">תמכו במפתח</string>
+    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter_title">Reset?</string>
 </resources>

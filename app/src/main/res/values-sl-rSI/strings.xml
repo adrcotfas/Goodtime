@@ -135,4 +135,6 @@
     <string name="pref_session_counter">Števec Sessions</string>
     <string name="pref_session_counter_summary">"Kaže današnji število dokončanih sej"</string>
     <string name="support_the_developer">Podpri razvijalce aplikacije</string>
+    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter_title">Reset?</string>
 </resources>

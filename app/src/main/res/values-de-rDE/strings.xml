@@ -135,4 +135,6 @@
     <string name="pref_session_counter">Sitzungsschalter</string>
     <string name="pref_session_counter_summary">"Zeigt die Anzahl der heute abgeschlossenen Sitzungen an"</string>
     <string name="support_the_developer">Unterstütze den Entwickler</string>
+    <string name="action_reset_counter">Dies wird die heutigen Sitzungen zurücksetzen.</string>
+    <string name="action_reset_counter_title">Zurücksetzen?</string>
 </resources>

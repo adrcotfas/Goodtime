@@ -135,4 +135,6 @@
     <string name="pref_session_counter">Счетчик сессий</string>
     <string name="pref_session_counter_summary">"Показывает сегодняшнее количество завершенных сессий"</string>
     <string name="support_the_developer">Поддержать разработчика</string>
+    <string name="action_reset_counter">Это сбросит сегодняшние завершённые сессии.</string>
+    <string name="action_reset_counter_title">Сбросить?</string>
 </resources>
