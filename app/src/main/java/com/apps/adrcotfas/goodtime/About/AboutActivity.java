@@ -13,145 +13,39 @@
 
 package com.apps.adrcotfas.goodtime.About;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.widget.Toast;
-
-import com.apps.adrcotfas.goodtime.BuildConfig;
-import com.apps.adrcotfas.goodtime.Main.MainIntroActivity;
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import com.apps.adrcotfas.goodtime.R;
-import com.apps.adrcotfas.goodtime.Util.DeviceInfo;
-import com.danielstone.materialaboutlibrary.ConvenienceBuilder;
-import com.danielstone.materialaboutlibrary.MaterialAboutActivity;
-import com.danielstone.materialaboutlibrary.items.MaterialAboutActionItem;
-import com.danielstone.materialaboutlibrary.items.MaterialAboutTitleItem;
-import com.danielstone.materialaboutlibrary.model.MaterialAboutCard;
-import com.danielstone.materialaboutlibrary.model.MaterialAboutList;
-import com.mikepenz.community_material_typeface_library.CommunityMaterial;
-import com.mikepenz.iconics.IconicsDrawable;
+import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
+import com.apps.adrcotfas.goodtime.databinding.AboutActivityMainBinding;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-
-public class AboutActivity extends MaterialAboutActivity {
-    @Override
-    @NonNull
-    protected MaterialAboutList getMaterialAboutList(@NonNull Context c) {
-        MaterialAboutCard.Builder builder1 = new MaterialAboutCard.Builder();
-        int colorIcon = R.color.teal200;
-        builder1.addItem(new MaterialAboutTitleItem.Builder()
-                .text(getString(R.string.app_name))
-                .icon(R.mipmap.ic_launcher)
-                .build());
-
-        builder1.addItem(ConvenienceBuilder.createVersionActionItem(c,
-                new IconicsDrawable(c)
-                        .icon(CommunityMaterial.Icon.cmd_information_outline)
-                        .color(ContextCompat.getColor(c, colorIcon))
-                        .sizeDp(18),
-                getString(R.string.about_version),
-                false));
-
-        builder1.addItem(new MaterialAboutActionItem.Builder()
-                .text(getString(R.string.about_source_code))
-                .icon(new IconicsDrawable(c)
-                        .icon(CommunityMaterial.Icon.cmd_github_circle)
-                        .color(ContextCompat.getColor(c, colorIcon))
-                        .sizeDp(18))
-                .setOnClickAction(ConvenienceBuilder.createWebsiteOnClickAction(
-                        c, Uri.parse(getString(R.string.app_url))))
-                .build());
-
-        builder1.addItem(new MaterialAboutActionItem.Builder()
-                .text(getString(R.string.about_open_source_licences))
-                .icon(new IconicsDrawable(c)
-                        .icon(CommunityMaterial.Icon.cmd_book)
-                        .color(ContextCompat.getColor(c, colorIcon))
-                        .sizeDp(18))
-                .setOnClickAction(() -> {
-                    Intent intent = new Intent(c, LicencesActivity.class);
-                    c.startActivity(intent);
-                })
-                .build());
-
-        builder1.addItem(new MaterialAboutActionItem.Builder()
-                .text(getString(R.string.about_app_intro))
-                .icon(new IconicsDrawable(c)
-                        .icon(CommunityMaterial.Icon.cmd_presentation)
-                        .color(ContextCompat.getColor(c, colorIcon))
-                        .sizeDp(18))
-                .setOnClickAction(() -> {
-                    Intent i = new Intent(AboutActivity.this, MainIntroActivity.class);
-                    startActivity(i);
-                })
-                .build());
-
-        MaterialAboutCard.Builder builder2 = new MaterialAboutCard.Builder();
-
-        builder2.addItem(new MaterialAboutActionItem.Builder()
-                .text(getString(R.string.feedback))
-                .icon(new IconicsDrawable(c)
-                        .icon(CommunityMaterial.Icon.cmd_email)
-                        .color(ContextCompat.getColor(c, colorIcon))
-                        .sizeDp(18))
-                .setOnClickAction(this::openFeedback).build());
-
-        builder2.addItem(new MaterialAboutActionItem.Builder()
-                .text(getString(R.string.about_translate))
-                .icon(new IconicsDrawable(c)
-                        .icon(CommunityMaterial.Icon.cmd_web)
-                        .color(ContextCompat.getColor(c, colorIcon))
-                        .sizeDp(18))
-                .setOnClickAction(() -> {
-                    String url = getString(R.string.app_translation_url);
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(url));
-                    startActivity(i);
-                }).build());
-
-        builder2.addItem(ConvenienceBuilder.createRateActionItem(c,
-                new IconicsDrawable(c)
-                        .icon(CommunityMaterial.Icon.cmd_star)
-                        .color(ContextCompat.getColor(c, colorIcon))
-                        .sizeDp(18),
-                getString(R.string.about_rate_this_app),
-                null
-        ));
-
-        MaterialAboutCard.Builder builder3 = new MaterialAboutCard.Builder();
-
-        builder3.addItem(ConvenienceBuilder.createMapItem(c,
-                new IconicsDrawable(c)
-                        .icon(CommunityMaterial.Icon.cmd_map)
-                        .color(ContextCompat.getColor(c, colorIcon))
-                        .sizeDp(18),
-                getString(R.string.about_visit_brasov),
-                null,
-                "Brasov"));
-
-        return new MaterialAboutList.Builder()
-                .addCard(builder1.build())
-                .addCard(builder2.build())
-                .addCard(builder3.build()).build();
-    }
+public class AboutActivity extends AppCompatActivity {
 
     @Override
-    protected CharSequence getActivityTitle() {
-        return getString(R.string.mal_title_about);
-    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.about_activity_main);
+        ThemeHelper.setTheme(this);
+        AboutActivityMainBinding binding = DataBindingUtil.setContentView(this,
+                R.layout.about_activity_main);
 
-    private void openFeedback() {
-        Intent email = new Intent(Intent.ACTION_SENDTO);
-        email.setData(new Uri.Builder().scheme("mailto").build());
-        email.putExtra(Intent.EXTRA_EMAIL, new String[]{"goodtime-app@googlegroups.com"});
-        email.putExtra(Intent.EXTRA_SUBJECT, "[Goodtime] Feedback");
-        email.putExtra(Intent.EXTRA_TEXT, "\nMy device info: \n" + DeviceInfo.getDeviceInfo()
-                + "\nApp version: " + BuildConfig.VERSION_NAME);
-        try {
-            startActivity(Intent.createChooser(email, this.getString(R.string.feedback_title)));
-        } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(this, R.string.about_no_email, Toast.LENGTH_SHORT).show();
+        setSupportActionBar(binding.toolbarWrapper.toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        AboutFragment aboutFragment = new AboutFragment();
+        fragmentTransaction.add(R.id.fragment, aboutFragment);
+        fragmentTransaction.commit();
     }
+
+    public void updateTitle(int resId) {
+        getSupportActionBar().setTitle(resId);
+    }
+
 }

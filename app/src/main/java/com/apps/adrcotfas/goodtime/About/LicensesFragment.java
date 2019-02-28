@@ -14,22 +14,19 @@
 package com.apps.adrcotfas.goodtime.About;
 
 import android.content.Context;
-import android.view.MenuItem;
-
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import com.apps.adrcotfas.goodtime.BuildConfig;
 import com.apps.adrcotfas.goodtime.R;
 import com.danielstone.materialaboutlibrary.ConvenienceBuilder;
-import com.danielstone.materialaboutlibrary.MaterialAboutActivity;
+import com.danielstone.materialaboutlibrary.MaterialAboutFragment;
 import com.danielstone.materialaboutlibrary.model.MaterialAboutCard;
 import com.danielstone.materialaboutlibrary.model.MaterialAboutList;
 import com.danielstone.materialaboutlibrary.util.OpenSourceLicense;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-
-public class LicencesActivity extends MaterialAboutActivity {
+public class LicensesFragment extends MaterialAboutFragment {
 
     @NonNull
     @Override
@@ -133,18 +130,13 @@ public class LicencesActivity extends MaterialAboutActivity {
     }
 
     @Override
-    protected CharSequence getActivityTitle() {
-        return getString(R.string.mal_title_licenses);
+    protected int getTheme() {
+        return R.style.AppTheme_MaterialAboutActivity;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            default:
-                return false;
-        }
+    public void onResume() {
+        super.onResume();
+        ((AboutActivity) getActivity()).updateTitle(R.string.mal_title_licenses);
     }
 }
