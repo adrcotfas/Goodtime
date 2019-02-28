@@ -135,4 +135,6 @@
     <string name="pref_session_counter">Συνεδρίες μετρητή</string>
     <string name="pref_session_counter_summary">"Δείχνει η σημερινή αριθμό των ολοκληρωθείσες επισκέψεις"</string>
     <string name="support_the_developer">Στήριξε τον προγραμματιστή</string>
+    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter_title">Reset?</string>
 </resources>

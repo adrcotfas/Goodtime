@@ -19,6 +19,8 @@ import com.apps.adrcotfas.goodtime.Database.AppDatabase;
 import com.apps.adrcotfas.goodtime.Database.SessionDao;
 import com.apps.adrcotfas.goodtime.Session;
 
+import org.joda.time.LocalDate;
+
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -66,6 +68,11 @@ public class SessionViewModel extends AndroidViewModel {
 
     public void deleteSession(long id) {
         mExecutorService.execute(() -> mSessionDao.deleteSession(id));
+    }
+
+    public void deleteSessionsFinishedToday() {
+        mExecutorService.execute(() -> mSessionDao.deleteSessions(
+                new LocalDate().toDateTimeAtStartOfDay().getMillis()));
     }
 
     public LiveData<List<Session>> getSessions(String label) {

@@ -135,4 +135,6 @@
     <string name="pref_session_counter">सत्र काउंटर</string>
     <string name="pref_session_counter_summary">"आज से पता चलता है पूरा सत्र की संख्या"</string>
     <string name="support_the_developer">डेवलपर का समर्थ करे</string>
+    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter_title">Reset?</string>
 </resources>

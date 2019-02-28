@@ -43,7 +43,6 @@ import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.Statistics.Main.SelectLabelDialog;
-import com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity;
 import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
@@ -104,6 +103,7 @@ public class TimerActivity
     private TextView mTimeLabel;
     private Toolbar mToolbar;
     private TimerActivityViewModel mViewModel;
+    private SessionViewModel mSessionViewModel;
 
     private TextView mSessionsCounterText;
 
@@ -348,9 +348,14 @@ public class TimerActivity
                     launchUpgradeActivity(this);
                 }
                 break;
-            case R.id.activity_main_alerts_menu_item:
-                Intent statisticsIntent = new Intent(this, StatisticsActivity.class);
-                startActivity(statisticsIntent);
+            case R.id.action_sessions_counter:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.action_reset_counter_title)
+                        .setMessage(R.string.action_reset_counter)
+                        .setPositiveButton(android.R.string.ok, (dialog, which)
+                                -> mSessionViewModel.deleteSessionsFinishedToday())
+                        .setNegativeButton(android.R.string.cancel, (dialog, which) -> {});
+                builder.show();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -415,7 +420,7 @@ public class TimerActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        final MenuItem alertMenuItem = menu.findItem(R.id.activity_main_alerts_menu_item);
+        final MenuItem alertMenuItem = menu.findItem(R.id.action_sessions_counter);
         alertMenuItem.setVisible(false);
         boolean sessionsCounterEnabled = PreferenceHelper.isSessionsCounterEnabled();
         if (sessionsCounterEnabled) {
@@ -423,7 +428,7 @@ public class TimerActivity
             mSessionsCounterText = mSessionsCounter.findViewById(R.id.view_alert_count_textview);
             mSessionsCounter.setOnClickListener(v -> onOptionsItemSelected(alertMenuItem));
 
-            SessionViewModel mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
+            mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
             mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
                 final LocalDate today = new LocalDate();
                 int statsToday = 0;

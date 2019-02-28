@@ -54,6 +54,9 @@ public interface SessionDao {
     @Query("delete from Session where id = :id")
     void deleteSession(long id);
 
+    @Query("delete from Session where endTime >= :endTime")
+    void deleteSessions(long endTime);
+
     @Query("delete from Session")
     void deleteAllSessions();
 }

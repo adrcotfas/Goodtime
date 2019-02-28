@@ -135,4 +135,6 @@
     <string name="pref_session_counter">Phiên truy cập</string>
     <string name="pref_session_counter_summary">"Hiển thị số phiên hoàn thành ngày hôm nay"</string>
     <string name="support_the_developer">Hỗ trợ nhà sản xuất</string>
+    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter_title">Reset?</string>
 </resources>

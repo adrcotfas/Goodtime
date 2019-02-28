@@ -135,4 +135,6 @@
     <string name="pref_session_counter">會話計數器</string>
     <string name="pref_session_counter_summary">"顯示今天已完成的會話數"</string>
     <string name="support_the_developer">支持開發者</string>
+    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter_title">Reset?</string>
 </resources>

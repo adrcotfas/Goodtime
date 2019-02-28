@@ -7,10 +7,11 @@
         android:icon="@drawable/ic_status_goodtime"
         android:title="@string/state"
         android:visible="false"
+        android:enabled="false"
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/activity_main_alerts_menu_item"
+        android:id="@+id/action_sessions_counter"
         android:title="@string/pref_session_counter"
         app:actionLayout="@layout/view_session_counter"
         app:showAsAction="always"/>

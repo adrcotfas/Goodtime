@@ -48,14 +48,14 @@
         <activity
             android:name=".About.AboutActivity"
             android:label="@string/about"
-            android:theme="@style/AppTheme.MaterialAboutActivity"
+            android:theme="@style/AboutTheme"
             android:parentActivityName=".Main.TimerActivity">
         </activity>
 
         <activity
             android:name=".About.LicencesActivity"
             android:label="@string/about_open_source_licences"
-            android:theme="@style/AppTheme.MaterialAboutActivity"
+            android:theme="@style/AboutTheme"
             android:parentActivityName=".About.AboutActivity">
         </activity>
 

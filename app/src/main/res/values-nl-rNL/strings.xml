@@ -135,4 +135,6 @@
     <string name="pref_session_counter">Sessies teller</string>
     <string name="pref_session_counter_summary">"Bevat het nummer van de hedendaagse van voltooide sessies"</string>
     <string name="support_the_developer">Ondersteun de ontwikkelaar van de app</string>
+    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter_title">Reset?</string>
 </resources>

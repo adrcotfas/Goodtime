@@ -213,10 +213,13 @@
         <item name="android:listDivider">@color/transparent_dark</item>
     </style>
 
-    <style name="AppTheme.MaterialAboutActivity" parent="Theme.Mal.Light.DarkActionBar">
-        <item name="colorPrimary">@color/teal200</item>
-        <item name="colorPrimaryDark">@color/teal300</item>
-        <item name="colorAccent">@color/teal200</item>
+    <style name="AboutTheme" parent="Theme.Mal.Dark">
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryDark">@color/black</item>
+        <item name="colorPrimaryVariant">@color/black</item>
+        <item name="android:colorBackground">@color/gray1100</item>
+        <item name="mal_card_background">@color/black</item>
+
         <item name="fontFamily">@font/app_font</item>
     </style>
 
