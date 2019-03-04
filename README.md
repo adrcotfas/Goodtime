@@ -4,7 +4,11 @@
 
 # Goodtime
 
-<a href='https://play.google.com/store/apps/details?id=com.apps.adrcotfas.goodtime&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="30%" height="30%" /></a>
+<a href='https://play.google.com/store/apps/details?id=com.apps.adrcotfas.goodtime&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height="80" /></a>
+<a href="https://f-droid.org/app/YOUR.APP.ID">
+    <img src="https://f-droid.org/badge/get-it-on.png"
+         alt="Get it on F-Droid" height="80">
+</a>
 
 A minimalist but powerful productivity timer designed to keep you focused and free of distractions.
 <br>Alternate between focused work sessions and short breaks handled by the app.
@@ -13,16 +17,24 @@ A minimalist but powerful productivity timer designed to keep you focused and fr
 <br>⏳ split your work into sessions of focus and then reward yourself with a break
 <br>☕ after more sessions of work, take a longer break
 
-**Features:**
-- Ad-free and open-source
-- Lightweight and battery friendly
+**Features**
+- No ads
+- No tracking or personal data collection
+- Open-source
+- Lightweight: ~2 MB download size
+- Battery friendly
 - Configurable timer
 - Pause, skip or add 60 seconds
+- Long breaks after a number of completed work sessions
 - Detailed statistics
-- Disable sound and Wi-Fi connection during the work sessions
 - AMOLED-friendly user interface
+- Immersive fullscreen mode
+- Keep the screen on
+- Custom notification sounds
+- Auto start work or break without user interaction
+- Disable sound and Wi-Fi connection during the work sessions
 
-**Pro features:**
+**Pro features**
 - Colored labels
 - Timer styles
 - Manually add sessions
