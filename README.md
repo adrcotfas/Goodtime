@@ -5,7 +5,7 @@
 # Goodtime
 
 <a href='https://play.google.com/store/apps/details?id=com.apps.adrcotfas.goodtime&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height="80" /></a>
-<a href="https://f-droid.org/app/YOUR.APP.ID">
+<a href="https://f-droid.org/en/packages/com.apps.adrcotfas.goodtime">
     <img src="https://f-droid.org/badge/get-it-on.png"
          alt="Get it on F-Droid" height="80">
 </a>
