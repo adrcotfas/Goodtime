@@ -291,6 +291,7 @@ public class TimerService extends LifecycleService {
 
     //TODO: clean-up this mess
     private void finalizeSession(SessionType sessionType, int minutes) {
+        getSessionManager().stopTimer();
         PreferenceHelper.resetAdd60SecondsCounter();
         getSessionManager().getCurrentSession().setDuration(
                 TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)));
