@@ -92,7 +92,9 @@ public class CurrentSessionManager extends ContextWrapper{
 
     public void stopTimer() {
         cancelAlarm();
-        mTimer.cancel();
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
         mCurrentSession.setTimerState(TimerState.INACTIVE);
     }
 
@@ -137,7 +139,10 @@ public class CurrentSessionManager extends ContextWrapper{
     }
     
     private void cancelAlarm() {
-        getAlarmManager().cancel(getAlarmPendingIntent(mCurrentSession.getSessionType().getValue()));
+        final PendingIntent intent = getAlarmPendingIntent(mCurrentSession.getSessionType().getValue());
+        if (intent != null) {
+            getAlarmManager().cancel(intent);
+        }
         unregisterAlarmReceiver();
     }
 
