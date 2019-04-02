@@ -13,9 +13,13 @@
 
 package com.apps.adrcotfas.goodtime.BL;
 
+import android.annotation.TargetApi;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.util.Log;
@@ -231,6 +235,15 @@ public class TimerService extends LifecycleService {
         final SessionType sessionType = getSessionManager().getCurrentSession().getSessionType().getValue();
         Log.d(TAG, TimerService.this.hashCode() + " onSkipEvent " + sessionType.toString());
 
+        if (sessionType == SessionType.WORK) {
+            if (PreferenceHelper.isWiFiDisabled()) {
+                toggleWifi(true);
+            }
+            if (PreferenceHelper.isSoundAndVibrationDisabled()) {
+                toggleSound(true);
+            }
+        }
+
         getSessionManager().stopTimer();
         stopForeground(true);
         updateLongBreakStreak(sessionType);
@@ -270,23 +283,37 @@ public class TimerService extends LifecycleService {
     }
 
     private void toggleSound(boolean restore) {
-        final AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        if (restore) {
-            aManager.setRingerMode(mPreviousRingerMode);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                isNotificationPolicyAccessGranted()) {
+            Runnable r = () -> {
+                final AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+                if (restore) {
+                    aManager.setRingerMode(mPreviousRingerMode);
+                } else {
+                    mPreviousRingerMode = aManager.getRingerMode();
+                    aManager.setRingerMode(RINGER_MODE_SILENT);
+                }
+            };
+            Thread t = new Thread(r);
+            t.start();
         } else {
-            mPreviousRingerMode = aManager.getRingerMode();
-            aManager.setRingerMode(RINGER_MODE_SILENT);
+            // should not happen
+            Log.w(TAG, "Trying to toggle sound but permission was not granted.");
         }
     }
 
     private void toggleWifi(boolean restore) {
-        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-        if (restore) {
-            wifiManager.setWifiEnabled(mPreviousWifiMode);
-        } else {
-            mPreviousWifiMode = wifiManager.isWifiEnabled();
-            wifiManager.setWifiEnabled(false);
-        }
+        Runnable r = () -> {
+            WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+            if (restore) {
+                wifiManager.setWifiEnabled(mPreviousWifiMode);
+            } else {
+                mPreviousWifiMode = wifiManager.isWifiEnabled();
+                wifiManager.setWifiEnabled(false);
+            }
+        };
+        Thread t = new Thread(r);
+        t.start();
     }
 
     //TODO: clean-up this mess
@@ -338,5 +365,12 @@ public class TimerService extends LifecycleService {
         activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activityIntent.putExtra("42", 42);
         getApplication().startActivity(activityIntent);
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean isNotificationPolicyAccessGranted() {
+        NotificationManager notificationManager = (NotificationManager)
+                getSystemService(Context.NOTIFICATION_SERVICE);
+        return notificationManager.isNotificationPolicyAccessGranted();
     }
 }
