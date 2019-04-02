@@ -749,6 +749,8 @@ public class TimerActivity
     @Override
     public void onBillingInitialized() {
         mBillingProcessor.loadOwnedPurchasesFromGoogle();
+        if (mBillingProcessor.isPurchased(Constants.sku)) {
+            PreferenceHelper.setPro();
+        }
     }
-
 }
