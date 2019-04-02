@@ -159,6 +159,7 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
         mBillingProcessor.loadOwnedPurchasesFromGoogle();
         if (mBillingProcessor.isPurchased(Constants.sku)) {
             buy.setVisibility(View.GONE);
+            PreferenceHelper.setPro();
         } else {
             SkuDetails details = mBillingProcessor.getPurchaseListingDetails(Constants.sku);
             if (details != null) {
