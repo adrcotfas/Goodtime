@@ -84,6 +84,8 @@ dependencies {
     // intro
     implementation 'com.github.adrcotfas:material-intro:e1228'
 
+    implementation 'io.github.kobakei:ratethisapp:1.2.0'
+
     // IAP
     googleImplementation 'com.anjlab.android.iab.v3:library:1.0.44'
 
