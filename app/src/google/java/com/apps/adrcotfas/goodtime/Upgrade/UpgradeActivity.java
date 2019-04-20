@@ -18,6 +18,8 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
@@ -42,6 +44,8 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
     private boolean readyToPurchase = false;
     private Button buy;
     private BillingProcessor mBillingProcessor;
+    private ProgressBar mProgressBar;
+    private ScrollView mContent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +66,10 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
                 mBillingProcessor.purchase(UpgradeActivity.this, Constants.sku);
             }
         });
+        mProgressBar = binding.progressBar;
+        mProgressBar.setVisibility(View.VISIBLE);
+        mContent = binding.content;
+        mContent.setVisibility(View.GONE);
 
         String checkMark = getString(R.string.check_mark) + " ";
 
@@ -166,5 +174,8 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
                 buy.setText(details.priceText);
             }
         }
+
+        mProgressBar.setVisibility(View.GONE);
+        mContent.setVisibility(View.VISIBLE);
     }
 }
