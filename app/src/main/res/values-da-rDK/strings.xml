@@ -18,7 +18,7 @@
     <string name="pref_amoled">"Mørkt tema"</string>
     <string name="pref_header_during_work_sessions">Tijdens werksessies</string>
     <string name="pref_enable_ringtone">"Underretningslyd"</string>
-    <string name="pref_ringtone_insistent">"Aanhoudende melding"</string>
+    <string name="pref_ringtone_insistent">"Insisterende meddelelser"</string>
     <string name="pref_ringtone_insistent_summary">"Herhaal de melding totdat deze is geannuleerd"</string>
     <string name="pref_ringtone_break">Færdige pause anmeldelse</string>
     <string name="pref_auto_start_break">"Auto start pause"</string>
@@ -67,7 +67,7 @@
     <string name="action_skip_break">Spring break</string>
     <string name="action_progress_work">Arbejdssession i gang</string>
     <string name="action_paused_title">Arbejdssession er sat på pause</string>
-    <string name="action_progress_break">Bryde i gang</string>
+    <string name="action_progress_break">Pause i gang</string>
     <string name="action_continue">Fortsæt?</string>
     <string name="action_finished_break">Bryde færdige</string>
     <string name="action_finished_session">Session færdig</string>
@@ -135,6 +135,6 @@
     <string name="pref_session_counter">Sessionstælleren</string>
     <string name="pref_session_counter_summary">"Viser dagens antallet af udfyldte sessioner"</string>
     <string name="support_the_developer">Støt udvikleren</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
-    <string name="action_reset_counter_title">Reset?</string>
+    <string name="action_reset_counter">Pause.</string>
+    <string name="action_reset_counter_title">Vil du nulstille?</string>
 </resources>

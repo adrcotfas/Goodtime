@@ -8,12 +8,12 @@
     <string name="pref_header_notifications">"Ειδοποιήσεις"</string>
     <string name="pref_header_general">"Γενικά"</string>
     <string name="pref_keep_screen_on">"Κράτησε την οθόνη ανοικτή"</string>
-    <string name="pref_long_break_duration">"Long break duration"</string>
-    <string name="pref_ringtone">"Ολοκληρωμένη ειδοποίηση εργασίας"</string>
+    <string name="pref_long_break_duration">"Διάρκεια μεγάλου διαλείμματος"</string>
+    <string name="pref_ringtone">"Ειδοποίηση ολοκλήρωσης εργασίας"</string>
     <string name="pref_ringtone_summary">"Όρισε τον ήχο ειδοποίησης"</string>
-    <string name="pref_work_duration">"Διάρκεια συνεδριών"</string>
+    <string name="pref_work_duration">"Διάρκεια συνεδρίας εργασίας"</string>
     <string name="pref_sessions_before_long_break">"Αριθμός συνεδριών πριν το μεγάλο διάλειμμα"</string>
-    <string name="pref_enable_long_break">"Ενεργοποιήστε μακρά διαλείμματα"</string>
+    <string name="pref_enable_long_break">"Ενεργοποίηση μεγάλων διαλειμμάτων"</string>
     <string name="pref_vibrate">"Δόνηση"</string>
     <string name="pref_amoled">"Σκούρο θέμα"</string>
     <string name="pref_header_during_work_sessions">Κατά τη διάρκεια των συνεδριών</string>

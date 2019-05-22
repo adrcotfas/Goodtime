@@ -5,7 +5,7 @@
     <string name="pref_disable_sound_and_vibration">"Avaktivera ljud och vibration"</string>
     <string name="pref_disable_wifi">"Avaktivera Wi-Fi"</string>
     <string name="pref_fullscreen">"Helskärmsläge"</string>
-    <string name="pref_header_notifications">"Anmälningar"</string>
+    <string name="pref_header_notifications">"Aviseringar"</string>
     <string name="pref_header_general">"Allmänt"</string>
     <string name="pref_keep_screen_on">"Håll skärmen igång"</string>
     <string name="pref_long_break_duration">"Lång pauslängd"</string>
@@ -135,6 +135,6 @@
     <string name="pref_session_counter">Sessionsräknare</string>
     <string name="pref_session_counter_summary">"Visar dagens antal avslutade sessioner"</string>
     <string name="support_the_developer">Stöd utvecklaren</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
-    <string name="action_reset_counter_title">Reset?</string>
+    <string name="action_reset_counter">Detta kommer nollställa dagens slutförda sessioner.</string>
+    <string name="action_reset_counter_title">Vill du nollställa?</string>
 </resources>
