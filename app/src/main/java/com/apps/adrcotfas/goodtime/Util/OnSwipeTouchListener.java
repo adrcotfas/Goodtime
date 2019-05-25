@@ -22,6 +22,17 @@ public abstract class OnSwipeTouchListener implements View.OnTouchListener {
 
     private final GestureDetector gestureDetector;
     private View view;
+    private boolean mIsScrolling;
+
+    enum SwipeDirection {
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN,
+        CENTER
+    }
+
+    private SwipeDirection mDirection;
 
     public OnSwipeTouchListener(Context context) {
         gestureDetector = new GestureDetector(context, new GestureListener());
@@ -33,6 +44,25 @@ public abstract class OnSwipeTouchListener implements View.OnTouchListener {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             onPress(view);
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            if(mIsScrolling) {
+                mIsScrolling  = false;
+                switch (mDirection) {
+                    case UP:
+                        onSwipeTop(view);
+                        break;
+                    case DOWN:
+                        onSwipeBottom(view);
+                        break;
+                    case LEFT:
+                        onSwipeLeft(view);
+                        break;
+                    case RIGHT:
+                        onSwipeRight(view);
+                        break;
+                    default:
+                        break;
+                }
+            }
             onRelease(view);
         }
         return gestureDetector.onTouchEvent(event);
@@ -49,8 +79,7 @@ public abstract class OnSwipeTouchListener implements View.OnTouchListener {
 
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
-        private static final int SWIPE_THRESHOLD = 100;
-        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+        private static final int SWIPE_THRESHOLD = 150;
 
         @Override
         public boolean onDown(MotionEvent e) {
@@ -70,34 +99,38 @@ public abstract class OnSwipeTouchListener implements View.OnTouchListener {
         }
 
         @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             boolean result = false;
             try {
                 float diffY = e2.getY() - e1.getY();
                 float diffX = e2.getX() - e1.getX();
                 if (Math.abs(diffX) > Math.abs(diffY)) {
-                    if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (Math.abs(diffX) > SWIPE_THRESHOLD) {
+                        mIsScrolling = true;
                         if (diffX > 0) {
-                            onSwipeRight(view);
+                            mDirection = SwipeDirection.RIGHT;
                         } else {
-                            onSwipeLeft(view);
+                            mDirection = SwipeDirection.LEFT;
                         }
                         result = true;
                     }
                 }
-                else if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                else if (Math.abs(diffY) > SWIPE_THRESHOLD) {
+                    mIsScrolling = true;
                     if (diffY > 0) {
-                        onSwipeBottom(view);
+                        mDirection = SwipeDirection.DOWN;
                     } else {
-                        onSwipeTop(view);
+                        mDirection = SwipeDirection.UP;
                     }
                     result = true;
+                } else {
+                    mDirection = SwipeDirection.CENTER;
+                    mIsScrolling = true;
                 }
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
             return result;
         }
-
     }
 }
