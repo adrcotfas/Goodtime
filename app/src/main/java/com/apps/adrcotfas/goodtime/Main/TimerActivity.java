@@ -104,6 +104,8 @@ public class TimerActivity
 
     private BillingHelper mBillingHelper;
 
+    private View mBlackCover;
+
     private MenuItem mStatusButton;
     private View mBoundsView;
     private TextView mTimeLabel;
@@ -155,17 +157,16 @@ public class TimerActivity
             PreferenceHelper.consumeFirstRun();
         }
 
-        mViewModel = ViewModelProviders.of(this).get(TimerActivityViewModel.class);
-
         ThemeHelper.setTheme(this);
-
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
+        mBlackCover = binding.blackCover;
         mToolbar = binding.bar;
         mTimeLabel = binding.timeLabel;
         mTutorialDot = binding.tutorialDot;
-
         mBoundsView = binding.main;
+
+        mViewModel = ViewModelProviders.of(this).get(TimerActivityViewModel.class);
 
         setupTimeLabelEvents();
 
@@ -348,6 +349,8 @@ public class TimerActivity
 
         showTutorialSnackbars();
         setTimeLabelColor();
+
+        mBlackCover.animate().alpha(0.f).setDuration(500);
     }
 
     @Override
