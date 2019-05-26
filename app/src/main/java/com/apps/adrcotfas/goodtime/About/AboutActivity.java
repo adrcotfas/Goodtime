@@ -18,8 +18,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.widget.Toast;
 
+import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.BuildConfig;
 import com.apps.adrcotfas.goodtime.Main.MainIntroActivity;
+import com.apps.adrcotfas.goodtime.Main.TimerActivity;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.DeviceInfo;
 import com.danielstone.materialaboutlibrary.ConvenienceBuilder;
@@ -83,6 +85,19 @@ public class AboutActivity extends MaterialAboutActivity {
                         .sizeDp(18))
                 .setOnClickAction(() -> {
                     Intent i = new Intent(AboutActivity.this, MainIntroActivity.class);
+                    startActivity(i);
+                })
+                .build());
+
+        builder1.addItem(new MaterialAboutActionItem.Builder()
+                .text(getString(R.string.tutorial_title))
+                .icon(new IconicsDrawable(c)
+                        .icon(CommunityMaterial.Icon.cmd_rocket)
+                        .color(ContextCompat.getColor(c, colorIcon))
+                        .sizeDp(18))
+                .setOnClickAction(() -> {
+                    PreferenceHelper.setLastIntroStep(0);
+                    Intent i = new Intent(AboutActivity.this, TimerActivity.class);
                     startActivity(i);
                 })
                 .build());

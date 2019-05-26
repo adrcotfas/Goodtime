@@ -108,6 +108,14 @@ public class LicencesActivity extends MaterialAboutActivity {
                 "Android In-App Billing v3", "2014", "AnjLab",
                 OpenSourceLicense.APACHE_2);
 
+        MaterialAboutCard rateThisApp = ConvenienceBuilder.createLicenseCard(c,
+                new IconicsDrawable(c)
+                        .icon(CommunityMaterial.Icon.cmd_book)
+                        .color(ContextCompat.getColor(c, colorIcon))
+                        .sizeDp(18),
+                "Android-RateThisApp", "2013-2017", "Keisuke Kobayashi",
+                OpenSourceLicense.APACHE_2);
+
         MaterialAboutList result = new MaterialAboutList()
                 .addCard(cardMpAndroidChart)
                 .addCard(cardPreferenceX)
@@ -117,7 +125,8 @@ public class LicencesActivity extends MaterialAboutActivity {
                 .addCard(androidIconicsLicenseCard)
                 .addCard(cardJodaOrg)
                 .addCard(cardIap)
-                .addCard(cardIntro);
+                .addCard(cardIntro)
+                .addCard(rateThisApp);
 
         if (BuildConfig.F_DROID) {
             MaterialAboutCard donationCard = ConvenienceBuilder.createLicenseCard(c,
