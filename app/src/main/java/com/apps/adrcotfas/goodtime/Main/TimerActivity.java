@@ -27,7 +27,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +40,7 @@ import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.BL.TimerService;
 import com.apps.adrcotfas.goodtime.BL.TimerState;
+import com.apps.adrcotfas.goodtime.BuildConfig;
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
@@ -49,11 +52,13 @@ import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 import com.apps.adrcotfas.goodtime.Util.OnSwipeTouchListener;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+import com.kobakei.ratethisapp.RateThisApp;
 
 import org.joda.time.LocalDate;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -76,20 +81,19 @@ import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
 import static android.view.WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON;
 import static android.view.animation.AnimationUtils.loadAnimation;
 import static android.widget.Toast.LENGTH_SHORT;
+import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.AMOLED;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREENSAVER_MODE;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREEN_ON;
-import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.AMOLED;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
 import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 import static java.lang.String.format;
 
-//TODO: remove duplicate from the other flavor
 public class TimerActivity
         extends
         AppCompatActivity
         implements
         SharedPreferences.OnSharedPreferenceChangeListener,
-        SelectLabelDialog.OnLabelSelectedListener {
+        SelectLabelDialog.OnLabelSelectedListener{
 
     private static final String TAG = TimerActivity.class.getSimpleName();
 
@@ -98,10 +102,14 @@ public class TimerActivity
     private FullscreenHelper mFullscreenHelper;
     private long mBackPressedAt;
 
+    private BillingHelper mBillingHelper;
+
     private MenuItem mStatusButton;
     private View mBoundsView;
     private TextView mTimeLabel;
     private Toolbar mToolbar;
+    private ImageView mTutorialDot;
+
     private TimerActivityViewModel mViewModel;
     private SessionViewModel mSessionViewModel;
 
@@ -155,6 +163,7 @@ public class TimerActivity
 
         mToolbar = binding.bar;
         mTimeLabel = binding.timeLabel;
+        mTutorialDot = binding.tutorialDot;
 
         mBoundsView = binding.main;
 
@@ -165,29 +174,47 @@ public class TimerActivity
             getSupportActionBar().setTitle(null);
         }
 
+        mBillingHelper = new BillingHelper(this);
+
         // dismiss it at orientation change
         DialogFragment selectLabelDialog = ((DialogFragment)getSupportFragmentManager().findFragmentByTag(DIALOG_SELECT_LABEL_TAG));
         if (selectLabelDialog != null) {
             selectLabelDialog.dismiss();
         }
+
+		if (!BuildConfig.F_DROID) {
+            // Monitor launch times and interval from installation
+            RateThisApp.onCreate(this);
+            // If the condition is satisfied, "Rate this app" dialog will be shown
+            RateThisApp.showRateDialogIfNeeded(this);
+		}
     }
 
     /**
      * Shows the tutorial snackbars
      */
     private void showTutorialSnackbars() {
-
         final int MESSAGE_SIZE = 4;
         int i = PreferenceHelper.getLastIntroStep();
 
         if (i < MESSAGE_SIZE) {
 
-            List<String> messages = new ArrayList<>();
+            final List<String> messages = Arrays.asList(
+                    getString(R.string.tutorial_tap),
+                    getString(R.string.tutorial_swipe_left),
+                    getString(R.string.tutorial_swipe_up),
+                    getString(R.string.tutorial_swipe_down));
 
-            messages.add(getString(R.string.tutorial_tap));
-            messages.add(getString(R.string.tutorial_swipe_left));
-            messages.add(getString(R.string.tutorial_swipe_up));
-            messages.add(getString(R.string.tutorial_swipe_down));
+            final List<Animation> animations = Arrays.asList(
+                    loadAnimation(getApplicationContext(), R.anim.tutorial_tap),
+                    loadAnimation(getApplicationContext(), R.anim.tutorial_swipe_right),
+                    loadAnimation(getApplicationContext(), R.anim.tutorial_swipe_up),
+                    loadAnimation(getApplicationContext(), R.anim.tutorial_swipe_down));
+
+            mTutorialDot.setVisibility(View.VISIBLE);
+            mTutorialDot.animate().translationX(0).translationY(0);
+            mTutorialDot.clearAnimation();
+            mTutorialDot.setAnimation(animations.get(PreferenceHelper.getLastIntroStep()));
 
             Snackbar s = Snackbar.make(mToolbar, messages.get(PreferenceHelper.getLastIntroStep()), Snackbar.LENGTH_INDEFINITE)
                     .setAction("OK", view -> {
@@ -199,11 +226,23 @@ public class TimerActivity
                     // TODO: extract style to xml
                     .setActionTextColor(getResources().getColor(R.color.teal200));
             s.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.gray1000));
+
+            s.setBehavior(new BaseTransientBottomBar.Behavior() {
+                @Override
+                public boolean canSwipeDismissView(View child) {
+                    return false;
+                }
+            });
+
             TextView tv = s.getView().findViewById(com.google.android.material.R.id.snackbar_text);
             if (tv != null) {
                 tv.setTextColor(ContextCompat.getColor(this, R.color.white));
             }
             s.show();
+        } else {
+            mTutorialDot.animate().translationX(0).translationY(0);
+            mTutorialDot.clearAnimation();
+            mTutorialDot.setVisibility(View.GONE);
         }
     }
 
@@ -305,8 +344,16 @@ public class TimerActivity
         toggleKeepScreenOn(PreferenceHelper.isScreenOnEnabled());
         toggleFullscreenMode();
 
+        mBillingHelper.refresh();
+
         showTutorialSnackbars();
         setTimeLabelColor();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mBillingHelper.refresh();
     }
 
     @Override
@@ -320,6 +367,9 @@ public class TimerActivity
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.unregisterOnSharedPreferenceChangeListener(this);
         EventBus.getDefault().unregister(this);
+
+        mBillingHelper.release();
+
         super.onDestroy();
     }
 
@@ -689,6 +739,13 @@ public class TimerActivity
             int newX = r.nextInt(boundX) + margin;
             int newY = r.nextInt(boundY) + margin;
             mTimeLabel.animate().x(newX).y(newY).setDuration(100);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (!mBillingHelper.handleActivityResult(requestCode, resultCode, data)){
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 }

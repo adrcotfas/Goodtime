@@ -34,6 +34,19 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0" />
 
+        <ImageView
+            android:id="@+id/tutorialDot"
+            android:src="@drawable/shape_tutorial_dot"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.6"
+            android:contentDescription="@string/tutorial_title" />
+
         <TextView
             android:id="@+id/timeLabel"
             android:layout_width="wrap_content"
