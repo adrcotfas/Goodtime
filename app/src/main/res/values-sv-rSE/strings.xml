@@ -137,4 +137,5 @@
     <string name="support_the_developer">Stöd utvecklaren</string>
     <string name="action_reset_counter">Detta kommer nollställa dagens slutförda sessioner.</string>
     <string name="action_reset_counter_title">Vill du nollställa?</string>
+    <string name="tutorial_title">Guide</string>
 </resources>

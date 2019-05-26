@@ -137,4 +137,5 @@
     <string name="support_the_developer">Støt udvikleren</string>
     <string name="action_reset_counter">Pause.</string>
     <string name="action_reset_counter_title">Vil du nulstille?</string>
+    <string name="tutorial_title">Guide</string>
 </resources>

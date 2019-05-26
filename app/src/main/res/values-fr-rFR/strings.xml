@@ -137,4 +137,5 @@
     <string name="support_the_developer">Soutenir le développeur</string>
     <string name="action_reset_counter">Cela réinitialisera les sessions terminées aujourd\'hui.</string>
     <string name="action_reset_counter_title">Réinitialiser ?</string>
+    <string name="tutorial_title">Tutorial</string>
 </resources>

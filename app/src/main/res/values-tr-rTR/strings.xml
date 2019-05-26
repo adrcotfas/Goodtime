@@ -137,4 +137,5 @@
     <string name="support_the_developer">Geliştiriciyi destekleyin</string>
     <string name="action_reset_counter">Bu işlem bu gün bitirilmiş tüm oturumları sıfırlayacak.</string>
     <string name="action_reset_counter_title">Sıfırla?</string>
+    <string name="tutorial_title">Eğitim</string>
 </resources>

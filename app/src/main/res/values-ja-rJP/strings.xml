@@ -137,4 +137,5 @@
     <string name="support_the_developer">開発者を支援</string>
     <string name="action_reset_counter">これにより、今日終了したセッションがリセットされます</string>
     <string name="action_reset_counter_title">リセットしますか？</string>
+    <string name="tutorial_title">チュートリアル</string>
 </resources>

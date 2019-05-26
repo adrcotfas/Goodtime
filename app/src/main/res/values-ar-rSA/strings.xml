@@ -137,4 +137,5 @@
     <string name="support_the_developer">ادعم المطور</string>
     <string name="action_reset_counter">هذا سوف تعيين جلسات تنتهي اليوم.</string>
     <string name="action_reset_counter_title">هل تريد إعادة الضبط؟</string>
+    <string name="tutorial_title">البرنامج التعليمي</string>
 </resources>

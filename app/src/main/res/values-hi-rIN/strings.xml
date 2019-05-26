@@ -136,5 +136,6 @@
     <string name="pref_session_counter_summary">"आज से पता चलता है पूरा सत्र की संख्या"</string>
     <string name="support_the_developer">डेवलपर का समर्थ करे</string>
     <string name="action_reset_counter">यह आज के पुरे किए गए सेशन को फिर से शुन्य कर देगा।</string>
-    <string name="action_reset_counter_title">Reset?</string>
+    <string name="action_reset_counter_title">रीसेट करें</string>
+    <string name="tutorial_title">शैक्षणिक-सूची</string>
 </resources>

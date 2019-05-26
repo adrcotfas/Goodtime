@@ -137,4 +137,5 @@
     <string name="support_the_developer">개발자 후원하기</string>
     <string name="action_reset_counter">오늘 완료한 세션을 초기화합니다.</string>
     <string name="action_reset_counter_title">초기화 하시겠습니까?</string>
+    <string name="tutorial_title">사용 방법</string>
 </resources>

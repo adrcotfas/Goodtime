@@ -137,4 +137,5 @@
     <string name="support_the_developer">Doneu suport al desenvolupador</string>
     <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
     <string name="action_reset_counter_title">Reset?</string>
+    <string name="tutorial_title">Tutorial</string>
 </resources>

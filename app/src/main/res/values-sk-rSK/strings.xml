@@ -136,5 +136,6 @@
     <string name="pref_session_counter_summary">"Zobrazí dnešný počet dokončených relácií"</string>
     <string name="support_the_developer">Podporiť vývojára</string>
     <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
-    <string name="action_reset_counter_title">Reset?</string>
+    <string name="action_reset_counter_title">Vymazať?</string>
+    <string name="tutorial_title">Tutoriál</string>
 </resources>
