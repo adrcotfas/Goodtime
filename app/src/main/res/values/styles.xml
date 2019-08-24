@@ -180,6 +180,8 @@
         <item name="android:actionModeCloseDrawable">@drawable/ic_clear</item>
         <item name="actionModeStyle">@style/ActionModeStyle</item>
 
+        <item name="android:navigationBarColor" tools:targetApi="lollipop">?attr/colorPrimary</item>
+
         <item name="alertDialogTheme">@style/DialogTheme</item>
 
         <item name="palette">@array/lightPalette</item>
