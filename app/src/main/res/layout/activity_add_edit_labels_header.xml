@@ -42,7 +42,7 @@
             android:layout_toEndOf="@id/image_left_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/AllSessionsAddEditDialogRowEdit"/>
+            style="@style/AddEditLabelRowEdit"/>
 
         <FrameLayout
             android:id="@+id/image_right_container"

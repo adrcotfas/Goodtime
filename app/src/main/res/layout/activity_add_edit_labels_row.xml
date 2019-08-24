@@ -48,7 +48,7 @@
         android:paddingBottom="12dp"
         android:paddingTop="12dp"
 
-        style="@style/AllSessionsAddEditDialogRowEdit"/>
+        style="@style/AddEditLabelRowEdit"/>
 
     <FrameLayout
         android:id="@+id/image_delete_container"

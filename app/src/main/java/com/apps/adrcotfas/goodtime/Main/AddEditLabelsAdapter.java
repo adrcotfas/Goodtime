@@ -21,6 +21,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.apps.adrcotfas.goodtime.LabelAndColor;
 import com.apps.adrcotfas.goodtime.R;
@@ -100,6 +101,11 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
 
             // switch the focus to a different row
             text.setOnFocusChangeListener((view, hasFocus) -> {
+
+                // shrink the textView when we're in edit mode and the delete button appears
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)text.getLayoutParams();
+                params.addRule(RelativeLayout.START_OF, hasFocus ? R.id.image_delete_container : R.id.image_right_container);
+                text.setLayoutParams(params);
 
                 int position = getAdapterPosition();
                 LabelAndColor crtLabel = mLabels.get(position);

@@ -16,6 +16,7 @@ package com.apps.adrcotfas.goodtime.Util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -68,6 +69,7 @@ public class ThemeHelper {
         chip.setTextAppearance(context, R.style.ChipTextAppearance);
         chip.setChipIcon(context.getResources().getDrawable(R.drawable.ic_check_off));
         chip.setCheckedIcon(context.getResources().getDrawable(R.drawable.ic_check));
+        chip.setEllipsize(TextUtils.TruncateAt.END);
     }
 
     public static void clearFocusEditText(View v, Context context) {
