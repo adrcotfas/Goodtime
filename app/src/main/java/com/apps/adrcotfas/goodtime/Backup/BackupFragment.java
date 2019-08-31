@@ -119,6 +119,9 @@ public class BackupFragment extends BottomSheetDialogFragment {
                                 intent.putExtra(Intent.EXTRA_STREAM, fileUri);
                                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                 getActivity().startActivity(Intent.createChooser(intent, getString(R.string.backup_export_title)));
+
+                                // re-open database
+                                AppDatabase.getDatabase(getContext());
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -191,6 +194,9 @@ public class BackupFragment extends BottomSheetDialogFragment {
                                 sessionsLiveData.removeObservers(BackupFragment.this);
                                 dismiss();
                             });
+
+                            // re-open database
+                            AppDatabase.getDatabase(getContext());
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
