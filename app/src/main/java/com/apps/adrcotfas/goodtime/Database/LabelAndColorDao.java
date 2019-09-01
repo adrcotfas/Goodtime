@@ -30,7 +30,7 @@ public interface LabelAndColorDao {
     @Insert(onConflict = IGNORE)
     void addLabel(LabelAndColor session);
 
-    @Query("select * from LabelAndColor")
+    @Query("select * from LabelAndColor ORDER BY `order`")
     LiveData<List<LabelAndColor>> getLabels();
 
     @Query("select color from LabelAndColor where label = :label")

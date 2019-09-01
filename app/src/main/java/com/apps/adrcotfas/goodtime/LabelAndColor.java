@@ -23,6 +23,7 @@ public class LabelAndColor {
     public LabelAndColor(String label, int color) {
         this.label = label;
         this.color = color;
+        this.order = 0;
     }
 
     @PrimaryKey
@@ -30,4 +31,7 @@ public class LabelAndColor {
     public String label;
 
     public int color;
+
+    @NonNull
+    public int order;
 }
