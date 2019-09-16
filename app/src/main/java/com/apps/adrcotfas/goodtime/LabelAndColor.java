@@ -24,6 +24,7 @@ public class LabelAndColor {
         this.label = label;
         this.color = color;
         this.order = 0;
+        this.archived = false;
     }
 
     @PrimaryKey
@@ -34,4 +35,7 @@ public class LabelAndColor {
 
     @NonNull
     public int order;
+
+    @NonNull
+    public boolean archived;
 }

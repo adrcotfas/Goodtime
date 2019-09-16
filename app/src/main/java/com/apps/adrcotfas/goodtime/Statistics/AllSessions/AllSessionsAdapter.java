@@ -86,6 +86,10 @@ public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHold
         return color;
     }
 
+    public List<LabelAndColor> getLabels() {
+        return mLabels;
+    }
+
     public void setData(List<Session> newSessions) {
         if (mEntries != null) {
             PostDiffCallback postDiffCallback = new PostDiffCallback(mEntries, newSessions);

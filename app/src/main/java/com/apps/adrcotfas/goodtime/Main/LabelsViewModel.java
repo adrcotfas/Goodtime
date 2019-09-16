@@ -52,8 +52,18 @@ public class LabelsViewModel extends AndroidViewModel {
         mIsMainView.setValue(true);
     }
 
+    /**
+     *  Returns only the labels which are not archived
+     */
     public LiveData<List<LabelAndColor>> getLabels() {
         return mLabelsDao.getLabels();
+    }
+
+    /**
+     *  Returns all labels, including the archived ones
+     */
+    public LiveData<List<LabelAndColor>> getAllLabels() {
+        return mLabelsDao.getAllLabels();
     }
 
     public LiveData<Integer> getColorOfLabel(String label) {
@@ -64,16 +74,20 @@ public class LabelsViewModel extends AndroidViewModel {
         mExecutorService.execute(() -> mLabelsDao.addLabel(labelAndColor));
     }
 
-    public void updateLabel(String label, String newLabel, int color) {
-        mExecutorService.execute(() -> mLabelsDao.updateLabel(label, newLabel, color));
-    }
-
     public void editLabelName(String label, String newLabel) {
         mExecutorService.execute(() -> mLabelsDao.editLabelName(label, newLabel));
     }
 
     public void editLabelColor(String label, int color) {
         mExecutorService.execute(() -> mLabelsDao.editLabelColor(label, color));
+    }
+
+    public void editLabelOrder(String label, int newOrder) {
+        mExecutorService.execute(() -> mLabelsDao.editLabelOrder(label, newOrder));
+    }
+
+    public void toggleLabelArchive(String label, boolean archived) {
+        mExecutorService.execute(() -> mLabelsDao.toggleLabelArchiveState(label, archived));
     }
 
     public void deleteLabel(String label) {

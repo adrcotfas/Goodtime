@@ -34,8 +34,8 @@ public abstract class AppDatabase extends RoomDatabase{
     private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-
             database.execSQL("ALTER TABLE LabelAndColor ADD COLUMN `order` INTEGER NOT NULL DEFAULT 0");
+            database.execSQL("ALTER TABLE LabelAndColor ADD COLUMN `archived` INTEGER NOT NULL DEFAULT 0");
         }
     };
 

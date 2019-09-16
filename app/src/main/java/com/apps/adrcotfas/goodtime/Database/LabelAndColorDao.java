@@ -30,8 +30,11 @@ public interface LabelAndColorDao {
     @Insert(onConflict = IGNORE)
     void addLabel(LabelAndColor session);
 
-    @Query("select * from LabelAndColor ORDER BY `order`")
+    @Query("select * from LabelAndColor where archived = 0 ORDER BY `order`")
     LiveData<List<LabelAndColor>> getLabels();
+
+    @Query("select * from LabelAndColor ORDER BY `order`")
+    LiveData<List<LabelAndColor>> getAllLabels();
 
     @Query("select color from LabelAndColor where label = :label")
     LiveData<Integer> getColor(String label);
@@ -42,9 +45,12 @@ public interface LabelAndColorDao {
     @Query("update LabelAndColor SET color = :color WHERE label = :id")
     void editLabelColor(String id, int color);
 
+    @Query("update LabelAndColor SET `order` = :newOrder WHERE label = :label")
+    void editLabelOrder(String label, int newOrder);
+
     @Query("delete from LabelAndColor where label = :label")
     void deleteLabel(String label);
 
-    @Query("update LabelAndColor SET label = :newLabel, color = :color WHERE label = :label")
-    void updateLabel(String label, String newLabel, int color);
+    @Query("update LabelAndColor SET archived = :archived WHERE label = :label")
+    void toggleLabelArchiveState(String label, boolean archived);
 }

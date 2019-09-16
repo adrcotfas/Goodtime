@@ -33,7 +33,6 @@ import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Statistics.Main.RecyclerItemClickListener;
 import com.apps.adrcotfas.goodtime.Statistics.Main.SelectLabelDialog;
 import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
-import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentAllSessionsBinding;
 
 import java.util.ArrayList;
@@ -63,7 +62,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
     private SessionViewModel mSessionViewModel;
     private LabelsViewModel mLabelsViewModel;
     private Session mSessionToEdit;
-    private List<Session> mSessions;
+    private List<Session> mSessions =  new ArrayList<>();
     private LinearLayout mEmptyState;
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
@@ -120,10 +119,21 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
     private void refreshCurrentLabel() {
         if (mLabelsViewModel.crtExtendedLabel.getValue() != null && mAdapter != null) {
             if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals(getString(R.string.label_all))) {
+//                mSessions.clear();
+//                for (LabelAndColor label : mAdapter.getLabels()) {
+//                    if (!label.archived) {
+//                        mSessionViewModel.getSessions(label.label).observe(this, sessions -> {
+//                            mSessions.addAll(sessions);
+//                            Collections.sort(mSessions, (lhs, rhs) -> Long.compare(rhs.endTime, lhs.endTime));
+//
+//                            mAdapter.setData(mSessions);
+//                            updateRecyclerViewVisibility();
+//                        });
+//                    }
                 mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
-                    mAdapter.setData(sessions);
-                    mSessions = sessions;
-                    updateRecyclerViewVisibility();
+                        mAdapter.setData(sessions);
+                        mSessions = sessions;
+                        updateRecyclerViewVisibility();
                 });
             } else if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals("unlabeled")) {
                 mSessionViewModel.getAllSessionsUnlabeled().observe(this, sessions -> {

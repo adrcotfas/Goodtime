@@ -40,6 +40,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,13 +48,17 @@ import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_UNLABELED
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.clearFocusEditText;
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.requestFocusEditText;
 
-public class AddEditLabelActivity extends AppCompatActivity implements AddEditLabelsAdapter.OnEditLabelListener{
+public class AddEditLabelActivity extends AppCompatActivity
+        implements AddEditLabelsAdapter.OnEditLabelListener{
+
+    private static final String TAG = AddEditLabelActivity.class.getSimpleName();
 
     private LabelsViewModel mLabelsViewModel;
     private List<LabelAndColor> mLabelAndColors;
 
     private RecyclerView mRecyclerView;
     private AddEditLabelsAdapter mCustomAdapter;
+    private ItemTouchHelper mItemTouchHelper;
 
     private LabelAndColor mLabelToAdd;
 
@@ -83,7 +88,7 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
         mImageLeft = binding.addLabel.imageLeft;
         mImageLeftContainer = binding.addLabel.imageLeftContainer;
 
-        final LiveData<List<LabelAndColor>> labels = mLabelsViewModel.getLabels();
+        final LiveData<List<LabelAndColor>> labels = mLabelsViewModel.getAllLabels();
         labels.observe(this, labelAndColors -> {
 
             mLabelAndColors = labelAndColors;
@@ -102,6 +107,10 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
 
             binding.progressBar.setVisibility(View.GONE);
             updateRecyclerViewVisibility();
+
+            ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mCustomAdapter);
+            mItemTouchHelper = new ItemTouchHelper(callback);
+            mItemTouchHelper.attachToRecyclerView(mRecyclerView);
         });
 
         mLabelToAdd = new LabelAndColor("", COLOR_INDEX_UNLABELED);
@@ -149,6 +158,11 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
     }
 
     @Override
+    public void onDragStarted(RecyclerView.ViewHolder viewHolder) {
+        mItemTouchHelper.startDrag(viewHolder);
+    }
+
+    @Override
     public void onEditLabel(String label, String newLabel) {
         mLabelsViewModel.editLabelName(label, newLabel);
 
@@ -165,6 +179,17 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
         LabelAndColor crtLabel = PreferenceHelper.getCurrentSessionLabel();
         if (crtLabel.label != null && crtLabel.label.equals(label)) {
             PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(label, color));
+        }
+    }
+
+    @Override
+    public void onToggleArchive(LabelAndColor label) {
+        mLabelsViewModel.toggleLabelArchive(label.label, label.archived);
+
+        LabelAndColor crtLabel = PreferenceHelper.getCurrentSessionLabel();
+        if (label.archived && crtLabel.label != null && crtLabel.label.equals(label.label)) {
+            GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
+            PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(null, COLOR_INDEX_UNLABELED));
         }
     }
 
@@ -200,6 +225,17 @@ public class AddEditLabelActivity extends AppCompatActivity implements AddEditLa
         }
 
         updateRecyclerViewVisibility();
+    }
+
+    /**
+     * Update the order of the labels inside the database based on the
+     * rearrangement that was done inside the adapter.
+     */
+    @Override
+    public void onLabelRearranged() {
+        for (int i = 0; i < mLabelAndColors.size(); ++i) {
+            mLabelsViewModel.editLabelOrder(mLabelAndColors.get(i).label, i);
+        }
     }
 
     private void updateRecyclerViewVisibility() {
