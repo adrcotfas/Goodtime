@@ -116,6 +116,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
         return view;
     }
 
+    //TODO: debug here when switching the current label; not optimal right now
     private void refreshCurrentLabel() {
         if (mLabelsViewModel.crtExtendedLabel.getValue() != null && mAdapter != null) {
             if (mLabelsViewModel.crtExtendedLabel.getValue().title.equals(getString(R.string.label_all))) {
