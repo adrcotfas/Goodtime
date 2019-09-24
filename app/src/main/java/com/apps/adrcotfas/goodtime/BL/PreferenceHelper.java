@@ -222,9 +222,9 @@ public class PreferenceHelper {
 
     public static void setCurrentSessionLabel(LabelAndColor label) {
         getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
-                .putString(CURRENT_SESSION_LABEL, label.label).apply();
+                .putString(CURRENT_SESSION_LABEL, label.title).apply();
         getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
-                .putInt(CURRENT_SESSION_COLOR, label.color).apply();
+                .putInt(CURRENT_SESSION_COLOR, label.colorId).apply();
     }
 
     public static boolean isFirstRun() {

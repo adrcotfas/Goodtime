@@ -78,8 +78,8 @@ public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHold
     private int getColor(String label) {
         int color = 0;
         for (LabelAndColor l : mLabels) {
-            if (l.label.equals(label)) {
-                color = ThemeHelper.getColor(mContext.get(), l.color);
+            if (l.title.equals(label)) {
+                color = ThemeHelper.getColor(mContext.get(), l.colorId);
                 break;
             }
         }

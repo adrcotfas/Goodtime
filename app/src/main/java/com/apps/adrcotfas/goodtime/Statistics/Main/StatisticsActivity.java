@@ -97,7 +97,7 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
     private void refreshCurrentLabel() {
         if (mLabelsViewModel.crtExtendedLabel.getValue() != null && mMenuItemCrtLabel != null) {
             MenuItemCompat.setIconTintList(mMenuItemCrtLabel,
-                    ColorStateList.valueOf(ThemeHelper.getColor(this, mLabelsViewModel.crtExtendedLabel.getValue().color)));
+                    ColorStateList.valueOf(ThemeHelper.getColor(this, mLabelsViewModel.crtExtendedLabel.getValue().colorId)));
         }
     }
 
@@ -131,7 +131,7 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
                 break;
             case R.id.action_select_label:
                 if (PreferenceHelper.isPro()) {
-                    SelectLabelDialog.newInstance(this, mLabelsViewModel.crtExtendedLabel.getValue().label, true)
+                    SelectLabelDialog.newInstance(this, mLabelsViewModel.crtExtendedLabel.getValue().title, true)
                             .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
                 } else {
                     launchUpgradeActivity(this);

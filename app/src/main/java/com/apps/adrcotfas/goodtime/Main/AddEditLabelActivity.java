@@ -129,17 +129,17 @@ public class AddEditLabelActivity extends AppCompatActivity
             mImageLeftContainer.setOnClickListener(hasFocus ? v -> {
                 final ColorPickerDialog.Params p = new ColorPickerDialog.Params.Builder(AddEditLabelActivity.this)
                         .setColors(ThemeHelper.getPalette(this))
-                        .setSelectedColor(ThemeHelper.getColor(this, mLabelToAdd.color))
+                        .setSelectedColor(ThemeHelper.getColor(this, mLabelToAdd.colorId))
                         .build();
                 ColorPickerDialog dialog = new ColorPickerDialog(AddEditLabelActivity.this, R.style.DialogTheme, c
                         -> {
-                    mLabelToAdd.color = ThemeHelper.getIndexOfColor(this, c);
+                    mLabelToAdd.colorId = ThemeHelper.getIndexOfColor(this, c);
                     mImageLeft.setColorFilter(c);
                 }, p);
                 dialog.setTitle(R.string.label_select_color);
                 dialog.show();
             } : v -> requestFocusEditText(mAddLabelView, this));
-            mImageLeft.setColorFilter(ThemeHelper.getColor(this, hasFocus ? mLabelToAdd.color : COLOR_INDEX_UNLABELED) );
+            mImageLeft.setColorFilter(ThemeHelper.getColor(this, hasFocus ? mLabelToAdd.colorId : COLOR_INDEX_UNLABELED) );
             if (!hasFocus) {
                 mLabelToAdd = new LabelAndColor("", ThemeHelper.getColor(this, COLOR_INDEX_UNLABELED));
                 mAddLabelView.setText("");
@@ -167,8 +167,8 @@ public class AddEditLabelActivity extends AppCompatActivity
         mLabelsViewModel.editLabelName(label, newLabel);
 
         LabelAndColor crtLabel = PreferenceHelper.getCurrentSessionLabel();
-        if (crtLabel.label != null && crtLabel.label.equals(label)) {
-            PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(newLabel, crtLabel.color));
+        if (crtLabel.title != null && crtLabel.title.equals(label)) {
+            PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(newLabel, crtLabel.colorId));
         }
     }
 
@@ -177,17 +177,17 @@ public class AddEditLabelActivity extends AppCompatActivity
         mLabelsViewModel.editLabelColor(label, color);
 
         LabelAndColor crtLabel = PreferenceHelper.getCurrentSessionLabel();
-        if (crtLabel.label != null && crtLabel.label.equals(label)) {
+        if (crtLabel.title != null && crtLabel.title.equals(label)) {
             PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(label, color));
         }
     }
 
     @Override
     public void onToggleArchive(LabelAndColor label) {
-        mLabelsViewModel.toggleLabelArchive(label.label, label.archived);
+        mLabelsViewModel.toggleLabelArchive(label.title, label.archived);
 
         LabelAndColor crtLabel = PreferenceHelper.getCurrentSessionLabel();
-        if (label.archived && crtLabel.label != null && crtLabel.label.equals(label.label)) {
+        if (label.archived && crtLabel.title != null && crtLabel.title.equals(label.title)) {
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
             PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(null, COLOR_INDEX_UNLABELED));
         }
@@ -207,7 +207,7 @@ public class AddEditLabelActivity extends AppCompatActivity
     public void onDeleteLabel(LabelAndColor labelAndColor, int position) {
         mLabelAndColors.remove(labelAndColor);
         mCustomAdapter.notifyItemRemoved(position);
-        mLabelsViewModel.deleteLabel(labelAndColor.label);
+        mLabelsViewModel.deleteLabel(labelAndColor.title);
 
         // workaround for edge case: clipping animation of last cached entry
         if (mCustomAdapter.getItemCount() == 0) {
@@ -215,12 +215,12 @@ public class AddEditLabelActivity extends AppCompatActivity
         }
 
         String crtSessionLabel = GoodtimeApplication.getCurrentSessionManager().getCurrentSession().getLabel().getValue();
-        if (crtSessionLabel != null && crtSessionLabel.equals(labelAndColor.label)) {
+        if (crtSessionLabel != null && crtSessionLabel.equals(labelAndColor.title)) {
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
         }
 
-        // the current session label was deleted
-        if (labelAndColor.label.equals(PreferenceHelper.getCurrentSessionLabel().label)) {
+        // the label attached to the current session was deleted
+        if (labelAndColor.title.equals(PreferenceHelper.getCurrentSessionLabel().title)) {
             PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(null, COLOR_INDEX_UNLABELED));
         }
 
@@ -234,7 +234,7 @@ public class AddEditLabelActivity extends AppCompatActivity
     @Override
     public void onLabelRearranged() {
         for (int i = 0; i < mLabelAndColors.size(); ++i) {
-            mLabelsViewModel.editLabelOrder(mLabelAndColors.get(i).label, i);
+            mLabelsViewModel.editLabelOrder(mLabelAndColors.get(i).title, i);
         }
     }
 
@@ -265,7 +265,7 @@ public class AddEditLabelActivity extends AppCompatActivity
         } else {
             boolean duplicateFound = false;
             for (LabelAndColor l : labels) {
-                if (newLabel.equals(l.label)) {
+                if (newLabel.equals(l.title)) {
                     duplicateFound = true;
                     break;
                 }
@@ -279,8 +279,8 @@ public class AddEditLabelActivity extends AppCompatActivity
     }
 
     private void addLabel() {
-        mLabelToAdd = new LabelAndColor(mAddLabelView.getText().toString().trim(), mLabelToAdd.color);
-        if (labelIsGoodToAdd(this, mLabelAndColors, mLabelToAdd.label, null)) {
+        mLabelToAdd = new LabelAndColor(mAddLabelView.getText().toString().trim(), mLabelToAdd.colorId);
+        if (labelIsGoodToAdd(this, mLabelAndColors, mLabelToAdd.title, null)) {
             mLabelAndColors.add(mLabelToAdd);
 
             mCustomAdapter.notifyItemInserted(mLabelAndColors.size());

@@ -486,7 +486,7 @@ public class TimerActivity
                 final LocalDate today = new LocalDate();
                 int statsToday = 0;
                 for (Session s : sessions) {
-                    final LocalDate crt = new LocalDate(new Date(s.endTime));
+                    final LocalDate crt = new LocalDate(new Date(s.timestamp));
                     if (crt.isEqual(today)) {
                         statsToday++;
                     }
@@ -598,7 +598,7 @@ public class TimerActivity
 
     private void showEditLabelDialog() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        SelectLabelDialog.newInstance(this, PreferenceHelper.getCurrentSessionLabel().label, false)
+        SelectLabelDialog.newInstance(this, PreferenceHelper.getCurrentSessionLabel().title, false)
                 .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
     }
 
@@ -695,9 +695,9 @@ public class TimerActivity
         LabelAndColor labelAndColor = PreferenceHelper.getCurrentSessionLabel();
 
         if (mStatusButton != null) {
-            if (labelAndColor.label != null) {
+            if (labelAndColor.title != null) {
                 mStatusButton.getIcon().setColorFilter(
-                        ThemeHelper.getColor(this, labelAndColor.color), PorterDuff.Mode.SRC_ATOP);
+                        ThemeHelper.getColor(this, labelAndColor.colorId), PorterDuff.Mode.SRC_ATOP);
             } else {
                 mStatusButton.getIcon().setColorFilter(
                         ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_UNLABELED), PorterDuff.Mode.SRC_ATOP);
@@ -708,8 +708,8 @@ public class TimerActivity
     private void setTimeLabelColor() {
         LabelAndColor labelAndColor = PreferenceHelper.getCurrentSessionLabel();
         if (mTimeLabel != null) {
-            if (labelAndColor.label != null) {
-                mTimeLabel.setTextColor(ThemeHelper.getColor(this, labelAndColor.color));
+            if (labelAndColor.title != null) {
+                mTimeLabel.setTextColor(ThemeHelper.getColor(this, labelAndColor.colorId));
             } else {
                 mTimeLabel.setTextColor(ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_UNLABELED));
             }
@@ -719,7 +719,7 @@ public class TimerActivity
     @Override
     public void onLabelSelected(LabelAndColor labelAndColor) {
         if (labelAndColor != null) {
-            GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(labelAndColor.label);
+            GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(labelAndColor.title);
             PreferenceHelper.setCurrentSessionLabel(labelAndColor);
         } else {
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);

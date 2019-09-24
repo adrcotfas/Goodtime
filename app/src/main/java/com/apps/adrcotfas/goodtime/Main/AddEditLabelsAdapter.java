@@ -83,13 +83,13 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         LabelAndColor crtLabel = mLabels.get(position);
-        holder.text.setText(crtLabel.label);
-        holder.imageLeft.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.color));
+        holder.text.setText(crtLabel.title);
+        holder.imageLeft.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.colorId));
 
         holder.labelicon.setImageDrawable(ContextCompat.getDrawable(
                 mContext.get(), crtLabel.archived ? R.drawable.ic_label_off : R.drawable.ic_label));
 
-        holder.labelicon.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.color));
+        holder.labelicon.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.colorId));
         holder.scrollIconContainer.setOnTouchListener((v, event) -> {
             if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                 mCallback.onDragStarted(holder);
@@ -160,7 +160,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
                 int position = getAdapterPosition();
                 LabelAndColor crtLabel = mLabels.get(position);
 
-                labelicon.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.color));
+                labelicon.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.colorId));
 
                 imageLeftContainer.setVisibility(hasFocus ? View.VISIBLE : View.INVISIBLE);
                 labelIconContainer.setVisibility(hasFocus ? View.INVISIBLE : View.VISIBLE);
@@ -175,13 +175,13 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
 
                 if (!hasFocus) {
                     String newLabelName = text.getText().toString();
-                    // save a label when losing focus if any changes were made
-                    if (labelIsGoodToAdd(mContext.get(), mLabels, newLabelName, crtLabel.label)) {
-                        mCallback.onEditLabel(crtLabel.label, newLabelName);
-                        crtLabel.label = newLabelName;
+                    // save a title when losing focus if any changes were made
+                    if (labelIsGoodToAdd(mContext.get(), mLabels, newLabelName, crtLabel.title)) {
+                        mCallback.onEditLabel(crtLabel.title, newLabelName);
+                        crtLabel.title = newLabelName;
                         notifyItemChanged(position);
                     } else {
-                        text.setText(crtLabel.label);
+                        text.setText(crtLabel.title);
                     }
                 }
             });
@@ -217,18 +217,18 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
                         mContext.get(), crtLabel.archived ? R.drawable.ic_label_off : R.drawable.ic_label));
             });
 
-            // changing the color of a label
+            // changing the colorId of a label
             imageLeftContainer.setOnClickListener(v -> {
                 LabelAndColor crtLabel = mLabels.get(getAdapterPosition());
                 final ColorPickerDialog.Params p = new ColorPickerDialog.Params.Builder(mContext.get())
                         .setColors(ThemeHelper.getPalette(mContext.get()))
-                        .setSelectedColor(ThemeHelper.getColor(mContext.get(), crtLabel.color))
+                        .setSelectedColor(ThemeHelper.getColor(mContext.get(), crtLabel.colorId))
                         .build();
                 ColorPickerDialog dialog = new ColorPickerDialog(mContext.get(), R.style.DialogTheme, c
                         -> {
-                    mCallback.onEditColor(crtLabel.label, ThemeHelper.getIndexOfColor(mContext.get(), c));
+                    mCallback.onEditColor(crtLabel.title, ThemeHelper.getIndexOfColor(mContext.get(), c));
                     imageLeft.setColorFilter(c);
-                    crtLabel.color = ThemeHelper.getIndexOfColor(mContext.get(), c);
+                    crtLabel.colorId = ThemeHelper.getIndexOfColor(mContext.get(), c);
                 }, p);
                 dialog.setTitle(R.string.label_select_color);
                 dialog.show();

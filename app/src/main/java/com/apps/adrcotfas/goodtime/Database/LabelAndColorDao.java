@@ -30,27 +30,27 @@ public interface LabelAndColorDao {
     @Insert(onConflict = IGNORE)
     void addLabel(LabelAndColor session);
 
-    @Query("select * from LabelAndColor where archived = 0 ORDER BY `order`")
+    @Query("select * from LabelAndColor where archived = 0 or archived = NULL ORDER BY `order`")
     LiveData<List<LabelAndColor>> getLabels();
 
     @Query("select * from LabelAndColor ORDER BY `order`")
     LiveData<List<LabelAndColor>> getAllLabels();
 
-    @Query("select color from LabelAndColor where label = :label")
-    LiveData<Integer> getColor(String label);
+    @Query("select colorId from LabelAndColor where title = :title")
+    LiveData<Integer> getColor(String title);
 
-    @Query("update LabelAndColor SET label = :label WHERE label = :id")
-    void editLabelName(String id, String label);
+    @Query("update LabelAndColor SET title = :newTitle WHERE title = :title")
+    void editLabelName(String title, String newTitle);
 
-    @Query("update LabelAndColor SET color = :color WHERE label = :id")
-    void editLabelColor(String id, int color);
+    @Query("update LabelAndColor SET colorId = :colorId WHERE title = :title")
+    void editLabelColor(String title, int colorId);
 
-    @Query("update LabelAndColor SET `order` = :newOrder WHERE label = :label")
-    void editLabelOrder(String label, int newOrder);
+    @Query("update LabelAndColor SET `order` = :order WHERE title = :title")
+    void editLabelOrder(String title, int order);
 
-    @Query("delete from LabelAndColor where label = :label")
-    void deleteLabel(String label);
+    @Query("delete from LabelAndColor where title = :title")
+    void deleteLabel(String title);
 
-    @Query("update LabelAndColor SET archived = :archived WHERE label = :label")
-    void toggleLabelArchiveState(String label, boolean archived);
+    @Query("update LabelAndColor SET archived = :archived WHERE title = :title")
+    void toggleLabelArchiveState(String title, boolean archived);
 }

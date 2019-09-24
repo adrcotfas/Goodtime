@@ -202,9 +202,9 @@ public class StatisticsFragment extends Fragment {
         Stats stats = new Stats(0, 0, 0, 0);
 
         for (Session s : sessions) {
-            final Long increment = isDurationType ? s.totalTime : 1L;
+            final Long increment = isDurationType ? s.duration : 1L;
 
-            final LocalDate crt = new LocalDate(new Date(s.endTime));
+            final LocalDate crt = new LocalDate(new Date(s.timestamp));
             if (crt.isEqual(today)) {
                 stats.today += increment;
             }
@@ -334,7 +334,7 @@ public class StatisticsFragment extends Fragment {
                 mSessionsToObserve.removeObservers(this);
             }
 
-            final int color = ThemeHelper.getColor(getActivity(), labelAndColor.color);
+            final int color = ThemeHelper.getColor(getActivity(), labelAndColor.colorId);
             mOverview.today.setTextColor(color);
             mOverview.week.setTextColor(color);
             mOverview.month.setTextColor(color);
@@ -344,7 +344,7 @@ public class StatisticsFragment extends Fragment {
             mHeaderHistory.setTextColor(color);
             mHeaderProductiveTime.setTextColor(color);
 
-            String s = labelAndColor.label;
+            String s = labelAndColor.title;
             if (getString(R.string.label_all).equals(s)) {
                 mSessionsToObserve = mSessionViewModel.getAllSessionsByEndTime();
 
@@ -352,7 +352,7 @@ public class StatisticsFragment extends Fragment {
                 mSessionsToObserve = mSessionViewModel.getAllSessionsUnlabeled();
 
             } else {
-                mSessionsToObserve = mSessionViewModel.getSessions(labelAndColor.label);
+                mSessionsToObserve = mSessionViewModel.getSessions(labelAndColor.title);
             }
             mSessionsToObserve.observe(this, sessions -> {
                 refreshStats(sessions);
@@ -485,21 +485,21 @@ public class StatisticsFragment extends Fragment {
             LocalDate localTime = new LocalDate();
             switch (rangeType) {
                 case DAYS:
-                    localTime = new LocalDate(new Date(sessions.get(i).endTime));
+                    localTime = new LocalDate(new Date(sessions.get(i).timestamp));
                     break;
                 case WEEKS:
-                    localTime = new LocalDate(new Date(sessions.get(i).endTime)).dayOfWeek().withMinimumValue();
+                    localTime = new LocalDate(new Date(sessions.get(i).timestamp)).dayOfWeek().withMinimumValue();
                     break;
                 case MONTHS:
-                    localTime = new LocalDate(new Date(sessions.get(i).endTime)).dayOfMonth().withMinimumValue();
+                    localTime = new LocalDate(new Date(sessions.get(i).timestamp)).dayOfMonth().withMinimumValue();
                     break;
             }
 
             if (!tree.containsKey(localTime)) {
-                tree.put(localTime, statsType == DURATION ? sessions.get(i).totalTime : 1);
+                tree.put(localTime, statsType == DURATION ? sessions.get(i).duration : 1);
             } else {
                 tree.put(localTime, tree.get(localTime)
-                        + (statsType == DURATION ? sessions.get(i).totalTime : 1));
+                        + (statsType == DURATION ? sessions.get(i).duration : 1));
             }
         }
 
@@ -624,7 +624,7 @@ public class StatisticsFragment extends Fragment {
             if (nrOfSessions > 0) {
                 // hour of day
                 for (Session s : sessions) {
-                    int crtHourOfDay = new DateTime(s.endTime).getHourOfDay();
+                    int crtHourOfDay = new DateTime(s.timestamp).getHourOfDay();
                     sessionsPerHour.set(crtHourOfDay, sessionsPerHour.get(crtHourOfDay) + 1);
                 }
 
@@ -644,7 +644,7 @@ public class StatisticsFragment extends Fragment {
             if (nrOfSessions > 0) {
                 // day of week
                 for (Session s : sessions) {
-                    int crtDayOfWeek = new LocalDate(s.endTime).getDayOfWeek() - 1;
+                    int crtDayOfWeek = new LocalDate(s.timestamp).getDayOfWeek() - 1;
                     sessionsPerDay.set(crtDayOfWeek, sessionsPerDay.get(crtDayOfWeek) + 1);
                 }
 

@@ -47,7 +47,7 @@ import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_ALL_LABEL
 public class SelectLabelDialog extends DialogFragment {
 
     /**
-     * The callback used to indicate the user is done selecting the label
+     * The callback used to indicate the user is done selecting the title
      */
     public interface OnLabelSelectedListener {
 
@@ -91,7 +91,7 @@ public class SelectLabelDialog extends DialogFragment {
             if (mIsExtendedVersion) {
                 Chip chip = new Chip(getActivity());
                 LabelAndColor total = getInstanceTotalLabel(getActivity());
-                chip.setText(total.label);
+                chip.setText(total.title);
                 chip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), COLOR_INDEX_ALL_LABELS)));
                 chip.setCheckable(true);
                 ThemeHelper.styleChip(getActivity(), chip);
@@ -107,13 +107,13 @@ public class SelectLabelDialog extends DialogFragment {
 
                 LabelAndColor crt = labels.get(j);
                 Chip chip = new Chip(getActivity());
-                chip.setText(crt.label);
-                chip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), crt.color)));
+                chip.setText(crt.title);
+                chip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), crt.colorId)));
                 chip.setCheckable(true);
                 ThemeHelper.styleChip(getActivity(), chip);
 
                 chip.setId(i++);
-                if (crt.label.equals(mLabel)) {
+                if (crt.title.equals(mLabel)) {
                     chip.setChecked(true);
                 }
                 binding.labels.addView(chip);

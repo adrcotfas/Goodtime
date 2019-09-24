@@ -143,7 +143,7 @@ public class BackupFragment extends BottomSheetDialogFragment {
     private void exportCsv() {
         Handler handler = new Handler();
 
-        LiveData<List<Session>> sessionsLiveData = mSessionViewModel.getAllSessionsByEndTime();
+        LiveData<List<Session>> sessionsLiveData = mSessionViewModel.getAllSessions();
         sessionsLiveData.observe(this, sessions -> {
             if (sessions.isEmpty()) {
                 handler.post(() -> Toast.makeText(getActivity(), R.string.backup_no_completed_sessions, Toast.LENGTH_SHORT).show());
@@ -171,9 +171,9 @@ public class BackupFragment extends BottomSheetDialogFragment {
                         fos.write("label".getBytes());
                         fos.write("\n".getBytes());
                         for (Session s : sessions) {
-                            fos.write(formatDateAndTime(s.endTime).getBytes());
+                            fos.write(formatDateAndTime(s.timestamp).getBytes());
                             fos.write(",".getBytes());
-                            fos.write(Long.toString(s.totalTime).getBytes());
+                            fos.write(Long.toString(s.duration).getBytes());
                             fos.write(",".getBytes());
                             fos.write(s.label != null ? s.label.getBytes() : "".getBytes());
                             fos.write("\n".getBytes());
