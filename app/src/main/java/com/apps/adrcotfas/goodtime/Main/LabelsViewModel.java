@@ -16,8 +16,8 @@ package com.apps.adrcotfas.goodtime.Main;
 import android.app.Application;
 
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
-import com.apps.adrcotfas.goodtime.Database.LabelAndColorDao;
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Database.LabelDao;
+import com.apps.adrcotfas.goodtime.Label;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -32,18 +32,18 @@ import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceTotalLabel
 
 public class LabelsViewModel extends AndroidViewModel {
 
-    private final LabelAndColorDao mLabelsDao;
+    private final LabelDao mLabelsDao;
     private final ExecutorService mExecutorService;
 
     /**
      * The current selected label in the Statistics view
      * "extended" because it might be "total" or "unlabeled"
      */
-    public final MutableLiveData<LabelAndColor> crtExtendedLabel = new MutableLiveData<>();
+    public final MutableLiveData<Label> crtExtendedLabel = new MutableLiveData<>();
 
     public LabelsViewModel(@NonNull Application application) {
         super(application);
-        mLabelsDao = AppDatabase.getDatabase(application).labelAndColor();
+        mLabelsDao = AppDatabase.getDatabase(application).labelDao();
         mExecutorService = Executors.newSingleThreadExecutor();
         crtExtendedLabel.setValue(getInstanceTotalLabel(application.getBaseContext()));
 
@@ -55,14 +55,14 @@ public class LabelsViewModel extends AndroidViewModel {
     /**
      *  Returns only the labels which are not archived
      */
-    public LiveData<List<LabelAndColor>> getLabels() {
+    public LiveData<List<Label>> getLabels() {
         return mLabelsDao.getLabels();
     }
 
     /**
      *  Returns all labels, including the archived ones
      */
-    public LiveData<List<LabelAndColor>> getAllLabels() {
+    public LiveData<List<Label>> getAllLabels() {
         return mLabelsDao.getAllLabels();
     }
 
@@ -70,8 +70,8 @@ public class LabelsViewModel extends AndroidViewModel {
         return mLabelsDao.getColor(label);
     }
 
-    public void addLabel(LabelAndColor labelAndColor) {
-        mExecutorService.execute(() -> mLabelsDao.addLabel(labelAndColor));
+    public void addLabel(Label label) {
+        mExecutorService.execute(() -> mLabelsDao.addLabel(label));
     }
 
     public void editLabelName(String label, String newLabel) {

@@ -26,7 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
@@ -87,7 +87,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
             mAdapter = new AllSessionsAdapter(labels);
             mRecyclerView.setAdapter(mAdapter);
 
-            mLabelsViewModel.crtExtendedLabel.observe(this, labelAndColor -> refreshCurrentLabel());
+            mLabelsViewModel.crtExtendedLabel.observe(this, label -> refreshCurrentLabel());
 
             mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
             mRecyclerView.addOnItemTouchListener(
@@ -283,10 +283,10 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
     }
 
     @Override
-    public void onLabelSelected(LabelAndColor labelAndColor) {
-        final String label = labelAndColor.title.equals("unlabeled") ? null : labelAndColor.title;
+    public void onLabelSelected(Label label) {
+        final String title = label.title.equals("unlabeled") ? null : label.title;
         for (Long i : mSelectedEntries) {
-            mSessionViewModel.editLabel(i, label);
+            mSessionViewModel.editLabel(i, title);
         }
         if (mActionMode != null) {
             mActionMode.finish();

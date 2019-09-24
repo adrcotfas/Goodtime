@@ -28,7 +28,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
@@ -170,7 +170,7 @@ public class StatisticsFragment extends Fragment {
         mLabelsViewModel = ViewModelProviders.of(getActivity()).get(LabelsViewModel.class);
         mSessionViewModel = ViewModelProviders.of(getActivity()).get(SessionViewModel.class);
 
-        mLabelsViewModel.crtExtendedLabel.observe(this, labelAndColor -> StatisticsFragment.this.refreshUi());
+        mLabelsViewModel.crtExtendedLabel.observe(this, label -> StatisticsFragment.this.refreshUi());
 
         setupSpinners();
         setupHistoryChart();
@@ -327,14 +327,14 @@ public class StatisticsFragment extends Fragment {
 
     //TODO: make more efficient when setting spinners to not refresh all of it if not needed
     private void refreshUi() {
-        final LabelAndColor labelAndColor = mLabelsViewModel.crtExtendedLabel.getValue();
+        final Label label = mLabelsViewModel.crtExtendedLabel.getValue();
 
-        if (labelAndColor != null) {
+        if (label != null) {
             if (mSessionsToObserve != null) {
                 mSessionsToObserve.removeObservers(this);
             }
 
-            final int color = ThemeHelper.getColor(getActivity(), labelAndColor.colorId);
+            final int color = ThemeHelper.getColor(getActivity(), label.colorId);
             mOverview.today.setTextColor(color);
             mOverview.week.setTextColor(color);
             mOverview.month.setTextColor(color);
@@ -344,7 +344,7 @@ public class StatisticsFragment extends Fragment {
             mHeaderHistory.setTextColor(color);
             mHeaderProductiveTime.setTextColor(color);
 
-            String s = labelAndColor.title;
+            String s = label.title;
             if (getString(R.string.label_all).equals(s)) {
                 mSessionsToObserve = mSessionViewModel.getAllSessionsByEndTime();
 
@@ -352,7 +352,7 @@ public class StatisticsFragment extends Fragment {
                 mSessionsToObserve = mSessionViewModel.getAllSessionsUnlabeled();
 
             } else {
-                mSessionsToObserve = mSessionViewModel.getSessions(labelAndColor.title);
+                mSessionsToObserve = mSessionViewModel.getSessions(label.title);
             }
             mSessionsToObserve.observe(this, sessions -> {
                 refreshStats(sessions);

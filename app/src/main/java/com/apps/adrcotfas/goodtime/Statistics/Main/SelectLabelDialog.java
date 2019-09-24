@@ -22,7 +22,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.Main.AddEditLabelActivity;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
@@ -52,9 +52,9 @@ public class SelectLabelDialog extends DialogFragment {
     public interface OnLabelSelectedListener {
 
         /**
-         * @param labelAndColor     the label that was set
+         * @param label     the label that was set
          */
-        void onLabelSelected(LabelAndColor labelAndColor);
+        void onLabelSelected(Label label);
     }
 
     private String mLabel;
@@ -90,7 +90,7 @@ public class SelectLabelDialog extends DialogFragment {
             int i = 0;
             if (mIsExtendedVersion) {
                 Chip chip = new Chip(getActivity());
-                LabelAndColor total = getInstanceTotalLabel(getActivity());
+                Label total = getInstanceTotalLabel(getActivity());
                 chip.setText(total.title);
                 chip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), COLOR_INDEX_ALL_LABELS)));
                 chip.setCheckable(true);
@@ -105,7 +105,7 @@ public class SelectLabelDialog extends DialogFragment {
 
             for (int j = labels.size() - 1; j >= 0; --j) {
 
-                LabelAndColor crt = labels.get(j);
+                Label crt = labels.get(j);
                 Chip chip = new Chip(getActivity());
                 chip.setText(crt.title);
                 chip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), crt.colorId)));
@@ -139,7 +139,7 @@ public class SelectLabelDialog extends DialogFragment {
                         Chip chip = (Chip) (binding.labels.getChildAt(binding.labels.getCheckedChipId()));
                         mLabel = chip.getText().toString();
                         int color = chip.getChipBackgroundColor().getDefaultColor();
-                        notifyLabelSelected(new LabelAndColor(mLabel, ThemeHelper.getIndexOfColor(getActivity(), color)));
+                        notifyLabelSelected(new Label(mLabel, ThemeHelper.getIndexOfColor(getActivity(), color)));
                     } else {
                         notifyLabelSelected(getInstanceUnlabeledLabel());
                     }
@@ -157,9 +157,9 @@ public class SelectLabelDialog extends DialogFragment {
         return builder.create();
     }
 
-    private void notifyLabelSelected(LabelAndColor labelAndColor) {
+    private void notifyLabelSelected(Label label) {
         if (mCallback != null) {
-            mCallback.get().onLabelSelected(labelAndColor);
+            mCallback.get().onLabelSelected(label);
         }
     }
 }

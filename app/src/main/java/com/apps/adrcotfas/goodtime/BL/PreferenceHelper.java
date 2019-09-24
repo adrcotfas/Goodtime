@@ -16,7 +16,7 @@ package com.apps.adrcotfas.goodtime.BL;
 import android.os.SystemClock;
 
 import com.apps.adrcotfas.goodtime.BuildConfig;
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
 
 import java.util.concurrent.TimeUnit;
 
@@ -214,13 +214,13 @@ public class PreferenceHelper {
         return getCurrentStreak() >= getSessionsBeforeLongBreak();
     }
 
-    public static LabelAndColor getCurrentSessionLabel() {
-        return new LabelAndColor(
+    public static Label getCurrentSessionLabel() {
+        return new Label(
                 getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getString(CURRENT_SESSION_LABEL, null),
                 getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getInt(CURRENT_SESSION_COLOR, 0));
     }
 
-    public static void setCurrentSessionLabel(LabelAndColor label) {
+    public static void setCurrentSessionLabel(Label label) {
         getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
                 .putString(CURRENT_SESSION_LABEL, label.title).apply();
         getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()

@@ -25,7 +25,7 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
@@ -201,9 +201,9 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements
     }
 
     @Override
-    public void onLabelSelected(LabelAndColor labelAndColor) {
-        if (labelAndColor != null && !labelAndColor.title.equals("unlabeled")) {
-            mViewModel.label.setValue(labelAndColor.title);
+    public void onLabelSelected(Label label) {
+        if (label != null && !label.title.equals("unlabeled")) {
+            mViewModel.label.setValue(label.title);
         } else {
             mViewModel.label.setValue(null);
         }

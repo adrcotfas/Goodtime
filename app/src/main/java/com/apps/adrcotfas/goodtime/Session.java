@@ -25,7 +25,7 @@ import static androidx.room.ForeignKey.SET_DEFAULT;
 @Entity(
         foreignKeys =
         @ForeignKey(
-                entity = LabelAndColor.class,
+                entity = Label.class,
                 parentColumns = {"title", "archived"},
                 childColumns = {"label", "archived"},
                 onUpdate = CASCADE,

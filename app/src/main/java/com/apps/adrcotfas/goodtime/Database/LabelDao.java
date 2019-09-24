@@ -13,7 +13,7 @@
 
 package com.apps.adrcotfas.goodtime.Database;
 
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
 
 import java.util.List;
 
@@ -25,32 +25,32 @@ import androidx.room.Query;
 import static androidx.room.OnConflictStrategy.IGNORE;
 
 @Dao
-public interface LabelAndColorDao {
+public interface LabelDao {
 
     @Insert(onConflict = IGNORE)
-    void addLabel(LabelAndColor session);
+    void addLabel(Label session);
 
-    @Query("select * from LabelAndColor where archived = 0 or archived = NULL ORDER BY `order`")
-    LiveData<List<LabelAndColor>> getLabels();
+    @Query("select * from Label where archived = 0 or archived = NULL ORDER BY `order`")
+    LiveData<List<Label>> getLabels();
 
-    @Query("select * from LabelAndColor ORDER BY `order`")
-    LiveData<List<LabelAndColor>> getAllLabels();
+    @Query("select * from Label ORDER BY `order`")
+    LiveData<List<Label>> getAllLabels();
 
-    @Query("select colorId from LabelAndColor where title = :title")
+    @Query("select colorId from Label where title = :title")
     LiveData<Integer> getColor(String title);
 
-    @Query("update LabelAndColor SET title = :newTitle WHERE title = :title")
+    @Query("update Label SET title = :newTitle WHERE title = :title")
     void editLabelName(String title, String newTitle);
 
-    @Query("update LabelAndColor SET colorId = :colorId WHERE title = :title")
+    @Query("update Label SET colorId = :colorId WHERE title = :title")
     void editLabelColor(String title, int colorId);
 
-    @Query("update LabelAndColor SET `order` = :order WHERE title = :title")
+    @Query("update Label SET `order` = :order WHERE title = :title")
     void editLabelOrder(String title, int order);
 
-    @Query("delete from LabelAndColor where title = :title")
+    @Query("delete from Label where title = :title")
     void deleteLabel(String title);
 
-    @Query("update LabelAndColor SET archived = :archived WHERE title = :title")
+    @Query("update Label SET archived = :archived WHERE title = :title")
     void toggleLabelArchiveState(String title, boolean archived);
 }

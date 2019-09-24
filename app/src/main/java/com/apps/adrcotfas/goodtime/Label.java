@@ -17,9 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
 @Entity(primaryKeys = {"title", "archived"})
-public class LabelAndColor {
+public class Label {
 
-    public LabelAndColor(String title, int colorId) {
+    public Label(String title, int colorId) {
         this.title = title;
         this.colorId = colorId;
     }

@@ -24,7 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.takisoft.colorpicker.ColorPickerDialog;
@@ -48,19 +48,19 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
     public interface OnEditLabelListener {
         void onEditColor(String label, int newColor);
         void onEditLabel(String label, String newLabel);
-        void onDeleteLabel(LabelAndColor labels, int position);
+        void onDeleteLabel(Label labels, int position);
         void onLabelRearranged();
-        void onToggleArchive(LabelAndColor label);
+        void onToggleArchive(Label label);
         void onDragStarted(RecyclerView.ViewHolder viewHolder);
     }
 
     private LayoutInflater inflater;
-    private List<LabelAndColor> mLabels;
+    private List<Label> mLabels;
     private WeakReference<Context> mContext;
     private OnEditLabelListener mCallback;
 
     public AddEditLabelsAdapter(Context ctx,
-                                List<LabelAndColor> labels,
+                                List<Label> labels,
                                 OnEditLabelListener callback){
         inflater = LayoutInflater.from(ctx);
         mContext = new WeakReference<>(ctx);
@@ -82,7 +82,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        LabelAndColor crtLabel = mLabels.get(position);
+        Label crtLabel = mLabels.get(position);
         holder.text.setText(crtLabel.title);
         holder.imageLeft.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.colorId));
 
@@ -158,7 +158,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
                 text.setLayoutParams(params);
 
                 int position = getAdapterPosition();
-                LabelAndColor crtLabel = mLabels.get(position);
+                Label crtLabel = mLabels.get(position);
 
                 labelicon.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.colorId));
 
@@ -210,7 +210,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
 
             // archive and unarchive a label
             labelIconContainer.setOnClickListener(v -> {
-                LabelAndColor crtLabel = mLabels.get(getAdapterPosition());
+                Label crtLabel = mLabels.get(getAdapterPosition());
                 crtLabel.archived = !crtLabel.archived;
                 mCallback.onToggleArchive(crtLabel);
                 labelicon.setImageDrawable(ContextCompat.getDrawable(
@@ -219,7 +219,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
 
             // changing the colorId of a label
             imageLeftContainer.setOnClickListener(v -> {
-                LabelAndColor crtLabel = mLabels.get(getAdapterPosition());
+                Label crtLabel = mLabels.get(getAdapterPosition());
                 final ColorPickerDialog.Params p = new ColorPickerDialog.Params.Builder(mContext.get())
                         .setColors(ThemeHelper.getPalette(mContext.get()))
                         .setSelectedColor(ThemeHelper.getColor(mContext.get(), crtLabel.colorId))

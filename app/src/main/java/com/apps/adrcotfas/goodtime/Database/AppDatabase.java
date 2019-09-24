@@ -15,7 +15,7 @@ package com.apps.adrcotfas.goodtime.Database;
 
 import android.content.Context;
 
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.Session;
 
 import androidx.annotation.NonNull;
@@ -25,7 +25,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Session.class, LabelAndColor.class}, version = 2, exportSchema = false)
+@Database(entities = {Session.class, Label.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final Object LOCK = new Object();
@@ -39,10 +39,10 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL(
                     "INSERT INTO labels_new (title, colorId) SELECT label, color FROM LabelAndColor");
             database.execSQL("DROP TABLE LabelAndColor");
-            database.execSQL("ALTER TABLE labels_new RENAME TO LabelAndColor");
+            database.execSQL("ALTER TABLE labels_new RENAME TO Label");
 
             database.execSQL(
-                    "CREATE TABLE sessions_new (id INTEGER NOT NULL, timestamp INTEGER NOT NULL, duration INTEGER NOT NULL, label TEXT, archived INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(id), FOREIGN KEY(label, archived) REFERENCES LabelAndColor(title, archived) ON UPDATE CASCADE ON DELETE SET DEFAULT)");
+                    "CREATE TABLE sessions_new (id INTEGER NOT NULL, timestamp INTEGER NOT NULL, duration INTEGER NOT NULL, label TEXT, archived INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(id), FOREIGN KEY(label, archived) REFERENCES Label(title, archived) ON UPDATE CASCADE ON DELETE SET DEFAULT)");
             database.execSQL(
                     "INSERT INTO sessions_new (timestamp, duration, label) SELECT endTime, totalTime, label FROM Session");
             database.execSQL("DROP TABLE Session");
@@ -77,5 +77,5 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract SessionDao sessionModel();
 
-    public abstract LabelAndColorDao labelAndColor();
+    public abstract LabelDao labelDao();
 }

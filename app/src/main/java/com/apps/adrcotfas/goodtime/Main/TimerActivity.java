@@ -41,7 +41,7 @@ import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.BL.TimerService;
 import com.apps.adrcotfas.goodtime.BL.TimerState;
 import com.apps.adrcotfas.goodtime.BuildConfig;
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
@@ -692,12 +692,12 @@ public class TimerActivity
     }
 
     private void setStatusIconColor() {
-        LabelAndColor labelAndColor = PreferenceHelper.getCurrentSessionLabel();
+        Label label = PreferenceHelper.getCurrentSessionLabel();
 
         if (mStatusButton != null) {
-            if (labelAndColor.title != null) {
+            if (label.title != null) {
                 mStatusButton.getIcon().setColorFilter(
-                        ThemeHelper.getColor(this, labelAndColor.colorId), PorterDuff.Mode.SRC_ATOP);
+                        ThemeHelper.getColor(this, label.colorId), PorterDuff.Mode.SRC_ATOP);
             } else {
                 mStatusButton.getIcon().setColorFilter(
                         ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_UNLABELED), PorterDuff.Mode.SRC_ATOP);
@@ -706,10 +706,10 @@ public class TimerActivity
     }
 
     private void setTimeLabelColor() {
-        LabelAndColor labelAndColor = PreferenceHelper.getCurrentSessionLabel();
+        Label label = PreferenceHelper.getCurrentSessionLabel();
         if (mTimeLabel != null) {
-            if (labelAndColor.title != null) {
-                mTimeLabel.setTextColor(ThemeHelper.getColor(this, labelAndColor.colorId));
+            if (label.title != null) {
+                mTimeLabel.setTextColor(ThemeHelper.getColor(this, label.colorId));
             } else {
                 mTimeLabel.setTextColor(ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_UNLABELED));
             }
@@ -717,10 +717,10 @@ public class TimerActivity
     }
 
     @Override
-    public void onLabelSelected(LabelAndColor labelAndColor) {
-        if (labelAndColor != null) {
-            GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(labelAndColor.title);
-            PreferenceHelper.setCurrentSessionLabel(labelAndColor);
+    public void onLabelSelected(Label label) {
+        if (label != null) {
+            GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(label.title);
+            PreferenceHelper.setCurrentSessionLabel(label);
         } else {
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
         }

@@ -26,7 +26,7 @@ import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityAddEditLabelsBinding;
@@ -54,13 +54,13 @@ public class AddEditLabelActivity extends AppCompatActivity
     private static final String TAG = AddEditLabelActivity.class.getSimpleName();
 
     private LabelsViewModel mLabelsViewModel;
-    private List<LabelAndColor> mLabelAndColors;
+    private List<Label> mLabels;
 
     private RecyclerView mRecyclerView;
     private AddEditLabelsAdapter mCustomAdapter;
     private ItemTouchHelper mItemTouchHelper;
 
-    private LabelAndColor mLabelToAdd;
+    private Label mLabelToAdd;
 
     private LinearLayout mEmptyState;
     private EditText mAddLabelView;
@@ -88,12 +88,12 @@ public class AddEditLabelActivity extends AppCompatActivity
         mImageLeft = binding.addLabel.imageLeft;
         mImageLeftContainer = binding.addLabel.imageLeftContainer;
 
-        final LiveData<List<LabelAndColor>> labels = mLabelsViewModel.getAllLabels();
-        labels.observe(this, labelAndColors -> {
+        final LiveData<List<Label>> labelsLiveData = mLabelsViewModel.getAllLabels();
+        labelsLiveData.observe(this, labels -> {
 
-            mLabelAndColors = labelAndColors;
+            mLabels = labels;
 
-            mCustomAdapter = new AddEditLabelsAdapter(this, mLabelAndColors, this);
+            mCustomAdapter = new AddEditLabelsAdapter(this, mLabels, this);
             mRecyclerView.setAdapter(mCustomAdapter);
 
             LinearLayoutManager lm = new LinearLayoutManager(this);
@@ -103,7 +103,7 @@ public class AddEditLabelActivity extends AppCompatActivity
 
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-            labels.removeObservers(AddEditLabelActivity.this);
+            labelsLiveData.removeObservers(AddEditLabelActivity.this);
 
             binding.progressBar.setVisibility(View.GONE);
             updateRecyclerViewVisibility();
@@ -113,7 +113,7 @@ public class AddEditLabelActivity extends AppCompatActivity
             mItemTouchHelper.attachToRecyclerView(mRecyclerView);
         });
 
-        mLabelToAdd = new LabelAndColor("", COLOR_INDEX_UNLABELED);
+        mLabelToAdd = new Label("", COLOR_INDEX_UNLABELED);
 
         mImageRightContainer.setOnClickListener(view -> {
             addLabel();
@@ -141,7 +141,7 @@ public class AddEditLabelActivity extends AppCompatActivity
             } : v -> requestFocusEditText(mAddLabelView, this));
             mImageLeft.setColorFilter(ThemeHelper.getColor(this, hasFocus ? mLabelToAdd.colorId : COLOR_INDEX_UNLABELED) );
             if (!hasFocus) {
-                mLabelToAdd = new LabelAndColor("", ThemeHelper.getColor(this, COLOR_INDEX_UNLABELED));
+                mLabelToAdd = new Label("", ThemeHelper.getColor(this, COLOR_INDEX_UNLABELED));
                 mAddLabelView.setText("");
             }
         });
@@ -166,9 +166,9 @@ public class AddEditLabelActivity extends AppCompatActivity
     public void onEditLabel(String label, String newLabel) {
         mLabelsViewModel.editLabelName(label, newLabel);
 
-        LabelAndColor crtLabel = PreferenceHelper.getCurrentSessionLabel();
+        Label crtLabel = PreferenceHelper.getCurrentSessionLabel();
         if (crtLabel.title != null && crtLabel.title.equals(label)) {
-            PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(newLabel, crtLabel.colorId));
+            PreferenceHelper.setCurrentSessionLabel(new Label(newLabel, crtLabel.colorId));
         }
     }
 
@@ -176,20 +176,20 @@ public class AddEditLabelActivity extends AppCompatActivity
     public void onEditColor(String label, int color) {
         mLabelsViewModel.editLabelColor(label, color);
 
-        LabelAndColor crtLabel = PreferenceHelper.getCurrentSessionLabel();
+        Label crtLabel = PreferenceHelper.getCurrentSessionLabel();
         if (crtLabel.title != null && crtLabel.title.equals(label)) {
-            PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(label, color));
+            PreferenceHelper.setCurrentSessionLabel(new Label(label, color));
         }
     }
 
     @Override
-    public void onToggleArchive(LabelAndColor label) {
+    public void onToggleArchive(Label label) {
         mLabelsViewModel.toggleLabelArchive(label.title, label.archived);
 
-        LabelAndColor crtLabel = PreferenceHelper.getCurrentSessionLabel();
+        Label crtLabel = PreferenceHelper.getCurrentSessionLabel();
         if (label.archived && crtLabel.title != null && crtLabel.title.equals(label.title)) {
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
-            PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(null, COLOR_INDEX_UNLABELED));
+            PreferenceHelper.setCurrentSessionLabel(new Label(null, COLOR_INDEX_UNLABELED));
         }
     }
 
@@ -204,10 +204,10 @@ public class AddEditLabelActivity extends AppCompatActivity
     }
 
     @Override
-    public void onDeleteLabel(LabelAndColor labelAndColor, int position) {
-        mLabelAndColors.remove(labelAndColor);
+    public void onDeleteLabel(Label label, int position) {
+        mLabels.remove(label);
         mCustomAdapter.notifyItemRemoved(position);
-        mLabelsViewModel.deleteLabel(labelAndColor.title);
+        mLabelsViewModel.deleteLabel(label.title);
 
         // workaround for edge case: clipping animation of last cached entry
         if (mCustomAdapter.getItemCount() == 0) {
@@ -215,13 +215,13 @@ public class AddEditLabelActivity extends AppCompatActivity
         }
 
         String crtSessionLabel = GoodtimeApplication.getCurrentSessionManager().getCurrentSession().getLabel().getValue();
-        if (crtSessionLabel != null && crtSessionLabel.equals(labelAndColor.title)) {
+        if (crtSessionLabel != null && crtSessionLabel.equals(label.title)) {
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
         }
 
         // the label attached to the current session was deleted
-        if (labelAndColor.title.equals(PreferenceHelper.getCurrentSessionLabel().title)) {
-            PreferenceHelper.setCurrentSessionLabel(new LabelAndColor(null, COLOR_INDEX_UNLABELED));
+        if (label.title.equals(PreferenceHelper.getCurrentSessionLabel().title)) {
+            PreferenceHelper.setCurrentSessionLabel(new Label(null, COLOR_INDEX_UNLABELED));
         }
 
         updateRecyclerViewVisibility();
@@ -233,8 +233,8 @@ public class AddEditLabelActivity extends AppCompatActivity
      */
     @Override
     public void onLabelRearranged() {
-        for (int i = 0; i < mLabelAndColors.size(); ++i) {
-            mLabelsViewModel.editLabelOrder(mLabelAndColors.get(i).title, i);
+        for (int i = 0; i < mLabels.size(); ++i) {
+            mLabelsViewModel.editLabelOrder(mLabels.get(i).title, i);
         }
     }
 
@@ -255,7 +255,7 @@ public class AddEditLabelActivity extends AppCompatActivity
      * @param newLabel The desired name for the new label or renamed label
      * @return true if the label name is valid, false otherwise
      */
-    public static boolean labelIsGoodToAdd(Context context, List<LabelAndColor> labels, String newLabel, String beforeEdit) {
+    public static boolean labelIsGoodToAdd(Context context, List<Label> labels, String newLabel, String beforeEdit) {
         boolean result = true;
 
         if (beforeEdit != null && beforeEdit.equals(newLabel)) {
@@ -264,7 +264,7 @@ public class AddEditLabelActivity extends AppCompatActivity
             result = false;
         } else {
             boolean duplicateFound = false;
-            for (LabelAndColor l : labels) {
+            for (Label l : labels) {
                 if (newLabel.equals(l.title)) {
                     duplicateFound = true;
                     break;
@@ -279,15 +279,15 @@ public class AddEditLabelActivity extends AppCompatActivity
     }
 
     private void addLabel() {
-        mLabelToAdd = new LabelAndColor(mAddLabelView.getText().toString().trim(), mLabelToAdd.colorId);
-        if (labelIsGoodToAdd(this, mLabelAndColors, mLabelToAdd.title, null)) {
-            mLabelAndColors.add(mLabelToAdd);
+        mLabelToAdd = new Label(mAddLabelView.getText().toString().trim(), mLabelToAdd.colorId);
+        if (labelIsGoodToAdd(this, mLabels, mLabelToAdd.title, null)) {
+            mLabels.add(mLabelToAdd);
 
-            mCustomAdapter.notifyItemInserted(mLabelAndColors.size());
-            mRecyclerView.scrollToPosition(mLabelAndColors.size() - 1);
+            mCustomAdapter.notifyItemInserted(mLabels.size());
+            mRecyclerView.scrollToPosition(mLabels.size() - 1);
 
             mLabelsViewModel.addLabel(mLabelToAdd);
-            mLabelToAdd = new LabelAndColor("", COLOR_INDEX_UNLABELED);
+            mLabelToAdd = new Label("", COLOR_INDEX_UNLABELED);
             mAddLabelView.setText("");
         }
     }
