@@ -56,7 +56,7 @@
         <item name="android:background">@color/true_transparent</item>
         <item name="android:inputType">textNoSuggestions</item>
         <item name="android:maxLines">1</item>
-        <item name="android:maxLength">48</item>
+        <item name="android:maxLength">32</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/regularTextSize</item>
         <item name="android:imeOptions">actionDone</item>
