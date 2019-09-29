@@ -186,8 +186,6 @@ public class AddEditLabelActivity extends AppCompatActivity
     public void onToggleArchive(Label label, int adapterPosition) {
         mLabelsViewModel.toggleLabelArchive(label.title, label.archived);
 
-        mCustomAdapter.onItemMove(adapterPosition, label.archived ? 0 : mLabels.size() - 1);
-
         Label crtLabel = PreferenceHelper.getCurrentSessionLabel();
         if (label.archived && crtLabel.title != null && crtLabel.title.equals(label.title)) {
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
