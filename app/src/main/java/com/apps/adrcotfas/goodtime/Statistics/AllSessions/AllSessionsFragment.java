@@ -44,6 +44,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -63,6 +64,11 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
     private LabelsViewModel mLabelsViewModel;
     private Session mSessionToEdit;
     private List<Session> mSessions =  new ArrayList<>();
+
+    private LiveData<List<Session>> sessionsLiveDataAll;
+    private LiveData<List<Session>> sessionsLiveDataUnlabeled;
+    private LiveData<List<Session>> sessionsLiveDataCrtLabel;
+
     private LinearLayout mEmptyState;
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
@@ -74,6 +80,12 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
 
         mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
         mLabelsViewModel = ViewModelProviders.of(getActivity()).get(LabelsViewModel.class);
+
+        sessionsLiveDataAll = mSessionViewModel.getAllSessionsByEndTime();
+        sessionsLiveDataUnlabeled = mSessionViewModel.getAllSessionsUnlabeled();
+        if (mLabelsViewModel.crtExtendedLabel.getValue() != null) {
+            sessionsLiveDataCrtLabel = mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().title);
+        }
 
         mEmptyState = binding.emptyState;
         mProgressBar = binding.progressBar;
@@ -116,23 +128,46 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
         return view;
     }
 
-    //TODO: debug here when switching the current label; not optimal right now
     private void refreshCurrentLabel() {
         if (mLabelsViewModel.crtExtendedLabel.getValue() != null && mAdapter != null) {
             if (mLabelsViewModel.crtExtendedLabel.getValue().title.equals(getString(R.string.label_all))) {
-                mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
+                sessionsLiveDataAll.observe(this, sessions -> {
+
+                    if (sessionsLiveDataUnlabeled != null) {
+                        sessionsLiveDataUnlabeled.removeObservers(this);
+                    }
+                    if (sessionsLiveDataCrtLabel != null) {
+                        sessionsLiveDataCrtLabel.removeObservers(this);
+                    }
+
                     mAdapter.setData(sessions);
                     mSessions = sessions;
                     updateRecyclerViewVisibility();
                 });
             } else if (mLabelsViewModel.crtExtendedLabel.getValue().title.equals("unlabeled")) {
-                mSessionViewModel.getAllSessionsUnlabeled().observe(this, sessions -> {
+                sessionsLiveDataUnlabeled.observe(this, sessions -> {
+
+                    if (sessionsLiveDataAll != null) {
+                        sessionsLiveDataAll.removeObservers(this);
+                    }
+                    if (sessionsLiveDataCrtLabel != null) {
+                        sessionsLiveDataCrtLabel.removeObservers(this);
+                    }
+
                     mAdapter.setData(sessions);
                     mSessions = sessions;
                     updateRecyclerViewVisibility();
                 });
             } else {
-                mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().title).observe(this, sessions -> {
+                sessionsLiveDataCrtLabel = mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().title);
+                sessionsLiveDataCrtLabel.observe(this, sessions -> {
+                    if (sessionsLiveDataAll != null) {
+                        sessionsLiveDataAll.removeObservers(this);
+                    }
+                    if (sessionsLiveDataUnlabeled != null) {
+                        sessionsLiveDataUnlabeled.removeObservers(this);
+                    }
+
                     mAdapter.setData(sessions);
                     mSessions = sessions;
                     updateRecyclerViewVisibility();
