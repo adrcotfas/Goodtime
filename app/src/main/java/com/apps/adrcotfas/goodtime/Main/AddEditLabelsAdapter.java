@@ -14,6 +14,7 @@
 package com.apps.adrcotfas.goodtime.Main;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -50,7 +51,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
         void onEditLabel(String label, String newLabel);
         void onDeleteLabel(Label labels, int position);
         void onLabelRearranged();
-        void onToggleArchive(Label label);
+        void onToggleArchive(Label label, int adapterPosition);
         void onDragStarted(RecyclerView.ViewHolder viewHolder);
     }
 
@@ -87,7 +88,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
         holder.imageLeft.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.colorId));
 
         holder.labelicon.setImageDrawable(ContextCompat.getDrawable(
-                mContext.get(), crtLabel.archived ? R.drawable.ic_label_off : R.drawable.ic_label));
+                mContext.get(), crtLabel.archived ? R.drawable.ic_archive : R.drawable.ic_label));
 
         holder.labelicon.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.colorId));
         holder.scrollIconContainer.setOnTouchListener((v, event) -> {
@@ -130,6 +131,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
         private ImageView imageLeft;
         private ImageView imageRight;
 
+        private RelativeLayout row;
         private FrameLayout scrollIconContainer;
         private FrameLayout imageLeftContainer;
         private FrameLayout labelIconContainer;
@@ -139,6 +141,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
         public ViewHolder(View itemView) {
             super(itemView);
 
+            row = itemView.findViewById(R.id.dialog_edit_label_row);
             text = itemView.findViewById(R.id.text);
             labelicon = itemView.findViewById(R.id.label_icon);
             imageLeft = itemView.findViewById(R.id.image_left); // the palette icon
@@ -212,9 +215,9 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
             labelIconContainer.setOnClickListener(v -> {
                 Label crtLabel = mLabels.get(getAdapterPosition());
                 crtLabel.archived = !crtLabel.archived;
-                mCallback.onToggleArchive(crtLabel);
+                mCallback.onToggleArchive(crtLabel, getAdapterPosition());
                 labelicon.setImageDrawable(ContextCompat.getDrawable(
-                        mContext.get(), crtLabel.archived ? R.drawable.ic_label_off : R.drawable.ic_label));
+                        mContext.get(), crtLabel.archived ? R.drawable.ic_archive : R.drawable.ic_label));
             });
 
             // changing the colorId of a label
@@ -240,7 +243,16 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
 
         @Override
         public void onItemSelected() {
-            //TODO: show the elevation on the view
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                row.setElevation(4);
+            }
+        }
+
+        @Override
+        public void onItemClear() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                row.setElevation(0);
+            }
         }
     }
 }

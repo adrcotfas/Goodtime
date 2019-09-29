@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="?attr/android:windowBackground"
-    android:minHeight="?attr/actionBarSize">
+    tools:targetApi="lollipop">
 
     <FrameLayout
         android:id="@+id/scroll_icon_container"
