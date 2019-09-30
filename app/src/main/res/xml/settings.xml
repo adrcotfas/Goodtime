@@ -134,7 +134,7 @@
             android:title="@string/pref_enable_ringtone"
             app:iconSpaceReserved="false"/>
 
-        <RingtonePreference
+        <com.takisoft.preferencex.RingtonePreference
             android:defaultValue="content://settings/system/notification_sound"
             android:key="pref_ringtone"
             android:persistent="true"
@@ -156,7 +156,7 @@
             android:dependency="pref_enable_ringtone"
             app:iconSpaceReserved="false"/>
 
-        <RingtonePreference
+        <com.takisoft.preferencex.RingtonePreference
             android:defaultValue="content://settings/system/notification_sound"
             android:key="pref_ringtone_break"
             android:persistent="true"

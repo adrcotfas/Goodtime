@@ -31,7 +31,7 @@ import android.view.WindowManager;
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.Constants;
-import com.takisoft.preferencex.PreferenceFragmentCompat;
+import com.takisoft.preferencex.RingtonePreferenceDialogFragmentCompat;
 import com.takisoft.preferencex.RingtonePreference;
 
 import androidx.annotation.Nullable;
@@ -40,6 +40,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.DISABLE_SOUND_AND_VIBRATION;
@@ -56,7 +57,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     private CheckBoxPreference mPrefDisableSoundCheckbox;
 
     @Override
-    public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+    public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
 
         mPrefDisableSoundCheckbox = findPreference(DISABLE_SOUND_AND_VIBRATION);
@@ -109,9 +110,26 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         });
     }
 
+    @Override
+    public void onDisplayPreferenceDialog(Preference preference) {
+        if (preference instanceof RingtonePreference) {
+            RingtonePreferenceDialogFragmentCompat dialog = RingtonePreferenceDialogFragmentCompat.newInstance(preference.getKey());
+            dialog.setTargetFragment(this, 0);
+            dialog.show(getFragmentManager(), null);
+        } else if (preference instanceof ProperSeekBarPreference) {
+            ProperSeekBarPreferenceDialog dialog = ProperSeekBarPreferenceDialog.newInstance(preference.getKey());
+            dialog.setTargetFragment(this, 0);
+            dialog.show(getFragmentManager(), null);
+        } else {
+            super.onDisplayPreferenceDialog(preference);
+        }
+    }
+
     private void setupDurations() {
         mPrefWorkDuration = findPreference(PreferenceHelper.WORK_DURATION);
+        mPrefWorkDuration.setShowSeekBarValue(true);
         mPrefBreakDuration = findPreference(PreferenceHelper.BREAK_DURATION);
+        mPrefBreakDuration.setShowSeekBarValue(true);
         mPrefEnableLongBreak = findPreference(PreferenceHelper.ENABLE_LONG_BREAK);
         toggleLongBreakPreference(mPrefEnableLongBreak.isChecked());
         mPrefEnableLongBreak.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -119,7 +137,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
             return true;
         });
         mPrefLongBreakDuration = findPreference(PreferenceHelper.LONG_BREAK_DURATION);
+        mPrefLongBreakDuration.setShowSeekBarValue(true);
         mPrefSessionsBeforeLongBreak = findPreference(PreferenceHelper.SESSIONS_BEFORE_LONG_BREAK);
+        mPrefSessionsBeforeLongBreak.setShowSeekBarValue(true);
     }
 
     private void setupProfile() {

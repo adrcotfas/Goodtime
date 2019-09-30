@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.apps.adrcotfas.goodtime"
         minSdkVersion 16
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 89
         versionName "2.0.11"
     }
@@ -52,13 +52,12 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 
     // Preferences
-    implementation 'androidx.preference:preference:1.1.0-alpha02'
+    implementation 'androidx.preference:preference:1.1.0'
 
-    implementation 'com.takisoft.preferencex:preferencex:1.0.0'
-    implementation 'com.takisoft.preferencex:preferencex-ringtone:1.0.0'
+    implementation 'com.takisoft.preferencex:preferencex-ringtone:1.1.0-alpha05'
 
     // Color picker for the labels
-    implementation 'com.takisoft.colorpicker:colorpicker:1.0.0'
+    implementation 'com.takisoft.preferencex:preferencex-colorpicker:1.1.0-alpha05'
 
     // EventBus
     implementation 'de.greenrobot:eventbus:2.4.0'

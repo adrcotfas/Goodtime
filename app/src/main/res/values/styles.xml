@@ -1,15 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <declare-styleable name="ProperSeekBarPreference">
-        <attr format="integer" name="min"/>
-        <attr name="android:max"/>
-        <attr name="android:layout"/>
-        <attr format="integer" name="seekBarIncrement"/>
-        <attr format="boolean" name="adjustable"/>
-        <attr format="boolean" name="showSeekBarValue"/>
-        <attr format="string" name="dialogTitle"/>
-    </declare-styleable>
-
     <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
         <item name="background">?attr/colorPrimary</item>
     </style>
