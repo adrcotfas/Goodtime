@@ -10,6 +10,8 @@
          alt="Get it on F-Droid" height="80">
 </a>
 
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CH2SJKS6GXG6L)
+
 A minimalist but powerful productivity timer designed to keep you focused and free of distractions.
 <br>Alternate between focused work sessions and short breaks handled by the app.
 <br>Get rid of procrastination and improve your time management!
