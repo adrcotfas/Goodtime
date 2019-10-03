@@ -191,6 +191,7 @@
         <item name="android:navigationBarColor" tools:targetApi="lollipop">?attr/colorPrimary</item>
 
         <item name="alertDialogTheme">@style/DialogTheme</item>
+        <item name="snackbarStyle">@style/SnackbarStyle</item>
 
         <item name="palette">@array/lightPalette</item>
         <item name="fontFamily">@font/app_font</item>
@@ -247,4 +248,9 @@
         <item name="android:paddingBottom">16dp</item>
         <item name="android:layout_marginBottom">16dp</item>
     </style>
+
+    <style name="SnackbarStyle" parent="Widget.MaterialComponents.Snackbar">
+        <item name="android:background">@color/gray1000</item>
+    </style>
+
 </resources>

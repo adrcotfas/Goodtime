@@ -224,9 +224,7 @@ public class TimerActivity
                         showTutorialSnackbars();
                     })
                     .setAnchorView(mToolbar)
-                    // TODO: extract style to xml
                     .setActionTextColor(getResources().getColor(R.color.teal200));
-            s.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.gray1000));
 
             s.setBehavior(new BaseTransientBottomBar.Behavior() {
                 @Override

@@ -58,6 +58,7 @@ public class PreferenceHelper {
     private static final String CURRENT_SESSION_LABEL      = "pref_current_session_label";
     private static final String CURRENT_SESSION_COLOR      = "pref_current_session_color";
     private static final String INTRO_SNACKBAR_STEP        = "pref_intro_snackbar_step";
+    private static final String INTRO_ARCHIVE_LABEL        = "pref_intro_archive_label";
 
     public static final String TIMER_STYLE                = "pref_timer_style";
 
@@ -279,5 +280,15 @@ public class PreferenceHelper {
         } else {
             return GoodtimeApplication.getPrivatePreferences().getBoolean(PRO, false);
         }
+    }
+
+    public static boolean getArchivedLabelHintWasShown() {
+        return GoodtimeApplication.getPrivatePreferences()
+                .getBoolean(INTRO_ARCHIVE_LABEL, false);
+    }
+
+    public static void setArchivedLabelHintWasShown(boolean state) {
+        GoodtimeApplication.getPrivatePreferences().edit()
+                .putBoolean(INTRO_ARCHIVE_LABEL, state).apply();
     }
 }

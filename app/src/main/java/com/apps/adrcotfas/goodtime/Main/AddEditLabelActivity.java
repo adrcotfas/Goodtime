@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
@@ -30,12 +31,15 @@ import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityAddEditLabelsBinding;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.takisoft.colorpicker.ColorPickerDialog;
 
 import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
@@ -191,6 +195,30 @@ public class AddEditLabelActivity extends AppCompatActivity
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
             PreferenceHelper.setCurrentSessionLabel(new Label(null, COLOR_INDEX_UNLABELED));
         }
+        if (!PreferenceHelper.getArchivedLabelHintWasShown()) {
+            showArchivedLabelHint();
+        }
+    }
+
+    /**
+     * When archiving a label for the first time, a snackbar will be shown to explain the action.
+     */
+    private void showArchivedLabelHint() {
+        Snackbar s = Snackbar.make(mRecyclerView, getString(R.string.tutorial_archive_label), Snackbar.LENGTH_INDEFINITE)
+                .setAction("OK", view -> PreferenceHelper.setArchivedLabelHintWasShown(true))
+                .setActionTextColor(getResources().getColor(R.color.teal200));
+
+        s.setBehavior(new BaseTransientBottomBar.Behavior() {
+            @Override
+            public boolean canSwipeDismissView(View child) {
+                return false;
+            }
+        });
+        TextView tv = s.getView().findViewById(com.google.android.material.R.id.snackbar_text);
+        if (tv != null) {
+            tv.setTextColor(ContextCompat.getColor(this, R.color.white));
+        }
+        s.show();
     }
 
     @Override

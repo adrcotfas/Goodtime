@@ -97,6 +97,7 @@ public class AboutActivity extends MaterialAboutActivity {
                         .sizeDp(18))
                 .setOnClickAction(() -> {
                     PreferenceHelper.setLastIntroStep(0);
+                    PreferenceHelper.setArchivedLabelHintWasShown(false);
                     Intent i = new Intent(AboutActivity.this, TimerActivity.class);
                     startActivity(i);
                 })
