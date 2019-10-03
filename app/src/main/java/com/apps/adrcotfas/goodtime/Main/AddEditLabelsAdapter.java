@@ -88,7 +88,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
         holder.imageLeft.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.colorId));
 
         holder.labelicon.setImageDrawable(ContextCompat.getDrawable(
-                mContext.get(), crtLabel.archived ? R.drawable.ic_archive : R.drawable.ic_label));
+                mContext.get(), crtLabel.archived ? R.drawable.ic_label_off : R.drawable.ic_label));
 
         holder.labelicon.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.colorId));
         holder.scrollIconContainer.setOnTouchListener((v, event) -> {
@@ -217,7 +217,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
                 crtLabel.archived = !crtLabel.archived;
                 mCallback.onToggleArchive(crtLabel, getAdapterPosition());
                 labelicon.setImageDrawable(ContextCompat.getDrawable(
-                        mContext.get(), crtLabel.archived ? R.drawable.ic_archive : R.drawable.ic_label));
+                        mContext.get(), crtLabel.archived ? R.drawable.ic_label_off : R.drawable.ic_label));
             });
 
             // changing the colorId of a label
