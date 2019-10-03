@@ -81,7 +81,7 @@ dependencies {
     implementation 'com.mikepenz:community-material-typeface:2.0.46.1@aar'
 
     // intro
-    implementation 'com.github.adrcotfas:material-intro:e1228'
+    implementation 'com.heinrichreimersoftware:material-intro:2.0.0'
 
     implementation 'io.github.kobakei:ratethisapp:1.2.0'
 
