@@ -40,7 +40,6 @@ public class PreferenceHelper {
     public final static String INSISTENT_RINGTONE          = "pref_ringtone_insistent";
     public final static String RINGTONE_WORK_FINISHED      = "pref_ringtone";
     public final static String RINGTONE_BREAK_FINISHED     = "pref_ringtone_break";
-    public final static String RINGTONE_BREAK_FINISHED_DUMMY = "pref_ringtone_break_dummy";
     private final static String ENABLE_VIBRATE              = "pref_vibrate";
     private final static String ENABLE_FULLSCREEN           = "pref_fullscreen";
     public final static String DISABLE_SOUND_AND_VIBRATION = "pref_disable_sound_and_vibration";
@@ -61,7 +60,6 @@ public class PreferenceHelper {
     private static final String INTRO_SNACKBAR_STEP        = "pref_intro_snackbar_step";
 
     public static final String TIMER_STYLE                = "pref_timer_style";
-    public static final String TIMER_STYLE_DUMMY          = "pref_timer_style_dummy";
 
     private static final String SESSIONS_COUNTER          = "pref_sessions_counter";
     private static final String ADD_60_SECONDS_COUNTER    = "pref_add_60_seconds_times";

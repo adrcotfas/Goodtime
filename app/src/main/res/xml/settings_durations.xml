@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ListPreference
+        android:dialogTitle="@string/Profile"
+        android:key="pref_profile"
+        android:entries="@array/pref_profiles"
+        android:defaultValue="@string/pref_profile_default"
+        android:entryValues="@array/pref_profiles"
+        android:persistent="true"
+        android:summary="%s"
+        android:title="@string/Profile"
+        app:iconSpaceReserved="false"/>
+
+    <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
+        android:key="pref_work_duration"
+        android:title="@string/pref_work_duration"
+        app:min="1"
+        app:dialogTitle="@string/pref_work_duration"
+        android:defaultValue="25"
+        android:max="240"
+        app:iconSpaceReserved="false"/>
+
+    <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
+        android:key="pref_break_duration"
+        android:title="@string/pref_break_duration"
+        app:min="1"
+        app:dialogTitle="@string/pref_break_duration"
+        android:defaultValue="5"
+        android:max="240"
+        app:iconSpaceReserved="false"/>
+
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="pref_enable_long_break"
+        android:title="@string/pref_enable_long_break"
+        app:iconSpaceReserved="false"/>
+
+    <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
+        android:key="pref_long_break_duration"
+        android:title="@string/pref_long_break_duration"
+        android:dependency="pref_enable_long_break"
+        app:min="1"
+        app:dialogTitle="@string/pref_long_break_duration"
+        android:defaultValue="15"
+        android:max="240"
+        app:iconSpaceReserved="false"/>
+
+    <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
+        android:key="pref_sessions_before_long_break"
+        android:title="@string/pref_sessions_before_long_break"
+        android:dependency="pref_enable_long_break"
+        app:min="2"
+        app:dialogTitle="@string/pref_sessions_before_long_break"
+        android:defaultValue="4"
+        android:max="10"
+        app:iconSpaceReserved="false"/>
+</PreferenceScreen>

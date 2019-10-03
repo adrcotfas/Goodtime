@@ -13,8 +13,7 @@
 
 package com.apps.adrcotfas.goodtime.Settings;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -22,23 +21,21 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.Settings;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
-import com.apps.adrcotfas.goodtime.Util.Constants;
+import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.takisoft.preferencex.RingtonePreferenceDialogFragmentCompat;
 import com.takisoft.preferencex.RingtonePreference;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.CheckBoxPreference;
-import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
@@ -48,12 +45,6 @@ import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgra
 
 public class SettingsFragment extends PreferenceFragmentCompat implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private ProperSeekBarPreference mPrefWorkDuration;
-    private ProperSeekBarPreference mPrefBreakDuration;
-    private SwitchPreferenceCompat mPrefEnableLongBreak;
-    private ProperSeekBarPreference mPrefLongBreakDuration;
-    private ProperSeekBarPreference mPrefSessionsBeforeLongBreak;
-
     private CheckBoxPreference mPrefDisableSoundCheckbox;
 
     @Override
@@ -61,14 +52,21 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         setPreferencesFromResource(R.xml.settings, rootKey);
 
         mPrefDisableSoundCheckbox = findPreference(DISABLE_SOUND_AND_VIBRATION);
-
-        setupProfile();
-        setupDurations();
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        view.setAlpha(0.f);
+        view.animate().alpha(1.f).setDuration(100);
+        return view;
+    }
+
+    @SuppressLint("BatteryLife")
+    @Override
     public void onResume() {
         super.onResume();
+        getActivity().setTitle(getString(R.string.settings));
 
         setupTheme();
         setupRingtone();
@@ -80,74 +78,42 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isIgnoringBatteryOptimizations()) {
             disableBatteryOptimizationPref.setVisible(true);
             disableBatteryOptimizationPref.setOnPreferenceClickListener(preference -> {
+
                 Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
                 startActivity(intent);
                 return true;
             });
         } else {
             disableBatteryOptimizationPref.setVisible(false);
         }
-
-        setupTimerStyle();
-    }
-
-    private void setupTimerStyle() {
-        final ListPreference timerStyle = findPreference(PreferenceHelper.TIMER_STYLE);
-        final Preference timerStyleDummy = findPreference(PreferenceHelper.TIMER_STYLE_DUMMY);
-
-        if (PreferenceHelper.isPro()) {
-            timerStyle.setVisible(true);
-            timerStyleDummy.setVisible(false);
-        } else {
-            timerStyle.setVisible(false);
-            timerStyleDummy.setVisible(true);
-        }
-
-        timerStyleDummy.setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
-            launchUpgradeActivity(getActivity());
-            return true;
-        });
     }
 
     @Override
     public void onDisplayPreferenceDialog(Preference preference) {
-        if (preference instanceof RingtonePreference) {
+        if (preference.getKey().equals(PreferenceHelper.RINGTONE_BREAK_FINISHED)) {
+            if (PreferenceHelper.isPro()) {
+                RingtonePreferenceDialogFragmentCompat dialog = RingtonePreferenceDialogFragmentCompat.newInstance(preference.getKey());
+                dialog.setTargetFragment(this, 0);
+                dialog.show(getFragmentManager(), null);
+            } else {
+                launchUpgradeActivity(getActivity());
+            }
+        }
+        else if (preference instanceof RingtonePreference) {
             RingtonePreferenceDialogFragmentCompat dialog = RingtonePreferenceDialogFragmentCompat.newInstance(preference.getKey());
             dialog.setTargetFragment(this, 0);
             dialog.show(getFragmentManager(), null);
-        } else if (preference instanceof ProperSeekBarPreference) {
-            ProperSeekBarPreferenceDialog dialog = ProperSeekBarPreferenceDialog.newInstance(preference.getKey());
-            dialog.setTargetFragment(this, 0);
-            dialog.show(getFragmentManager(), null);
+        } else if (preference.getKey().equals(PreferenceHelper.TIMER_STYLE)){
+            if (PreferenceHelper.isPro()) {
+                super.onDisplayPreferenceDialog(preference);
+            } else {
+                launchUpgradeActivity(getActivity());
+            }
         } else {
             super.onDisplayPreferenceDialog(preference);
         }
-    }
-
-    private void setupDurations() {
-        mPrefWorkDuration = findPreference(PreferenceHelper.WORK_DURATION);
-        mPrefWorkDuration.setShowSeekBarValue(true);
-        mPrefBreakDuration = findPreference(PreferenceHelper.BREAK_DURATION);
-        mPrefBreakDuration.setShowSeekBarValue(true);
-        mPrefEnableLongBreak = findPreference(PreferenceHelper.ENABLE_LONG_BREAK);
-        toggleLongBreakPreference(mPrefEnableLongBreak.isChecked());
-        mPrefEnableLongBreak.setOnPreferenceChangeListener((preference, newValue) -> {
-            toggleLongBreakPreference((Boolean) newValue);
-            return true;
-        });
-        mPrefLongBreakDuration = findPreference(PreferenceHelper.LONG_BREAK_DURATION);
-        mPrefLongBreakDuration.setShowSeekBarValue(true);
-        mPrefSessionsBeforeLongBreak = findPreference(PreferenceHelper.SESSIONS_BEFORE_LONG_BREAK);
-        mPrefSessionsBeforeLongBreak.setShowSeekBarValue(true);
-    }
-
-    private void setupProfile() {
-        ListPreference mPrefProfile = findPreference(PreferenceHelper.PROFILE);
-        mPrefProfile.setOnPreferenceChangeListener((preference, newValue) -> {
-            switchProfile((CharSequence) newValue);
-            return true;
-        });
     }
 
     private void setupAutoStartSessionVsInsistentNotification() {
@@ -188,28 +154,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     }
 
     private void setupRingtone() {
-
         final RingtonePreference prefWork = findPreference(PreferenceHelper.RINGTONE_WORK_FINISHED);
         final RingtonePreference prefBreak = findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED);
-        final Preference prefBreakDummy = findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED_DUMMY);
-        prefBreakDummy.setOnPreferenceClickListener(preference -> {
-            launchUpgradeActivity(getActivity());
-            return true;
-        });
 
         if (PreferenceHelper.isPro()) {
-            prefBreakDummy.setVisible(false);
-            prefBreak.setVisible(true);
             prefWork.setOnPreferenceChangeListener(null);
         } else {
-            prefBreakDummy.setVisible(true);
-            prefBreak.setVisible(false);
-            prefBreakDummy.setSummary(prefBreak.getSummary());
-
             prefBreak.setRingtone(prefWork.getRingtone());
             prefWork.setOnPreferenceChangeListener((preference, newValue) -> {
                 prefBreak.setRingtone((Uri) newValue);
-                prefBreakDummy.setSummary(prefBreak.getSummary());
+                prefBreak.setSummary(prefBreak.getSummary());
                 return true;
             });
         }
@@ -248,40 +202,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
             return true;
         });
         prefAmoled.setOnPreferenceChangeListener(PreferenceHelper.isPro() ? (preference, newValue) -> {
-            int amoledColor = getActivity().getResources().getColor(android.R.color.black);
-            int darkColor = getActivity().getResources().getColor(R.color.gray900);
-            int darkColorToolbar = getActivity().getResources().getColor(R.color.gray1000);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                final Handler handler = new Handler();
-                handler.postDelayed(() -> {
-                    Window window = getActivity().getWindow();
-                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                    window.setStatusBarColor((boolean) newValue ? amoledColor : darkColorToolbar);
-                }, 400);
-            }
-
-            ObjectAnimator toolbarFade = ObjectAnimator.ofObject(
-                    (Toolbar)getActivity().findViewById(R.id.toolbar),
-                    "backgroundColor",
-                    new ArgbEvaluator(),
-                    (boolean) newValue ? darkColorToolbar : amoledColor,
-                    (boolean) newValue ? amoledColor : darkColorToolbar);
-
-            ObjectAnimator backgroundFade = ObjectAnimator.ofObject(
-                    getView(),
-                    "backgroundColor",
-                    new ArgbEvaluator(),
-                    (boolean) newValue ? darkColor : amoledColor,
-                    (boolean) newValue ? amoledColor : darkColor);
-
-            backgroundFade.setDuration(500);
-            backgroundFade.setStartDelay(100);
-            toolbarFade.setDuration(500);
-            toolbarFade.setStartDelay(100);
-            backgroundFade.start();
-            toolbarFade.start();
+            ThemeHelper.setTheme((SettingsActivity)getActivity());
+            getActivity().recreate();
 
             return true;
         } : null);
@@ -333,34 +255,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         return !notificationManager.isNotificationPolicyAccessGranted();
     }
 
-    private void switchProfile(CharSequence newValue) {
-        if (newValue.equals(getResources().getText(R.string.pref_profile_default))) {
-            mPrefWorkDuration.setValue(Constants.DEFAULT_WORK_DURATION_DEFAULT);
-            mPrefBreakDuration.setValue(Constants.DEFAULT_BREAK_DURATION_DEFAULT);
-            mPrefEnableLongBreak.setChecked(false);
-            toggleLongBreakPreference(false);
-            mPrefLongBreakDuration.setValue(Constants.DEFAULT_LONG_BREAK_DURATION);
-            mPrefSessionsBeforeLongBreak.setValue(Constants.DEFAULT_SESSIONS_BEFORE_LONG_BREAK);
-        } else if (newValue.equals(getResources().getText(R.string.pref_profile_5217))) {
-            mPrefWorkDuration.setValue(Constants.DEFAULT_WORK_DURATION_5217);
-            mPrefBreakDuration.setValue(Constants.DEFAULT_BREAK_DURATION_5217);
-            mPrefEnableLongBreak.setChecked(false);
-            toggleLongBreakPreference(false);
-        }
-    }
-
     private void toggleEnableRingtonePreference(Boolean newValue) {
         findPreference(PreferenceHelper.RINGTONE_WORK_FINISHED).setVisible(newValue);
-        if (PreferenceHelper.isPro()) {
-            findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED).setVisible(newValue);
-        } else {
-            findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED_DUMMY).setVisible(newValue);
-        }
-    }
-
-    private void toggleLongBreakPreference(Boolean newValue) {
-        findPreference(PreferenceHelper.LONG_BREAK_DURATION).setVisible(newValue);
-        findPreference(PreferenceHelper.SESSIONS_BEFORE_LONG_BREAK).setVisible(newValue);
+        findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED).setVisible(newValue);
     }
 }
 

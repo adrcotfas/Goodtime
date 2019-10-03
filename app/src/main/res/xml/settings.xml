@@ -14,59 +14,20 @@
         android:title="@string/pref_header_general"
         app:iconSpaceReserved="false">
 
+        <Preference
+            app:fragment="com.apps.adrcotfas.goodtime.Settings.DurationsSettingsFragment"
+            android:title="Timer duration"
+            app:iconSpaceReserved="false"/>
+
         <ListPreference
-            android:dialogTitle="@string/Profile"
-            android:key="pref_profile"
-            android:entries="@array/pref_profiles"
-            android:defaultValue="@string/pref_profile_default"
-            android:entryValues="@array/pref_profiles"
+            android:dialogTitle="@string/pref_timer_style"
+            android:key="pref_timer_style"
+            android:entries="@array/pref_timer_style"
+            android:defaultValue="@string/pref_timer_style_default_value"
+            android:entryValues="@array/pref_timer_style_values"
             android:persistent="true"
             android:summary="%s"
-            android:title="@string/Profile"
-            app:iconSpaceReserved="false"/>
-
-        <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
-            android:key="pref_work_duration"
-            android:title="@string/pref_work_duration"
-            app:min="1"
-            app:dialogTitle="@string/pref_work_duration"
-            android:defaultValue="25"
-            android:max="240"
-            app:iconSpaceReserved="false"/>
-
-        <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
-            android:key="pref_break_duration"
-            android:title="@string/pref_break_duration"
-            app:min="1"
-            app:dialogTitle="@string/pref_break_duration"
-            android:defaultValue="5"
-            android:max="240"
-            app:iconSpaceReserved="false"/>
-
-        <SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:key="pref_enable_long_break"
-            android:title="@string/pref_enable_long_break"
-            app:iconSpaceReserved="false"/>
-
-        <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
-            android:key="pref_long_break_duration"
-            android:title="@string/pref_long_break_duration"
-            android:dependency="pref_enable_long_break"
-            app:min="1"
-            app:dialogTitle="@string/pref_long_break_duration"
-            android:defaultValue="15"
-            android:max="240"
-            app:iconSpaceReserved="false"/>
-
-        <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
-            android:key="pref_sessions_before_long_break"
-            android:title="@string/pref_sessions_before_long_break"
-            android:dependency="pref_enable_long_break"
-            app:min="2"
-            app:dialogTitle="@string/pref_sessions_before_long_break"
-            android:defaultValue="4"
-            android:max="10"
+            android:title="@string/pref_timer_style"
             app:iconSpaceReserved="false"/>
 
         <CheckBoxPreference
@@ -94,24 +55,6 @@
             android:persistent="true"
             android:key="pref_amoled"
             android:title="@string/pref_amoled"
-            app:iconSpaceReserved="false"/>
-
-        <Preference
-            android:dialogTitle="@string/pref_timer_style"
-            android:key="pref_timer_style_dummy"
-            android:summary="@string/pref_timer_style_default"
-            android:title="@string/pref_timer_style"
-            app:iconSpaceReserved="false"/>
-
-        <ListPreference
-            android:dialogTitle="@string/pref_timer_style"
-            android:key="pref_timer_style"
-            android:entries="@array/pref_timer_style"
-            android:defaultValue="@string/pref_timer_style_default_value"
-            android:entryValues="@array/pref_timer_style_values"
-            android:persistent="true"
-            android:summary="%s"
-            android:title="@string/pref_timer_style"
             app:iconSpaceReserved="false"/>
 
         <CheckBoxPreference
@@ -146,14 +89,6 @@
             android:dependency="pref_enable_ringtone"
             app:pref_showAdd="true"
             app:pref_summaryHasRingtone="%s"
-            app:iconSpaceReserved="false"/>
-
-        <Preference
-            android:key="pref_ringtone_break_dummy"
-            android:persistent="true"
-            android:summary="@string/pref_ringtone_summary"
-            android:title="@string/pref_ringtone_break"
-            android:dependency="pref_enable_ringtone"
             app:iconSpaceReserved="false"/>
 
         <com.takisoft.preferencex.RingtonePreference
