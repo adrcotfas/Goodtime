@@ -195,7 +195,7 @@ public class AddEditLabelActivity extends AppCompatActivity
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
             PreferenceHelper.setCurrentSessionLabel(new Label(null, COLOR_INDEX_UNLABELED));
         }
-        if (!PreferenceHelper.getArchivedLabelHintWasShown()) {
+        if (label.archived && !PreferenceHelper.getArchivedLabelHintWasShown()) {
             showArchivedLabelHint();
             PreferenceHelper.setArchivedLabelHintWasShown(true);
         }
