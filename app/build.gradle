@@ -63,7 +63,7 @@ dependencies {
     implementation 'de.greenrobot:eventbus:2.4.0'
 
     // for the NavigationView of NavigationDrawer
-    implementation 'com.google.android.material:material:1.1.0-alpha10'
+    implementation 'com.google.android.material:material:1.1.0-alpha02'
 
     // About
     implementation 'com.github.daniel-stoneuk:material-about-library:2.4.2'
