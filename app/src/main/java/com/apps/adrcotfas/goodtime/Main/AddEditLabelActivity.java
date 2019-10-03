@@ -197,6 +197,7 @@ public class AddEditLabelActivity extends AppCompatActivity
         }
         if (!PreferenceHelper.getArchivedLabelHintWasShown()) {
             showArchivedLabelHint();
+            PreferenceHelper.setArchivedLabelHintWasShown(true);
         }
     }
 
@@ -205,7 +206,7 @@ public class AddEditLabelActivity extends AppCompatActivity
      */
     private void showArchivedLabelHint() {
         Snackbar s = Snackbar.make(mRecyclerView, getString(R.string.tutorial_archive_label), Snackbar.LENGTH_INDEFINITE)
-                .setAction("OK", view -> PreferenceHelper.setArchivedLabelHintWasShown(true))
+                .setAction("OK", view -> {})
                 .setActionTextColor(getResources().getColor(R.color.teal200));
 
         s.setBehavior(new BaseTransientBottomBar.Behavior() {
