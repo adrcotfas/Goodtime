@@ -46,10 +46,6 @@ public class LabelsViewModel extends AndroidViewModel {
         mLabelsDao = AppDatabase.getDatabase(application).labelDao();
         mExecutorService = Executors.newSingleThreadExecutor();
         crtExtendedLabel.setValue(getInstanceTotalLabel(application.getBaseContext()));
-
-        //Used to signal the current visible fragment in StatisticsActivity
-        MutableLiveData<Boolean> mIsMainView = new MutableLiveData<>();
-        mIsMainView.setValue(true);
     }
 
     /**
