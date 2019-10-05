@@ -11,7 +11,7 @@
  * either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-package com.apps.adrcotfas.goodtime.Main;
+package com.apps.adrcotfas.goodtime.AddEditLabels;
 
 import android.content.Context;
 import android.os.Build;
@@ -26,6 +26,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.apps.adrcotfas.goodtime.Label;
+import com.apps.adrcotfas.goodtime.Main.ItemTouchHelperAdapter;
+import com.apps.adrcotfas.goodtime.Main.ItemTouchHelperViewHolder;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.takisoft.colorpicker.ColorPickerDialog;
@@ -39,12 +41,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.apps.adrcotfas.goodtime.Main.AddEditLabelActivity.labelIsGoodToAdd;
+import static com.apps.adrcotfas.goodtime.AddEditLabels.AddEditLabelActivity.labelIsGoodToAdd;
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.clearFocusEditText;
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.requestFocusEditText;
 
 public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdapter.ViewHolder>
-        implements ItemTouchHelperAdapter{
+        implements ItemTouchHelperAdapter {
 
     public interface OnEditLabelListener {
         void onEditColor(String label, int newColor);

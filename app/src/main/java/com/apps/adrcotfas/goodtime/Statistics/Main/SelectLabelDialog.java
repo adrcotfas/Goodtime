@@ -23,7 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.apps.adrcotfas.goodtime.Label;
-import com.apps.adrcotfas.goodtime.Main.AddEditLabelActivity;
+import com.apps.adrcotfas.goodtime.AddEditLabels.AddEditLabelActivity;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;

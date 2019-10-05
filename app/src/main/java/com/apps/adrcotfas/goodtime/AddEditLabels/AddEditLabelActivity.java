@@ -11,7 +11,7 @@
  * either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-package com.apps.adrcotfas.goodtime.Main;
+package com.apps.adrcotfas.goodtime.AddEditLabels;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -28,6 +28,8 @@ import android.widget.Toast;
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.Label;
+import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
+import com.apps.adrcotfas.goodtime.Main.SimpleItemTouchHelperCallback;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityAddEditLabelsBinding;
