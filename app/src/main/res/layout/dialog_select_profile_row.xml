@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_edit_label_row"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <CheckedTextView
+        android:id="@id/text"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/listPreferredItemHeightSmall"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:gravity="center_vertical"
+        android:drawableLeft="?android:attr/listChoiceIndicatorSingle"
+        android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
+        android:paddingRight="?android:attr/listPreferredItemPaddingRight"
+        android:drawableStart="?android:attr/listChoiceIndicatorSingle"
+        android:paddingStart="?android:attr/listPreferredItemPaddingLeft"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingRight"
+        android:height="48dp" />
+
+    <FrameLayout
+        android:id="@+id/image_delete_container"
+        android:layout_width="@dimen/menu_item_size"
+        android:layout_height="@dimen/menu_item_size"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:focusable="true"
+        android:clickable="true">
+        <ImageView
+            android:id="@+id/image_delete"
+            android:contentDescription="@string/dialog_delete"
+            android:src="@drawable/ic_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+        <View
+            android:layout_width="@dimen/menu_item_ripple_size"
+            android:layout_height="@dimen/menu_item_ripple_size"
+            android:layout_gravity="center"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:duplicateParentState="true">
+        </View>
+    </FrameLayout>
+
+</RelativeLayout>

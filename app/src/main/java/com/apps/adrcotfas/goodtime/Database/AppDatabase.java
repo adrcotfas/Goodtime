@@ -16,6 +16,7 @@ package com.apps.adrcotfas.goodtime.Database;
 import android.content.Context;
 
 import com.apps.adrcotfas.goodtime.Label;
+import com.apps.adrcotfas.goodtime.Profile;
 import com.apps.adrcotfas.goodtime.Session;
 
 import androidx.annotation.NonNull;
@@ -25,7 +26,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Session.class, Label.class}, version = 2, exportSchema = false)
+@Database(entities = {Session.class, Label.class, Profile.class}, version = 3, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final Object LOCK = new Object();
@@ -50,6 +51,19 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    private static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL(
+                    "CREATE TABLE Profile (name TEXT NOT NULL, durationWork INTEGER NOT NULL" +
+                            ", durationBreak INTEGER NOT NULL" +
+                            ", enableLongBreak INTEGER NOT NULL" +
+                            ", durationLongBreak INTEGER NOT NULL" +
+                            ", sessionsBeforeLongBreak INTEGER NOT NULL" +
+                            ", PRIMARY KEY(name))");
+        }
+    };
+
     public static AppDatabase getDatabase(Context context) {
         if (INSTANCE == null || !INSTANCE.isOpen()) {
             synchronized (LOCK) {
@@ -71,11 +85,13 @@ public abstract class AppDatabase extends RoomDatabase {
         INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                 AppDatabase.class, "goodtime-db")
                 .setJournalMode(JournalMode.TRUNCATE)
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .build();
     }
 
     public abstract SessionDao sessionModel();
 
     public abstract LabelDao labelDao();
+
+    public abstract ProfileDao profileDao();
 }

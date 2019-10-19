@@ -3,15 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ListPreference
+    <com.apps.adrcotfas.goodtime.Settings.ProfilePreference
         android:dialogTitle="@string/Profile"
         android:key="pref_profile"
-        android:entries="@array/pref_profiles"
         android:defaultValue="@string/pref_profile_default"
-        android:entryValues="@array/pref_profiles"
         android:persistent="true"
         android:summary="%s"
         android:title="@string/Profile"
+        android:enabled="false"
         app:iconSpaceReserved="false"/>
 
     <com.apps.adrcotfas.goodtime.Settings.ProperSeekBarPreference
@@ -57,4 +56,10 @@
         android:defaultValue="4"
         android:max="10"
         app:iconSpaceReserved="false"/>
+
+    <EditTextPreference
+        android:key="pref_save_custom_profile"
+        android:title="@string/pref_save_custom_profile"
+        android:icon="@drawable/ic_done"/>
+
 </PreferenceScreen>
