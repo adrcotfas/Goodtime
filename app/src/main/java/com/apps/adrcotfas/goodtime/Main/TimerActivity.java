@@ -85,7 +85,6 @@ import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.AMOLED;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREENSAVER_MODE;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREEN_ON;
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
-import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 import static java.lang.String.format;
 
 public class TimerActivity

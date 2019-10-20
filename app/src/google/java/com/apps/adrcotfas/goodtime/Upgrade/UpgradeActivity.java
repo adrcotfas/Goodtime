@@ -121,7 +121,7 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
 
     @Override
     public void onProductPurchased(@NonNull String productId, TransactionDetails details) {
-        PreferenceHelper.setPro();
+        PreferenceHelper.setPro(true);
         buy.setEnabled(false);
         Toast.makeText(UpgradeActivity.this, getString(R.string.upgrade_enjoy), Toast.LENGTH_LONG).show();
         finish();
@@ -133,13 +133,10 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
         for(String sku : mBillingProcessor.listOwnedProducts()) {
             if (sku.equals(Constants.sku)) {
                 buy.setEnabled(false);
-                PreferenceHelper.setPro();
                 found = true;
             }
         }
-        if (found) {
-            PreferenceHelper.setPro();
-        }
+        PreferenceHelper.setPro(found);
     }
 
     @Override
@@ -167,12 +164,13 @@ public class UpgradeActivity extends AppCompatActivity implements BillingProcess
         mBillingProcessor.loadOwnedPurchasesFromGoogle();
         if (mBillingProcessor.isPurchased(Constants.sku)) {
             buy.setVisibility(View.GONE);
-            PreferenceHelper.setPro();
+            PreferenceHelper.setPro(true);
         } else {
             SkuDetails details = mBillingProcessor.getPurchaseListingDetails(Constants.sku);
             if (details != null) {
                 buy.setText(details.priceText);
             }
+            PreferenceHelper.setPro(false);
         }
 
         mProgressBar.setVisibility(View.GONE);

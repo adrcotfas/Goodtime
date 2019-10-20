@@ -316,9 +316,9 @@ public class PreferenceHelper {
                 .putInt(ADD_60_SECONDS_COUNTER, getAdd60SecondsCounter() + 1).apply();
     }
 
-    public static void setPro() {
+    public static void setPro(boolean value) {
         GoodtimeApplication.getPrivatePreferences().edit()
-                .putBoolean(PRO, true).apply();
+                .putBoolean(PRO, value).apply();
     }
 
     public static boolean isPro() {
