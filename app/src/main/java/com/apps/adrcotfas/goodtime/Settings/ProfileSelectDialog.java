@@ -27,7 +27,7 @@ public class ProfileSelectDialog extends PreferenceDialogFragmentCompat implemen
             int mClickedDialogEntryIndex;
     private CharSequence[] mEntries;
 
-    private ProfilesVieModel mProfilesViewModel;
+    private ProfilesViewModel mProfilesViewModel;
 
     private ProfileSelectAdapter mAdapter;
     private RecyclerView mRecyclerView;
@@ -74,7 +74,7 @@ public class ProfileSelectDialog extends PreferenceDialogFragmentCompat implemen
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
 
-        mProfilesViewModel = ViewModelProviders.of(this).get(ProfilesVieModel.class);
+        mProfilesViewModel = ViewModelProviders.of(this).get(ProfilesViewModel.class);
         LayoutInflater inflater = LayoutInflater.from(getContext());
         @SuppressLint("InflateParams")
         View dialogView = inflater.inflate(R.layout.dialog_select_profile, null);

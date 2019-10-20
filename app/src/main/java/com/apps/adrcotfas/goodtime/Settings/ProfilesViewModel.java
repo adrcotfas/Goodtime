@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ProfilesVieModel extends AndroidViewModel {
+public class ProfilesViewModel extends AndroidViewModel {
 
     private final ProfileDao mProfilesDao;
     private final ExecutorService mExecutorService;
 
-    public ProfilesVieModel(@NonNull Application application) {
+    public ProfilesViewModel(@NonNull Application application) {
         super(application);
         mProfilesDao = AppDatabase.getDatabase(application).profileDao();
         mExecutorService = Executors.newSingleThreadExecutor();
