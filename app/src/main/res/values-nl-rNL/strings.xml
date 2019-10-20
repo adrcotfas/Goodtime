@@ -23,7 +23,7 @@
     <string name="pref_ringtone_break">Bericht over beëindigde pauze</string>
     <string name="pref_auto_start_break">"Auto start pauze"</string>
     <string name="pref_auto_start_work">"Auto aan de slag"</string>
-    <string name="pref_auto_start_break_summary">Begin van de pauze na een werksessie zonder tussenkomst van de gebruiker</string>
+    <string name="pref_auto_start_break_summary">Start de pauze na een werksessie zonder interactie van de gebruiker</string>
     <string name="pref_auto_start_work_summary">Start de sessie na een onderbreking zonder tussenkomst van de gebruiker</string>
     <string name="pref_disable_battery_optimization">Nauwkeurige meldingen</string>
     <string name="pref_disable_battery_optimization_summary">Optimalisatie van de batterij voor dit app uitschakelen</string>

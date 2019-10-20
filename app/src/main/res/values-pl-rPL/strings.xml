@@ -134,7 +134,7 @@
     <string name="pref_session_counter">Licznik sesji</string>
     <string name="pref_session_counter_summary">"Pokazuje dzisiejszą liczbę ukończonych sesji"</string>
     <string name="support_the_developer">Wesprzyj dewelopera</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
-    <string name="action_reset_counter_title">Reset?</string>
-    <string name="tutorial_title">Tutorial</string>
+    <string name="action_reset_counter">To zresetuje dzisiejsze sesje.</string>
+    <string name="action_reset_counter_title">Zresetować?</string>
+    <string name="tutorial_title">Samouczek</string>
 </resources>

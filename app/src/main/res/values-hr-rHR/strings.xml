@@ -29,7 +29,7 @@
     <string name="pref_disable_battery_optimization_summary">Onemogući optimizaciju baterije za ovu aplikaciju</string>
     <string name="pref_screen_saver">Screensaver način</string>
     <string name="pref_screen_saver_summary">Pomiče tajmer dok je zaslon uključen</string>
-    <string name="about">Info</string>
+    <string name="about">O aplikaciji</string>
     <string name="about_translate">Prevedi ovu aplikaciju</string>
     <string name="about_open_source_licences">Licenca otvorenog koda</string>
     <string name="about_no_email">"Nijedna aplikacija za slanje e-pošte nije instalirana."</string>
@@ -134,7 +134,7 @@
     <string name="pref_session_counter">Brojač sjednica</string>
     <string name="pref_session_counter_summary">"Prikazuje današnji broj dovršenih sesija"</string>
     <string name="support_the_developer">Podrži programera</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
-    <string name="action_reset_counter_title">Reset?</string>
-    <string name="tutorial_title">Tutorial</string>
+    <string name="action_reset_counter">Ovo će resetovati današnje završene sesije.</string>
+    <string name="action_reset_counter_title">Resetirajte?</string>
+    <string name="tutorial_title">Tutorijal</string>
 </resources>

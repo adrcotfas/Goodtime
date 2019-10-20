@@ -21,7 +21,7 @@
     <string name="pref_ringtone_insistent">"Notificación insistente"</string>
     <string name="pref_ringtone_insistent_summary">"Repetir la notificación hasta que la cancele"</string>
     <string name="pref_ringtone_break">Sonido de descanso terminado</string>
-    <string name="pref_auto_start_break">"Inicio automático de descanso"</string>
+    <string name="pref_auto_start_break">"Inicio de descanso automático"</string>
     <string name="pref_auto_start_work">"Inicio automático de trabajo"</string>
     <string name="pref_auto_start_break_summary">Iniciar el descanso después de una sesión de trabajo sin interacción del usuario</string>
     <string name="pref_auto_start_work_summary">Iniciar la sesión de trabajo después de un descanso sin interacción del usuario</string>
