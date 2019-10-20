@@ -6,8 +6,49 @@ android {
         applicationId "com.apps.adrcotfas.goodtime"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 210
+        versionCode 90
         versionName "2.1.0"
+        resConfigs "ar-rSA",
+                "bn-rBD",
+                "bs-rBA",
+                "ca-rES",
+                "cs-rCZ",
+                "da-rDK",
+                "de-rDE",
+                "el-rGR",
+                "en-rUS",
+                "es-rES",
+                "fi-rFI",
+                "fr-rFR",
+                "gl-rES",
+                "hi-rIN",
+                "hr-rHR",
+                "hu-rHU",
+                "in-rID",
+                "it-rIT",
+                "iw-rIL",
+                "ja-rJP",
+                "ko-rKR",
+                "lt-rLT",
+                "lv-rLV",
+                "nl-rNL",
+                "no-rNO",
+                "pl-rPL",
+                "pt-rBR",
+                "pt-rPT",
+                "ro-rRO",
+                "ru-rRU",
+                "sk-rSK",
+                "sl-rSI",
+                "sr-rCS",
+                "sr-rSP",
+                "sv-rSE",
+                "th-rTH",
+                "tr-rTR",
+                "uk-rUA",
+                "vi-rVN",
+                "zh-rCN",
+                "zh-rTW"
     }
 
     dataBinding {
