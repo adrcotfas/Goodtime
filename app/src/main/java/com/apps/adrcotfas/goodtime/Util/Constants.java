@@ -15,6 +15,8 @@ package com.apps.adrcotfas.goodtime.Util;
 
 public class Constants {
 
+    public static final String PROFILE_NAME_DEFAULT = "25/5";
+    public static final String PROFILE_NAME_52_17 = "52/17";
     public static final int DEFAULT_WORK_DURATION_DEFAULT = 25;
     public static final int DEFAULT_BREAK_DURATION_DEFAULT = 5;
     public static final int DEFAULT_LONG_BREAK_DURATION        = 15;

@@ -20,7 +20,7 @@ import com.apps.adrcotfas.goodtime.R;
 
 public class SaveCustomProfileDialog extends PreferenceDialogFragmentCompat {
 
-    private ProfilesVieModel mProfilesViewModel;
+    private ProfilesViewModel mProfilesViewModel;
     private Profile mProfileToAdd;
     private String mTitle;
     private String mCrtProfileName;
@@ -39,7 +39,7 @@ public class SaveCustomProfileDialog extends PreferenceDialogFragmentCompat {
     @Override
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
-        mProfilesViewModel = ViewModelProviders.of(this).get(ProfilesVieModel.class);
+        mProfilesViewModel = ViewModelProviders.of(this).get(ProfilesViewModel.class);
         ListPreference profilePreference = (ListPreference) getPreference();
 
         LayoutInflater inflater = LayoutInflater.from(getContext());

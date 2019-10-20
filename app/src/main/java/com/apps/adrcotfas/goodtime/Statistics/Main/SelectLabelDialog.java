@@ -15,34 +15,43 @@ package com.apps.adrcotfas.goodtime.Statistics.Main;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 
+import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.AddEditLabels.AddEditLabelActivity;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
+import com.apps.adrcotfas.goodtime.Profile;
 import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Settings.ProfilesViewModel;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.DialogSelectLabelBinding;
 import com.google.android.material.chip.Chip;
 
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 
 import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceTotalLabel;
 import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceUnlabeledLabel;
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_ALL_LABELS;
+import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
 public class SelectLabelDialog extends DialogFragment {
 
@@ -57,9 +66,16 @@ public class SelectLabelDialog extends DialogFragment {
         void onLabelSelected(Label label);
     }
 
+    private List<Profile> mProfiles;
     private String mLabel;
     private WeakReference<OnLabelSelectedListener> mCallback;
+    /**
+     * The extended version of this dialog is used in the Statistics
+     * where it also contains "all" as a label.
+     * The regular version contains an extra neutral button for selecting the current profile.
+     */
     private boolean mIsExtendedVersion;
+    private AlertDialog mAlertDialog;
 
     public SelectLabelDialog() {
         // Empty constructor required for DialogFragment
@@ -84,8 +100,21 @@ public class SelectLabelDialog extends DialogFragment {
                 null,
                 false);
 
-        LabelsViewModel mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
-        mLabelsViewModel.getLabels().observe(this, labels -> {
+        binding.editLabels.setOnClickListener(v -> {
+            if (PreferenceHelper.isPro()) {
+                Intent intent = new Intent(getActivity(), AddEditLabelActivity.class);
+                startActivity(intent);
+            } else {
+                launchUpgradeActivity(getActivity());
+            }
+
+            if (mAlertDialog != null) {
+                mAlertDialog.dismiss();
+            }
+        });
+
+        LabelsViewModel labelsVm = ViewModelProviders.of(this).get(LabelsViewModel.class);
+        labelsVm.getLabels().observe(this, labels -> {
 
             int i = 0;
             if (mIsExtendedVersion) {
@@ -104,7 +133,6 @@ public class SelectLabelDialog extends DialogFragment {
             }
 
             for (int j = labels.size() - 1; j >= 0; --j) {
-
                 Label crt = labels.get(j);
                 Chip chip = new Chip(getActivity());
                 chip.setText(crt.title);
@@ -133,7 +161,6 @@ public class SelectLabelDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()))
                 .setView(binding.getRoot())
-                .setTitle(R.string.label_dialog_select)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     if (binding.labels.getCheckedChipId() != -1) {
                         Chip chip = (Chip) (binding.labels.getChildAt(binding.labels.getCheckedChipId()));
@@ -149,17 +176,89 @@ public class SelectLabelDialog extends DialogFragment {
                     if (dialog != null) {
                         dialog.dismiss();
                     }
-                })
-                .setNeutralButton(R.string.label_dialog_edit, (dialog, i) -> {
-                    Intent intent = new Intent(getActivity(), AddEditLabelActivity.class);
-                    startActivity(intent);
                 });
-        return builder.create();
+        if (!mIsExtendedVersion) {
+            builder.setNeutralButton(
+                    PreferenceHelper.isUnsavedProfileActive()
+                            ? getResources().getString(R.string.Profile)
+                            : PreferenceHelper.getProfile(), null);
+
+            mAlertDialog = builder.create();
+            mAlertDialog.setOnShowListener(dialog -> {
+
+                //TODO: Clean-up this mess
+                Button neutral = mAlertDialog.getButton(DialogInterface.BUTTON_NEUTRAL);
+                neutral.setOnClickListener(v -> {
+                    ProfilesViewModel profilesVm = ViewModelProviders.of(SelectLabelDialog.this).get(ProfilesViewModel.class);
+                    LiveData<List<Profile>> profilesLiveData = profilesVm.getProfiles();
+                    profilesLiveData.observe(SelectLabelDialog.this, profiles -> {
+
+                        mProfiles = profiles;
+                        int profileIdx = 0;
+                        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(SelectLabelDialog.this.getActivity(),
+                                R.layout.checked_text_view);
+
+                        String pref25 = SelectLabelDialog.this.getResources().getText(R.string.pref_profile_default).toString();
+                        String pref52 = SelectLabelDialog.this.getResources().getText(R.string.pref_profile_5217).toString();
+                        String crtProfileName = PreferenceHelper.getProfile();
+
+                        if (crtProfileName.equals(pref25)) {
+                            profileIdx = 0;
+                        } else if (crtProfileName.equals(pref52)) {
+                            profileIdx = 1;
+                        }
+
+                        arrayAdapter.add(pref25);
+                        arrayAdapter.add(pref52);
+
+                        final int PREDEFINED_PROFILES_NR = arrayAdapter.getCount();
+
+                        for (int i = 0; i < profiles.size(); ++i) {
+                            Profile p = profiles.get(i);
+                            arrayAdapter.add(p.name);
+                            if (crtProfileName.equals(p.name)) {
+                                profileIdx = i + PREDEFINED_PROFILES_NR;
+                            }
+                        }
+
+                        AlertDialog.Builder profileDialogBuilder =
+                                new AlertDialog.Builder(Objects.requireNonNull(SelectLabelDialog.this.getActivity()))
+                                        .setTitle(SelectLabelDialog.this.getResources().getString(R.string.Profile))
+                                        .setSingleChoiceItems(
+                                                arrayAdapter,
+                                                PreferenceHelper.isUnsavedProfileActive() ? -1 : profileIdx,
+                                                (dialogInterface, which) -> {
+                                            String selected = arrayAdapter.getItem(which);
+                                            updateProfile(which);
+
+                                            dialogInterface.dismiss();
+                                            if (mAlertDialog != null) {
+                                                mAlertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setText(selected);
+                                            }
+                                        })
+                                        .setNegativeButton(android.R.string.cancel, (dialog1, which) -> dialog1.dismiss());
+                        profileDialogBuilder.show();
+                    });
+                });
+            });
+        }
+        return mAlertDialog;
     }
 
     private void notifyLabelSelected(Label label) {
         if (mCallback != null) {
             mCallback.get().onLabelSelected(label);
+        }
+    }
+
+    private void updateProfile(int index) {
+        if (index == 0) {
+            PreferenceHelper.setProfile25_5();
+        } else if (index == 1) {
+            PreferenceHelper.setProfile52_17();
+        } else {
+            int PREDEFINED_PROFILES_NR = 2;
+            PreferenceHelper.setProfile(mProfiles.get(index - PREDEFINED_PROFILES_NR));
         }
     }
 }

@@ -393,11 +393,7 @@ public class TimerActivity
                 bottomNavigationDrawerFragment.show(getSupportFragmentManager(), bottomNavigationDrawerFragment.getTag());
                 break;
             case R.id.action_current_label:
-                if (PreferenceHelper.isPro()) {
-                    showEditLabelDialog();
-                } else {
-                    launchUpgradeActivity(this);
-                }
+                showEditLabelDialog();
                 break;
             case R.id.action_sessions_counter:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);

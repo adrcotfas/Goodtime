@@ -17,6 +17,9 @@ import android.os.SystemClock;
 
 import com.apps.adrcotfas.goodtime.BuildConfig;
 import com.apps.adrcotfas.goodtime.Label;
+import com.apps.adrcotfas.goodtime.Profile;
+import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;
 
@@ -65,6 +68,8 @@ public class PreferenceHelper {
 
     private static final String SESSIONS_COUNTER          = "pref_sessions_counter";
     private static final String ADD_60_SECONDS_COUNTER    = "pref_add_60_seconds_times";
+
+    private static final String UNSAVED_PROFILE_ACTIVE = "pref_custom_pref_active";
 
     static void migratePreferences() {
         if (getDefaultSharedPreferences(GoodtimeApplication.getInstance())
@@ -236,6 +241,47 @@ public class PreferenceHelper {
                 .putBoolean(FIRST_RUN, false).apply();
     }
 
+    public static void setProfile25_5() {
+        setUnsavedProfileActive(false);
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
+                .putString(PROFILE, Constants.PROFILE_NAME_DEFAULT)
+                .putInt(WORK_DURATION, Constants.DEFAULT_WORK_DURATION_DEFAULT)
+                .putInt(BREAK_DURATION, Constants.DEFAULT_BREAK_DURATION_DEFAULT)
+                .putBoolean(ENABLE_LONG_BREAK, false)
+                .putInt(LONG_BREAK_DURATION, Constants.DEFAULT_LONG_BREAK_DURATION)
+                .putInt(SESSIONS_BEFORE_LONG_BREAK, Constants.DEFAULT_SESSIONS_BEFORE_LONG_BREAK)
+                .apply();
+    }
+
+    public static void setProfile52_17() {
+        setUnsavedProfileActive(false);
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
+                .putString(PROFILE, Constants.PROFILE_NAME_52_17)
+                .putInt(WORK_DURATION, Constants.DEFAULT_WORK_DURATION_5217)
+                .putInt(BREAK_DURATION, Constants.DEFAULT_BREAK_DURATION_5217)
+                .putBoolean(ENABLE_LONG_BREAK, false)
+                .putInt(LONG_BREAK_DURATION, Constants.DEFAULT_LONG_BREAK_DURATION)
+                .putInt(SESSIONS_BEFORE_LONG_BREAK, Constants.DEFAULT_SESSIONS_BEFORE_LONG_BREAK)
+                .apply();
+    }
+
+    public static void setProfile(Profile profile) {
+        setUnsavedProfileActive(false);
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
+                .putString(PROFILE, profile.name)
+                .putInt(WORK_DURATION, profile.durationWork)
+                .putInt(BREAK_DURATION, profile.durationBreak)
+                .putBoolean(ENABLE_LONG_BREAK, profile.enableLongBreak)
+                .putInt(LONG_BREAK_DURATION, profile.durationLongBreak)
+                .putInt(SESSIONS_BEFORE_LONG_BREAK, profile.sessionsBeforeLongBreak)
+                .apply();
+    }
+
+    public static String getProfile() {
+            return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getString(PROFILE,
+                    GoodtimeApplication.getInstance().getResources().getString(R.string.pref_profile_default));
+    }
+
     public static String getTimerStyle() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getString(TIMER_STYLE, "0");
     }
@@ -291,5 +337,15 @@ public class PreferenceHelper {
     public static void setArchivedLabelHintWasShown(boolean state) {
         GoodtimeApplication.getPrivatePreferences().edit()
                 .putBoolean(INTRO_ARCHIVE_LABEL, state).apply();
+    }
+
+    public static boolean isUnsavedProfileActive() {
+        return GoodtimeApplication.getPrivatePreferences()
+                .getBoolean(UNSAVED_PROFILE_ACTIVE, false);
+    }
+
+    public static void setUnsavedProfileActive(boolean state) {
+        GoodtimeApplication.getPrivatePreferences().edit()
+                .putBoolean(UNSAVED_PROFILE_ACTIVE, state).apply();
     }
 }
