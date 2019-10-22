@@ -13,12 +13,12 @@
     <string name="pref_ringtone_summary">"Benachrichtigungston festlegen"</string>
     <string name="pref_work_duration">"Dauer einer Sitzung"</string>
     <string name="pref_sessions_before_long_break">"Sitzungen vor einer langen Pause"</string>
-    <string name="pref_enable_long_break">"Lange Pausen"</string>
+    <string name="pref_enable_long_break">"Lange Pausen aktivieren"</string>
     <string name="pref_vibrate">"Vibration"</string>
     <string name="pref_amoled">"Dunkles Design"</string>
     <string name="pref_header_during_work_sessions">Während der Arbeitssitzungen</string>
     <string name="pref_enable_ringtone">"Benachrichtigungston"</string>
-    <string name="pref_ringtone_insistent">"Insistente Benachrichtigung"</string>
+    <string name="pref_ringtone_insistent">"Hartnäckige Benachrichtigung"</string>
     <string name="pref_ringtone_insistent_summary">"Benachrichtigung wiederholen, bis sie abgebrochen wird"</string>
     <string name="pref_ringtone_break">Benachrichtigungston am Ende einer Sitzung</string>
     <string name="pref_auto_start_break">"Pause automatisch starten"</string>
@@ -26,15 +26,14 @@
     <string name="pref_auto_start_break_summary">Pause nach einer Arbeitssitzung ohne Benutzerinteraktion starten</string>
     <string name="pref_auto_start_work_summary">Arbeitssitzung nach einer Pause ohne Benutzerinteraktion starten</string>
     <string name="pref_disable_battery_optimization">Genaue Benachrichtigungen</string>
-    <string name="pref_disable_battery_optimization_summary">Deaktivieren Sie die Batterieoptimierung für diese App</string>
+    <string name="pref_disable_battery_optimization_summary">Deaktiviere die Batterieoptimierung für diese App</string>
     <string name="pref_screen_saver">Bildschirmschoner-Modus</string>
     <string name="pref_screen_saver_summary">Bewegt den Timer während der Bildschirm eingeschaltet ist</string>
     <string name="about">Über</string>
     <string name="about_translate">Hilf, die App zu übersetzen</string>
     <string name="about_open_source_licences">Open Source Lizenzen</string>
-    <string name="about_no_email">"Es sind keine Email-Clients installiert."</string>
+    <string name="about_no_email">"Es sind keine Email-Accounts installiert."</string>
     <string name="about_rate_this_app">Bewerte die App</string>
-    <string name="about_visit_brasov">Braşov besuchen</string>
     <string name="about_version">Version</string>
     <string name="about_source_code">Quelltext</string>
     <string name="about_app_intro">Einführung</string>
@@ -76,6 +75,7 @@
     <string name="tutorial_swipe_left">Wischen Sie nach links oder rechts, um die aktuelle Sitzung zu überspringen</string>
     <string name="tutorial_swipe_up">Wischen Sie nach oben, um eine weitere Minute hinzuzufügen</string>
     <string name="tutorial_swipe_down">Wischen Sie den Timer nach unten, um zu stoppen</string>
+    <string name="tutorial_archive_label">Sie haben gerade ein Label archiviert. Es wird nicht für die Auswahl oder Statistik sichtbar sein.</string>
     <string name="intro_avoid_distractions">"Vermeide Ablenkungen"</string>
     <string name="intro_avoid_distractions_description">"Konzentriere dich auf deine Arbeit mit automatisch verwalteten Sessions."</string>
     <string name="intro_clear_mind">"Bekomme einen klaren Kopf"</string>
@@ -128,6 +128,9 @@
     <string name="upgrade_enjoy">Genießen Sie die pro-Version!</string>
     <string name="upgrade_extra_features">Extra-Features</string>
     <string name="Profile">Profile</string>
+    <string name="pref_profile_name">Profilname</string>
+    <string name="pref_save_custom_profile">Eigenes Profil speichern</string>
+    <string name="pref_timer_duration">Timer-Dauer</string>
     <string name="pref_timer_style">Timer-Stil</string>
     <string name="pref_timer_style_default">Standard</string>
     <string name="pref_timer_style_classic">Klassiker</string>
@@ -137,4 +140,5 @@
     <string name="support_the_developer">Unterstütze den Entwickler</string>
     <string name="action_reset_counter">Dies wird die heutigen Sitzungen zurücksetzen.</string>
     <string name="action_reset_counter_title">Zurücksetzen?</string>
+    <string name="tutorial_title">Einführungen</string>
 </resources>

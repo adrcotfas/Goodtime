@@ -97,6 +97,7 @@ public class AboutActivity extends MaterialAboutActivity {
                         .sizeDp(18))
                 .setOnClickAction(() -> {
                     PreferenceHelper.setLastIntroStep(0);
+                    PreferenceHelper.setArchivedLabelHintWasShown(false);
                     Intent i = new Intent(AboutActivity.this, TimerActivity.class);
                     startActivity(i);
                 })
@@ -134,21 +135,10 @@ public class AboutActivity extends MaterialAboutActivity {
                 null
         ));
 
-        MaterialAboutCard.Builder builder3 = new MaterialAboutCard.Builder();
-
-        builder3.addItem(ConvenienceBuilder.createMapItem(c,
-                new IconicsDrawable(c)
-                        .icon(CommunityMaterial.Icon.cmd_map)
-                        .color(ContextCompat.getColor(c, colorIcon))
-                        .sizeDp(18),
-                getString(R.string.about_visit_brasov),
-                null,
-                "Brasov"));
-
         return new MaterialAboutList.Builder()
                 .addCard(builder1.build())
                 .addCard(builder2.build())
-                .addCard(builder3.build()).build();
+                .build();
     }
 
     @Override

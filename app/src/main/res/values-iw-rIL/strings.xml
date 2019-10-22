@@ -34,7 +34,6 @@
     <string name="about_open_source_licences">רשיונות קוד פתוח</string>
     <string name="about_no_email">"אין תוכנות אימייל מותקנות."</string>
     <string name="about_rate_this_app">דרגו את האפליקציה</string>
-    <string name="about_visit_brasov">בקר בראשוב</string>
     <string name="about_version">גרסה</string>
     <string name="about_source_code">קוד מקור</string>
     <string name="about_app_intro">מבוא היישומים</string>
@@ -76,6 +75,7 @@
     <string name="tutorial_swipe_left">לסחוב שמאלה או ימינה כדי לדלג על ההפעלה הנוכחית</string>
     <string name="tutorial_swipe_up">לסחוב למעלה כדי להוסיף עוד דקה אחת</string>
     <string name="tutorial_swipe_down">נשמטים למטה על טיימר להפסיק</string>
+    <string name="tutorial_archive_label">פשוט ארכנת תווית. זה לא יהיה גלוי לבחירה או לסטטיסטיקה.</string>
     <string name="intro_avoid_distractions">"המנעו מהסחות דעת"</string>
     <string name="intro_avoid_distractions_description">"תשאירו את העבודה שלכם על המסלול בעזרת יחידות מתוזמנות המטופלות בידי האפליקציה."</string>
     <string name="intro_clear_mind">"נקו את הראש"</string>
@@ -128,6 +128,9 @@
     <string name="upgrade_enjoy">ליהנות גירסת pro!</string>
     <string name="upgrade_extra_features">תכונות נוספות</string>
     <string name="Profile">פרופיל</string>
+    <string name="pref_profile_name">שם הפרופיל</string>
+    <string name="pref_save_custom_profile">שמור פרופיל מותאם אישית</string>
+    <string name="pref_timer_duration">משך טיימר</string>
     <string name="pref_timer_style">סגנון טיימר</string>
     <string name="pref_timer_style_default">ברירת מחדל</string>
     <string name="pref_timer_style_classic">קלאסי</string>
@@ -135,6 +138,7 @@
     <string name="pref_session_counter">מונה הפעלות</string>
     <string name="pref_session_counter_summary">"מראה של היום מספר פגישות שהושלמו"</string>
     <string name="support_the_developer">תמכו במפתח</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
-    <string name="action_reset_counter_title">Reset?</string>
+    <string name="action_reset_counter">זה יאפס את ההפעלות המוגמרות של היום.</string>
+    <string name="action_reset_counter_title">לאפס?</string>
+    <string name="tutorial_title">מדריך</string>
 </resources>

@@ -34,7 +34,6 @@
     <string name="about_open_source_licences">Licenţele Open Source</string>
     <string name="about_no_email">"Nu există niciun client de e-mail instalat."</string>
     <string name="about_rate_this_app">Evaluează această aplicație</string>
-    <string name="about_visit_brasov">Vizitează Brașovul</string>
     <string name="about_version">Versiune</string>
     <string name="about_source_code">Codul sursă</string>
     <string name="about_app_intro">Introducere în aplicație</string>
@@ -76,6 +75,7 @@
     <string name="tutorial_swipe_left">Glisați cu degetul spre stânga sau dreapta pentru a sări peste sesiunea curentă</string>
     <string name="tutorial_swipe_up">Glisați cu degetul în sus pentru a adăuga încă un minut</string>
     <string name="tutorial_swipe_down">Glisați cu degetul în jos pe cronometru, pentru a-l opri</string>
+    <string name="tutorial_archive_label">Tocmai ai arhivat o etichetă. Nu va fi disponibilă pentru selecție sau statistici.</string>
     <string name="intro_avoid_distractions">"Evită distragerile"</string>
     <string name="intro_avoid_distractions_description">"Ține evidența muncii tale folosind sesiunile de lucru cronometrate de aplicație."</string>
     <string name="intro_clear_mind">"Limpezește-ți mintea"</string>
@@ -128,6 +128,9 @@
     <string name="upgrade_enjoy">Bucurați-vă de versiunea pro!</string>
     <string name="upgrade_extra_features">Opțiuni suplimentare</string>
     <string name="Profile">Profil</string>
+    <string name="pref_profile_name">Nume profil</string>
+    <string name="pref_save_custom_profile">Salvează profil personalizat</string>
+    <string name="pref_timer_duration">Durată timer</string>
     <string name="pref_timer_style">Stil timer</string>
     <string name="pref_timer_style_default">Prestabilit</string>
     <string name="pref_timer_style_classic">Clasic</string>
@@ -135,6 +138,7 @@
     <string name="pref_session_counter">Contor pentru sesiuni</string>
     <string name="pref_session_counter_summary">"Arată numărul de sesiuni complete pentru ziua curentă"</string>
     <string name="support_the_developer">Sprijină dezvoltatorul</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
-    <string name="action_reset_counter_title">Reset?</string>
+    <string name="action_reset_counter">Resetează sesiunile finalizate azi.</string>
+    <string name="action_reset_counter_title">Resetaţi?</string>
+    <string name="tutorial_title">Tutorial</string>
 </resources>

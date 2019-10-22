@@ -1,23 +1,72 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dialog_edit_label_row"
     android:orientation="horizontal"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="?attr/android:windowBackground"
+    tools:targetApi="lollipop">
+
+    <FrameLayout
+        android:id="@+id/scroll_icon_container"
+        android:layout_width="@dimen/menu_item_icon_size"
+        android:layout_height="@dimen/menu_item_size"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:focusable="false"
+        android:clickable="false">
+        <ImageView
+            android:id="@+id/scroll_icon"
+            android:src="@drawable/ic_dots_scroll"
+            android:contentDescription="@string/labels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|end">
+        </ImageView>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/label_icon_container"
+        android:layout_width="@dimen/menu_item_size"
+        android:layout_height="@dimen/menu_item_size"
+        android:layout_toRightOf="@id/scroll_icon_container"
+        android:layout_toEndOf="@id/scroll_icon_container"
+        android:layout_centerVertical="true"
+        android:focusable="false"
+        android:clickable="false">
+        <ImageView
+            android:id="@+id/label_icon"
+            android:src="@drawable/ic_label"
+            android:contentDescription="@string/labels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+        </ImageView>
+        <View
+            android:layout_width="@dimen/menu_item_ripple_size"
+            android:layout_height="@dimen/menu_item_ripple_size"
+            android:layout_gravity="center"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:duplicateParentState="true">
+        </View>
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/image_left_container"
         android:layout_width="@dimen/menu_item_size"
         android:layout_height="@dimen/menu_item_size"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
+        android:layout_toRightOf="@id/scroll_icon_container"
+        android:layout_toEndOf="@id/scroll_icon_container"
         android:layout_centerVertical="true"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
         android:focusable="false"
-        android:clickable="false">
+        android:clickable="false"
+        android:visibility="invisible">
         <ImageView
             android:id="@+id/image_left"
-            android:src="@drawable/ic_label"
+            android:src="@drawable/ic_palette"
             android:contentDescription="@string/labels"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,7 +97,7 @@
         android:paddingBottom="12dp"
         android:paddingTop="12dp"
 
-        style="@style/AllSessionsAddEditDialogRowEdit"/>
+        style="@style/AddEditLabelRowEdit"/>
 
     <FrameLayout
         android:id="@+id/image_delete_container"

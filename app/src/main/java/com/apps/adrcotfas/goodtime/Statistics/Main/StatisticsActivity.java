@@ -20,7 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Statistics.AllSessions.AddEditEntryDialog;
@@ -62,7 +62,7 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        mLabelsViewModel.crtExtendedLabel.observe(this, labelAndColor -> refreshCurrentLabel());
+        mLabelsViewModel.crtExtendedLabel.observe(this, label -> refreshCurrentLabel());
 
         mIsMainView = false;
         toggleStatisticsView();
@@ -97,7 +97,7 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
     private void refreshCurrentLabel() {
         if (mLabelsViewModel.crtExtendedLabel.getValue() != null && mMenuItemCrtLabel != null) {
             MenuItemCompat.setIconTintList(mMenuItemCrtLabel,
-                    ColorStateList.valueOf(ThemeHelper.getColor(this, mLabelsViewModel.crtExtendedLabel.getValue().color)));
+                    ColorStateList.valueOf(ThemeHelper.getColor(this, mLabelsViewModel.crtExtendedLabel.getValue().colorId)));
         }
     }
 
@@ -130,12 +130,8 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
 
                 break;
             case R.id.action_select_label:
-                if (PreferenceHelper.isPro()) {
-                    SelectLabelDialog.newInstance(this, mLabelsViewModel.crtExtendedLabel.getValue().label, true)
-                            .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
-                } else {
-                    launchUpgradeActivity(this);
-                }
+                SelectLabelDialog.newInstance(this, mLabelsViewModel.crtExtendedLabel.getValue().title, true)
+                        .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
 
                 break;
             case R.id.action_view_list:
@@ -153,9 +149,9 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
     }
 
     @Override
-    public void onLabelSelected(LabelAndColor labelAndColor) {
-        if (labelAndColor != null) {
-            mLabelsViewModel.crtExtendedLabel.setValue(labelAndColor);
+    public void onLabelSelected(Label label) {
+        if (label != null) {
+            mLabelsViewModel.crtExtendedLabel.setValue(label);
         } else {
             mLabelsViewModel.crtExtendedLabel.setValue(null);
         }

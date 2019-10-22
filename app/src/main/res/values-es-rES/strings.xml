@@ -21,7 +21,7 @@
     <string name="pref_ringtone_insistent">"Notificación insistente"</string>
     <string name="pref_ringtone_insistent_summary">"Repetir la notificación hasta que la cancele"</string>
     <string name="pref_ringtone_break">Sonido de descanso terminado</string>
-    <string name="pref_auto_start_break">"Inicio automático de descanso"</string>
+    <string name="pref_auto_start_break">"Inicio de descanso automático"</string>
     <string name="pref_auto_start_work">"Inicio automático de trabajo"</string>
     <string name="pref_auto_start_break_summary">Iniciar el descanso después de una sesión de trabajo sin interacción del usuario</string>
     <string name="pref_auto_start_work_summary">Iniciar la sesión de trabajo después de un descanso sin interacción del usuario</string>
@@ -34,7 +34,6 @@
     <string name="about_open_source_licences">Licencias de código abierto</string>
     <string name="about_no_email">"No hay clientes de e-mail instalados."</string>
     <string name="about_rate_this_app">Calificar esta app</string>
-    <string name="about_visit_brasov">Visita Brașov</string>
     <string name="about_version">Versión</string>
     <string name="about_source_code">Código fuente</string>
     <string name="about_app_intro">Introducción de la aplicación</string>
@@ -76,6 +75,7 @@
     <string name="tutorial_swipe_left">Deslizar hacia izquierda o derecha para saltar la sesión actual</string>
     <string name="tutorial_swipe_up">Deslizar hacia arriba para añadir un minuto más</string>
     <string name="tutorial_swipe_down">Deslice hacia abajo el temporizador para detener</string>
+    <string name="tutorial_archive_label">Acabas de archivar una etiqueta. No será visible para la selección o estadísticas.</string>
     <string name="intro_avoid_distractions">"Evitar distracciones"</string>
     <string name="intro_avoid_distractions_description">"Mantén tu trabajo en buen camino usando sesiones de tiempo manejadas por la app."</string>
     <string name="intro_clear_mind">"Limpia tu mente"</string>
@@ -128,6 +128,9 @@
     <string name="upgrade_enjoy">¡Disfruta de la versión pro!</string>
     <string name="upgrade_extra_features">Características adicionales</string>
     <string name="Profile">Perfil</string>
+    <string name="pref_profile_name">Nombre del perfil</string>
+    <string name="pref_save_custom_profile">Shrani profil po meri</string>
+    <string name="pref_timer_duration">Trajanje časovnika</string>
     <string name="pref_timer_style">Estilo de temporizador</string>
     <string name="pref_timer_style_default">Predeterminado</string>
     <string name="pref_timer_style_classic">Clásico</string>
@@ -137,4 +140,5 @@
     <string name="support_the_developer">Apoyar al desarrollador</string>
     <string name="action_reset_counter">Esto restablecerá las sesiones finalizadas de hoy.</string>
     <string name="action_reset_counter_title">¿Restablecer?</string>
+    <string name="tutorial_title">Tutorial</string>
 </resources>

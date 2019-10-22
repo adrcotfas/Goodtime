@@ -34,7 +34,6 @@
     <string name="about_open_source_licences">開源許可證</string>
     <string name="about_no_email">"沒有安裝電子郵件應用程式"</string>
     <string name="about_rate_this_app">給我們評分</string>
-    <string name="about_visit_brasov">訪問布拉索夫</string>
     <string name="about_version">版本 / 更新日誌</string>
     <string name="about_source_code">原始碼</string>
     <string name="about_app_intro">應用介紹</string>
@@ -76,6 +75,7 @@
     <string name="tutorial_swipe_left">向左或向右滑動以跳過當前會話</string>
     <string name="tutorial_swipe_up">向上滑動可再添加一分鐘</string>
     <string name="tutorial_swipe_down">向下滑動計時器停止</string>
+    <string name="tutorial_archive_label">您剛剛存檔了標籤。 對於選擇或統計信息將不可見。</string>
     <string name="intro_avoid_distractions">"避開擾人事物"</string>
     <string name="intro_avoid_distractions_description">"藉由計時器來維持你的工作水準"</string>
     <string name="intro_clear_mind">"屏除雜念"</string>
@@ -128,6 +128,9 @@
     <string name="upgrade_enjoy">享受專業版!</string>
     <string name="upgrade_extra_features">額外的功能</string>
     <string name="Profile">基本資料描述</string>
+    <string name="pref_profile_name">檔案名稱</string>
+    <string name="pref_save_custom_profile">保存自定義配置文件</string>
+    <string name="pref_timer_duration">計時器持續時間</string>
     <string name="pref_timer_style">計時器樣式</string>
     <string name="pref_timer_style_default">預設</string>
     <string name="pref_timer_style_classic">預設</string>
@@ -135,6 +138,7 @@
     <string name="pref_session_counter">會話計數器</string>
     <string name="pref_session_counter_summary">"顯示今天已完成的會話數"</string>
     <string name="support_the_developer">支持開發者</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
-    <string name="action_reset_counter_title">Reset?</string>
+    <string name="action_reset_counter">這將重置今天結束的會話。</string>
+    <string name="action_reset_counter_title">您要重設嗎？</string>
+    <string name="tutorial_title">使用教學</string>
 </resources>

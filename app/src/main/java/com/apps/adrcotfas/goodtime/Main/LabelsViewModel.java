@@ -16,8 +16,8 @@ package com.apps.adrcotfas.goodtime.Main;
 import android.app.Application;
 
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
-import com.apps.adrcotfas.goodtime.Database.LabelAndColorDao;
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Database.LabelDao;
+import com.apps.adrcotfas.goodtime.Label;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -32,40 +32,42 @@ import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceTotalLabel
 
 public class LabelsViewModel extends AndroidViewModel {
 
-    private final LabelAndColorDao mLabelsDao;
+    private final LabelDao mLabelsDao;
     private final ExecutorService mExecutorService;
 
     /**
      * The current selected label in the Statistics view
      * "extended" because it might be "total" or "unlabeled"
      */
-    public final MutableLiveData<LabelAndColor> crtExtendedLabel = new MutableLiveData<>();
+    public final MutableLiveData<Label> crtExtendedLabel = new MutableLiveData<>();
 
     public LabelsViewModel(@NonNull Application application) {
         super(application);
-        mLabelsDao = AppDatabase.getDatabase(application).labelAndColor();
+        mLabelsDao = AppDatabase.getDatabase(application).labelDao();
         mExecutorService = Executors.newSingleThreadExecutor();
         crtExtendedLabel.setValue(getInstanceTotalLabel(application.getBaseContext()));
-
-        //Used to signal the current visible fragment in StatisticsActivity
-        MutableLiveData<Boolean> mIsMainView = new MutableLiveData<>();
-        mIsMainView.setValue(true);
     }
 
-    public LiveData<List<LabelAndColor>> getLabels() {
+    /**
+     *  Returns only the labels which are not archived
+     */
+    public LiveData<List<Label>> getLabels() {
         return mLabelsDao.getLabels();
+    }
+
+    /**
+     *  Returns all labels, including the archived ones
+     */
+    public LiveData<List<Label>> getAllLabels() {
+        return mLabelsDao.getAllLabels();
     }
 
     public LiveData<Integer> getColorOfLabel(String label) {
         return mLabelsDao.getColor(label);
     }
 
-    public void addLabel(LabelAndColor labelAndColor) {
-        mExecutorService.execute(() -> mLabelsDao.addLabel(labelAndColor));
-    }
-
-    public void updateLabel(String label, String newLabel, int color) {
-        mExecutorService.execute(() -> mLabelsDao.updateLabel(label, newLabel, color));
+    public void addLabel(Label label) {
+        mExecutorService.execute(() -> mLabelsDao.addLabel(label));
     }
 
     public void editLabelName(String label, String newLabel) {
@@ -74,6 +76,14 @@ public class LabelsViewModel extends AndroidViewModel {
 
     public void editLabelColor(String label, int color) {
         mExecutorService.execute(() -> mLabelsDao.editLabelColor(label, color));
+    }
+
+    public void editLabelOrder(String label, int newOrder) {
+        mExecutorService.execute(() -> mLabelsDao.editLabelOrder(label, newOrder));
+    }
+
+    public void toggleLabelArchive(String label, boolean archived) {
+        mExecutorService.execute(() -> mLabelsDao.toggleLabelArchiveState(label, archived));
     }
 
     public void deleteLabel(String label) {

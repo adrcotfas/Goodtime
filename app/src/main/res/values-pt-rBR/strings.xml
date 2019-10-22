@@ -34,7 +34,6 @@
     <string name="about_open_source_licences">Licenças de código aberto</string>
     <string name="about_no_email">"Não há clientes de email instalados."</string>
     <string name="about_rate_this_app">Avalie este aplicativo</string>
-    <string name="about_visit_brasov">Visite Brașov</string>
     <string name="about_version">Versão</string>
     <string name="about_source_code">Código fonte</string>
     <string name="about_app_intro">Intro do app</string>
@@ -76,6 +75,7 @@
     <string name="tutorial_swipe_left">Deslize para a esquerda ou direita para pular a sessão atual</string>
     <string name="tutorial_swipe_up">Deslize para cima para adicionar mais um minuto</string>
     <string name="tutorial_swipe_down">Deslize para baixo sobre o temporizador para parar</string>
+    <string name="tutorial_archive_label">Você acabou de arquivar um rótulo. Não estará visível para seleção ou estatísticas.</string>
     <string name="intro_avoid_distractions">"Evitar distrações"</string>
     <string name="intro_avoid_distractions_description">"Mantenha seu trabalho na linha usando sessões cronometradas pelo app."</string>
     <string name="intro_clear_mind">"Limpe sua mente"</string>
@@ -128,6 +128,9 @@
     <string name="upgrade_enjoy">Aproveite a versão pro!</string>
     <string name="upgrade_extra_features">Recursos extras</string>
     <string name="Profile">Perfil</string>
+    <string name="pref_profile_name">Nome do perfil</string>
+    <string name="pref_save_custom_profile">Guardar perfil personalizado</string>
+    <string name="pref_timer_duration">Duração do temporizador</string>
     <string name="pref_timer_style">Estilo do temporizador</string>
     <string name="pref_timer_style_default">Padrão</string>
     <string name="pref_timer_style_classic">Clássico</string>
@@ -137,4 +140,5 @@
     <string name="support_the_developer">Apoie o desenvolvedor</string>
     <string name="action_reset_counter">Isto irá resetar as sessões concluídas de hoje.</string>
     <string name="action_reset_counter_title">Resetar?</string>
+    <string name="tutorial_title">Tutorial</string>
 </resources>

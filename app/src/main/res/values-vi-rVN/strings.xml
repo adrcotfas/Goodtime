@@ -34,7 +34,6 @@
     <string name="about_open_source_licences">Giấy phép Mã nguồn mở</string>
     <string name="about_no_email">"Không tìm thấy ứng dụng Email nào trên thiết bị."</string>
     <string name="about_rate_this_app">Đánh giá ứng dụng</string>
-    <string name="about_visit_brasov">Truy cập Brașov</string>
     <string name="about_version">Phiên bản</string>
     <string name="about_source_code">Mã nguồn</string>
     <string name="about_app_intro">Giới thiệu ứng dụng</string>
@@ -76,6 +75,7 @@
     <string name="tutorial_swipe_left">Vuốt sang trái hoặc phải để bỏ qua phiên hiện tại</string>
     <string name="tutorial_swipe_up">Vuốt lên để thêm một phút nữa</string>
     <string name="tutorial_swipe_down">Vuốt xuống bộ hẹn giờ để dừng</string>
+    <string name="tutorial_archive_label">Bạn chỉ cần lưu trữ một nhãn. Nó sẽ không hiển thị để lựa chọn hoặc thống kê.</string>
     <string name="intro_avoid_distractions">"Tránh làm phiền"</string>
     <string name="intro_avoid_distractions_description">"Giữ công việc theo lộ trình theo thời gian thiết lập trên ứng dụng."</string>
     <string name="intro_clear_mind">"Làm mới đầu óc"</string>
@@ -128,6 +128,9 @@
     <string name="upgrade_enjoy">Thưởng thức phiên bản pro!</string>
     <string name="upgrade_extra_features">Tính năng bổ sung</string>
     <string name="Profile">Hồ sơ</string>
+    <string name="pref_profile_name">Xuyen</string>
+    <string name="pref_save_custom_profile">Lưu hồ sơ tùy chỉnh</string>
+    <string name="pref_timer_duration">Thời gian hẹn giờ</string>
     <string name="pref_timer_style">Phong cách hẹn giờ</string>
     <string name="pref_timer_style_default">Mặc định</string>
     <string name="pref_timer_style_classic">Cổ điển</string>
@@ -135,6 +138,7 @@
     <string name="pref_session_counter">Phiên truy cập</string>
     <string name="pref_session_counter_summary">"Hiển thị số phiên hoàn thành ngày hôm nay"</string>
     <string name="support_the_developer">Hỗ trợ nhà sản xuất</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
-    <string name="action_reset_counter_title">Reset?</string>
+    <string name="action_reset_counter">Điều này sẽ thiết lập lại các phiên kết thúc ngày hôm nay.</string>
+    <string name="action_reset_counter_title">Đặt lại?</string>
+    <string name="tutorial_title">Hướng dẫn</string>
 </resources>

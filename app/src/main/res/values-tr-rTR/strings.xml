@@ -34,7 +34,6 @@
     <string name="about_open_source_licences">Açık Kaynak Lisansları</string>
     <string name="about_no_email">"Yüklü e-posta istemcisi yok."</string>
     <string name="about_rate_this_app">Bu uygulamayı oyla</string>
-    <string name="about_visit_brasov">Brașov\'u ziyaret edin</string>
     <string name="about_version">Sürüm</string>
     <string name="about_source_code">Kaynak kodu</string>
     <string name="about_app_intro">Uygulamanın ön tanıtımı</string>
@@ -76,6 +75,7 @@
     <string name="tutorial_swipe_left">Geçerli oturumu atlamak için sağa ya da sola kaydırın</string>
     <string name="tutorial_swipe_up">Bir dakika daha eklemek için yukarı kaydırın</string>
     <string name="tutorial_swipe_down">Durdurmak için zamanlayıcıdan aşağı doğru kaydırın</string>
+    <string name="tutorial_archive_label">Bir etiketi arşivlediniz. Seçim veya istatistikler için görünmez.</string>
     <string name="intro_avoid_distractions">"Dikkat dağıtan şeyleri engelle"</string>
     <string name="intro_avoid_distractions_description">"Uygulamanın gerçekleştirdiği zamanlanmış oturumları kullanarak çalışmalarınızı devam ettirin."</string>
     <string name="intro_clear_mind">"Zihnini temizle"</string>
@@ -128,6 +128,9 @@
     <string name="upgrade_enjoy">Pro versiyonun tadını çıkarın!</string>
     <string name="upgrade_extra_features">Ekstra özellikler</string>
     <string name="Profile">Profili</string>
+    <string name="pref_profile_name">Profil ismi</string>
+    <string name="pref_save_custom_profile">Özel profili kaydet</string>
+    <string name="pref_timer_duration">Zamanlayıcı süresi</string>
     <string name="pref_timer_style">Zamanlayıcı tarzı</string>
     <string name="pref_timer_style_default">Varsayılan</string>
     <string name="pref_timer_style_classic">Klasik</string>
@@ -137,4 +140,5 @@
     <string name="support_the_developer">Geliştiriciyi destekleyin</string>
     <string name="action_reset_counter">Bu işlem bu gün bitirilmiş tüm oturumları sıfırlayacak.</string>
     <string name="action_reset_counter_title">Sıfırla?</string>
+    <string name="tutorial_title">Eğitim</string>
 </resources>

@@ -1,15 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <declare-styleable name="ProperSeekBarPreference">
-        <attr format="integer" name="min"/>
-        <attr name="android:max"/>
-        <attr name="android:layout"/>
-        <attr format="integer" name="seekBarIncrement"/>
-        <attr format="boolean" name="adjustable"/>
-        <attr format="boolean" name="showSeekBarValue"/>
-        <attr format="string" name="dialogTitle"/>
-    </declare-styleable>
-
     <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
         <item name="background">?attr/colorPrimary</item>
     </style>
@@ -46,6 +36,20 @@
     <style name="OverviewTextDescription">
         <item name="android:textSize">@dimen/smallTextSize</item>
         <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="AddEditLabelRowEdit" parent="@android:style/TextAppearance.Widget.EditText">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:drawablePadding">32dp</item>
+        <item name="android:background">@color/true_transparent</item>
+        <item name="android:inputType">textNoSuggestions</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:maxLength">32</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/regularTextSize</item>
+        <item name="android:imeOptions">actionDone</item>
     </style>
 
     <style name="AllSessionsAddEditDialogRowEdit" parent="@android:style/TextAppearance.Widget.EditText">
@@ -111,6 +115,10 @@
     <style name="ChipStyle" parent="Widget.MaterialComponents.Chip.Action">
         <item name="android:textSize">@dimen/smallTextSize</item>
         <item name="android:textColor">@color/black</item>
+
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+
         <item name="chipIconSize">20dp</item>
         <item name="chipStartPadding">4dp</item>
         <item name="textEndPadding">4dp</item>
@@ -121,7 +129,7 @@
         <item name="android:background">@drawable/shape_rectangle</item>
         <item name="android:backgroundTint" tools:targetApi="lollipop">@color/teal200</item>
         <item name="android:ellipsize">end</item>
-        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
 
         <item name="android:paddingLeft">8dp</item>
         <item name="android:paddingTop">2dp</item>
@@ -183,6 +191,7 @@
         <item name="android:navigationBarColor" tools:targetApi="lollipop">?attr/colorPrimary</item>
 
         <item name="alertDialogTheme">@style/DialogTheme</item>
+        <item name="snackbarStyle">@style/SnackbarStyle</item>
 
         <item name="palette">@array/lightPalette</item>
         <item name="fontFamily">@font/app_font</item>
@@ -239,4 +248,9 @@
         <item name="android:paddingBottom">16dp</item>
         <item name="android:layout_marginBottom">16dp</item>
     </style>
+
+    <style name="SnackbarStyle" parent="Widget.MaterialComponents.Snackbar">
+        <item name="android:background">@color/gray1000</item>
+    </style>
+
 </resources>

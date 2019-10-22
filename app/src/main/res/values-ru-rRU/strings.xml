@@ -34,7 +34,6 @@
     <string name="about_open_source_licences">Лицензии с открытым исходным кодом</string>
     <string name="about_no_email">"Не найдено приложений для работы с электронной почтой."</string>
     <string name="about_rate_this_app">Оцените это приложение</string>
-    <string name="about_visit_brasov">Посетить Brașov</string>
     <string name="about_version">Версия</string>
     <string name="about_source_code">Исходный код</string>
     <string name="about_app_intro">Вступление</string>
@@ -76,6 +75,7 @@
     <string name="tutorial_swipe_left">Проведите влево или вправо, чтобы пропустить текущий сеанс</string>
     <string name="tutorial_swipe_up">Проведите пальцем вверх, чтобы добавить еще одну минуту</string>
     <string name="tutorial_swipe_down">Проведите пальцем вниз по таймеру, чтобы остановить</string>
+    <string name="tutorial_archive_label">Вы только что архивировали метку. Она не будет видна для выбора или статистики.</string>
     <string name="intro_avoid_distractions">"Не отвлекайтесь"</string>
     <string name="intro_avoid_distractions_description">"Выполняйте намеченные задачи, используя управляемые приложением временные сессии."</string>
     <string name="intro_clear_mind">"Проясните голову"</string>
@@ -128,6 +128,9 @@
     <string name="upgrade_enjoy">Наслаждайтесь про версией!</string>
     <string name="upgrade_extra_features">Дополнительные функции</string>
     <string name="Profile">Профиль</string>
+    <string name="pref_profile_name">Имя профиля</string>
+    <string name="pref_save_custom_profile">Сохранить пользовательский профиль</string>
+    <string name="pref_timer_duration">Продолжительность таймера</string>
     <string name="pref_timer_style">Таймер стиль</string>
     <string name="pref_timer_style_default">По умолчанию</string>
     <string name="pref_timer_style_classic">Классические</string>
@@ -137,4 +140,5 @@
     <string name="support_the_developer">Поддержать разработчика</string>
     <string name="action_reset_counter">Это сбросит сегодняшние завершённые сессии.</string>
     <string name="action_reset_counter_title">Сбросить?</string>
+    <string name="tutorial_title">Դասընթաց</string>
 </resources>

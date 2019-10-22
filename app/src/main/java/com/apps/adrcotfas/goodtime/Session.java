@@ -17,34 +17,39 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
-import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import static androidx.room.ForeignKey.CASCADE;
-import static androidx.room.ForeignKey.SET_NULL;
+import static androidx.room.ForeignKey.SET_DEFAULT;
 
-@Entity(indices  = {@Index("label")},
-        foreignKeys = @ForeignKey(
-        entity = LabelAndColor.class,
-        parentColumns = "label",
-        childColumns = "label",
-        onUpdate = CASCADE,
-        onDelete = SET_NULL))
+@Entity(
+        foreignKeys =
+        @ForeignKey(
+                entity = Label.class,
+                parentColumns = {"title", "archived"},
+                childColumns = {"label", "archived"},
+                onUpdate = CASCADE,
+                onDelete = SET_DEFAULT))
 public class Session {
-    @PrimaryKey(autoGenerate = true)
-    public final long id;
 
-    public Session(long id, long endTime, int totalTime, @Nullable String label) {
+    public Session(long id, long timestamp, int duration, @Nullable String label) {
         this.id = id;
-        this.endTime = endTime;
-        this.totalTime = totalTime;
+        this.timestamp = timestamp;
+        this.duration = duration;
         this.label = label;
+        this.archived = false;
     }
 
-    public final long endTime;
+    @PrimaryKey(autoGenerate = true)
+    public long id;
 
-    public final int totalTime;
+    public long timestamp;
+
+    public int duration;
 
     @Nullable
-    public final String label;
+    public String label;
+
+    @NonNull
+    public Boolean archived;
 }

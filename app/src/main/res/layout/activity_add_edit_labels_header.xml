@@ -38,11 +38,16 @@
             android:id="@+id/text"
             android:hint="@string/label_add"
             android:layout_centerVertical="true"
+
             android:layout_toRightOf="@id/image_left_container"
             android:layout_toEndOf="@id/image_left_container"
+
+            android:layout_toLeftOf="@id/image_right_container"
+            android:layout_toStartOf="@id/image_right_container"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/AllSessionsAddEditDialogRowEdit"/>
+            style="@style/AddEditLabelRowEdit"/>
 
         <FrameLayout
             android:id="@+id/image_right_container"

@@ -23,6 +23,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.apps.adrcotfas.goodtime.About.AboutActivity;
+import com.apps.adrcotfas.goodtime.AddEditLabels.AddEditLabelActivity;
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.Backup.BackupFragment;
 import com.apps.adrcotfas.goodtime.BuildConfig;

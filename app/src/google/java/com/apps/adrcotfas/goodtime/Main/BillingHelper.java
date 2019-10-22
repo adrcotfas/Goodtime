@@ -36,9 +36,7 @@ public class BillingHelper implements IBillingHelper, BillingProcessor.IBillingH
                 found = true;
             }
         }
-        if (found) {
-            PreferenceHelper.setPro();
-        }
+        PreferenceHelper.setPro(found);
     }
 
     @Override
@@ -50,7 +48,7 @@ public class BillingHelper implements IBillingHelper, BillingProcessor.IBillingH
     public void onBillingInitialized() {
         mBillingProcessor.loadOwnedPurchasesFromGoogle();
         if (mBillingProcessor.isPurchased(Constants.sku)) {
-            PreferenceHelper.setPro();
+            PreferenceHelper.setPro(true);
         }
     }
 

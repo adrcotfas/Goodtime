@@ -16,7 +16,10 @@ package com.apps.adrcotfas.goodtime.BL;
 import android.os.SystemClock;
 
 import com.apps.adrcotfas.goodtime.BuildConfig;
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
+import com.apps.adrcotfas.goodtime.Profile;
+import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;
 
@@ -40,7 +43,6 @@ public class PreferenceHelper {
     public final static String INSISTENT_RINGTONE          = "pref_ringtone_insistent";
     public final static String RINGTONE_WORK_FINISHED      = "pref_ringtone";
     public final static String RINGTONE_BREAK_FINISHED     = "pref_ringtone_break";
-    public final static String RINGTONE_BREAK_FINISHED_DUMMY = "pref_ringtone_break_dummy";
     private final static String ENABLE_VIBRATE              = "pref_vibrate";
     private final static String ENABLE_FULLSCREEN           = "pref_fullscreen";
     public final static String DISABLE_SOUND_AND_VIBRATION = "pref_disable_sound_and_vibration";
@@ -52,6 +54,7 @@ public class PreferenceHelper {
     public final static String AMOLED                      = "pref_amoled";
 
     public final static String DISABLE_BATTERY_OPTIMIZATION = "pref_disable_battery_optimization";
+    public static final String SAVE_CUSTOM_PROFILE          = "pref_save_custom_profile";
 
     private final static String WORK_STREAK                 = "pref_WORK_STREAK";
     private final static String LAST_WORK_FINISHED_AT       = "pref_last_work_finished_at";
@@ -59,12 +62,14 @@ public class PreferenceHelper {
     private static final String CURRENT_SESSION_LABEL      = "pref_current_session_label";
     private static final String CURRENT_SESSION_COLOR      = "pref_current_session_color";
     private static final String INTRO_SNACKBAR_STEP        = "pref_intro_snackbar_step";
+    private static final String INTRO_ARCHIVE_LABEL        = "pref_intro_archive_label";
 
     public static final String TIMER_STYLE                = "pref_timer_style";
-    public static final String TIMER_STYLE_DUMMY          = "pref_timer_style_dummy";
 
     private static final String SESSIONS_COUNTER          = "pref_sessions_counter";
     private static final String ADD_60_SECONDS_COUNTER    = "pref_add_60_seconds_times";
+
+    private static final String UNSAVED_PROFILE_ACTIVE = "pref_custom_pref_active";
 
     static void migratePreferences() {
         if (getDefaultSharedPreferences(GoodtimeApplication.getInstance())
@@ -214,17 +219,17 @@ public class PreferenceHelper {
         return getCurrentStreak() >= getSessionsBeforeLongBreak();
     }
 
-    public static LabelAndColor getCurrentSessionLabel() {
-        return new LabelAndColor(
+    public static Label getCurrentSessionLabel() {
+        return new Label(
                 getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getString(CURRENT_SESSION_LABEL, null),
                 getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getInt(CURRENT_SESSION_COLOR, 0));
     }
 
-    public static void setCurrentSessionLabel(LabelAndColor label) {
+    public static void setCurrentSessionLabel(Label label) {
         getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
-                .putString(CURRENT_SESSION_LABEL, label.label).apply();
+                .putString(CURRENT_SESSION_LABEL, label.title).apply();
         getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
-                .putInt(CURRENT_SESSION_COLOR, label.color).apply();
+                .putInt(CURRENT_SESSION_COLOR, label.colorId).apply();
     }
 
     public static boolean isFirstRun() {
@@ -234,6 +239,47 @@ public class PreferenceHelper {
     public static void consumeFirstRun() {
         GoodtimeApplication.getPrivatePreferences().edit()
                 .putBoolean(FIRST_RUN, false).apply();
+    }
+
+    public static void setProfile25_5() {
+        setUnsavedProfileActive(false);
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
+                .putString(PROFILE, Constants.PROFILE_NAME_DEFAULT)
+                .putInt(WORK_DURATION, Constants.DEFAULT_WORK_DURATION_DEFAULT)
+                .putInt(BREAK_DURATION, Constants.DEFAULT_BREAK_DURATION_DEFAULT)
+                .putBoolean(ENABLE_LONG_BREAK, false)
+                .putInt(LONG_BREAK_DURATION, Constants.DEFAULT_LONG_BREAK_DURATION)
+                .putInt(SESSIONS_BEFORE_LONG_BREAK, Constants.DEFAULT_SESSIONS_BEFORE_LONG_BREAK)
+                .apply();
+    }
+
+    public static void setProfile52_17() {
+        setUnsavedProfileActive(false);
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
+                .putString(PROFILE, Constants.PROFILE_NAME_52_17)
+                .putInt(WORK_DURATION, Constants.DEFAULT_WORK_DURATION_5217)
+                .putInt(BREAK_DURATION, Constants.DEFAULT_BREAK_DURATION_5217)
+                .putBoolean(ENABLE_LONG_BREAK, false)
+                .putInt(LONG_BREAK_DURATION, Constants.DEFAULT_LONG_BREAK_DURATION)
+                .putInt(SESSIONS_BEFORE_LONG_BREAK, Constants.DEFAULT_SESSIONS_BEFORE_LONG_BREAK)
+                .apply();
+    }
+
+    public static void setProfile(Profile profile) {
+        setUnsavedProfileActive(false);
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
+                .putString(PROFILE, profile.name)
+                .putInt(WORK_DURATION, profile.durationWork)
+                .putInt(BREAK_DURATION, profile.durationBreak)
+                .putBoolean(ENABLE_LONG_BREAK, profile.enableLongBreak)
+                .putInt(LONG_BREAK_DURATION, profile.durationLongBreak)
+                .putInt(SESSIONS_BEFORE_LONG_BREAK, profile.sessionsBeforeLongBreak)
+                .apply();
+    }
+
+    public static String getProfile() {
+            return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getString(PROFILE,
+                    GoodtimeApplication.getInstance().getResources().getString(R.string.pref_profile_default));
     }
 
     public static String getTimerStyle() {
@@ -270,9 +316,9 @@ public class PreferenceHelper {
                 .putInt(ADD_60_SECONDS_COUNTER, getAdd60SecondsCounter() + 1).apply();
     }
 
-    public static void setPro() {
+    public static void setPro(boolean value) {
         GoodtimeApplication.getPrivatePreferences().edit()
-                .putBoolean(PRO, true).apply();
+                .putBoolean(PRO, value).apply();
     }
 
     public static boolean isPro() {
@@ -281,5 +327,25 @@ public class PreferenceHelper {
         } else {
             return GoodtimeApplication.getPrivatePreferences().getBoolean(PRO, false);
         }
+    }
+
+    public static boolean getArchivedLabelHintWasShown() {
+        return GoodtimeApplication.getPrivatePreferences()
+                .getBoolean(INTRO_ARCHIVE_LABEL, false);
+    }
+
+    public static void setArchivedLabelHintWasShown(boolean state) {
+        GoodtimeApplication.getPrivatePreferences().edit()
+                .putBoolean(INTRO_ARCHIVE_LABEL, state).apply();
+    }
+
+    public static boolean isUnsavedProfileActive() {
+        return GoodtimeApplication.getPrivatePreferences()
+                .getBoolean(UNSAVED_PROFILE_ACTIVE, false);
+    }
+
+    public static void setUnsavedProfileActive(boolean state) {
+        GoodtimeApplication.getPrivatePreferences().edit()
+                .putBoolean(UNSAVED_PROFILE_ACTIVE, state).apply();
     }
 }

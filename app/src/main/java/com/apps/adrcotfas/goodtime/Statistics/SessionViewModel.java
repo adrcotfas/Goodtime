@@ -44,10 +44,6 @@ public class SessionViewModel extends AndroidViewModel {
         return mSessionDao.getAllSessionsByEndTime();
     }
 
-    public LiveData<List<Session>> getAllSessionsByDuration() {
-        return mSessionDao.getAllSessionsByDuration();
-    }
-
     public LiveData<Session> getSession(long id) {
         return mSessionDao.getSession(id);
     }
@@ -71,7 +67,7 @@ public class SessionViewModel extends AndroidViewModel {
     }
 
     public void deleteSessionsFinishedToday() {
-        mExecutorService.execute(() -> mSessionDao.deleteSessions(
+        mExecutorService.execute(() -> mSessionDao.deleteSessionsAfter(
                 new LocalDate().toDateTimeAtStartOfDay().getMillis()));
     }
 
@@ -81,5 +77,9 @@ public class SessionViewModel extends AndroidViewModel {
 
     public LiveData<List<Session>> getAllSessionsUnlabeled() {
         return mSessionDao.getAllSessionsUnlabeled();
+    }
+
+    public LiveData<List<Session>> getAllSessions() {
+        return mSessionDao.getAllSessions();
     }
 }

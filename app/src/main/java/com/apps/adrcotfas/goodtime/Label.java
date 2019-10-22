@@ -15,19 +15,22 @@ package com.apps.adrcotfas.goodtime;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
-@Entity
-public class LabelAndColor {
+@Entity(primaryKeys = {"title", "archived"})
+public class Label {
 
-    public LabelAndColor(String label, int color) {
-        this.label = label;
-        this.color = color;
+    public Label(String title, int colorId) {
+        this.title = title;
+        this.colorId = colorId;
     }
 
-    @PrimaryKey
     @NonNull
-    public String label;
+    public String title;
 
-    public int color;
+    public int colorId;
+
+    public int order = 0;
+
+    @NonNull
+    public Boolean archived = false;
 }

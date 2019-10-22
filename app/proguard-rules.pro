@@ -61,4 +61,7 @@
 -keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
     <init>(java.lang.Throwable);
 }
-##---------------End: proguard configuration for EventBus  ----------
+##---------------End: proguard configuration for EventBus  ---------
+
+# For some reason, obfuscating this would render it invisible (Unable to instantiate fragment)
+-keep class com.apps.adrcotfas.goodtime.Settings.DurationsSettingsFragment { *; }

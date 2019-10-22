@@ -25,7 +25,7 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
@@ -136,7 +136,7 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements
                 final String label = mViewModel.label.getValue();
                 Session sessionToAdd = new Session(0, mViewModel.date.getValue().getMillis(), duration, label);
                 if (mViewModel.sessionToEditId != INVALID_SESSION_TO_EDIT_ID) {
-                    mSessionViewModel.editSession(mViewModel.sessionToEditId, sessionToAdd.endTime, sessionToAdd.totalTime, sessionToAdd.label);
+                    mSessionViewModel.editSession(mViewModel.sessionToEditId, sessionToAdd.timestamp, sessionToAdd.duration, sessionToAdd.label);
                 } else {
                     mSessionViewModel.addSession(sessionToAdd);
                 }
@@ -146,8 +146,8 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements
 
         // this is for the edit dialog
         if (mSessionToEdit != null) {
-            mViewModel.date.setValue(new DateTime(mSessionToEdit.endTime));
-            mViewModel.duration.setValue(mSessionToEdit.totalTime);
+            mViewModel.date.setValue(new DateTime(mSessionToEdit.timestamp));
+            mViewModel.duration.setValue(mSessionToEdit.duration);
             mViewModel.label.setValue(mSessionToEdit.label);
             mViewModel.sessionToEditId = mSessionToEdit.id;
             binding.header.setText(getString(R.string.session_edit_session));
@@ -201,9 +201,9 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements
     }
 
     @Override
-    public void onLabelSelected(LabelAndColor labelAndColor) {
-        if (labelAndColor != null && !labelAndColor.label.equals("unlabeled")) {
-            mViewModel.label.setValue(labelAndColor.label);
+    public void onLabelSelected(Label label) {
+        if (label != null && !label.title.equals("unlabeled")) {
+            mViewModel.label.setValue(label.title);
         } else {
             mViewModel.label.setValue(null);
         }

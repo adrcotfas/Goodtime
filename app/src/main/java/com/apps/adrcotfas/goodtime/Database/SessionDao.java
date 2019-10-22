@@ -30,23 +30,23 @@ public interface SessionDao {
     @Query("select * from Session where id = :id")
     LiveData<Session> getSession(long id);
 
-    @Query("select * from Session ORDER BY endTime DESC")
+    @Query("select * from Session ORDER BY timestamp DESC")
+    LiveData<List<Session>> getAllSessions();
+
+    @Query("select * from Session where archived is 0 OR archived is NULL ORDER BY timestamp DESC")
     LiveData<List<Session>> getAllSessionsByEndTime();
 
-    @Query("select * from Session ORDER BY totalTime DESC")
-    LiveData<List<Session>> getAllSessionsByDuration();
-
-    @Query("select * from Session where label is NULL ORDER BY endTime DESC")
+    @Query("select * from Session where label is NULL ORDER BY timestamp DESC")
     LiveData<List<Session>> getAllSessionsUnlabeled();
 
-    @Query("select * from Session where label = :label ORDER BY endTime DESC")
+    @Query("select * from Session where label = :label ORDER BY timestamp DESC")
     LiveData<List<Session>> getSessions(String label);
 
     @Insert(onConflict = REPLACE)
     void addSession(Session session);
 
-    @Query("update Session SET endTime = :endTime, totalTime = :totalTime, label = :label WHERE id = :id")
-    void editSession(long id, long endTime, long totalTime, String label);
+    @Query("update Session SET timestamp = :timestamp, duration = :duration, label = :label WHERE id = :id")
+    void editSession(long id, long timestamp, long duration, String label);
 
     @Query("update Session SET label = :label WHERE id = :id")
     void editLabel(long id, String label);
@@ -54,8 +54,13 @@ public interface SessionDao {
     @Query("delete from Session where id = :id")
     void deleteSession(long id);
 
-    @Query("delete from Session where endTime >= :endTime")
-    void deleteSessions(long endTime);
+    /**
+     * Deletes sessions finished at a later timestamp than the one provided as input.
+     * Typically used to delete today's finished sessions
+     * @param timestamp Sessions finished later than this timestamp will be deleted
+     */
+    @Query("delete from Session where timestamp >= :timestamp")
+    void deleteSessionsAfter(long timestamp);
 
     @Query("delete from Session")
     void deleteAllSessions();

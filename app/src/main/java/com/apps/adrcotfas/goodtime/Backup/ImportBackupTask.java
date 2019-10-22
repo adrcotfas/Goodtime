@@ -66,7 +66,7 @@ public class ImportBackupTask extends AsyncTask<Uri, Void, Boolean> {
             FileInputStream inStream = new FileInputStream(tempFile);
             File destinationPath = mContext.get().getDatabasePath("goodtime-db");
             FileUtils.copy(inStream, destinationPath);
-            AppDatabase.getDatabase(mContext.get());
+            AppDatabase.recreateInstance(mContext.get());
             success = true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();

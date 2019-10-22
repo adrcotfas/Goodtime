@@ -19,7 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
@@ -36,9 +36,9 @@ public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHold
     private WeakReference<Context> mContext;
     public List<Session> mEntries = new ArrayList<>();
     public List<Long> mSelectedEntries = new ArrayList<>();
-    private final List<LabelAndColor> mLabels;
+    private final List<Label> mLabels;
 
-    AllSessionsAdapter(List<LabelAndColor> labels) {
+    AllSessionsAdapter(List<Label> labels) {
         // this and the override of getItemId are to avoid clipping in the view
         setHasStableIds(true);
         mLabels = labels;
@@ -77,13 +77,17 @@ public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHold
 
     private int getColor(String label) {
         int color = 0;
-        for (LabelAndColor l : mLabels) {
-            if (l.label.equals(label)) {
-                color = ThemeHelper.getColor(mContext.get(), l.color);
+        for (Label l : mLabels) {
+            if (l.title.equals(label)) {
+                color = ThemeHelper.getColor(mContext.get(), l.colorId);
                 break;
             }
         }
         return color;
+    }
+
+    public List<Label> getLabels() {
+        return mLabels;
     }
 
     public void setData(List<Session> newSessions) {

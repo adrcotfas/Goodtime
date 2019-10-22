@@ -15,19 +15,19 @@ package com.apps.adrcotfas.goodtime.Statistics;
 
 import android.content.Context;
 
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.R;
 
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_ALL_LABELS;
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_UNLABELED;
 
 public class Utils {
-    public static LabelAndColor getInstanceTotalLabel(Context context) {
-        return new LabelAndColor(context.getString(R.string.label_all),
+    public static Label getInstanceTotalLabel(Context context) {
+        return new Label(context.getString(R.string.label_all),
                 COLOR_INDEX_ALL_LABELS);
     }
 
-    public static LabelAndColor getInstanceUnlabeledLabel() {
-        return new LabelAndColor("unlabeled", COLOR_INDEX_UNLABELED);
+    public static Label getInstanceUnlabeledLabel() {
+        return new Label("unlabeled", COLOR_INDEX_UNLABELED);
     }
 }

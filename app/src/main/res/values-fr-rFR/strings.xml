@@ -34,7 +34,6 @@
     <string name="about_open_source_licences">Licences Open Source</string>
     <string name="about_no_email">"Aucun client mail n'est installé."</string>
     <string name="about_rate_this_app">Noter cette application</string>
-    <string name="about_visit_brasov">Visiter Braşov</string>
     <string name="about_version">Version</string>
     <string name="about_source_code">Code source</string>
     <string name="about_app_intro">Intro de l\'application</string>
@@ -76,6 +75,7 @@
     <string name="tutorial_swipe_left">Glisser vers la gauche ou la droite pour sauter la session en cours</string>
     <string name="tutorial_swipe_up">Glisser vers le haut pour ajouter une minute de plus</string>
     <string name="tutorial_swipe_down">Glisser vers le bas sur la minuterie pour l\'arrêter</string>
+    <string name="tutorial_archive_label">Vous venez d\'archiver une étiquette. Elle ne sera pas visible pour la sélection ou les statistiques.</string>
     <string name="intro_avoid_distractions">"Évitez les distractions"</string>
     <string name="intro_avoid_distractions_description">"Restez concentré sur votre travail en utilisant des sessions chronométrées gérées par l'application."</string>
     <string name="intro_clear_mind">"Videz-vous la tête"</string>
@@ -128,7 +128,10 @@
     <string name="upgrade_enjoy">Profitez de la version pro !</string>
     <string name="upgrade_extra_features">Fonctionnalités supplémentaires</string>
     <string name="Profile">Profil</string>
-    <string name="pref_timer_style">Style de minuterie</string>
+    <string name="pref_profile_name">Nom de profil</string>
+    <string name="pref_save_custom_profile">Enregistrer le profil personnalisé</string>
+    <string name="pref_timer_duration">Durée du minuteur</string>
+    <string name="pref_timer_style">Style du minuteur</string>
     <string name="pref_timer_style_default">Par défaut</string>
     <string name="pref_timer_style_classic">Classique</string>
     <string name="pref_timer_style_minutes">Minutes seulement</string>
@@ -137,4 +140,5 @@
     <string name="support_the_developer">Soutenir le développeur</string>
     <string name="action_reset_counter">Cela réinitialisera les sessions terminées aujourd\'hui.</string>
     <string name="action_reset_counter_title">Réinitialiser ?</string>
+    <string name="tutorial_title">Tutorial</string>
 </resources>

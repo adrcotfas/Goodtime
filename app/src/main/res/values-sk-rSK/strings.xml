@@ -34,7 +34,6 @@
     <string name="about_open_source_licences">Licencie pre otvorený zdroj</string>
     <string name="about_no_email">"Nie je nainštalovaný žiaden emailový program."</string>
     <string name="about_rate_this_app">Ohodnotiť aplikáciu</string>
-    <string name="about_visit_brasov">Navštívte Brašov</string>
     <string name="about_version">Verzia</string>
     <string name="about_source_code">Zdrojový kód</string>
     <string name="about_app_intro">Aplikácia intro</string>
@@ -76,6 +75,7 @@
     <string name="tutorial_swipe_left">Posunutím prstom doľava alebo doprava preskočte aktuálnu reláciu</string>
     <string name="tutorial_swipe_up">Prejdite prstom nahor a pridajte ešte jednu minútu</string>
     <string name="tutorial_swipe_down">Ak chcete zastaviť, prejdite prstom na časovač</string>
+    <string name="tutorial_archive_label">Práve ste archivovali štítok. Nebude viditeľný pre výber ani štatistiku.</string>
     <string name="intro_avoid_distractions">"Vyhni sa vyrušovaniu"</string>
     <string name="intro_avoid_distractions_description">"Ustráž svoju prácu prostredníctvom načasovaných činností v tejto aplikácii."</string>
     <string name="intro_clear_mind">"Očisti svoju myseľ"</string>
@@ -128,6 +128,9 @@
     <string name="upgrade_enjoy">Užite si profesionálnu verziu!</string>
     <string name="upgrade_extra_features">Extra funkcie</string>
     <string name="Profile">Profil</string>
+    <string name="pref_profile_name">Názov profilu</string>
+    <string name="pref_save_custom_profile">Uložiť vlastný profil</string>
+    <string name="pref_timer_duration">Trvanie časovača</string>
     <string name="pref_timer_style">Štýl časovača</string>
     <string name="pref_timer_style_default">Predvolené</string>
     <string name="pref_timer_style_classic">Klasický</string>
@@ -135,6 +138,7 @@
     <string name="pref_session_counter">Počítadlo relácie</string>
     <string name="pref_session_counter_summary">"Zobrazí dnešný počet dokončených relácií"</string>
     <string name="support_the_developer">Podporiť vývojára</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
-    <string name="action_reset_counter_title">Reset?</string>
+    <string name="action_reset_counter">Týmto sa obnovia dnešné ukončené relácie.</string>
+    <string name="action_reset_counter_title">Vymazať?</string>
+    <string name="tutorial_title">Tutoriál</string>
 </resources>

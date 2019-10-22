@@ -23,7 +23,7 @@
     <string name="pref_ringtone_break">Bericht over beëindigde pauze</string>
     <string name="pref_auto_start_break">"Auto start pauze"</string>
     <string name="pref_auto_start_work">"Auto aan de slag"</string>
-    <string name="pref_auto_start_break_summary">Begin van de pauze na een werksessie zonder tussenkomst van de gebruiker</string>
+    <string name="pref_auto_start_break_summary">Start de pauze na een werksessie zonder interactie van de gebruiker</string>
     <string name="pref_auto_start_work_summary">Start de sessie na een onderbreking zonder tussenkomst van de gebruiker</string>
     <string name="pref_disable_battery_optimization">Nauwkeurige meldingen</string>
     <string name="pref_disable_battery_optimization_summary">Optimalisatie van de batterij voor dit app uitschakelen</string>
@@ -34,7 +34,6 @@
     <string name="about_open_source_licences">Open Source-licenties</string>
     <string name="about_no_email">"Er zijn geen e-mailadressen geïnstalleerd."</string>
     <string name="about_rate_this_app">Beoordeel deze app</string>
-    <string name="about_visit_brasov">Bezoek Braşov</string>
     <string name="about_version">Versie</string>
     <string name="about_source_code">Broncode</string>
     <string name="about_app_intro">App intro</string>
@@ -76,6 +75,7 @@
     <string name="tutorial_swipe_left">Vegen links of rechts om de huidige sessie overslaan</string>
     <string name="tutorial_swipe_up">Jatten omhoog om toe te voegen nog een minuut</string>
     <string name="tutorial_swipe_down">Swipe naar beneden op de timer om te stoppen</string>
+    <string name="tutorial_archive_label">Je hebt zojuist een label gearchiveerd. Het is niet zichtbaar voor selectie of statistieken.</string>
     <string name="intro_avoid_distractions">"Vermijd afleidingen"</string>
     <string name="intro_avoid_distractions_description">"Houd je werk bij door de app sessies te laten timen."</string>
     <string name="intro_clear_mind">"Leeg je gedachten"</string>
@@ -128,6 +128,9 @@
     <string name="upgrade_enjoy">Geniet van de pro-versie!</string>
     <string name="upgrade_extra_features">Extra functies</string>
     <string name="Profile">Profiel</string>
+    <string name="pref_profile_name">Profielnaam</string>
+    <string name="pref_save_custom_profile">Aangepast profiel opslaan</string>
+    <string name="pref_timer_duration">Tijdsduur</string>
     <string name="pref_timer_style">Timer-stijl</string>
     <string name="pref_timer_style_default">Standaard</string>
     <string name="pref_timer_style_classic">Klassiek</string>
@@ -135,6 +138,7 @@
     <string name="pref_session_counter">Sessies teller</string>
     <string name="pref_session_counter_summary">"Bevat het nummer van de hedendaagse van voltooide sessies"</string>
     <string name="support_the_developer">Ondersteun de ontwikkelaar van de app</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
-    <string name="action_reset_counter_title">Reset?</string>
+    <string name="action_reset_counter">Dit zal de voltooide sessies van vandaag resetten.</string>
+    <string name="action_reset_counter_title">Resetten?</string>
+    <string name="tutorial_title">Handleiding</string>
 </resources>

@@ -26,7 +26,7 @@ public class StringUtils {
 
     private static final DateTimeFormatter monthFormatter = DateTimeFormat.forPattern("EEE', 'MMM d', ' yyyy");
     private static final DateTimeFormatter timeFormatter = DateTimeFormat.forPattern("HH:mm");
-    private static final DateTimeFormatter backUpFormatter = DateTimeFormat.forPattern("yyyy-MM-dd-HH:mm");
+    private static final DateTimeFormatter backUpFormatter = DateTimeFormat.forPattern("yyyy-MM-dd-HH-mm");
     private static final DateTimeFormatter dayOfWeekFormatter = DateTimeFormat.forPattern("E");
     private static final DateTimeFormatter hourOfDayFormatter = DateTimeFormat.forPattern("hh");
     private static final DateTimeFormatter meridianFormatter = DateTimeFormat.forPattern("a");

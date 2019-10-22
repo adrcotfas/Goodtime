@@ -11,23 +11,29 @@
  * either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-package com.apps.adrcotfas.goodtime.Main;
+package com.apps.adrcotfas.goodtime.AddEditLabels;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
+import com.apps.adrcotfas.goodtime.Main.ItemTouchHelperAdapter;
+import com.apps.adrcotfas.goodtime.Main.ItemTouchHelperViewHolder;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.takisoft.colorpicker.ColorPickerDialog;
 
 import java.lang.ref.WeakReference;
+import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -35,28 +41,39 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.apps.adrcotfas.goodtime.Main.AddEditLabelActivity.labelIsGoodToAdd;
+import static com.apps.adrcotfas.goodtime.AddEditLabels.AddEditLabelActivity.labelIsGoodToAdd;
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.clearFocusEditText;
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.requestFocusEditText;
 
-public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdapter.ViewHolder> {
+public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdapter.ViewHolder>
+        implements ItemTouchHelperAdapter {
 
     public interface OnEditLabelListener {
         void onEditColor(String label, int newColor);
         void onEditLabel(String label, String newLabel);
-        void onDeleteLabel(LabelAndColor labels, int position);
+        void onDeleteLabel(Label labels, int position);
+        void onLabelRearranged();
+        void onToggleArchive(Label label, int adapterPosition);
+        void onDragStarted(RecyclerView.ViewHolder viewHolder);
     }
 
     private LayoutInflater inflater;
-    private List<LabelAndColor> mLabels;
+    private List<Label> mLabels;
     private WeakReference<Context> mContext;
     private OnEditLabelListener mCallback;
 
-    public AddEditLabelsAdapter(Context ctx, List<LabelAndColor> labels, OnEditLabelListener callback){
+    public AddEditLabelsAdapter(Context ctx,
+                                List<Label> labels,
+                                OnEditLabelListener callback){
         inflater = LayoutInflater.from(ctx);
         mContext = new WeakReference<>(ctx);
         mLabels = labels;
         mCallback = callback;
+
+        // update the order inside
+        for (int i = 0; i < mLabels.size(); ++i) {
+            mLabels.get(i).order = i;
+        }
     }
 
     @NonNull
@@ -68,9 +85,39 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        holder.text.setText(mLabels.get(position).label);
-        holder.imageLeft.setColorFilter(ThemeHelper.getColor(mContext.get(), mLabels.get(position).color));
-        holder.imageLeftContainer.setClickable(false);
+        Label crtLabel = mLabels.get(position);
+        holder.text.setText(crtLabel.title);
+        holder.imageLeft.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.colorId));
+
+        holder.labelicon.setImageDrawable(ContextCompat.getDrawable(
+                mContext.get(), crtLabel.archived ? R.drawable.ic_label_off : R.drawable.ic_label));
+
+        holder.labelicon.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.colorId));
+        holder.scrollIconContainer.setOnTouchListener((v, event) -> {
+            if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                mCallback.onDragStarted(holder);
+            }
+            return false;
+        });
+    }
+
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(mLabels, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(mLabels, i, i - 1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+    @Override
+    public void onClearView() {
+        mCallback.onLabelRearranged();
     }
 
     @Override
@@ -78,36 +125,50 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
         return mLabels.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder implements
+            ItemTouchHelperViewHolder {
 
         private EditText  text;
+        private ImageView labelicon;
         private ImageView imageLeft;
         private ImageView imageRight;
 
+        private RelativeLayout row;
+        private FrameLayout scrollIconContainer;
         private FrameLayout imageLeftContainer;
+        private FrameLayout labelIconContainer;
         private FrameLayout imageRightContainer;
         private FrameLayout imageDeleteContainer;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
+            row = itemView.findViewById(R.id.dialog_edit_label_row);
             text = itemView.findViewById(R.id.text);
-            imageLeft = itemView.findViewById(R.id.image_left); // can have the label or the palette icon
+            labelicon = itemView.findViewById(R.id.label_icon);
+            imageLeft = itemView.findViewById(R.id.image_left); // the palette icon
             imageRight = itemView.findViewById(R.id.image_right); // can have the edit or the done icon
+            scrollIconContainer = itemView.findViewById(R.id.scroll_icon_container);
             imageLeftContainer = itemView.findViewById(R.id.image_left_container);
+            labelIconContainer = itemView.findViewById(R.id.label_icon_container);
             imageRightContainer = itemView.findViewById(R.id.image_right_container);
             imageDeleteContainer = itemView.findViewById(R.id.image_delete_container);
 
             // switch the focus to a different row
             text.setOnFocusChangeListener((view, hasFocus) -> {
 
-                int position = getAdapterPosition();
-                LabelAndColor crtLabel = mLabels.get(position);
-                imageLeft.setImageDrawable(ContextCompat.getDrawable(
-                        mContext.get(), hasFocus ? R.drawable.ic_palette : R.drawable.ic_label));
-                imageLeftContainer.setClickable(hasFocus);
-                imageLeft.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.color));
+                // shrink the textView when we're in edit mode and the delete button appears
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)text.getLayoutParams();
+                params.addRule(RelativeLayout.START_OF, hasFocus ? R.id.image_delete_container : R.id.image_right_container);
+                text.setLayoutParams(params);
 
+                int position = getAdapterPosition();
+                Label crtLabel = mLabels.get(position);
+
+                labelicon.setColorFilter(ThemeHelper.getColor(mContext.get(), crtLabel.colorId));
+
+                imageLeftContainer.setVisibility(hasFocus ? View.VISIBLE : View.INVISIBLE);
+                labelIconContainer.setVisibility(hasFocus ? View.INVISIBLE : View.VISIBLE);
                 imageDeleteContainer.setVisibility(hasFocus ? View.VISIBLE : View.INVISIBLE);
 
                 imageRight.setImageDrawable(ContextCompat.getDrawable(
@@ -119,13 +180,13 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
 
                 if (!hasFocus) {
                     String newLabelName = text.getText().toString();
-                    // save a label when losing focus if any changes were made
-                    if (labelIsGoodToAdd(mContext.get(), mLabels, newLabelName, crtLabel.label)) {
-                        mCallback.onEditLabel(crtLabel.label, newLabelName);
-                        crtLabel.label = newLabelName;
+                    // save a title when losing focus if any changes were made
+                    if (labelIsGoodToAdd(mContext.get(), mLabels, newLabelName, crtLabel.title)) {
+                        mCallback.onEditLabel(crtLabel.title, newLabelName);
+                        crtLabel.title = newLabelName;
                         notifyItemChanged(position);
                     } else {
-                        text.setText(crtLabel.label);
+                        text.setText(crtLabel.title);
                     }
                 }
             });
@@ -152,18 +213,27 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
                 return false;
             });
 
-            // changing the color of a label
+            // archive and unarchive a label
+            labelIconContainer.setOnClickListener(v -> {
+                Label crtLabel = mLabels.get(getAdapterPosition());
+                crtLabel.archived = !crtLabel.archived;
+                mCallback.onToggleArchive(crtLabel, getAdapterPosition());
+                labelicon.setImageDrawable(ContextCompat.getDrawable(
+                        mContext.get(), crtLabel.archived ? R.drawable.ic_label_off : R.drawable.ic_label));
+            });
+
+            // changing the colorId of a label
             imageLeftContainer.setOnClickListener(v -> {
-                LabelAndColor crtLabel = mLabels.get(getAdapterPosition());
+                Label crtLabel = mLabels.get(getAdapterPosition());
                 final ColorPickerDialog.Params p = new ColorPickerDialog.Params.Builder(mContext.get())
                         .setColors(ThemeHelper.getPalette(mContext.get()))
-                        .setSelectedColor(ThemeHelper.getColor(mContext.get(), crtLabel.color))
+                        .setSelectedColor(ThemeHelper.getColor(mContext.get(), crtLabel.colorId))
                         .build();
                 ColorPickerDialog dialog = new ColorPickerDialog(mContext.get(), R.style.DialogTheme, c
                         -> {
-                    mCallback.onEditColor(crtLabel.label, ThemeHelper.getIndexOfColor(mContext.get(), c));
+                    mCallback.onEditColor(crtLabel.title, ThemeHelper.getIndexOfColor(mContext.get(), c));
                     imageLeft.setColorFilter(c);
-                    crtLabel.color = ThemeHelper.getIndexOfColor(mContext.get(), c);
+                    crtLabel.colorId = ThemeHelper.getIndexOfColor(mContext.get(), c);
                 }, p);
                 dialog.setTitle(R.string.label_select_color);
                 dialog.show();
@@ -171,6 +241,20 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
 
             // the edit button
             imageRightContainer.setOnClickListener(v -> requestFocusEditText(text, mContext.get()));
+        }
+
+        @Override
+        public void onItemSelected() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                row.setElevation(4);
+            }
+        }
+
+        @Override
+        public void onItemClear() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                row.setElevation(0);
+            }
         }
     }
 }

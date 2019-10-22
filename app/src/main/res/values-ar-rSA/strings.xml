@@ -34,7 +34,6 @@
     <string name="about_open_source_licences">تراخيص مفتوحة المصدر</string>
     <string name="about_no_email">"لا توجد برامج بريد إلكتروني مثبتة."</string>
     <string name="about_rate_this_app">قيم التطبيق</string>
-    <string name="about_visit_brasov">زيارة براشوف</string>
     <string name="about_version">الإصدار</string>
     <string name="about_source_code">مصدر التعليمات البرمجية</string>
     <string name="about_app_intro">مقدمة التطبيق</string>
@@ -76,6 +75,7 @@
     <string name="tutorial_swipe_left">اسحب إلى اليسار أو اليمين لتخطي الجلسة الحالية</string>
     <string name="tutorial_swipe_up">اسحب لأعلى لإضافة دقيقة أخرى</string>
     <string name="tutorial_swipe_down">اسحب لأسفل على المؤقت للتوقف</string>
+    <string name="tutorial_archive_label">أنت فقط أرشفة تسمية. لن يكون مرئيًا للاختيار أو الإحصائيات.</string>
     <string name="intro_avoid_distractions">"تجنب التشتيت"</string>
     <string name="intro_avoid_distractions_description">"الحفاظ على عملك على المسار الصحيح باستخدام جلسات توقيت التعامل معها من قبل التطبيق."</string>
     <string name="intro_clear_mind">"صفي ذهنك"</string>
@@ -128,6 +128,9 @@
     <string name="upgrade_enjoy">استمتع النسخة الموالية!</string>
     <string name="upgrade_extra_features">ميزات اضافية</string>
     <string name="Profile">الملفّ الشّخصي</string>
+    <string name="pref_profile_name">إسم حسابك</string>
+    <string name="pref_save_custom_profile">حفظ ملف التعريف المخصص</string>
+    <string name="pref_timer_duration">مدة الموقت</string>
     <string name="pref_timer_style">بدء المؤقت</string>
     <string name="pref_timer_style_default">افتراضي</string>
     <string name="pref_timer_style_classic">الافتراضي</string>
@@ -137,4 +140,5 @@
     <string name="support_the_developer">ادعم المطور</string>
     <string name="action_reset_counter">هذا سوف تعيين جلسات تنتهي اليوم.</string>
     <string name="action_reset_counter_title">هل تريد إعادة الضبط؟</string>
+    <string name="tutorial_title">البرنامج التعليمي</string>
 </resources>

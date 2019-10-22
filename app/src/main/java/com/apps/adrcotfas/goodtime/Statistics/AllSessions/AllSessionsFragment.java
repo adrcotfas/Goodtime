@@ -25,15 +25,13 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
-import com.apps.adrcotfas.goodtime.LabelAndColor;
+import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Statistics.Main.RecyclerItemClickListener;
 import com.apps.adrcotfas.goodtime.Statistics.Main.SelectLabelDialog;
 import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
-import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentAllSessionsBinding;
 
 import java.util.ArrayList;
@@ -45,13 +43,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity.DIALOG_SELECT_LABEL_TAG;
-import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
 public class AllSessionsFragment extends Fragment implements SelectLabelDialog.OnLabelSelectedListener {
 
@@ -63,7 +61,12 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
     private SessionViewModel mSessionViewModel;
     private LabelsViewModel mLabelsViewModel;
     private Session mSessionToEdit;
-    private List<Session> mSessions;
+    private List<Session> mSessions =  new ArrayList<>();
+
+    private LiveData<List<Session>> sessionsLiveDataAll;
+    private LiveData<List<Session>> sessionsLiveDataUnlabeled;
+    private LiveData<List<Session>> sessionsLiveDataCrtLabel;
+
     private LinearLayout mEmptyState;
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
@@ -75,6 +78,12 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
 
         mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
         mLabelsViewModel = ViewModelProviders.of(getActivity()).get(LabelsViewModel.class);
+
+        sessionsLiveDataAll = mSessionViewModel.getAllSessionsByEndTime();
+        sessionsLiveDataUnlabeled = mSessionViewModel.getAllSessionsUnlabeled();
+        if (mLabelsViewModel.crtExtendedLabel.getValue() != null) {
+            sessionsLiveDataCrtLabel = mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().title);
+        }
 
         mEmptyState = binding.emptyState;
         mProgressBar = binding.progressBar;
@@ -88,7 +97,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
             mAdapter = new AllSessionsAdapter(labels);
             mRecyclerView.setAdapter(mAdapter);
 
-            mLabelsViewModel.crtExtendedLabel.observe(this, labelAndColor -> refreshCurrentLabel());
+            mLabelsViewModel.crtExtendedLabel.observe(this, label -> refreshCurrentLabel());
 
             mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
             mRecyclerView.addOnItemTouchListener(
@@ -119,20 +128,44 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
 
     private void refreshCurrentLabel() {
         if (mLabelsViewModel.crtExtendedLabel.getValue() != null && mAdapter != null) {
-            if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals(getString(R.string.label_all))) {
-                mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
+            if (mLabelsViewModel.crtExtendedLabel.getValue().title.equals(getString(R.string.label_all))) {
+                sessionsLiveDataAll.observe(this, sessions -> {
+
+                    if (sessionsLiveDataUnlabeled != null) {
+                        sessionsLiveDataUnlabeled.removeObservers(this);
+                    }
+                    if (sessionsLiveDataCrtLabel != null) {
+                        sessionsLiveDataCrtLabel.removeObservers(this);
+                    }
+
                     mAdapter.setData(sessions);
                     mSessions = sessions;
                     updateRecyclerViewVisibility();
                 });
-            } else if (mLabelsViewModel.crtExtendedLabel.getValue().label.equals("unlabeled")) {
-                mSessionViewModel.getAllSessionsUnlabeled().observe(this, sessions -> {
+            } else if (mLabelsViewModel.crtExtendedLabel.getValue().title.equals("unlabeled")) {
+                sessionsLiveDataUnlabeled.observe(this, sessions -> {
+
+                    if (sessionsLiveDataAll != null) {
+                        sessionsLiveDataAll.removeObservers(this);
+                    }
+                    if (sessionsLiveDataCrtLabel != null) {
+                        sessionsLiveDataCrtLabel.removeObservers(this);
+                    }
+
                     mAdapter.setData(sessions);
                     mSessions = sessions;
                     updateRecyclerViewVisibility();
                 });
             } else {
-                mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().label).observe(this, sessions -> {
+                sessionsLiveDataCrtLabel = mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().title);
+                sessionsLiveDataCrtLabel.observe(this, sessions -> {
+                    if (sessionsLiveDataAll != null) {
+                        sessionsLiveDataAll.removeObservers(this);
+                    }
+                    if (sessionsLiveDataUnlabeled != null) {
+                        sessionsLiveDataUnlabeled.removeObservers(this);
+                    }
+
                     mAdapter.setData(sessions);
                     mSessions = sessions;
                     updateRecyclerViewVisibility();
@@ -221,20 +254,16 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             switch (item.getItemId()) {
                 case R.id.action_edit:
-                    if (PreferenceHelper.isPro()) {
-                        if (mSelectedEntries.size() > 1) {
-                            SelectLabelDialog.newInstance(
-                                    AllSessionsFragment.this,
-                                    null, false)
-                                    .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
+                    if (mSelectedEntries.size() > 1) {
+                        SelectLabelDialog.newInstance(
+                                AllSessionsFragment.this,
+                                null, false)
+                                .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
 
-                        } else if (mSessionToEdit != null) {
-                            AddEditEntryDialog newFragment = AddEditEntryDialog.newInstance(mSessionToEdit);
-                            newFragment.show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
-                            mActionMode.finish();
-                        }
-                    } else {
-                        launchUpgradeActivity(getActivity());
+                    } else if (mSessionToEdit != null) {
+                        AddEditEntryDialog newFragment = AddEditEntryDialog.newInstance(mSessionToEdit);
+                        newFragment.show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
+                        mActionMode.finish();
                     }
                     break;
                 case R.id.action_select_all:
@@ -284,10 +313,10 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
     }
 
     @Override
-    public void onLabelSelected(LabelAndColor labelAndColor) {
-        final String label = labelAndColor.label.equals("unlabeled") ? null : labelAndColor.label;
+    public void onLabelSelected(Label label) {
+        final String title = label.title.equals("unlabeled") ? null : label.title;
         for (Long i : mSelectedEntries) {
-            mSessionViewModel.editLabel(i, label);
+            mSessionViewModel.editLabel(i, title);
         }
         if (mActionMode != null) {
             mActionMode.finish();

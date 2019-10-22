@@ -34,7 +34,6 @@
     <string name="about_open_source_licences">Open Source-lisenser</string>
     <string name="about_no_email">"Det er ingen email klienter installert."</string>
     <string name="about_rate_this_app">Anmeld denne appen</string>
-    <string name="about_visit_brasov">Besøk Brasov</string>
     <string name="about_version">Versjon</string>
     <string name="about_source_code">Kildekode</string>
     <string name="about_app_intro">App intro</string>
@@ -76,6 +75,7 @@
     <string name="tutorial_swipe_left">Dra til venstre eller høyre hoppe over gjeldende økt</string>
     <string name="tutorial_swipe_up">Dra opp til en mer minutt</string>
     <string name="tutorial_swipe_down">Sveip ned på timeren for å stoppe</string>
+    <string name="tutorial_archive_label">Du arkiverte en etikett. Det vil ikke være synlig for utvalg eller statistikk.</string>
     <string name="intro_avoid_distractions">"Unngå distraksjoner"</string>
     <string name="intro_avoid_distractions_description">"Hold kontroll over arbeidet ditt med tids økter kontrollert av appen."</string>
     <string name="intro_clear_mind">"Rens tankene dine"</string>
@@ -128,6 +128,9 @@
     <string name="upgrade_enjoy">Nyt det pro versjonen!</string>
     <string name="upgrade_extra_features">Tilleggsfunksjoner</string>
     <string name="Profile">Profil</string>
+    <string name="pref_profile_name">Profilnavn</string>
+    <string name="pref_save_custom_profile">Lagre tilpasset profil</string>
+    <string name="pref_timer_duration">Timer varighet</string>
     <string name="pref_timer_style">Timer stil</string>
     <string name="pref_timer_style_default">Standard</string>
     <string name="pref_timer_style_classic">Klassisk</string>
@@ -135,6 +138,7 @@
     <string name="pref_session_counter">Økter counter</string>
     <string name="pref_session_counter_summary">"Viser dagens antall fullførte økter"</string>
     <string name="support_the_developer">Støtt utvikleren</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
-    <string name="action_reset_counter_title">Reset?</string>
+    <string name="action_reset_counter">Dette vil tilbakestille dagens ferdige økter.</string>
+    <string name="action_reset_counter_title">Tilbakestill?</string>
+    <string name="tutorial_title">Opplæring</string>
 </resources>
