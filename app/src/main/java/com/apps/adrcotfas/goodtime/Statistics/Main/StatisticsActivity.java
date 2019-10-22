@@ -130,12 +130,8 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
 
                 break;
             case R.id.action_select_label:
-                if (PreferenceHelper.isPro()) {
-                    SelectLabelDialog.newInstance(this, mLabelsViewModel.crtExtendedLabel.getValue().title, true)
-                            .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
-                } else {
-                    launchUpgradeActivity(this);
-                }
+                SelectLabelDialog.newInstance(this, mLabelsViewModel.crtExtendedLabel.getValue().title, true)
+                        .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
 
                 break;
             case R.id.action_view_list:

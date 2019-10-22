@@ -15,8 +15,9 @@
         app:iconSpaceReserved="false">
 
         <Preference
+            android:key="pref_timer_duration"
             app:fragment="com.apps.adrcotfas.goodtime.Settings.DurationsSettingsFragment"
-            android:title="Timer duration"
+            android:title="@string/pref_timer_duration"
             app:iconSpaceReserved="false"/>
 
         <ListPreference

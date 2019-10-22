@@ -23,15 +23,11 @@ import com.apps.adrcotfas.goodtime.databinding.GenericMainBinding;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
 
 import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
 
-public class SettingsActivity extends AppCompatActivity implements
-        PreferenceFragmentCompat.OnPreferenceStartFragmentCallback{
+public class SettingsActivity extends AppCompatActivity {
 
 
     @Override
@@ -62,24 +58,6 @@ public class SettingsActivity extends AppCompatActivity implements
     @Override
     public void onAttachedToWindow() {
         getWindow().addFlags(FLAG_SHOW_WHEN_LOCKED);
-    }
-
-    @Override
-    public boolean onPreferenceStartFragment(PreferenceFragmentCompat caller, Preference pref) {
-        // Instantiate the new Fragment
-        final Bundle args = pref.getExtras();
-        final Fragment fragment = getSupportFragmentManager().getFragmentFactory().instantiate(
-                getClassLoader(),
-                pref.getFragment());
-        fragment.setArguments(args);
-        fragment.setTargetFragment(caller, 0);
-        // Replace the existing Fragment with the new Fragment
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment, fragment)
-                .addToBackStack(null)
-                .commit();
-        setTitle(pref.getTitle());
-        return true;
     }
 
     @Override

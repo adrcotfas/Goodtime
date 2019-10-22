@@ -182,7 +182,6 @@ public class SelectLabelDialog extends DialogFragment {
                     PreferenceHelper.isUnsavedProfileActive()
                             ? getResources().getString(R.string.Profile)
                             : PreferenceHelper.getProfile(), null);
-
             mAlertDialog = builder.create();
             mAlertDialog.setOnShowListener(dialog -> {
 
@@ -241,6 +240,8 @@ public class SelectLabelDialog extends DialogFragment {
                     });
                 });
             });
+        } else {
+            mAlertDialog = builder.create();
         }
         return mAlertDialog;
     }

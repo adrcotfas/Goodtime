@@ -25,7 +25,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
@@ -51,7 +50,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity.DIALOG_SELECT_LABEL_TAG;
-import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
 public class AllSessionsFragment extends Fragment implements SelectLabelDialog.OnLabelSelectedListener {
 
@@ -256,20 +254,16 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             switch (item.getItemId()) {
                 case R.id.action_edit:
-                    if (PreferenceHelper.isPro()) {
-                        if (mSelectedEntries.size() > 1) {
-                            SelectLabelDialog.newInstance(
-                                    AllSessionsFragment.this,
-                                    null, false)
-                                    .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
+                    if (mSelectedEntries.size() > 1) {
+                        SelectLabelDialog.newInstance(
+                                AllSessionsFragment.this,
+                                null, false)
+                                .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
 
-                        } else if (mSessionToEdit != null) {
-                            AddEditEntryDialog newFragment = AddEditEntryDialog.newInstance(mSessionToEdit);
-                            newFragment.show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
-                            mActionMode.finish();
-                        }
-                    } else {
-                        launchUpgradeActivity(getActivity());
+                    } else if (mSessionToEdit != null) {
+                        AddEditEntryDialog newFragment = AddEditEntryDialog.newInstance(mSessionToEdit);
+                        newFragment.show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
+                        mActionMode.finish();
                     }
                     break;
                 case R.id.action_select_all:
