@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Deslizar hacia izquierda o derecha para saltar la sesión actual</string>
     <string name="tutorial_swipe_up">Deslizar hacia arriba para añadir un minuto más</string>
     <string name="tutorial_swipe_down">Deslice hacia abajo el temporizador para detener</string>
+    <string name="tutorial_archive_label">Acabas de archivar una etiqueta. No será visible para la selección o estadísticas.</string>
     <string name="intro_avoid_distractions">"Evitar distracciones"</string>
     <string name="intro_avoid_distractions_description">"Mantén tu trabajo en buen camino usando sesiones de tiempo manejadas por la app."</string>
     <string name="intro_clear_mind">"Limpia tu mente"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">¡Disfruta de la versión pro!</string>
     <string name="upgrade_extra_features">Características adicionales</string>
     <string name="Profile">Perfil</string>
+    <string name="pref_profile_name">Nombre del perfil</string>
+    <string name="pref_save_custom_profile">Shrani profil po meri</string>
+    <string name="pref_timer_duration">Trajanje časovnika</string>
     <string name="pref_timer_style">Estilo de temporizador</string>
     <string name="pref_timer_style_default">Predeterminado</string>
     <string name="pref_timer_style_classic">Clásico</string>

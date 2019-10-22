@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Przesuń palcem w lewo lub w prawo, aby pominąć bieżącą sesję</string>
     <string name="tutorial_swipe_up">Przesuń w górę, aby dodać jeszcze jedną minutę</string>
     <string name="tutorial_swipe_down">Przesuń w dół na zegar, aby zatrzymać</string>
+    <string name="tutorial_archive_label">Właśnie zarchiwizowałeś etykietę. Nie będzie widoczny dla selekcji ani statystyk.</string>
     <string name="intro_avoid_distractions">"Unikaj rozproszeń"</string>
     <string name="intro_avoid_distractions_description">"Kontynuuj swoją pracę dzięki sesjom w aplikacji."</string>
     <string name="intro_clear_mind">"Oczyść swój umysł"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">Skorzystaj z wersji pro!</string>
     <string name="upgrade_extra_features">Dodatkowe funkcje</string>
     <string name="Profile">Profil</string>
+    <string name="pref_profile_name">Nazwa profilu</string>
+    <string name="pref_save_custom_profile">Zapisz profil niestandardowy</string>
+    <string name="pref_timer_duration">Czas trwania timera</string>
     <string name="pref_timer_style">Styl licznika</string>
     <string name="pref_timer_style_default">Domyślna</string>
     <string name="pref_timer_style_classic">Klasyczny</string>

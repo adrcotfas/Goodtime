@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Wischen Sie nach links oder rechts, um die aktuelle Sitzung zu überspringen</string>
     <string name="tutorial_swipe_up">Wischen Sie nach oben, um eine weitere Minute hinzuzufügen</string>
     <string name="tutorial_swipe_down">Wischen Sie den Timer nach unten, um zu stoppen</string>
+    <string name="tutorial_archive_label">Sie haben gerade ein Label archiviert. Es wird nicht für die Auswahl oder Statistik sichtbar sein.</string>
     <string name="intro_avoid_distractions">"Vermeide Ablenkungen"</string>
     <string name="intro_avoid_distractions_description">"Konzentriere dich auf deine Arbeit mit automatisch verwalteten Sessions."</string>
     <string name="intro_clear_mind">"Bekomme einen klaren Kopf"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">Genießen Sie die pro-Version!</string>
     <string name="upgrade_extra_features">Extra-Features</string>
     <string name="Profile">Profile</string>
+    <string name="pref_profile_name">Profilname</string>
+    <string name="pref_save_custom_profile">Eigenes Profil speichern</string>
+    <string name="pref_timer_duration">Timer-Dauer</string>
     <string name="pref_timer_style">Timer-Stil</string>
     <string name="pref_timer_style_default">Standard</string>
     <string name="pref_timer_style_classic">Klassiker</string>

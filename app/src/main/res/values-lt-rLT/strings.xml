@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Braukite kairėn arba dešinėn pereiti per dabartinį seansą</string>
     <string name="tutorial_swipe_up">Braukite į viršų pridėti daugiau minutę</string>
     <string name="tutorial_swipe_down">Braukite žemyn Norėdami sustabdyti laikmatį</string>
+    <string name="tutorial_archive_label">Jūs tiesiog archyvavote etiketę. Tai nebus matoma nei atrankai, nei statistikai.</string>
     <string name="intro_avoid_distractions">"Vengti pašalinių trigdžių"</string>
     <string name="intro_avoid_distractions_description">"Irbkite produktyviai naudodami programėlės dotuotas sesijas."</string>
     <string name="intro_clear_mind">"Atlaisvinkite savo protą"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">Mėgaukitės pro versija!</string>
     <string name="upgrade_extra_features">Papildomos funkcijos</string>
     <string name="Profile">Profilis</string>
+    <string name="pref_profile_name">Profilio pavadinimas</string>
+    <string name="pref_save_custom_profile">Įrašykite pasirinktinį profilį</string>
+    <string name="pref_timer_duration">Laikmačio trukmė</string>
     <string name="pref_timer_style">Laikmačio stilius</string>
     <string name="pref_timer_style_default">Numatytasis</string>
     <string name="pref_timer_style_classic">Klasikinis</string>
@@ -134,7 +138,7 @@
     <string name="pref_session_counter">Sesijų skaitiklis</string>
     <string name="pref_session_counter_summary">"Rodo šiandien atliktų sesijų skaičių"</string>
     <string name="support_the_developer">Paremti kūrėją</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter">Tai atkurs šiandien baigtas sesijas.</string>
     <string name="action_reset_counter_title">Atstatyti?</string>
     <string name="tutorial_title">Vedlys</string>
 </resources>

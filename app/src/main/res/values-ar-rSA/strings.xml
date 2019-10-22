@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">اسحب إلى اليسار أو اليمين لتخطي الجلسة الحالية</string>
     <string name="tutorial_swipe_up">اسحب لأعلى لإضافة دقيقة أخرى</string>
     <string name="tutorial_swipe_down">اسحب لأسفل على المؤقت للتوقف</string>
+    <string name="tutorial_archive_label">أنت فقط أرشفة تسمية. لن يكون مرئيًا للاختيار أو الإحصائيات.</string>
     <string name="intro_avoid_distractions">"تجنب التشتيت"</string>
     <string name="intro_avoid_distractions_description">"الحفاظ على عملك على المسار الصحيح باستخدام جلسات توقيت التعامل معها من قبل التطبيق."</string>
     <string name="intro_clear_mind">"صفي ذهنك"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">استمتع النسخة الموالية!</string>
     <string name="upgrade_extra_features">ميزات اضافية</string>
     <string name="Profile">الملفّ الشّخصي</string>
+    <string name="pref_profile_name">إسم حسابك</string>
+    <string name="pref_save_custom_profile">حفظ ملف التعريف المخصص</string>
+    <string name="pref_timer_duration">مدة الموقت</string>
     <string name="pref_timer_style">بدء المؤقت</string>
     <string name="pref_timer_style_default">افتراضي</string>
     <string name="pref_timer_style_classic">الافتراضي</string>

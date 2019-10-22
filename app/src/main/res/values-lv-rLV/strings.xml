@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Sist pa kreisi vai pa labi, lai pārietu no pašreizējās sesijas</string>
     <string name="tutorial_swipe_up">Velciet uz augšu, lai pievienotu vēl vienu minūti</string>
     <string name="tutorial_swipe_down">Lai apturētu, velciet uz leju taimer</string>
+    <string name="tutorial_archive_label">Jūs tikko arhivējāt etiķeti. Tas nebūs redzams atlasē vai statistikā.</string>
     <string name="intro_avoid_distractions">"Izvairies no uzmanības novēršanas"</string>
     <string name="intro_avoid_distractions_description">"Seko sava darba gaitai izmantojot ierobežotas laika sesijas ko apstrādā lietotne."</string>
     <string name="intro_clear_mind">"Atbrīvo savu prātu"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">Izbaudiet pro versija!</string>
     <string name="upgrade_extra_features">Papildu funkcijas</string>
     <string name="Profile">Profils</string>
+    <string name="pref_profile_name">Profila vārds</string>
+    <string name="pref_save_custom_profile">Saglabājiet pielāgoto profilu</string>
+    <string name="pref_timer_duration">Taimera ilgums</string>
     <string name="pref_timer_style">Taimera stils</string>
     <string name="pref_timer_style_default">Noklusējuma</string>
     <string name="pref_timer_style_classic">Klasiskie</string>
@@ -134,7 +138,7 @@
     <string name="pref_session_counter">Sesijas skaitītājs</string>
     <string name="pref_session_counter_summary">"Rāda šodienas pabeigtu sesiju skaits"</string>
     <string name="support_the_developer">Atbalsti izstrādātāju</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter">Tas atiestatīs šodienas pabeigtās sesijas.</string>
     <string name="action_reset_counter_title">Atiestatīt?</string>
     <string name="tutorial_title">Apmācība</string>
 </resources>

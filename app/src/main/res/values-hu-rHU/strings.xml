@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Húzza balra vagy jobbra az aktuális munkamenet átugrásához</string>
     <string name="tutorial_swipe_up">Húzza felfelé, hogy még egy percet adjon hozzá</string>
     <string name="tutorial_swipe_down">A leállításhoz húzza le az időzítőt</string>
+    <string name="tutorial_archive_label">Csak archiváltál egy címkét. Nem lesz látható a kiválasztás vagy a statisztika szempontjából.</string>
     <string name="intro_avoid_distractions">"Kerüld el a zavaró hatásokat"</string>
     <string name="intro_avoid_distractions_description">"Tartsd sínen a munkád az alkalmazásban időzített szakaszokkal."</string>
     <string name="intro_clear_mind">"Tisztítsd ki az elméd"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">Élvezze a pro verziót!</string>
     <string name="upgrade_extra_features">Extra funkciók</string>
     <string name="Profile">Profil</string>
+    <string name="pref_profile_name">Suchprofilname</string>
+    <string name="pref_save_custom_profile">Az egyedi profil mentése</string>
+    <string name="pref_timer_duration">Időzítő időtartama</string>
     <string name="pref_timer_style">Időzítő stílus</string>
     <string name="pref_timer_style_default">Alapértelmezett</string>
     <string name="pref_timer_style_classic">Klasszikus</string>

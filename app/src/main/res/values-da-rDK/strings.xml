@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Stryg til venstre eller højre for at springe den aktuelle session over</string>
     <string name="tutorial_swipe_up">Stryg op til at tilføje et minut</string>
     <string name="tutorial_swipe_down">Stryg ned for at stoppe timeren</string>
+    <string name="tutorial_archive_label">Du arkiverede lige en etiket. Det vil ikke være synligt for udvælgelse eller statistik.</string>
     <string name="intro_avoid_distractions">"Undgå distraktioner"</string>
     <string name="intro_avoid_distractions_description">"Hold styr på dit arbejde ved tidtagning af arbejdssessioner håndteret af denne app."</string>
     <string name="intro_clear_mind">"Bliv klar i hovedet"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">Nyd pro versionen!</string>
     <string name="upgrade_extra_features">Ekstra funktioner</string>
     <string name="Profile">Profil</string>
+    <string name="pref_profile_name">Profilnavn</string>
+    <string name="pref_save_custom_profile">Gem brugerdefineret profil</string>
+    <string name="pref_timer_duration">Timer varighed</string>
     <string name="pref_timer_style">Timerstil</string>
     <string name="pref_timer_style_default">Standard</string>
     <string name="pref_timer_style_classic">Klassisk</string>

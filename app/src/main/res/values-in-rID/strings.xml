@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Menggesek kiri atau kanan untuk melewatkan sesi saat ini</string>
     <string name="tutorial_swipe_up">Babatan untuk menambahkan lebih satu menit</string>
     <string name="tutorial_swipe_down">Babatan turun pada timer berhenti</string>
+    <string name="tutorial_archive_label">Anda baru saja mengarsipkan label. Itu tidak akan terlihat untuk seleksi atau statistik.</string>
     <string name="intro_avoid_distractions">"Hindari gangguan"</string>
     <string name="intro_avoid_distractions_description">"Biarkan pekerjaanmu terekam menggunakan sesi berwaktu yang di tangani oleh aplikasi."</string>
     <string name="intro_clear_mind">"Bersihkan pikiranmu"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">Nikmati versi pro!</string>
     <string name="upgrade_extra_features">Fitur tambahan</string>
     <string name="Profile">Profil</string>
+    <string name="pref_profile_name">Nama profil</string>
+    <string name="pref_save_custom_profile">Simpan profil khusus</string>
+    <string name="pref_timer_duration">Durasi pengatur waktu</string>
     <string name="pref_timer_style">Gaya timer</string>
     <string name="pref_timer_style_default">Bawaan</string>
     <string name="pref_timer_style_classic">Klasik</string>

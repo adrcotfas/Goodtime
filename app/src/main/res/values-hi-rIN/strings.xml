@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">वर्तमान सत्र को छोड़ने के लिए बाएं या दाएं स्वाइप करें</string>
     <string name="tutorial_swipe_up">एक और मिनट जोड़ने के लिए स्वाइप करें</string>
     <string name="tutorial_swipe_down">बंद करने के लिए टाइमर पर स्वाइप करें</string>
+    <string name="tutorial_archive_label">आपने अभी एक लेबल संग्रहीत किया है। यह चयन या आँकड़ों के लिए दिखाई नहीं देगा।</string>
     <string name="intro_avoid_distractions">"व्याकुलता हटाए"</string>
     <string name="intro_avoid_distractions_description">"ऐप द्वारा नियंत्रित समयबद्ध सत्रों का उपयोग करते हुए ट्रैक पर अपना काम रखें"</string>
     <string name="intro_clear_mind">"अपना दिमाग साफ़ करे"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">प्रो संस्करण का आनंद लें!</string>
     <string name="upgrade_extra_features">अतिरिक्त सुविधाओं</string>
     <string name="Profile">प्रालेख</string>
+    <string name="pref_profile_name">प्रोफ़ाइल नाम</string>
+    <string name="pref_save_custom_profile">कस्टम प्रोफ़ाइल सहेजें</string>
+    <string name="pref_timer_duration">समय की अवधि</string>
     <string name="pref_timer_style">टाइमर शैली</string>
     <string name="pref_timer_style_default">पूर्व निर्धारित</string>
     <string name="pref_timer_style_classic">क्लासिक</string>

@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Desplaceu-vos cap a l\'esquerra o cap a la dreta per ometre la sessió actual</string>
     <string name="tutorial_swipe_up">Feu lliscar el dit cap a enrere per afegir un minut més</string>
     <string name="tutorial_swipe_down">Desplaceu-vos cap avall al temporitzador per aturar</string>
+    <string name="tutorial_archive_label">Acabeu d\'arxivar una etiqueta. No serà visible per a la selecció ni les estadístiques.</string>
     <string name="intro_avoid_distractions">"Eviteu distraccions"</string>
     <string name="intro_avoid_distractions_description">"Fes la feina de manera productiva utilitzant sessions temporitzades administrades per l'aplicació."</string>
     <string name="intro_clear_mind">"Endreça la teva ment"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">Gaudir de la versió pro!</string>
     <string name="upgrade_extra_features">Funcions addicionals</string>
     <string name="Profile">Perfil</string>
+    <string name="pref_profile_name">Nom del perfil</string>
+    <string name="pref_save_custom_profile">Desa el perfil personalitzat</string>
+    <string name="pref_timer_duration">Durada del temporitzador</string>
     <string name="pref_timer_style">Estil de temporitzador</string>
     <string name="pref_timer_style_default">Per defecte</string>
     <string name="pref_timer_style_classic">Clàssic</string>

@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Dra åt vänster eller höger för att hoppa över den aktuella sessionen</string>
     <string name="tutorial_swipe_up">Dra upp för att lägga till en minut</string>
     <string name="tutorial_swipe_down">Dra ner på timern för att stoppa</string>
+    <string name="tutorial_archive_label">Du arkiverade precis en etikett. Det kommer inte att vara synligt för urval eller statistik.</string>
     <string name="intro_avoid_distractions">"Undvik distraktioner"</string>
     <string name="intro_avoid_distractions_description">"Behåll fokus på ditt arbete med hjälp av tidsbestämda sessioner."</string>
     <string name="intro_clear_mind">"Frigör ditt sinne"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">Njut av pro-versionen!</string>
     <string name="upgrade_extra_features">Extra-funktioner</string>
     <string name="Profile">Profil</string>
+    <string name="pref_profile_name">Profilnamn</string>
+    <string name="pref_save_custom_profile">Spara anpassad profil</string>
+    <string name="pref_timer_duration">Tidtagarens varaktighet</string>
     <string name="pref_timer_style">Stil på timern</string>
     <string name="pref_timer_style_default">Standard</string>
     <string name="pref_timer_style_classic">Klassisk</string>

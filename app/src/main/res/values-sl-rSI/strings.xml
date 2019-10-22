@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Če želite preskočiti trenutno sejo, povlecite levo ali desno</string>
     <string name="tutorial_swipe_up">Povlecite navzgor, da dodate še eno minuto</string>
     <string name="tutorial_swipe_down">Če želite ustaviti, s prstom povlecite navzdol</string>
+    <string name="tutorial_archive_label">Pravkar ste arhivirali etiketo. Ne bo vidno za izbiro ali statistiko.</string>
     <string name="intro_avoid_distractions">"Izogni se motnjam"</string>
     <string name="intro_avoid_distractions_description">"Sledi svojemu delu z uporabo odštevanja delovnih sej, ki jih nudi ta aplikacija."</string>
     <string name="intro_clear_mind">"Razjasni svoj um"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">Uživajte v pro različici!</string>
     <string name="upgrade_extra_features">Dodatne funkcije</string>
     <string name="Profile">Profil</string>
+    <string name="pref_profile_name">Ime profila</string>
+    <string name="pref_save_custom_profile">Shrani profil po meri</string>
+    <string name="pref_timer_duration">Trajanje časovnika</string>
     <string name="pref_timer_style">Slog ure</string>
     <string name="pref_timer_style_default">Privzeto</string>
     <string name="pref_timer_style_classic">Klasika</string>

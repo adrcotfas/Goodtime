@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Scorrere verso sinistra o destra per saltare la sessione corrente</string>
     <string name="tutorial_swipe_up">Scorri verso l\'alto per aggiungere un altro minuto</string>
     <string name="tutorial_swipe_down">Scorri verso il basso sul contaminuti per interrompere</string>
+    <string name="tutorial_archive_label">Hai appena archiviato un\'etichetta. Non sarà visibile per la selezione o le statistiche.</string>
     <string name="intro_avoid_distractions">"Evita distrazioni"</string>
     <string name="intro_avoid_distractions_description">"Rimani concentrato sul tuo lavoro usando sessioni cronometrate gestite dell'app."</string>
     <string name="intro_clear_mind">"Libera la mente"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">Goditi la versione pro!</string>
     <string name="upgrade_extra_features">Funzioni extra</string>
     <string name="Profile">Profilo</string>
+    <string name="pref_profile_name">Nome profilo</string>
+    <string name="pref_save_custom_profile">Salva profilo personalizzato</string>
+    <string name="pref_timer_duration">Durata del timer</string>
     <string name="pref_timer_style">Stile del contaminuti</string>
     <string name="pref_timer_style_default">Predefinito</string>
     <string name="pref_timer_style_classic">Classica</string>

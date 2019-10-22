@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Проведите влево или вправо, чтобы пропустить текущий сеанс</string>
     <string name="tutorial_swipe_up">Проведите пальцем вверх, чтобы добавить еще одну минуту</string>
     <string name="tutorial_swipe_down">Проведите пальцем вниз по таймеру, чтобы остановить</string>
+    <string name="tutorial_archive_label">Вы только что архивировали метку. Она не будет видна для выбора или статистики.</string>
     <string name="intro_avoid_distractions">"Не отвлекайтесь"</string>
     <string name="intro_avoid_distractions_description">"Выполняйте намеченные задачи, используя управляемые приложением временные сессии."</string>
     <string name="intro_clear_mind">"Проясните голову"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">Наслаждайтесь про версией!</string>
     <string name="upgrade_extra_features">Дополнительные функции</string>
     <string name="Profile">Профиль</string>
+    <string name="pref_profile_name">Имя профиля</string>
+    <string name="pref_save_custom_profile">Сохранить пользовательский профиль</string>
+    <string name="pref_timer_duration">Продолжительность таймера</string>
     <string name="pref_timer_style">Таймер стиль</string>
     <string name="pref_timer_style_default">По умолчанию</string>
     <string name="pref_timer_style_classic">Классические</string>

@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Σαρώστε προς τα αριστερά ή δεξιά για να παρακάμψετε την τρέχουσα περίοδο λειτουργίας</string>
     <string name="tutorial_swipe_up">Σαρώστε προς τα επάνω για να προσθέσετε ένα λεπτό ακόμη</string>
     <string name="tutorial_swipe_down">Σαρώστε προς τα κάτω το χρονόμετρο να σταματήσει</string>
+    <string name="tutorial_archive_label">Μόλις αρχειοθετήσατε μια ετικέτα. Δεν θα είναι ορατό για επιλογή ή στατιστικά στοιχεία.</string>
     <string name="intro_avoid_distractions">"Απόφυγε τους αντιπερισπασμούς"</string>
     <string name="intro_avoid_distractions_description">"Διατήρησε τον ειρμό της δουλειάς σου χρησιμοποιώντας χρονομετρημένες συνεδρίες που διαχειρίζονται από την εφαρμογή."</string>
     <string name="intro_clear_mind">"Καθάρισε τον νού σου"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">Απολαύστε την επαγγελματική έκδοση!</string>
     <string name="upgrade_extra_features">Επιπλέον χαρακτηριστικά</string>
     <string name="Profile">Προφίλ</string>
+    <string name="pref_profile_name">Όνομα προφίλ</string>
+    <string name="pref_save_custom_profile">Αποθήκευση προσαρμοσμένου προφίλ</string>
+    <string name="pref_timer_duration">Διάρκεια χρονισμού</string>
     <string name="pref_timer_style">Χρονόμετρο στυλ</string>
     <string name="pref_timer_style_default">Προεπιλογή</string>
     <string name="pref_timer_style_classic">Κλασικό</string>
@@ -134,7 +138,7 @@
     <string name="pref_session_counter">Συνεδρίες μετρητή</string>
     <string name="pref_session_counter_summary">"Δείχνει η σημερινή αριθμό των ολοκληρωθείσες επισκέψεις"</string>
     <string name="support_the_developer">Στήριξε τον προγραμματιστή</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter">Αυτό θα επαναφέρει τις τελικές συνεδρίες της ημέρας.</string>
     <string name="action_reset_counter_title">Να γίνει επαναφορά;</string>
     <string name="tutorial_title">Οδηγός λειτουργίας</string>
 </resources>

@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">ปัดไปทางซ้ายหรือขวาเพื่อข้ามเซสชันปัจจุบัน</string>
     <string name="tutorial_swipe_up">ปัดขึ้นเพื่อเพิ่มอีกหนึ่งนาที</string>
     <string name="tutorial_swipe_down">ปัดลงบนตัวจับเวลาเพื่อหยุด</string>
+    <string name="tutorial_archive_label">คุณเพิ่งเก็บป้ายกำกับไว้ จะไม่ปรากฏให้เห็นสำหรับการเลือกหรือสถิติ</string>
     <string name="intro_avoid_distractions">"หลีกเลี่ยงการรบกวน"</string>
     <string name="intro_avoid_distractions_description">"จัดการเวลางานของคุณโดยใช้ตัวกำหนดค่าระยะเวลาของเรา"</string>
     <string name="intro_clear_mind">"ทำให้สมองของคุณโล่งขึ้น"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">เพลิดเพลินไปกับรุ่นโปร!</string>
     <string name="upgrade_extra_features">คุณสมบัติพิเศษ</string>
     <string name="Profile">ข้อมูลส่วนตัว</string>
+    <string name="pref_profile_name">ชื่อโปรไฟล์</string>
+    <string name="pref_save_custom_profile">บันทึกโปรไฟล์ที่กำหนดเอง</string>
+    <string name="pref_timer_duration">ระยะเวลาจับเวลา</string>
     <string name="pref_timer_style">สไตล์จับเวลา</string>
     <string name="pref_timer_style_default">ค่าเริ่มต้น</string>
     <string name="pref_timer_style_classic">คลาสสิก</string>
@@ -134,7 +138,7 @@
     <string name="pref_session_counter">เคาน์เตอร์ประชุม</string>
     <string name="pref_session_counter_summary">"แสดงจำนวนเซสชันที่เสร็จสมบูรณ์แล้ววันนี้"</string>
     <string name="support_the_developer">ช่วยเหลือนักพัฒนา</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter">สิ่งนี้จะรีเซ็ตเซสชันที่เสร็จสิ้นแล้วของวันนี้</string>
     <string name="action_reset_counter_title">รีเซ็ตหรือไม่</string>
     <string name="tutorial_title">แนะนำการเล่นเบื้องต้น</string>
 </resources>

@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Vegen links of rechts om de huidige sessie overslaan</string>
     <string name="tutorial_swipe_up">Jatten omhoog om toe te voegen nog een minuut</string>
     <string name="tutorial_swipe_down">Swipe naar beneden op de timer om te stoppen</string>
+    <string name="tutorial_archive_label">Je hebt zojuist een label gearchiveerd. Het is niet zichtbaar voor selectie of statistieken.</string>
     <string name="intro_avoid_distractions">"Vermijd afleidingen"</string>
     <string name="intro_avoid_distractions_description">"Houd je werk bij door de app sessies te laten timen."</string>
     <string name="intro_clear_mind">"Leeg je gedachten"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">Geniet van de pro-versie!</string>
     <string name="upgrade_extra_features">Extra functies</string>
     <string name="Profile">Profiel</string>
+    <string name="pref_profile_name">Profielnaam</string>
+    <string name="pref_save_custom_profile">Aangepast profiel opslaan</string>
+    <string name="pref_timer_duration">Tijdsduur</string>
     <string name="pref_timer_style">Timer-stijl</string>
     <string name="pref_timer_style_default">Standaard</string>
     <string name="pref_timer_style_classic">Klassiek</string>

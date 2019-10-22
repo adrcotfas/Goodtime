@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">বামে বা ডানে সেশনের এড়িয়ে যেতে সোয়াইপ করুন</string>
     <string name="tutorial_swipe_up">উপরে আরও এক মিনিট যোগ করতে সোয়াইপ করুন</string>
     <string name="tutorial_swipe_down">এ সময়-গণক বন্ধ করতে নীচে সোয়াইপ করুন</string>
+    <string name="tutorial_archive_label">আপনি সবেমাত্র একটি লেবেল সংরক্ষণাগারভুক্ত করেছেন। এটি নির্বাচন বা পরিসংখ্যানের জন্য দৃশ্যমান হবে না।.</string>
     <string name="intro_avoid_distractions">"বিক্ষিপ্ততা পরিহার"</string>
     <string name="intro_avoid_distractions_description">"কাজের গতিবিধি এই অ্যাপের সাহায্যে ঠিক রাখুন."</string>
     <string name="intro_clear_mind">"মন পরিস্কার করুন"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">প্রো সংস্করণের উপভোগ!</string>
     <string name="upgrade_extra_features">অতিরিক্ত বৈশিষ্ট্য</string>
     <string name="Profile">প্রোফাইল</string>
+    <string name="pref_profile_name">প্রোফাইল নাম</string>
+    <string name="pref_save_custom_profile">কাস্টম প্রোফাইল সংরক্ষণ করুন</string>
+    <string name="pref_timer_duration">টাইমার সময়কাল</string>
     <string name="pref_timer_style">সময়-সংরক্ষককে স্টাইল</string>
     <string name="pref_timer_style_default">পূর্ব-নির্ধারিত</string>
     <string name="pref_timer_style_classic">ক্লাসিক</string>

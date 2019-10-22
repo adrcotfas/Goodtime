@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">Prevuci levo ili desno da preskočiš trenutnu sesiju</string>
     <string name="tutorial_swipe_up">Prevuci nagore da dodaš još jedan minut</string>
     <string name="tutorial_swipe_down">Prevuci nadole da zaustaviš tajmer</string>
+    <string name="tutorial_archive_label">You just archived a label. It will not be visible for selection or statistics.</string>
     <string name="intro_avoid_distractions">"Izbegni ometanja"</string>
     <string name="intro_avoid_distractions_description">"Vodi računa o svom poslu pomoću vremenski određenih sesija kojima upravlja aplikacija."</string>
     <string name="intro_clear_mind">"Očistite svoj um"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">Uživaj u pro verziji!</string>
     <string name="upgrade_extra_features">Dodatne funkcije</string>
     <string name="Profile">Profil</string>
+    <string name="pref_profile_name">Profile name</string>
+    <string name="pref_save_custom_profile">Save custom profile</string>
+    <string name="pref_timer_duration">Timer duration</string>
     <string name="pref_timer_style">Stil tajmera</string>
     <string name="pref_timer_style_default">Podrazumevano</string>
     <string name="pref_timer_style_classic">Klasičan</string>

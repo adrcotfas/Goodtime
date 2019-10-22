@@ -75,6 +75,7 @@
     <string name="tutorial_swipe_left">向左或向右滑動以跳過當前會話</string>
     <string name="tutorial_swipe_up">向上滑動可再添加一分鐘</string>
     <string name="tutorial_swipe_down">向下滑動計時器停止</string>
+    <string name="tutorial_archive_label">你刚刚存档了一个标签。它不会被选择或统计可见。</string>
     <string name="intro_avoid_distractions">"避免打扰"</string>
     <string name="intro_avoid_distractions_description">"使用 Goodtime 使你工作时保持专注"</string>
     <string name="intro_clear_mind">"摒除杂念"</string>
@@ -127,6 +128,9 @@
     <string name="upgrade_enjoy">享受专业版！</string>
     <string name="upgrade_extra_features">额外功能</string>
     <string name="Profile">方案</string>
+    <string name="pref_profile_name">配置文件名称</string>
+    <string name="pref_save_custom_profile">保存自定义配置文件</string>
+    <string name="pref_timer_duration">时间长度</string>
     <string name="pref_timer_style">计时器风格</string>
     <string name="pref_timer_style_default">默认</string>
     <string name="pref_timer_style_classic">经典</string>
