@@ -29,7 +29,8 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat implemen
     private SwitchPreferenceCompat mPrefEnableLongBreak;
     private ProperSeekBarPreference mPrefLongBreakDuration;
     private ProperSeekBarPreference mPrefSessionsBeforeLongBreak;
-    private List<Profile> mProfiles;
+    private List<Profile> mProfiles = new ArrayList<>();
+    private ProfilesViewModel mProfilesViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,12 +48,11 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat implemen
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings_durations, rootKey);
-        ProfilesViewModel profilesViewModel = ViewModelProviders.of(getActivity()).get(ProfilesViewModel.class);
-        profilesViewModel.getProfiles().observe(this, profiles -> {
+        mProfilesViewModel = ViewModelProviders.of(getActivity()).get(ProfilesViewModel.class);
+        mProfilesViewModel.getProfiles().observe(this, profiles -> {
             mProfiles = profiles;
             setupProfiles();
         });
-
         setupDurations();
     }
 
@@ -101,9 +101,22 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat implemen
         mPrefProfile.attachListener(this);
 
         ArrayList<CharSequence> profileNames = new ArrayList<>();
-        profileNames.add(getResources().getText(R.string.pref_profile_default));
-        profileNames.add(getResources().getText(R.string.pref_profile_5217));
+
+        CharSequence profile_name_25_5 = getResources().getText(R.string.pref_profile_default);
+        CharSequence profile_name_52_17 = getResources().getText(R.string.pref_profile_5217);
+
+        profileNames.add(profile_name_25_5);
+        profileNames.add(profile_name_52_17);
+
         for (Profile p : mProfiles) {
+            // TODO: workaround for implementation fault: custom profiles with the same name as the default ones
+            //  delete this in future releases
+            if (p.name.equals(profile_name_25_5.toString())
+                    || p.name.equals(profile_name_52_17.toString())) {
+                mProfilesViewModel.deleteProfile(p.name);
+                continue;
+            }
+
             profileNames.add(p.name);
         }
 
@@ -143,7 +156,7 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat implemen
                         PreferenceHelper.PROFILE,
                         getString(R.string.pref_save_custom_profile),
                         profile,
-                        mPrefProfile.getValue());
+                        mPrefProfile);
                 dialog.setTargetFragment(this, 0);
                 dialog.show(getFragmentManager(), null);
             } else {
