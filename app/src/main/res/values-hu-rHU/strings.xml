@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">Extra funkciók</string>
     <string name="Profile">Profil</string>
     <string name="pref_profile_name">Suchprofilname</string>
+    <string name="profile_already_exists">A profil már létezik</string>
     <string name="pref_save_custom_profile">Az egyedi profil mentése</string>
     <string name="pref_timer_duration">Időzítő időtartama</string>
     <string name="pref_timer_style">Időzítő stílus</string>
@@ -138,7 +139,7 @@
     <string name="pref_session_counter">Szekciók számláló</string>
     <string name="pref_session_counter_summary">"A befejezett ülések számát mutatja"</string>
     <string name="support_the_developer">A fejlesztő támogatása</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter">Ez visszaállítja a mai befejezett munkameneteket.</string>
     <string name="action_reset_counter_title">Visszaállítás?</string>
     <string name="tutorial_title">A bemutató</string>
 </resources>

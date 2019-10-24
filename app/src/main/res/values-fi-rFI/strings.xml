@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">Extra ominaisuudet</string>
     <string name="Profile">Profiili</string>
     <string name="pref_profile_name">Profiilinimi</string>
+    <string name="profile_already_exists">Profiili on jo olemassa</string>
     <string name="pref_save_custom_profile">Tallenna mukautettu profiili</string>
     <string name="pref_timer_duration">Ajastimen kesto</string>
     <string name="pref_timer_style">Ajastimen tyyli</string>

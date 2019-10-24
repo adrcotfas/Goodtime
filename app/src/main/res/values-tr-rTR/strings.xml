@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">Ekstra özellikler</string>
     <string name="Profile">Profili</string>
     <string name="pref_profile_name">Profil ismi</string>
+    <string name="profile_already_exists">Profil zaten var</string>
     <string name="pref_save_custom_profile">Özel profili kaydet</string>
     <string name="pref_timer_duration">Zamanlayıcı süresi</string>
     <string name="pref_timer_style">Zamanlayıcı tarzı</string>

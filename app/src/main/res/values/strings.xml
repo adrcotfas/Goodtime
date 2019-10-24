@@ -144,6 +144,7 @@
 
     <string name="Profile">Profile</string>
     <string name="pref_profile_name">Profile name</string>
+    <string name="profile_already_exists">Profile already exists</string>
     <string name="pref_save_custom_profile">Save custom profile</string>
     <string name="pref_timer_duration">Timer duration</string>
 

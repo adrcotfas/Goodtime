@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">Дополнительные функции</string>
     <string name="Profile">Профиль</string>
     <string name="pref_profile_name">Имя профиля</string>
+    <string name="profile_already_exists">Профиль уже существует</string>
     <string name="pref_save_custom_profile">Сохранить пользовательский профиль</string>
     <string name="pref_timer_duration">Продолжительность таймера</string>
     <string name="pref_timer_style">Таймер стиль</string>

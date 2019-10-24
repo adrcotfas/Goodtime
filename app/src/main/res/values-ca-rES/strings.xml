@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">Funcions addicionals</string>
     <string name="Profile">Perfil</string>
     <string name="pref_profile_name">Nom del perfil</string>
+    <string name="profile_already_exists">El perfil ja existeix</string>
     <string name="pref_save_custom_profile">Desa el perfil personalitzat</string>
     <string name="pref_timer_duration">Durada del temporitzador</string>
     <string name="pref_timer_style">Estil de temporitzador</string>

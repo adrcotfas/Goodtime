@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">Tilleggsfunksjoner</string>
     <string name="Profile">Profil</string>
     <string name="pref_profile_name">Profilnavn</string>
+    <string name="profile_already_exists">Profilen eksisterer allerede</string>
     <string name="pref_save_custom_profile">Lagre tilpasset profil</string>
     <string name="pref_timer_duration">Timer varighet</string>
     <string name="pref_timer_style">Timer stil</string>

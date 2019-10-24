@@ -128,8 +128,9 @@
     <string name="upgrade_enjoy">Uživaj u pro verziji!</string>
     <string name="upgrade_extra_features">Dodatne funkcije</string>
     <string name="Profile">Profil</string>
-    <string name="pref_profile_name">Profile name</string>
-    <string name="pref_save_custom_profile">Save custom profile</string>
+    <string name="pref_profile_name">Naziv profila</string>
+    <string name="profile_already_exists">Ovaj profil već postoji</string>
+    <string name="pref_save_custom_profile">Moj prilagođeni profil</string>
     <string name="pref_timer_duration">Timer duration</string>
     <string name="pref_timer_style">Stil tajmera</string>
     <string name="pref_timer_style_default">Podrazumevano</string>

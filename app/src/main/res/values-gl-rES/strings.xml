@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">Funcións adicionais</string>
     <string name="Profile">Perfil</string>
     <string name="pref_profile_name">Nome do perfil</string>
+    <string name="profile_already_exists">O perfil xa existe</string>
     <string name="pref_save_custom_profile">Ve-lo perfil da clienta</string>
     <string name="pref_timer_duration">Duración do temporizador</string>
     <string name="pref_timer_style">Estilo de temporizador</string>

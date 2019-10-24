@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">Características adicionales</string>
     <string name="Profile">Perfil</string>
     <string name="pref_profile_name">Nombre del perfil</string>
+    <string name="profile_already_exists">Ya existe el perfil</string>
     <string name="pref_save_custom_profile">Shrani profil po meri</string>
     <string name="pref_timer_duration">Trajanje časovnika</string>
     <string name="pref_timer_style">Estilo de temporizador</string>
