@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">Dodatkowe funkcje</string>
     <string name="Profile">Profil</string>
     <string name="pref_profile_name">Nazwa profilu</string>
+    <string name="profile_already_exists">Profil o tej nazwie już istnieje</string>
     <string name="pref_save_custom_profile">Zapisz profil niestandardowy</string>
     <string name="pref_timer_duration">Czas trwania timera</string>
     <string name="pref_timer_style">Styl licznika</string>

@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">অতিরিক্ত বৈশিষ্ট্য</string>
     <string name="Profile">প্রোফাইল</string>
     <string name="pref_profile_name">প্রোফাইল নাম</string>
+    <string name="profile_already_exists">প্রোফাইল ইতিমধ্যে বিদ্যমান</string>
     <string name="pref_save_custom_profile">কাস্টম প্রোফাইল সংরক্ষণ করুন</string>
     <string name="pref_timer_duration">টাইমার সময়কাল</string>
     <string name="pref_timer_style">সময়-সংরক্ষককে স্টাইল</string>

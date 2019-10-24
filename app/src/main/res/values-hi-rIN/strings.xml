@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">अतिरिक्त सुविधाओं</string>
     <string name="Profile">प्रालेख</string>
     <string name="pref_profile_name">प्रोफ़ाइल नाम</string>
+    <string name="profile_already_exists">प्रोफ़ाइल पहले से मौजूद है</string>
     <string name="pref_save_custom_profile">कस्टम प्रोफ़ाइल सहेजें</string>
     <string name="pref_timer_duration">समय की अवधि</string>
     <string name="pref_timer_style">टाइमर शैली</string>

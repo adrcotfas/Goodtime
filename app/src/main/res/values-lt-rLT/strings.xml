@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">Papildomos funkcijos</string>
     <string name="Profile">Profilis</string>
     <string name="pref_profile_name">Profilio pavadinimas</string>
+    <string name="profile_already_exists">Profilis jau yra</string>
     <string name="pref_save_custom_profile">Įrašykite pasirinktinį profilį</string>
     <string name="pref_timer_duration">Laikmačio trukmė</string>
     <string name="pref_timer_style">Laikmačio stilius</string>

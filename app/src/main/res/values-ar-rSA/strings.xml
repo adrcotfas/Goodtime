@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">ميزات اضافية</string>
     <string name="Profile">الملفّ الشّخصي</string>
     <string name="pref_profile_name">إسم حسابك</string>
+    <string name="profile_already_exists">الملف الشخصي موجود بالفعل</string>
     <string name="pref_save_custom_profile">حفظ ملف التعريف المخصص</string>
     <string name="pref_timer_duration">مدة الموقت</string>
     <string name="pref_timer_style">بدء المؤقت</string>

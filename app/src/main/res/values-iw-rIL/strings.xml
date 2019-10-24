@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">תכונות נוספות</string>
     <string name="Profile">פרופיל</string>
     <string name="pref_profile_name">שם הפרופיל</string>
+    <string name="profile_already_exists">הפרופיל קיים כבר</string>
     <string name="pref_save_custom_profile">שמור פרופיל מותאם אישית</string>
     <string name="pref_timer_duration">משך טיימר</string>
     <string name="pref_timer_style">סגנון טיימר</string>

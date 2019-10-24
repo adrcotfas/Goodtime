@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">Extra functies</string>
     <string name="Profile">Profiel</string>
     <string name="pref_profile_name">Profielnaam</string>
+    <string name="profile_already_exists">Deze naam bestaat al</string>
     <string name="pref_save_custom_profile">Aangepast profiel opslaan</string>
     <string name="pref_timer_duration">Tijdsduur</string>
     <string name="pref_timer_style">Timer-stijl</string>

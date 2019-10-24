@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">额外功能</string>
     <string name="Profile">方案</string>
     <string name="pref_profile_name">配置文件名称</string>
+    <string name="profile_already_exists">编码方案已经存在</string>
     <string name="pref_save_custom_profile">保存自定义配置文件</string>
     <string name="pref_timer_duration">时间长度</string>
     <string name="pref_timer_style">计时器风格</string>

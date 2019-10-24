@@ -129,6 +129,7 @@
     <string name="upgrade_extra_features">คุณสมบัติพิเศษ</string>
     <string name="Profile">ข้อมูลส่วนตัว</string>
     <string name="pref_profile_name">ชื่อโปรไฟล์</string>
+    <string name="profile_already_exists">มีโปรไฟล์อยู่แล้ว</string>
     <string name="pref_save_custom_profile">บันทึกโปรไฟล์ที่กำหนดเอง</string>
     <string name="pref_timer_duration">ระยะเวลาจับเวลา</string>
     <string name="pref_timer_style">สไตล์จับเวลา</string>
