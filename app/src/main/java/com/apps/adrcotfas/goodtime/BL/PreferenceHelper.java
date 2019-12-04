@@ -13,6 +13,9 @@
 
 package com.apps.adrcotfas.goodtime.BL;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.SystemClock;
 
 import com.apps.adrcotfas.goodtime.BuildConfig;
@@ -70,6 +73,7 @@ public class PreferenceHelper {
     private static final String ADD_60_SECONDS_COUNTER    = "pref_add_60_seconds_times";
 
     private static final String UNSAVED_PROFILE_ACTIVE = "pref_custom_pref_active";
+    private static final String MIGRATION_FINISHED_101 = "pref_migration_finished_101";
 
     static void migratePreferences() {
         if (getDefaultSharedPreferences(GoodtimeApplication.getInstance())
@@ -121,7 +125,7 @@ public class PreferenceHelper {
                 .getBoolean(INSISTENT_RINGTONE, false);
     }
 
-    static String getNotificationSoundWorkFinished() {
+    public static String getNotificationSoundWorkFinished() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getString(RINGTONE_WORK_FINISHED, "");
     }
@@ -347,5 +351,30 @@ public class PreferenceHelper {
     public static void setUnsavedProfileActive(boolean state) {
         GoodtimeApplication.getPrivatePreferences().edit()
                 .putBoolean(UNSAVED_PROFILE_ACTIVE, state).apply();
+    }
+
+    public static void resetRingtonePreferences(String preference) {
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
+                .putString(preference, "").commit();
+    }
+
+    //TODO: remove when https://github.com/Gericop/Android-Support-Preference-V7-Fix/issues/203 is fixed
+    public static void migrate(Context context) {
+        try {
+            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            int verCode = pInfo.versionCode;
+
+            final boolean migrationFinished101 =
+                    GoodtimeApplication.getPrivatePreferences().getBoolean(MIGRATION_FINISHED_101, false);
+
+            if (verCode == 101 && !migrationFinished101) {
+                resetRingtonePreferences(RINGTONE_WORK_FINISHED);
+                resetRingtonePreferences(RINGTONE_BREAK_FINISHED);
+                GoodtimeApplication.getPrivatePreferences().edit()
+                        .putBoolean(MIGRATION_FINISHED_101, true).apply();
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

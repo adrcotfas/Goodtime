@@ -51,6 +51,7 @@ public class GoodtimeApplication extends Application {
                 PreferenceManager.getDefaultSharedPreferences(this)
                         .getInt(WORK_DURATION, DEFAULT_WORK_DURATION_DEFAULT))));
 
+        PreferenceHelper.migrate(this);
     }
 
     public CurrentSession getCurrentSession() {

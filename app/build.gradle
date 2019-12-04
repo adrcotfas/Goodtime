@@ -6,8 +6,8 @@ android {
         applicationId "com.apps.adrcotfas.goodtime"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 100
-        versionName "2.1.1"
+        versionCode 101
+        versionName "2.1.2"
         resConfigs "ar-rSA",
                 "bn-rBD",
                 "bs-rBA",
@@ -96,10 +96,11 @@ dependencies {
     // Preferences
     implementation 'androidx.preference:preference:1.1.0'
 
-    implementation 'com.takisoft.preferencex:preferencex-ringtone:1.1.0-alpha05'
+    implementation 'com.takisoft.preferencex:preferencex:1.1.0'
+    implementation 'com.takisoft.preferencex:preferencex-ringtone:1.1.0'
 
     // Color picker for the labels
-    implementation 'com.takisoft.preferencex:preferencex-colorpicker:1.1.0-alpha05'
+    implementation 'com.takisoft.preferencex:preferencex-colorpicker:1.1.0'
 
     // EventBus
     implementation 'de.greenrobot:eventbus:2.4.0'

@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
+import com.takisoft.preferencex.PreferenceFragmentCompat;
 import com.takisoft.preferencex.RingtonePreferenceDialogFragmentCompat;
 import com.takisoft.preferencex.RingtonePreference;
 
@@ -37,10 +38,12 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.DISABLE_SOUND_AND_VIBRATION;
+import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.RINGTONE_BREAK_FINISHED;
+import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.RINGTONE_WORK_FINISHED;
+
 import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements ActivityCompat.OnRequestPermissionsResultCallback {
@@ -48,7 +51,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     private CheckBoxPreference mPrefDisableSoundCheckbox;
 
     @Override
-    public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
+    public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
 
         mPrefDisableSoundCheckbox = findPreference(DISABLE_SOUND_AND_VIBRATION);
@@ -94,6 +97,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     public void onDisplayPreferenceDialog(Preference preference) {
         if (preference.getKey().equals(PreferenceHelper.RINGTONE_BREAK_FINISHED)) {
             if (PreferenceHelper.isPro()) {
+                //TODO: clean-up this mess when https://github.com/Gericop/Android-Support-Preference-V7-Fix/issues/203 is fixed
+                if (PreferenceHelper.getNotificationSoundWorkFinished().equals("content://settings/system/notification_sound")) {
+                    PreferenceHelper.resetRingtonePreferences(RINGTONE_BREAK_FINISHED);
+                }
                 RingtonePreferenceDialogFragmentCompat dialog = RingtonePreferenceDialogFragmentCompat.newInstance(preference.getKey());
                 dialog.setTargetFragment(this, 0);
                 dialog.show(getFragmentManager(), null);
@@ -101,7 +108,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
                 launchUpgradeActivity(getActivity());
             }
         }
-        else if (preference instanceof RingtonePreference) {
+        if (preference instanceof RingtonePreference) {
+            //TODO: clean-up this mess
+            if (PreferenceHelper.getNotificationSoundWorkFinished().equals("content://settings/system/notification_sound")) {
+                PreferenceHelper.resetRingtonePreferences(RINGTONE_WORK_FINISHED);
+            }
+
             RingtonePreferenceDialogFragmentCompat dialog = RingtonePreferenceDialogFragmentCompat.newInstance(preference.getKey());
             dialog.setTargetFragment(this, 0);
             dialog.show(getFragmentManager(), null);
