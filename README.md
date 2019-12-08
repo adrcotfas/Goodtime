@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/goodtime-productivity/Goodtime.svg?branch=master)](https://travis-ci.org/goodtime-productivity/Goodtime) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/goodtime/localized.svg)](https://crowdin.com/project/goodtime)
-
+[![Build Status](https://travis-ci.org/goodtime-productivity/Goodtime.svg?branch=master)](https://travis-ci.org/goodtime-productivity/Goodtime) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/goodtime/localized.svg)](https://crowdin.com/project/goodtime) [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LEFM8XAK5MYFA)
 
 
 # Goodtime
@@ -9,8 +8,6 @@
     <img src="https://f-droid.org/badge/get-it-on.png"
          alt="Get it on F-Droid" height="80">
 </a>
-
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CH2SJKS6GXG6L)
 
 A minimalist but powerful productivity timer designed to keep you focused and free of distractions.
 <br>Alternate between focused work sessions and short breaks handled by the app.
