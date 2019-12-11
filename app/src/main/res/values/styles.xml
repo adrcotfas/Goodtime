@@ -230,7 +230,7 @@
         <item name="colorPrimaryVariant">@color/black</item>
         <item name="android:colorBackground">@color/gray1100</item>
         <item name="mal_card_background">@color/black</item>
-
+        <item name="android:navigationBarColor" tools:targetApi="lollipop">?attr/colorPrimary</item>
         <item name="fontFamily">@font/app_font</item>
     </style>
 
