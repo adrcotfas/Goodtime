@@ -41,8 +41,6 @@ import androidx.preference.Preference;
 import androidx.preference.SwitchPreferenceCompat;
 
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.DISABLE_SOUND_AND_VIBRATION;
-import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.RINGTONE_BREAK_FINISHED;
-import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.RINGTONE_WORK_FINISHED;
 
 import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
@@ -97,10 +95,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     public void onDisplayPreferenceDialog(Preference preference) {
         if (preference.getKey().equals(PreferenceHelper.RINGTONE_BREAK_FINISHED)) {
             if (PreferenceHelper.isPro()) {
-                //TODO: clean-up this mess when https://github.com/Gericop/Android-Support-Preference-V7-Fix/issues/203 is fixed
-                if (PreferenceHelper.getNotificationSoundWorkFinished().equals("content://settings/system/notification_sound")) {
-                    PreferenceHelper.resetRingtonePreferences(RINGTONE_BREAK_FINISHED);
-                }
                 RingtonePreferenceDialogFragmentCompat dialog = RingtonePreferenceDialogFragmentCompat.newInstance(preference.getKey());
                 dialog.setTargetFragment(this, 0);
                 dialog.show(getFragmentManager(), null);
@@ -109,11 +103,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
             }
         }
         if (preference instanceof RingtonePreference) {
-            //TODO: clean-up this mess
-            if (PreferenceHelper.getNotificationSoundWorkFinished().equals("content://settings/system/notification_sound")) {
-                PreferenceHelper.resetRingtonePreferences(RINGTONE_WORK_FINISHED);
-            }
-
             RingtonePreferenceDialogFragmentCompat dialog = RingtonePreferenceDialogFragmentCompat.newInstance(preference.getKey());
             dialog.setTargetFragment(this, 0);
             dialog.show(getFragmentManager(), null);

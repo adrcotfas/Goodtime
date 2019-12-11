@@ -50,8 +50,6 @@ public class GoodtimeApplication extends Application {
         mCurrentSessionManager = new CurrentSessionManager(this, new CurrentSession(TimeUnit.MINUTES.toMillis(
                 PreferenceManager.getDefaultSharedPreferences(this)
                         .getInt(WORK_DURATION, DEFAULT_WORK_DURATION_DEFAULT))));
-
-        PreferenceHelper.migrate(this);
     }
 
     public CurrentSession getCurrentSession() {

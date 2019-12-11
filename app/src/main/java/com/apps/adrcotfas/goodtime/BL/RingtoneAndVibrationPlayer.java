@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Vibrator;
 
@@ -36,8 +37,14 @@ class RingtoneAndVibrationPlayer extends ContextWrapper{
             mMediaPlayer = new MediaPlayer();
             mVibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
 
-            final Uri uri = Uri.parse( sessionType == SessionType.WORK ?
-                    PreferenceHelper.getNotificationSoundWorkFinished() : PreferenceHelper.getNotificationSoundBreakFinished());
+            final String ringtone = sessionType == SessionType.WORK ?
+                    PreferenceHelper.getNotificationSoundWorkFinished() : PreferenceHelper.getNotificationSoundBreakFinished();
+            Uri uri;
+            if (ringtone.equals("")) {
+                uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            } else {
+                uri = Uri.parse(ringtone);
+            }
 
             mMediaPlayer.setDataSource(this, uri);
             if (PreferenceHelper.isRingtoneEnabled()) {

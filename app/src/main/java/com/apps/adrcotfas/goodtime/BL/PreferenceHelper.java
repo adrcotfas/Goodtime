@@ -352,29 +352,4 @@ public class PreferenceHelper {
         GoodtimeApplication.getPrivatePreferences().edit()
                 .putBoolean(UNSAVED_PROFILE_ACTIVE, state).apply();
     }
-
-    public static void resetRingtonePreferences(String preference) {
-        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
-                .putString(preference, "").commit();
-    }
-
-    //TODO: remove when https://github.com/Gericop/Android-Support-Preference-V7-Fix/issues/203 is fixed
-    public static void migrate(Context context) {
-        try {
-            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            int verCode = pInfo.versionCode;
-
-            final boolean migrationFinished101 =
-                    GoodtimeApplication.getPrivatePreferences().getBoolean(MIGRATION_FINISHED_101, false);
-
-            if (verCode == 101 && !migrationFinished101) {
-                resetRingtonePreferences(RINGTONE_WORK_FINISHED);
-                resetRingtonePreferences(RINGTONE_BREAK_FINISHED);
-                GoodtimeApplication.getPrivatePreferences().edit()
-                        .putBoolean(MIGRATION_FINISHED_101, true).apply();
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
 }
