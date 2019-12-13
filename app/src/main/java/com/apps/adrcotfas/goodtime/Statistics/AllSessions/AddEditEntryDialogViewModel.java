@@ -27,7 +27,7 @@ public class AddEditEntryDialogViewModel extends ViewModel {
     public long sessionToEditId;
 
     public AddEditEntryDialogViewModel() {
-        date.setValue(new DateTime().withHourOfDay(9).withMinuteOfHour(0));
+        date.setValue(new DateTime());
         label.setValue(null);
         sessionToEditId = INVALID_SESSION_TO_EDIT_ID;
     }
