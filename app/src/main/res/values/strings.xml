@@ -19,6 +19,8 @@
     <string name="pref_vibration_type_none">None</string>
     <string name="pref_vibration_type_soft">Soft</string>
     <string name="pref_vibration_type_strong">Strong</string>
+    <string name="pref_vibration_type_sos">SOS</string>
+    <string name="pref_vibration_type_heartbeat">Heartbeat</string>
     <string name="pref_amoled">"Dark theme"</string>
     <string name="pref_header_during_work_sessions">During work sessions</string>
     <string name="pref_enable_ringtone">"Notification sound"</string>

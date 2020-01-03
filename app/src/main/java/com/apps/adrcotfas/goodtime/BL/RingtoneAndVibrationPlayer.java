@@ -21,6 +21,8 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Vibrator;
 
+import com.apps.adrcotfas.goodtime.Util.VibrationPatterns;
+
 import java.io.IOException;
 
 class RingtoneAndVibrationPlayer extends ContextWrapper{
@@ -60,20 +62,12 @@ class RingtoneAndVibrationPlayer extends ContextWrapper{
                 mMediaPlayer.start();
             });
 
-            switch (PreferenceHelper.getVibrationType()) {
-                case STRONG:
-                    mVibrator.vibrate(new long[] {0, 500, 500, 500},
-                            PreferenceHelper.isRingtoneInsistent() ? 2 : -1);
-                    break;
-
-                case SOFT:
-                    mVibrator.vibrate(new long[] {0, 50, 50, 50, 50, 50},
-                            PreferenceHelper.isRingtoneInsistent() ? 2 : -1);
-                    break;
-
-                default:
-                    // Either "NONE" or an invalid value: no vibration
+            final int vibrationType = PreferenceHelper.getVibrationType();
+            if (vibrationType > 0) {
+                mVibrator.vibrate(VibrationPatterns.LIST[vibrationType],
+                        PreferenceHelper.isRingtoneInsistent() ? 2 : -1);
             }
+
         } catch (SecurityException | IOException e) {
             stop();
         }

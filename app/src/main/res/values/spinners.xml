@@ -45,12 +45,22 @@
         <item>@string/pref_vibration_type_none</item>
         <item>@string/pref_vibration_type_soft</item>
         <item>@string/pref_vibration_type_strong</item>
+        <item>@string/pref_vibration_type_sos</item>
+        <item>@string/pref_vibration_type_heartbeat</item>
     </string-array>
 
+    <string name="pref_vibration_values_none" translatable="false">0</string>
+    <string name="pref_vibration_values_soft" translatable="false">1</string>
+    <string name="pref_vibration_values_strong" translatable="false">2</string>
+    <string name="pref_vibration_values_sos" translatable="false">3</string>
+    <string name="pref_vibration_values_heartbeat" translatable="false">4</string>
+
     <string-array name="pref_vibration_values">
-        <item>NONE</item>
-        <item>SOFT</item>
-        <item>STRONG</item>
+        <item>@string/pref_vibration_values_none</item>
+        <item>@string/pref_vibration_values_soft</item>
+        <item>@string/pref_vibration_values_strong</item>
+        <item>@string/pref_vibration_values_sos</item>
+        <item>@string/pref_vibration_values_heartbeat</item>
     </string-array>
 
 </resources>

@@ -42,6 +42,7 @@ import androidx.preference.SwitchPreferenceCompat;
 
 import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.DISABLE_SOUND_AND_VIBRATION;
 
+import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.VIBRATION_TYPE;
 import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements ActivityCompat.OnRequestPermissionsResultCallback {
@@ -106,12 +107,17 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
             RingtonePreferenceDialogFragmentCompat dialog = RingtonePreferenceDialogFragmentCompat.newInstance(preference.getKey());
             dialog.setTargetFragment(this, 0);
             dialog.show(getFragmentManager(), null);
-        } else if (preference.getKey().equals(PreferenceHelper.TIMER_STYLE)){
+        } else if (preference.getKey().equals(PreferenceHelper.TIMER_STYLE)) {
             if (PreferenceHelper.isPro()) {
                 super.onDisplayPreferenceDialog(preference);
             } else {
                 launchUpgradeActivity(getActivity());
             }
+
+        } else if (preference.getKey().equals(VIBRATION_TYPE)) {
+            VibrationPreferenceDialogFragment dialog = VibrationPreferenceDialogFragment.newInstance(preference.getKey());
+            dialog.setTargetFragment(this, 0);
+            dialog.show(getFragmentManager(), null);
         } else {
             super.onDisplayPreferenceDialog(preference);
         }

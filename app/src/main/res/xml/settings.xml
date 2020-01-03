@@ -105,10 +105,10 @@
             app:iconSpaceReserved="false"/>
 
         <ListPreference
-            android:defaultValue="STRONG"
+            android:key="pref_vibration_type"
+            android:defaultValue="@string/pref_vibration_values_strong"
             android:entryValues="@array/pref_vibration_values"
             android:entries="@array/pref_vibration_types"
-            android:key="pref_vibration_type"
             android:title="@string/pref_vibrate"
             android:summary="%s"
             app:iconSpaceReserved="false"/>
