@@ -31,6 +31,7 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat implemen
     private ProperSeekBarPreference mPrefSessionsBeforeLongBreak;
     private List<Profile> mProfiles = new ArrayList<>();
     private ProfilesViewModel mProfilesViewModel;
+    private Preference mSaveCustomProfileButton;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,6 +55,8 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat implemen
             setupProfiles();
         });
         setupDurations();
+        mSaveCustomProfileButton = findPreference(PreferenceHelper.SAVE_CUSTOM_PROFILE);
+        mSaveCustomProfileButton.setVisible(PreferenceHelper.isUnsavedProfileActive());
     }
 
     private void setupDurations() {
@@ -61,14 +64,14 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat implemen
         mPrefWorkDuration.setShowSeekBarValue(true);
         mPrefWorkDuration.setOnPreferenceChangeListener((preference, newValue) -> {
             mPrefProfile.setSummary("");
-            PreferenceHelper.setUnsavedProfileActive(true);
+            onDurationsChanged();
             return true;
         });
         mPrefBreakDuration = findPreference(PreferenceHelper.BREAK_DURATION);
         mPrefBreakDuration.setShowSeekBarValue(true);
         mPrefBreakDuration.setOnPreferenceChangeListener((preference, newValue) -> {
             mPrefProfile.setSummary("");
-            PreferenceHelper.setUnsavedProfileActive(true);
+            onDurationsChanged();
             return true;
         });
 
@@ -77,21 +80,21 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat implemen
         mPrefEnableLongBreak.setOnPreferenceChangeListener((preference, newValue) -> {
             toggleLongBreakPreference((Boolean) newValue);
             mPrefProfile.setSummary("");
-            PreferenceHelper.setUnsavedProfileActive(true);
+            onDurationsChanged();
             return true;
         });
         mPrefLongBreakDuration = findPreference(PreferenceHelper.LONG_BREAK_DURATION);
         mPrefLongBreakDuration.setShowSeekBarValue(true);
         mPrefLongBreakDuration.setOnPreferenceChangeListener((preference, newValue) -> {
             mPrefProfile.setSummary("");
-            PreferenceHelper.setUnsavedProfileActive(true);
+            onDurationsChanged();
             return true;
         });
         mPrefSessionsBeforeLongBreak = findPreference(PreferenceHelper.SESSIONS_BEFORE_LONG_BREAK);
         mPrefSessionsBeforeLongBreak.setShowSeekBarValue(true);
         mPrefSessionsBeforeLongBreak.setOnPreferenceChangeListener((preference, newValue) -> {
             mPrefProfile.setSummary("");
-            PreferenceHelper.setUnsavedProfileActive(true);
+            onDurationsChanged();
             return true;
         });
     }
@@ -172,9 +175,16 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat implemen
         }
     }
 
+    public void onDurationsChanged() {
+        PreferenceHelper.setUnsavedProfileActive(true);
+        mSaveCustomProfileButton.setVisible(true);
+    }
+
     @Override
     public void onProfileChange(CharSequence newValue) {
         PreferenceHelper.setUnsavedProfileActive(false);
+        mSaveCustomProfileButton.setVisible(false);
+
         if (newValue.equals(getResources().getText(R.string.pref_profile_default))) {
             mPrefWorkDuration.setValue(Constants.DEFAULT_WORK_DURATION_DEFAULT);
             mPrefBreakDuration.setValue(Constants.DEFAULT_BREAK_DURATION_DEFAULT);
