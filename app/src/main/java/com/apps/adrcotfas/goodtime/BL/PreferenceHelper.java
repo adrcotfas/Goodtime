@@ -46,7 +46,7 @@ public class PreferenceHelper {
     public final static String INSISTENT_RINGTONE          = "pref_ringtone_insistent";
     public final static String RINGTONE_WORK_FINISHED      = "pref_ringtone";
     public final static String RINGTONE_BREAK_FINISHED     = "pref_ringtone_break";
-    private final static String ENABLE_VIBRATE              = "pref_vibrate";
+    private final static String VIBRATION_TYPE             = "pref_vibration_type";
     private final static String ENABLE_FULLSCREEN           = "pref_fullscreen";
     public final static String DISABLE_SOUND_AND_VIBRATION = "pref_disable_sound_and_vibration";
     private final static String DISABLE_WIFI                = "pref_disable_wifi";
@@ -135,9 +135,17 @@ public class PreferenceHelper {
                 .getString(RINGTONE_BREAK_FINISHED, "");
     }
 
-    static boolean isVibrationEnabled() {
-        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getBoolean(ENABLE_VIBRATE, true);
+    static VibrationType getVibrationType() {
+        VibrationType type = VibrationType.STRONG;
+        try {
+            type = VibrationType.valueOf(
+                getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                        .getString(VIBRATION_TYPE, "")
+            );
+        } catch (IllegalArgumentException e) {
+            // Fall back invalid values to "STRONG"
+        }
+        return type;
     }
 
     public static boolean isFullscreenEnabled() {

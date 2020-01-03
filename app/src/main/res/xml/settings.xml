@@ -104,10 +104,13 @@
             app:pref_summaryHasRingtone="%s"
             app:iconSpaceReserved="false"/>
 
-        <SwitchPreferenceCompat
-            android:defaultValue="true"
-            android:key="pref_vibrate"
+        <ListPreference
+            android:defaultValue="STRONG"
+            android:entryValues="@array/pref_vibration_values"
+            android:entries="@array/pref_vibration_types"
+            android:key="pref_vibration_type"
             android:title="@string/pref_vibrate"
+            android:summary="%s"
             app:iconSpaceReserved="false"/>
 
         <CheckBoxPreference
