@@ -60,9 +60,19 @@ class RingtoneAndVibrationPlayer extends ContextWrapper{
                 mMediaPlayer.start();
             });
 
-            if (PreferenceHelper.isVibrationEnabled()) {
-                mVibrator.vibrate(new long[] {0, 500, 500, 500},
-                        PreferenceHelper.isRingtoneInsistent() ? 2 : -1);
+            switch (PreferenceHelper.getVibrationType()) {
+                case STRONG:
+                    mVibrator.vibrate(new long[] {0, 500, 500, 500},
+                            PreferenceHelper.isRingtoneInsistent() ? 2 : -1);
+                    break;
+
+                case SOFT:
+                    mVibrator.vibrate(new long[] {0, 50, 50, 50, 50, 50},
+                            PreferenceHelper.isRingtoneInsistent() ? 2 : -1);
+                    break;
+
+                default:
+                    // Either "NONE" or an invalid value: no vibration
             }
         } catch (SecurityException | IOException e) {
             stop();

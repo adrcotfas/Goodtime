@@ -41,4 +41,16 @@
         <item>@string/spinner_range_hours</item>
     </string-array>
 
+    <string-array name="pref_vibration_types">
+        <item>@string/pref_vibration_type_none</item>
+        <item>@string/pref_vibration_type_soft</item>
+        <item>@string/pref_vibration_type_strong</item>
+    </string-array>
+
+    <string-array name="pref_vibration_values">
+        <item>NONE</item>
+        <item>SOFT</item>
+        <item>STRONG</item>
+    </string-array>
+
 </resources>
