@@ -32,8 +32,6 @@ A minimalist but powerful productivity timer designed to keep you focused and fr
 - Custom notification sounds
 - Auto start work or break without user interaction
 - Disable sound and Wi-Fi connection during the work sessions
-
-**Pro features**
 - Colored labels
 - Timer styles
 - Manually add sessions
