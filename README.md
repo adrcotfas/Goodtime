@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/goodtime-productivity/Goodtime.svg?branch=master)](https://travis-ci.org/goodtime-productivity/Goodtime) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/goodtime/localized.svg)](https://crowdin.com/project/goodtime) [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LEFM8XAK5MYFA)
+[![Build Status](https://travis-ci.org/adrcotfas/Goodtime.svg?branch=master)](https://travis-ci.org/goodtime-productivity/Goodtime) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/goodtime/localized.svg)](https://crowdin.com/project/goodtime) [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LEFM8XAK5MYFA)
 
 
 # Goodtime
