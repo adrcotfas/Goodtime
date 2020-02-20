@@ -8,12 +8,12 @@
     alt="Get it on F-Droid"
     height="80">](https://f-droid.org/packages/com.apps.adrcotfas.goodtime)
 
-A minimalist but powerful productivity timer designed to keep you focused and free of distractions.
-Alternate between focused work sessions and short breaks, all handled by the app.
-Get rid of procrastination and improve your time management!
+A minimalist but powerful productivity timer designed to keep you focused and free of distractions.  
+Alternate between focused work sessions and short breaks, all handled by the app.  
+Get rid of procrastination and improve your time management!  
 
-⏳ split your work into focused sessions and then reward yourself with a break
-☕ after mulitple work sessions, take a longer break
+⏳ split your work into focused sessions and then reward yourself with a break  
+☕ after multiple work sessions, take a longer break
 
 ## Features
 - No ads
@@ -41,7 +41,6 @@ Get rid of procrastination and improve your time management!
 - Themes
 - Separate notification sound for work and break
 - Insistent notifications
-- All future features for free
 
 ## Translations
 You can help translate or improve existing translations at [Crowdin](https://crowdin.com/project/goodtime). Thank you!
