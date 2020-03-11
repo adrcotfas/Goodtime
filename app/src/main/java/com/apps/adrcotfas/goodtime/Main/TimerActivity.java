@@ -116,6 +116,8 @@ public class TimerActivity
 
     private TextView mSessionsCounterText;
 
+    private SessionType mCurrentSessionType = SessionType.INVALID;
+
     private static final String DIALOG_SELECT_LABEL_TAG = "dialogSelectLabel";
 
     public void onStartButtonClick(View view) {
@@ -410,6 +412,7 @@ public class TimerActivity
     private void setupEvents() {
         mCurrentSession.getDuration().observe(TimerActivity.this, this::updateTimeLabel);
         mCurrentSession.getSessionType().observe(TimerActivity.this, sessionType -> {
+            mCurrentSessionType = sessionType;
             if (mStatusButton != null) {
                 if (sessionType == SessionType.WORK) {
                     mStatusButton.setIcon(getResources().getDrawable(R.drawable.ic_status_goodtime));
@@ -417,11 +420,13 @@ public class TimerActivity
                     mStatusButton.setIcon(getResources().getDrawable(R.drawable.ic_break));
                 }
                 setStatusIconColor();
+                setTimeLabelColor();
             }
         });
 
         mCurrentSession.getTimerState().observe(TimerActivity.this, timerState -> {
             if (timerState == TimerState.INACTIVE) {
+                setTimeLabelColor();
                 if (mStatusButton != null) {
                     mStatusButton.setVisible(false);
                 }
@@ -688,6 +693,11 @@ public class TimerActivity
         Label label = PreferenceHelper.getCurrentSessionLabel();
 
         if (mStatusButton != null) {
+            if (mCurrentSessionType == SessionType.BREAK || mCurrentSessionType == SessionType.LONG_BREAK) {
+                mStatusButton.getIcon().setColorFilter(
+                        ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_BREAK), PorterDuff.Mode.SRC_ATOP);
+                return;
+            }
             if (label.title != null) {
                 mStatusButton.getIcon().setColorFilter(
                         ThemeHelper.getColor(this, label.colorId), PorterDuff.Mode.SRC_ATOP);
@@ -701,6 +711,10 @@ public class TimerActivity
     private void setTimeLabelColor() {
         Label label = PreferenceHelper.getCurrentSessionLabel();
         if (mTimeLabel != null) {
+            if (mCurrentSessionType == SessionType.BREAK || mCurrentSessionType == SessionType.LONG_BREAK) {
+                mTimeLabel.setTextColor(ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_BREAK));
+                return;
+            }
             if (label.title != null) {
                 mTimeLabel.setTextColor(ThemeHelper.getColor(this, label.colorId));
             } else {

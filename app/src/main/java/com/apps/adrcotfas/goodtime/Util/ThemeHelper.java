@@ -34,6 +34,7 @@ public class ThemeHelper {
 
     public static final int COLOR_INDEX_UNLABELED = 0;
     public static final int COLOR_INDEX_ALL_LABELS = 42;
+    public static final int COLOR_INDEX_BREAK = 43;
 
     public static void setTheme(AppCompatActivity activity) {
         if (PreferenceHelper.isAmoledTheme()) {
@@ -116,6 +117,9 @@ public class ThemeHelper {
         }
         if (colorIndex == COLOR_INDEX_ALL_LABELS) {
             return context.getResources().getColor(R.color.teal200);
+        }
+        if (colorIndex == COLOR_INDEX_BREAK) {
+            return context.getResources().getColor(R.color.grey_500);
         }
         int colors[] = getPalette(context);
         if (colorIndex < colors.length) {
