@@ -33,6 +33,9 @@ import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 
 import java.util.concurrent.TimeUnit;
 
+import static android.graphics.Color.GREEN;
+import static android.graphics.Color.RED;
+
 /**
  * Class responsible with creating and updating notifications for the foreground {@link TimerService}
  * and triggering notifications for events like finishing a session or updating the remaining time.
@@ -153,6 +156,7 @@ public class NotificationHelper extends ContextWrapper {
         if (sessionType == SessionType.WORK) {
             builder.setContentTitle(getString(R.string.action_finished_session))
                     .setContentText(getString(R.string.action_continue))
+                    .setLights(GREEN, 500, 2000)
                     .addAction(buildStartBreakAction(this))
                     .addAction(buildSkipBreakAction(this));
             extender.addAction(buildStartBreakAction(this));
@@ -160,6 +164,7 @@ public class NotificationHelper extends ContextWrapper {
         } else {
             builder.setContentTitle(getString(R.string.action_finished_break))
                     .setContentText(getString(R.string.action_continue))
+                    .setLights(RED, 500, 2000)
                     .addAction(buildStartWorkAction(this));
             extender.addAction(buildStartWorkAction(this));
         }
