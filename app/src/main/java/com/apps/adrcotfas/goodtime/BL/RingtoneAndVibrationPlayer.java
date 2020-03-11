@@ -15,6 +15,7 @@ package com.apps.adrcotfas.goodtime.BL;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
@@ -29,9 +30,11 @@ class RingtoneAndVibrationPlayer extends ContextWrapper{
 
     private MediaPlayer mMediaPlayer;
     private Vibrator mVibrator;
+    private AudioManager mAudioManager;
 
     public RingtoneAndVibrationPlayer(Context context) {
         super(context);
+        mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
     }
 
     public void play(SessionType sessionType) {
@@ -50,7 +53,16 @@ class RingtoneAndVibrationPlayer extends ContextWrapper{
 
             mMediaPlayer.setDataSource(this, uri);
             if (PreferenceHelper.isRingtoneEnabled()) {
-                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+                if (areHeadphonesPlugged()) {
+                    mAudioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+                    mAudioManager.setSpeakerphoneOn(false);
+                    mMediaPlayer.setAudioStreamType(AudioManager.MODE_IN_COMMUNICATION);
+                } else {
+                    mAudioManager.setMode(AudioManager.MODE_NORMAL);
+                    mAudioManager.setSpeakerphoneOn(true);
+                    mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+                }
+
                 mMediaPlayer.setLooping(PreferenceHelper.isRingtoneInsistent());
                 mMediaPlayer.prepareAsync();
             }
@@ -71,6 +83,21 @@ class RingtoneAndVibrationPlayer extends ContextWrapper{
         } catch (SecurityException | IOException e) {
             stop();
         }
+    }
+
+    private boolean areHeadphonesPlugged(){
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            AudioDeviceInfo[] audioDevices = mAudioManager.getDevices(AudioManager.GET_DEVICES_ALL);
+            for(AudioDeviceInfo deviceInfo : audioDevices){
+                if(deviceInfo.getType()==AudioDeviceInfo.TYPE_WIRED_HEADPHONES
+                        || deviceInfo.getType()==AudioDeviceInfo.TYPE_WIRED_HEADSET){
+                    return true;
+                }
+            }
+        } else {
+            return mAudioManager.isWiredHeadsetOn();
+        }
+        return false;
     }
 
     public void stop() {
