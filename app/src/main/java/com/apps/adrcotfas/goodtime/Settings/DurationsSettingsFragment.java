@@ -21,7 +21,8 @@ import java.util.List;
 
 import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
-public class DurationsSettingsFragment extends PreferenceFragmentCompat implements ProfilePreference.ProfileChangeListener {
+public class DurationsSettingsFragment extends PreferenceFragmentCompat
+        implements ProfilePreference.ProfileChangeListener, ProperSeekBarPreferenceDialog.Listener {
 
     private ProfilePreference mPrefProfile;
     private ProperSeekBarPreference mPrefWorkDuration;
@@ -141,7 +142,8 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat implemen
     @Override
     public void onDisplayPreferenceDialog(Preference preference) {
         if (preference instanceof ProperSeekBarPreference) {
-            ProperSeekBarPreferenceDialog dialog = ProperSeekBarPreferenceDialog.newInstance(preference.getKey());
+            ProperSeekBarPreferenceDialog dialog =
+                    ProperSeekBarPreferenceDialog.newInstance(preference.getKey(), this);
             dialog.setTargetFragment(this, 0);
             dialog.show(getFragmentManager(), null);
         } else if (preference.getKey().equals(PreferenceHelper.SAVE_CUSTOM_PROFILE)) {
@@ -210,5 +212,11 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat implemen
                 }
             }
         }
+    }
+
+    @Override
+    public void onValueSet() {
+        mSaveCustomProfileButton.setVisible(true);
+        mPrefProfile.setSummary("");
     }
 }

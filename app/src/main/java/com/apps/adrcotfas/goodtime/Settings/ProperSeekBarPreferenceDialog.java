@@ -17,11 +17,18 @@ import com.apps.adrcotfas.goodtime.R;
 
 public class ProperSeekBarPreferenceDialog extends PreferenceDialogFragmentCompat {
 
-    public static ProperSeekBarPreferenceDialog newInstance(String key) {
+    interface Listener {
+        void onValueSet();
+    }
+
+    Listener listener;
+
+    public static ProperSeekBarPreferenceDialog newInstance(String key, Listener listener) {
         ProperSeekBarPreferenceDialog fragment = new ProperSeekBarPreferenceDialog();
         Bundle b = new Bundle(1);
         b.putString(PreferenceDialogFragmentCompat.ARG_KEY, key);
         fragment.setArguments(b);
+        fragment.listener = listener;
         return fragment;
     }
 
@@ -39,9 +46,13 @@ public class ProperSeekBarPreferenceDialog extends PreferenceDialogFragmentCompa
         builder.setTitle(seekBarPreference.getTitle());
         builder.setPositiveButton(android.R.string.ok, (di, i) -> {
             final EditText input = dialogView.findViewById(R.id.value);
-            final String name = input.getText().toString();
-            if (!TextUtils.isEmpty(name)) {
-                seekBarPreference.setValue(Integer.parseInt(name));
+            final String value = input.getText().toString();
+            if (!TextUtils.isEmpty(value)) {
+                final int seekBarValue = Integer.parseInt(value);
+                if (seekBarPreference.getValue() != seekBarValue) {
+                    listener.onValueSet();
+                    seekBarPreference.setValue(seekBarValue);
+                }
             }
         });
         builder.setNegativeButton(android.R.string.cancel, (di, i) -> {
