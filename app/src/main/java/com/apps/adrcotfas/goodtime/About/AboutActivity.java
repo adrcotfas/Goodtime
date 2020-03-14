@@ -135,9 +135,25 @@ public class AboutActivity extends MaterialAboutActivity {
                 null
         ));
 
+        MaterialAboutCard.Builder builder3 = new MaterialAboutCard.Builder();
+
+        builder3.addItem(new MaterialAboutActionItem.Builder()
+                .text(getString(R.string.other_apps))
+                .icon(new IconicsDrawable(c)
+                        .icon(CommunityMaterial.Icon.cmd_application)
+                        .color(ContextCompat.getColor(c, colorIcon))
+                        .sizeDp(18))
+                .setOnClickAction(() -> {
+                    String url = "https://play.google.com/store/apps/developer?id=Adrian+Cotfas";
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(url));
+                    startActivity(i);
+                }).build());
+
         return new MaterialAboutList.Builder()
                 .addCard(builder1.build())
                 .addCard(builder2.build())
+                .addCard(builder3.build())
                 .build();
     }
 
