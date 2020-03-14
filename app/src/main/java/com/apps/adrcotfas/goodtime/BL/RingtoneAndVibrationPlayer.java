@@ -89,8 +89,9 @@ class RingtoneAndVibrationPlayer extends ContextWrapper{
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             AudioDeviceInfo[] audioDevices = mAudioManager.getDevices(AudioManager.GET_DEVICES_ALL);
             for(AudioDeviceInfo deviceInfo : audioDevices){
-                if(deviceInfo.getType()==AudioDeviceInfo.TYPE_WIRED_HEADPHONES
-                        || deviceInfo.getType()==AudioDeviceInfo.TYPE_WIRED_HEADSET){
+                if(deviceInfo.getType() == AudioDeviceInfo.TYPE_WIRED_HEADPHONES
+                        || deviceInfo.getType() == AudioDeviceInfo.TYPE_WIRED_HEADSET
+                        || deviceInfo.getType() == AudioDeviceInfo.TYPE_BLUETOOTH_SCO){
                     return true;
                 }
             }
