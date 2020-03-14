@@ -170,7 +170,7 @@ public class StatisticsFragment extends Fragment {
         mLabelsViewModel = ViewModelProviders.of(getActivity()).get(LabelsViewModel.class);
         mSessionViewModel = ViewModelProviders.of(getActivity()).get(SessionViewModel.class);
 
-        mLabelsViewModel.crtExtendedLabel.observe(this, label -> StatisticsFragment.this.refreshUi());
+        mLabelsViewModel.crtExtendedLabel.observe(getViewLifecycleOwner(), label -> StatisticsFragment.this.refreshUi());
 
         setupSpinners();
         setupHistoryChart();
@@ -354,7 +354,7 @@ public class StatisticsFragment extends Fragment {
             } else {
                 mSessionsToObserve = mSessionViewModel.getSessions(label.title);
             }
-            mSessionsToObserve.observe(this, sessions -> {
+            mSessionsToObserve.observe(getViewLifecycleOwner(), sessions -> {
                 refreshStats(sessions);
                 refreshHistoryChart(sessions, color);
                 refreshProductiveTimeChart(sessions, color);

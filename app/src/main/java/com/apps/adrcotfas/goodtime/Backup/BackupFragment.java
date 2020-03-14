@@ -97,7 +97,7 @@ public class BackupFragment extends BottomSheetDialogFragment {
         Handler handler = new Handler();
 
         LiveData<List<Session>> sessionsLiveData = mSessionViewModel.getAllSessionsByEndTime();
-        sessionsLiveData.observe(this, sessions -> {
+        sessionsLiveData.observe(getViewLifecycleOwner(), sessions -> {
             if (sessions.isEmpty()) {
                 handler.post(() -> Toast.makeText(getActivity(), R.string.backup_no_completed_sessions, Toast.LENGTH_SHORT).show());
                 dismiss();
@@ -144,7 +144,7 @@ public class BackupFragment extends BottomSheetDialogFragment {
         Handler handler = new Handler();
 
         LiveData<List<Session>> sessionsLiveData = mSessionViewModel.getAllSessions();
-        sessionsLiveData.observe(this, sessions -> {
+        sessionsLiveData.observe(getViewLifecycleOwner(), sessions -> {
             if (sessions.isEmpty()) {
                 handler.post(() -> Toast.makeText(getActivity(), R.string.backup_no_completed_sessions, Toast.LENGTH_SHORT).show());
                 dismiss();

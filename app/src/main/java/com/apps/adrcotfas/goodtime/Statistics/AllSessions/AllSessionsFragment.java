@@ -93,11 +93,11 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
         mRecyclerView = binding.mainRecylcerView;
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
 
-        mLabelsViewModel.getLabels().observe(this, labels -> {
+        mLabelsViewModel.getLabels().observe(getViewLifecycleOwner(), labels -> {
             mAdapter = new AllSessionsAdapter(labels);
             mRecyclerView.setAdapter(mAdapter);
 
-            mLabelsViewModel.crtExtendedLabel.observe(this, label -> refreshCurrentLabel());
+            mLabelsViewModel.crtExtendedLabel.observe(getViewLifecycleOwner(), label -> refreshCurrentLabel());
 
             mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
             mRecyclerView.addOnItemTouchListener(
@@ -129,7 +129,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
     private void refreshCurrentLabel() {
         if (mLabelsViewModel.crtExtendedLabel.getValue() != null && mAdapter != null) {
             if (mLabelsViewModel.crtExtendedLabel.getValue().title.equals(getString(R.string.label_all))) {
-                sessionsLiveDataAll.observe(this, sessions -> {
+                sessionsLiveDataAll.observe(getViewLifecycleOwner(), sessions -> {
 
                     if (sessionsLiveDataUnlabeled != null) {
                         sessionsLiveDataUnlabeled.removeObservers(this);
@@ -143,7 +143,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
                     updateRecyclerViewVisibility();
                 });
             } else if (mLabelsViewModel.crtExtendedLabel.getValue().title.equals("unlabeled")) {
-                sessionsLiveDataUnlabeled.observe(this, sessions -> {
+                sessionsLiveDataUnlabeled.observe(getViewLifecycleOwner(), sessions -> {
 
                     if (sessionsLiveDataAll != null) {
                         sessionsLiveDataAll.removeObservers(this);
@@ -158,7 +158,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
                 });
             } else {
                 sessionsLiveDataCrtLabel = mSessionViewModel.getSessions(mLabelsViewModel.crtExtendedLabel.getValue().title);
-                sessionsLiveDataCrtLabel.observe(this, sessions -> {
+                sessionsLiveDataCrtLabel.observe(getViewLifecycleOwner(), sessions -> {
                     if (sessionsLiveDataAll != null) {
                         sessionsLiveDataAll.removeObservers(this);
                     }

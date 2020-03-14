@@ -95,20 +95,20 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements
         mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
         mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
 
-        mViewModel.duration.observe(this, d -> {
+        mViewModel.duration.observe(getViewLifecycleOwner(), d -> {
             String duration = d.toString();
             binding.duration.setText(duration);
             binding.duration.setSelection(duration.length());
         });
-        mViewModel.date.observe(this, date ->  {
+        mViewModel.date.observe(getViewLifecycleOwner(), date ->  {
             binding.editDate.setText(StringUtils.formatDate(date.getMillis()));
             binding.editTime.setText(StringUtils.formatTime(date.getMillis()));
         });
 
-        mViewModel.label.observe(this, label -> {
+        mViewModel.label.observe(getViewLifecycleOwner(), label -> {
             if (label != null && !label.equals("unlabeled")) {
                 binding.labelChip.setText(label);
-                mLabelsViewModel.getColorOfLabel(label).observe(this, color ->
+                mLabelsViewModel.getColorOfLabel(label).observe(getViewLifecycleOwner(), color ->
                         binding.labelChip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), color))));
                 binding.labelDrawable.setImageDrawable(getResources().getDrawable(R.drawable.ic_label));
             } else {
