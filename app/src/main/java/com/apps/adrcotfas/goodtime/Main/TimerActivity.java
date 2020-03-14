@@ -693,11 +693,6 @@ public class TimerActivity
         Label label = PreferenceHelper.getCurrentSessionLabel();
 
         if (mStatusButton != null) {
-            if (mCurrentSessionType == SessionType.BREAK || mCurrentSessionType == SessionType.LONG_BREAK) {
-                mStatusButton.getIcon().setColorFilter(
-                        ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_BREAK), PorterDuff.Mode.SRC_ATOP);
-                return;
-            }
             if (label.title != null) {
                 mStatusButton.getIcon().setColorFilter(
                         ThemeHelper.getColor(this, label.colorId), PorterDuff.Mode.SRC_ATOP);
