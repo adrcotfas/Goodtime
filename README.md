@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/adrcotfas/Goodtime.svg?branch=master)](https://travis-ci.org/goodtime-productivity/Goodtime) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/goodtime/localized.svg)](https://crowdin.com/project/goodtime)
+[![Build Status](https://travis-ci.org/adrcotfas/Goodtime.svg?branch=master)](https://travis-ci.org/adrcotfas/Goodtime) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/goodtime/localized.svg)](https://crowdin.com/project/goodtime)
 
 # Goodtime
 [<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
