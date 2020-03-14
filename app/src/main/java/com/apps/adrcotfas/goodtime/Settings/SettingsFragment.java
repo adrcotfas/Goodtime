@@ -90,6 +90,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         } else {
             disableBatteryOptimizationPref.setVisible(false);
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            findPreference(PreferenceHelper.DISABLE_WIFI).setVisible(false);
+        }
     }
 
     @Override

@@ -49,7 +49,7 @@ public class PreferenceHelper {
     public final static String VIBRATION_TYPE             = "pref_vibration_type";
     private final static String ENABLE_FULLSCREEN           = "pref_fullscreen";
     public final static String DISABLE_SOUND_AND_VIBRATION = "pref_disable_sound_and_vibration";
-    private final static String DISABLE_WIFI                = "pref_disable_wifi";
+    public final static String DISABLE_WIFI                = "pref_disable_wifi";
     public final static String ENABLE_SCREEN_ON            = "pref_keep_screen_on";
     public final static String ENABLE_SCREENSAVER_MODE     = "pref_screen_saver";
     public final static String AUTO_START_BREAK            = "pref_auto_start_break";

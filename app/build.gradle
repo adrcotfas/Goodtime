@@ -6,8 +6,8 @@ android {
         applicationId "com.apps.adrcotfas.goodtime"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 103
-        versionName "2.1.4"
+        versionCode 104
+        versionName "2.1.5"
         resConfigs "ar-rSA",
                 "bn-rBD",
                 "bs-rBA",
@@ -87,11 +87,11 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-    annotationProcessor "androidx.databinding:databinding-compiler:3.6.0-beta01"
+    annotationProcessor "androidx.databinding:databinding-compiler:3.6.1"
 
-    annotationProcessor 'androidx.room:room-compiler:2.2.0'
-    implementation 'androidx.room:room-runtime:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    annotationProcessor 'androidx.room:room-compiler:2.2.4'
+    implementation 'androidx.room:room-runtime:2.2.4'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
     // Preferences
     implementation 'androidx.preference:preference:1.1.0'
@@ -115,9 +115,9 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 
     // Time
-    implementation 'joda-time:joda-time:2.10.4'
+    implementation 'joda-time:joda-time:2.10.5'
 
-    implementation 'androidx.recyclerview:recyclerview-selection:1.1.0-alpha06'
+    implementation 'androidx.recyclerview:recyclerview-selection:1.1.0-rc01'
 
     // icons
     implementation "com.mikepenz:iconics-core:3.1.0"
