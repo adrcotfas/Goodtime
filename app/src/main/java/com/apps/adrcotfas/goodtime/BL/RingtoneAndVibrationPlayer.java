@@ -52,20 +52,12 @@ class RingtoneAndVibrationPlayer extends ContextWrapper{
             }
 
             mMediaPlayer.setDataSource(this, uri);
-            if (PreferenceHelper.isRingtoneEnabled()) {
-                if (areHeadphonesPlugged()) {
-                    mAudioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
-                    mAudioManager.setSpeakerphoneOn(false);
-                    mMediaPlayer.setAudioStreamType(AudioManager.MODE_IN_COMMUNICATION);
-                } else {
-                    mAudioManager.setMode(AudioManager.MODE_NORMAL);
-                    mAudioManager.setSpeakerphoneOn(true);
-                    mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                }
+            mAudioManager.setMode(AudioManager.MODE_NORMAL);
+            mAudioManager.setSpeakerphoneOn(true);
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
 
-                mMediaPlayer.setLooping(PreferenceHelper.isRingtoneInsistent());
-                mMediaPlayer.prepareAsync();
-            }
+            mMediaPlayer.setLooping(PreferenceHelper.isRingtoneInsistent());
+            mMediaPlayer.prepareAsync();
 
             mMediaPlayer.setOnPreparedListener(mp -> {
                 // TODO: check duration of custom ringtones which may be much longer than notification sounds.
@@ -83,22 +75,6 @@ class RingtoneAndVibrationPlayer extends ContextWrapper{
         } catch (SecurityException | IOException e) {
             stop();
         }
-    }
-
-    private boolean areHeadphonesPlugged(){
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            AudioDeviceInfo[] audioDevices = mAudioManager.getDevices(AudioManager.GET_DEVICES_ALL);
-            for(AudioDeviceInfo deviceInfo : audioDevices){
-                if(deviceInfo.getType() == AudioDeviceInfo.TYPE_WIRED_HEADPHONES
-                        || deviceInfo.getType() == AudioDeviceInfo.TYPE_WIRED_HEADSET
-                        || deviceInfo.getType() == AudioDeviceInfo.TYPE_BLUETOOTH_SCO){
-                    return true;
-                }
-            }
-        } else {
-            return mAudioManager.isWiredHeadsetOn();
-        }
-        return false;
     }
 
     public void stop() {
