@@ -39,32 +39,34 @@ class RingtoneAndVibrationPlayer extends ContextWrapper{
 
     public void play(SessionType sessionType) {
         try {
-            mMediaPlayer = new MediaPlayer();
             mVibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
 
-            final String ringtone = sessionType == SessionType.WORK ?
-                    PreferenceHelper.getNotificationSoundWorkFinished() : PreferenceHelper.getNotificationSoundBreakFinished();
-            Uri uri;
-            if (ringtone.equals("")) {
-                uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            } else {
-                uri = Uri.parse(ringtone);
+            if (PreferenceHelper.isRingtoneEnabled()) {
+                final String ringtone = sessionType == SessionType.WORK ?
+                        PreferenceHelper.getNotificationSoundWorkFinished() : PreferenceHelper.getNotificationSoundBreakFinished();
+                Uri uri;
+                if (ringtone.equals("")) {
+                    uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                } else {
+                    uri = Uri.parse(ringtone);
+                }
+
+                mMediaPlayer = new MediaPlayer();
+                mMediaPlayer.setDataSource(this, uri);
+                mAudioManager.setMode(AudioManager.MODE_NORMAL);
+                mAudioManager.setSpeakerphoneOn(true);
+                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
+
+                mMediaPlayer.setLooping(PreferenceHelper.isRingtoneInsistent());
+                mMediaPlayer.prepareAsync();
+
+                mMediaPlayer.setOnPreparedListener(mp -> {
+                    // TODO: check duration of custom ringtones which may be much longer than notification sounds.
+                    // If it's n seconds long and we're in continuous mode,
+                    // schedule a stop after x seconds.
+                    mMediaPlayer.start();
+                });
             }
-
-            mMediaPlayer.setDataSource(this, uri);
-            mAudioManager.setMode(AudioManager.MODE_NORMAL);
-            mAudioManager.setSpeakerphoneOn(true);
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
-
-            mMediaPlayer.setLooping(PreferenceHelper.isRingtoneInsistent());
-            mMediaPlayer.prepareAsync();
-
-            mMediaPlayer.setOnPreparedListener(mp -> {
-                // TODO: check duration of custom ringtones which may be much longer than notification sounds.
-                // If it's n seconds long and we're in continuous mode,
-                // schedule a stop after x seconds.
-                mMediaPlayer.start();
-            });
 
             final int vibrationType = PreferenceHelper.getVibrationType();
             if (vibrationType > 0) {
