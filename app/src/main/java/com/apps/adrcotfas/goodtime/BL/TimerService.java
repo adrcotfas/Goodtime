@@ -326,6 +326,7 @@ public class TimerService extends LifecycleService {
         if (sessionType != SessionType.WORK) {
             return;
         }
+        getSessionManager().getCurrentSession().setSessionType(SessionType.INVALID);
 
         final String label = getSessionManager().getCurrentSession().getLabel().getValue();
         final long endTime = System.currentTimeMillis();
