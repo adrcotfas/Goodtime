@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.SkuDetails;
 import com.anjlab.android.iab.v3.TransactionDetails;
-import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
+import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
