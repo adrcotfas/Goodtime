@@ -24,6 +24,7 @@ import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;

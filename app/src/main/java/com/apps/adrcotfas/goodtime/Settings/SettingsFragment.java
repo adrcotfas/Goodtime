@@ -16,6 +16,7 @@ package com.apps.adrcotfas.goodtime.Settings;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.NotificationManager;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -23,12 +24,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TimePicker;
 
-import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Util.StringUtils;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.takisoft.preferencex.PreferenceFragmentCompat;
 import com.takisoft.preferencex.RingtonePreferenceDialogFragmentCompat;
@@ -38,22 +41,55 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.Preference;
+import androidx.preference.SwitchPreference;
 import androidx.preference.SwitchPreferenceCompat;
 
-import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.DISABLE_SOUND_AND_VIBRATION;
+import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 
-import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.VIBRATION_TYPE;
+import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.DISABLE_SOUND_AND_VIBRATION;
+
+import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.VIBRATION_TYPE;
 import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
-public class SettingsFragment extends PreferenceFragmentCompat implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class SettingsFragment extends PreferenceFragmentCompat implements ActivityCompat.OnRequestPermissionsResultCallback, TimePickerDialog.OnTimeSetListener {
 
     private CheckBoxPreference mPrefDisableSoundCheckbox;
+    private SwitchPreference mPrefReminder;
 
     @Override
     public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
 
         mPrefDisableSoundCheckbox = findPreference(DISABLE_SOUND_AND_VIBRATION);
+        setupReminderPreference();
+    }
+
+    private void setupReminderPreference() {
+        mPrefReminder = findPreference(PreferenceHelper.ENABLE_REMINDER);
+        mPrefReminder.setSummaryOn(StringUtils.formatTime(PreferenceHelper.getTimeOfReminder()));
+        mPrefReminder.setSummaryOff("");
+        mPrefReminder.setOnPreferenceClickListener(preference -> {
+            mPrefReminder.setChecked(!mPrefReminder.isChecked());
+            return true;
+        });
+        mPrefReminder.setOnPreferenceChangeListener((preference, newValue) -> {
+            if ((boolean)newValue) {
+                final long millis = PreferenceHelper.getTimeOfReminder();
+                final DateTime time = new DateTime(millis);
+
+                TimePickerDialog d = new TimePickerDialog(
+                        getActivity(),
+                        R.style.DialogTheme,
+                        SettingsFragment.this,
+                        time.getHourOfDay(),
+                        time.getMinuteOfHour(),
+                        DateFormat.is24HourFormat(getContext()));
+                d.show();
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override
@@ -269,6 +305,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     private void toggleEnableRingtonePreference(Boolean newValue) {
         findPreference(PreferenceHelper.RINGTONE_WORK_FINISHED).setVisible(newValue);
         findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED).setVisible(newValue);
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        final long millis = new LocalTime(hourOfDay, minute).toDateTimeToday().getMillis();
+        PreferenceHelper.setTimeOfReminder(millis);
+        mPrefReminder.setSummaryOn(StringUtils.formatTime(millis));
+        mPrefReminder.setChecked(true);
     }
 }
 

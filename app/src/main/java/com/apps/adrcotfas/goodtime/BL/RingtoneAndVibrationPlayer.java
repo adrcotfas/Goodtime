@@ -15,13 +15,13 @@ package com.apps.adrcotfas.goodtime.BL;
 
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Vibrator;
 
+import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.Util.VibrationPatterns;
 
 import java.io.IOException;

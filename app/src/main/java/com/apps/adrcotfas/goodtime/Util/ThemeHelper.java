@@ -25,7 +25,7 @@ import android.widget.EditText;
 import androidx.annotation.AttrRes;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
+import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;

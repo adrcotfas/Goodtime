@@ -20,8 +20,11 @@ import java.util.concurrent.TimeUnit;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 
+import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
+import com.apps.adrcotfas.goodtime.Settings.reminders.ReminderHelper;
+
 import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES;
-import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
+import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.WORK_DURATION;
 import static com.apps.adrcotfas.goodtime.Util.Constants.DEFAULT_WORK_DURATION_DEFAULT;
 
 /**
@@ -32,6 +35,8 @@ public class GoodtimeApplication extends Application {
     private static volatile GoodtimeApplication INSTANCE;
     private static CurrentSessionManager mCurrentSessionManager;
     private static SharedPreferences mPreferences;
+
+    private static ReminderHelper mReminderHelper;
 
     public static GoodtimeApplication getInstance() {
         return INSTANCE;
@@ -50,6 +55,7 @@ public class GoodtimeApplication extends Application {
         mCurrentSessionManager = new CurrentSessionManager(this, new CurrentSession(TimeUnit.MINUTES.toMillis(
                 PreferenceManager.getDefaultSharedPreferences(this)
                         .getInt(WORK_DURATION, DEFAULT_WORK_DURATION_DEFAULT))));
+        mReminderHelper = new ReminderHelper(this);
     }
 
     public CurrentSession getCurrentSession() {
@@ -62,5 +68,9 @@ public class GoodtimeApplication extends Application {
 
     public static SharedPreferences getPrivatePreferences() {
         return mPreferences;
+    }
+
+    public ReminderHelper getReminderHelper() {
+        return mReminderHelper;
     }
 }

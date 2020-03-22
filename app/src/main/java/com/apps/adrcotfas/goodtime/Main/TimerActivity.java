@@ -36,7 +36,7 @@ import android.widget.Toast;
 import com.apps.adrcotfas.goodtime.BL.CurrentSession;
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
 import com.apps.adrcotfas.goodtime.BL.NotificationHelper;
-import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
+import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.BL.TimerService;
 import com.apps.adrcotfas.goodtime.BL.TimerState;
@@ -45,6 +45,7 @@ import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Session;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
+import com.apps.adrcotfas.goodtime.Settings.reminders.ReminderHelper;
 import com.apps.adrcotfas.goodtime.Statistics.Main.SelectLabelDialog;
 import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
 import com.apps.adrcotfas.goodtime.Util.Constants;
@@ -81,10 +82,10 @@ import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
 import static android.view.WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON;
 import static android.view.animation.AnimationUtils.loadAnimation;
 import static android.widget.Toast.LENGTH_SHORT;
-import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.AMOLED;
-import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREENSAVER_MODE;
-import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.ENABLE_SCREEN_ON;
-import static com.apps.adrcotfas.goodtime.BL.PreferenceHelper.WORK_DURATION;
+import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.AMOLED;
+import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.ENABLE_SCREENSAVER_MODE;
+import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.ENABLE_SCREEN_ON;
+import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.WORK_DURATION;
 import static java.lang.String.format;
 
 public class TimerActivity
@@ -324,6 +325,8 @@ public class TimerActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+        ReminderHelper.removeNotification(getApplicationContext());
 
         mViewModel.isActive = true;
         if (mViewModel.dialogPendingType != SessionType.INVALID) {

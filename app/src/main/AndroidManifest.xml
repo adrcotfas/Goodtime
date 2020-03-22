@@ -103,6 +103,18 @@
                 android:resource="@xml/file_paths"/>
         </provider>
 
+        <receiver android:name=".Settings.reminders.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".Settings.reminders.ReminderReceiver">
+            <intent-filter>
+                <action android:name="buddy.reminder_action"/>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

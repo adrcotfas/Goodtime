@@ -26,7 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
-import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
+import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.Main.SimpleItemTouchHelperCallback;

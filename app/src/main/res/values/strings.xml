@@ -111,6 +111,11 @@
     <string name="delete_selected_entries">Delete selected entries?</string>
     <string name="empty_state_no_items">No items</string>
     <string name="notification_channel_name">Goodtime Notifications</string>
+
+    <string name="reminder_notification_channel_name">"Goodtime Reminder Notifications"</string>
+    <string name="reminder_title">"Daily reminder"</string>
+    <string name="reminder_text">"It's time to be productive!"</string>
+
     <string name="settings">Settings</string>
     <string name="state">State</string>
     <string name="feedback">Feedback</string>
@@ -152,6 +157,7 @@
     <string name="profile_already_exists">Profile already exists</string>
     <string name="pref_save_custom_profile">Save custom profile</string>
     <string name="pref_timer_duration">Timer duration</string>
+    <string name="timer_durations">Set the duration for work and break sessions</string>
 
     <string name="pref_timer_style">Timer style</string>
     <string name="pref_timer_style_default">Default</string>

@@ -18,7 +18,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.widget.Toast;
 
-import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
+import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.BuildConfig;
 import com.apps.adrcotfas.goodtime.Main.MainIntroActivity;
 import com.apps.adrcotfas.goodtime.Main.TimerActivity;

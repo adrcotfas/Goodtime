@@ -15,6 +15,8 @@ package com.apps.adrcotfas.goodtime.BL;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
+
 /**
  * Stores the session remaining duration, type and timer state.
  * @see GoodtimeApplication

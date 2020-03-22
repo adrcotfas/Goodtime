@@ -27,6 +27,7 @@ import android.util.Log;
 import com.apps.adrcotfas.goodtime.Database.AppDatabase;
 import com.apps.adrcotfas.goodtime.Main.TimerActivity;
 import com.apps.adrcotfas.goodtime.Session;
+import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;
@@ -254,7 +255,6 @@ public class TimerService extends LifecycleService {
     }
 
     private void updateLongBreakStreak(SessionType sessionType) {
-
         if (PreferenceHelper.isLongBreakEnabled()) {
             if (sessionType == SessionType.LONG_BREAK) {
                 PreferenceHelper.resetCurrentStreak();

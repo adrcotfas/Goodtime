@@ -18,7 +18,8 @@
             android:key="pref_timer_duration"
             app:fragment="com.apps.adrcotfas.goodtime.Settings.DurationsSettingsFragment"
             android:title="@string/pref_timer_duration"
-            app:iconSpaceReserved="false"/>
+            android:summary="@string/timer_durations"
+            android:icon="@drawable/ic_status_goodtime"/>
 
         <ListPreference
             android:dialogTitle="@string/pref_timer_style"
@@ -76,7 +77,7 @@
             android:defaultValue="true"
             android:key="pref_enable_ringtone"
             android:title="@string/pref_enable_ringtone"
-            app:iconSpaceReserved="false"/>
+            android:icon="@drawable/ic_notifications"/>
 
         <com.takisoft.preferencex.RingtonePreference
             android:key="pref_ringtone"
@@ -111,7 +112,7 @@
             android:entries="@array/pref_vibration_types"
             android:title="@string/pref_vibrate"
             android:summary="%s"
-            app:iconSpaceReserved="false"/>
+            android:icon="@drawable/ic_vibration"/>
 
         <CheckBoxPreference
             android:defaultValue="false"
@@ -133,6 +134,14 @@
             android:title="@string/pref_ringtone_insistent"
             android:summary="@string/pref_ringtone_insistent_summary"
             app:iconSpaceReserved="false"/>
+
+        <SwitchPreference
+            android:key="pref_enable_reminder"
+            android:title="@string/reminder_title"
+            android:defaultValue="false"
+            android:persistent="true"
+            android:icon="@drawable/ic_reminder"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory

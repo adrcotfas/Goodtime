@@ -11,18 +11,19 @@
  * either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-package com.apps.adrcotfas.goodtime.BL;
+package com.apps.adrcotfas.goodtime.Settings;
 
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.SystemClock;
 
+import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
+import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.BuildConfig;
 import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.Profile;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.Constants;
+
+import org.joda.time.LocalTime;
 
 import java.util.concurrent.TimeUnit;
 
@@ -73,9 +74,11 @@ public class PreferenceHelper {
     private static final String ADD_60_SECONDS_COUNTER    = "pref_add_60_seconds_times";
 
     private static final String UNSAVED_PROFILE_ACTIVE = "pref_custom_pref_active";
-    private static final String MIGRATION_FINISHED_101 = "pref_migration_finished_101";
 
-    static void migratePreferences() {
+    public final static String ENABLE_REMINDER = "pref_enable_reminder";
+    public final static String REMINDER_TIME_VALUE = "pref_reminder_time_value";
+
+    public static void migratePreferences() {
         if (getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getInt(PREFERENCES_VERSION_INTERNAL, 0) == 0) {
             getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit().clear().apply();
@@ -105,7 +108,7 @@ public class PreferenceHelper {
         return duration;
     }
 
-    static boolean isLongBreakEnabled() {
+    public static boolean isLongBreakEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(ENABLE_LONG_BREAK, false);
     }
@@ -115,12 +118,12 @@ public class PreferenceHelper {
                 .getInt(SESSIONS_BEFORE_LONG_BREAK, 4);
     }
 
-    static boolean isRingtoneEnabled() {
+    public static boolean isRingtoneEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(ENABLE_RINGTONE, true);
     }
 
-    static boolean isRingtoneInsistent() {
+    public static boolean isRingtoneInsistent() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(INSISTENT_RINGTONE, false);
     }
@@ -130,12 +133,12 @@ public class PreferenceHelper {
                 .getString(RINGTONE_WORK_FINISHED, "");
     }
 
-    static String getNotificationSoundBreakFinished() {
+    public static String getNotificationSoundBreakFinished() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getString(RINGTONE_BREAK_FINISHED, "");
     }
 
-    static int getVibrationType() {
+    public static int getVibrationType() {
         return Integer.valueOf(getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                     .getString(VIBRATION_TYPE, "2" /*STRONG*/));
     }
@@ -145,12 +148,12 @@ public class PreferenceHelper {
                 .getBoolean(ENABLE_FULLSCREEN, false);
     }
 
-    static boolean isSoundAndVibrationDisabled() {
+    public static boolean isSoundAndVibrationDisabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(DISABLE_SOUND_AND_VIBRATION, false);
     }
 
-    static boolean isWiFiDisabled() {
+    public static boolean isWiFiDisabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(DISABLE_WIFI, false);
     }
@@ -185,7 +188,7 @@ public class PreferenceHelper {
      * in a reasonable time frame comparing with the last completed work session,
      * else it considers this session the first completed one in the streak.
      */
-    static void incrementCurrentStreak() {
+    public static void incrementCurrentStreak() {
 
         // Add an extra 10 minutes to a work and break sessions duration
         // If the user did not complete another session in this time frame, just increment from 0.
@@ -204,22 +207,22 @@ public class PreferenceHelper {
                 .putLong(LAST_WORK_FINISHED_AT, increment ? currentMillis: 0).apply();
     }
 
-    static int getCurrentStreak() {
+    public static int getCurrentStreak() {
         return GoodtimeApplication.getPrivatePreferences().getInt(WORK_STREAK, 0);
     }
 
-    static long lastWorkFinishedAt() {
+    public static long lastWorkFinishedAt() {
         return GoodtimeApplication.getPrivatePreferences().getLong(LAST_WORK_FINISHED_AT, 0);
     }
 
-    static void resetCurrentStreak() {
+    public static void resetCurrentStreak() {
         GoodtimeApplication.getPrivatePreferences().edit()
                 .putInt(WORK_STREAK, 0).apply();
         GoodtimeApplication.getPrivatePreferences().edit()
                 .putLong(LAST_WORK_FINISHED_AT, 0).apply();
     }
 
-    static boolean itsTimeForLongBreak() {
+    public static boolean itsTimeForLongBreak() {
         return getCurrentStreak() >= getSessionsBeforeLongBreak();
     }
 
@@ -351,5 +354,21 @@ public class PreferenceHelper {
     public static void setUnsavedProfileActive(boolean state) {
         GoodtimeApplication.getPrivatePreferences().edit()
                 .putBoolean(UNSAVED_PROFILE_ACTIVE, state).apply();
+    }
+
+    public static boolean isReminderEnabled() {
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getBoolean(ENABLE_REMINDER, true);
+    }
+
+    public static long getTimeOfReminder() {
+        long defaultTime = new LocalTime(9, 0).toDateTimeToday().getMillis();
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getLong(REMINDER_TIME_VALUE, defaultTime);
+    }
+
+    public static void setTimeOfReminder(long time) {
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
+                .putLong(REMINDER_TIME_VALUE, time).apply();
     }
 }

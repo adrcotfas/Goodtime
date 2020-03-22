@@ -25,7 +25,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 
-import com.apps.adrcotfas.goodtime.BL.PreferenceHelper;
+import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.AddEditLabels.AddEditLabelActivity;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
