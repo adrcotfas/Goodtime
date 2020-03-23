@@ -358,7 +358,7 @@ public class PreferenceHelper {
 
     public static boolean isReminderEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getBoolean(ENABLE_REMINDER, true);
+                .getBoolean(ENABLE_REMINDER, false);
     }
 
     public static long getTimeOfReminder() {

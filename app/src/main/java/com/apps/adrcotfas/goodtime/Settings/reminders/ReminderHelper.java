@@ -70,12 +70,11 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
             Log.d(TAG, "onSharedPreferenceChanged");
             if (PreferenceHelper.isReminderEnabled()) {
                 enableBootReceiver();
+                scheduleNotification();
             } else {
                 disableBootReceiver();
                 unscheduledNotification();
             }
-        } else if (key.equals(PreferenceHelper.REMINDER_TIME_VALUE)) {
-            scheduleNotification();
         }
     }
 
@@ -126,7 +125,7 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
         if (PreferenceHelper.isReminderEnabled()) {
 
             long calendarMillis = PreferenceHelper.getTimeOfReminder();
-            Log.d(TAG, "time of reminder: %s" + StringUtils.formatDateAndTime(calendarMillis));
+            Log.d(TAG, "time of reminder: " + StringUtils.formatDateAndTime(calendarMillis));
 
             final DateTime now = new DateTime();
             Log.d(TAG, "now: %s" + StringUtils.formatDateAndTime(now.getMillis()));
@@ -134,7 +133,7 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
                 calendarMillis  = new LocalTime(calendarMillis).toDateTimeToday().plusDays(1).getMillis();
             }
 
-            Log.d(TAG, "scheduleNotification at %s" + StringUtils.formatDateAndTime(calendarMillis));
+            Log.d(TAG, "scheduleNotification at: " + StringUtils.formatDateAndTime(calendarMillis));
 
             getAlarmManager().setInexactRepeating(
                     RTC_WAKEUP,
