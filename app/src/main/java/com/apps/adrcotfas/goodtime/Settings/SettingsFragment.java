@@ -305,6 +305,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     private void toggleEnableRingtonePreference(Boolean newValue) {
         findPreference(PreferenceHelper.RINGTONE_WORK_FINISHED).setVisible(newValue);
         findPreference(PreferenceHelper.RINGTONE_BREAK_FINISHED).setVisible(newValue);
+        findPreference(PreferenceHelper.PRIORITY_ALARM).setVisible(newValue);
     }
 
     @Override

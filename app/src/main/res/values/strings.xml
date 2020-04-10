@@ -24,6 +24,8 @@
     <string name="pref_amoled">"Dark theme"</string>
     <string name="pref_header_during_work_sessions">During work sessions</string>
     <string name="pref_enable_ringtone">"Notification sound"</string>
+    <string name="pref_priority_alarm">"Override sound profile"</string>
+    <string name="pref_priority_alarm_summary">"The notification sound behaves like an alarm"</string>
     <string name="pref_ringtone_insistent">"Insistent notification"</string>
     <string name="pref_ringtone_insistent_summary">"Repeat the notification until it's cancelled"</string>
     <string name="pref_ringtone_break">Finished break notification</string>

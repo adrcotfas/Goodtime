@@ -44,6 +44,7 @@ public class PreferenceHelper {
     public final static String LONG_BREAK_DURATION         = "pref_long_break_duration";
     public final static String SESSIONS_BEFORE_LONG_BREAK  = "pref_sessions_before_long_break";
     public final static String ENABLE_RINGTONE             = "pref_enable_ringtone";
+    public final static String PRIORITY_ALARM             = "pref_priority_alarm";
     public final static String INSISTENT_RINGTONE          = "pref_ringtone_insistent";
     public final static String RINGTONE_WORK_FINISHED      = "pref_ringtone";
     public final static String RINGTONE_BREAK_FINISHED     = "pref_ringtone_break";
@@ -121,6 +122,11 @@ public class PreferenceHelper {
     public static boolean isRingtoneEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(ENABLE_RINGTONE, true);
+    }
+
+    public static boolean isPriorityAlarm() {
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getBoolean(PRIORITY_ALARM, false);
     }
 
     public static boolean isRingtoneInsistent() {

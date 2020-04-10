@@ -55,7 +55,8 @@ class RingtoneAndVibrationPlayer extends ContextWrapper{
                 mMediaPlayer.setDataSource(this, uri);
                 mAudioManager.setMode(AudioManager.MODE_NORMAL);
                 mAudioManager.setSpeakerphoneOn(true);
-                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
+                mMediaPlayer.setAudioStreamType(PreferenceHelper.isPriorityAlarm()
+                        ? AudioManager.STREAM_ALARM : AudioManager.STREAM_NOTIFICATION);
 
                 mMediaPlayer.setLooping(PreferenceHelper.isRingtoneInsistent());
                 mMediaPlayer.prepareAsync();
