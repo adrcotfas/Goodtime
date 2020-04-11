@@ -97,6 +97,7 @@ public class CurrentSessionManager extends ContextWrapper{
             mTimer.cancel();
         }
         mCurrentSession.setTimerState(TimerState.INACTIVE);
+        mCurrentSession.setSessionType(SessionType.INVALID);
     }
 
     /**
