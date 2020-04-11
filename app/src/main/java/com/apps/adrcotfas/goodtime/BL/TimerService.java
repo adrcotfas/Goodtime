@@ -283,23 +283,30 @@ public class TimerService extends LifecycleService {
     }
 
     private void toggleSound(boolean restore) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                isNotificationPolicyAccessGranted()) {
-            Runnable r = () -> {
-                final AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-                if (restore) {
-                    aManager.setRingerMode(mPreviousRingerMode);
-                } else {
-                    mPreviousRingerMode = aManager.getRingerMode();
-                    aManager.setRingerMode(RINGER_MODE_SILENT);
-                }
-            };
-            Thread t = new Thread(r);
-            t.start();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            toggleSoundInternal(restore);
+        } else if (isNotificationPolicyAccessGranted()) {
+            toggleSoundInternal(restore);
         } else {
             // should not happen
             Log.w(TAG, "Trying to toggle sound but permission was not granted.");
         }
+    }
+
+    private void toggleSoundInternal(boolean restore) {
+        Thread t = new Thread(() -> {
+            final AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+            if (restore) {
+                if (mPreviousRingerMode == RINGER_MODE_SILENT) {
+                    return;
+                }
+                aManager.setRingerMode(mPreviousRingerMode);
+            } else {
+                mPreviousRingerMode = aManager.getRingerMode();
+                aManager.setRingerMode(RINGER_MODE_SILENT);
+            }
+        });
+        t.start();
     }
 
     private void toggleWifi(boolean restore) {
