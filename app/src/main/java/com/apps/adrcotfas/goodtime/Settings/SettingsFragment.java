@@ -15,6 +15,7 @@ package com.apps.adrcotfas.goodtime.Settings;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -41,7 +42,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.Preference;
-import androidx.preference.SwitchPreference;
 import androidx.preference.SwitchPreferenceCompat;
 
 import org.joda.time.DateTime;
@@ -55,7 +55,7 @@ import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgra
 public class SettingsFragment extends PreferenceFragmentCompat implements ActivityCompat.OnRequestPermissionsResultCallback, TimePickerDialog.OnTimeSetListener {
 
     private CheckBoxPreference mPrefDisableSoundCheckbox;
-    private SwitchPreference mPrefReminder;
+    private SwitchPreferenceCompat mPrefReminder;
 
     @Override
     public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
@@ -80,7 +80,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
 
                 TimePickerDialog d = new TimePickerDialog(
                         getActivity(),
-                        R.style.DialogTheme,
+                        (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                                ? R.style.DialogTheme : AlertDialog.THEME_HOLO_DARK,
                         SettingsFragment.this,
                         time.getHourOfDay(),
                         time.getMinuteOfHour(),

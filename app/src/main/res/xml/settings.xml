@@ -143,7 +143,7 @@
             android:summary="@string/pref_ringtone_insistent_summary"
             app:iconSpaceReserved="false"/>
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="pref_enable_reminder"
             android:title="@string/reminder_title"
             android:defaultValue="false"
