@@ -324,15 +324,14 @@ public class TimerService extends LifecycleService {
 
     //TODO: clean-up this mess
     private void finalizeSession(SessionType sessionType, int minutes) {
-        if (sessionType != SessionType.WORK) {
-            return;
-        }
         getSessionManager().stopTimer();
         PreferenceHelper.resetAdd60SecondsCounter();
         getSessionManager().getCurrentSession().setDuration(
                 TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)));
 
-        getSessionManager().getCurrentSession().setSessionType(SessionType.INVALID);
+        if (sessionType != SessionType.WORK) {
+            return;
+        }
 
         final String label = getSessionManager().getCurrentSession().getLabel().getValue();
         final long endTime = System.currentTimeMillis();
