@@ -67,14 +67,13 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 import de.greenrobot.event.EventBus;
 
@@ -94,12 +93,12 @@ public class TimerActivity
         AppCompatActivity
         implements
         SharedPreferences.OnSharedPreferenceChangeListener,
-        SelectLabelDialog.OnLabelSelectedListener{
+        SelectLabelDialog.OnLabelSelectedListener, FinishedSessionDialog.Listener {
 
     private static final String TAG = TimerActivity.class.getSimpleName();
 
     private final CurrentSession mCurrentSession = GoodtimeApplication.getInstance().getCurrentSession();
-    private AlertDialog mDialogSessionFinished;
+    private FinishedSessionDialog mDialogSessionFinished;
     private FullscreenHelper mFullscreenHelper;
     private long mBackPressedAt;
 
@@ -113,8 +112,8 @@ public class TimerActivity
     private Toolbar mToolbar;
     private ImageView mTutorialDot;
 
-    private TimerActivityViewModel mViewModel;
     private SessionViewModel mSessionViewModel;
+    private TimerActivityViewModel mViewModel;
 
     private TextView mSessionsCounterText;
 
@@ -169,8 +168,6 @@ public class TimerActivity
         mTutorialDot = binding.tutorialDot;
         mBoundsView = binding.main;
 
-        mViewModel = ViewModelProviders.of(this).get(TimerActivityViewModel.class);
-
         setupTimeLabelEvents();
 
         setSupportActionBar(mToolbar);
@@ -186,12 +183,14 @@ public class TimerActivity
             selectLabelDialog.dismiss();
         }
 
-		if (!BuildConfig.F_DROID) {
+        if (!BuildConfig.F_DROID) {
             // Monitor launch times and interval from installation
             RateThisApp.onCreate(this);
             // If the condition is satisfied, "Rate this app" dialog will be shown
             RateThisApp.showRateDialogIfNeeded(this);
-		}
+        }
+
+        mViewModel = new ViewModelProvider(this).get(TimerActivityViewModel.class);
     }
 
     /**
@@ -323,6 +322,13 @@ public class TimerActivity
                 | FLAG_TURN_SCREEN_ON);
     }
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mViewModel.isActive = false;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -360,12 +366,6 @@ public class TimerActivity
     protected void onStart() {
         super.onStart();
         mBillingHelper.refresh();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mViewModel.isActive = false;
     }
 
     @Override
@@ -483,7 +483,7 @@ public class TimerActivity
             mSessionsCounterText = mSessionsCounter.findViewById(R.id.view_alert_count_textview);
             mSessionsCounter.setOnClickListener(v -> onOptionsItemSelected(alertMenuItem));
 
-            mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
+            mSessionViewModel = new ViewModelProvider(this).get(SessionViewModel.class);
             mSessionViewModel.getAllSessionsByEndTime().observe(this, sessions -> {
                 final LocalDate today = new LocalDate();
                 int statsToday = 0;
@@ -511,13 +511,18 @@ public class TimerActivity
      */
     public void onEventMainThread(Object o) {
         if (!PreferenceHelper.isAutoStartBreak() && o instanceof Constants.FinishWorkEvent) {
+            mViewModel.showFinishDialog = true;
+            mViewModel.dialogPendingType = SessionType.WORK;
             showFinishDialog(SessionType.WORK);
         } else if (!PreferenceHelper.isAutoStartWork() && (o instanceof Constants.FinishBreakEvent
                 || o instanceof Constants.FinishLongBreakEvent)) {
+            mViewModel.showFinishDialog = true;
+            mViewModel.dialogPendingType = SessionType.LONG_BREAK;
             showFinishDialog(SessionType.BREAK);
         } else if (o instanceof Constants.ClearFinishDialogEvent) {
             if (mDialogSessionFinished != null) {
                 mDialogSessionFinished.dismiss();
+                mViewModel.showFinishDialog = false;
             }
         }
     }
@@ -607,34 +612,8 @@ public class TimerActivity
     private void showFinishDialog(SessionType sessionType) {
         if (mViewModel.isActive) {
             Log.i(TAG, "Showing the finish dialog.");
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-            if (sessionType == SessionType.WORK) {
-                builder.setTitle(R.string.action_finished_session)
-                        .setPositiveButton(R.string.action_start_break, (dialog, which) -> {
-                            start(SessionType.BREAK);
-                            delayToggleFullscreenMode();
-                        })
-                        .setNeutralButton(R.string.dialog_close, (dialog, which) -> {
-                            EventBus.getDefault().post(new Constants.ClearNotificationEvent());
-                            delayToggleFullscreenMode();
-                        })
-                        .setOnCancelListener(dialog -> toggleFullscreenMode());
-            } else {
-                builder.setTitle(R.string.action_finished_break)
-                        .setPositiveButton(R.string.action_start_work, (dialog, which) -> {
-                            start(SessionType.WORK);
-                            delayToggleFullscreenMode();
-                        })
-                        .setNeutralButton(android.R.string.cancel, (dialog, which) -> {
-                            EventBus.getDefault().post(new Constants.ClearNotificationEvent());
-                            delayToggleFullscreenMode();
-                        })
-                        .setOnCancelListener(dialog -> toggleFullscreenMode());
-            }
-
-            mDialogSessionFinished = builder.create();
-            mDialogSessionFinished.setCanceledOnTouchOutside(false);
-            mDialogSessionFinished.show();
+            mDialogSessionFinished = FinishedSessionDialog.newInstance(this, sessionType);
+            mDialogSessionFinished.show(getSupportFragmentManager(), TAG);
             mViewModel.dialogPendingType = SessionType.INVALID;
         } else {
             mViewModel.dialogPendingType = sessionType;
@@ -756,5 +735,29 @@ public class TimerActivity
         if (!mBillingHelper.handleActivityResult(requestCode, resultCode, data)){
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    public void onFinishedSessionDialogPositiveButtonClick(SessionType sessionType) {
+        if (sessionType == SessionType.WORK) {
+            start(SessionType.BREAK);
+            delayToggleFullscreenMode();
+        } else {
+            start(SessionType.WORK);
+            delayToggleFullscreenMode();
+        }
+        mViewModel.showFinishDialog = false;
+    }
+
+    @Override
+    public void onFinishedSessionDialogNeutralButtonClick(SessionType sessionType) {
+        if (sessionType == SessionType.WORK) {
+            EventBus.getDefault().post(new Constants.ClearNotificationEvent());
+            delayToggleFullscreenMode();
+        } else {
+            EventBus.getDefault().post(new Constants.ClearNotificationEvent());
+            delayToggleFullscreenMode();
+        }
+        mViewModel.showFinishDialog = false;
     }
 }

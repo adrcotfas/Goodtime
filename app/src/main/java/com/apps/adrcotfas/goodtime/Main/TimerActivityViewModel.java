@@ -22,17 +22,14 @@ import androidx.lifecycle.AndroidViewModel;
 
 public class TimerActivityViewModel extends AndroidViewModel {
 
-    /**
-     * If the main activity is visible or not
-     */
     public boolean isActive;
-    /**
-     * The session type of the pending dialog. INVALID if no finished session dialog should be shown
-     */
+    public boolean showFinishDialog;
     public SessionType dialogPendingType;
+
     public TimerActivityViewModel(@NonNull Application application) {
         super(application);
         isActive = false;
+        showFinishDialog = false;
         dialogPendingType = SessionType.INVALID;
     }
 }
