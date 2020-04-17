@@ -18,6 +18,8 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.format.DateFormat;
+
 import com.apps.adrcotfas.goodtime.R;
 
 import java.util.Calendar;
@@ -46,14 +48,14 @@ public class TimePickerFragment extends DialogFragment {
         if (calendar == null) {
             calendar = Calendar.getInstance();
         }
-        int hour = calendar.get(Calendar.HOUR);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
 
         return new TimePickerDialog(
                 getActivity(),
                 (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                         ? R.style.DialogTheme : AlertDialog.THEME_HOLO_DARK,
-                listener, hour, minute, true);
+                listener, hour, minute, DateFormat.is24HourFormat(getContext()));
     }
 }
 
