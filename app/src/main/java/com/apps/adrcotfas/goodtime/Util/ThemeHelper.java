@@ -61,7 +61,7 @@ public class ThemeHelper {
     }
 
     public static void styleChip(Context context, Chip chip) {
-        chip.setLayoutParams(new ChipGroup.LayoutParams(ChipGroup.LayoutParams.WRAP_CONTENT, dpToPx(context, 24)));
+        chip.setLayoutParams(new ChipGroup.LayoutParams(ChipGroup.LayoutParams.WRAP_CONTENT, dpToPx(context, 42)));
         chip.setChipIconSize(ThemeHelper.dpToPx(context,20));
         chip.setChipStartPadding(ThemeHelper.dpToPx(context,4));
         chip.setChipCornerRadius(ThemeHelper.dpToPx(context,12));

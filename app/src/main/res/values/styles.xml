@@ -145,14 +145,15 @@
 
     <style name="DialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog" >
         <item name="android:backgroundTint" tools:ignore="NewApi">?attr/alertDialogColor</item>
+        <item name="android:background">?attr/alertDialogColor</item>
         <item name="colorPrimary">@color/teal200</item>
         <item name="colorPrimaryVariant">@color/teal300</item>
         <item name="colorSecondary">@color/teal200</item>
         <item name="colorSecondaryVariant">@color/teal300</item>
-
         <item name="buttonStyle">@style/Button</item>
         <item name="materialButtonStyle">@style/Button</item>
         <item name="android:buttonBarButtonStyle">@style/Button</item>
+        <item name="android:timePickerStyle" tools:targetApi="lollipop">@style/TimePickerStyle</item>
     </style>
 
     <style name="CardViewStyle" parent="Widget.MaterialComponents.CardView">
@@ -163,7 +164,7 @@
     </style>
 
     <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar" >
-        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimary">@color/teal200</item>
         <item name="colorPrimaryVariant">@color/black</item>
         <item name="colorOnPrimary">#FFFFFF</item>
         <item name="colorSecondary">@color/teal200</item>
@@ -188,18 +189,20 @@
         <item name="android:actionModeCloseDrawable">@drawable/ic_clear</item>
         <item name="actionModeStyle">@style/ActionModeStyle</item>
 
-        <item name="android:navigationBarColor" tools:targetApi="lollipop">?attr/colorPrimary</item>
+        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/black</item>
 
         <item name="alertDialogTheme">@style/DialogTheme</item>
         <item name="snackbarStyle">@style/SnackbarStyle</item>
 
         <item name="palette">@array/lightPalette</item>
         <item name="fontFamily">@font/app_font</item>
-
+        <item name="elevationOverlayEnabled">false</item>
+        <item name="materialAlertDialogTheme">@style/DialogTheme</item>
+        <item name="bottomSheetDialogTheme">@style/BottomDialogStyle</item>
     </style>
 
     <style name="AppThemeDark" parent="AppTheme" >
-        <item name="colorPrimary">@color/gray1000</item>
+        <item name="colorPrimary">@color/teal200</item>
         <item name="colorOnPrimary">@android:color/white</item>
         <item name="colorSecondary">@color/teal200</item>
         <item name="colorSecondaryVariant">@color/teal300</item>
@@ -217,6 +220,16 @@
         <item name="appBarColor">@color/gray1000</item>
         <item name="cardViewColor">@color/gray1000</item>
         <item name="alertDialogColor">@color/gray1000</item>
+        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/gray1000</item>
+    </style>
+
+    <style name="BottomDialogStyle" parent="@style/Theme.MaterialComponents.BottomSheetDialog" >
+        <item name="android:backgroundTint" tools:targetApi="lollipop">?attr/alertDialogColor</item>
+    </style>
+
+    <style name="TimePickerStyle"
+        parent="@android:style/Widget.Material.Light.TimePicker" tools:targetApi="lollipop">
+        <item name="android:timePickerMode">spinner</item>
     </style>
 
     <style name="NavigationDrawerStyle">

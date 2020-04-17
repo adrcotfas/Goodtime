@@ -35,6 +35,7 @@ import com.apps.adrcotfas.goodtime.Settings.ProfilesViewModel;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.DialogSelectLabelBinding;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 
 import java.lang.ref.WeakReference;
@@ -159,7 +160,7 @@ public class SelectLabelDialog extends DialogFragment {
             }, 100);
         });
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()))
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(Objects.requireNonNull(getActivity()))
                 .setView(binding.getRoot())
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     if (binding.labels.getCheckedChipId() != -1) {
@@ -220,8 +221,8 @@ public class SelectLabelDialog extends DialogFragment {
                             }
                         }
 
-                        AlertDialog.Builder profileDialogBuilder =
-                                new AlertDialog.Builder(Objects.requireNonNull(SelectLabelDialog.this.getActivity()))
+                        MaterialAlertDialogBuilder profileDialogBuilder =
+                                new MaterialAlertDialogBuilder(Objects.requireNonNull(SelectLabelDialog.this.getActivity()))
                                         .setTitle(SelectLabelDialog.this.getResources().getString(R.string.Profile))
                                         .setSingleChoiceItems(
                                                 arrayAdapter,

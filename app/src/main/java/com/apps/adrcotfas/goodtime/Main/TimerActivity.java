@@ -53,6 +53,7 @@ import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 import com.apps.adrcotfas.goodtime.Util.OnSwipeTouchListener;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.kobakei.ratethisapp.RateThisApp;
@@ -400,7 +401,7 @@ public class TimerActivity
                 showEditLabelDialog();
                 break;
             case R.id.action_sessions_counter:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
                 builder.setTitle(R.string.action_reset_counter_title)
                         .setMessage(R.string.action_reset_counter)
                         .setPositiveButton(android.R.string.ok, (dialog, which)
@@ -606,7 +607,7 @@ public class TimerActivity
     private void showFinishDialog(SessionType sessionType) {
         if (mViewModel.isActive) {
             Log.i(TAG, "Showing the finish dialog.");
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
             if (sessionType == SessionType.WORK) {
                 builder.setTitle(R.string.action_finished_session)
                         .setPositiveButton(R.string.action_start_break, (dialog, which) -> {

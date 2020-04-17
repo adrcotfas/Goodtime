@@ -29,6 +29,7 @@ import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
 import com.apps.adrcotfas.goodtime.Util.FileUtils;
 import com.apps.adrcotfas.goodtime.databinding.DialogBackupBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -80,7 +81,7 @@ public class BackupFragment extends BottomSheetDialogFragment {
     }
 
     private void importBackup() {
-        new AlertDialog.Builder(getActivity())
+        new MaterialAlertDialogBuilder(getActivity())
                 .setTitle(R.string.backup_import_title)
                 .setMessage(R.string.backup_import_message)
                 .setPositiveButton(android.R.string.ok, (dialog, id) -> {

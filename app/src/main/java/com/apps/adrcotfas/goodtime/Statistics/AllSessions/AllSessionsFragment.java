@@ -33,6 +33,7 @@ import com.apps.adrcotfas.goodtime.Statistics.Main.RecyclerItemClickListener;
 import com.apps.adrcotfas.goodtime.Statistics.Main.SelectLabelDialog;
 import com.apps.adrcotfas.goodtime.Statistics.SessionViewModel;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentAllSessionsBinding;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -270,7 +271,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
                     selectAll();
                     break;
                 case R.id.action_delete:
-                    new AlertDialog.Builder(getActivity())
+                    new MaterialAlertDialogBuilder(getActivity())
                             .setTitle(R.string.delete_selected_entries)
                             .setPositiveButton(android.R.string.ok, (dialog, id) -> deleteSessions())
                             .setNegativeButton(android.R.string.cancel, (dialog, id) -> dialog.cancel())
