@@ -168,7 +168,6 @@ public class TimerService extends LifecycleService {
     }
 
     private void onStopEvent() {
-        getSessionManager().stopTimer();
         Log.d(TAG, "onStopEvent");
 
         if (PreferenceHelper.isWiFiDisabled()) {
@@ -325,14 +324,14 @@ public class TimerService extends LifecycleService {
 
     //TODO: clean-up this mess
     private void finalizeSession(SessionType sessionType, int minutes) {
+        if (sessionType != SessionType.WORK) {
+            return;
+        }
         getSessionManager().stopTimer();
         PreferenceHelper.resetAdd60SecondsCounter();
         getSessionManager().getCurrentSession().setDuration(
                 TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)));
 
-        if (sessionType != SessionType.WORK) {
-            return;
-        }
         getSessionManager().getCurrentSession().setSessionType(SessionType.INVALID);
 
         final String label = getSessionManager().getCurrentSession().getLabel().getValue();
