@@ -41,6 +41,13 @@
         <item>@string/spinner_range_hours</item>
     </string-array>
 
+    <string-array name="spinner_pie_time_type">
+        <item>@string/statistics_today</item>
+        <item>@string/statistics_this_week</item>
+        <item>@string/statistics_this_month</item>
+        <item>@string/statistics_total</item>
+    </string-array>
+
     <string-array name="pref_vibration_types">
         <item>@string/pref_vibration_type_none</item>
         <item>@string/pref_vibration_type_soft</item>

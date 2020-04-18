@@ -24,11 +24,45 @@
                 style="@style/SectionHeader"
                 tools:ignore="RelativeOverlap" />
 
+            <Spinner
+                android:id="@+id/pie_chart_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                style="@style/SpinnerStyle"/>
+
+            <LinearLayout
+                android:id="@+id/empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_below="@+id/pie_chart_type"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <ImageView
+                    android:id="@id/imageView"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_list_large"
+                    android:tint="@color/grey_500"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/empty_state_no_items"
+                    android:textSize="@dimen/largeTextSize"
+                    android:gravity="center"/>
+            </LinearLayout>
+
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/pie_chart"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_below="@+id/header_pie_chart"/>
+                android:layout_below="@+id/pie_chart_type"/>
 
         </RelativeLayout>
 

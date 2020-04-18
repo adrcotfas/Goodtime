@@ -13,12 +13,13 @@
 
 package com.apps.adrcotfas.goodtime.Statistics.Main;
 
-import android.graphics.Color;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextPaint;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +68,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
@@ -123,10 +125,12 @@ public class StatisticsFragment extends Fragment {
     private boolean mShowPieChart = false;
     private MaterialCardView mPieChartSection;
     private PieChart mPieChart;
+    private LinearLayout mPieEmptyState;
 
     private Spinner mStatsType;
     private Spinner mRangeType;
-    private Spinner mProductiveTime;
+    private Spinner mProductiveTimeType;
+    private Spinner mPieChartType;
 
     private TextView mHeaderOverview;
     private TextView mHeaderHistory;
@@ -176,7 +180,8 @@ public class StatisticsFragment extends Fragment {
 
         mStatsType = binding.overview.statsType;
         mRangeType = binding.history.rangeType;
-        mProductiveTime = binding.productiveHours.timeType;
+        mProductiveTimeType = binding.productiveHours.timeType;
+        mPieChartType = binding.pieChartSection.pieChartType;
 
         mHeaderOverview = binding.overview.header;
         mHeaderHistory = binding.history.headerHistory;
@@ -184,6 +189,8 @@ public class StatisticsFragment extends Fragment {
 
         mPieChartSection = binding.pieChartSection.parent;
         mPieChart = binding.pieChartSection.pieChart;
+        mPieEmptyState = binding.pieChartSection.emptyState;
+        setupPieChart();
 
         mLabelsViewModel = new ViewModelProvider(getActivity()).get(LabelsViewModel.class);
         mSessionViewModel = new ViewModelProvider(getActivity()).get(SessionViewModel.class);
@@ -273,8 +280,7 @@ public class StatisticsFragment extends Fragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 refreshUi();
             }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) { }
+            @Override public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
         ArrayAdapter <CharSequence> rangeTypeAdapter = ArrayAdapter.createFromResource(getContext(),
@@ -288,35 +294,45 @@ public class StatisticsFragment extends Fragment {
                 mXAxisFormatter.setRangeType(SpinnerRangeType.values()[position]);
                 refreshUi();
             }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) { }
+            @Override public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
         ArrayAdapter <CharSequence> timeTypeAdapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.spinner_productive_time_type, R.layout.spinner_item);
         timeTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        mProductiveTime.setAdapter(timeTypeAdapter);
-        mProductiveTime.setSelection(0, false);
-        mProductiveTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mProductiveTimeType.setAdapter(timeTypeAdapter);
+        mProductiveTimeType.setSelection(0, false);
+        mProductiveTimeType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 refreshUi();
             }
+            @Override public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+
+        ArrayAdapter <CharSequence> pieTypeAdapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.spinner_pie_time_type, R.layout.spinner_item);
+        pieTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        mPieChartType.setAdapter(pieTypeAdapter);
+        mPieChartType.setSelection(2, false);
+        mPieChartType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) { }
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                refreshUi();
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
 
     private void refreshProductiveTimeChart(List<Session> sessions, int color) {
         // generate according to spinner
-        if (mProductiveTime.getSelectedItemPosition() == HOUR_OF_DAY.ordinal()) {
+        if (mProductiveTimeType.getSelectedItemPosition() == HOUR_OF_DAY.ordinal()) {
             generateProductiveTimeChart(sessions, HOUR_OF_DAY, color);
 
             final int visibleXCount = (int) ThemeHelper.pxToDp(getContext(), mChartHistory.getWidth()) / 36;
             mChartProductiveHours.setVisibleXRangeMaximum(visibleXCount);
             mChartProductiveHours.setVisibleXRangeMinimum(visibleXCount);
             mChartProductiveHours.getXAxis().setLabelCount(visibleXCount);
-
         } else {
             generateProductiveTimeChart(sessions, DAY_OF_WEEK, color);
 
@@ -380,12 +396,12 @@ public class StatisticsFragment extends Fragment {
                 mPieChartSection.setVisibility(mShowPieChart ? View.VISIBLE : View.GONE);
                 if (mShowPieChart){
                     if (sessions.isEmpty()) {
-                        mPieChartSection.setVisibility(View.GONE);
+                        mPieEmptyState.setVisibility(View.VISIBLE);
                     } else {
                         LiveData<List<Label>> labelsLd = mLabelsViewModel.getLabels();
                         labelsLd.observe(getViewLifecycleOwner(), labels -> {
                             if (labels.isEmpty()) {
-                                mPieChartSection.setVisibility(View.GONE);
+                                mPieChartSection.setVisibility(View.VISIBLE);
                             } else {
                                 refreshPieChart(sessions, labels);
                                 labelsLd.removeObservers(getActivity());
@@ -403,21 +419,77 @@ public class StatisticsFragment extends Fragment {
         }
     }
 
-    private void refreshPieChart(List<Session> sessions, List<Label> labels) {
+    private void setupPieChart() {
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = getContext().getTheme();
+        theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
+        @ColorInt int color = typedValue.data;
+        mPieChart.setHoleColor(color);
+
         mPieChart.getLegend().setEnabled(false);
         mPieChart.setUsePercentValues(true);
         mPieChart.setDrawHoleEnabled(true);
         mPieChart.setHoleRadius(80);
-        mPieChart.setHoleColor(Color.BLACK);
         mPieChart.getDescription().setEnabled(false);
-
+        mPieChart.setExtraOffsets(8, 8, 8, 8);
+        mPieChart.highlightValues(null);
+        mPieChart.setEntryLabelColor(getResources().getColor(R.color.grey_500));
+        mPieChart.setEntryLabelTextSize(11f);
         mPieChart.setTransparentCircleRadius(0);
         mPieChart.setDragDecelerationFrictionCoef(0.95f);
         mPieChart.setRotationEnabled(true);
         mPieChart.setHighlightPerTapEnabled(false);
+        mPieChart.setNoDataText("");
+    }
 
+    private void refreshPieChart(List<Session> sessions, List<Label> labels) {
         Map<String, Integer> totalTimePerLabel = new HashMap<>();
-        for (Session s : sessions) {
+
+        final PieStatsType pieStatsType =
+                PieStatsType.values()[mPieChartType.getSelectedItemPosition()];
+
+        final LocalDate today = new LocalDate();
+        final long todayStart = today.toDateTimeAtStartOfDay().getMillis();
+        final long thisWeekStart  = today.dayOfWeek().withMinimumValue().toDateTimeAtStartOfDay().getMillis();
+        final long thisMonthStart = today.dayOfMonth().withMinimumValue().toDateTimeAtStartOfDay().getMillis();
+
+        List<Session> filteredSessions = new ArrayList<>(sessions);
+        switch (pieStatsType) {
+            case TODAY:
+                for (Session s : sessions) {
+                    if (s.timestamp < todayStart) {
+                        filteredSessions.remove(s);
+                    }
+                }
+                break;
+            case THIS_WEEK:
+                for (Session s : sessions) {
+                    if (s.timestamp < thisWeekStart) {
+                        filteredSessions.remove(s);
+                    }
+                }
+                break;
+            case THIS_MONTH:
+                for (Session s : sessions) {
+                    if (s.timestamp < thisMonthStart) {
+                        filteredSessions.remove(s);
+                    }
+                }
+                break;
+            case TOTAL:
+                break;
+        }
+
+        if (filteredSessions.isEmpty()) {
+            mPieEmptyState.setVisibility(View.VISIBLE);
+            mPieChart.setVisibility(View.GONE);
+            return;
+        } else {
+            mPieEmptyState.setVisibility(View.GONE);
+            mPieChart.setVisibility(View.VISIBLE);
+        }
+
+        for (Session s : filteredSessions) {
             if (!s.archived) {
                 if (totalTimePerLabel.containsKey(s.label)) {
                     totalTimePerLabel.put(s.label, totalTimePerLabel.get(s.label) + s.duration);
@@ -462,11 +534,7 @@ public class StatisticsFragment extends Fragment {
         data.setValueTextSize(12f);
         data.setValueTextColor(grey500);
 
-        mPieChart.setExtraOffsets(8, 8, 8, 8);
         mPieChart.setData(data);
-        mPieChart.highlightValues(null);
-        mPieChart.setEntryLabelColor(grey500);
-        mPieChart.setEntryLabelTextSize(11f);
         mPieChart.invalidate();
     }
 
