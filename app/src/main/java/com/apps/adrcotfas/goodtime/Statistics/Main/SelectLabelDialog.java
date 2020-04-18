@@ -160,7 +160,7 @@ public class SelectLabelDialog extends DialogFragment {
             }, 100);
         });
 
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(Objects.requireNonNull(getActivity()))
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity())
                 .setView(binding.getRoot())
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     if (binding.labels.getCheckedChipId() != -1) {
@@ -222,7 +222,7 @@ public class SelectLabelDialog extends DialogFragment {
                         }
 
                         MaterialAlertDialogBuilder profileDialogBuilder =
-                                new MaterialAlertDialogBuilder(Objects.requireNonNull(SelectLabelDialog.this.getActivity()))
+                                new MaterialAlertDialogBuilder(SelectLabelDialog.this.requireActivity())
                                         .setTitle(SelectLabelDialog.this.getResources().getString(R.string.Profile))
                                         .setSingleChoiceItems(
                                                 arrayAdapter,
