@@ -132,6 +132,7 @@
     <string name="statistics_this_month">This month</string>
     <string name="statistics_total">Total</string>
     <string name="statistics_productive_time">Productive time</string>
+    <string name="statistics_pie_chart">Work distribution</string>
 
     <string name="spinner_stats_duration">Time</string>
     <string name="spinner_stats_nr_of_sessions">Sessions</string>
@@ -174,5 +175,6 @@
     <string name="action_reset_counter_title">Reset?</string>
     <string name="tutorial_title">Tutorial</string>
     <string name="other_apps">Other apps</string>
+    <string name="unlabeled">unlabeled</string>
 
 </resources>

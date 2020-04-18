@@ -28,7 +28,7 @@
                 <include android:id="@+id/overview" layout="@layout/statistics_overview"/>
                 <include android:id="@+id/history" layout="@layout/statistics_history"/>
                 <include android:id="@+id/productive_hours" layout="@layout/statistics_productive_hours"/>
-
+                <include android:id="@+id/pie_chart_section" layout="@layout/statistics_pie_chart"/>
             </LinearLayout>
 
     </ScrollView>

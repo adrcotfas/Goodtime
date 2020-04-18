@@ -13,6 +13,7 @@
 
 package com.apps.adrcotfas.goodtime.Statistics.Main;
 
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,6 +39,7 @@ import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentMainBinding;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -46,15 +48,23 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.google.android.material.card.MaterialCardView;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import androidx.annotation.NonNull;
@@ -62,7 +72,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import static com.apps.adrcotfas.goodtime.Statistics.Main.SpinnerProductiveTimeType.DAY_OF_WEEK;
 import static com.apps.adrcotfas.goodtime.Statistics.Main.SpinnerProductiveTimeType.HOUR_OF_DAY;
@@ -70,6 +80,7 @@ import static com.apps.adrcotfas.goodtime.Statistics.Main.SpinnerStatsType.DURAT
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatLong;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatMinutes;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.toPercentage;
+import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_UNLABELED;
 
 public class StatisticsFragment extends Fragment {
 
@@ -108,6 +119,10 @@ public class StatisticsFragment extends Fragment {
     private LiveData<List<Session>> mSessionsToObserve;
     private LineChart mChartHistory;
     private BarChart mChartProductiveHours;
+
+    private boolean mShowPieChart = false;
+    private MaterialCardView mPieChartSection;
+    private PieChart mPieChart;
 
     private Spinner mStatsType;
     private Spinner mRangeType;
@@ -167,10 +182,13 @@ public class StatisticsFragment extends Fragment {
         mHeaderHistory = binding.history.headerHistory;
         mHeaderProductiveTime = binding.productiveHours.headerProductiveTime;
 
-        mLabelsViewModel = ViewModelProviders.of(getActivity()).get(LabelsViewModel.class);
-        mSessionViewModel = ViewModelProviders.of(getActivity()).get(SessionViewModel.class);
+        mPieChartSection = binding.pieChartSection.parent;
+        mPieChart = binding.pieChartSection.pieChart;
 
-        mLabelsViewModel.crtExtendedLabel.observe(getViewLifecycleOwner(), label -> StatisticsFragment.this.refreshUi());
+        mLabelsViewModel = new ViewModelProvider(getActivity()).get(LabelsViewModel.class);
+        mSessionViewModel = new ViewModelProvider(getActivity()).get(SessionViewModel.class);
+
+        mLabelsViewModel.crtExtendedLabel.observe(getViewLifecycleOwner(), label -> refreshUi());
 
         setupSpinners();
         setupHistoryChart();
@@ -243,7 +261,7 @@ public class StatisticsFragment extends Fragment {
         }
         mOverviewDescription.month.setText(sb.toString());
     }
-    
+
     private void setupSpinners() {
         ArrayAdapter<CharSequence> statsTypeAdapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.spinner_stats_type, R.layout.spinner_item);
@@ -347,17 +365,34 @@ public class StatisticsFragment extends Fragment {
             String s = label.title;
             if (getString(R.string.label_all).equals(s)) {
                 mSessionsToObserve = mSessionViewModel.getAllSessionsByEndTime();
-
+                mShowPieChart = true;
             } else if ("unlabeled".equals(s)) {
                 mSessionsToObserve = mSessionViewModel.getAllSessionsUnlabeled();
-
+                mShowPieChart = false;
             } else {
                 mSessionsToObserve = mSessionViewModel.getSessions(label.title);
+                mShowPieChart = false;
             }
             mSessionsToObserve.observe(getViewLifecycleOwner(), sessions -> {
                 refreshStats(sessions);
                 refreshHistoryChart(sessions, color);
                 refreshProductiveTimeChart(sessions, color);
+                mPieChartSection.setVisibility(mShowPieChart ? View.VISIBLE : View.GONE);
+                if (mShowPieChart){
+                    if (sessions.isEmpty()) {
+                        mPieChartSection.setVisibility(View.GONE);
+                    } else {
+                        LiveData<List<Label>> labelsLd = mLabelsViewModel.getLabels();
+                        labelsLd.observe(getViewLifecycleOwner(), labels -> {
+                            if (labels.isEmpty()) {
+                                mPieChartSection.setVisibility(View.GONE);
+                            } else {
+                                refreshPieChart(sessions, labels);
+                                labelsLd.removeObservers(getActivity());
+                            }
+                        });
+                    }
+                }
 
                 final Handler handler = new Handler();
                 handler.postDelayed(() -> {
@@ -366,6 +401,73 @@ public class StatisticsFragment extends Fragment {
                 }, 200);
             });
         }
+    }
+
+    private void refreshPieChart(List<Session> sessions, List<Label> labels) {
+        mPieChart.getLegend().setEnabled(false);
+        mPieChart.setUsePercentValues(true);
+        mPieChart.setDrawHoleEnabled(true);
+        mPieChart.setHoleRadius(80);
+        mPieChart.setHoleColor(Color.BLACK);
+        mPieChart.getDescription().setEnabled(false);
+
+        mPieChart.setTransparentCircleRadius(0);
+        mPieChart.setDragDecelerationFrictionCoef(0.95f);
+        mPieChart.setRotationEnabled(true);
+        mPieChart.setHighlightPerTapEnabled(false);
+
+        Map<String, Integer> totalTimePerLabel = new HashMap<>();
+        for (Session s : sessions) {
+            if (!s.archived) {
+                if (totalTimePerLabel.containsKey(s.label)) {
+                    totalTimePerLabel.put(s.label, totalTimePerLabel.get(s.label) + s.duration);
+                } else {
+                    totalTimePerLabel.put(s.label, s.duration);
+                }
+            }
+        }
+
+        ArrayList<PieEntry> entries = new ArrayList<>();
+        for (String label : totalTimePerLabel.keySet()) {
+            entries.add(new PieEntry(totalTimePerLabel.get(label), label));
+        }
+
+        Collections.sort(entries, (o1, o2) -> Float.compare(o2.getValue(), o1.getValue()));
+
+        ArrayList<Integer> colors = new ArrayList<>();
+        for (PieEntry p : entries) {
+            for (Label l : labels) {
+                if (p.getLabel() == null) {
+                    p.setLabel(getString(R.string.unlabeled));
+                    colors.add(ThemeHelper.getColor(getContext(), COLOR_INDEX_UNLABELED));
+                    break;
+                } else if (p.getLabel().equals(l.title)) {
+                    colors.add(ThemeHelper.getColor(getContext(), l.colorId));
+                    break;
+                }
+            }
+        }
+
+        int grey500 = getResources().getColor(R.color.grey_500);
+
+        PieDataSet dataSet = new PieDataSet(entries, "");
+        dataSet.setColors(colors);
+        dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+        dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+        dataSet.setValueLineColor(grey500);
+        dataSet.setValueLinePart1Length(0.175f);
+
+        PieData data = new PieData(dataSet);
+        data.setValueFormatter(new PercentFormatter());
+        data.setValueTextSize(12f);
+        data.setValueTextColor(grey500);
+
+        mPieChart.setExtraOffsets(8, 8, 8, 8);
+        mPieChart.setData(data);
+        mPieChart.highlightValues(null);
+        mPieChart.setEntryLabelColor(grey500);
+        mPieChart.setEntryLabelTextSize(11f);
+        mPieChart.invalidate();
     }
 
     private void refreshHistoryChart(List<Session> sessions, int color) {
