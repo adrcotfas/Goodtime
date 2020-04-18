@@ -154,6 +154,7 @@
         <item name="materialButtonStyle">@style/Button</item>
         <item name="android:buttonBarButtonStyle">@style/Button</item>
         <item name="android:timePickerStyle" tools:targetApi="lollipop">@style/TimePickerStyle</item>
+        <item name="android:scrollbars">none</item>
     </style>
 
     <style name="CardViewStyle" parent="Widget.MaterialComponents.CardView">
