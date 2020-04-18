@@ -145,7 +145,6 @@
 
     <style name="DialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog" >
         <item name="android:backgroundTint" tools:ignore="NewApi">?attr/alertDialogColor</item>
-        <item name="android:background">?attr/alertDialogColor</item>
         <item name="colorPrimary">@color/teal200</item>
         <item name="colorPrimaryVariant">@color/teal300</item>
         <item name="colorSecondary">@color/teal200</item>
