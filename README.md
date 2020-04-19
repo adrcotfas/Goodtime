@@ -33,6 +33,7 @@ Get rid of procrastination and improve your time management!
 - Disable sound and Wi-Fi connection during the work sessions
 - Colored labels
 - Timer styles
+- Daily reminder
 - Manually add sessions
 - Edit completed sessions
 - Backup export and import
