@@ -82,6 +82,7 @@ import static com.apps.adrcotfas.goodtime.Statistics.Main.SpinnerStatsType.DURAT
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatLong;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatMinutes;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.toPercentage;
+import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_ALL_LABELS;
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_UNLABELED;
 
 public class StatisticsFragment extends Fragment {
@@ -314,7 +315,7 @@ public class StatisticsFragment extends Fragment {
                 R.array.spinner_pie_time_type, R.layout.spinner_item);
         pieTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mPieChartType.setAdapter(pieTypeAdapter);
-        mPieChartType.setSelection(2, false);
+        mPieChartType.setSelection(3, false);
         mPieChartType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -395,19 +396,11 @@ public class StatisticsFragment extends Fragment {
                 refreshProductiveTimeChart(sessions, color);
                 mPieChartSection.setVisibility(mShowPieChart ? View.VISIBLE : View.GONE);
                 if (mShowPieChart){
-                    if (sessions.isEmpty()) {
-                        mPieEmptyState.setVisibility(View.VISIBLE);
-                    } else {
-                        LiveData<List<Label>> labelsLd = mLabelsViewModel.getLabels();
-                        labelsLd.observe(getViewLifecycleOwner(), labels -> {
-                            if (labels.isEmpty()) {
-                                mPieChartSection.setVisibility(View.VISIBLE);
-                            } else {
-                                refreshPieChart(sessions, labels);
-                                labelsLd.removeObservers(getActivity());
-                            }
-                        });
-                    }
+                    LiveData<List<Label>> labelsLd = mLabelsViewModel.getLabels();
+                    labelsLd.observe(getViewLifecycleOwner(), labels -> {
+                        labelsLd.removeObservers(requireActivity());
+                        refreshPieChart(sessions, labels);
+                    });
                 }
 
                 final Handler handler = new Handler();
@@ -508,10 +501,16 @@ public class StatisticsFragment extends Fragment {
 
         ArrayList<Integer> colors = new ArrayList<>();
         for (PieEntry p : entries) {
+            if (labels.isEmpty()) {
+                p.setLabel(getString(R.string.unlabeled));
+                colors.add(ThemeHelper.getColor(getContext(), COLOR_INDEX_ALL_LABELS));
+                break;
+            }
             for (Label l : labels) {
                 if (p.getLabel() == null) {
                     p.setLabel(getString(R.string.unlabeled));
-                    colors.add(ThemeHelper.getColor(getContext(), COLOR_INDEX_UNLABELED));
+                    colors.add(ThemeHelper.getColor(getContext(), entries.size() == 1
+                            ? COLOR_INDEX_ALL_LABELS : COLOR_INDEX_UNLABELED));
                     break;
                 } else if (p.getLabel().equals(l.title)) {
                     colors.add(ThemeHelper.getColor(getContext(), l.colorId));
