@@ -56,6 +56,8 @@
             android:onClick="onStartButtonClick"
             android:singleLine="true"
             style="@style/TimerStyle"
+            android:paddingTop="32dp"
+            android:paddingBottom="32dp"
 
             android:textSize="85sp"
             android:adjustViewBounds="true"
