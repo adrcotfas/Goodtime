@@ -49,7 +49,7 @@ public class AboutActivity extends MaterialAboutActivity {
 
         builder1.addItem(ConvenienceBuilder.createVersionActionItem(c,
                 new IconicsDrawable(c)
-                        .icon(CommunityMaterial.Icon.cmd_information_outline)
+                        .icon(CommunityMaterial.Icon2.cmd_information_outline)
                         .color(ContextCompat.getColor(c, colorIcon))
                         .sizeDp(18),
                 getString(R.string.about_version),
@@ -80,7 +80,7 @@ public class AboutActivity extends MaterialAboutActivity {
         builder1.addItem(new MaterialAboutActionItem.Builder()
                 .text(getString(R.string.about_app_intro))
                 .icon(new IconicsDrawable(c)
-                        .icon(CommunityMaterial.Icon.cmd_presentation)
+                        .icon(CommunityMaterial.Icon2.cmd_presentation)
                         .color(ContextCompat.getColor(c, colorIcon))
                         .sizeDp(18))
                 .setOnClickAction(() -> {
@@ -92,7 +92,7 @@ public class AboutActivity extends MaterialAboutActivity {
         builder1.addItem(new MaterialAboutActionItem.Builder()
                 .text(getString(R.string.tutorial_title))
                 .icon(new IconicsDrawable(c)
-                        .icon(CommunityMaterial.Icon.cmd_rocket)
+                        .icon(CommunityMaterial.Icon2.cmd_rocket)
                         .color(ContextCompat.getColor(c, colorIcon))
                         .sizeDp(18))
                 .setOnClickAction(() -> {
@@ -116,7 +116,7 @@ public class AboutActivity extends MaterialAboutActivity {
         builder2.addItem(new MaterialAboutActionItem.Builder()
                 .text(getString(R.string.about_translate))
                 .icon(new IconicsDrawable(c)
-                        .icon(CommunityMaterial.Icon.cmd_web)
+                        .icon(CommunityMaterial.Icon2.cmd_web)
                         .color(ContextCompat.getColor(c, colorIcon))
                         .sizeDp(18))
                 .setOnClickAction(() -> {
@@ -128,7 +128,7 @@ public class AboutActivity extends MaterialAboutActivity {
 
         builder2.addItem(ConvenienceBuilder.createRateActionItem(c,
                 new IconicsDrawable(c)
-                        .icon(CommunityMaterial.Icon.cmd_star)
+                        .icon(CommunityMaterial.Icon2.cmd_star)
                         .color(ContextCompat.getColor(c, colorIcon))
                         .sizeDp(18),
                 getString(R.string.about_rate_this_app),

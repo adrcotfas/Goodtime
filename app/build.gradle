@@ -120,9 +120,9 @@ dependencies {
     // RecyclerView selection framework
     implementation 'androidx.recyclerview:recyclerview-selection:1.1.0-rc01'
 
-    // icons
-    implementation "com.mikepenz:iconics-core:3.1.0"
-    implementation 'com.mikepenz:community-material-typeface:2.0.46.1@aar'
+    // Icons
+    implementation 'com.mikepenz:iconics-core:3.2.5'
+    implementation 'com.mikepenz:community-material-typeface:2.7.94.1@aar'
 
     // Intro
     implementation 'com.heinrichreimersoftware:material-intro:2.0.0'

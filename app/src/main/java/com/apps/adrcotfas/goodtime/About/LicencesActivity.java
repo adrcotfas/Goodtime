@@ -41,7 +41,7 @@ public class LicencesActivity extends MaterialAboutActivity {
                         .icon(CommunityMaterial.Icon.cmd_book)
                         .color(ContextCompat.getColor(c, colorIcon))
                         .sizeDp(18),
-                "MPAndroidChart", "2018", "Philipp Jahoda",
+                "MPAndroidChart", "2019", "Philipp Jahoda",
                 OpenSourceLicense.APACHE_2);
 
         MaterialAboutCard cardPreferenceX = ConvenienceBuilder.createLicenseCard(c,
@@ -65,7 +65,7 @@ public class LicencesActivity extends MaterialAboutActivity {
                         .icon(CommunityMaterial.Icon.cmd_book)
                         .color(ContextCompat.getColor(c, colorIcon))
                         .sizeDp(18),
-                "EventBus", "2012-2017", "Markus Junginger, greenrobot",
+                "EventBus", "2012-2020", "Markus Junginger, greenrobot",
                 OpenSourceLicense.APACHE_2);
 
         MaterialAboutCard materialAboutLIbraryLicenseCard = ConvenienceBuilder.createLicenseCard(c,
@@ -73,7 +73,7 @@ public class LicencesActivity extends MaterialAboutActivity {
                         .icon(CommunityMaterial.Icon.cmd_book)
                         .color(ContextCompat.getColor(c, colorIcon))
                         .sizeDp(18),
-                "material-about-library", "2016-2018", "Daniel Stone",
+                "material-about-library", "2016-2020", "Daniel Stone",
                 OpenSourceLicense.APACHE_2);
 
         MaterialAboutCard androidIconicsLicenseCard = ConvenienceBuilder.createLicenseCard(c,
@@ -81,7 +81,7 @@ public class LicencesActivity extends MaterialAboutActivity {
                         .icon(CommunityMaterial.Icon.cmd_book)
                         .color(ContextCompat.getColor(c, colorIcon))
                         .sizeDp(18),
-                "Android Iconics", "2016", "Mike Penz",
+                "Android Iconics", "2020", "Mike Penz",
                 OpenSourceLicense.APACHE_2);
 
         MaterialAboutCard cardJodaOrg = ConvenienceBuilder.createLicenseCard(c,
