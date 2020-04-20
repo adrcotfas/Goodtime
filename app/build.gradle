@@ -130,8 +130,8 @@ dependencies {
     // App rating
     implementation 'io.github.kobakei:ratethisapp:1.2.0'
 
-    // IAP
-    googleImplementation 'com.anjlab.android.iab.v3:library:1.0.44'
+    // In-app purchases
+    googleImplementation 'com.anjlab.android.iab.v3:library:1.0.45'
 
     // F-Droid donations
     fdroidImplementation 'org.sufficientlysecure:donations:2.6'
