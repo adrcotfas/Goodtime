@@ -29,7 +29,7 @@ import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 import static com.apps.adrcotfas.goodtime.Util.Constants.ACTION.FINISHED;
 import static com.apps.adrcotfas.goodtime.Util.Constants.SESSION_TYPE;
@@ -139,7 +139,7 @@ public class CurrentSessionManager extends ContextWrapper{
                     triggerAtMillis, getAlarmPendingIntent(sessionType));
         }
     }
-    
+
     private void cancelAlarm() {
         final PendingIntent intent = getAlarmPendingIntent(mCurrentSession.getSessionType().getValue());
         if (intent != null) {
