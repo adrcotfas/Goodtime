@@ -38,6 +38,7 @@ import com.takisoft.preferencex.PreferenceFragmentCompat;
 import com.takisoft.preferencex.RingtonePreferenceDialogFragmentCompat;
 import com.takisoft.preferencex.RingtonePreference;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.CheckBoxPreference;
@@ -94,7 +95,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         view.setAlpha(0.f);
         view.animate().alpha(1.f).setDuration(100);
@@ -135,30 +136,29 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
 
     @Override
     public void onDisplayPreferenceDialog(Preference preference) {
-        if (preference.getKey().equals(PreferenceHelper.RINGTONE_BREAK_FINISHED)) {
-            if (PreferenceHelper.isPro()) {
-                RingtonePreferenceDialogFragmentCompat dialog = RingtonePreferenceDialogFragmentCompat.newInstance(preference.getKey());
-                dialog.setTargetFragment(this, 0);
-                dialog.show(getFragmentManager(), null);
-            } else {
-                launchUpgradeActivity(getActivity());
-            }
-        }
         if (preference instanceof RingtonePreference) {
-            RingtonePreferenceDialogFragmentCompat dialog = RingtonePreferenceDialogFragmentCompat.newInstance(preference.getKey());
+            RingtonePreferenceDialogFragmentCompat dialog =
+                    RingtonePreferenceDialogFragmentCompat.newInstance(preference.getKey());
             dialog.setTargetFragment(this, 0);
-            dialog.show(getFragmentManager(), null);
+            if (preference.getKey().equals(PreferenceHelper.RINGTONE_BREAK_FINISHED)) {
+                if (PreferenceHelper.isPro()) {
+                    dialog.show(getParentFragmentManager(), null);
+                } else {
+                    launchUpgradeActivity(getActivity());
+                }
+            } else {
+                dialog.show(getParentFragmentManager(), null);
+            }
         } else if (preference.getKey().equals(PreferenceHelper.TIMER_STYLE)) {
             if (PreferenceHelper.isPro()) {
                 super.onDisplayPreferenceDialog(preference);
             } else {
                 launchUpgradeActivity(getActivity());
             }
-
         } else if (preference.getKey().equals(VIBRATION_TYPE)) {
             VibrationPreferenceDialogFragment dialog = VibrationPreferenceDialogFragment.newInstance(preference.getKey());
             dialog.setTargetFragment(this, 0);
-            dialog.show(getFragmentManager(), null);
+            dialog.show(getParentFragmentManager(), null);
         } else {
             super.onDisplayPreferenceDialog(preference);
         }
