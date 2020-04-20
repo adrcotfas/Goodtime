@@ -143,8 +143,9 @@
         <item name="backgroundTint">?appBarColor</item>
     </style>
 
-    <style name="DialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog" >
+    <style name="DialogTheme" parent="Theme.MaterialComponents.Dialog" >
         <item name="android:backgroundTint" tools:ignore="NewApi">?attr/alertDialogColor</item>
+        <item name="dialogCornerRadius">16dp</item>
         <item name="colorPrimary">@color/teal200</item>
         <item name="colorPrimaryVariant">@color/teal300</item>
         <item name="colorSecondary">@color/teal200</item>
@@ -224,7 +225,20 @@
     </style>
 
     <style name="BottomDialogStyle" parent="@style/Theme.MaterialComponents.BottomSheetDialog" >
+        <item name="bottomSheetStyle">@style/RoundedBottomSheetStyle</item>
         <item name="android:backgroundTint" tools:targetApi="lollipop">?attr/alertDialogColor</item>
+    </style>
+
+    <style name="RoundedBottomSheetStyle" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/RoundedBottomSheetDialog</item>
+    </style>
+
+    <style name="RoundedBottomSheetDialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
     <style name="TimePickerStyle"

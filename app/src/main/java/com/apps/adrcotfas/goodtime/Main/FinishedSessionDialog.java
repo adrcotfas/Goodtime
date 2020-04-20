@@ -19,11 +19,11 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.R;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class FinishedSessionDialog extends DialogFragment {
 
@@ -67,7 +67,7 @@ public class FinishedSessionDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         setCancelable(false);
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         if (sessionType == SessionType.WORK) {
             builder.setTitle(R.string.action_finished_session)
                     .setPositiveButton(R.string.action_start_break, (dialog, which)

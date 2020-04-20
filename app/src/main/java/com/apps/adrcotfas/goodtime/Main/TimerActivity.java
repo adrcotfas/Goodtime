@@ -53,7 +53,6 @@ import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 import com.apps.adrcotfas.goodtime.Util.OnSwipeTouchListener;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.kobakei.ratethisapp.RateThisApp;
@@ -67,6 +66,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -401,13 +401,13 @@ public class TimerActivity
                 showEditLabelDialog();
                 break;
             case R.id.action_sessions_counter:
-                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-                builder.setTitle(R.string.action_reset_counter_title)
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.action_reset_counter_title)
                         .setMessage(R.string.action_reset_counter)
                         .setPositiveButton(android.R.string.ok, (dialog, which)
                                 -> mSessionViewModel.deleteSessionsFinishedToday())
-                        .setNegativeButton(android.R.string.cancel, (dialog, which) -> {});
-                builder.show();
+                        .setNegativeButton(android.R.string.cancel, (dialog, which) -> {})
+                        .show();
                 return true;
         }
         return super.onOptionsItemSelected(item);

@@ -30,7 +30,6 @@ import com.apps.adrcotfas.goodtime.Main.ItemTouchHelperAdapter;
 import com.apps.adrcotfas.goodtime.Main.ItemTouchHelperViewHolder;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.takisoft.colorpicker.ColorPickerDialog;
 
 import java.lang.ref.WeakReference;
@@ -38,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -195,7 +195,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
             imageDeleteContainer.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 clearFocusEditText(text, mContext.get());
-                new MaterialAlertDialogBuilder(mContext.get())
+                new AlertDialog.Builder(mContext.get())
                         .setNegativeButton(android.R.string.cancel, null)
                         .setPositiveButton(R.string.dialog_delete, (dialogInterface, which)
                                 -> mCallback.onDeleteLabel(mLabels.get(position), position))

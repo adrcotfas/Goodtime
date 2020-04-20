@@ -35,19 +35,17 @@ import com.apps.adrcotfas.goodtime.Settings.ProfilesViewModel;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.DialogSelectLabelBinding;
 import com.google.android.material.chip.Chip;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceTotalLabel;
 import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceUnlabeledLabel;
@@ -114,13 +112,13 @@ public class SelectLabelDialog extends DialogFragment {
             }
         });
 
-        LabelsViewModel labelsVm = ViewModelProviders.of(this).get(LabelsViewModel.class);
+        LabelsViewModel labelsVm = new ViewModelProvider(this).get(LabelsViewModel.class);
         labelsVm.getLabels().observe(this, labels -> {
 
             int i = 0;
             if (mIsExtendedVersion) {
-                Chip chip = new Chip(getActivity());
-                Label total = getInstanceTotalLabel(getActivity());
+                Chip chip = new Chip(requireContext());
+                Label total = getInstanceTotalLabel(requireContext());
                 chip.setText(total.title);
                 chip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), COLOR_INDEX_ALL_LABELS)));
                 chip.setCheckable(true);
@@ -135,7 +133,7 @@ public class SelectLabelDialog extends DialogFragment {
 
             for (int j = labels.size() - 1; j >= 0; --j) {
                 Label crt = labels.get(j);
-                Chip chip = new Chip(getActivity());
+                Chip chip = new Chip(requireContext());
                 chip.setText(crt.title);
                 chip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), crt.colorId)));
                 chip.setCheckable(true);
@@ -160,14 +158,14 @@ public class SelectLabelDialog extends DialogFragment {
             }, 100);
         });
 
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity())
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setView(binding.getRoot())
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     if (binding.labels.getCheckedChipId() != -1) {
                         Chip chip = (Chip) (binding.labels.getChildAt(binding.labels.getCheckedChipId()));
                         mLabel = chip.getText().toString();
                         int color = chip.getChipBackgroundColor().getDefaultColor();
-                        notifyLabelSelected(new Label(mLabel, ThemeHelper.getIndexOfColor(getActivity(), color)));
+                        notifyLabelSelected(new Label(mLabel, ThemeHelper.getIndexOfColor(requireContext(), color)));
                     } else {
                         notifyLabelSelected(getInstanceUnlabeledLabel());
                     }
@@ -189,13 +187,13 @@ public class SelectLabelDialog extends DialogFragment {
                 //TODO: Clean-up this mess
                 Button neutral = mAlertDialog.getButton(DialogInterface.BUTTON_NEUTRAL);
                 neutral.setOnClickListener(v -> {
-                    ProfilesViewModel profilesVm = ViewModelProviders.of(SelectLabelDialog.this).get(ProfilesViewModel.class);
+                    ProfilesViewModel profilesVm = new ViewModelProvider(SelectLabelDialog.this).get(ProfilesViewModel.class);
                     LiveData<List<Profile>> profilesLiveData = profilesVm.getProfiles();
                     profilesLiveData.observe(SelectLabelDialog.this, profiles -> {
 
                         mProfiles = profiles;
                         int profileIdx = 0;
-                        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(SelectLabelDialog.this.getActivity(),
+                        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireContext(),
                                 R.layout.checked_text_view);
 
                         String pref25 = SelectLabelDialog.this.getResources().getText(R.string.pref_profile_default).toString();
@@ -221,8 +219,8 @@ public class SelectLabelDialog extends DialogFragment {
                             }
                         }
 
-                        MaterialAlertDialogBuilder profileDialogBuilder =
-                                new MaterialAlertDialogBuilder(SelectLabelDialog.this.requireActivity())
+                        AlertDialog.Builder profileDialogBuilder =
+                                new AlertDialog.Builder(requireContext())
                                         .setTitle(SelectLabelDialog.this.getResources().getString(R.string.Profile))
                                         .setSingleChoiceItems(
                                                 arrayAdapter,

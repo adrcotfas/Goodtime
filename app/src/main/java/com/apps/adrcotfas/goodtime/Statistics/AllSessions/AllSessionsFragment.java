@@ -271,7 +271,7 @@ public class AllSessionsFragment extends Fragment implements SelectLabelDialog.O
                     selectAll();
                     break;
                 case R.id.action_delete:
-                    new MaterialAlertDialogBuilder(getActivity())
+                    new AlertDialog.Builder(requireContext())
                             .setTitle(R.string.delete_selected_entries)
                             .setPositiveButton(android.R.string.ok, (dialog, id) -> deleteSessions())
                             .setNegativeButton(android.R.string.cancel, (dialog, id) -> dialog.cancel())
