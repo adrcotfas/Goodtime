@@ -547,16 +547,23 @@ public class StatisticsFragment extends Fragment {
         mChartHistory.getData().setHighlightEnabled(false);
 
         mChartHistory.getAxisLeft().setAxisMinimum(0f);
-        mChartHistory.getAxisLeft().setAxisMaximum(isDurationType ? 60f : 6f);
+        mChartHistory.getAxisLeft().setAxisMaximum(isDurationType ? 60f : 8f);
 
-        final int visibleXCount = (int) ThemeHelper.pxToDp(getContext(), mChartHistory.getWidth()) / 36;
+        final int visibleXCount = (int) ThemeHelper.pxToDp(requireContext(), mChartHistory.getWidth()) / 36;
         mChartHistory.setVisibleXRangeMaximum(visibleXCount);
         mChartHistory.setVisibleXRangeMinimum(visibleXCount);
         mChartHistory.getXAxis().setLabelCount(visibleXCount);
         mChartHistory.getAxisLeft().setLabelCount(5, true);
 
-        if (sessions.size() > 0 && data.getYMax() >= (isDurationType ? 60 : 6f)) {
-            mChartHistory.getAxisLeft().setAxisMaximum(isDurationType ? (float) (Math.ceil((double)(data.getYMax() / 20)) * 20) : data.getYMax() + 5);
+        final float yMax = data.getYMax();
+        if (sessions.size() > 0 && yMax >= (isDurationType ? 60 : 8f)) {
+            if (isDurationType) {
+                mChartHistory.getAxisLeft().setAxisMaximum((float) (Math.ceil((double)(yMax / 20)) * 20));
+            } else {
+                // round to the next multiple of 4
+                float axisMax = (yMax % 4 != 0) ? yMax + 4 - (yMax % 4) : yMax;
+                mChartHistory.getAxisLeft().setAxisMaximum(axisMax);
+            }
         }
 
         // this part is to align the history chart to the productive time chart by setting the same width
@@ -565,7 +572,6 @@ public class StatisticsFragment extends Fragment {
         int widthOfOtherChart = (int) ThemeHelper.pxToDp(getContext(), (int) p.measureText("100%"));
         mChartHistory.getAxisLeft().setMinWidth(widthOfOtherChart);
         mChartHistory.getAxisLeft().setMaxWidth(widthOfOtherChart);
-
         mChartHistory.notifyDataSetChanged();
     }
 
