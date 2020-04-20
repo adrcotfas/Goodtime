@@ -39,7 +39,7 @@
             app:iconSpaceReserved="false"/>
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="pref_keep_screen_on"
             android:title="@string/pref_keep_screen_on"
             app:iconSpaceReserved="false"/>
