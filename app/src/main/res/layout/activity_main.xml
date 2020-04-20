@@ -57,7 +57,7 @@
             android:singleLine="true"
             style="@style/TimerStyle"
 
-            android:textSize="65sp"
+            android:textSize="85sp"
             android:adjustViewBounds="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

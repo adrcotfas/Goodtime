@@ -532,25 +532,16 @@ public class TimerActivity
         long minutes = TimeUnit.SECONDS.toMinutes(seconds);
         seconds -= (minutes * 60);
 
-        SpannableString currentFormattedTick;
+        String currentFormattedTick;
+
         boolean isMinutesStyle = PreferenceHelper.getTimerStyle().equals(getResources().getString(R.string.pref_timer_style_minutes_value));
         if (isMinutesStyle) {
-            String currentTick = String.valueOf(TimeUnit.SECONDS.toMinutes((minutes * 60) + seconds + 59));
-            currentFormattedTick = new SpannableString(currentTick);
-            currentFormattedTick.setSpan(new RelativeSizeSpan(1.5f), 0,
-                    currentTick.length(), 0);
+            currentFormattedTick = String.valueOf(TimeUnit.SECONDS.toMinutes((minutes * 60) + seconds + 59));
         } else {
-            boolean isV1Style = PreferenceHelper.getTimerStyle().equals(getResources().getString(R.string.pref_timer_style_default_value));
-            final String separator =  isV1Style ? "." : ":";
-            String currentTick = (minutes > 0 ? minutes + separator : "") +
-                    format(Locale.US, "%02d", seconds);
-            currentFormattedTick = new SpannableString(currentTick);
-            if (minutes > 0) {
-                currentFormattedTick.setSpan(new RelativeSizeSpan(isV1Style ? 2f : 1.25f), 0,
-                        isV1Style ? currentTick.indexOf(separator) : currentTick.length(), 0);
-            } else {
-                currentFormattedTick.setSpan(new RelativeSizeSpan(1.25f), 0, currentTick.length(), 0);
-            }
+            currentFormattedTick =
+                    ((minutes > 9) ? minutes  : "0" + minutes)
+                    + ":"
+                    + ((seconds > 9) ? seconds : "0" + seconds);
         }
 
         mTimeLabel.setText(currentFormattedTick);

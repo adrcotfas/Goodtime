@@ -33,7 +33,7 @@ public class PreferenceHelper {
 
     private static final String PRO = "pref_blana";
 
-    private final static int PREFERENCES_VERSION = 1;
+    private final static int PREFERENCES_VERSION = 2;
     private final static String PREFERENCES_VERSION_INTERNAL  = "pref_version";
 
     private final static String FIRST_RUN = "pref_first_run";
@@ -80,11 +80,17 @@ public class PreferenceHelper {
     public final static String REMINDER_TIME_VALUE = "pref_reminder_time_value";
 
     public static void migratePreferences() {
-        if (getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getInt(PREFERENCES_VERSION_INTERNAL, 0) == 0) {
+        int version = getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getInt(PREFERENCES_VERSION_INTERNAL, 0);
+        if (version == 0) {
             getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit().clear().apply();
-            getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit().putInt(PREFERENCES_VERSION_INTERNAL, PREFERENCES_VERSION).apply();
+        } else if (version == 1) {
+            final String OLD_MINUTES_ONLY = "2";
+            if (PreferenceHelper.getTimerStyle().equals(OLD_MINUTES_ONLY)) {
+                PreferenceHelper.setTimerStyle(0);
+            }
         }
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit().putInt(PREFERENCES_VERSION_INTERNAL, PREFERENCES_VERSION).apply();
     }
 
     public static long getSessionDuration(SessionType sessionType) {
@@ -293,6 +299,10 @@ public class PreferenceHelper {
     public static String getProfile() {
             return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getString(PROFILE,
                     GoodtimeApplication.getInstance().getResources().getString(R.string.pref_profile_default));
+    }
+
+    public static void setTimerStyle(int value) {
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit().putString(TIMER_STYLE, String.valueOf(value)).apply();
     }
 
     public static String getTimerStyle() {

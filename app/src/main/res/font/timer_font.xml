@@ -4,5 +4,5 @@
     <font
         app:fontStyle="normal"
         app:fontWeight="100"
-        app:font="@font/roboto_thin" />
+        app:font="@font/roboto_mono_thin" />
 </font-family>

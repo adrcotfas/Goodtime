@@ -150,11 +150,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
                 dialog.show(getParentFragmentManager(), null);
             }
         } else if (preference.getKey().equals(PreferenceHelper.TIMER_STYLE)) {
-            if (PreferenceHelper.isPro()) {
-                super.onDisplayPreferenceDialog(preference);
-            } else {
-                launchUpgradeActivity(getActivity());
-            }
+            super.onDisplayPreferenceDialog(preference);
         } else if (preference.getKey().equals(VIBRATION_TYPE)) {
             VibrationPreferenceDialogFragment dialog = VibrationPreferenceDialogFragment.newInstance(preference.getKey());
             dialog.setTargetFragment(this, 0);
