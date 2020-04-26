@@ -12,26 +12,30 @@ android:
     - 'android-sdk-preview-license-.+'
     - 'android-sdk-license-.+'
     - 'google-gdk-license-.+'
+
  components:
   - tools
   - platform-tools
-
+  - tools
+  - build-tools-29.0.3
   - android-28
-  - build-tools-28-rc1
   - add-on
   - extra
 
 script:
     - ./gradlew build check
+
 before_cache:
     - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+
 cache:
   directories:
     - $HOME/.m2
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
+
 before_install:
       - chmod +x ./gradlew
       - yes | sdkmanager "platforms;android-28"
-      - yes | sdkmanager "build-tools;28.0.0-rc1"
+      - yes | sdkmanager "build-tools;29.0.3"
