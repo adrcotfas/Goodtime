@@ -4,9 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
@@ -39,7 +39,7 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         view.setAlpha(0.f);
         view.animate().alpha(1.f).setDuration(150);
@@ -49,7 +49,7 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings_durations, rootKey);
-        mProfilesViewModel = ViewModelProviders.of(getActivity()).get(ProfilesViewModel.class);
+        mProfilesViewModel = new ViewModelProvider(requireActivity()).get(ProfilesViewModel.class);
         mProfilesViewModel.getProfiles().observe(this, profiles -> {
             mProfiles = profiles;
             setupProfiles();
@@ -144,7 +144,7 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat
             ProperSeekBarPreferenceDialog dialog =
                     ProperSeekBarPreferenceDialog.newInstance(preference.getKey(), this);
             dialog.setTargetFragment(this, 0);
-            dialog.show(getFragmentManager(), null);
+            dialog.show(getParentFragmentManager(), null);
         } else if (preference.getKey().equals(PreferenceHelper.SAVE_CUSTOM_PROFILE)) {
             if (PreferenceHelper.isPro()) {
                 Profile profile = mPrefEnableLongBreak.isChecked() ? new Profile(
@@ -162,7 +162,7 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat
                         profile,
                         mPrefProfile);
                 dialog.setTargetFragment(this, 0);
-                dialog.show(getFragmentManager(), null);
+                dialog.show(getParentFragmentManager(), null);
             } else {
                 launchUpgradeActivity(getActivity());
             }
@@ -170,13 +170,13 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat
             ProfileSelectDialog dialog =
                     ProfileSelectDialog.newInstance(PreferenceHelper.PROFILE);
             dialog.setTargetFragment(this, 0);
-            dialog.show(getFragmentManager(), null);
+            dialog.show(getParentFragmentManager(), null);
         } else {
             super.onDisplayPreferenceDialog(preference);
         }
     }
 
-    public void onDurationsChanged() {
+    private void onDurationsChanged() {
         PreferenceHelper.setUnsavedProfileActive(true);
         mSaveCustomProfileButton.setVisible(true);
     }

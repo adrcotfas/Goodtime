@@ -26,10 +26,12 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.StringUtils;
@@ -55,6 +57,7 @@ import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgra
 
 public class SettingsFragment extends PreferenceFragmentCompat implements ActivityCompat.OnRequestPermissionsResultCallback, TimePickerDialog.OnTimeSetListener {
 
+    private static final String TAG = "SettingsFragment";
     private CheckBoxPreference mPrefDisableSoundCheckbox;
     private SwitchPreferenceCompat mPrefReminder;
 
@@ -140,14 +143,21 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
             RingtonePreferenceDialogFragmentCompat dialog =
                     RingtonePreferenceDialogFragmentCompat.newInstance(preference.getKey());
             dialog.setTargetFragment(this, 0);
-            if (preference.getKey().equals(PreferenceHelper.RINGTONE_BREAK_FINISHED)) {
-                if (PreferenceHelper.isPro()) {
+            if (preference.getKey().equals(PreferenceHelper.RINGTONE_BREAK_FINISHED)
+                    && !PreferenceHelper.isPro()) {
+                launchUpgradeActivity(getActivity());
+            }
+            else {
+                try {
                     dialog.show(getParentFragmentManager(), null);
-                } else {
-                    launchUpgradeActivity(getActivity());
+                } catch (NumberFormatException e) {
+                    //TODO: handle this later
+                    Log.e(TAG, "The annoying RingtonePreferenceDialog exception was thrown");
+                    Toast.makeText(
+                            requireActivity(),
+                            "Something went wrong",
+                            Toast.LENGTH_SHORT).show();
                 }
-            } else {
-                dialog.show(getParentFragmentManager(), null);
             }
         } else if (preference.getKey().equals(PreferenceHelper.TIMER_STYLE)) {
             super.onDisplayPreferenceDialog(preference);

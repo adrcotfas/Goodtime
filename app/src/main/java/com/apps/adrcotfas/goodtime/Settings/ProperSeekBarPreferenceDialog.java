@@ -21,7 +21,7 @@ public class ProperSeekBarPreferenceDialog extends PreferenceDialogFragmentCompa
         void onValueSet();
     }
 
-    Listener listener;
+    private Listener listener;
 
     public static ProperSeekBarPreferenceDialog newInstance(String key, Listener listener) {
         ProperSeekBarPreferenceDialog fragment = new ProperSeekBarPreferenceDialog();
