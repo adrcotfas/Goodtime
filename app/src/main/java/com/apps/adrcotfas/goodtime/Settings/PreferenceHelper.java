@@ -208,12 +208,14 @@ public class PreferenceHelper {
                 + PreferenceHelper.getSessionDuration(SessionType.BREAK)
                 + 10);
 
-        final long currentMillis = SystemClock.elapsedRealtime();
-        final boolean increment = lastWorkFinishedAt() == 0
-                || currentMillis - lastWorkFinishedAt() < maxDifference;
+        final long currentMillis = System.currentTimeMillis();
+        final long lastWorkFinishedAt = lastWorkFinishedAt();
+        final boolean increment = (lastWorkFinishedAt == 0)
+                || ((currentMillis - lastWorkFinishedAt) < maxDifference);
 
+        final int currentStreak = getCurrentStreak();
         GoodtimeApplication.getPrivatePreferences().edit()
-                .putInt(WORK_STREAK, increment ? getCurrentStreak() + 1 : 1).apply();
+                .putInt(WORK_STREAK, increment ? currentStreak + 1 : 1).apply();
 
         GoodtimeApplication.getPrivatePreferences().edit()
                 .putLong(LAST_WORK_FINISHED_AT, increment ? currentMillis: 0).apply();
