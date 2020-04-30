@@ -315,7 +315,7 @@ public class StatisticsFragment extends Fragment {
                 R.array.spinner_pie_time_type, R.layout.spinner_item);
         pieTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mPieChartType.setAdapter(pieTypeAdapter);
-        mPieChartType.setSelection(3, false);
+        mPieChartType.setSelection(2, false);
         mPieChartType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
