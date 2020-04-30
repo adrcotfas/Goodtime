@@ -275,7 +275,7 @@ public class StatisticsFragment extends Fragment {
                 R.array.spinner_stats_type, R.layout.spinner_item);
         statsTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mStatsType.setAdapter(statsTypeAdapter);
-        mStatsType.setSelection(0, false);
+        mStatsType.setSelection(1, false);
         mStatsType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
