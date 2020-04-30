@@ -405,7 +405,10 @@ public class TimerActivity
                         .setTitle(R.string.action_reset_counter_title)
                         .setMessage(R.string.action_reset_counter)
                         .setPositiveButton(android.R.string.ok, (dialog, which)
-                                -> mSessionViewModel.deleteSessionsFinishedToday())
+                                -> {
+                            mSessionViewModel.deleteSessionsFinishedToday();
+                            PreferenceHelper.resetCurrentStreak();
+                        })
                         .setNegativeButton(android.R.string.cancel, (dialog, which) -> {})
                         .show();
                 return true;
