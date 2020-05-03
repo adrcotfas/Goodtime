@@ -106,7 +106,7 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements
         });
 
         mViewModel.label.observe(getViewLifecycleOwner(), label -> {
-            if (label != null && !label.equals("unlabeled")) {
+            if (label != null && !label.equals(getString(R.string.label_unlabeled))) {
                 binding.labelChip.setText(label);
                 mLabelsViewModel.getColorOfLabel(label).observe(getViewLifecycleOwner(), color ->
                         binding.labelChip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), color))));

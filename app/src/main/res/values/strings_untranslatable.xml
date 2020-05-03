@@ -24,4 +24,6 @@
         <item>@string/update_pro_13</item>
     </string-array>
 
+    <string name="label_unlabeled" translatable="false">unlabeled</string>
+
 </resources>

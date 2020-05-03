@@ -22,7 +22,25 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 app:navigationIcon="@drawable/ic_menu"
-                style="@style/ActionBarTheme"/>
+                style="@style/ActionBarTheme">
+
+                <TextView
+                    android:id="@+id/label_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    app:layout_constraintTop_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline3"
+                    app:layout_constraintEnd_toEndOf="parent"
+
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_gravity="end"
+                    style="@style/SmallPseudoChip"/>
+            </com.google.android.material.bottomappbar.BottomAppBar>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <!--this is used for fullscreen taps-->

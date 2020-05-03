@@ -17,11 +17,11 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.SpannableString;
-import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -62,7 +62,6 @@ import org.joda.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -86,7 +85,6 @@ import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.AMOLED;
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.ENABLE_SCREENSAVER_MODE;
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.ENABLE_SCREEN_ON;
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.WORK_DURATION;
-import static java.lang.String.format;
 
 public class TimerActivity
         extends
@@ -111,6 +109,7 @@ public class TimerActivity
     private TextView mTimeLabel;
     private Toolbar mToolbar;
     private ImageView mTutorialDot;
+    private TextView mLabelView;
 
     private SessionViewModel mSessionViewModel;
     private TimerActivityViewModel mViewModel;
@@ -167,6 +166,7 @@ public class TimerActivity
         mTimeLabel = binding.timeLabel;
         mTutorialDot = binding.tutorialDot;
         mBoundsView = binding.main;
+        mLabelView = binding.labelView;
 
         setupTimeLabelEvents();
 
@@ -666,7 +666,24 @@ public class TimerActivity
         }
     }
 
+    private void setupLabelView() {
+        Label label = PreferenceHelper.getCurrentSessionLabel();
+        if (label.title == null ||
+                label.title.equals(getString(R.string.label_unlabeled)) ||
+                !PreferenceHelper.showCurrentLabel()) {
+            mLabelView.setVisibility(View.GONE);
+        } else {
+            mLabelView.setVisibility(View.VISIBLE);
+            mLabelView.setText(label.title);
+            Drawable d = getResources().getDrawable(R.drawable.shape_rectangle);
+            d.setColorFilter(new PorterDuffColorFilter(
+                    ThemeHelper.getColor(this, label.colorId), PorterDuff.Mode.SRC_ATOP));
+            mLabelView.setBackground(d);
+        }
+    }
+
     private void setStatusIconColor() {
+        setupLabelView();
         Label label = PreferenceHelper.getCurrentSessionLabel();
 
         if (mStatusButton != null) {
