@@ -36,6 +36,7 @@ import android.widget.Toast;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.StringUtils;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
+import com.apps.adrcotfas.goodtime.Util.TimePickerDialogFixedNougatSpinner;
 import com.takisoft.preferencex.PreferenceFragmentCompat;
 import com.takisoft.preferencex.RingtonePreferenceDialogFragmentCompat;
 import com.takisoft.preferencex.RingtonePreference;
@@ -82,7 +83,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
                 final long millis = PreferenceHelper.getTimeOfReminder();
                 final DateTime time = new DateTime(millis);
 
-                TimePickerDialog d = new TimePickerDialog(
+                TimePickerDialogFixedNougatSpinner d = new TimePickerDialogFixedNougatSpinner(
                         getActivity(),
                         (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                                 ? R.style.DialogTheme : AlertDialog.THEME_HOLO_DARK,

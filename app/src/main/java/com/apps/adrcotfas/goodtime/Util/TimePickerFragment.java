@@ -51,7 +51,7 @@ public class TimePickerFragment extends DialogFragment {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
 
-        return new TimePickerDialog(
+        return new TimePickerDialogFixedNougatSpinner(
                 getActivity(),
                 (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                         ? R.style.DialogTheme : AlertDialog.THEME_HOLO_DARK,

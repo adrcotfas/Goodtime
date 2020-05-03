@@ -116,6 +116,14 @@ public class LicencesActivity extends MaterialAboutActivity {
                 "Android-RateThisApp", "2013-2017", "Keisuke Kobayashi",
                 OpenSourceLicense.APACHE_2);
 
+        MaterialAboutCard timePicker = ConvenienceBuilder.createLicenseCard(c,
+                new IconicsDrawable(c)
+                        .icon(CommunityMaterial.Icon.cmd_book)
+                        .color(ContextCompat.getColor(c, colorIcon))
+                        .sizeDp(18),
+                "TimePickerDialogFixedNougatSpinner", "2018", "Jeff Lockhart",
+                OpenSourceLicense.MIT);
+
         MaterialAboutList result = new MaterialAboutList()
                 .addCard(cardMpAndroidChart)
                 .addCard(cardPreferenceX)
@@ -126,7 +134,8 @@ public class LicencesActivity extends MaterialAboutActivity {
                 .addCard(cardJodaOrg)
                 .addCard(cardIap)
                 .addCard(cardIntro)
-                .addCard(rateThisApp);
+                .addCard(rateThisApp)
+                .addCard(timePicker);
 
         if (BuildConfig.F_DROID) {
             MaterialAboutCard donationCard = ConvenienceBuilder.createLicenseCard(c,
