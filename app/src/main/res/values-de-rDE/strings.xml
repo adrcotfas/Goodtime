@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="de" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"Dauer einer Pause"</string>
     <string name="pref_disable_sound_and_vibration">"Ton und Vibration ausschalten"</string>
     <string name="pref_disable_wifi">"WLAN ausschalten"</string>
@@ -14,9 +14,16 @@
     <string name="pref_sessions_before_long_break">"Sitzungen vor einer langen Pause"</string>
     <string name="pref_enable_long_break">"Lange Pausen aktivieren"</string>
     <string name="pref_vibrate">"Vibration"</string>
+    <string name="pref_vibration_type_none">Keine</string>
+    <string name="pref_vibration_type_soft">Weich</string>
+    <string name="pref_vibration_type_strong">Stark</string>
+    <string name="pref_vibration_type_sos">SOS</string>
+    <string name="pref_vibration_type_heartbeat">Herzschlag</string>
     <string name="pref_amoled">"Dunkles Design"</string>
     <string name="pref_header_during_work_sessions">Während der Arbeitssitzungen</string>
     <string name="pref_enable_ringtone">"Benachrichtigungston"</string>
+    <string name="pref_priority_alarm">"Override sound profile"</string>
+    <string name="pref_priority_alarm_summary">"The notification sound behaves like an alarm"</string>
     <string name="pref_ringtone_insistent">"Hartnäckige Benachrichtigung"</string>
     <string name="pref_ringtone_insistent_summary">"Benachrichtigung wiederholen, bis sie abgebrochen wird"</string>
     <string name="pref_ringtone_break">Benachrichtigungston am Ende einer Pause</string>
@@ -96,6 +103,9 @@
     <string name="delete_selected_entries">Markierte Einträge löschen?</string>
     <string name="empty_state_no_items">Keine Inhalte</string>
     <string name="notification_channel_name">Goodtime-Benachrichtigungen</string>
+    <string name="reminder_notification_channel_name">"Goodtime-Erinnerungsbenachrichtigungen"</string>
+    <string name="reminder_title">"Tägliche Erinnerung"</string>
+    <string name="reminder_text">"Es ist an der Zeit, produktiv zu sein!"</string>
     <string name="settings">Einstellungen</string>
     <string name="state">Flugmodus</string>
     <string name="feedback">Feedback</string>
@@ -131,6 +141,7 @@
     <string name="profile_already_exists">Profil ist bereits vorhanden</string>
     <string name="pref_save_custom_profile">Eigenes Profil speichern</string>
     <string name="pref_timer_duration">Timer-Dauer</string>
+    <string name="timer_durations">Dauer für Arbeits- und Pausensitzungen festlegen</string>
     <string name="pref_timer_style">Timer-Stil</string>
     <string name="pref_timer_style_default">Standard</string>
     <string name="pref_timer_style_classic">Klassiker</string>
@@ -138,7 +149,8 @@
     <string name="pref_session_counter">Sitzungsschalter</string>
     <string name="pref_session_counter_summary">"Zeigt die Anzahl der heute abgeschlossenen Sitzungen an"</string>
     <string name="support_the_developer">Unterstütze den Entwickler</string>
-    <string name="action_reset_counter">Dies wird die heutigen Sitzungen zurücksetzen.</string>
+    <string name="action_reset_counter">"Dies wird die heutigen Sitzungen zurücksetzen."</string>
     <string name="action_reset_counter_title">Zurücksetzen?</string>
     <string name="tutorial_title">Einführungen</string>
+    <string name="other_apps">Andere Apps</string>
 </resources>

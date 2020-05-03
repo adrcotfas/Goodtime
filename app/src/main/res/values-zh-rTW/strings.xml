@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="zh-rTW" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"小憩週期"</string>
     <string name="pref_disable_sound_and_vibration">"停用音效及震動"</string>
     <string name="pref_disable_wifi">"停用Wi-Fi"</string>
@@ -14,9 +14,16 @@
     <string name="pref_sessions_before_long_break">"長時間休息之前的會話"</string>
     <string name="pref_enable_long_break">"啟用長休息"</string>
     <string name="pref_vibrate">"震動"</string>
+    <string name="pref_vibration_type_none">None</string>
+    <string name="pref_vibration_type_soft">Soft</string>
+    <string name="pref_vibration_type_strong">Strong</string>
+    <string name="pref_vibration_type_sos">SOS</string>
+    <string name="pref_vibration_type_heartbeat">Heartbeat</string>
     <string name="pref_amoled">"深色主題"</string>
     <string name="pref_header_during_work_sessions">在工作會議期間</string>
     <string name="pref_enable_ringtone">"通知音效"</string>
+    <string name="pref_priority_alarm">"Override sound profile"</string>
+    <string name="pref_priority_alarm_summary">"The notification sound behaves like an alarm"</string>
     <string name="pref_ringtone_insistent">"持續通知"</string>
     <string name="pref_ringtone_insistent_summary">"重複通知, 直到它被取消"</string>
     <string name="pref_ringtone_break">已完成的中斷通知</string>
@@ -96,6 +103,9 @@
     <string name="delete_selected_entries">刪除所選條目？</string>
     <string name="empty_state_no_items">沒有東西</string>
     <string name="notification_channel_name">Goodtime Notifications</string>
+    <string name="reminder_notification_channel_name">"Goodtime Reminder Notifications"</string>
+    <string name="reminder_title">"Daily reminder"</string>
+    <string name="reminder_text">"It's time to be productive!"</string>
     <string name="settings">設置</string>
     <string name="state">狀態</string>
     <string name="feedback">意見反饋</string>
@@ -131,6 +141,7 @@
     <string name="profile_already_exists">編碼方案已經存在</string>
     <string name="pref_save_custom_profile">保存自定義配置文件</string>
     <string name="pref_timer_duration">計時器持續時間</string>
+    <string name="timer_durations">Set the duration for work and break sessions</string>
     <string name="pref_timer_style">計時器樣式</string>
     <string name="pref_timer_style_default">預設</string>
     <string name="pref_timer_style_classic">預設</string>
@@ -138,7 +149,8 @@
     <string name="pref_session_counter">會話計數器</string>
     <string name="pref_session_counter_summary">"顯示今天已完成的會話數"</string>
     <string name="support_the_developer">支持開發者</string>
-    <string name="action_reset_counter">這將重置今天結束的會話。</string>
+    <string name="action_reset_counter">"這將重置今天結束的會話。"</string>
     <string name="action_reset_counter_title">您要重設嗎？</string>
     <string name="tutorial_title">使用教學</string>
+    <string name="other_apps">Other apps</string>
 </resources>

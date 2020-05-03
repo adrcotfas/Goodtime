@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="ca" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"Durada del descans"</string>
     <string name="pref_disable_sound_and_vibration">"Desactivar el so i la vibració"</string>
     <string name="pref_disable_wifi">"Desactivar la Wi-Fi"</string>
@@ -14,9 +14,16 @@
     <string name="pref_sessions_before_long_break">"Nombre de sessions abans del descans llarg"</string>
     <string name="pref_enable_long_break">"Permetre llargues estades"</string>
     <string name="pref_vibrate">"Vibració"</string>
+    <string name="pref_vibration_type_none">None</string>
+    <string name="pref_vibration_type_soft">Soft</string>
+    <string name="pref_vibration_type_strong">Strong</string>
+    <string name="pref_vibration_type_sos">SOS</string>
+    <string name="pref_vibration_type_heartbeat">Heartbeat</string>
     <string name="pref_amoled">"Tema fosc"</string>
     <string name="pref_header_during_work_sessions">Durant les sessions de treball</string>
     <string name="pref_enable_ringtone">"So de notificació"</string>
+    <string name="pref_priority_alarm">"Override sound profile"</string>
+    <string name="pref_priority_alarm_summary">"The notification sound behaves like an alarm"</string>
     <string name="pref_ringtone_insistent">"Notificació insistent"</string>
     <string name="pref_ringtone_insistent_summary">"Repetiu la notificació fins que no s'hagi cancel·lat"</string>
     <string name="pref_ringtone_break">Notificació de pausa acabat</string>
@@ -96,6 +103,9 @@
     <string name="delete_selected_entries">Suprimir entrades seleccionades?</string>
     <string name="empty_state_no_items">Sense articles</string>
     <string name="notification_channel_name">Goodtime notificacions</string>
+    <string name="reminder_notification_channel_name">"Goodtime Reminder Notifications"</string>
+    <string name="reminder_title">"Daily reminder"</string>
+    <string name="reminder_text">"It's time to be productive!"</string>
     <string name="settings">Configuració</string>
     <string name="state">Estat</string>
     <string name="feedback">Opinió</string>
@@ -131,6 +141,7 @@
     <string name="profile_already_exists">El perfil ja existeix</string>
     <string name="pref_save_custom_profile">Desa el perfil personalitzat</string>
     <string name="pref_timer_duration">Durada del temporitzador</string>
+    <string name="timer_durations">Set the duration for work and break sessions</string>
     <string name="pref_timer_style">Estil de temporitzador</string>
     <string name="pref_timer_style_default">Per defecte</string>
     <string name="pref_timer_style_classic">Clàssic</string>
@@ -138,7 +149,8 @@
     <string name="pref_session_counter">Contador de sessions</string>
     <string name="pref_session_counter_summary">"Mostra el nombre actual de sessions completades"</string>
     <string name="support_the_developer">Doneu suport al desenvolupador</string>
-    <string name="action_reset_counter">This will reset today\'s finished sessions.</string>
+    <string name="action_reset_counter">"This will reset today's finished sessions."</string>
     <string name="action_reset_counter_title">Reset?</string>
     <string name="tutorial_title">Tutorial</string>
+    <string name="other_apps">Other apps</string>
 </resources>
