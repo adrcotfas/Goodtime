@@ -141,24 +141,24 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     @Override
     public void onDisplayPreferenceDialog(Preference preference) {
         if (preference instanceof RingtonePreference) {
-            RingtonePreferenceDialogFragmentCompat dialog =
-                    RingtonePreferenceDialogFragmentCompat.newInstance(preference.getKey());
-            dialog.setTargetFragment(this, 0);
-            if (preference.getKey().equals(PreferenceHelper.RINGTONE_BREAK_FINISHED)
-                    && !PreferenceHelper.isPro()) {
-                launchUpgradeActivity(getActivity());
-            }
-            else {
-                try {
-                    dialog.show(getParentFragmentManager(), null);
-                } catch (NumberFormatException e) {
-                    //TODO: handle this later
-                    Log.e(TAG, "The annoying RingtonePreferenceDialog exception was thrown");
-                    Toast.makeText(
-                            requireActivity(),
-                            "Something went wrong",
-                            Toast.LENGTH_SHORT).show();
+            try {
+                RingtonePreferenceDialogFragmentCompat dialog =
+                        RingtonePreferenceDialogFragmentCompat.newInstance(preference.getKey());
+                dialog.setTargetFragment(this, 0);
+                if (preference.getKey().equals(PreferenceHelper.RINGTONE_BREAK_FINISHED)
+                        && !PreferenceHelper.isPro()) {
+                    launchUpgradeActivity(getActivity());
                 }
+                else {
+                    dialog.show(getParentFragmentManager(), null);
+                }
+            } catch (NumberFormatException e) {
+                //TODO: handle this later
+                Log.e(TAG, "The annoying RingtonePreferenceDialog exception was thrown");
+                Toast.makeText(
+                        requireActivity(),
+                        "Something went wrong",
+                        Toast.LENGTH_SHORT).show();
             }
         } else if (preference.getKey().equals(PreferenceHelper.TIMER_STYLE)) {
             super.onDisplayPreferenceDialog(preference);
