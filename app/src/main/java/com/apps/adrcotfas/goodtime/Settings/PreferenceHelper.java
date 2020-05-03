@@ -206,7 +206,7 @@ public class PreferenceHelper {
         // If the user did not complete another session in this time frame, just increment from 0.
         final long maxDifference = TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)
                 + PreferenceHelper.getSessionDuration(SessionType.BREAK)
-                + 10);
+                + 20);
 
         final long currentMillis = System.currentTimeMillis();
         final long lastWorkFinishedAt = lastWorkFinishedAt();
