@@ -19,7 +19,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.apps.adrcotfas.goodtime.Util.Constants;
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 import static com.apps.adrcotfas.goodtime.Util.Constants.SESSION_TYPE;
 

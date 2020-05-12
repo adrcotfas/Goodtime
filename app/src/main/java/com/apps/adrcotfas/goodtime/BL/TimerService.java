@@ -33,7 +33,8 @@ import com.apps.adrcotfas.goodtime.Util.Constants;
 import java.util.concurrent.TimeUnit;
 
 import androidx.lifecycle.LifecycleService;
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static com.apps.adrcotfas.goodtime.BL.NotificationHelper.GOODTIME_NOTIFICATION_ID;
@@ -113,6 +114,7 @@ public class TimerService extends LifecycleService {
      * Called when an event is posted to the EventBus
      * @param o holds the type of the Event
      */
+    @Subscribe
     public void onEvent(Object o) {
         if (o instanceof Constants.FinishWorkEvent) {
             Log.d(TAG, "onEvent " + o.getClass().getSimpleName());
