@@ -57,6 +57,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.kobakei.ratethisapp.RateThisApp;
 
+import org.greenrobot.eventbus.Subscribe;
 import org.joda.time.LocalDate;
 
 import java.util.Arrays;
@@ -512,6 +513,7 @@ public class TimerActivity
      * Called when an event is posted to the EventBus
      * @param o holds the type of the Event
      */
+    @Subscribe
     public void onEventMainThread(Object o) {
         if (!PreferenceHelper.isAutoStartBreak() && o instanceof Constants.FinishWorkEvent) {
             mViewModel.showFinishDialog = true;
