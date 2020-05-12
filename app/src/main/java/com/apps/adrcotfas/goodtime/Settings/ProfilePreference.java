@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.Settings;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 
@@ -24,6 +25,7 @@ public class ProfilePreference extends ListPreference {
         this(context, attrs, defStyleAttr, 0);
     }
 
+    @SuppressLint("RestrictedApi")
     public ProfilePreference(Context context, AttributeSet attrs) {
         this(context, attrs, TypedArrayUtils.getAttr(context, R.attr.dialogPreferenceStyle,
                 android.R.attr.dialogPreferenceStyle));
