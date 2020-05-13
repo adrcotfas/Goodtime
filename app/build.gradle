@@ -7,8 +7,8 @@ android {
         applicationId "com.apps.adrcotfas.goodtime"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 116
-        versionName "2.1.13"
+        versionCode 117
+        versionName "2.1.14"
         resConfigs "ar-rSA",
                 "bn-rBD",
                 "bs-rBA",
