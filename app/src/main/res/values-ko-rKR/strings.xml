@@ -119,6 +119,7 @@
     <string name="statistics_this_month">이번 달</string>
     <string name="statistics_total">전체</string>
     <string name="statistics_productive_time">생산적인 시간</string>
+    <string name="statistics_pie_chart">Work distribution</string>
     <string name="spinner_stats_duration">시간</string>
     <string name="spinner_stats_nr_of_sessions">세션</string>
     <string name="spinner_range_hours">시간</string>
@@ -153,4 +154,7 @@
     <string name="action_reset_counter_title">초기화 하시겠습니까?</string>
     <string name="tutorial_title">사용 방법</string>
     <string name="other_apps">Other apps</string>
+    <string name="unlabeled">unlabeled</string>
+    <string name="pref_show_label">View current label</string>
+    <string name="pref_show_label_summary">Shows the current label on the main screen</string>
 </resources>

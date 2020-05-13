@@ -119,6 +119,7 @@
     <string name="statistics_this_month">Šomēnes</string>
     <string name="statistics_total">Kopā</string>
     <string name="statistics_productive_time">Produktīvs laiks</string>
+    <string name="statistics_pie_chart">Work distribution</string>
     <string name="spinner_stats_duration">Laiks</string>
     <string name="spinner_stats_nr_of_sessions">Kursu sesijas</string>
     <string name="spinner_range_hours">Stundas</string>
@@ -153,4 +154,7 @@
     <string name="action_reset_counter_title">Atiestatīt?</string>
     <string name="tutorial_title">Apmācība</string>
     <string name="other_apps">Other apps</string>
+    <string name="unlabeled">unlabeled</string>
+    <string name="pref_show_label">View current label</string>
+    <string name="pref_show_label_summary">Shows the current label on the main screen</string>
 </resources>

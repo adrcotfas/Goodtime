@@ -119,6 +119,7 @@
     <string name="statistics_this_month">Aktuális hónap</string>
     <string name="statistics_total">Összesen</string>
     <string name="statistics_productive_time">Produktív idő</string>
+    <string name="statistics_pie_chart">Work distribution</string>
     <string name="spinner_stats_duration">Idő</string>
     <string name="spinner_stats_nr_of_sessions">Munkamenetek</string>
     <string name="spinner_range_hours">Óra</string>
@@ -153,4 +154,7 @@
     <string name="action_reset_counter_title">Visszaállítás?</string>
     <string name="tutorial_title">Ismertető</string>
     <string name="other_apps">Egyéb alkalmazások</string>
+    <string name="unlabeled">unlabeled</string>
+    <string name="pref_show_label">View current label</string>
+    <string name="pref_show_label_summary">Shows the current label on the main screen</string>
 </resources>

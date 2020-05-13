@@ -119,6 +119,7 @@
     <string name="statistics_this_month">Deze maand</string>
     <string name="statistics_total">Totaal</string>
     <string name="statistics_productive_time">Productieve tijd</string>
+    <string name="statistics_pie_chart">Work distribution</string>
     <string name="spinner_stats_duration">Datum</string>
     <string name="spinner_stats_nr_of_sessions">Sessies</string>
     <string name="spinner_range_hours">Uren</string>
@@ -153,4 +154,7 @@
     <string name="action_reset_counter_title">Resetten?</string>
     <string name="tutorial_title">Handleiding</string>
     <string name="other_apps">Andere apps</string>
+    <string name="unlabeled">unlabeled</string>
+    <string name="pref_show_label">View current label</string>
+    <string name="pref_show_label_summary">Shows the current label on the main screen</string>
 </resources>

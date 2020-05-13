@@ -119,6 +119,7 @@
     <string name="statistics_this_month">本月</string>
     <string name="statistics_total">总计</string>
     <string name="statistics_productive_time">高效工作时间</string>
+    <string name="statistics_pie_chart">Work distribution</string>
     <string name="spinner_stats_duration">时间</string>
     <string name="spinner_stats_nr_of_sessions">时段</string>
     <string name="spinner_range_hours">小时</string>
@@ -153,4 +154,7 @@
     <string name="action_reset_counter_title">重置？</string>
     <string name="tutorial_title">教程</string>
     <string name="other_apps">其它应用</string>
+    <string name="unlabeled">unlabeled</string>
+    <string name="pref_show_label">View current label</string>
+    <string name="pref_show_label_summary">Shows the current label on the main screen</string>
 </resources>

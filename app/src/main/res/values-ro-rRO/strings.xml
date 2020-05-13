@@ -119,6 +119,7 @@
     <string name="statistics_this_month">Luna curentă</string>
     <string name="statistics_total">Total</string>
     <string name="statistics_productive_time">Timp productiv</string>
+    <string name="statistics_pie_chart">Work distribution</string>
     <string name="spinner_stats_duration">Timp</string>
     <string name="spinner_stats_nr_of_sessions">Sesiuni</string>
     <string name="spinner_range_hours">Ore</string>
@@ -153,4 +154,7 @@
     <string name="action_reset_counter_title">Resetaţi?</string>
     <string name="tutorial_title">Tutorial</string>
     <string name="other_apps">Other apps</string>
+    <string name="unlabeled">unlabeled</string>
+    <string name="pref_show_label">View current label</string>
+    <string name="pref_show_label_summary">Shows the current label on the main screen</string>
 </resources>

@@ -119,6 +119,7 @@
     <string name="statistics_this_month">Ta mesec</string>
     <string name="statistics_total">Skupaj</string>
     <string name="statistics_productive_time">Produktivni čas</string>
+    <string name="statistics_pie_chart">Work distribution</string>
     <string name="spinner_stats_duration">Čas</string>
     <string name="spinner_stats_nr_of_sessions">Seje</string>
     <string name="spinner_range_hours">Ur</string>
@@ -153,4 +154,7 @@
     <string name="action_reset_counter_title">Ponastavi?</string>
     <string name="tutorial_title">Navodila</string>
     <string name="other_apps">Other apps</string>
+    <string name="unlabeled">unlabeled</string>
+    <string name="pref_show_label">View current label</string>
+    <string name="pref_show_label_summary">Shows the current label on the main screen</string>
 </resources>

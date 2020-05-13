@@ -119,6 +119,7 @@
     <string name="statistics_this_month">今月</string>
     <string name="statistics_total">合計</string>
     <string name="statistics_productive_time">生産時間</string>
+    <string name="statistics_pie_chart">Work distribution</string>
     <string name="spinner_stats_duration">時間</string>
     <string name="spinner_stats_nr_of_sessions">セッション</string>
     <string name="spinner_range_hours">時間</string>
@@ -153,4 +154,7 @@
     <string name="action_reset_counter_title">リセットしますか？</string>
     <string name="tutorial_title">チュートリアル</string>
     <string name="other_apps">Other apps</string>
+    <string name="unlabeled">unlabeled</string>
+    <string name="pref_show_label">View current label</string>
+    <string name="pref_show_label_summary">Shows the current label on the main screen</string>
 </resources>

@@ -119,6 +119,7 @@
     <string name="statistics_this_month">Este mes</string>
     <string name="statistics_total">Total</string>
     <string name="statistics_productive_time">Tiempo productivo</string>
+    <string name="statistics_pie_chart">Distribución del trabajo</string>
     <string name="spinner_stats_duration">Tiempo</string>
     <string name="spinner_stats_nr_of_sessions">Sesiones</string>
     <string name="spinner_range_hours">Horas</string>
@@ -153,4 +154,7 @@
     <string name="action_reset_counter_title">¿Restablecer?</string>
     <string name="tutorial_title">Tutorial</string>
     <string name="other_apps">Otras aplicaciones</string>
+    <string name="unlabeled">Sin etiquetas</string>
+    <string name="pref_show_label">Ver etiqueta actual</string>
+    <string name="pref_show_label_summary">Mostrar la etiqueta actual en la pantalla principal</string>
 </resources>

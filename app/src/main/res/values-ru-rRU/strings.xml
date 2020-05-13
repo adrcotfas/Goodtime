@@ -119,6 +119,7 @@
     <string name="statistics_this_month">В этом месяце</string>
     <string name="statistics_total">Итого</string>
     <string name="statistics_productive_time">Продуктивное время</string>
+    <string name="statistics_pie_chart">Work distribution</string>
     <string name="spinner_stats_duration">Продолжительность</string>
     <string name="spinner_stats_nr_of_sessions">Сессии</string>
     <string name="spinner_range_hours">Часы</string>
@@ -153,4 +154,7 @@
     <string name="action_reset_counter_title">Сбросить?</string>
     <string name="tutorial_title">Краткое руководство</string>
     <string name="other_apps">Другие приложения</string>
+    <string name="unlabeled">unlabeled</string>
+    <string name="pref_show_label">View current label</string>
+    <string name="pref_show_label_summary">Shows the current label on the main screen</string>
 </resources>
