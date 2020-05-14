@@ -516,18 +516,15 @@ public class TimerActivity
     @Subscribe
     public void onEventMainThread(Object o) {
         if (!PreferenceHelper.isAutoStartBreak() && o instanceof Constants.FinishWorkEvent) {
-            mViewModel.showFinishDialog = true;
             mViewModel.dialogPendingType = SessionType.WORK;
             showFinishDialog(SessionType.WORK);
         } else if (!PreferenceHelper.isAutoStartWork() && (o instanceof Constants.FinishBreakEvent
                 || o instanceof Constants.FinishLongBreakEvent)) {
-            mViewModel.showFinishDialog = true;
-            mViewModel.dialogPendingType = SessionType.LONG_BREAK;
+            mViewModel.dialogPendingType = SessionType.BREAK;
             showFinishDialog(SessionType.BREAK);
         } else if (o instanceof Constants.ClearFinishDialogEvent) {
             if (mDialogSessionFinished != null) {
-                mDialogSessionFinished.dismiss();
-                mViewModel.showFinishDialog = false;
+                mDialogSessionFinished.dismissAllowingStateLoss();
             }
         }
     }
@@ -759,7 +756,6 @@ public class TimerActivity
             start(SessionType.WORK);
             delayToggleFullscreenMode();
         }
-        mViewModel.showFinishDialog = false;
     }
 
     @Override
@@ -771,6 +767,5 @@ public class TimerActivity
             EventBus.getDefault().post(new Constants.ClearNotificationEvent());
             delayToggleFullscreenMode();
         }
-        mViewModel.showFinishDialog = false;
     }
 }
