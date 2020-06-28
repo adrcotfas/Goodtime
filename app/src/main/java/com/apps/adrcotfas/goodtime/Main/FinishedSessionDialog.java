@@ -17,10 +17,10 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.apps.adrcotfas.goodtime.BL.SessionType;
 import com.apps.adrcotfas.goodtime.R;
@@ -33,7 +33,6 @@ public class FinishedSessionDialog extends DialogFragment {
     }
 
     private Listener listener;
-    private SessionType sessionType;
 
     public FinishedSessionDialog() {
 
@@ -55,10 +54,9 @@ public class FinishedSessionDialog extends DialogFragment {
         listener = null;
     }
 
-    public static FinishedSessionDialog newInstance(Listener listener, SessionType sessionType) {
+    public static FinishedSessionDialog newInstance(Listener listener) {
         FinishedSessionDialog dialog = new FinishedSessionDialog();
         dialog.listener = listener;
-        dialog.sessionType = sessionType;
         return dialog;
     }
 
@@ -66,8 +64,10 @@ public class FinishedSessionDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        TimerActivityViewModel viewModel = new ViewModelProvider(requireActivity()).get(TimerActivityViewModel.class);
         setCancelable(false);
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        final SessionType sessionType = viewModel.dialogPendingType;
         if (sessionType == SessionType.WORK) {
             builder.setTitle(R.string.action_finished_session)
                     .setPositiveButton(R.string.action_start_break, (dialog, which)

@@ -337,9 +337,8 @@ public class TimerActivity
         ReminderHelper.removeNotification(getApplicationContext());
 
         mViewModel.isActive = true;
-        if (mViewModel.dialogPendingType != SessionType.INVALID) {
-            showFinishDialog(mViewModel.dialogPendingType);
-            mViewModel.dialogPendingType = SessionType.INVALID;
+        if (mViewModel.showFinishDialog) {
+            showFinishDialog();
         }
 
         // initialize notification channels on the first run
@@ -517,11 +516,11 @@ public class TimerActivity
     public void onEventMainThread(Object o) {
         if (!PreferenceHelper.isAutoStartBreak() && o instanceof Constants.FinishWorkEvent) {
             mViewModel.dialogPendingType = SessionType.WORK;
-            showFinishDialog(SessionType.WORK);
+            showFinishDialog();
         } else if (!PreferenceHelper.isAutoStartWork() && (o instanceof Constants.FinishBreakEvent
                 || o instanceof Constants.FinishLongBreakEvent)) {
             mViewModel.dialogPendingType = SessionType.BREAK;
-            showFinishDialog(SessionType.BREAK);
+            showFinishDialog();
         } else if (o instanceof Constants.ClearFinishDialogEvent) {
             if (mDialogSessionFinished != null) {
                 mDialogSessionFinished.dismissAllowingStateLoss();
@@ -602,14 +601,14 @@ public class TimerActivity
                 .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
     }
 
-    private void showFinishDialog(SessionType sessionType) {
+    private void showFinishDialog() {
         if (mViewModel.isActive) {
+            mViewModel.showFinishDialog = false;
             Log.i(TAG, "Showing the finish dialog.");
-            mDialogSessionFinished = FinishedSessionDialog.newInstance(this, sessionType);
+            mDialogSessionFinished = FinishedSessionDialog.newInstance(this);
             mDialogSessionFinished.show(getSupportFragmentManager(), TAG);
-            mViewModel.dialogPendingType = SessionType.INVALID;
         } else {
-            mViewModel.dialogPendingType = sessionType;
+            mViewModel.showFinishDialog = true;
         }
     }
 
