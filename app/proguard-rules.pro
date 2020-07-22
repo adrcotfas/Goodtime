@@ -65,3 +65,8 @@
 
 # For some reason, obfuscating this would render it invisible (Unable to instantiate fragment)
 -keep class com.apps.adrcotfas.goodtime.Settings.DurationsSettingsFragment { *; }
+
+# Models
+-keep class com.apps.adrcotfas.goodtime.Label { *; }
+-keep class com.apps.adrcotfas.goodtime.Profile { *; }
+-keep class com.apps.adrcotfas.goodtime.Session { *; }
