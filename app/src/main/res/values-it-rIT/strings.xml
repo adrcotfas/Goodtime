@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="it" tools:ignore="MissingTranslation">
-    <string name="pref_break_duration">"Durata pause"</string>
+    <string name="pref_break_duration">"Durata delle pause"</string>
     <string name="pref_disable_sound_and_vibration">"Disattiva suono e vibrazione"</string>
     <string name="pref_disable_wifi">"Disattiva Wi-Fi"</string>
     <string name="pref_fullscreen">"Modalità a schermo intero"</string>
     <string name="pref_header_notifications">"Notifiche"</string>
     <string name="pref_header_general">"Generale"</string>
     <string name="pref_keep_screen_on">"Mantieni lo schermo acceso"</string>
-    <string name="pref_long_break_duration">"Durata pausa lunga"</string>
-    <string name="pref_ringtone">"Suono di notifica"</string>
-    <string name="pref_ringtone_summary">"Seleziona suono notifica"</string>
+    <string name="pref_long_break_duration">"Durata della pausa lunga"</string>
+    <string name="pref_ringtone">"Notifica di lavoro terminato"</string>
+    <string name="pref_ringtone_summary">"Imposta il suono della notifica"</string>
     <string name="pref_work_duration">"Durata sessioni di lavoro"</string>
     <string name="pref_sessions_before_long_break">"Numero delle sessioni prima della pausa lunga"</string>
     <string name="pref_enable_long_break">"Attiva pause lunghe"</string>
     <string name="pref_vibrate">"Vibrazione"</string>
-    <string name="pref_vibration_type_none">None</string>
-    <string name="pref_vibration_type_soft">Soft</string>
-    <string name="pref_vibration_type_strong">Strong</string>
+    <string name="pref_vibration_type_none">Nessuna</string>
+    <string name="pref_vibration_type_soft">Leggera</string>
+    <string name="pref_vibration_type_strong">Forte</string>
     <string name="pref_vibration_type_sos">SOS</string>
-    <string name="pref_vibration_type_heartbeat">Heartbeat</string>
+    <string name="pref_vibration_type_heartbeat">Battito</string>
     <string name="pref_amoled">"Tema Scuro"</string>
     <string name="pref_header_during_work_sessions">Durante le sessioni di lavoro</string>
     <string name="pref_enable_ringtone">"Suono di notifica"</string>
-    <string name="pref_priority_alarm">"Override sound profile"</string>
-    <string name="pref_priority_alarm_summary">"The notification sound behaves like an alarm"</string>
+    <string name="pref_priority_alarm">"Sovrascrivi il profilo audio"</string>
+    <string name="pref_priority_alarm_summary">"Il suono di notifica si comporta come un allarme"</string>
     <string name="pref_ringtone_insistent">"Notifica insistente"</string>
     <string name="pref_ringtone_insistent_summary">"Ripeti la notifica fino a quando non viene annullata"</string>
     <string name="pref_ringtone_break">Notifica di pausa terminata</string>
@@ -103,9 +103,9 @@
     <string name="delete_selected_entries">Elimina le voci selezionate?</string>
     <string name="empty_state_no_items">Nessun elemento</string>
     <string name="notification_channel_name">Notifiche Goodtime</string>
-    <string name="reminder_notification_channel_name">"Goodtime Reminder Notifications"</string>
-    <string name="reminder_title">"Daily reminder"</string>
-    <string name="reminder_text">"It's time to be productive!"</string>
+    <string name="reminder_notification_channel_name">"Notifiche di promemoria di Goodtime"</string>
+    <string name="reminder_title">"Promemoria giornaliero"</string>
+    <string name="reminder_text">"È ora di essere produttivi!"</string>
     <string name="settings">Impostazioni</string>
     <string name="state">Stato</string>
     <string name="feedback">Parere</string>
@@ -119,7 +119,7 @@
     <string name="statistics_this_month">Questo mese</string>
     <string name="statistics_total">Totale</string>
     <string name="statistics_productive_time">Tempo produttivo</string>
-    <string name="statistics_pie_chart">Work distribution</string>
+    <string name="statistics_pie_chart">Distribuzione del lavoro</string>
     <string name="spinner_stats_duration">Tempo</string>
     <string name="spinner_stats_nr_of_sessions">Sessioni</string>
     <string name="spinner_range_hours">Ore</string>
@@ -142,7 +142,7 @@
     <string name="profile_already_exists">Profilo già esistente</string>
     <string name="pref_save_custom_profile">Salva profilo personalizzato</string>
     <string name="pref_timer_duration">Durata del timer</string>
-    <string name="timer_durations">Set the duration for work and break sessions</string>
+    <string name="timer_durations">Imposta la durata delle sessioni di lavoro e di pausa</string>
     <string name="pref_timer_style">Stile del contaminuti</string>
     <string name="pref_timer_style_default">Predefinito</string>
     <string name="pref_timer_style_classic">Classica</string>
@@ -153,8 +153,8 @@
     <string name="action_reset_counter">"Questo ripristinerà le sessioni completate di oggi."</string>
     <string name="action_reset_counter_title">Reimpostare?</string>
     <string name="tutorial_title">Tutorial</string>
-    <string name="other_apps">Other apps</string>
-    <string name="unlabeled">unlabeled</string>
-    <string name="pref_show_label">View current label</string>
-    <string name="pref_show_label_summary">Shows the current label on the main screen</string>
+    <string name="other_apps">Altre app</string>
+    <string name="unlabeled">non etichettato</string>
+    <string name="pref_show_label">Visualizza l\'etichetta corrente</string>
+    <string name="pref_show_label_summary">Mostra l\'etichetta corrente nella schermata principale</string>
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="de" tools:ignore="MissingTranslation">
-    <string name="pref_break_duration">"Dauer einer Pause"</string>
+    <string name="pref_break_duration">"Pausendauer"</string>
     <string name="pref_disable_sound_and_vibration">"Ton und Vibration ausschalten"</string>
     <string name="pref_disable_wifi">"WLAN ausschalten"</string>
     <string name="pref_fullscreen">"Vollbildmodus"</string>
@@ -22,8 +22,8 @@
     <string name="pref_amoled">"Dunkles Design"</string>
     <string name="pref_header_during_work_sessions">Während der Arbeitssitzungen</string>
     <string name="pref_enable_ringtone">"Benachrichtigungston"</string>
-    <string name="pref_priority_alarm">"Override sound profile"</string>
-    <string name="pref_priority_alarm_summary">"The notification sound behaves like an alarm"</string>
+    <string name="pref_priority_alarm">"Soundprofil überschreiben"</string>
+    <string name="pref_priority_alarm_summary">"Der Benachrichtigungston entspricht dem eines Alarms"</string>
     <string name="pref_ringtone_insistent">"Hartnäckige Benachrichtigung"</string>
     <string name="pref_ringtone_insistent_summary">"Benachrichtigung wiederholen, bis sie abgebrochen wird"</string>
     <string name="pref_ringtone_break">Benachrichtigungston am Ende einer Pause</string>
@@ -119,7 +119,7 @@
     <string name="statistics_this_month">Dieser Monat</string>
     <string name="statistics_total">Gesamt</string>
     <string name="statistics_productive_time">Produktive Zeit</string>
-    <string name="statistics_pie_chart">Work distribution</string>
+    <string name="statistics_pie_chart">Arbeitsverteilung</string>
     <string name="spinner_stats_duration">Zeit</string>
     <string name="spinner_stats_nr_of_sessions">Sitzungen</string>
     <string name="spinner_range_hours">Stunden</string>
@@ -154,7 +154,7 @@
     <string name="action_reset_counter_title">Zurücksetzen?</string>
     <string name="tutorial_title">Einführungen</string>
     <string name="other_apps">Andere Apps</string>
-    <string name="unlabeled">unlabeled</string>
-    <string name="pref_show_label">View current label</string>
-    <string name="pref_show_label_summary">Shows the current label on the main screen</string>
+    <string name="unlabeled">Ohne Label</string>
+    <string name="pref_show_label">Aktuelles Label anzeigen</string>
+    <string name="pref_show_label_summary">Zeigt das aktuelle Label auf dem Hauptbildschirm</string>
 </resources>

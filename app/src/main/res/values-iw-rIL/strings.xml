@@ -14,8 +14,8 @@
     <string name="pref_sessions_before_long_break">"מושבים לפני הפסקה ארוכה"</string>
     <string name="pref_enable_long_break">"אפשר הפסקות ארוכות"</string>
     <string name="pref_vibrate">"רטט"</string>
-    <string name="pref_vibration_type_none">None</string>
-    <string name="pref_vibration_type_soft">Soft</string>
+    <string name="pref_vibration_type_none">ללא</string>
+    <string name="pref_vibration_type_soft">רך</string>
     <string name="pref_vibration_type_strong">Strong</string>
     <string name="pref_vibration_type_sos">SOS</string>
     <string name="pref_vibration_type_heartbeat">Heartbeat</string>
@@ -156,5 +156,5 @@
     <string name="other_apps">Other apps</string>
     <string name="unlabeled">unlabeled</string>
     <string name="pref_show_label">View current label</string>
-    <string name="pref_show_label_summary">Shows the current label on the main screen</string>
+    <string name="pref_show_label_summary">הצג תוית נוכחית במסך הראשי</string>
 </resources>
