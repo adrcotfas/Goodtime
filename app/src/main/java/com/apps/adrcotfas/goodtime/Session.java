@@ -50,6 +50,5 @@ public class Session {
     @Nullable
     public String label;
 
-    @NonNull
-    public Boolean archived;
+    public boolean archived;
 }

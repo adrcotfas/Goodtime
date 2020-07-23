@@ -31,6 +31,5 @@ public class Label {
 
     public int order = 0;
 
-    @NonNull
-    public Boolean archived = false;
+    public boolean archived = false;
 }
