@@ -173,7 +173,7 @@ public class PreferenceHelper {
 
     public static boolean isScreenOnEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
-                .getBoolean(ENABLE_SCREEN_ON, false);
+                .getBoolean(ENABLE_SCREEN_ON, true);
     }
 
     public static boolean isScreensaverEnabled() {
