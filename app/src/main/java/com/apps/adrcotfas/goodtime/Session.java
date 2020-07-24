@@ -15,6 +15,7 @@ package com.apps.adrcotfas.goodtime;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
@@ -50,5 +51,6 @@ public class Session {
     @Nullable
     public String label;
 
+    @ColumnInfo(name = "archived", defaultValue = "0")
     public boolean archived;
 }

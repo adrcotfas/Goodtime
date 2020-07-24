@@ -26,7 +26,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Session.class, Label.class, Profile.class}, version = 3, exportSchema = false)
+@Database(entities = {Session.class, Label.class, Profile.class}, version = 4, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final Object LOCK = new Object();
@@ -64,6 +64,18 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    private static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL(
+                    "CREATE TABLE sessions_new (id INTEGER NOT NULL, timestamp INTEGER NOT NULL, duration INTEGER NOT NULL, label TEXT, archived INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(id), FOREIGN KEY(label, archived) REFERENCES Label(title, archived) ON UPDATE CASCADE ON DELETE SET DEFAULT)");
+            database.execSQL(
+                    "INSERT INTO sessions_new (id, timestamp, duration, label, archived) SELECT id, timestamp, duration, label, archived FROM Session");
+            database.execSQL("DROP TABLE Session");
+            database.execSQL("ALTER TABLE sessions_new RENAME TO Session");
+        }
+    };
+
     public static AppDatabase getDatabase(Context context) {
         if (INSTANCE == null || !INSTANCE.isOpen()) {
             synchronized (LOCK) {
@@ -85,7 +97,7 @@ public abstract class AppDatabase extends RoomDatabase {
         INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                 AppDatabase.class, "goodtime-db")
                 .setJournalMode(JournalMode.TRUNCATE)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                 .build();
     }
 
