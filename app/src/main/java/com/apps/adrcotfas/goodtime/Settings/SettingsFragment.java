@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Adrian Cotfas
+ * Copyright 2016-2020 Adrian Cotfas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy of the License at
@@ -53,6 +53,7 @@ import org.joda.time.LocalTime;
 
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.DISABLE_SOUND_AND_VIBRATION;
 
+import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.DND_MODE;
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.VIBRATION_TYPE;
 import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
@@ -60,6 +61,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
 
     private static final String TAG = "SettingsFragment";
     private CheckBoxPreference mPrefDisableSoundCheckbox;
+    private CheckBoxPreference mPrefDndMode;
     private SwitchPreferenceCompat mPrefReminder;
 
     @Override
@@ -67,6 +69,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         setPreferencesFromResource(R.xml.settings, rootKey);
 
         mPrefDisableSoundCheckbox = findPreference(DISABLE_SOUND_AND_VIBRATION);
+        mPrefDndMode = findPreference(DND_MODE);
         setupReminderPreference();
     }
 
@@ -84,7 +87,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
                 final DateTime time = new DateTime(millis);
 
                 TimePickerDialogFixedNougatSpinner d = new TimePickerDialogFixedNougatSpinner(
-                        getActivity(),
+                        requireActivity(),
                         (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                                 ? R.style.DialogTheme : AlertDialog.THEME_HOLO_DARK,
                         SettingsFragment.this,
@@ -117,6 +120,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         setupScreensaver();
         setupAutoStartSessionVsInsistentNotification();
         setupDisableSoundCheckBox();
+        setupDnDCheckBox();
 
         final Preference disableBatteryOptimizationPref = findPreference(PreferenceHelper.DISABLE_BATTERY_OPTIMIZATION);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isIgnoringBatteryOptimizations()) {
@@ -133,9 +137,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
             disableBatteryOptimizationPref.setVisible(false);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            findPreference(PreferenceHelper.DISABLE_WIFI).setVisible(false);
-        }
+        findPreference(PreferenceHelper.DISABLE_WIFI).setVisible(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q);
+        mPrefDndMode.setVisible(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M);
     }
 
     @Override
@@ -264,17 +267,17 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         } : null);
     }
 
-    private void updateDisableSoundCheckBoxSummary(boolean notificationPolicyAccessGranted) {
+    private void updateDisableSoundCheckBoxSummary(CheckBoxPreference pref, boolean notificationPolicyAccessGranted) {
         if (notificationPolicyAccessGranted) {
-            mPrefDisableSoundCheckbox.setSummary("");
+            pref.setSummary("");
         } else {
-            mPrefDisableSoundCheckbox.setSummary(R.string.settings_grant_permission);
+            pref.setSummary(R.string.settings_grant_permission);
         }
     }
 
     private void setupDisableSoundCheckBox() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isNotificationPolicyAccessDenied()) {
-            updateDisableSoundCheckBoxSummary(false);
+            updateDisableSoundCheckBoxSummary(mPrefDisableSoundCheckbox,false);
             mPrefDisableSoundCheckbox.setChecked(false);
             mPrefDisableSoundCheckbox.setOnPreferenceClickListener(
                     preference -> {
@@ -283,14 +286,43 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
                     }
             );
         } else {
-            updateDisableSoundCheckBoxSummary(true);
+            updateDisableSoundCheckBoxSummary(mPrefDisableSoundCheckbox, true);
+            mPrefDisableSoundCheckbox.setOnPreferenceClickListener(preference -> {
+                if (mPrefDndMode.isChecked()) {
+                    mPrefDndMode.setChecked(false);
+                    return true;
+                }
+                return false;
+            });
+        }
+    }
+
+    private void setupDnDCheckBox() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isNotificationPolicyAccessDenied()) {
+            updateDisableSoundCheckBoxSummary(mPrefDndMode, false);
+            mPrefDndMode.setChecked(false);
+            mPrefDndMode.setOnPreferenceClickListener(
+                    preference -> {
+                        requestNotificationPolicyAccess();
+                        return false;
+                    }
+            );
+        } else {
+            updateDisableSoundCheckBoxSummary(mPrefDndMode, true);
+            mPrefDndMode.setOnPreferenceClickListener(preference -> {
+                if (mPrefDisableSoundCheckbox.isChecked()) {
+                    mPrefDisableSoundCheckbox.setChecked(false);
+                    return true;
+                }
+                return false;
+            });
         }
     }
 
     private boolean isIgnoringBatteryOptimizations(){
-        PowerManager pwrm = (PowerManager) getActivity().getSystemService(Context.POWER_SERVICE);
+        PowerManager pwrm = (PowerManager) requireActivity().getSystemService(Context.POWER_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return pwrm.isIgnoringBatteryOptimizations(getActivity().getPackageName());
+            return pwrm.isIgnoringBatteryOptimizations(requireActivity().getPackageName());
         }
         return true;
     }
@@ -306,7 +338,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     @TargetApi(Build.VERSION_CODES.M)
     private boolean isNotificationPolicyAccessDenied() {
         NotificationManager notificationManager = (NotificationManager)
-                getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                requireActivity().getSystemService(Context.NOTIFICATION_SERVICE);
         return !notificationManager.isNotificationPolicyAccessGranted();
     }
 

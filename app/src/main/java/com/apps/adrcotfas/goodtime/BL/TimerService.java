@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Adrian Cotfas
+ * Copyright 2016-2020 Adrian Cotfas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy of the License at
@@ -153,6 +153,9 @@ public class TimerService extends LifecycleService {
             if (PreferenceHelper.isSoundAndVibrationDisabled()) {
                 toggleSound(false);
             }
+            if (PreferenceHelper.isDndModeActive()) {
+                toggleDndMode(false);
+            }
         }
 
         if (!PreferenceHelper.isAutoStartWork() && !PreferenceHelper.isAutoStartBreak()) {
@@ -179,6 +182,9 @@ public class TimerService extends LifecycleService {
         if (PreferenceHelper.isSoundAndVibrationDisabled()) {
             toggleSound(true);
         }
+        if (PreferenceHelper.isDndModeActive()) {
+            toggleDndMode(true);
+        }
 
         SessionType sessionType = getSessionManager().getCurrentSession().getSessionType().getValue();
         Log.d(TAG, "onStopEvent, sessionType: " + sessionType);
@@ -204,6 +210,9 @@ public class TimerService extends LifecycleService {
             }
             if (PreferenceHelper.isSoundAndVibrationDisabled()) {
                 toggleSound(true);
+            }
+            if (PreferenceHelper.isDndModeActive()) {
+                toggleDndMode(true);
             }
         }
 
@@ -244,6 +253,9 @@ public class TimerService extends LifecycleService {
             }
             if (PreferenceHelper.isSoundAndVibrationDisabled()) {
                 toggleSound(true);
+            }
+            if (PreferenceHelper.isDndModeActive()) {
+                toggleDndMode(true);
             }
         }
 
@@ -288,7 +300,7 @@ public class TimerService extends LifecycleService {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             toggleSoundInternal(restore);
         } else if (isNotificationPolicyAccessGranted()) {
-            togglePriorityMode(restore);
+            toggleSoundInternal(restore);
         } else {
             // should not happen
             Log.w(TAG, "Trying to toggle sound but permission was not granted.");
@@ -309,6 +321,17 @@ public class TimerService extends LifecycleService {
             }
         });
         t.start();
+    }
+
+    private void toggleDndMode(boolean restore) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (isNotificationPolicyAccessGranted()) {
+                togglePriorityMode(restore);
+            } else {
+                // should not happen
+                Log.w(TAG, "Trying to toggle DnD mode but permission was not granted.");
+            }
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)

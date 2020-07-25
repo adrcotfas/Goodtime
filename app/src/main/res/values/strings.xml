@@ -4,6 +4,7 @@
     tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"Break duration"</string>
     <string name="pref_disable_sound_and_vibration">"Disable sound and vibration"</string>
+    <string name="pref_dnd">"Do not disturb with priority mode"</string>
     <string name="pref_disable_wifi">"Disable Wi-Fi"</string>
     <string name="pref_fullscreen">"Fullscreen mode"</string>
     <string name="pref_header_notifications">"Notifications"</string>

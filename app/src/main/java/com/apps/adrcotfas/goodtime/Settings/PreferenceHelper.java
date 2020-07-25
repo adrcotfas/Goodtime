@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Adrian Cotfas
+ * Copyright 2016-2020 Adrian Cotfas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy of the License at
@@ -12,8 +12,6 @@
  */
 
 package com.apps.adrcotfas.goodtime.Settings;
-
-import android.os.SystemClock;
 
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
 import com.apps.adrcotfas.goodtime.BL.SessionType;
@@ -51,6 +49,7 @@ public class PreferenceHelper {
     public final static String VIBRATION_TYPE             = "pref_vibration_type";
     private final static String ENABLE_FULLSCREEN           = "pref_fullscreen";
     public final static String DISABLE_SOUND_AND_VIBRATION = "pref_disable_sound_and_vibration";
+    public final static String DND_MODE                    = "pref_dnd";
     public final static String DISABLE_WIFI                = "pref_disable_wifi";
     public final static String ENABLE_SCREEN_ON            = "pref_keep_screen_on";
     public final static String ENABLE_SCREENSAVER_MODE     = "pref_screen_saver";
@@ -152,7 +151,7 @@ public class PreferenceHelper {
     }
 
     public static int getVibrationType() {
-        return Integer.valueOf(getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+        return Integer.parseInt(getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                     .getString(VIBRATION_TYPE, "2" /*STRONG*/));
     }
 
@@ -164,6 +163,11 @@ public class PreferenceHelper {
     public static boolean isSoundAndVibrationDisabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(DISABLE_SOUND_AND_VIBRATION, false);
+    }
+
+    public static boolean isDndModeActive() {
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getBoolean(DND_MODE, false);
     }
 
     public static boolean isWiFiDisabled() {

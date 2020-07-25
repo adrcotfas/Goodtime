@@ -172,6 +172,12 @@
 
         <CheckBoxPreference
             android:defaultValue="false"
+            android:key="pref_dnd"
+            android:title="@string/pref_dnd"
+            app:iconSpaceReserved="false"/>
+
+        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="pref_disable_wifi"
             android:title="@string/pref_disable_wifi"
             app:iconSpaceReserved="false"/>
