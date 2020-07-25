@@ -122,6 +122,7 @@ public class NotificationHelper extends ContextWrapper {
 
         mBuilder.mActions.clear();
         if (currentSession.getSessionType().getValue() == SessionType.WORK) {
+            mBuilder.setSmallIcon(R.drawable.ic_status_goodtime);
             if (currentSession.getTimerState().getValue() == TimerState.PAUSED) {
                 mBuilder.addAction(buildStopAction(this))
                         .addAction(buildResumeAction(this))
@@ -134,6 +135,7 @@ public class NotificationHelper extends ContextWrapper {
                         .setContentText(buildProgressText(currentSession.getDuration().getValue()));
             }
         } else {
+            mBuilder.setSmallIcon(R.drawable.ic_break);
             mBuilder.addAction(buildStopAction(this))
                     .setContentTitle(getString(R.string.action_progress_break))
                     .setContentText(buildProgressText(currentSession.getDuration().getValue()));
@@ -144,7 +146,6 @@ public class NotificationHelper extends ContextWrapper {
 
     private NotificationCompat.Builder getFinishedSessionBuilder(SessionType sessionType) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, GOODTIME_NOTIFICATION)
-                .setSmallIcon(R.drawable.ic_status_goodtime)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -156,6 +157,7 @@ public class NotificationHelper extends ContextWrapper {
         if (sessionType == SessionType.WORK) {
             builder.setContentTitle(getString(R.string.action_finished_session))
                     .setContentText(getString(R.string.action_continue))
+                    .setSmallIcon(R.drawable.ic_status_goodtime)
                     .setLights(GREEN, 500, 2000)
                     .addAction(buildStartBreakAction(this))
                     .addAction(buildSkipBreakAction(this));
@@ -165,6 +167,7 @@ public class NotificationHelper extends ContextWrapper {
             builder.setContentTitle(getString(R.string.action_finished_break))
                     .setContentText(getString(R.string.action_continue))
                     .setLights(RED, 500, 2000)
+                    .setSmallIcon(R.drawable.ic_break)
                     .addAction(buildStartWorkAction(this));
             extender.addAction(buildStartWorkAction(this));
         }
