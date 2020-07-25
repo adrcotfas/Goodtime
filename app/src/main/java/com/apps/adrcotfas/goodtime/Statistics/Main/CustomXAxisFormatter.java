@@ -14,7 +14,7 @@
 package com.apps.adrcotfas.goodtime.Statistics.Main;
 
 import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
@@ -29,7 +29,7 @@ import java.util.List;
  * - formats the first X-axis label to the current month and year,
  * - formats the first day of a month to the corresponding month
  */
-public class CustomXAxisFormatter implements IAxisValueFormatter {
+public class CustomXAxisFormatter extends ValueFormatter {
 
     final private List<LocalDate> mDates;
     private SpinnerRangeType mRangeType;
@@ -41,7 +41,7 @@ public class CustomXAxisFormatter implements IAxisValueFormatter {
     }
 
     @Override
-    public String getFormattedValue(float value, AxisBase axis) {
+    public String getAxisLabel(float value, AxisBase axis) {
 
         final int firstValue = (int) axis.mEntries[0];
         final boolean isLeftmost = value == axis.mEntries[0];

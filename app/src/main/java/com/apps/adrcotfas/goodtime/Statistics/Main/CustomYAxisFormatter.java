@@ -14,13 +14,13 @@
 package com.apps.adrcotfas.goodtime.Statistics.Main;
 
 import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatLong;
 
-public class CustomYAxisFormatter implements IAxisValueFormatter {
+public class CustomYAxisFormatter extends ValueFormatter {
     @Override
-    public String getFormattedValue(float value, AxisBase axis) {
+    public String getAxisLabel(float value, AxisBase axis) {
         return formatLong((long)value);
     }
 }

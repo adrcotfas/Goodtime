@@ -105,14 +105,14 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.2.0'
 
     // Material components
-    implementation 'com.google.android.material:material:1.2.0-alpha06'
+    implementation 'com.google.android.material:material:1.2.0-rc01'
 
     // About
     //implementation 'com.github.daniel-stoneuk:material-about-library:x.y.z'
     implementation 'com.github.adrcotfas:material-about-library:a65545f360'
 
     // Statistics
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     // Time
     implementation 'joda-time:joda-time:2.10.5'
@@ -131,7 +131,7 @@ dependencies {
     implementation 'io.github.kobakei:ratethisapp:1.2.0'
 
     // In-app purchases
-    googleImplementation 'com.anjlab.android.iab.v3:library:1.0.45'
+    googleImplementation 'com.anjlab.android.iab.v3:library:1.1.0'
 
     // F-Droid donations
     fdroidImplementation 'org.sufficientlysecure:donations:2.6'

@@ -21,6 +21,7 @@ import android.text.TextPaint;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -53,6 +54,7 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.google.android.material.card.MaterialCardView;
 
@@ -90,7 +92,7 @@ public class StatisticsFragment extends Fragment {
     private static final String TAG = StatisticsFragment.class.getSimpleName();
 
     //TODO: move to separate file
-    private class Stats {
+    private static class Stats {
         long today;
         long week;
         long month;
@@ -105,7 +107,7 @@ public class StatisticsFragment extends Fragment {
     }
 
     //TODO: move to separate file and remove duplicate code
-    private class StatsView {
+    private static class StatsView {
         TextView today;
         TextView week;
         TextView month;
@@ -126,6 +128,7 @@ public class StatisticsFragment extends Fragment {
     private boolean mShowPieChart = false;
     private MaterialCardView mPieChartSection;
     private PieChart mPieChart;
+    private boolean mPieChartShowPercentages = false;
     private LinearLayout mPieEmptyState;
 
     private Spinner mStatsType;
@@ -193,8 +196,8 @@ public class StatisticsFragment extends Fragment {
         mPieEmptyState = binding.pieChartSection.emptyState;
         setupPieChart();
 
-        mLabelsViewModel = new ViewModelProvider(getActivity()).get(LabelsViewModel.class);
-        mSessionViewModel = new ViewModelProvider(getActivity()).get(SessionViewModel.class);
+        mLabelsViewModel = new ViewModelProvider(requireActivity()).get(LabelsViewModel.class);
+        mSessionViewModel = new ViewModelProvider(requireActivity()).get(SessionViewModel.class);
 
         mLabelsViewModel.crtExtendedLabel.observe(getViewLifecycleOwner(), label -> refreshUi());
 
@@ -271,7 +274,7 @@ public class StatisticsFragment extends Fragment {
     }
 
     private void setupSpinners() {
-        ArrayAdapter<CharSequence> statsTypeAdapter = ArrayAdapter.createFromResource(getContext(),
+        ArrayAdapter<CharSequence> statsTypeAdapter = ArrayAdapter.createFromResource(requireContext(),
                 R.array.spinner_stats_type, R.layout.spinner_item);
         statsTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mStatsType.setAdapter(statsTypeAdapter);
@@ -330,7 +333,7 @@ public class StatisticsFragment extends Fragment {
         if (mProductiveTimeType.getSelectedItemPosition() == HOUR_OF_DAY.ordinal()) {
             generateProductiveTimeChart(sessions, HOUR_OF_DAY, color);
 
-            final int visibleXCount = (int) ThemeHelper.pxToDp(getContext(), mChartHistory.getWidth()) / 36;
+            final int visibleXCount = (int) ThemeHelper.pxToDp(requireContext(), mChartHistory.getWidth()) / 36;
             mChartProductiveHours.setVisibleXRangeMaximum(visibleXCount);
             mChartProductiveHours.setVisibleXRangeMinimum(visibleXCount);
             mChartProductiveHours.getXAxis().setLabelCount(visibleXCount);
@@ -418,7 +421,6 @@ public class StatisticsFragment extends Fragment {
         theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
         @ColorInt int color = typedValue.data;
         mPieChart.setHoleColor(color);
-
         mPieChart.getLegend().setEnabled(false);
         mPieChart.setUsePercentValues(true);
         mPieChart.setDrawHoleEnabled(true);
@@ -433,6 +435,14 @@ public class StatisticsFragment extends Fragment {
         mPieChart.setRotationEnabled(true);
         mPieChart.setHighlightPerTapEnabled(false);
         mPieChart.setNoDataText("");
+        mPieChart.setTouchEnabled(true);
+        mPieChart.setOnChartGestureListener(new PieChartGestureListener() {
+            @Override
+            public void onChartSingleTapped(MotionEvent me) {
+                mPieChartShowPercentages = !mPieChartShowPercentages;
+                refreshUi();
+            }
+        });
     }
 
     private void refreshPieChart(List<Session> sessions, List<Label> labels) {
@@ -527,11 +537,24 @@ public class StatisticsFragment extends Fragment {
         dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         dataSet.setValueLineColor(grey500);
         dataSet.setValueLinePart1Length(0.175f);
+        dataSet.setUsingSliceColorAsValueLineColor(true);
 
         PieData data = new PieData(dataSet);
-        data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(12f);
         data.setValueTextColor(grey500);
+
+        if (mPieChartShowPercentages) {
+            mPieChart.setUsePercentValues(true);
+            data.setValueFormatter(new PercentFormatter(mPieChart));
+        } else {
+            mPieChart.setUsePercentValues(false);
+            data.setValueFormatter(new ValueFormatter() {
+                @Override
+                public String getFormattedValue(float value) {
+                    return formatMinutes((long)value);
+                }
+            });
+        }
 
         mPieChart.setData(data);
         mPieChart.invalidate();
@@ -569,7 +592,7 @@ public class StatisticsFragment extends Fragment {
         // this part is to align the history chart to the productive time chart by setting the same width
         TextPaint p = new TextPaint();
         p.setTextSize(getResources().getDimension(R.dimen.tinyTextSize));
-        int widthOfOtherChart = (int) ThemeHelper.pxToDp(getContext(), (int) p.measureText("100%"));
+        int widthOfOtherChart = (int) ThemeHelper.pxToDp(requireContext(), (int) p.measureText("100%"));
         mChartHistory.getAxisLeft().setMinWidth(widthOfOtherChart);
         mChartHistory.getAxisLeft().setMaxWidth(widthOfOtherChart);
         mChartHistory.notifyDataSetChanged();
@@ -612,7 +635,7 @@ public class StatisticsFragment extends Fragment {
         mChartHistory.getDescription().setEnabled(false);
         mChartHistory.setNoDataText("");
         mChartHistory.setHardwareAccelerationEnabled(true);
-        mChartHistory.animateY(500, Easing.EasingOption.EaseOutCubic);
+        mChartHistory.animateY(500, Easing.EaseOutCubic);
         mChartHistory.getLegend().setEnabled(false);
         mChartHistory.setDoubleTapToZoomEnabled(false);
         mChartHistory.setScaleEnabled(false);
@@ -627,7 +650,7 @@ public class StatisticsFragment extends Fragment {
         final SpinnerRangeType rangeType =
                 SpinnerRangeType.values()[mRangeType.getSelectedItemPosition()];
 
-        final int DUMMY_INTERVAL_RANGE = (int) ThemeHelper.pxToDp(getContext(), mChartHistory.getWidth()) / 24;
+        final int DUMMY_INTERVAL_RANGE = (int) ThemeHelper.pxToDp(requireContext(), mChartHistory.getWidth()) / 24;
 
         List<Entry> yVals = new ArrayList<>();
         TreeMap<LocalDate, Integer> tree = new TreeMap<>();
@@ -746,7 +769,12 @@ public class StatisticsFragment extends Fragment {
 
     private void setupProductiveTimeChart() {
         YAxis yAxis = mChartProductiveHours.getAxisLeft();
-        yAxis.setValueFormatter((value, axis) -> toPercentage(value));
+        yAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return toPercentage(value);
+            }
+        });
         yAxis.setTextColor(getResources().getColor(R.color.grey_500));
         yAxis.setGranularity(0.25f);
         yAxis.setTextSize(getResources().getDimension(R.dimen.tinyTextSize) / mDisplayDensity);
@@ -777,7 +805,7 @@ public class StatisticsFragment extends Fragment {
         mChartProductiveHours.getDescription().setEnabled(false);
         mChartProductiveHours.setNoDataText("");
         mChartProductiveHours.setHardwareAccelerationEnabled(true);
-        mChartProductiveHours.animateY(500, Easing.EasingOption.EaseOutCubic);
+        mChartProductiveHours.animateY(500, Easing.EaseOutCubic);
         mChartProductiveHours.getLegend().setEnabled(false);
         mChartProductiveHours.setDoubleTapToZoomEnabled(false);
         mChartProductiveHours.setScaleEnabled(false);
