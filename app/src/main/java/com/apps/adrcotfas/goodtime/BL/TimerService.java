@@ -32,6 +32,7 @@ import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LifecycleService;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -287,7 +288,7 @@ public class TimerService extends LifecycleService {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             toggleSoundInternal(restore);
         } else if (isNotificationPolicyAccessGranted()) {
-            toggleSoundInternal(restore);
+            togglePriorityMode(restore);
         } else {
             // should not happen
             Log.w(TAG, "Trying to toggle sound but permission was not granted.");
@@ -305,6 +306,21 @@ public class TimerService extends LifecycleService {
             } else {
                 mPreviousRingerMode = aManager.getRingerMode();
                 aManager.setRingerMode(RINGER_MODE_SILENT);
+            }
+        });
+        t.start();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void togglePriorityMode(boolean restore) {
+        Thread t = new Thread(() -> {
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (manager != null) {
+                if (restore) {
+                    manager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
+                } else {
+                    manager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY);
+                }
             }
         });
         t.start();
