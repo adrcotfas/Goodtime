@@ -130,6 +130,13 @@
             android:summary="%s"
             android:icon="@drawable/ic_vibration"/>
 
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="pref_flashing_notification"
+            android:title="@string/pref_flashing_notification"
+            android:summary="@string/pref_flashing_notification_summary"
+            android:icon="@drawable/ic_flash"/>
+
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref_auto_start_break"

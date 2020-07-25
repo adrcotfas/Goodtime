@@ -25,11 +25,13 @@ public class TimerActivityViewModel extends AndroidViewModel {
     public boolean isActive;
     public boolean showFinishDialog;
     public SessionType dialogPendingType;
+    public boolean enableFlashingNotification;
 
     public TimerActivityViewModel(@NonNull Application application) {
         super(application);
         isActive = false;
         showFinishDialog = false;
+        enableFlashingNotification = false;
         dialogPendingType = SessionType.INVALID;
     }
 }

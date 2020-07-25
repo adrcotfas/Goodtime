@@ -104,6 +104,7 @@ public class TimerActivity
     private BillingHelper mBillingHelper;
 
     private View mBlackCover;
+    private View mWhiteCover;
 
     private MenuItem mStatusButton;
     private View mBoundsView;
@@ -163,6 +164,7 @@ public class TimerActivity
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         mBlackCover = binding.blackCover;
+        mWhiteCover = binding.whiteCover;
         mToolbar = binding.bar;
         mTimeLabel = binding.timeLabel;
         mTutorialDot = binding.tutorialDot;
@@ -338,7 +340,7 @@ public class TimerActivity
 
         mViewModel.isActive = true;
         if (mViewModel.showFinishDialog) {
-            showFinishDialog();
+            showFinishedSessionUI();
         }
 
         // initialize notification channels on the first run
@@ -360,6 +362,10 @@ public class TimerActivity
         setTimeLabelColor();
 
         mBlackCover.animate().alpha(0.f).setDuration(500);
+        if (PreferenceHelper.isFlashingNotificationEnabled() && mViewModel.enableFlashingNotification) {
+            mWhiteCover.setVisibility(View.VISIBLE);
+            mWhiteCover.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink_screen));
+        }
     }
 
     @Override
@@ -516,15 +522,16 @@ public class TimerActivity
     public void onEventMainThread(Object o) {
         if (!PreferenceHelper.isAutoStartBreak() && o instanceof Constants.FinishWorkEvent) {
             mViewModel.dialogPendingType = SessionType.WORK;
-            showFinishDialog();
+            showFinishedSessionUI();
         } else if (!PreferenceHelper.isAutoStartWork() && (o instanceof Constants.FinishBreakEvent
                 || o instanceof Constants.FinishLongBreakEvent)) {
             mViewModel.dialogPendingType = SessionType.BREAK;
-            showFinishDialog();
+            showFinishedSessionUI();
         } else if (o instanceof Constants.ClearFinishDialogEvent) {
             if (mDialogSessionFinished != null) {
                 mDialogSessionFinished.dismissAllowingStateLoss();
             }
+            stopFlashingNotification();
         }
     }
 
@@ -584,6 +591,8 @@ public class TimerActivity
         } else {
             startService(stopIntent);
         }
+        mWhiteCover.setVisibility(View.GONE);
+        mWhiteCover.clearAnimation();
     }
 
     private void add60Seconds() {
@@ -601,14 +610,16 @@ public class TimerActivity
                 .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
     }
 
-    private void showFinishDialog() {
+    private void showFinishedSessionUI() {
         if (mViewModel.isActive) {
             mViewModel.showFinishDialog = false;
+            mViewModel.enableFlashingNotification = true;
             Log.i(TAG, "Showing the finish dialog.");
             mDialogSessionFinished = FinishedSessionDialog.newInstance(this);
             mDialogSessionFinished.show(getSupportFragmentManager(), TAG);
         } else {
             mViewModel.showFinishDialog = true;
+            mViewModel.enableFlashingNotification = false;
         }
     }
 
@@ -755,6 +766,7 @@ public class TimerActivity
             start(SessionType.WORK);
             delayToggleFullscreenMode();
         }
+        stopFlashingNotification();
     }
 
     @Override
@@ -766,5 +778,12 @@ public class TimerActivity
             EventBus.getDefault().post(new Constants.ClearNotificationEvent());
             delayToggleFullscreenMode();
         }
+        stopFlashingNotification();
+    }
+
+    private void stopFlashingNotification() {
+        mWhiteCover.setVisibility(View.GONE);
+        mWhiteCover.clearAnimation();
+        mViewModel.enableFlashingNotification = false;
     }
 }

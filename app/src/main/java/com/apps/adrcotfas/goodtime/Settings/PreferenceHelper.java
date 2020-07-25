@@ -59,6 +59,7 @@ public class PreferenceHelper {
 
     public final static String DISABLE_BATTERY_OPTIMIZATION = "pref_disable_battery_optimization";
     public static final String SAVE_CUSTOM_PROFILE          = "pref_save_custom_profile";
+    public static final String ENABLE_FLASHING_NOTIFICATION  = "pref_flashing_notification";
 
     private final static String WORK_STREAK                 = "pref_WORK_STREAK";
     private final static String LAST_WORK_FINISHED_AT       = "pref_last_work_finished_at";
@@ -138,6 +139,11 @@ public class PreferenceHelper {
     public static boolean isRingtoneInsistent() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(INSISTENT_RINGTONE, false);
+    }
+
+    public static boolean isFlashingNotificationEnabled() {
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getBoolean(ENABLE_FLASHING_NOTIFICATION, false);
     }
 
     public static String getNotificationSoundWorkFinished() {
