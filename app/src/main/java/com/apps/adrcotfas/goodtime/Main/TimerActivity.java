@@ -106,7 +106,7 @@ public class TimerActivity
     private View mBlackCover;
     private View mWhiteCover;
 
-    private MenuItem mStatusButton;
+    private MenuItem mLabelButton;
     private View mBoundsView;
     private TextView mTimeLabel;
     private Toolbar mToolbar;
@@ -170,6 +170,7 @@ public class TimerActivity
         mTutorialDot = binding.tutorialDot;
         mBoundsView = binding.main;
         mLabelView = binding.labelView;
+        mLabelView.setOnClickListener(v -> showEditLabelDialog());
 
         setupTimeLabelEvents();
 
@@ -389,7 +390,9 @@ public class TimerActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_main, menu);
-        mStatusButton = menu.findItem(R.id.action_state);
+        mLabelButton = menu.findItem(R.id.action_current_label);
+        mLabelButton.getIcon().setColorFilter(
+                ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_ALL_LABELS), PorterDuff.Mode.SRC_ATOP);
         setupEvents();
         return super.onCreateOptionsMenu(menu);
     }
@@ -426,36 +429,21 @@ public class TimerActivity
         mCurrentSession.getDuration().observe(TimerActivity.this, this::updateTimeLabel);
         mCurrentSession.getSessionType().observe(TimerActivity.this, sessionType -> {
             mCurrentSessionType = sessionType;
-            if (mStatusButton != null) {
-                if (sessionType == SessionType.WORK) {
-                    mStatusButton.setIcon(getResources().getDrawable(R.drawable.ic_status_goodtime));
-                } else {
-                    mStatusButton.setIcon(getResources().getDrawable(R.drawable.ic_break));
-                }
-                setStatusIconColor();
-                setTimeLabelColor();
-            }
+            setupLabelView();
+            setTimeLabelColor();
         });
 
         mCurrentSession.getTimerState().observe(TimerActivity.this, timerState -> {
             if (timerState == TimerState.INACTIVE) {
+                setupLabelView();
                 setTimeLabelColor();
-                if (mStatusButton != null) {
-                    mStatusButton.setVisible(false);
-                }
                 final Handler handler = new Handler();
                 handler.postDelayed(() -> mTimeLabel.clearAnimation(), 300);
             } else if (timerState == TimerState.PAUSED) {
-                if (mStatusButton != null) {
-                    mStatusButton.setVisible(true);
-                }
                 final Handler handler = new Handler();
                 handler.postDelayed(() -> mTimeLabel.startAnimation(
                         loadAnimation(getApplicationContext(), R.anim.blink)), 300);
             } else {
-                if (mStatusButton != null) {
-                    mStatusButton.setVisible(true);
-                }
                 final Handler handler = new Handler();
                 handler.postDelayed(() -> mTimeLabel.clearAnimation(), 300);
             }
@@ -548,8 +536,8 @@ public class TimerActivity
         } else {
             currentFormattedTick =
                     ((minutes > 9) ? minutes  : "0" + minutes)
-                    + ":"
-                    + ((seconds > 9) ? seconds : "0" + seconds);
+                            + ":"
+                            + ((seconds > 9) ? seconds : "0" + seconds);
         }
 
         mTimeLabel.setText(currentFormattedTick);
@@ -678,9 +666,9 @@ public class TimerActivity
     private void setupLabelView() {
         Label label = PreferenceHelper.getCurrentSessionLabel();
         if (label.title == null ||
-                label.title.equals(getString(R.string.label_unlabeled)) ||
-                !PreferenceHelper.showCurrentLabel()) {
+                label.title.equals(getString(R.string.label_unlabeled))) {
             mLabelView.setVisibility(View.GONE);
+            mLabelButton.setVisible(true);
         } else {
             mLabelView.setVisibility(View.VISIBLE);
             mLabelView.setText(label.title);
@@ -688,21 +676,7 @@ public class TimerActivity
             d.setColorFilter(new PorterDuffColorFilter(
                     ThemeHelper.getColor(this, label.colorId), PorterDuff.Mode.SRC_ATOP));
             mLabelView.setBackground(d);
-        }
-    }
-
-    private void setStatusIconColor() {
-        setupLabelView();
-        Label label = PreferenceHelper.getCurrentSessionLabel();
-
-        if (mStatusButton != null) {
-            if (label.title != null) {
-                mStatusButton.getIcon().setColorFilter(
-                        ThemeHelper.getColor(this, label.colorId), PorterDuff.Mode.SRC_ATOP);
-            } else {
-                mStatusButton.getIcon().setColorFilter(
-                        ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_UNLABELED), PorterDuff.Mode.SRC_ATOP);
-            }
+            mLabelButton.setVisible(false);
         }
     }
 
@@ -729,7 +703,7 @@ public class TimerActivity
         } else {
             GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
         }
-        setStatusIconColor();
+        setupLabelView();
         setTimeLabelColor();
     }
 

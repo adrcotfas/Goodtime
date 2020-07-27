@@ -181,7 +181,4 @@
     <string name="tutorial_title">Tutorial</string>
     <string name="other_apps">Other apps</string>
     <string name="unlabeled">unlabeled</string>
-    <string name="pref_show_label">View current label</string>
-    <string name="pref_show_label_summary">Shows the current label on the main screen</string>
-
 </resources>

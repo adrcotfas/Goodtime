@@ -2,12 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/action_state"
-        android:icon="@drawable/ic_status_goodtime"
-        android:title="@string/state"
-        android:visible="false"
-        android:enabled="false"
+    <item android:id="@+id/action_current_label"
+        android:icon="@drawable/ic_label"
+        android:title="@string/label_current"
         app:showAsAction="always"/>
 
     <item
@@ -15,10 +12,4 @@
         android:title="@string/pref_session_counter"
         app:actionLayout="@layout/view_session_counter"
         app:showAsAction="always"/>
-
-    <item android:id="@+id/action_current_label"
-        android:icon="@drawable/ic_dots"
-        android:title="@string/label_current"
-        app:showAsAction="always"/>
-
 </menu>
