@@ -16,9 +16,8 @@ package com.apps.adrcotfas.goodtime.Main;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,6 +52,7 @@ import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 import com.apps.adrcotfas.goodtime.Util.OnSwipeTouchListener;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.kobakei.ratethisapp.RateThisApp;
@@ -111,7 +111,7 @@ public class TimerActivity
     private TextView mTimeLabel;
     private Toolbar mToolbar;
     private ImageView mTutorialDot;
-    private TextView mLabelView;
+    private Chip mLabelView;
 
     private SessionViewModel mSessionViewModel;
     private TimerActivityViewModel mViewModel;
@@ -670,13 +670,10 @@ public class TimerActivity
             mLabelView.setVisibility(View.GONE);
             mLabelButton.setVisible(true);
         } else {
+            mLabelButton.setVisible(false);
             mLabelView.setVisibility(View.VISIBLE);
             mLabelView.setText(label.title);
-            Drawable d = getResources().getDrawable(R.drawable.shape_rectangle);
-            d.setColorFilter(new PorterDuffColorFilter(
-                    ThemeHelper.getColor(this, label.colorId), PorterDuff.Mode.SRC_ATOP));
-            mLabelView.setBackground(d);
-            mLabelButton.setVisible(false);
+            mLabelView.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(this, label.colorId)));
         }
     }
 

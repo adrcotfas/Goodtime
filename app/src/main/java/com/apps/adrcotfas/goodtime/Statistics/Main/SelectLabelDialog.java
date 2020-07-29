@@ -122,7 +122,8 @@ public class SelectLabelDialog extends DialogFragment {
                 chip.setText(total.title);
                 chip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), COLOR_INDEX_ALL_LABELS)));
                 chip.setCheckable(true);
-                ThemeHelper.styleChip(getActivity(), chip);
+                chip.setChipIcon(getResources().getDrawable(R.drawable.ic_check_off));
+                chip.setCheckedIcon(getResources().getDrawable(R.drawable.ic_check));
 
                 chip.setId(i++);
                 if (chip.getText().toString().equals(mLabel)) {
@@ -137,7 +138,8 @@ public class SelectLabelDialog extends DialogFragment {
                 chip.setText(crt.title);
                 chip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(getActivity(), crt.colorId)));
                 chip.setCheckable(true);
-                ThemeHelper.styleChip(getActivity(), chip);
+                chip.setChipIcon(getResources().getDrawable(R.drawable.ic_check_off));
+                chip.setCheckedIcon(getResources().getDrawable(R.drawable.ic_check));
 
                 chip.setId(i++);
                 if (crt.title.equals(mLabel)) {

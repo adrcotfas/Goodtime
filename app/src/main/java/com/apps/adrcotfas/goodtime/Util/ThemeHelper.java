@@ -60,19 +60,6 @@ public class ThemeHelper {
         return (int) (dpToPx(context, dp) / context.getResources().getDisplayMetrics().scaledDensity);
     }
 
-    public static void styleChip(Context context, Chip chip) {
-        chip.setLayoutParams(new ChipGroup.LayoutParams(ChipGroup.LayoutParams.WRAP_CONTENT, dpToPx(context, 42)));
-        chip.setChipIconSize(ThemeHelper.dpToPx(context,20));
-        chip.setChipStartPadding(ThemeHelper.dpToPx(context,4));
-        chip.setChipCornerRadius(ThemeHelper.dpToPx(context,12));
-        chip.setTextStartPadding(ThemeHelper.dpToPx(context,4));
-        chip.setTextEndPadding(ThemeHelper.dpToPx(context,4));
-        chip.setTextAppearance(context, R.style.ChipTextAppearance);
-        chip.setChipIcon(context.getResources().getDrawable(R.drawable.ic_check_off));
-        chip.setCheckedIcon(context.getResources().getDrawable(R.drawable.ic_check));
-        chip.setEllipsize(TextUtils.TruncateAt.END);
-    }
-
     public static void clearFocusEditText(View v, Context context) {
         v.clearFocus();
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
