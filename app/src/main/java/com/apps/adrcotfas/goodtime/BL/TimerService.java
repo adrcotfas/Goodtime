@@ -136,7 +136,7 @@ public class TimerService extends LifecycleService {
 
     private void onStartEvent(SessionType sessionType) {
 
-        EventBus.getDefault().post(new Constants.ClearFinishDialogEvent());
+        EventBus.getDefault().post(new Constants.StartSessionEvent());
         if (sessionType != SessionType.WORK && PreferenceHelper.isLongBreakEnabled()
                 && PreferenceHelper.itsTimeForLongBreak()) {
             sessionType = SessionType.LONG_BREAK;

@@ -336,7 +336,6 @@ public class TimerActivity
     @Override
     protected void onResume() {
         super.onResume();
-
         ReminderHelper.removeNotification(getApplicationContext());
 
         mViewModel.isActive = true;
@@ -363,9 +362,23 @@ public class TimerActivity
         setTimeLabelColor();
 
         mBlackCover.animate().alpha(0.f).setDuration(500);
+
+        // then only reason we're doing this here is because a FinishSessionEvent
+        // comes together with a "bring activity on top"
         if (PreferenceHelper.isFlashingNotificationEnabled() && mViewModel.enableFlashingNotification) {
             mWhiteCover.setVisibility(View.VISIBLE);
-            mWhiteCover.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink_screen));
+            if ((PreferenceHelper.isAutoStartBreak() && mCurrentSessionType == SessionType.BREAK)
+                    || (PreferenceHelper.isAutoStartWork() && mCurrentSessionType == SessionType.WORK)) {
+                final Animation anim = loadAnimation(getApplicationContext(), R.anim.blink_screen_3_times);
+                anim.setAnimationListener(new Animation.AnimationListener() {
+                    @Override public void onAnimationStart(Animation animation) {}
+                    @Override public void onAnimationEnd(Animation animation) { stopFlashingNotification(); }
+                    @Override public void onAnimationRepeat(Animation animation) {}
+                });
+                mWhiteCover.startAnimation(anim);
+            } else {
+                mWhiteCover.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink_screen));
+            }
         }
     }
 
@@ -508,18 +521,31 @@ public class TimerActivity
      */
     @Subscribe
     public void onEventMainThread(Object o) {
-        if (!PreferenceHelper.isAutoStartBreak() && o instanceof Constants.FinishWorkEvent) {
-            mViewModel.dialogPendingType = SessionType.WORK;
-            showFinishedSessionUI();
-        } else if (!PreferenceHelper.isAutoStartWork() && (o instanceof Constants.FinishBreakEvent
-                || o instanceof Constants.FinishLongBreakEvent)) {
-            mViewModel.dialogPendingType = SessionType.BREAK;
-            showFinishedSessionUI();
-        } else if (o instanceof Constants.ClearFinishDialogEvent) {
+        if (o instanceof Constants.FinishWorkEvent) {
+            if (PreferenceHelper.isAutoStartBreak()) {
+                if (PreferenceHelper.isFlashingNotificationEnabled()) {
+                    mViewModel.enableFlashingNotification = true;
+                }
+            } else {
+                mViewModel.dialogPendingType = SessionType.WORK;
+                showFinishedSessionUI();
+            }
+        } else if (o instanceof Constants.FinishBreakEvent || o instanceof Constants.FinishLongBreakEvent) {
+            if (PreferenceHelper.isAutoStartWork()) {
+                if (PreferenceHelper.isFlashingNotificationEnabled()) {
+                    mViewModel.enableFlashingNotification = true;
+                }
+            } else {
+                mViewModel.dialogPendingType = SessionType.BREAK;
+                showFinishedSessionUI();
+            }
+        } else if (o instanceof Constants.StartSessionEvent) {
             if (mDialogSessionFinished != null) {
                 mDialogSessionFinished.dismissAllowingStateLoss();
             }
-            stopFlashingNotification();
+            if (!PreferenceHelper.isAutoStartBreak() && !PreferenceHelper.isAutoStartWork()) {
+                stopFlashingNotification();
+            }
         }
     }
 
@@ -670,18 +696,22 @@ public class TimerActivity
                 label.title.equals(getString(R.string.label_unlabeled))) {
             mLabelChip.setVisibility(View.GONE);
             mLabelButton.setVisible(true);
+            int color = ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_ALL_LABELS);
             mLabelButton.getIcon().setColorFilter(
-                    ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_ALL_LABELS), PorterDuff.Mode.SRC_ATOP);
-        } else if (PreferenceHelper.showCurrentLabel()) {
-            mLabelButton.setVisible(false);
-            mLabelChip.setVisibility(View.VISIBLE);
-            mLabelChip.setText(label.title);
-            mLabelChip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(this, label.colorId)));
+                    color, PorterDuff.Mode.SRC_ATOP);
         } else {
-            mLabelChip.setVisibility(View.GONE);
-            mLabelButton.setVisible(true);
-            mLabelButton.getIcon().setColorFilter(
-                    ThemeHelper.getColor(this, label.colorId), PorterDuff.Mode.SRC_ATOP);
+            final int color = ThemeHelper.getColor(this, label.colorId);
+            if (PreferenceHelper.showCurrentLabel()) {
+                mLabelButton.setVisible(false);
+                mLabelChip.setVisibility(View.VISIBLE);
+                mLabelChip.setText(label.title);
+                mLabelChip.setChipBackgroundColor(ColorStateList.valueOf(color));
+            } else {
+                mLabelChip.setVisibility(View.GONE);
+                mLabelButton.setVisible(true);
+                mLabelButton.getIcon().setColorFilter(
+                        color, PorterDuff.Mode.SRC_ATOP);
+            }
         }
     }
 
