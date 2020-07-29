@@ -47,7 +47,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import static com.apps.adrcotfas.goodtime.Statistics.AllSessions.AddEditEntryDialogViewModel.INVALID_SESSION_TO_EDIT_ID;
 import static com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity.DIALOG_DATE_PICKER_TAG;
@@ -91,9 +91,10 @@ public class AddEditEntryDialog extends BottomSheetDialogFragment implements
         DialogAddEntryBinding binding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.dialog_add_entry, null, false);
 
         View view = binding.getRoot();
-        mViewModel = ViewModelProviders.of(this).get(AddEditEntryDialogViewModel.class);
-        mSessionViewModel = ViewModelProviders.of(this).get(SessionViewModel.class);
-        mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
+        final ViewModelProvider viewModelProvider = new ViewModelProvider(this);
+        mViewModel = viewModelProvider.get(AddEditEntryDialogViewModel.class);
+        mSessionViewModel = viewModelProvider.get(SessionViewModel.class);
+        mLabelsViewModel = viewModelProvider.get(LabelsViewModel.class);
 
         mViewModel.duration.observe(getViewLifecycleOwner(), d -> {
             String duration = d.toString();
