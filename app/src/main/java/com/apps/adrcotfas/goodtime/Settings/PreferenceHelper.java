@@ -72,6 +72,7 @@ public class PreferenceHelper {
     public static final String TIMER_STYLE                = "pref_timer_style";
 
     private static final String SESSIONS_COUNTER          = "pref_sessions_counter";
+    private static final String SHOW_CURRENT_LABEL        = "pref_show_label";
     private static final String ADD_60_SECONDS_COUNTER    = "pref_add_60_seconds_times";
 
     private static final String UNSAVED_PROFILE_ACTIVE = "pref_custom_pref_active";
@@ -323,6 +324,10 @@ public class PreferenceHelper {
 
     public static boolean isSessionsCounterEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getBoolean(SESSIONS_COUNTER, true);
+    }
+
+    public static boolean showCurrentLabel() {
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance()).getBoolean(SHOW_CURRENT_LABEL, false);
     }
 
     public static int getLastIntroStep() {

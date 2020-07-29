@@ -66,6 +66,15 @@
             android:title="@string/pref_session_counter"
             android:summary="@string/pref_session_counter_summary"
             app:iconSpaceReserved="false"/>
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_show_label"
+            android:persistent="true"
+            android:title="@string/pref_show_label"
+            android:summary="@string/pref_show_label_summary"
+            app:iconSpaceReserved="false"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory

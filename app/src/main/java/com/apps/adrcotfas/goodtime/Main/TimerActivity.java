@@ -111,7 +111,7 @@ public class TimerActivity
     private TextView mTimeLabel;
     private Toolbar mToolbar;
     private ImageView mTutorialDot;
-    private Chip mLabelView;
+    private Chip mLabelChip;
 
     private SessionViewModel mSessionViewModel;
     private TimerActivityViewModel mViewModel;
@@ -169,8 +169,8 @@ public class TimerActivity
         mTimeLabel = binding.timeLabel;
         mTutorialDot = binding.tutorialDot;
         mBoundsView = binding.main;
-        mLabelView = binding.labelView;
-        mLabelView.setOnClickListener(v -> showEditLabelDialog());
+        mLabelChip = binding.labelView;
+        mLabelChip.setOnClickListener(v -> showEditLabelDialog());
 
         setupTimeLabelEvents();
 
@@ -665,15 +665,23 @@ public class TimerActivity
 
     private void setupLabelView() {
         Label label = PreferenceHelper.getCurrentSessionLabel();
+
         if (label.title == null ||
                 label.title.equals(getString(R.string.label_unlabeled))) {
-            mLabelView.setVisibility(View.GONE);
+            mLabelChip.setVisibility(View.GONE);
             mLabelButton.setVisible(true);
-        } else {
+            mLabelButton.getIcon().setColorFilter(
+                    ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_ALL_LABELS), PorterDuff.Mode.SRC_ATOP);
+        } else if (PreferenceHelper.showCurrentLabel()) {
             mLabelButton.setVisible(false);
-            mLabelView.setVisibility(View.VISIBLE);
-            mLabelView.setText(label.title);
-            mLabelView.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(this, label.colorId)));
+            mLabelChip.setVisibility(View.VISIBLE);
+            mLabelChip.setText(label.title);
+            mLabelChip.setChipBackgroundColor(ColorStateList.valueOf(ThemeHelper.getColor(this, label.colorId)));
+        } else {
+            mLabelChip.setVisibility(View.GONE);
+            mLabelButton.setVisible(true);
+            mLabelButton.getIcon().setColorFilter(
+                    ThemeHelper.getColor(this, label.colorId), PorterDuff.Mode.SRC_ATOP);
         }
     }
 
