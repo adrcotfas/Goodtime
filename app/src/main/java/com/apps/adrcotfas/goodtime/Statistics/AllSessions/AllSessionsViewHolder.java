@@ -13,8 +13,7 @@
 
 package com.apps.adrcotfas.goodtime.Statistics.AllSessions;
 
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
+import android.content.res.ColorStateList;
 import android.view.View;
 
 import com.apps.adrcotfas.goodtime.Session;
@@ -33,9 +32,8 @@ public class AllSessionsViewHolder extends RecyclerView.ViewHolder {
         rowOverlay = binding.overlay;
     }
 
-    public void bind(Session item, int color, Drawable d) {
+    public void bind(Session item, ColorStateList color) {
         binding.setItem(item);
-        d.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
-        binding.status.setBackground(d);
+        binding.status.setChipBackgroundColor(color);
     }
 }

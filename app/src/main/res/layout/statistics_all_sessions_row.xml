@@ -81,7 +81,7 @@
             android:text="@{com.apps.adrcotfas.goodtime.Util.StringUtils.formatTime(item.timestamp)}"
             android:textSize="@dimen/smallerTextSize" />
 
-        <TextView
+        <com.google.android.material.chip.Chip
             android:id="@+id/status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -96,10 +96,10 @@
 
             android:layout_marginRight="16dp"
             android:layout_marginEnd="16dp"
-
             android:text="@{item.label}"
             android:visibility="@{item.label == null ? View.INVISIBLE : View.VISIBLE}"
-            style="@style/SmallPseudoChip"/>
+            style="@style/ChipStyleSmall"
+            android:clickable="false"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"

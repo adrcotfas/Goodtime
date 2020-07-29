@@ -14,7 +14,7 @@
 package com.apps.adrcotfas.goodtime.Statistics.AllSessions;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,8 +57,7 @@ public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHold
     public void onBindViewHolder(@NonNull AllSessionsViewHolder holder, int position) {
         Session session = mEntries.get(position);
 
-        Drawable d = mContext.get().getResources().getDrawable(R.drawable.shape_rectangle);
-        holder.bind(session, getColor(session.label), d);
+        holder.bind(session, ColorStateList.valueOf(getColor(session.label)));
 
         holder.rowOverlay.setVisibility(
                 mSelectedEntries.contains(mEntries.get(position).id) ? View.VISIBLE : View.INVISIBLE);
@@ -109,7 +108,7 @@ public class AllSessionsAdapter extends RecyclerView.Adapter<AllSessionsViewHold
         notifyDataSetChanged();
     }
 
-    class PostDiffCallback extends DiffUtil.Callback {
+    static class PostDiffCallback extends DiffUtil.Callback {
 
         private final List<Session> oldSessions, newSessions;
 
