@@ -127,6 +127,7 @@
         <item name="textEndPadding">4dp</item>
         <item name="chipCornerRadius">12dp</item>
         <item name="chipMinHeight">26dp</item>
+        <item name="ensureMinTouchTargetSize">false</item>
     </style>
 
     <style name="ChipStyleSmall" parent="Widget.MaterialComponents.Chip.Action">
@@ -138,6 +139,7 @@
         <item name="chipStartPadding">2dp</item>
         <item name="chipEndPadding">2dp</item>
         <item name="chipMinHeight">18dp</item>
+        <item name="ensureMinTouchTargetSize">false</item>
     </style>
 
     <style name="SmallPseudoChip">

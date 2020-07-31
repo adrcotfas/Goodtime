@@ -35,7 +35,8 @@
                     android:layout_marginEnd="16dp"
                     android:layout_gravity="end"
                     android:padding="8dp"
-                    style="@style/ChipStyleSmall"/>
+                    style="@style/ChipStyleSmall"
+                    app:ensureMinTouchTargetSize="true"/>
             </com.google.android.material.bottomappbar.BottomAppBar>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
