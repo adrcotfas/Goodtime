@@ -36,6 +36,7 @@ public class Constants {
     }
 
     public final static String SESSION_TYPE = "goodtime.session.type";
+    public final static String ONE_MINUTE_LEFT = "goodtime.one.minute.left";
 
     public static class FinishWorkEvent {}
     public static class FinishBreakEvent {}
@@ -43,4 +44,5 @@ public class Constants {
     public static class UpdateTimerProgressEvent {}
     public static class ClearNotificationEvent {}
     public static class StartSessionEvent {}
+    public static class OneMinuteLeft {}
 }

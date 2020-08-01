@@ -137,6 +137,14 @@
             android:summary="@string/pref_flashing_notification_summary"
             android:icon="@drawable/ic_flash"/>
 
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="pref_one_minute_left_notification"
+            android:title="@string/pref_one_minute_left_notification"
+            android:summary="@string/pref_one_minute_left_notification_summary"
+            app:iconSpaceReserved="false">
+        </SwitchPreferenceCompat>
+
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref_auto_start_break"

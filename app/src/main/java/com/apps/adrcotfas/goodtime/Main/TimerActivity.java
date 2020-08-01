@@ -369,15 +369,9 @@ public class TimerActivity
             mWhiteCover.setVisibility(View.VISIBLE);
             if ((PreferenceHelper.isAutoStartBreak() && mCurrentSessionType == SessionType.BREAK)
                     || (PreferenceHelper.isAutoStartWork() && mCurrentSessionType == SessionType.WORK)) {
-                final Animation anim = loadAnimation(getApplicationContext(), R.anim.blink_screen_3_times);
-                anim.setAnimationListener(new Animation.AnimationListener() {
-                    @Override public void onAnimationStart(Animation animation) {}
-                    @Override public void onAnimationEnd(Animation animation) { stopFlashingNotification(); }
-                    @Override public void onAnimationRepeat(Animation animation) {}
-                });
-                mWhiteCover.startAnimation(anim);
+                startFlashingNotificationShort();
             } else {
-                mWhiteCover.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink_screen));
+                startFlashingNotification();
             }
         }
     }
@@ -545,6 +539,10 @@ public class TimerActivity
             }
             if (!PreferenceHelper.isAutoStartBreak() && !PreferenceHelper.isAutoStartWork()) {
                 stopFlashingNotification();
+            }
+        } else if (o instanceof Constants.OneMinuteLeft) {
+            if (PreferenceHelper.isFlashingNotificationEnabled()) {
+                startFlashingNotificationShort();
             }
         }
     }
@@ -788,6 +786,22 @@ public class TimerActivity
             delayToggleFullscreenMode();
         }
         stopFlashingNotification();
+    }
+
+    private void startFlashingNotification() {
+        mWhiteCover.setVisibility(View.VISIBLE);
+        mWhiteCover.startAnimation(loadAnimation(getApplicationContext(), R.anim.blink_screen));
+    }
+
+    private void startFlashingNotificationShort() {
+        mWhiteCover.setVisibility(View.VISIBLE);
+        final Animation anim = loadAnimation(getApplicationContext(), R.anim.blink_screen_3_times);
+        anim.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {}
+            @Override public void onAnimationEnd(Animation animation) { stopFlashingNotification(); }
+            @Override public void onAnimationRepeat(Animation animation) {}
+        });
+        mWhiteCover.startAnimation(anim);
     }
 
     private void stopFlashingNotification() {

@@ -21,6 +21,7 @@ import android.util.Log;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 import org.greenrobot.eventbus.EventBus;
 
+import static com.apps.adrcotfas.goodtime.Util.Constants.ONE_MINUTE_LEFT;
 import static com.apps.adrcotfas.goodtime.Util.Constants.SESSION_TYPE;
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -29,6 +30,13 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        final boolean oneMinuteLeft = intent.getBooleanExtra(ONE_MINUTE_LEFT, false);
+        if (oneMinuteLeft) {
+            Log.v(TAG, "onReceive oneMinuteLeft");
+            EventBus.getDefault().post(new Constants.OneMinuteLeft());
+            return;
+        }
 
         final SessionType sessionType = SessionType.valueOf(intent.getStringExtra(SESSION_TYPE));
         Log.v(TAG, "onReceive " + sessionType.toString());

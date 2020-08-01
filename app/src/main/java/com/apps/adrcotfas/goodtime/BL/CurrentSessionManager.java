@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import org.greenrobot.eventbus.EventBus;
 
 import static com.apps.adrcotfas.goodtime.Util.Constants.ACTION.FINISHED;
+import static com.apps.adrcotfas.goodtime.Util.Constants.ONE_MINUTE_LEFT;
 import static com.apps.adrcotfas.goodtime.Util.Constants.SESSION_TYPE;
 
 /**
@@ -45,7 +46,7 @@ public class CurrentSessionManager extends ContextWrapper{
 
     private AppCountDownTimer mTimer;
     private final CurrentSession mCurrentSession;
-    private long mRemaining;
+    private long mRemaining; // [ms]
     private final AlarmReceiver mAlarmReceiver;
 
     private long mSessionDuration;
@@ -65,7 +66,9 @@ public class CurrentSessionManager extends ContextWrapper{
         mCurrentSession.setSessionType(sessionType);
         mCurrentSession.setDuration(mSessionDuration);
 
-        scheduleAlarm(sessionType, mSessionDuration);
+        scheduleAlarm(sessionType, mSessionDuration,
+                PreferenceHelper.oneMinuteBeforeNotificationEnabled()
+                        && mSessionDuration > TimeUnit.MINUTES.toMillis(1));
         mTimer = new AppCountDownTimer(mSessionDuration);
         mTimer.start();
     }
@@ -74,7 +77,9 @@ public class CurrentSessionManager extends ContextWrapper{
         switch(mCurrentSession.getTimerState().getValue()) {
             case PAUSED:
                 Log.v(TAG, "toggleTimer PAUSED");
-                scheduleAlarm(mCurrentSession.getSessionType().getValue(), mRemaining);
+                scheduleAlarm(mCurrentSession.getSessionType().getValue(), mRemaining,
+                        PreferenceHelper.oneMinuteBeforeNotificationEnabled()
+                                && mRemaining > TimeUnit.MINUTES.toMillis(1));
                 mTimer.start();
                 mCurrentSession.setTimerState(TimerState.ACTIVE);
                 break;
@@ -123,7 +128,7 @@ public class CurrentSessionManager extends ContextWrapper{
         return sessionMinutes - remainingMinutes + extraMinutes;
     }
 
-    private void scheduleAlarm(SessionType sessionType, long duration) {
+    private void scheduleAlarm(SessionType sessionType, long duration, boolean remindOneMinuteLeft) {
         this.registerReceiver(mAlarmReceiver, new IntentFilter(FINISHED));
         final long triggerAtMillis = duration + SystemClock.elapsedRealtime();
 
@@ -138,12 +143,31 @@ public class CurrentSessionManager extends ContextWrapper{
             getAlarmManager().set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     triggerAtMillis, getAlarmPendingIntent(sessionType));
         }
+
+        if (remindOneMinuteLeft && sessionType == SessionType.WORK) {
+            Log.v(TAG, "scheduled one minute left");
+            final long triggerAtMillisOneMinuteLeft = duration - TimeUnit.MINUTES.toMillis(1) + SystemClock.elapsedRealtime();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                        triggerAtMillisOneMinuteLeft, getOneMinuteLeftAlarmPendingIntent());
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                getAlarmManager().setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                        triggerAtMillisOneMinuteLeft, getOneMinuteLeftAlarmPendingIntent());
+            } else {
+                getAlarmManager().set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                        triggerAtMillisOneMinuteLeft, getOneMinuteLeftAlarmPendingIntent());
+            }
+        }
     }
 
     private void cancelAlarm() {
         final PendingIntent intent = getAlarmPendingIntent(mCurrentSession.getSessionType().getValue());
         if (intent != null) {
             getAlarmManager().cancel(intent);
+        }
+        final PendingIntent intentOneMinuteLeft = getOneMinuteLeftAlarmPendingIntent();
+        if (intentOneMinuteLeft != null) {
+            getAlarmManager().cancel(intentOneMinuteLeft);
         }
         unregisterAlarmReceiver();
     }
@@ -168,6 +192,13 @@ public class CurrentSessionManager extends ContextWrapper{
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+    private PendingIntent getOneMinuteLeftAlarmPendingIntent() {
+        Intent intent = new Intent(FINISHED);
+        intent.putExtra(ONE_MINUTE_LEFT, true);
+        return PendingIntent.getBroadcast(getApplicationContext(), 1,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
     public CurrentSession getCurrentSession() {
         return mCurrentSession;
     }
@@ -185,7 +216,9 @@ public class CurrentSessionManager extends ContextWrapper{
         mTimer = new AppCountDownTimer(mRemaining);
 
         if (mCurrentSession.getTimerState().getValue() != TimerState.PAUSED) {
-            scheduleAlarm(mCurrentSession.getSessionType().getValue(), mRemaining);
+            scheduleAlarm(mCurrentSession.getSessionType().getValue(), mRemaining,
+                    PreferenceHelper.oneMinuteBeforeNotificationEnabled()
+                            && mRemaining > TimeUnit.MINUTES.toMillis(1));
             mTimer.start();
             mCurrentSession.setTimerState(TimerState.ACTIVE);
         } else {

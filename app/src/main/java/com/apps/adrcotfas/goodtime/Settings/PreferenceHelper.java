@@ -53,6 +53,7 @@ public class PreferenceHelper {
     public final static String DISABLE_WIFI                = "pref_disable_wifi";
     public final static String ENABLE_SCREEN_ON            = "pref_keep_screen_on";
     public final static String ENABLE_SCREENSAVER_MODE     = "pref_screen_saver";
+    public final static String ENABLE_ONE_MINUTE_BEFORE_NOTIFICATION = "pref_one_minute_left_notification";
     public final static String AUTO_START_BREAK            = "pref_auto_start_break";
     public final static String AUTO_START_WORK             = "pref_auto_start_work";
     public final static String AMOLED                      = "pref_amoled";
@@ -189,6 +190,11 @@ public class PreferenceHelper {
     public static boolean isScreensaverEnabled() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getBoolean(ENABLE_SCREENSAVER_MODE, false);
+    }
+
+    public static boolean oneMinuteBeforeNotificationEnabled() {
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getBoolean(ENABLE_ONE_MINUTE_BEFORE_NOTIFICATION, false);
     }
 
     public static boolean isAutoStartBreak() {

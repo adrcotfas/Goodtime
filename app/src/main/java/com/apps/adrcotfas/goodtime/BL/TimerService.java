@@ -117,7 +117,9 @@ public class TimerService extends LifecycleService {
      */
     @Subscribe
     public void onEvent(Object o) {
-        if (o instanceof Constants.FinishWorkEvent) {
+        if (o instanceof Constants.OneMinuteLeft) {
+            onOneMinuteLeft();
+        } else if (o instanceof Constants.FinishWorkEvent) {
             Log.d(TAG, "onEvent " + o.getClass().getSimpleName());
             onFinishEvent(SessionType.WORK);
         } else if (o instanceof Constants.FinishBreakEvent) {
@@ -198,6 +200,12 @@ public class TimerService extends LifecycleService {
         finalizeSession(sessionType, getSessionManager().getElapsedMinutesAtStop());
     }
 
+    private void onOneMinuteLeft() {
+        acquireScreenLock();
+        bringActivityToFront();
+        mRingtoneAndVibrationPlayer.play(SessionType.WORK, false);
+    }
+
     private void onFinishEvent(SessionType sessionType) {
         Log.d(TAG, TimerService.this.hashCode() + " onFinishEvent " + sessionType.toString());
 
@@ -216,7 +224,7 @@ public class TimerService extends LifecycleService {
             }
         }
 
-        mRingtoneAndVibrationPlayer.play(sessionType);
+        mRingtoneAndVibrationPlayer.play(sessionType, PreferenceHelper.isRingtoneInsistent());
         stopForeground(true);
 
         updateLongBreakStreak(sessionType);

@@ -122,6 +122,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         setupDisableSoundCheckBox();
         setupDnDCheckBox();
         setupFlashingNotificationPref();
+        setupOneMinuteLeftNotificationPref();
 
         final Preference disableBatteryOptimizationPref = findPreference(PreferenceHelper.DISABLE_BATTERY_OPTIMIZATION);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isIgnoringBatteryOptimizations()) {
@@ -300,6 +301,15 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
 
     private void setupFlashingNotificationPref() {
         SwitchPreferenceCompat pref = findPreference(PreferenceHelper.ENABLE_FLASHING_NOTIFICATION);
+        pref.setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
+            launchUpgradeActivity(getActivity());
+            pref.setChecked(false);
+            return true;
+        });
+    }
+
+    private void setupOneMinuteLeftNotificationPref() {
+        SwitchPreferenceCompat pref = findPreference(PreferenceHelper.ENABLE_ONE_MINUTE_BEFORE_NOTIFICATION);
         pref.setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
             launchUpgradeActivity(getActivity());
             pref.setChecked(false);

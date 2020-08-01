@@ -37,7 +37,7 @@ class RingtoneAndVibrationPlayer extends ContextWrapper{
         mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
     }
 
-    public void play(SessionType sessionType) {
+    public void play(SessionType sessionType, boolean insistent) {
         try {
             mVibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
 
@@ -58,7 +58,7 @@ class RingtoneAndVibrationPlayer extends ContextWrapper{
                 mMediaPlayer.setAudioStreamType(PreferenceHelper.isPriorityAlarm()
                         ? AudioManager.STREAM_ALARM : AudioManager.STREAM_NOTIFICATION);
 
-                mMediaPlayer.setLooping(PreferenceHelper.isRingtoneInsistent());
+                mMediaPlayer.setLooping(insistent);
                 mMediaPlayer.prepareAsync();
 
                 mMediaPlayer.setOnPreparedListener(mp -> {

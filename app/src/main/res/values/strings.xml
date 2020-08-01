@@ -11,7 +11,7 @@
     <string name="pref_header_general">"General"</string>
     <string name="pref_keep_screen_on">"Keep the screen on"</string>
     <string name="pref_long_break_duration">"Long break duration"</string>
-    <string name="pref_ringtone">"Finished work notification"</string>
+    <string name="pref_ringtone">"Finished work notification sound"</string>
     <string name="pref_ringtone_summary">"Set the notification sound"</string>
     <string name="pref_work_duration">"Work session duration"</string>
     <string name="pref_sessions_before_long_break">"Sessions before a long break"</string>
@@ -29,7 +29,7 @@
     <string name="pref_priority_alarm_summary">"The notification sound behaves like an alarm"</string>
     <string name="pref_ringtone_insistent">"Insistent notification"</string>
     <string name="pref_ringtone_insistent_summary">"Repeat the notification until it's cancelled"</string>
-    <string name="pref_ringtone_break">Finished break notification</string>
+    <string name="pref_ringtone_break">Finished break notification sound</string>
     <string name="pref_auto_start_break">"Auto start break"</string>
     <string name="pref_auto_start_work">"Auto start work"</string>
     <string name="pref_auto_start_break_summary">Start the break after a work session without user interaction</string>
@@ -183,5 +183,7 @@
     <string name="unlabeled">unlabeled</string>
     <string name="pref_show_label">View current label</string>
     <string name="pref_show_label_summary">Shows the current label on the main screen</string>
+    <string name="pref_one_minute_left_notification">Pre-notification</string>
+    <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
 
 </resources>
