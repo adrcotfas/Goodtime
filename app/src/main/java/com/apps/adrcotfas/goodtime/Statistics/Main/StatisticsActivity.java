@@ -25,21 +25,20 @@ import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Statistics.AllSessions.AddEditEntryDialog;
 import com.apps.adrcotfas.goodtime.Statistics.AllSessions.AllSessionsFragment;
+import com.apps.adrcotfas.goodtime.Util.UpgradeDialogHelper;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
+import com.apps.adrcotfas.goodtime.common.BaseActivity;
 import com.apps.adrcotfas.goodtime.databinding.StatisticsActivityMainBinding;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuItemCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
-import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
-
-public class StatisticsActivity extends AppCompatActivity implements SelectLabelDialog.OnLabelSelectedListener {
+public class StatisticsActivity extends BaseActivity implements SelectLabelDialog.OnLabelSelectedListener {
 
     public static final String DIALOG_ADD_ENTRY_TAG = "dialogAddEntry";
     public  static final String DIALOG_SELECT_LABEL_TAG = "dialogSelectLabel";
@@ -53,7 +52,7 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
+        mLabelsViewModel = new ViewModelProvider(this).get(LabelsViewModel.class);
 
         ThemeHelper.setTheme(this);
         StatisticsActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.statistics_activity_main);
@@ -125,7 +124,7 @@ public class StatisticsActivity extends AppCompatActivity implements SelectLabel
                     AddEditEntryDialog newFragment = new AddEditEntryDialog();
                     newFragment.show(fragmentManager, DIALOG_ADD_ENTRY_TAG);
                 } else {
-                    launchUpgradeActivity(this);
+                    UpgradeDialogHelper.launchUpgradeDialog(getSupportFragmentManager());
                 }
 
                 break;

@@ -135,8 +135,6 @@
     <string name="update_pro_10">Separar sonido de notificación para trabajo y descanso</string>
     <string name="update_pro_11">Notificaciones insistentes</string>
     <string name="update_pro_13">Todas las características futuras gratis</string>
-    <string name="upgrade_enjoy">¡Disfruta de la versión pro!</string>
-    <string name="upgrade_extra_features">Características adicionales</string>
     <string name="Profile">Perfil</string>
     <string name="pref_profile_name">Nombre del perfil</string>
     <string name="profile_already_exists">Ya existe el perfil</string>

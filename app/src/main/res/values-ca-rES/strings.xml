@@ -135,8 +135,6 @@
     <string name="update_pro_10">Separa el so de notificació per a treball i trencar</string>
     <string name="update_pro_11">Notificació insistent</string>
     <string name="update_pro_13">Tot futur ofereix de franc</string>
-    <string name="upgrade_enjoy">Gaudir de la versió pro!</string>
-    <string name="upgrade_extra_features">Funcions addicionals</string>
     <string name="Profile">Perfil</string>
     <string name="pref_profile_name">Nom del perfil</string>
     <string name="profile_already_exists">El perfil ja existeix</string>

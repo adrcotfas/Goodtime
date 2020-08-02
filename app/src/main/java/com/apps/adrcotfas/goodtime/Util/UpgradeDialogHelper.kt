@@ -10,17 +10,16 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
+package com.apps.adrcotfas.goodtime.Util
 
-package com.apps.adrcotfas.goodtime.Util;
+import androidx.fragment.app.FragmentManager
+import com.apps.adrcotfas.goodtime.upgrade.UpgradeDialog.Companion.showNewInstance
 
-import android.content.Context;
-import android.content.Intent;
-
-import com.apps.adrcotfas.goodtime.Upgrade.UpgradeActivity;
-
-public class UpgradeActivityHelper {
-    public static void launchUpgradeActivity(Context ctx) {
-        Intent intent = new Intent(ctx, UpgradeActivity.class);
-        ctx.startActivity(intent);
+class UpgradeDialogHelper {
+    companion object {
+        @JvmStatic
+        fun launchUpgradeDialog(fragmentManager: FragmentManager) {
+            showNewInstance(fragmentManager)
+        }
     }
 }

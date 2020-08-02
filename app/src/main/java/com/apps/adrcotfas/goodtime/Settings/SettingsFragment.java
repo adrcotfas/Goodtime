@@ -34,6 +34,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Util.UpgradeDialogHelper;
 import com.apps.adrcotfas.goodtime.Util.StringUtils;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.Util.TimePickerDialogFixedNougatSpinner;
@@ -55,7 +56,6 @@ import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.DISABLE_SOUN
 
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.DND_MODE;
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.VIBRATION_TYPE;
-import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements ActivityCompat.OnRequestPermissionsResultCallback, TimePickerDialog.OnTimeSetListener {
 
@@ -152,7 +152,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
                 dialog.setTargetFragment(this, 0);
                 if (preference.getKey().equals(PreferenceHelper.RINGTONE_BREAK_FINISHED)
                         && !PreferenceHelper.isPro()) {
-                    launchUpgradeActivity(getActivity());
+                    UpgradeDialogHelper.launchUpgradeDialog(requireActivity().getSupportFragmentManager());
                 }
                 else {
                     dialog.show(getParentFragmentManager(), null);
@@ -198,7 +198,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
 
         final CheckBoxPreference insistentRingPref = findPreference(PreferenceHelper.INSISTENT_RINGTONE);
         insistentRingPref.setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
-            launchUpgradeActivity(getActivity());
+            UpgradeDialogHelper.launchUpgradeDialog(requireActivity().getSupportFragmentManager());
             insistentRingPref.setChecked(false);
             return true;
         });
@@ -239,7 +239,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     private void setupScreensaver() {
         final CheckBoxPreference screensaverPref = SettingsFragment.this.findPreference(PreferenceHelper.ENABLE_SCREENSAVER_MODE);
         findPreference(PreferenceHelper.ENABLE_SCREENSAVER_MODE).setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
-            launchUpgradeActivity(getActivity());
+            UpgradeDialogHelper.launchUpgradeDialog(requireActivity().getSupportFragmentManager());
             screensaverPref.setChecked(false);
             return true;
         });
@@ -257,7 +257,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     private void setupTheme() {
         SwitchPreferenceCompat prefAmoled = findPreference(PreferenceHelper.AMOLED);
         prefAmoled.setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
-            launchUpgradeActivity(getActivity());
+            UpgradeDialogHelper.launchUpgradeDialog(requireActivity().getSupportFragmentManager());
             prefAmoled.setChecked(true);
             return true;
         });
@@ -302,7 +302,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     private void setupFlashingNotificationPref() {
         SwitchPreferenceCompat pref = findPreference(PreferenceHelper.ENABLE_FLASHING_NOTIFICATION);
         pref.setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
-            launchUpgradeActivity(getActivity());
+            UpgradeDialogHelper.launchUpgradeDialog(requireActivity().getSupportFragmentManager());
             pref.setChecked(false);
             return true;
         });
@@ -311,7 +311,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     private void setupOneMinuteLeftNotificationPref() {
         SwitchPreferenceCompat pref = findPreference(PreferenceHelper.ENABLE_ONE_MINUTE_BEFORE_NOTIFICATION);
         pref.setOnPreferenceClickListener(PreferenceHelper.isPro() ? null : preference -> {
-            launchUpgradeActivity(getActivity());
+            UpgradeDialogHelper.launchUpgradeDialog(requireActivity().getSupportFragmentManager());
             pref.setChecked(false);
             return true;
         });

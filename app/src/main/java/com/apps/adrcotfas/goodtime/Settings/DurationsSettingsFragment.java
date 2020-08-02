@@ -13,12 +13,11 @@ import androidx.preference.SwitchPreferenceCompat;
 
 import com.apps.adrcotfas.goodtime.Profile;
 import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Util.UpgradeDialogHelper;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
 public class DurationsSettingsFragment extends PreferenceFragmentCompat
         implements ProfilePreference.ProfileChangeListener, ProperSeekBarPreferenceDialog.Listener {
@@ -164,7 +163,7 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat
                 dialog.setTargetFragment(this, 0);
                 dialog.show(getParentFragmentManager(), null);
             } else {
-                launchUpgradeActivity(getActivity());
+                UpgradeDialogHelper.launchUpgradeDialog(requireActivity().getSupportFragmentManager());
             }
         } else if (preference.getKey().equals(PreferenceHelper.PROFILE)) {
             ProfileSelectDialog dialog =

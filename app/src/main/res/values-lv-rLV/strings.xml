@@ -135,8 +135,6 @@
     <string name="update_pro_10">Atsevišķa paziņojuma skaņu darbam un pauze</string>
     <string name="update_pro_11">Neatlaidīgs paziņojumus</string>
     <string name="update_pro_13">Visus turpmākos līdzekļus, bez maksas</string>
-    <string name="upgrade_enjoy">Izbaudiet pro versija!</string>
-    <string name="upgrade_extra_features">Papildu funkcijas</string>
     <string name="Profile">Profils</string>
     <string name="pref_profile_name">Profila vārds</string>
     <string name="profile_already_exists">Profils jau pastāv</string>

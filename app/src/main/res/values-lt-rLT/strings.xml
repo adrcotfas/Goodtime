@@ -135,8 +135,6 @@
     <string name="update_pro_10">Atskiras pranešimo garsas darbui ir pertraukai</string>
     <string name="update_pro_11">Neteisingi pranešimai</string>
     <string name="update_pro_13">Visos būsimos funkcijos nemokamai</string>
-    <string name="upgrade_enjoy">Mėgaukitės pro versija!</string>
-    <string name="upgrade_extra_features">Papildomos funkcijos</string>
     <string name="Profile">Profilis</string>
     <string name="pref_profile_name">Profilio pavadinimas</string>
     <string name="profile_already_exists">Profilis jau yra</string>

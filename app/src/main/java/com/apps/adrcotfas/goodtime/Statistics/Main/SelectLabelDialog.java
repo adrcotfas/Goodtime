@@ -32,6 +32,7 @@ import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
 import com.apps.adrcotfas.goodtime.Profile;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Settings.ProfilesViewModel;
+import com.apps.adrcotfas.goodtime.Util.UpgradeDialogHelper;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.databinding.DialogSelectLabelBinding;
 import com.google.android.material.chip.Chip;
@@ -50,7 +51,6 @@ import androidx.lifecycle.ViewModelProvider;
 import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceTotalLabel;
 import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceUnlabeledLabel;
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_ALL_LABELS;
-import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
 
 public class SelectLabelDialog extends DialogFragment {
 
@@ -104,7 +104,7 @@ public class SelectLabelDialog extends DialogFragment {
                 Intent intent = new Intent(getActivity(), AddEditLabelActivity.class);
                 startActivity(intent);
             } else {
-                launchUpgradeActivity(getActivity());
+                UpgradeDialogHelper.launchUpgradeDialog(requireActivity().getSupportFragmentManager());
             }
 
             if (mAlertDialog != null) {

@@ -30,6 +30,7 @@ import com.apps.adrcotfas.goodtime.BuildConfig;
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Settings.SettingsActivity;
 import com.apps.adrcotfas.goodtime.Statistics.Main.StatisticsActivity;
+import com.apps.adrcotfas.goodtime.Util.UpgradeDialogHelper;
 import com.apps.adrcotfas.goodtime.databinding.DrawerMainBinding;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -42,14 +43,13 @@ import androidx.core.widget.NestedScrollView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
 
-import static com.apps.adrcotfas.goodtime.Util.UpgradeActivityHelper.launchUpgradeActivity;
-
 public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
 
     private NavigationView navigationView;
     private NestedScrollView layout;
-    public BottomNavigationDrawerFragment() {
 
+    public BottomNavigationDrawerFragment() {
+        // required
     }
 
     @Nullable
@@ -63,7 +63,7 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
             binding.upgrade.setVisibility(View.GONE);
         } else {
             binding.upgrade.setOnClickListener(v -> {
-                launchUpgradeActivity(getActivity());
+                UpgradeDialogHelper.launchUpgradeDialog(requireActivity().getSupportFragmentManager());
                 if (getDialog() != null) {
                     getDialog().dismiss();
                 }
@@ -112,7 +112,7 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
                         Intent intent = new Intent(getActivity(), AddEditLabelActivity.class);
                         startActivity(intent);
                     } else {
-                        launchUpgradeActivity(getContext());
+                        UpgradeDialogHelper.launchUpgradeDialog(requireActivity().getSupportFragmentManager());
                     }
                     break;
                 case R.id.action_settings:
@@ -128,7 +128,7 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                         new BackupFragment().show(fragmentManager, "");
                     } else {
-                        launchUpgradeActivity(getContext());
+                        UpgradeDialogHelper.launchUpgradeDialog(requireActivity().getSupportFragmentManager());
                     }
                     break;
                 case R.id.action_about:

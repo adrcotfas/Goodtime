@@ -135,8 +135,6 @@
     <string name="update_pro_10">แยกเสียงการแจ้งเตือนสำหรับการทำงานและทำลาย</string>
     <string name="update_pro_11">การแจ้งเตือนที่ยืนหยัด</string>
     <string name="update_pro_13">คุณสมบัติในอนาคตทั้งหมดฟรี</string>
-    <string name="upgrade_enjoy">เพลิดเพลินไปกับรุ่นโปร!</string>
-    <string name="upgrade_extra_features">คุณสมบัติพิเศษ</string>
     <string name="Profile">ข้อมูลส่วนตัว</string>
     <string name="pref_profile_name">ชื่อโปรไฟล์</string>
     <string name="profile_already_exists">มีโปรไฟล์อยู่แล้ว</string>

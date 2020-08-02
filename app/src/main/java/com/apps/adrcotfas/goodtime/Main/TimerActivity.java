@@ -51,6 +51,7 @@ import com.apps.adrcotfas.goodtime.Util.Constants;
 import com.apps.adrcotfas.goodtime.Util.IntentWithAction;
 import com.apps.adrcotfas.goodtime.Util.OnSwipeTouchListener;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
+import com.apps.adrcotfas.goodtime.common.BaseActivity;
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -67,7 +68,6 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
@@ -89,7 +89,7 @@ import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.WORK_DURATIO
 
 public class TimerActivity
         extends
-        AppCompatActivity
+        BaseActivity
         implements
         SharedPreferences.OnSharedPreferenceChangeListener,
         SelectLabelDialog.OnLabelSelectedListener, FinishedSessionDialog.Listener {
@@ -100,8 +100,6 @@ public class TimerActivity
     private FinishedSessionDialog mDialogSessionFinished;
     private FullscreenHelper mFullscreenHelper;
     private long mBackPressedAt;
-
-    private BillingHelper mBillingHelper;
 
     private View mBlackCover;
     private View mWhiteCover;
@@ -178,8 +176,6 @@ public class TimerActivity
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(null);
         }
-
-        mBillingHelper = new BillingHelper(this);
 
         // dismiss it at orientation change
         DialogFragment selectLabelDialog = ((DialogFragment)getSupportFragmentManager().findFragmentByTag(DIALOG_SELECT_LABEL_TAG));
@@ -356,8 +352,6 @@ public class TimerActivity
         toggleKeepScreenOn(PreferenceHelper.isScreenOnEnabled());
         toggleFullscreenMode();
 
-        mBillingHelper.refresh();
-
         showTutorialSnackbars();
         setTimeLabelColor();
 
@@ -377,19 +371,10 @@ public class TimerActivity
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        mBillingHelper.refresh();
-    }
-
-    @Override
     protected void onDestroy() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.unregisterOnSharedPreferenceChangeListener(this);
         EventBus.getDefault().unregister(this);
-
-        mBillingHelper.release();
-
         super.onDestroy();
     }
 
@@ -754,13 +739,6 @@ public class TimerActivity
             int newX = r.nextInt(boundX) + margin;
             int newY = r.nextInt(boundY) + margin;
             mTimeLabel.animate().x(newX).y(newY).setDuration(100);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!mBillingHelper.handleActivityResult(requestCode, resultCode, data)){
-            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 

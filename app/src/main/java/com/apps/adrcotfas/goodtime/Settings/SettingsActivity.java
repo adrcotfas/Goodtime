@@ -18,17 +18,16 @@ import android.view.MenuItem;
 
 import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
+import com.apps.adrcotfas.goodtime.common.BaseActivity;
 import com.apps.adrcotfas.goodtime.databinding.GenericMainBinding;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentTransaction;
 
 import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
 
-public class SettingsActivity extends AppCompatActivity {
-
+public class SettingsActivity extends BaseActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,7 +37,6 @@ public class SettingsActivity extends AppCompatActivity {
         GenericMainBinding binding = DataBindingUtil.setContentView(this, R.layout.generic_main);
         binding.layout.setAlpha(0.f);
         binding.layout.animate().alpha(1.f).setDuration(100);
-
 
         setSupportActionBar(binding.toolbarWrapper.toolbar);
 

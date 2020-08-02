@@ -135,8 +135,6 @@
     <string name="update_pro_10">Oddzielny dźwięk powiadomienia dla pracy i przerwy</string>
     <string name="update_pro_11">Natarczywe powiadomienia</string>
     <string name="update_pro_13">Wszystkie przyszłe funkcje za darmo</string>
-    <string name="upgrade_enjoy">Skorzystaj z wersji pro!</string>
-    <string name="upgrade_extra_features">Dodatkowe funkcje</string>
     <string name="Profile">Profil</string>
     <string name="pref_profile_name">Nazwa profilu</string>
     <string name="profile_already_exists">Profil o tej nazwie już istnieje</string>
