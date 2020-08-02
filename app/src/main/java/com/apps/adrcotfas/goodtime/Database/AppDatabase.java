@@ -26,7 +26,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Session.class, Label.class, Profile.class}, version = 4, exportSchema = false)
+@Database(entities = {Session.class, Label.class, Profile.class}, version = 5, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final Object LOCK = new Object();
@@ -76,6 +76,13 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    private static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            // do nothing here; it seems to be needed by the switch to kapt room compiler
+        }
+    };
+
     public static AppDatabase getDatabase(Context context) {
         if (INSTANCE == null || !INSTANCE.isOpen()) {
             synchronized (LOCK) {
@@ -97,7 +104,7 @@ public abstract class AppDatabase extends RoomDatabase {
         INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                 AppDatabase.class, "goodtime-db")
                 .setJournalMode(JournalMode.TRUNCATE)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                 .build();
     }
 
