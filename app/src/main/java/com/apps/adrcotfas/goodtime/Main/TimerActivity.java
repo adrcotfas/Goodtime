@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Adrian Cotfas
+ * Copyright 2016-2020 Adrian Cotfas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy of the License at
@@ -18,9 +18,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -86,6 +88,7 @@ import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.AMOLED;
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.ENABLE_SCREENSAVER_MODE;
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.ENABLE_SCREEN_ON;
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.WORK_DURATION;
+import static com.apps.adrcotfas.goodtime.Util.BatteryUtils.isIgnoringBatteryOptimizations;
 
 public class TimerActivity
         extends
@@ -382,6 +385,14 @@ public class TimerActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_main, menu);
+
+        MenuItem batteryButton = menu.findItem(R.id.action_battery_optimization);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isIgnoringBatteryOptimizations(this)) {
+            batteryButton.setVisible(true);
+        } else {
+            batteryButton.setVisible(false);
+        }
+
         mLabelButton = menu.findItem(R.id.action_current_label);
         mLabelButton.getIcon().setColorFilter(
                 ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_ALL_LABELS), PorterDuff.Mode.SRC_ATOP);
@@ -397,6 +408,9 @@ public class TimerActivity
             case android.R.id.home:
                 BottomNavigationDrawerFragment bottomNavigationDrawerFragment = new BottomNavigationDrawerFragment();
                 bottomNavigationDrawerFragment.show(getSupportFragmentManager(), bottomNavigationDrawerFragment.getTag());
+                break;
+            case R.id.action_battery_optimization:
+                showBatteryOptimizationDialog();
                 break;
             case R.id.action_current_label:
                 showEditLabelDialog();
@@ -415,6 +429,13 @@ public class TimerActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showBatteryOptimizationDialog() {
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+        intent.setData(Uri.parse("package:" + this.getPackageName()));
+        startActivity(intent);
     }
 
     private void setupEvents() {

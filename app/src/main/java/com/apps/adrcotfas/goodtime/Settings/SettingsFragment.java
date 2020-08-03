@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.provider.Settings;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -56,6 +55,7 @@ import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.DISABLE_SOUN
 
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.DND_MODE;
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.VIBRATION_TYPE;
+import static com.apps.adrcotfas.goodtime.Util.BatteryUtils.isIgnoringBatteryOptimizations;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements ActivityCompat.OnRequestPermissionsResultCallback, TimePickerDialog.OnTimeSetListener {
 
@@ -125,7 +125,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         setupOneMinuteLeftNotificationPref();
 
         final Preference disableBatteryOptimizationPref = findPreference(PreferenceHelper.DISABLE_BATTERY_OPTIMIZATION);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isIgnoringBatteryOptimizations()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isIgnoringBatteryOptimizations(requireContext())) {
             disableBatteryOptimizationPref.setVisible(true);
             disableBatteryOptimizationPref.setOnPreferenceClickListener(preference -> {
 
@@ -337,14 +337,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
                 return false;
             });
         }
-    }
-
-    private boolean isIgnoringBatteryOptimizations(){
-        PowerManager pwrm = (PowerManager) requireActivity().getSystemService(Context.POWER_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return pwrm.isIgnoringBatteryOptimizations(requireActivity().getPackageName());
-        }
-        return true;
     }
 
     private void requestNotificationPolicyAccess() {
