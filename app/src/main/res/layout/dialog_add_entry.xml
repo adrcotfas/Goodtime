@@ -28,6 +28,8 @@
             android:drawableLeft="@drawable/ic_duration"
             android:drawableStart="@drawable/ic_duration"
             android:inputType="numberDecimal"
+            android:digits="0123456789"
+            android:singleLine="true"
             android:maxLength="3"
             android:imeOptions="actionDone"
             android:hint="@string/add_duration_minutes"
