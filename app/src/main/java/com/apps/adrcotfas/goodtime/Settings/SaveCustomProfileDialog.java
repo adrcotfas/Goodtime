@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.ListPreference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 
@@ -49,7 +49,7 @@ public class SaveCustomProfileDialog extends PreferenceDialogFragmentCompat {
     @Override
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
-        mProfilesViewModel = ViewModelProviders.of(this).get(ProfilesViewModel.class);
+        mProfilesViewModel = new ViewModelProvider(this).get(ProfilesViewModel.class);
         ListPreference profilePreference = (ListPreference) getPreference();
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -60,14 +60,15 @@ public class SaveCustomProfileDialog extends PreferenceDialogFragmentCompat {
         builder.setTitle(mTitle);
         builder.setPositiveButton(android.R.string.ok, (di, i) -> {
             final EditText input = dialogView.findViewById(R.id.value);
-            final String name = input.getText().toString();
+            String name = input.getText().toString();
 
             if (mProfiles.contains(name)) {
                 Toast.makeText(getContext(), R.string.profile_already_exists, Toast.LENGTH_SHORT).show();
                 return;
             }
+            name = name.trim();
 
-            if (!TextUtils.isEmpty(name)) {
+            if (TextUtils.isEmpty(name)) {
                 mProfileToAdd.name = name;
                 mProfilesViewModel.addProfile(mProfileToAdd);
             }

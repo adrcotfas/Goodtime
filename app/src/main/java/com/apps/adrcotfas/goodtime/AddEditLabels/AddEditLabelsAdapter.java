@@ -179,7 +179,7 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
                         : v -> requestFocusEditText(text, mContext.get()));
 
                 if (!hasFocus) {
-                    String newLabelName = text.getText().toString();
+                    String newLabelName = text.getText().toString().trim();
                     // save a title when losing focus if any changes were made
                     if (labelIsGoodToAdd(mContext.get(), mLabels, newLabelName, crtLabel.title)) {
                         mCallback.onEditLabel(crtLabel.title, newLabelName);
