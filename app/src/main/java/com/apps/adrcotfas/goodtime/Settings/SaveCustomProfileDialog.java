@@ -68,7 +68,7 @@ public class SaveCustomProfileDialog extends PreferenceDialogFragmentCompat {
             }
             name = name.trim();
 
-            if (TextUtils.isEmpty(name)) {
+            if (!TextUtils.isEmpty(name)) {
                 mProfileToAdd.name = name;
                 mProfilesViewModel.addProfile(mProfileToAdd);
             }
