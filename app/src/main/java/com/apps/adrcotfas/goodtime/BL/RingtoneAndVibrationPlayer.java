@@ -72,7 +72,7 @@ class RingtoneAndVibrationPlayer extends ContextWrapper{
             final int vibrationType = PreferenceHelper.getVibrationType();
             if (vibrationType > 0) {
                 mVibrator.vibrate(VibrationPatterns.LIST[vibrationType],
-                        PreferenceHelper.isRingtoneInsistent() ? 2 : -1);
+                        insistent ? 2 : -1);
             }
 
         } catch (SecurityException | IOException e) {
