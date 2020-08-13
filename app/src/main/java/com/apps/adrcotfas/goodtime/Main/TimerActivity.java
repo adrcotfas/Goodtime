@@ -364,7 +364,7 @@ public class TimerActivity
         // comes together with a "bring activity on top"
         if (PreferenceHelper.isFlashingNotificationEnabled() && mViewModel.enableFlashingNotification) {
             mWhiteCover.setVisibility(View.VISIBLE);
-            if ((PreferenceHelper.isAutoStartBreak() && mCurrentSessionType == SessionType.BREAK)
+            if ((PreferenceHelper.isAutoStartBreak() && (mCurrentSessionType == SessionType.BREAK || mCurrentSessionType == SessionType.LONG_BREAK))
                     || (PreferenceHelper.isAutoStartWork() && mCurrentSessionType == SessionType.WORK)) {
                 startFlashingNotificationShort();
             } else {
