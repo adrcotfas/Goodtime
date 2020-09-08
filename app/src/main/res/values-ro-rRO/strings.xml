@@ -2,6 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="ro" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"Durata pauzei"</string>
     <string name="pref_disable_sound_and_vibration">"Dezactivați sunetul și vibrațiile"</string>
+    <string name="pref_dnd">"Do not disturb mode"</string>
     <string name="pref_disable_wifi">"Dezactivează Wi-Fi"</string>
     <string name="pref_fullscreen">"Modul fullscreen"</string>
     <string name="pref_header_notifications">"Notificări"</string>
@@ -32,6 +33,8 @@
     <string name="pref_auto_start_break_summary">Începe pauza după o sesiune de lucru fără interacțiunea utilizatorului</string>
     <string name="pref_auto_start_work_summary">Începe sesiunea de lucru după pauză fără interacțiunea utilizatorului</string>
     <string name="pref_disable_battery_optimization">Notificări exacte</string>
+    <string name="pref_flashing_notification">Flash the screen</string>
+    <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
     <string name="pref_disable_battery_optimization_summary">Dezactivați optimizarea bateriei pentru această aplicație</string>
     <string name="pref_screen_saver">Modul screensaver</string>
     <string name="pref_screen_saver_summary">Mută cronometrul în timp ce ecranul este pornit</string>
@@ -134,7 +137,9 @@
     <string name="update_pro_9">Teme</string>
     <string name="update_pro_10">Notificări separate pentru sesiunile de lucru și pauză</string>
     <string name="update_pro_11">Notificări insistente</string>
+    <string name="update_pro_12">One time payment</string>
     <string name="update_pro_13">Toate funcționalitățile viitoare gratuite</string>
+    <string name="update_pro_message">Upgrade to support open-source and ad-free software and enjoy some awesome features!</string>
     <string name="Profile">Profil</string>
     <string name="pref_profile_name">Nume profil</string>
     <string name="profile_already_exists">Profilul există deja</string>
@@ -155,4 +160,8 @@
     <string name="unlabeled">unlabeled</string>
     <string name="pref_show_label">View current label</string>
     <string name="pref_show_label_summary">Shows the current label on the main screen</string>
+    <string name="pref_one_minute_left_notification">Pre-notification</string>
+    <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
+    <string name="donate_message">Donate to support open-source and ad-free software!</string>
+    <string name="donate">Donate</string>
 </resources>

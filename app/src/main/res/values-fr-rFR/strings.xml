@@ -2,6 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="fr" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"Durée de pause"</string>
     <string name="pref_disable_sound_and_vibration">"Désactiver les sons et vibrations"</string>
+    <string name="pref_dnd">"Mode ne pas déranger"</string>
     <string name="pref_disable_wifi">"Désactiver le Wi-Fi"</string>
     <string name="pref_fullscreen">"Mode plein écran"</string>
     <string name="pref_header_notifications">"Notifications"</string>
@@ -32,6 +33,8 @@
     <string name="pref_auto_start_break_summary">Démarrer la pause après une session de travail sans interaction de l’utilisateur</string>
     <string name="pref_auto_start_work_summary">Démarrer la session de travail après une pause sans interaction de l’utilisateur</string>
     <string name="pref_disable_battery_optimization">Notifications précises</string>
+    <string name="pref_flashing_notification">Faire clignoter l\'écran</string>
+    <string name="pref_flashing_notification_summary">Une notification visuelle pour les environnements silencieux</string>
     <string name="pref_disable_battery_optimization_summary">Désactiver l\'optimisation de la batterie pour cette application</string>
     <string name="pref_screen_saver">Mode économiseur d’écran</string>
     <string name="pref_screen_saver_summary">Déplace la minuterie lorsque l’écran est allumé</string>
@@ -119,7 +122,7 @@
     <string name="statistics_this_month">Ce mois-ci</string>
     <string name="statistics_total">Total</string>
     <string name="statistics_productive_time">Temps productif</string>
-    <string name="statistics_pie_chart">Work distribution</string>
+    <string name="statistics_pie_chart">Répartition du travail</string>
     <string name="spinner_stats_duration">Temps</string>
     <string name="spinner_stats_nr_of_sessions">Sessions</string>
     <string name="spinner_range_hours">Heures</string>
@@ -134,7 +137,9 @@
     <string name="update_pro_9">Thèmes</string>
     <string name="update_pro_10">Différencier le son des notifications pour le travail et les pauses</string>
     <string name="update_pro_11">Notification insistante</string>
+    <string name="update_pro_12">Paiement unique</string>
     <string name="update_pro_13">Toutes les futures fonctionnalités incluses gratuitement</string>
+    <string name="update_pro_message">Mettre à niveau pour soutenir ce logiciel open-source et sans publicité et profiter de fonctionnalités géniales !</string>
     <string name="Profile">Profil</string>
     <string name="pref_profile_name">Nom de profil</string>
     <string name="profile_already_exists">Ce profil a déjà été créé</string>
@@ -152,7 +157,11 @@
     <string name="action_reset_counter_title">Réinitialiser ?</string>
     <string name="tutorial_title">Tutorial</string>
     <string name="other_apps">Autres applications</string>
-    <string name="unlabeled">unlabeled</string>
-    <string name="pref_show_label">View current label</string>
-    <string name="pref_show_label_summary">Shows the current label on the main screen</string>
+    <string name="unlabeled">sans étiquette</string>
+    <string name="pref_show_label">Afficher l\'étiquette actuelle</string>
+    <string name="pref_show_label_summary">Affiche l\'étiquette actuelle sur l\'écran principal</string>
+    <string name="pref_one_minute_left_notification">Pré-notification</string>
+    <string name="pref_one_minute_left_notification_summary">Notifier une minute avant la fin d\'une session de travail</string>
+    <string name="donate_message">Faire un don pour soutenir ce logiciel open-source et sans publicité !</string>
+    <string name="donate">Faire un don</string>
 </resources>

@@ -2,6 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="hr" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"Trajanje pauze"</string>
     <string name="pref_disable_sound_and_vibration">"Isključi zvuk i vibracije"</string>
+    <string name="pref_dnd">"Do not disturb mode"</string>
     <string name="pref_disable_wifi">"Isključi Wi-Fi"</string>
     <string name="pref_fullscreen">"Preko cijelog ekrana"</string>
     <string name="pref_header_notifications">"Obavijesti"</string>
@@ -32,6 +33,8 @@
     <string name="pref_auto_start_break_summary">Počnite pauzu nakon radne sesije bez interakcije korisnika</string>
     <string name="pref_auto_start_work_summary">Pokrenite radnu sesiju nakon prekida bez interakcije korisnika</string>
     <string name="pref_disable_battery_optimization">Točne obavijesti</string>
+    <string name="pref_flashing_notification">Flash the screen</string>
+    <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
     <string name="pref_disable_battery_optimization_summary">Onemogući optimizaciju baterije za ovu aplikaciju</string>
     <string name="pref_screen_saver">Screensaver način</string>
     <string name="pref_screen_saver_summary">Pomiče tajmer dok je zaslon uključen</string>
@@ -134,7 +137,9 @@
     <string name="update_pro_9">Teme</string>
     <string name="update_pro_10">Odvojeni zvuk obavijesti za posao i prekid</string>
     <string name="update_pro_11">Stalna obavijesti</string>
+    <string name="update_pro_12">One time payment</string>
     <string name="update_pro_13">Sve buduće značajke besplatno</string>
+    <string name="update_pro_message">Upgrade to support open-source and ad-free software and enjoy some awesome features!</string>
     <string name="Profile">Profil</string>
     <string name="pref_profile_name">Naziv profila</string>
     <string name="profile_already_exists">Profil već postoji</string>
@@ -155,4 +160,8 @@
     <string name="unlabeled">unlabeled</string>
     <string name="pref_show_label">View current label</string>
     <string name="pref_show_label_summary">Shows the current label on the main screen</string>
+    <string name="pref_one_minute_left_notification">Pre-notification</string>
+    <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
+    <string name="donate_message">Donate to support open-source and ad-free software!</string>
+    <string name="donate">Donate</string>
 </resources>

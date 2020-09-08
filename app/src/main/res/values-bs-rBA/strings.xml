@@ -2,13 +2,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="bs" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"Break duration"</string>
     <string name="pref_disable_sound_and_vibration">"Disable sound and vibration"</string>
+    <string name="pref_dnd">"Do not disturb mode"</string>
     <string name="pref_disable_wifi">"Disable Wi-Fi"</string>
     <string name="pref_fullscreen">"Fullscreen mode"</string>
     <string name="pref_header_notifications">"Notifications"</string>
     <string name="pref_header_general">"General"</string>
     <string name="pref_keep_screen_on">"Keep the screen on"</string>
     <string name="pref_long_break_duration">"Long break duration"</string>
-    <string name="pref_ringtone">"Finished work notification"</string>
+    <string name="pref_ringtone">"Finished work notification sound"</string>
     <string name="pref_ringtone_summary">"Set the notification sound"</string>
     <string name="pref_work_duration">"Work session duration"</string>
     <string name="pref_sessions_before_long_break">"Sessions before a long break"</string>
@@ -26,12 +27,14 @@
     <string name="pref_priority_alarm_summary">"The notification sound behaves like an alarm"</string>
     <string name="pref_ringtone_insistent">"Insistent notification"</string>
     <string name="pref_ringtone_insistent_summary">"Repeat the notification until it's cancelled"</string>
-    <string name="pref_ringtone_break">Finished break notification</string>
+    <string name="pref_ringtone_break">Finished break notification sound</string>
     <string name="pref_auto_start_break">"Auto start break"</string>
     <string name="pref_auto_start_work">"Auto start work"</string>
     <string name="pref_auto_start_break_summary">Start the break after a work session without user interaction</string>
     <string name="pref_auto_start_work_summary">Start the work session after a break without user interaction</string>
     <string name="pref_disable_battery_optimization">Accurate notifications</string>
+    <string name="pref_flashing_notification">Flash the screen</string>
+    <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
     <string name="pref_disable_battery_optimization_summary">Disable battery optimization for this app</string>
     <string name="pref_screen_saver">Screensaver mode</string>
     <string name="pref_screen_saver_summary">Moves the timer while the screen is on</string>
@@ -126,7 +129,7 @@
     <string name="spinner_range_days">Days</string>
     <string name="spinner_range_weeks">Weeks</string>
     <string name="spinner_range_months">Months</string>
-    <string name="update_pro_1">Colored labels</string>
+    <string name="update_pro_1">Colored labels to organize your work</string>
     <string name="update_pro_4">Manually add sessions</string>
     <string name="update_pro_5">Edit completed sessions</string>
     <string name="update_pro_6">Backup export and import</string>
@@ -134,11 +137,13 @@
     <string name="update_pro_9">Themes</string>
     <string name="update_pro_10">Separate notification sound for work and break</string>
     <string name="update_pro_11">Insistent notifications</string>
+    <string name="update_pro_12">One time payment</string>
     <string name="update_pro_13">All future features for free</string>
+    <string name="update_pro_message">Upgrade to support open-source and ad-free software and enjoy some awesome features!</string>
     <string name="Profile">Profile</string>
     <string name="pref_profile_name">Profile name</string>
     <string name="profile_already_exists">Profile already exists</string>
-    <string name="pref_save_custom_profile">Save custom profile</string>
+    <string name="pref_save_custom_profile">Save custom time profile</string>
     <string name="pref_timer_duration">Timer duration</string>
     <string name="timer_durations">Set the duration for work and break sessions</string>
     <string name="pref_timer_style">Timer style</string>
@@ -155,4 +160,8 @@
     <string name="unlabeled">unlabeled</string>
     <string name="pref_show_label">View current label</string>
     <string name="pref_show_label_summary">Shows the current label on the main screen</string>
+    <string name="pref_one_minute_left_notification">Pre-notification</string>
+    <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
+    <string name="donate_message">Donate to support open-source and ad-free software!</string>
+    <string name="donate">Donate</string>
 </resources>

@@ -2,6 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="hu" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"Szünet időtartama"</string>
     <string name="pref_disable_sound_and_vibration">"Hang és rezgés letiltása"</string>
+    <string name="pref_dnd">"Do not disturb mode"</string>
     <string name="pref_disable_wifi">"Wi-Fi kikapcsolása"</string>
     <string name="pref_fullscreen">"Teljes képernyős mód"</string>
     <string name="pref_header_notifications">"Értesítések"</string>
@@ -32,6 +33,8 @@
     <string name="pref_auto_start_break_summary">A pihenőidő elindul a munka időzítőjének lejártakor, felhasználói beavatkozás nélkül</string>
     <string name="pref_auto_start_work_summary">A munkaidő számláló elindul a szünet végeztével, felhasználói beavatkozás nélkül</string>
     <string name="pref_disable_battery_optimization">Pontos értesítések</string>
+    <string name="pref_flashing_notification">Flash the screen</string>
+    <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
     <string name="pref_disable_battery_optimization_summary">Akkumulátor-optimalizálás kikapcsolása</string>
     <string name="pref_screen_saver">Képernyővédő mód</string>
     <string name="pref_screen_saver_summary">Az időzítő mozgatása a képernyő bekapcsolt állapotában</string>
@@ -134,7 +137,9 @@
     <string name="update_pro_9">Témák</string>
     <string name="update_pro_10">Különböző értesítés használata a munka- és pihenőidőhöz</string>
     <string name="update_pro_11">Kitartó értesítés</string>
+    <string name="update_pro_12">One time payment</string>
     <string name="update_pro_13">Minden jövőbeli szolgáltatás ingyenes</string>
+    <string name="update_pro_message">Upgrade to support open-source and ad-free software and enjoy some awesome features!</string>
     <string name="Profile">Profil</string>
     <string name="pref_profile_name">Profil neve</string>
     <string name="profile_already_exists">A profil már létezik</string>
@@ -155,4 +160,8 @@
     <string name="unlabeled">unlabeled</string>
     <string name="pref_show_label">View current label</string>
     <string name="pref_show_label_summary">Shows the current label on the main screen</string>
+    <string name="pref_one_minute_left_notification">Pre-notification</string>
+    <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
+    <string name="donate_message">Donate to support open-source and ad-free software!</string>
+    <string name="donate">Donate</string>
 </resources>

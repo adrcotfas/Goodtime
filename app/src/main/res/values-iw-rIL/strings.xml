@@ -2,6 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="he" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"משך הפסקה"</string>
     <string name="pref_disable_sound_and_vibration">"השבת קול ורטט"</string>
+    <string name="pref_dnd">"Do not disturb mode"</string>
     <string name="pref_disable_wifi">"השבת Wi-Fi"</string>
     <string name="pref_fullscreen">"מצב מסך מלא"</string>
     <string name="pref_header_notifications">"התראות"</string>
@@ -32,6 +33,8 @@
     <string name="pref_auto_start_break_summary">התחל את ההפסקה לאחר הפעלת עבודה ללא אינטראקציה עם המשתמש</string>
     <string name="pref_auto_start_work_summary">התחל את העבודה לאחר הפסקה ללא אינטראקציה עם המשתמש</string>
     <string name="pref_disable_battery_optimization">הודעות מדויקות</string>
+    <string name="pref_flashing_notification">Flash the screen</string>
+    <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
     <string name="pref_disable_battery_optimization_summary">השבת אופטימיזציה של הסוללה עבור אפליקציה זו</string>
     <string name="pref_screen_saver">מצב שומר מסך</string>
     <string name="pref_screen_saver_summary">מזיז את הטיימר כשהמסך פועל</string>
@@ -134,7 +137,9 @@
     <string name="update_pro_9">ערכות נושא</string>
     <string name="update_pro_10">להפריד צליל הדיווח לעבודה ולשבור</string>
     <string name="update_pro_11">הודעות התעקש</string>
+    <string name="update_pro_12">One time payment</string>
     <string name="update_pro_13">כל העתיד כולל ללא תשלום</string>
+    <string name="update_pro_message">Upgrade to support open-source and ad-free software and enjoy some awesome features!</string>
     <string name="Profile">פרופיל</string>
     <string name="pref_profile_name">שם הפרופיל</string>
     <string name="profile_already_exists">הפרופיל קיים כבר</string>
@@ -155,4 +160,8 @@
     <string name="unlabeled">unlabeled</string>
     <string name="pref_show_label">View current label</string>
     <string name="pref_show_label_summary">הצג תוית נוכחית במסך הראשי</string>
+    <string name="pref_one_minute_left_notification">Pre-notification</string>
+    <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
+    <string name="donate_message">Donate to support open-source and ad-free software!</string>
+    <string name="donate">Donate</string>
 </resources>

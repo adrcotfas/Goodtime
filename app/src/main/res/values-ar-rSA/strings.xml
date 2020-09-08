@@ -2,6 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="ar" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"مدة الإستراحة"</string>
     <string name="pref_disable_sound_and_vibration">"الغاء الصوت والاهتزاز"</string>
+    <string name="pref_dnd">"Do not disturb mode"</string>
     <string name="pref_disable_wifi">"إلغاء إتصال الواي فاي"</string>
     <string name="pref_fullscreen">"وضع الشاشة الكاملة"</string>
     <string name="pref_header_notifications">"الإشعارات"</string>
@@ -32,6 +33,8 @@
     <string name="pref_auto_start_break_summary">ابدأ الفاصل بعد جلسة عمل دون تدخل المستخدم</string>
     <string name="pref_auto_start_work_summary">ابدأ الفاصل بعد جلسة عمل دون تدخل المستخدم</string>
     <string name="pref_disable_battery_optimization">إعلامات دقيقة</string>
+    <string name="pref_flashing_notification">Flash the screen</string>
+    <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
     <string name="pref_disable_battery_optimization_summary">تعطيل تحسين البطارية لهذا التطبيق</string>
     <string name="pref_screen_saver">وضع شاشة التوقف</string>
     <string name="pref_screen_saver_summary">ينقل المؤقت أثناء تشغيل الشاشة</string>
@@ -134,7 +137,9 @@
     <string name="update_pro_9">سمة البرنامج</string>
     <string name="update_pro_10">صوت إعلام منفصل للعمل وكسر</string>
     <string name="update_pro_11">إخطارات ملحة</string>
+    <string name="update_pro_12">One time payment</string>
     <string name="update_pro_13">كل المميزات مجانية</string>
+    <string name="update_pro_message">Upgrade to support open-source and ad-free software and enjoy some awesome features!</string>
     <string name="Profile">الملفّ الشّخصي</string>
     <string name="pref_profile_name">إسم حسابك</string>
     <string name="profile_already_exists">الملف الشخصي موجود بالفعل</string>
@@ -155,4 +160,8 @@
     <string name="unlabeled">unlabeled</string>
     <string name="pref_show_label">View current label</string>
     <string name="pref_show_label_summary">Shows the current label on the main screen</string>
+    <string name="pref_one_minute_left_notification">Pre-notification</string>
+    <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
+    <string name="donate_message">Donate to support open-source and ad-free software!</string>
+    <string name="donate">Donate</string>
 </resources>

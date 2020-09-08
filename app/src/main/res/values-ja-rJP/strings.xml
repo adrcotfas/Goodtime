@@ -2,6 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="ja" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"休憩の長さ"</string>
     <string name="pref_disable_sound_and_vibration">"通知音と振動を無効にする"</string>
+    <string name="pref_dnd">"Do not disturb mode"</string>
     <string name="pref_disable_wifi">"Wi-Fiを無効にする"</string>
     <string name="pref_fullscreen">"全画面モード"</string>
     <string name="pref_header_notifications">"通知"</string>
@@ -32,6 +33,8 @@
     <string name="pref_auto_start_break_summary">ユーザーの介入なしに作業セッションの後に休憩を開始</string>
     <string name="pref_auto_start_work_summary">ユーザーの操作なしで休憩の後に作業セッションを開始する</string>
     <string name="pref_disable_battery_optimization">正確な通知</string>
+    <string name="pref_flashing_notification">Flash the screen</string>
+    <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
     <string name="pref_disable_battery_optimization_summary">このアプリのバッテリー最適化を無効にする</string>
     <string name="pref_screen_saver">スクリーンセーバーモード</string>
     <string name="pref_screen_saver_summary">画面表示中にタイマーを動かす</string>
@@ -134,7 +137,9 @@
     <string name="update_pro_9">テーマ</string>
     <string name="update_pro_10">仕事用と休憩用に別々の通知音</string>
     <string name="update_pro_11">強固な通知</string>
+    <string name="update_pro_12">One time payment</string>
     <string name="update_pro_13">将来のすべての機能を無料で</string>
+    <string name="update_pro_message">Upgrade to support open-source and ad-free software and enjoy some awesome features!</string>
     <string name="Profile">プロフィール</string>
     <string name="pref_profile_name">プロファイル名</string>
     <string name="profile_already_exists">プロファイルは既に存在します</string>
@@ -155,4 +160,8 @@
     <string name="unlabeled">unlabeled</string>
     <string name="pref_show_label">View current label</string>
     <string name="pref_show_label_summary">Shows the current label on the main screen</string>
+    <string name="pref_one_minute_left_notification">Pre-notification</string>
+    <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
+    <string name="donate_message">Donate to support open-source and ad-free software!</string>
+    <string name="donate">Donate</string>
 </resources>

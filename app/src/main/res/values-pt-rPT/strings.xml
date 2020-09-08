@@ -2,6 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="pt-rPT" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"Duração da pausa"</string>
     <string name="pref_disable_sound_and_vibration">"Desativar som e vibração"</string>
+    <string name="pref_dnd">"Do not disturb mode"</string>
     <string name="pref_disable_wifi">"Desativar Wi-Fi"</string>
     <string name="pref_fullscreen">"Modo ecrã inteiro"</string>
     <string name="pref_header_notifications">"Notificações"</string>
@@ -32,6 +33,8 @@
     <string name="pref_auto_start_break_summary">Começar a pausa depois de uma sessão de trabalho sem interação do utilizador</string>
     <string name="pref_auto_start_work_summary">Começar a sessão de trabalho depois de uma pausa sem interação do utilizador</string>
     <string name="pref_disable_battery_optimization">Notificações precisas</string>
+    <string name="pref_flashing_notification">Flash the screen</string>
+    <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
     <string name="pref_disable_battery_optimization_summary">Desativar otimização de bateria para esta aplicação</string>
     <string name="pref_screen_saver">Modo protetor de ecrã</string>
     <string name="pref_screen_saver_summary">Decrementa o temporizador enquanto o ecrã está ativo</string>
@@ -134,7 +137,9 @@
     <string name="update_pro_9">Temas</string>
     <string name="update_pro_10">Defina sons de notificação de trabalho e pausa diferentes</string>
     <string name="update_pro_11">Notificações persistentes</string>
+    <string name="update_pro_12">One time payment</string>
     <string name="update_pro_13">Todas as funcionalidades futuras gratuitamente</string>
+    <string name="update_pro_message">Upgrade to support open-source and ad-free software and enjoy some awesome features!</string>
     <string name="Profile">Perfil</string>
     <string name="pref_profile_name">Nome do perfil</string>
     <string name="profile_already_exists">Perfil já existe</string>
@@ -155,4 +160,8 @@
     <string name="unlabeled">unlabeled</string>
     <string name="pref_show_label">View current label</string>
     <string name="pref_show_label_summary">Shows the current label on the main screen</string>
+    <string name="pref_one_minute_left_notification">Pre-notification</string>
+    <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
+    <string name="donate_message">Donate to support open-source and ad-free software!</string>
+    <string name="donate">Donate</string>
 </resources>

@@ -2,6 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="gl" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"Duración do descanso"</string>
     <string name="pref_disable_sound_and_vibration">"Desactivar o son e a vibración"</string>
+    <string name="pref_dnd">"Do not disturb mode"</string>
     <string name="pref_disable_wifi">"Desactivar a Wi-Fi"</string>
     <string name="pref_fullscreen">"Modo de pantalla completa"</string>
     <string name="pref_header_notifications">"Notificacións"</string>
@@ -32,6 +33,8 @@
     <string name="pref_auto_start_break_summary">Comece a pausa despois dunha sesión de traballo sen interacción do usuario</string>
     <string name="pref_auto_start_work_summary">Comece a sesión de traballo despois dun descanso sen interacción do usuario</string>
     <string name="pref_disable_battery_optimization">Notificacións precisas</string>
+    <string name="pref_flashing_notification">Flash the screen</string>
+    <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
     <string name="pref_disable_battery_optimization_summary">Desactiva a optimización da batería para esta aplicación</string>
     <string name="pref_screen_saver">Modo protector de pantalla</string>
     <string name="pref_screen_saver_summary">Mover o temporizador mentres a pantalla está acesa</string>
@@ -134,7 +137,9 @@
     <string name="update_pro_9">Estilos</string>
     <string name="update_pro_10">Son de notificación separado para o traballo e pausa</string>
     <string name="update_pro_11">Notificación insistente</string>
+    <string name="update_pro_12">One time payment</string>
     <string name="update_pro_13">Todas as funcións futuras de balde</string>
+    <string name="update_pro_message">Upgrade to support open-source and ad-free software and enjoy some awesome features!</string>
     <string name="Profile">Perfil</string>
     <string name="pref_profile_name">Nome do perfil</string>
     <string name="profile_already_exists">O perfil xa existe</string>
@@ -155,4 +160,8 @@
     <string name="unlabeled">sen etiquetar</string>
     <string name="pref_show_label">Ver etiqueta actual</string>
     <string name="pref_show_label_summary">Amosa esta etiqueta na pantalla principal</string>
+    <string name="pref_one_minute_left_notification">Pre-notification</string>
+    <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
+    <string name="donate_message">Donate to support open-source and ad-free software!</string>
+    <string name="donate">Donate</string>
 </resources>
