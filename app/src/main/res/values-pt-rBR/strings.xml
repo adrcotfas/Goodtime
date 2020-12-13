@@ -35,9 +35,9 @@
     <string name="pref_disable_battery_optimization">Notificações precisas</string>
     <string name="pref_flashing_notification">Piscar a tela</string>
     <string name="pref_flashing_notification_summary">Uma notificação visual para ambientes silenciosos</string>
-    <string name="pref_disable_battery_optimization_summary">Desabilitar a otimização de bateria para este app</string>
+    <string name="pref_disable_battery_optimization_summary">Desabilitar a otimização de bateria para este aplicativo</string>
     <string name="pref_screen_saver">Modo protetor de tela</string>
-    <string name="pref_screen_saver_summary">Move o cronômetro enquanto a tela está ligada</string>
+    <string name="pref_screen_saver_summary">Mover o cronômetro enquanto a tela estiver ligada</string>
     <string name="about">Sobre</string>
     <string name="about_translate">Traduzir este aplicativo</string>
     <string name="about_open_source_licences">Licenças de código aberto</string>
@@ -79,7 +79,7 @@
     <string name="action_continue">Continuar?</string>
     <string name="action_finished_break">Intervalo finalizado</string>
     <string name="action_finished_session">Sessão finalizada</string>
-    <string name="action_press_back_button">Pressione o botão voltar de novo para sair</string>
+    <string name="action_press_back_button">Pressione o botão voltar novamente para sair</string>
     <string name="tutorial_tap">Toque o temporizador para iniciar e pausar</string>
     <string name="tutorial_swipe_left">Deslize para a esquerda ou direita para pular a sessão atual</string>
     <string name="tutorial_swipe_up">Deslize para cima para adicionar mais um minuto</string>
@@ -129,7 +129,7 @@
     <string name="spinner_range_days">Dias</string>
     <string name="spinner_range_weeks">Semanas</string>
     <string name="spinner_range_months">Meses</string>
-    <string name="update_pro_1">Etiquetas coloridas</string>
+    <string name="update_pro_1">Etiquetas coloridas para organizar seu trabalho</string>
     <string name="update_pro_4">Adicionar sessões manualmente</string>
     <string name="update_pro_5">Editar sessões concluídas</string>
     <string name="update_pro_6">Exportação e importação de backups</string>

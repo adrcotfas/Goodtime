@@ -69,9 +69,9 @@
     <string name="label_all">alle</string>
     <string name="action_stop">Stop</string>
     <string name="action_resume">Hervatten</string>
-    <string name="action_pause">Pauzeren</string>
+    <string name="action_pause">Pauseren</string>
     <string name="action_start_work">Begin met werken</string>
-    <string name="action_start_break">Start met pauzeren</string>
+    <string name="action_start_break">Start met pauseren</string>
     <string name="action_skip_break">Pauze overslaan</string>
     <string name="action_progress_work">Werksessie aan de gang</string>
     <string name="action_paused_title">Werksessie is gepauzeerd</string>

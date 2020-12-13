@@ -2,14 +2,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="tr" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"Ara süresi"</string>
     <string name="pref_disable_sound_and_vibration">"Ses ve titreşimi devre dışı bırak"</string>
-    <string name="pref_dnd">"Do not disturb mode"</string>
+    <string name="pref_dnd">"Rahatsız etme"</string>
     <string name="pref_disable_wifi">"Kablosuz bağlantıyı devre dışı bırak"</string>
     <string name="pref_fullscreen">"Tam ekran kipi"</string>
     <string name="pref_header_notifications">"Bildirimler"</string>
     <string name="pref_header_general">"Genel"</string>
     <string name="pref_keep_screen_on">"Ekranı açık tut"</string>
     <string name="pref_long_break_duration">"Uzun ara süresi"</string>
-    <string name="pref_ringtone">"Bitmiş iş bildirimi"</string>
+    <string name="pref_ringtone">"Biten oturum bildirim sesi"</string>
     <string name="pref_ringtone_summary">"Bildirim sesini ayarla"</string>
     <string name="pref_work_duration">"Çalışma oturumu süresi"</string>
     <string name="pref_sessions_before_long_break">"Bir uzun ara öncesi oturum sayısı"</string>
@@ -23,7 +23,7 @@
     <string name="pref_amoled">"Koyu Tema"</string>
     <string name="pref_header_during_work_sessions">Çalışma oturumları sırasında</string>
     <string name="pref_enable_ringtone">"Bildirim sesi"</string>
-    <string name="pref_priority_alarm">"Override sound profile"</string>
+    <string name="pref_priority_alarm">"Her zaman sesli uyarı"</string>
     <string name="pref_priority_alarm_summary">"Bildirim sesi alarma benzer"</string>
     <string name="pref_ringtone_insistent">"Israrlı bildirim"</string>
     <string name="pref_ringtone_insistent_summary">"Bildirimi iptal edinceye kadar tekrarla"</string>
@@ -34,7 +34,7 @@
     <string name="pref_auto_start_work_summary">Bir aradan sonra çalışma oturumunu kullanıcı etkileşimi olmadan başlat</string>
     <string name="pref_disable_battery_optimization">Doğru bildirimler</string>
     <string name="pref_flashing_notification">Flash the screen</string>
-    <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
+    <string name="pref_flashing_notification_summary">Sessiz ortamlar için görsel bildirim</string>
     <string name="pref_disable_battery_optimization_summary">Bu uygulama için pil optimizasyonunu devre dışı bırak</string>
     <string name="pref_screen_saver">Ekran koruyucu kipi</string>
     <string name="pref_screen_saver_summary">Zamanlayıcıyı ekran açıkken çalıştırır</string>
@@ -137,9 +137,9 @@
     <string name="update_pro_9">Temalar</string>
     <string name="update_pro_10">Çalışma ve ara için bildirim sesini ayır</string>
     <string name="update_pro_11">Israrlı bildirimleri</string>
-    <string name="update_pro_12">One time payment</string>
+    <string name="update_pro_12">Tek sefer ödeme</string>
     <string name="update_pro_13">Gelecekteki tüm özellikler ücretsiz</string>
-    <string name="update_pro_message">Upgrade to support open-source and ad-free software and enjoy some awesome features!</string>
+    <string name="update_pro_message">Açık-kaynak ve reklamsız yazılımlara destek olmak için yükselt ve yeni özelliklerin tadını çıkar!</string>
     <string name="Profile">Profili</string>
     <string name="pref_profile_name">Profil ismi</string>
     <string name="profile_already_exists">Profil zaten var</string>
@@ -160,8 +160,8 @@
     <string name="unlabeled">etiketlenmemiş</string>
     <string name="pref_show_label">Geçerli etileti görüntüle</string>
     <string name="pref_show_label_summary">Geçerli etiketi ana ekranda gösterir</string>
-    <string name="pref_one_minute_left_notification">Pre-notification</string>
-    <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
-    <string name="donate_message">Donate to support open-source and ad-free software!</string>
-    <string name="donate">Donate</string>
+    <string name="pref_one_minute_left_notification">Erken bildirim</string>
+    <string name="pref_one_minute_left_notification_summary">Çalışma oturumu bitmeden bir dakika önce haber ver</string>
+    <string name="donate_message">Bu açık kaynak ve reklamsız yazılımı desteklemek için bağış yap!</string>
+    <string name="donate">Bağış</string>
 </resources>

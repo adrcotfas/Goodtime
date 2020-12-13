@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="it" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"Durata delle pause"</string>
     <string name="pref_disable_sound_and_vibration">"Disattiva suono e vibrazione"</string>
-    <string name="pref_dnd">"Do not disturb mode"</string>
+    <string name="pref_dnd">"Non disturbare la modalità"</string>
     <string name="pref_disable_wifi">"Disattiva Wi-Fi"</string>
     <string name="pref_fullscreen">"Modalità a schermo intero"</string>
     <string name="pref_header_notifications">"Notifiche"</string>
