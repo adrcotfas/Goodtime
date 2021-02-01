@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="he" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"משך הפסקה"</string>
     <string name="pref_disable_sound_and_vibration">"השבת צליל ורטט"</string>
-    <string name="pref_dnd">"מצב \"נא לא להפריע\""</string>
+    <string name="pref_dnd">"הפעל מצב \"נא לא להפריע\""</string>
     <string name="pref_disable_wifi">"השבת Wi-Fi"</string>
     <string name="pref_fullscreen">"מצב מסך מלא"</string>
     <string name="pref_header_notifications">"התראות"</string>
@@ -33,16 +33,16 @@
     <string name="pref_auto_start_break_summary">מתחיל הפסקה לאחר סיום סשן עבודה, ללא אינטראקציה מצד המשתמש</string>
     <string name="pref_auto_start_work_summary">מתחיל סשן עבודה לאחר סיום הפסקה, ללא אינטראקציה מצד המשתמש</string>
     <string name="pref_disable_battery_optimization">התראות מדויקות</string>
-    <string name="pref_flashing_notification">הבהב את המסך</string>
-    <string name="pref_flashing_notification_summary">התראה חזותית לסביבות שקטות</string>
+    <string name="pref_flashing_notification">הפעל הבהוב מסך</string>
+    <string name="pref_flashing_notification_summary">התראה חזותית עבור סביבות שקטות</string>
     <string name="pref_disable_battery_optimization_summary">השבת אופטימיזציה של הסוללה עבור אפליקציה זו</string>
     <string name="pref_screen_saver">מצב שומר מסך</string>
     <string name="pref_screen_saver_summary">מזיז את הטיימר כאשר המסך דלוק</string>
     <string name="about">אודות</string>
-    <string name="about_translate">תרגם את האפליקציה</string>
+    <string name="about_translate">תרגום האפליקציה</string>
     <string name="about_open_source_licences">רשיונות קוד פתוח</string>
     <string name="about_no_email">"אין תוכנות אימייל מותקנות."</string>
-    <string name="about_rate_this_app">דרג את האפליקציה</string>
+    <string name="about_rate_this_app">דירוג האפליקציה</string>
     <string name="about_version">גרסה</string>
     <string name="about_source_code">קוד מקור</string>
     <string name="about_app_intro">אשף התחלה</string>
@@ -76,7 +76,7 @@
     <string name="action_progress_work">סשן עבודה בפעולה</string>
     <string name="action_paused_title">סשן העבודה מושהה</string>
     <string name="action_progress_break">הפסקה בפעולה</string>
-    <string name="action_continue">להמשיך?</string>
+    <string name="action_continue">ברצונך להמשיך?</string>
     <string name="action_finished_break">ההפסקה הסתיימה</string>
     <string name="action_finished_session">הסשן הסתיים</string>
     <string name="action_press_back_button">לחץ שוב כדי לצאת</string>
@@ -151,17 +151,17 @@
     <string name="pref_timer_style_classic">קלאסי</string>
     <string name="pref_timer_style_minutes">דקות בלבד</string>
     <string name="pref_session_counter">מונה סשנים</string>
-    <string name="pref_session_counter_summary">"הצג את מספר הסשנים שהושלמו היום"</string>
+    <string name="pref_session_counter_summary">"מציג את מספר הסשנים שהושלמו היום"</string>
     <string name="support_the_developer">תמכו במפתח</string>
     <string name="action_reset_counter">"פעולה זו תאפס את הסשנים שהושלמו היום."</string>
     <string name="action_reset_counter_title">לאפס?</string>
     <string name="tutorial_title">הדרכה</string>
-    <string name="other_apps">יישומים אחרים</string>
+    <string name="other_apps">אפליקציות אחרות</string>
     <string name="unlabeled">ללא תווית</string>
     <string name="pref_show_label">צפה בתווית הנוכחית</string>
-    <string name="pref_show_label_summary">מציג תווית נוכחית במסך הראשי</string>
+    <string name="pref_show_label_summary">מציג את התווית הנוכחית במסך הראשי</string>
     <string name="pref_one_minute_left_notification">התראה מקדימה</string>
-    <string name="pref_one_minute_left_notification_summary">הודע לי דקה לפני שמסתיים סשן העבודה</string>
+    <string name="pref_one_minute_left_notification_summary">מודיע דקה לפני שמסתיים סשן העבודה</string>
     <string name="donate_message">תרום לתמיכה בתוכנת קוד פתוח ללא פרסומות!</string>
     <string name="donate">תרום</string>
 </resources>

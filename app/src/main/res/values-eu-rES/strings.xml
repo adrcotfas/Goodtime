@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="eu" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"Etenaldiaren iraupena"</string>
     <string name="pref_disable_sound_and_vibration">"Desgaitu soinua eta bibrazioa"</string>
-    <string name="pref_dnd">"Do not disturb mode"</string>
+    <string name="pref_dnd">"\"Ez molestatu\" modua"</string>
     <string name="pref_disable_wifi">"Desgaitu Wi-Fia"</string>
     <string name="pref_fullscreen">"Pantaila osoko modua"</string>
     <string name="pref_header_notifications">"Jakinarazpenak"</string>
@@ -33,8 +33,8 @@
     <string name="pref_auto_start_break_summary">Hasi etenaldia lan-saio baten ondoren erabiltzaile-interakziorik gabe</string>
     <string name="pref_auto_start_work_summary">Hasi lan-saioa etenaldi baten ondoren erabiltzaile-interakziorik gabe</string>
     <string name="pref_disable_battery_optimization">Jakinarazpen zehatzak</string>
-    <string name="pref_flashing_notification">Flash the screen</string>
-    <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
+    <string name="pref_flashing_notification">Distiratu pantaila</string>
+    <string name="pref_flashing_notification_summary">Jakinarazpen bisuala ingurune isiletarako</string>
     <string name="pref_disable_battery_optimization_summary">Desgaitu bateriaren optimizazioa aplikazio honentzat</string>
     <string name="pref_screen_saver">Pantaila-babesle modua</string>
     <string name="pref_screen_saver_summary">Tenporizadorea mugitzen du pantaila piztuta dagoenean</string>
@@ -137,9 +137,9 @@
     <string name="update_pro_9">Gaiak</string>
     <string name="update_pro_10">Bereizi lanaren eta etenaldiaren jakinarazpen-soinuak</string>
     <string name="update_pro_11">Jakinarazpen iraunkorrak</string>
-    <string name="update_pro_12">One time payment</string>
+    <string name="update_pro_12">Behin bakarrik egin beharreko ordainketa</string>
     <string name="update_pro_13">Etorkizuneko eginbideak dohainik</string>
-    <string name="update_pro_message">Upgrade to support open-source and ad-free software and enjoy some awesome features!</string>
+    <string name="update_pro_message">Bertsio-berritu kode irekiko eta iragarkirik gabeko softwarea laguntzeko eta eginbide bikainak gozatu!</string>
     <string name="Profile">Profila</string>
     <string name="pref_profile_name">Profilaren izena</string>
     <string name="profile_already_exists">Profila dagoeneko existitzen da</string>
@@ -161,7 +161,7 @@
     <string name="pref_show_label">Ikusi uneko etiketa</string>
     <string name="pref_show_label_summary">Uneko etiketa pantaila nagusian erakusten du</string>
     <string name="pref_one_minute_left_notification">Aurrejakinarazpena</string>
-    <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
+    <string name="pref_one_minute_left_notification_summary">Jakinarazi lan-saioa bukatu baino minutu bat lehenago</string>
     <string name="donate_message">Donate to support open-source and ad-free software!</string>
     <string name="donate">Dohaintza</string>
 </resources>
