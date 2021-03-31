@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Goodtime</string>
+    <string name="app_name" translatable="false">Productivity</string>
     <string name="app_name_long" translatable="false">Goodtime Productivity</string>
     <string name="app_url" translatable="false">https://github.com/adrcotfas/Goodtime</string>
     <string name="app_translation_url" translatable="false">https://crowdin.com/project/goodtime</string>
