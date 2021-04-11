@@ -543,6 +543,7 @@ public class TimerActivity
             if (mDialogSessionFinished != null) {
                 mDialogSessionFinished.dismissAllowingStateLoss();
             }
+            mViewModel.showFinishDialog = false;
             if (!PreferenceHelper.isAutoStartBreak() && !PreferenceHelper.isAutoStartWork()) {
                 stopFlashingNotification();
             }
