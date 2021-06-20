@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -66,7 +67,6 @@ import org.joda.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AlertDialog;
@@ -77,6 +77,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
+
 import org.greenrobot.eventbus.EventBus;
 
 import static android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
@@ -575,7 +576,7 @@ public class TimerActivity
 
         Log.v(TAG, "drawing the time label.");
 
-        if (PreferenceHelper.isScreensaverEnabled() && seconds == 1 && mCurrentSession.getTimerState().getValue() != TimerState.PAUSED) {
+        if (PreferenceHelper.isScreensaverEnabled() && mCurrentSession.getTimerState().getValue() != TimerState.PAUSED) {
             teleportTimeView();
         }
 
@@ -747,20 +748,71 @@ public class TimerActivity
         setTimeLabelColor();
     }
 
+    private Direction direction = Direction.random();
+
     private void teleportTimeView() {
 
+//region Highly unoptimised code to visually track the TopLeft of mTimeLabel
+//        View dot = new View(mBoundsView.getContext());
+//        dot.setBackgroundColor(Color.WHITE);
+//        dot.setLayoutParams(new ViewGroup.LayoutParams(1, 1));
+//        dot.setX(mTimeLabel.getX());
+//        dot.setY(mTimeLabel.getY());
+//        ((ConstraintLayout) mBoundsView.getParent()).addView(dot);
+//endregion
+
         int margin = ThemeHelper.dpToPx(this, 48);
-        int maxX = mBoundsView.getWidth() - mTimeLabel.getWidth() - margin;
-        int maxY = mBoundsView.getHeight() - mTimeLabel.getHeight() - margin;
 
-        int boundX = maxX - margin;
-        int boundY = maxY - margin;
+        // Bounds in which the TopLeft corner/pixel of mTimeLabel can move
+        Rect bounds = new Rect(
+                ((int) mBoundsView.getX()) + margin,
+                ((int) mBoundsView.getY()) + margin,
+                mBoundsView.getWidth() - mTimeLabel.getWidth() - margin,
+                mBoundsView.getHeight() - mTimeLabel.getHeight() - margin
+        );
 
-        if (boundX > 0 && boundY > 0) {
-            Random r = new Random();
-            int newX = r.nextInt(boundX) + margin;
-            int newY = r.nextInt(boundY) + margin;
-            mTimeLabel.animate().x(newX).y(newY).setDuration(100);
+        Log.d(TAG, "teleportTimeView: Bounds ==> " + bounds.toShortString());
+
+        if (bounds.width() > 0 && bounds.height() > 0) {
+
+            float x = mTimeLabel.getX();
+            float y = mTimeLabel.getY();
+
+            float newX = x;
+            float newY = y;
+
+            if (direction.getHorizontal() == Horizontal.LEFT) {
+                if (x == bounds.left) {
+                    direction = new Direction(Horizontal.RIGHT, direction.getVertical());
+                    newX = x + 1;
+                } else {
+                    newX = x - 1;
+                }
+            } else if (direction.getHorizontal() == Horizontal.RIGHT) {
+                if (x == bounds.right) {
+                    direction = new Direction(Horizontal.LEFT, direction.getVertical());
+                    newX = x - 1;
+                } else {
+                    newX = x + 1;
+                }
+            }
+            if (direction.getVertical() == Vertical.UP) {
+                if (y == bounds.top) {
+                    direction = new Direction(direction.getHorizontal(), Vertical.DOWN);
+                    newY = y + 1;
+                } else {
+                    newY = y - 1;
+                }
+            } else if (direction.getVertical() == Vertical.DOWN) {
+                if (y == bounds.bottom) {
+                    direction = new Direction(direction.getHorizontal(), Vertical.UP);
+                    newY = y - 1;
+                } else {
+                    newY = y + 1;
+                }
+            }
+            mTimeLabel.setX(newX);
+            mTimeLabel.setY(newY);
         }
     }
 
