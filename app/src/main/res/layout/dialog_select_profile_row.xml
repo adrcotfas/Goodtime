@@ -13,7 +13,6 @@
         android:layout_height="@dimen/menu_item_size"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:focusable="true"
         android:clickable="true">
         <ImageView

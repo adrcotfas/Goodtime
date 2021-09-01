@@ -387,7 +387,7 @@ public class TimerActivity
         menuInflater.inflate(R.menu.menu_main, menu);
 
         MenuItem batteryButton = menu.findItem(R.id.action_battery_optimization);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isIgnoringBatteryOptimizations(this)) {
+        if (!isIgnoringBatteryOptimizations(this)) {
             batteryButton.setVisible(true);
         } else {
             batteryButton.setVisible(false);

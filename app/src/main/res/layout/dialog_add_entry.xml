@@ -25,7 +25,6 @@
             android:id="@+id/duration"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:drawableLeft="@drawable/ic_duration"
             android:drawableStart="@drawable/ic_duration"
             android:inputType="numberDecimal"
             android:digits="0123456789"
@@ -44,16 +43,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/edit_date"
-                android:drawableLeft="@drawable/ic_clock"
                 android:drawableStart="@drawable/ic_clock"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 style="@style/AllSessionsAddEditDialogRow"/>
 
             <TextView
                 android:id="@+id/edit_time"
                 android:layout_width="wrap_content"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:layout_height="match_parent"
                 style="@style/AllSessionsAddEditDialogRowEnd"
@@ -71,7 +67,6 @@
                 android:contentDescription="@string/labels"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:src="@drawable/ic_label_off"
                 android:layout_centerVertical="true" />
@@ -80,11 +75,9 @@
                 android:id="@+id/label_chip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/label_drawable"
                 android:layout_toEndOf="@id/label_drawable"
 
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="32dp"
                 android:layout_marginStart="32dp"
                 android:text="@string/label_add"
                 style="@style/ChipStyleSmall"/>
@@ -95,7 +88,6 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginBottom="24dp"
-            android:drawableLeft="@drawable/ic_done"
             android:drawableStart="@drawable/ic_done"
             android:text="@string/save"
             style="@style/AllSessionsAddEditDialogRow"/>

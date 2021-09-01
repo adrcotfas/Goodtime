@@ -19,7 +19,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.util.Log;
@@ -133,30 +132,14 @@ public class CurrentSessionManager extends ContextWrapper{
         final long triggerAtMillis = duration + SystemClock.elapsedRealtime();
 
         Log.v(TAG, "scheduleAlarm " + sessionType.toString());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    triggerAtMillis, getAlarmPendingIntent(sessionType));
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getAlarmManager().setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    triggerAtMillis, getAlarmPendingIntent(sessionType));
-        } else {
-            getAlarmManager().set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    triggerAtMillis, getAlarmPendingIntent(sessionType));
-        }
+        getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                triggerAtMillis, getAlarmPendingIntent(sessionType));
 
         if (remindOneMinuteLeft && sessionType == SessionType.WORK) {
             Log.v(TAG, "scheduled one minute left");
             final long triggerAtMillisOneMinuteLeft = duration - TimeUnit.MINUTES.toMillis(1) + SystemClock.elapsedRealtime();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                        triggerAtMillisOneMinuteLeft, getOneMinuteLeftAlarmPendingIntent());
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                getAlarmManager().setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                        triggerAtMillisOneMinuteLeft, getOneMinuteLeftAlarmPendingIntent());
-            } else {
-                getAlarmManager().set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                        triggerAtMillisOneMinuteLeft, getOneMinuteLeftAlarmPendingIntent());
-            }
+            getAlarmManager().setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    triggerAtMillisOneMinuteLeft, getOneMinuteLeftAlarmPendingIntent());
         }
     }
 

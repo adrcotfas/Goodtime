@@ -14,7 +14,6 @@
 package com.apps.adrcotfas.goodtime.Util
 
 import android.content.Context
-import android.os.Build
 import android.os.PowerManager
 
 class BatteryUtils {
@@ -22,9 +21,7 @@ class BatteryUtils {
         @JvmStatic
         fun isIgnoringBatteryOptimizations(context: Context): Boolean {
             val pwrm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                pwrm.isIgnoringBatteryOptimizations(context.packageName)
-            } else true
+            return pwrm.isIgnoringBatteryOptimizations(context.packageName)
         }
     }
 }

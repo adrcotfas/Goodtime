@@ -14,7 +14,6 @@
 package com.apps.adrcotfas.goodtime.Statistics.Main;
 
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextPaint;
@@ -750,7 +749,7 @@ public class StatisticsFragment extends Fragment {
         LineDataSet set = new LineDataSet(entries, null);
         set.setColor(color);
         set.setCircleColor(color);
-        set.setDrawFilled(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT);
+        set.setDrawFilled(true);
         set.setFillColor(color);
         set.setLineWidth(3f);
         set.setCircleRadius(3f);
@@ -758,12 +757,6 @@ public class StatisticsFragment extends Fragment {
         set.disableDashedLine();
         set.setDrawValues(false);
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            set.setDrawFilled(false);
-            set.setLineWidth(2f);
-            set.setCircleRadius(4f);
-            set.setDrawCircleHole(true);
-        }
         return set;
     }
 
