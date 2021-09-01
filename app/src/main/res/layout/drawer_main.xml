@@ -16,7 +16,6 @@
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginLeft="18dp"
             android:layout_marginStart="18dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -36,7 +35,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:text="@string/app_name_long"
                 android:textSize="16sp" />

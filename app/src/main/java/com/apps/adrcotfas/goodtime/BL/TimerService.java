@@ -305,9 +305,7 @@ public class TimerService extends LifecycleService {
     }
 
     private void toggleSound(boolean restore) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            toggleSoundInternal(restore);
-        } else if (isNotificationPolicyAccessGranted()) {
+        if (isNotificationPolicyAccessGranted()) {
             toggleSoundInternal(restore);
         } else {
             // should not happen
@@ -332,13 +330,11 @@ public class TimerService extends LifecycleService {
     }
 
     private void toggleDndMode(boolean restore) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (isNotificationPolicyAccessGranted()) {
-                togglePriorityMode(restore);
-            } else {
-                // should not happen
-                Log.w(TAG, "Trying to toggle DnD mode but permission was not granted.");
-            }
+        if (isNotificationPolicyAccessGranted()) {
+            togglePriorityMode(restore);
+        } else {
+            // should not happen
+            Log.w(TAG, "Trying to toggle DnD mode but permission was not granted.");
         }
     }
 

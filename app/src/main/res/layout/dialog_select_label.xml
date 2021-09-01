@@ -11,9 +11,7 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="24dp"
             android:paddingStart="24dp"
-            android:paddingRight="12dp"
             android:paddingEnd="16dp"
             android:paddingBottom="16dp">
 
@@ -31,7 +29,6 @@
                 android:layout_width="@dimen/menu_item_size"
                 android:layout_height="@dimen/menu_item_size"
                 android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:focusable="true"
                 android:clickable="true">
@@ -83,8 +80,6 @@
                 android:layout_height="wrap_content"
 
                 android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 app:singleSelection="true"

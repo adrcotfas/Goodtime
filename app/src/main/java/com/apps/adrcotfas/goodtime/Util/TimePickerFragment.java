@@ -53,8 +53,7 @@ public class TimePickerFragment extends DialogFragment {
 
         return new TimePickerDialogFixedNougatSpinner(
                 getActivity(),
-                (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                        ? R.style.DialogTheme : AlertDialog.THEME_HOLO_DARK,
+                R.style.DialogTheme,
                 listener, hour, minute, DateFormat.is24HourFormat(getContext()));
     }
 }

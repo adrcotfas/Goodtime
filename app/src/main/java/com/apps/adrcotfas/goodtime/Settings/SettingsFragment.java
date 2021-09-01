@@ -15,7 +15,6 @@ package com.apps.adrcotfas.goodtime.Settings;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -88,8 +87,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
 
                 TimePickerDialogFixedNougatSpinner d = new TimePickerDialogFixedNougatSpinner(
                         requireActivity(),
-                        (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                                ? R.style.DialogTheme : AlertDialog.THEME_HOLO_DARK,
+                        R.style.DialogTheme,
                         SettingsFragment.this,
                         time.getHourOfDay(),
                         time.getMinuteOfHour(),
@@ -125,7 +123,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         setupOneMinuteLeftNotificationPref();
 
         final Preference disableBatteryOptimizationPref = findPreference(PreferenceHelper.DISABLE_BATTERY_OPTIMIZATION);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isIgnoringBatteryOptimizations(requireContext())) {
+        if (!isIgnoringBatteryOptimizations(requireContext())) {
             disableBatteryOptimizationPref.setVisible(true);
             disableBatteryOptimizationPref.setOnPreferenceClickListener(preference -> {
 
@@ -140,7 +138,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         }
 
         findPreference(PreferenceHelper.DISABLE_WIFI).setVisible(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q);
-        mPrefDndMode.setVisible(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M);
+        mPrefDndMode.setVisible(true);
     }
 
     @Override
@@ -278,7 +276,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     }
 
     private void setupDisableSoundCheckBox() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isNotificationPolicyAccessDenied()) {
+        if (isNotificationPolicyAccessDenied()) {
             updateDisableSoundCheckBoxSummary(mPrefDisableSoundCheckbox,false);
             mPrefDisableSoundCheckbox.setChecked(false);
             mPrefDisableSoundCheckbox.setOnPreferenceClickListener(
@@ -318,7 +316,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     }
 
     private void setupDnDCheckBox() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isNotificationPolicyAccessDenied()) {
+        if (isNotificationPolicyAccessDenied()) {
             updateDisableSoundCheckBoxSummary(mPrefDndMode, false);
             mPrefDndMode.setChecked(false);
             mPrefDndMode.setOnPreferenceClickListener(
@@ -340,7 +338,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
     }
 
     private void requestNotificationPolicyAccess() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isNotificationPolicyAccessDenied()) {
+        if (isNotificationPolicyAccessDenied()) {
             Intent intent = new Intent(android.provider.Settings.
                     ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
             startActivity(intent);

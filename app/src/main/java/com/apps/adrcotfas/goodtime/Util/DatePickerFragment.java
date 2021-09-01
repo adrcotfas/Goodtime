@@ -13,10 +13,8 @@
 
 package com.apps.adrcotfas.goodtime.Util;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DatePickerDialog;
-import android.os.Build;
 import android.os.Bundle;
 import com.apps.adrcotfas.goodtime.R;
 
@@ -54,8 +52,7 @@ public class DatePickerFragment extends DialogFragment {
 
         DatePickerDialog d =  new DatePickerDialog(
                 getActivity(),
-                (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                        ? R.style.DialogTheme : AlertDialog.THEME_HOLO_DARK,
+                R.style.DialogTheme,
                 listener, year, month, day);
         d.getDatePicker().setMaxDate(new LocalDate().toDateTimeAtStartOfDay().getMillis());
 

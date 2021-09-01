@@ -22,17 +22,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
 
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
 
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
 
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:singleLine="true"
 
             android:text="@{Integer.toString(item.duration)}"
@@ -50,7 +47,6 @@
 
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
 
             android:singleLine="true"
 
@@ -74,7 +70,6 @@
             app:layout_constraintStart_toStartOf="@+id/guideline2"
 
             android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
 
             android:singleLine="true"
@@ -94,7 +89,6 @@
             app:layout_constrainedWidth="true"
             app:layout_constraintHorizontal_bias="0.0"
 
-            android:layout_marginRight="16dp"
             android:layout_marginEnd="16dp"
             android:text="@{item.label}"
             android:visibility="@{item.label == null ? View.INVISIBLE : View.VISIBLE}"

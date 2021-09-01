@@ -16,7 +16,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:text="@string/statistics_productive_time"
                 style="@style/SectionHeader"
@@ -27,7 +26,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 style="@style/SpinnerStyle"/>
 

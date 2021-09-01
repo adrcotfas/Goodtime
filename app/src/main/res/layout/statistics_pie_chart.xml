@@ -17,7 +17,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:text="@string/statistics_pie_chart"
                 android:textColor="@color/teal200"
@@ -29,7 +28,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 style="@style/SpinnerStyle"/>
 

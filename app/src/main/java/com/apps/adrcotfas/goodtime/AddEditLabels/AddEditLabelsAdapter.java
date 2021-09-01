@@ -245,16 +245,12 @@ public class AddEditLabelsAdapter extends RecyclerView.Adapter<AddEditLabelsAdap
 
         @Override
         public void onItemSelected() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                row.setElevation(4);
-            }
+            row.setElevation(4);
         }
 
         @Override
         public void onItemClear() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                row.setElevation(0);
-            }
+            row.setElevation(0);
         }
     }
 }
