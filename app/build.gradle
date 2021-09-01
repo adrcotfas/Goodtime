@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 29
@@ -142,7 +141,4 @@ dependencies {
 
     // In-app purchases
     googleImplementation 'com.anjlab.android.iab.v3:library:1.1.0'
-
-    // F-Droid donations
-    fdroidImplementation 'org.sufficientlysecure:donations:2.6'
 }
