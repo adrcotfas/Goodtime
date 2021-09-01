@@ -136,17 +136,6 @@ public class LicencesActivity extends MaterialAboutActivity {
                 .addCard(cardIntro)
                 .addCard(rateThisApp)
                 .addCard(timePicker);
-
-        if (BuildConfig.F_DROID) {
-            MaterialAboutCard donationCard = ConvenienceBuilder.createLicenseCard(c,
-                    new IconicsDrawable(c)
-                            .icon(CommunityMaterial.Icon.cmd_book)
-                            .color(ContextCompat.getColor(c, colorIcon))
-                            .sizeDp(18),
-                    "Android Donations Lib", "2018", "SufficientlySecure",
-                    OpenSourceLicense.APACHE_2);
-            result.addCard(donationCard);
-        }
         return result;
     }
 
