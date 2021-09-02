@@ -172,14 +172,14 @@ public class CurrentSessionManager extends ContextWrapper{
         Intent intent = new Intent(FINISHED);
         intent.putExtra(SESSION_TYPE, sessionType.toString());
         return PendingIntent.getBroadcast(getApplicationContext(), 0,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     private PendingIntent getOneMinuteLeftAlarmPendingIntent() {
         Intent intent = new Intent(FINISHED);
         intent.putExtra(ONE_MINUTE_LEFT, true);
         return PendingIntent.getBroadcast(getApplicationContext(), 1,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     public CurrentSession getCurrentSession() {
