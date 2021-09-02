@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.apps.adrcotfas.goodtime">
 
     <!-- Used by RingtonePreference to allow adding custom ringtones -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Used to enable and disable WiFi during work sessions -->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
     <!-- Used to enable and disable sound during work sessions -->
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <uses-permission android:name="android.permission.VIBRATE" />
+
     <!-- Used to wake the screen when a session is finished -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- Used on Android P and later for the timer foreground service -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <!-- For the option of removing the app from the battery optimization -->
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
         android:name="com.apps.adrcotfas.goodtime.BL.GoodtimeApplication"
         android:allowBackup="true"
+        android:fullBackupOnly="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -31,8 +34,9 @@
         tools:ignore="GoogleAppIndexingWarning,InnerclassSeparator">
         <activity
             android:name="com.apps.adrcotfas.goodtime.Main.TimerActivity"
-            android:showOnLockScreen="true"
+            android:exported="true"
             android:launchMode="singleTask"
+            android:showOnLockScreen="true"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,45 +46,39 @@
         <activity
             android:name=".Settings.SettingsActivity"
             android:label="@string/settings"
-            android:parentActivityName=".Main.TimerActivity">
-        </activity>
+            android:parentActivityName=".Main.TimerActivity" />
 
         <activity
             android:name=".About.AboutActivity"
             android:label="@string/about"
-            android:theme="@style/AboutTheme"
-            android:parentActivityName=".Main.TimerActivity">
-        </activity>
+            android:parentActivityName=".Main.TimerActivity"
+            android:theme="@style/AboutTheme" />
 
         <activity
             android:name=".About.LicencesActivity"
             android:label="@string/about_open_source_licences"
-            android:theme="@style/AboutTheme"
-            android:parentActivityName=".About.AboutActivity">
-        </activity>
+            android:parentActivityName=".About.AboutActivity"
+            android:theme="@style/AboutTheme" />
 
         <activity
             android:name=".Statistics.Main.StatisticsActivity"
             android:label="@string/statistics"
-            android:parentActivityName=".Main.TimerActivity">
-        </activity>
+            android:parentActivityName=".Main.TimerActivity" />
 
         <activity
             android:name=".AddEditLabels.AddEditLabelActivity"
             android:label="@string/label_dialog_edit"
-            android:parentActivityName=".Main.TimerActivity">
-        </activity>
+            android:parentActivityName=".Main.TimerActivity" />
 
         <activity
             android:name=".Main.MainIntroActivity"
-            android:theme="@style/Theme.Intro"
-            android:parentActivityName=".Main.TimerActivity">
-        </activity>
+            android:parentActivityName=".Main.TimerActivity"
+            android:theme="@style/Theme.Intro" />
 
         <service
             android:name="com.apps.adrcotfas.goodtime.BL.TimerService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -89,21 +87,24 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
         </provider>
 
-        <receiver android:name=".Settings.reminders.BootReceiver">
+        <receiver
+            android:name=".Settings.reminders.BootReceiver"
+            android:exported="false">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".Settings.reminders.ReminderReceiver">
+        <receiver
+            android:name=".Settings.reminders.ReminderReceiver"
+            android:exported="false">
             <intent-filter>
-                <action android:name="buddy.reminder_action"/>
+                <action android:name="buddy.reminder_action" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

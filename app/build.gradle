@@ -4,12 +4,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 31
 
     defaultConfig {
         applicationId "com.apps.adrcotfas.goodtime"
         minSdkVersion 23
-        targetSdkVersion 29
+        targetSdkVersion 31
         versionCode 131
         versionName "2.2.7"
         resConfigs "ar-rSA",
@@ -56,8 +56,6 @@ android {
                 "zh-rTW"
     }
 
-    kotlinOptions { jvmTarget = "1.8" }
-
     dataBinding {
         enabled = true
     }
@@ -83,23 +81,27 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.3.1'
+    implementation 'androidx.core:core-ktx:1.6.0'
 
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
 
-    annotationProcessor 'androidx.databinding:databinding-compiler:4.0.1'
+    annotationProcessor 'androidx.databinding:databinding-compiler:7.0.1'
 
-    kapt "androidx.room:room-compiler:2.2.5"
-    implementation 'androidx.room:room-runtime:2.2.5'
+    kapt "androidx.room:room-compiler:2.3.0"
+    implementation 'androidx.room:room-runtime:2.3.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
     // Preferences
@@ -114,7 +116,7 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.2.0'
 
     // Material components
-    implementation 'com.google.android.material:material:1.2.0-rc01'
+    implementation 'com.google.android.material:material:1.4.0'
 
     // About
     //implementation 'com.github.daniel-stoneuk:material-about-library:x.y.z'
@@ -127,7 +129,7 @@ dependencies {
     implementation 'joda-time:joda-time:2.10.5'
 
     // RecyclerView selection framework
-    implementation 'androidx.recyclerview:recyclerview-selection:1.1.0-rc01'
+    implementation 'androidx.recyclerview:recyclerview-selection:1.1.0'
 
     // Icons
     implementation 'com.mikepenz:iconics-core:3.2.5'
