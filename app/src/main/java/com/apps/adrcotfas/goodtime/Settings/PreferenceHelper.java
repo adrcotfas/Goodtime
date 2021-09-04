@@ -44,8 +44,8 @@ public class PreferenceHelper {
     public final static String ENABLE_RINGTONE             = "pref_enable_ringtone";
     public final static String PRIORITY_ALARM             = "pref_priority_alarm";
     public final static String INSISTENT_RINGTONE          = "pref_ringtone_insistent";
-    public final static String RINGTONE_WORK_FINISHED      = "pref_ringtone";
-    public final static String RINGTONE_BREAK_FINISHED     = "pref_ringtone_break";
+    public final static String RINGTONE_WORK_FINISHED      = "pref_notification_sound_work";
+    public final static String RINGTONE_BREAK_FINISHED     = "pref_notification_sound_break";
     public final static String VIBRATION_TYPE             = "pref_vibration_type";
     private final static String ENABLE_FULLSCREEN           = "pref_fullscreen";
     public final static String DISABLE_SOUND_AND_VIBRATION = "pref_disable_sound_and_vibration";
@@ -155,6 +155,26 @@ public class PreferenceHelper {
     public static String getNotificationSoundBreakFinished() {
         return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getString(RINGTONE_BREAK_FINISHED, "");
+    }
+
+    public static void setNotificationSoundWorkFinished(String newValue) {
+        setNotificationSoundFinished(RINGTONE_WORK_FINISHED, newValue);
+    }
+
+    public static void setNotificationSoundBreakFinished(String newValue) {
+        setNotificationSoundFinished(RINGTONE_BREAK_FINISHED, newValue);
+    }
+    
+    public static String getNotificationSoundFinished(String key) {
+        assert(key.equals(RINGTONE_WORK_FINISHED) || key.equals(RINGTONE_BREAK_FINISHED));
+        return getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getString(key, "");
+    }
+
+    public static void setNotificationSoundFinished(String key, String newValue) {
+        assert(key.equals(RINGTONE_WORK_FINISHED) || key.equals(RINGTONE_BREAK_FINISHED));
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
+                .putString(key, newValue).apply();
     }
 
     public static int getVibrationType() {
