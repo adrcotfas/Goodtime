@@ -70,3 +70,6 @@
 -keep class com.apps.adrcotfas.goodtime.Label { *; }
 -keep class com.apps.adrcotfas.goodtime.Profile { *; }
 -keep class com.apps.adrcotfas.goodtime.Session { *; }
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer

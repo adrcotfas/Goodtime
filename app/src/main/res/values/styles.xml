@@ -160,6 +160,26 @@
         <item name="android:scrollbars">none</item>
     </style>
 
+    <style name="ThemeOverlay.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="alertDialogStyle">@style/MaterialAlertDialog</item>
+        <item name="android:backgroundTint" tools:ignore="NewApi">?attr/alertDialogColor</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.App.Title.Text</item>
+    </style>
+
+    <style name="MaterialAlertDialog.App.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textSize">@dimen/largeTextSize</item>
+    </style>
+
+    <style name="MaterialAlertDialog" parent="MaterialAlertDialog.MaterialComponents">
+        <item name="shapeAppearance">@style/ShapeAppearance.MediumComponent</item>
+    </style>
+
+    <style name="ShapeAppearance.MediumComponent"
+        parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
     <style name="CardViewStyle" parent="Widget.MaterialComponents.CardView">
         <item name="android:layout_marginLeft">@dimen/card_spacing</item>
         <item name="android:layout_marginTop">@dimen/card_spacing</item>
@@ -201,7 +221,7 @@
         <item name="palette">@array/lightPalette</item>
         <item name="fontFamily">@font/app_font</item>
         <item name="elevationOverlayEnabled">false</item>
-        <item name="materialAlertDialogTheme">@style/DialogTheme</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.MaterialAlertDialog</item>
         <item name="bottomSheetDialogTheme">@style/BottomDialogStyle</item>
 
         <item name="chipStyle">@style/ChipStyle</item>
@@ -290,5 +310,4 @@
     <style name="SnackbarStyle" parent="Widget.MaterialComponents.Snackbar">
         <item name="android:background">@color/gray1000</item>
     </style>
-
 </resources>

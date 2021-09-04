@@ -4,12 +4,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.apps.adrcotfas.goodtime"
         minSdkVersion 23
-        targetSdkVersion 31
+        targetSdkVersion 30
         versionCode 131
         versionName "2.2.7"
         resConfigs "ar-rSA",
@@ -105,9 +105,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
     // Preferences
-    implementation 'androidx.preference:preference:1.1.1'
-    implementation 'com.takisoft.preferencex:preferencex:1.1.0'
-    implementation 'com.takisoft.preferencex:preferencex-ringtone:1.1.0'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
 
     // Color picker for the labels
     implementation 'com.takisoft.preferencex:preferencex-colorpicker:1.1.0'
@@ -123,7 +121,7 @@ dependencies {
     implementation 'com.github.adrcotfas:material-about-library:a65545f360'
 
     // Statistics
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation 'com.github.PhilJay:MPAndroidChart:3.1.0'
 
     // Time
     implementation 'joda-time:joda-time:2.10.5'
@@ -143,4 +141,9 @@ dependencies {
 
     // In-app purchases
     googleImplementation 'com.anjlab.android.iab.v3:library:1.1.0'
+
+    //TODO: use the main repo when it's ready
+    implementation 'com.github.adrcotfas:UltimateRingtonePicker:jitpack_fix-SNAPSHOT'
+
+    implementation 'com.google.code.gson:gson:2.8.6'
 }

@@ -95,30 +95,20 @@
             android:dependency="pref_enable_ringtone"
             app:iconSpaceReserved="false"/>
 
-        <com.takisoft.preferencex.RingtonePreference
-            android:key="pref_ringtone"
-            android:persistent="true"
-            android:ringtoneType="notification"
-            android:showDefault="true"
-            android:showSilent="false"
+        <Preference
+            android:key="pref_notification_sound_work"
             android:summary="@string/pref_ringtone_summary"
             android:title="@string/pref_ringtone"
             android:dependency="pref_enable_ringtone"
-            app:pref_showAdd="true"
-            app:pref_summaryHasRingtone="%s"
+            app:layout="@layout/preference_compact"
             app:iconSpaceReserved="false"/>
 
-        <com.takisoft.preferencex.RingtonePreference
-            android:key="pref_ringtone_break"
-            android:persistent="true"
-            android:ringtoneType="notification"
-            android:showDefault="true"
-            android:showSilent="false"
+        <Preference
+            android:key="pref_notification_sound_break"
             android:summary="@string/pref_ringtone_summary"
             android:title="@string/pref_ringtone_break"
             android:dependency="pref_enable_ringtone"
-            app:pref_showAdd="true"
-            app:pref_summaryHasRingtone="%s"
+            app:layout="@layout/preference_compact"
             app:iconSpaceReserved="false"/>
 
         <ListPreference
