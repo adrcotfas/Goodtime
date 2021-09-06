@@ -17,6 +17,10 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -91,6 +95,16 @@ public class StringUtils {
 
     public static String formatDateAndTime(long millis) {
         return backUpFormatter.print(millis);
+    }
+
+    public static String formatTimeForStatistics(Long millis) {
+        LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault());
+        return date.format(java.time.format.DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT));
+    }
+
+    public static String formatDateForStatistics(Long millis) {
+        LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault());
+        return date.format(java.time.format.DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
     }
 
     public static String toPercentage(float value) {
