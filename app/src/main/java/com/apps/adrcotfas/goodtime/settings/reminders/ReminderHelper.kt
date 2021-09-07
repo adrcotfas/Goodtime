@@ -70,7 +70,7 @@ class ReminderHelper@Inject constructor(
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         if (key == PreferenceHelper.ENABLE_REMINDER) {
             Log.d(TAG, "onSharedPreferenceChanged")
             toggleBootReceiver(preferenceHelper.isReminderEnabled())

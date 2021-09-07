@@ -82,11 +82,10 @@ class PreferenceHelper(val context: Context) {
         val version =
             preferences.getInt(PREFERENCES_VERSION_INTERNAL, 0)
         if (version == 0) {
-            preferences.edit()
-                .clear().apply()
+            preferences.edit().clear().apply()
         } else if (version == 1) {
-            val OLD_MINUTES_ONLY = "2"
-            if (timerStyle == OLD_MINUTES_ONLY) {
+            val oldMinutesOnly = "2"
+            if (timerStyle == oldMinutesOnly) {
                 setTimerStyle(0)
             }
         }
