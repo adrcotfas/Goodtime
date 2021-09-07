@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Adrian Cotfas
+ * Copyright 2016-2021 Adrian Cotfas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy of the License at
@@ -29,9 +29,10 @@ class PreferenceHelper(val context: Context) {
     val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val preferencesPrivate: SharedPreferences =
         context.getSharedPreferences(
-            context.packageName + "_private_preferences",
-            Context.MODE_PRIVATE
-        )
+        context.packageName + "_private_preferences",
+        Context.MODE_PRIVATE
+    )
+
     companion object {
         private const val PRO = "pref_blana"
         private const val PREFERENCES_VERSION = 2
@@ -188,11 +189,11 @@ class PreferenceHelper(val context: Context) {
             )
         )
         set(label) {
-            preferences.edit()
-                .putString(CURRENT_SESSION_LABEL, label.title).apply()
-            preferences.edit()
-                .putInt(CURRENT_SESSION_COLOR, label.colorId).apply()
-        }
+        preferences.edit()
+            .putString(CURRENT_SESSION_LABEL, label.title).apply()
+        preferences.edit()
+            .putInt(CURRENT_SESSION_COLOR, label.colorId).apply()
+    }
 
 
     fun isFirstRun() = preferencesPrivate.getBoolean(FIRST_RUN, true)
