@@ -24,7 +24,7 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
-        android:name="com.apps.adrcotfas.goodtime.BL.GoodtimeApplication"
+        android:name="com.apps.adrcotfas.goodtime.bl.GoodtimeApplication"
         android:allowBackup="true"
         android:fullBackupOnly="true"
         android:icon="@mipmap/ic_launcher"
@@ -34,7 +34,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning,InnerclassSeparator">
         <activity
-            android:name="com.apps.adrcotfas.goodtime.Main.TimerActivity"
+            android:name="com.apps.adrcotfas.goodtime.main.TimerActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:showOnLockScreen="true"
@@ -45,39 +45,39 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Settings.SettingsActivity"
+            android:name=".settings.SettingsActivity"
             android:label="@string/settings"
-            android:parentActivityName=".Main.TimerActivity" />
+            android:parentActivityName=".main.TimerActivity" />
 
         <activity
-            android:name=".About.AboutActivity"
+            android:name=".about.AboutActivity"
             android:label="@string/about"
-            android:parentActivityName=".Main.TimerActivity"
+            android:parentActivityName=".main.TimerActivity"
             android:theme="@style/AboutTheme" />
 
         <activity
-            android:name=".About.LicencesActivity"
+            android:name=".about.LicencesActivity"
             android:label="@string/about_open_source_licences"
-            android:parentActivityName=".About.AboutActivity"
+            android:parentActivityName=".about.AboutActivity"
             android:theme="@style/AboutTheme" />
 
         <activity
-            android:name=".Statistics.Main.StatisticsActivity"
+            android:name=".statistics.Main.StatisticsActivity"
             android:label="@string/statistics"
-            android:parentActivityName=".Main.TimerActivity" />
+            android:parentActivityName=".main.TimerActivity" />
 
         <activity
-            android:name=".AddEditLabels.AddEditLabelActivity"
+            android:name=".labels.AddEditLabelActivity"
             android:label="@string/label_dialog_edit"
-            android:parentActivityName=".Main.TimerActivity" />
+            android:parentActivityName=".main.TimerActivity" />
 
         <activity
-            android:name=".Main.MainIntroActivity"
-            android:parentActivityName=".Main.TimerActivity"
+            android:name=".main.MainIntroActivity"
+            android:parentActivityName=".main.TimerActivity"
             android:theme="@style/Theme.Intro" />
 
         <service
-            android:name="com.apps.adrcotfas.goodtime.BL.TimerService"
+            android:name="com.apps.adrcotfas.goodtime.bl.TimerService"
             android:enabled="true"
             android:exported="false" />
 
@@ -92,7 +92,7 @@
         </provider>
 
         <receiver
-            android:name=".Settings.reminders.BootReceiver"
+            android:name=".settings.reminders.BootReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -100,7 +100,7 @@
         </receiver>
 
         <receiver
-            android:name=".Settings.reminders.ReminderReceiver"
+            android:name=".settings.reminders.ReminderReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="buddy.reminder_action" />

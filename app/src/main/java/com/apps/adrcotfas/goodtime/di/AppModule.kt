@@ -1,10 +1,10 @@
 package com.apps.adrcotfas.goodtime.di
 
 import android.content.Context
-import com.apps.adrcotfas.goodtime.BL.CurrentSessionManager
-import com.apps.adrcotfas.goodtime.BL.RingtoneAndVibrationPlayer
-import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper
-import com.apps.adrcotfas.goodtime.Settings.reminders.ReminderHelper
+import com.apps.adrcotfas.goodtime.bl.CurrentSessionManager
+import com.apps.adrcotfas.goodtime.bl.RingtoneAndVibrationPlayer
+import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
+import com.apps.adrcotfas.goodtime.settings.reminders.ReminderHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
