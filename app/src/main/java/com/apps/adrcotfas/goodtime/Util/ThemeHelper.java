@@ -25,10 +25,7 @@ import android.widget.EditText;
 import androidx.annotation.AttrRes;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.R;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 
 public class ThemeHelper {
 
@@ -36,8 +33,8 @@ public class ThemeHelper {
     public static final int COLOR_INDEX_ALL_LABELS = 42;
     public static final int COLOR_INDEX_BREAK = 43;
 
-    public static void setTheme(AppCompatActivity activity) {
-        if (PreferenceHelper.isAmoledTheme()) {
+    public static void setTheme(AppCompatActivity activity, Boolean amoled) {
+        if (amoled) {
             activity.setTheme(R.style.AppTheme);
         } else {
             activity.setTheme(R.style.AppThemeDark);

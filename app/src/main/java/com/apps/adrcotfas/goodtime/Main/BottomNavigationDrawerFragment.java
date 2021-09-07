@@ -43,10 +43,17 @@ import androidx.core.widget.NestedScrollView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
 
     private NavigationView navigationView;
     private NestedScrollView layout;
+
+    @Inject PreferenceHelper preferenceHelper;
 
     public BottomNavigationDrawerFragment() {
         // required
@@ -58,7 +65,7 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
 
         DrawerMainBinding binding = DataBindingUtil.inflate(inflater, R.layout.drawer_main, container, false);
 
-        if (PreferenceHelper.isPro() && !BuildConfig.F_DROID) {
+        if (preferenceHelper.isPro() && !BuildConfig.F_DROID) {
             binding.separator1.setVisibility(View.GONE);
             binding.upgrade.setVisibility(View.GONE);
         } else {
@@ -108,7 +115,7 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
         navigationView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.edit_labels:
-                    if (PreferenceHelper.isPro()) {
+                    if (preferenceHelper.isPro()) {
                         Intent intent = new Intent(getActivity(), AddEditLabelActivity.class);
                         startActivity(intent);
                     } else {
@@ -124,7 +131,7 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
                     startActivity(statisticsIntent);
                     break;
                 case R.id.action_backup:
-                    if (PreferenceHelper.isPro()) {
+                    if (preferenceHelper.isPro()) {
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                         new BackupFragment().show(fragmentManager, "");
                     } else {

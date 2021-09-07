@@ -27,12 +27,20 @@ import androidx.fragment.app.FragmentTransaction;
 
 import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class SettingsActivity extends BaseActivity {
+
+    @Inject
+    PreferenceHelper preferenceHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ThemeHelper.setTheme(this);
+        ThemeHelper.setTheme(this, preferenceHelper.isAmoledTheme());
 
         GenericMainBinding binding = DataBindingUtil.setContentView(this, R.layout.generic_main);
         binding.layout.setAlpha(0.f);

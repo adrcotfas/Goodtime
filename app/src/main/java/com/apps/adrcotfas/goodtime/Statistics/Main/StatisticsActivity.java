@@ -38,6 +38,11 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class StatisticsActivity extends BaseActivity implements SelectLabelDialog.OnLabelSelectedListener {
 
     public static final String DIALOG_ADD_ENTRY_TAG = "dialogAddEntry";
@@ -49,12 +54,14 @@ public class StatisticsActivity extends BaseActivity implements SelectLabelDialo
     private MenuItem mMenuItemCrtLabel;
     private boolean mIsMainView;
 
+    @Inject PreferenceHelper preferenceHelper;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mLabelsViewModel = new ViewModelProvider(this).get(LabelsViewModel.class);
 
-        ThemeHelper.setTheme(this);
+        ThemeHelper.setTheme(this, preferenceHelper.isAmoledTheme());
         StatisticsActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.statistics_activity_main);
 
         setSupportActionBar(binding.toolbarWrapper.toolbar);
@@ -120,7 +127,7 @@ public class StatisticsActivity extends BaseActivity implements SelectLabelDialo
         switch (item.getItemId()) {
             case R.id.action_add:
 
-                if (PreferenceHelper.isPro()) {
+                if (preferenceHelper.isPro()) {
                     AddEditEntryDialog newFragment = new AddEditEntryDialog();
                     newFragment.show(fragmentManager, DIALOG_ADD_ENTRY_TAG);
                 } else {

@@ -19,6 +19,11 @@ import com.apps.adrcotfas.goodtime.Util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class DurationsSettingsFragment extends PreferenceFragmentCompat
         implements ProfilePreference.ProfileChangeListener, ProperSeekBarPreferenceDialog.Listener {
 
@@ -31,6 +36,8 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat
     private List<Profile> mProfiles = new ArrayList<>();
     private ProfilesViewModel mProfilesViewModel;
     private Preference mSaveCustomProfileButton;
+
+    @Inject PreferenceHelper preferenceHelper;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,7 +62,7 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat
         });
         setupDurations();
         mSaveCustomProfileButton = findPreference(PreferenceHelper.SAVE_CUSTOM_PROFILE);
-        mSaveCustomProfileButton.setVisible(PreferenceHelper.isUnsavedProfileActive());
+        mSaveCustomProfileButton.setVisible(preferenceHelper.isUnsavedProfileActive());
     }
 
     private void setupDurations() {
@@ -125,7 +132,7 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat
         mPrefProfile.setEntries(profileNames.toArray(new CharSequence[profileNames.size()]));
         mPrefProfile.setEntryValues(profileNames.toArray(new CharSequence[profileNames.size()]));
 
-        if (PreferenceHelper.isUnsavedProfileActive()) {
+        if (preferenceHelper.isUnsavedProfileActive()) {
             mPrefProfile.setSummary("");
         }
 
@@ -145,7 +152,7 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat
             dialog.setTargetFragment(this, 0);
             dialog.show(getParentFragmentManager(), null);
         } else if (preference.getKey().equals(PreferenceHelper.SAVE_CUSTOM_PROFILE)) {
-            if (PreferenceHelper.isPro()) {
+            if (preferenceHelper.isPro()) {
                 Profile profile = mPrefEnableLongBreak.isChecked() ? new Profile(
                         "",
                         mPrefWorkDuration.getValue(),
@@ -176,13 +183,13 @@ public class DurationsSettingsFragment extends PreferenceFragmentCompat
     }
 
     private void onDurationsChanged() {
-        PreferenceHelper.setUnsavedProfileActive(true);
+        preferenceHelper.setUnsavedProfileActive(true);
         mSaveCustomProfileButton.setVisible(true);
     }
 
     @Override
     public void onProfileChange(CharSequence newValue) {
-        PreferenceHelper.setUnsavedProfileActive(false);
+        preferenceHelper.setUnsavedProfileActive(false);
         mSaveCustomProfileButton.setVisible(false);
 
         if (newValue.equals(getResources().getText(R.string.pref_profile_default))) {

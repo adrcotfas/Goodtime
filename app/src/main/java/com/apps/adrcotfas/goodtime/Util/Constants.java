@@ -24,8 +24,6 @@ public class Constants {
     public static final int DEFAULT_WORK_DURATION_5217         = 52;
     public static final int DEFAULT_BREAK_DURATION_5217        = 17;
 
-    public static final String sku = "upgraded_version";
-
     public interface ACTION {
         String START       = "goodtime.action.start";
         String SKIP        = "goodtime.action.skip";
