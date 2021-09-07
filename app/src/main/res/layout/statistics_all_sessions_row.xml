@@ -6,7 +6,7 @@
     <data>
         <variable
             name="item"
-            type="com.apps.adrcotfas.goodtime.Session" />
+            type="com.apps.adrcotfas.goodtime.database.Session" />
         <import type="android.view.View" />
     </data>
 
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:singleLine="true"
-            android:text="@{com.apps.adrcotfas.goodtime.Util.StringUtils.formatDateForStatistics(item.timestamp)}"
+            android:text="@{com.apps.adrcotfas.goodtime.util.StringUtils.formatDateForStatistics(item.timestamp)}"
             android:textSize="@dimen/smallTextSize"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -54,7 +54,7 @@
 
             android:layout_marginEnd="16dp"
             android:singleLine="true"
-            android:text="@{com.apps.adrcotfas.goodtime.Util.StringUtils.formatTimeForStatistics(item.timestamp)}"
+            android:text="@{com.apps.adrcotfas.goodtime.util.StringUtils.formatTimeForStatistics(item.timestamp)}"
             android:textSize="@dimen/smallTextSize"
             app:layout_constraintBottom_toBottomOf="parent"
 
