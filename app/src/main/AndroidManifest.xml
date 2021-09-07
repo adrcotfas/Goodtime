@@ -56,9 +56,10 @@
             android:theme="@style/AboutTheme" />
 
         <activity
-            android:name=".about.LicencesActivity"
-            android:label="@string/about_open_source_licences"
-            android:parentActivityName=".about.AboutActivity"
+            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+            android:theme="@style/AboutTheme" />
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
             android:theme="@style/AboutTheme" />
 
         <activity

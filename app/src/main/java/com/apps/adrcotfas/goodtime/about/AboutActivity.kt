@@ -32,6 +32,7 @@ import android.content.Context
 import android.net.Uri
 import android.widget.Toast
 import com.apps.adrcotfas.goodtime.BuildConfig
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -85,8 +86,7 @@ class AboutActivity : MaterialAboutActivity() {
                     .sizeDp(18)
             )
             .setOnClickAction {
-                val intent = Intent(c, LicencesActivity::class.java)
-                c.startActivity(intent)
+                startActivity(Intent(this, OssLicensesMenuActivity::class.java))
             }
             .build())
         builder1.addItem(MaterialAboutActionItem.Builder()

@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.android.gms.oss-licenses-plugin'
 }
 
 android {
@@ -151,6 +152,9 @@ dependencies {
 
     //TODO: use the main repo when it's ready
     implementation 'com.github.adrcotfas:UltimateRingtonePicker:jitpack_fix-SNAPSHOT'
+
+    // open source licences list
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 
     implementation 'com.google.code.gson:gson:2.8.6'
 
