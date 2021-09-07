@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Adrian Cotfas
+ * Copyright 2016-2021 Adrian Cotfas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy of the License at
@@ -25,7 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
+import com.apps.adrcotfas.goodtime.BL.CurrentSessionManager;
 import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.Main.LabelsViewModel;
@@ -54,6 +54,11 @@ import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_UNLABELED
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.clearFocusEditText;
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.requestFocusEditText;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class AddEditLabelActivity extends AppCompatActivity
         implements AddEditLabelsAdapter.OnEditLabelListener{
 
@@ -74,10 +79,16 @@ public class AddEditLabelActivity extends AppCompatActivity
     private ImageView mImageLeft;
     private FrameLayout mImageLeftContainer;
 
+    @Inject
+    PreferenceHelper preferenceHelper;
+
+    @Inject
+    CurrentSessionManager currentSessionManager;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ThemeHelper.setTheme(this);
+        ThemeHelper.setTheme(this, preferenceHelper.isAmoledTheme());
 
         ActivityAddEditLabelsBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_add_edit_labels);
         mLabelsViewModel = ViewModelProviders.of(this).get(LabelsViewModel.class);
@@ -172,9 +183,9 @@ public class AddEditLabelActivity extends AppCompatActivity
     public void onEditLabel(String label, String newLabel) {
         mLabelsViewModel.editLabelName(label, newLabel);
 
-        Label crtLabel = PreferenceHelper.getCurrentSessionLabel();
+        Label crtLabel = preferenceHelper.getCurrentSessionLabel();
         if (crtLabel.title != null && crtLabel.title.equals(label)) {
-            PreferenceHelper.setCurrentSessionLabel(new Label(newLabel, crtLabel.colorId));
+            preferenceHelper.setCurrentSessionLabel(new Label(newLabel, crtLabel.colorId));
         }
     }
 
@@ -182,9 +193,9 @@ public class AddEditLabelActivity extends AppCompatActivity
     public void onEditColor(String label, int color) {
         mLabelsViewModel.editLabelColor(label, color);
 
-        Label crtLabel = PreferenceHelper.getCurrentSessionLabel();
+        Label crtLabel = preferenceHelper.getCurrentSessionLabel();
         if (crtLabel.title != null && crtLabel.title.equals(label)) {
-            PreferenceHelper.setCurrentSessionLabel(new Label(label, color));
+            preferenceHelper.setCurrentSessionLabel(new Label(label, color));
         }
     }
 
@@ -192,12 +203,12 @@ public class AddEditLabelActivity extends AppCompatActivity
     public void onToggleArchive(Label label, int adapterPosition) {
         mLabelsViewModel.toggleLabelArchive(label.title, label.archived);
 
-        Label crtLabel = PreferenceHelper.getCurrentSessionLabel();
+        Label crtLabel = preferenceHelper.getCurrentSessionLabel();
         if (label.archived && crtLabel.title != null && crtLabel.title.equals(label.title)) {
-            GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
-            PreferenceHelper.setCurrentSessionLabel(new Label(null, COLOR_INDEX_UNLABELED));
+            currentSessionManager.getCurrentSession().setLabel(null);
+            preferenceHelper.setCurrentSessionLabel(new Label(null, COLOR_INDEX_UNLABELED));
         }
-        if (label.archived && !PreferenceHelper.getArchivedLabelHintWasShown()) {
+        if (label.archived && !preferenceHelper.getArchivedLabelHintWasShown()) {
             showArchivedLabelHint();
         }
     }
@@ -208,7 +219,7 @@ public class AddEditLabelActivity extends AppCompatActivity
     private void showArchivedLabelHint() {
         Snackbar s = Snackbar.make(mRecyclerView, getString(R.string.tutorial_archive_label), Snackbar.LENGTH_INDEFINITE)
                 .setAction("OK", view -> {
-                    PreferenceHelper.setArchivedLabelHintWasShown(true);
+                    preferenceHelper.setArchivedLabelHintWasShown(true);
                 })
                 .setActionTextColor(getResources().getColor(R.color.teal200));
 
@@ -227,10 +238,9 @@ public class AddEditLabelActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -246,14 +256,14 @@ public class AddEditLabelActivity extends AppCompatActivity
             mCustomAdapter.notifyDataSetChanged();
         }
 
-        String crtSessionLabel = GoodtimeApplication.getCurrentSessionManager().getCurrentSession().getLabel().getValue();
+        String crtSessionLabel = currentSessionManager.getCurrentSession().getLabel().getValue();
         if (crtSessionLabel != null && crtSessionLabel.equals(label.title)) {
-            GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
+            currentSessionManager.getCurrentSession().setLabel(null);
         }
 
         // the label attached to the current session was deleted
-        if (label.title.equals(PreferenceHelper.getCurrentSessionLabel().title)) {
-            PreferenceHelper.setCurrentSessionLabel(new Label(null, COLOR_INDEX_UNLABELED));
+        if (label.title.equals(preferenceHelper.getCurrentSessionLabel().title)) {
+            preferenceHelper.setCurrentSessionLabel(new Label(null, COLOR_INDEX_UNLABELED));
         }
 
         updateRecyclerViewVisibility();

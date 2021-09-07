@@ -52,8 +52,16 @@ import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceTotalLabel
 import static com.apps.adrcotfas.goodtime.Statistics.Utils.getInstanceUnlabeledLabel;
 import static com.apps.adrcotfas.goodtime.Util.ThemeHelper.COLOR_INDEX_ALL_LABELS;
 
-public class SelectLabelDialog extends DialogFragment {
+import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
+public class SelectLabelDialog extends DialogFragment {
+    
+    @Inject
+    PreferenceHelper preferenceHelper;
+    
     /**
      * The callback used to indicate the user is done selecting the title
      */
@@ -100,7 +108,7 @@ public class SelectLabelDialog extends DialogFragment {
                 false);
 
         binding.editLabels.setOnClickListener(v -> {
-            if (PreferenceHelper.isPro()) {
+            if (preferenceHelper.isPro()) {
                 Intent intent = new Intent(getActivity(), AddEditLabelActivity.class);
                 startActivity(intent);
             } else {
@@ -180,9 +188,9 @@ public class SelectLabelDialog extends DialogFragment {
                 });
         if (!mIsExtendedVersion) {
             builder.setNeutralButton(
-                    PreferenceHelper.isUnsavedProfileActive()
+                    preferenceHelper.isUnsavedProfileActive()
                             ? getResources().getString(R.string.Profile)
-                            : PreferenceHelper.getProfile(), null);
+                            : preferenceHelper.getProfile(), null);
             mAlertDialog = builder.create();
             mAlertDialog.setOnShowListener(dialog -> {
 
@@ -200,7 +208,7 @@ public class SelectLabelDialog extends DialogFragment {
 
                         String pref25 = SelectLabelDialog.this.getResources().getText(R.string.pref_profile_default).toString();
                         String pref52 = SelectLabelDialog.this.getResources().getText(R.string.pref_profile_5217).toString();
-                        String crtProfileName = PreferenceHelper.getProfile();
+                        String crtProfileName = preferenceHelper.getProfile();
 
                         if (crtProfileName.equals(pref25)) {
                             profileIdx = 0;
@@ -226,7 +234,7 @@ public class SelectLabelDialog extends DialogFragment {
                                         .setTitle(SelectLabelDialog.this.getResources().getString(R.string.Profile))
                                         .setSingleChoiceItems(
                                                 arrayAdapter,
-                                                PreferenceHelper.isUnsavedProfileActive() ? -1 : profileIdx,
+                                                preferenceHelper.isUnsavedProfileActive() ? -1 : profileIdx,
                                                 (dialogInterface, which) -> {
                                             String selected = arrayAdapter.getItem(which);
                                             updateProfile(which);
@@ -255,12 +263,12 @@ public class SelectLabelDialog extends DialogFragment {
 
     private void updateProfile(int index) {
         if (index == 0) {
-            PreferenceHelper.setProfile25_5();
+            preferenceHelper.setProfile25_5();
         } else if (index == 1) {
-            PreferenceHelper.setProfile52_17();
+            preferenceHelper.setProfile52_17();
         } else {
             int PREDEFINED_PROFILES_NR = 2;
-            PreferenceHelper.setProfile(mProfiles.get(index - PREDEFINED_PROFILES_NR));
+            preferenceHelper.setProfile(mProfiles.get(index - PREDEFINED_PROFILES_NR));
         }
     }
 }

@@ -31,13 +31,18 @@ import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper
 import com.apps.adrcotfas.goodtime.Util.Constants
 import com.apps.adrcotfas.goodtime.databinding.DialogUpgradeBinding
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class UpgradeDialog
     : DialogFragment(), BillingProcessor.IBillingHandler {
 
     private var readyToPurchase = false
     private lateinit var billingProcessor : BillingProcessor
     private lateinit var binding : DialogUpgradeBinding
+
+    @Inject lateinit var preferenceHelper: PreferenceHelper
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         isOpen = true
@@ -93,13 +98,13 @@ class UpgradeDialog
         if (billingProcessor.isPurchased(Constants.sku)) {
             // should not happen
             binding.buttonPro.visibility = View.GONE
-            PreferenceHelper.setPro(true)
+            preferenceHelper.setPro(true)
         } else {
             if (billingProcessor.isPurchased(Constants.sku)) {
                 binding.buttonPro.visibility = View.GONE
-                PreferenceHelper.setPro(true)
+                preferenceHelper.setPro(true)
             } else {
-                PreferenceHelper.setPro(false)
+                preferenceHelper.setPro(false)
             }
 
         }
@@ -113,11 +118,11 @@ class UpgradeDialog
                 found = true
             }
         }
-        PreferenceHelper.setPro(found)
+        preferenceHelper.setPro(found)
     }
 
     override fun onProductPurchased(productId: String, details: TransactionDetails?) {
-        PreferenceHelper.setPro(true)
+        preferenceHelper.setPro(true)
         binding.buttonPro.isEnabled = false
         dismiss()
     }

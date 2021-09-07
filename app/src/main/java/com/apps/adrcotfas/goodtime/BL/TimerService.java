@@ -42,26 +42,35 @@ import static com.apps.adrcotfas.goodtime.BL.NotificationHelper.GOODTIME_NOTIFIC
 import static com.apps.adrcotfas.goodtime.Util.Constants.SESSION_TYPE;
 import static com.apps.adrcotfas.goodtime.Util.StringUtils.formatTime;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Class representing the foreground service which triggers the countdown timer and handles events.
  */
+@AndroidEntryPoint
 public class TimerService extends LifecycleService {
 
     private static final String TAG = TimerService.class.getSimpleName();
 
-    private NotificationHelper mNotificationHelper;
-    private RingtoneAndVibrationPlayer mRingtoneAndVibrationPlayer;
+    private NotificationHelper notificationHelper;
 
-    private int mPreviousRingerMode;
-    private boolean mPreviousWifiMode;
+    @Inject
+    RingtoneAndVibrationPlayer ringtoneAndVibrationPlayer;
+    
+    @Inject PreferenceHelper preferenceHelper;
+    
+    @Inject CurrentSessionManager currentSessionManager;
+
+    private int previousRingerMode;
+    private boolean previousWifiMode;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
         Log.d(TAG, "onCreate " + this.hashCode());
-        mNotificationHelper = new NotificationHelper(getApplicationContext());
-        mRingtoneAndVibrationPlayer = new RingtoneAndVibrationPlayer(getApplicationContext());
+        notificationHelper = new NotificationHelper(getApplicationContext());
         EventBus.getDefault().register(this);
     }
 
@@ -131,79 +140,79 @@ public class TimerService extends LifecycleService {
             updateNotificationProgress();
         } else if (o instanceof Constants.ClearNotificationEvent) {
             Log.d(TAG, "onEvent " + o.getClass().getSimpleName());
-            mNotificationHelper.clearNotification();
-            mRingtoneAndVibrationPlayer.stop();
+            notificationHelper.clearNotification();
+            ringtoneAndVibrationPlayer.stop();
         }
     }
 
     private void onStartEvent(SessionType sessionType) {
 
         EventBus.getDefault().post(new Constants.StartSessionEvent());
-        if (sessionType != SessionType.WORK && PreferenceHelper.isLongBreakEnabled()
-                && PreferenceHelper.itsTimeForLongBreak()) {
+        if (sessionType != SessionType.WORK && preferenceHelper.isLongBreakEnabled()
+                && preferenceHelper.itsTimeForLongBreak()) {
             sessionType = SessionType.LONG_BREAK;
         }
 
         Log.d(TAG, "onStartEvent: " + sessionType.toString());
 
-        getSessionManager().startTimer(sessionType);
+        currentSessionManager.startTimer(sessionType);
 
         if (sessionType == SessionType.WORK) {
-            if (PreferenceHelper.isWiFiDisabled()) {
+            if (preferenceHelper.isWiFiDisabled()) {
                 toggleWifi(false);
             }
-            if (PreferenceHelper.isSoundAndVibrationDisabled()) {
+            if (preferenceHelper.isSoundAndVibrationDisabled()) {
                 toggleSound(false);
             }
-            if (PreferenceHelper.isDndModeActive()) {
+            if (preferenceHelper.isDndModeActive()) {
                 toggleDndMode(false);
             }
         }
 
-        if (!PreferenceHelper.isAutoStartWork() && !PreferenceHelper.isAutoStartBreak()) {
-            mRingtoneAndVibrationPlayer.stop();
+        if (!preferenceHelper.isAutoStartWork() && !preferenceHelper.isAutoStartBreak()) {
+            ringtoneAndVibrationPlayer.stop();
         }
 
-        mNotificationHelper.clearNotification();
-        startForeground(GOODTIME_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
-                getSessionManager().getCurrentSession()).build());
+        notificationHelper.clearNotification();
+        startForeground(GOODTIME_NOTIFICATION_ID, notificationHelper.getInProgressBuilder(
+                currentSessionManager.getCurrentSession()).build());
     }
 
     private void onToggleEvent() {
-        getSessionManager().toggleTimer();
-        startForeground(GOODTIME_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
-                getSessionManager().getCurrentSession()).build());
+        currentSessionManager.toggleTimer();
+        startForeground(GOODTIME_NOTIFICATION_ID, notificationHelper.getInProgressBuilder(
+                currentSessionManager.getCurrentSession()).build());
     }
 
     private void onStopEvent() {
         Log.d(TAG, "onStopEvent");
 
-        if (PreferenceHelper.isWiFiDisabled()) {
+        if (preferenceHelper.isWiFiDisabled()) {
             toggleWifi(true);
         }
-        if (PreferenceHelper.isSoundAndVibrationDisabled()) {
+        if (preferenceHelper.isSoundAndVibrationDisabled()) {
             toggleSound(true);
         }
-        if (PreferenceHelper.isDndModeActive()) {
+        if (preferenceHelper.isDndModeActive()) {
             toggleDndMode(true);
         }
 
-        SessionType sessionType = getSessionManager().getCurrentSession().getSessionType().getValue();
+        SessionType sessionType = currentSessionManager.getCurrentSession().getSessionType().getValue();
         Log.d(TAG, "onStopEvent, sessionType: " + sessionType);
         if (sessionType == SessionType.LONG_BREAK) {
-            PreferenceHelper.resetCurrentStreak();
+            preferenceHelper.resetCurrentStreak();
         }
 
         stopForeground(true);
         stopSelf();
 
-        finalizeSession(sessionType, getSessionManager().getElapsedMinutesAtStop());
+        finalizeSession(sessionType, currentSessionManager.getElapsedMinutesAtStop());
     }
 
     private void onOneMinuteLeft() {
         acquireScreenLock();
         bringActivityToFront();
-        mRingtoneAndVibrationPlayer.play(SessionType.WORK, false);
+        ringtoneAndVibrationPlayer.play(SessionType.WORK, false);
     }
 
     private void onFinishEvent(SessionType sessionType) {
@@ -213,83 +222,79 @@ public class TimerService extends LifecycleService {
         bringActivityToFront();
 
         if (sessionType == SessionType.WORK) {
-            if (PreferenceHelper.isWiFiDisabled()) {
+            if (preferenceHelper.isWiFiDisabled()) {
                 toggleWifi(true);
             }
-            if (PreferenceHelper.isSoundAndVibrationDisabled()) {
+            if (preferenceHelper.isSoundAndVibrationDisabled()) {
                 toggleSound(true);
             }
-            if (PreferenceHelper.isDndModeActive()) {
+            if (preferenceHelper.isDndModeActive()) {
                 toggleDndMode(true);
             }
         }
 
-        mRingtoneAndVibrationPlayer.play(sessionType, PreferenceHelper.isRingtoneInsistent());
+        ringtoneAndVibrationPlayer.play(sessionType, preferenceHelper.isRingtoneInsistent());
         stopForeground(true);
 
         updateLongBreakStreak(sessionType);
 
         // store what was done to the database
-        finalizeSession(sessionType, getSessionManager().getElapsedMinutesAtFinished());
+        finalizeSession(sessionType, currentSessionManager.getElapsedMinutesAtFinished());
 
-        if (PreferenceHelper.isAutoStartBreak() && sessionType == SessionType.WORK) {
+        if (preferenceHelper.isAutoStartBreak() && sessionType == SessionType.WORK) {
             onStartEvent(SessionType.BREAK);
-        } else if (PreferenceHelper.isAutoStartWork() && sessionType != SessionType.WORK) {
+        } else if (preferenceHelper.isAutoStartWork() && sessionType != SessionType.WORK) {
             onStartEvent(SessionType.WORK);
         } else {
-            mNotificationHelper.notifyFinished(sessionType);
+            notificationHelper.notifyFinished(sessionType);
         }
     }
 
     private void onAdd60Seconds() {
         Log.d(TAG, TimerService.this.hashCode() + " onAdd60Seconds ");
-        PreferenceHelper.increment60SecondsCounter();
-        if (getSessionManager().getCurrentSession().getTimerState().getValue() == TimerState.INACTIVE) {
-            startForeground(GOODTIME_NOTIFICATION_ID, mNotificationHelper.getInProgressBuilder(
-                    getSessionManager().getCurrentSession()).build());
+        preferenceHelper.increment60SecondsCounter();
+        if (currentSessionManager.getCurrentSession().getTimerState().getValue() == TimerState.INACTIVE) {
+            startForeground(GOODTIME_NOTIFICATION_ID, notificationHelper.getInProgressBuilder(
+                    currentSessionManager.getCurrentSession()).build());
         }
-        getSessionManager().add60Seconds();
+        currentSessionManager.add60Seconds();
     }
 
     private void onSkipEvent() {
-        final SessionType sessionType = getSessionManager().getCurrentSession().getSessionType().getValue();
+        final SessionType sessionType = currentSessionManager.getCurrentSession().getSessionType().getValue();
         Log.d(TAG, TimerService.this.hashCode() + " onSkipEvent " + sessionType.toString());
 
         if (sessionType == SessionType.WORK) {
-            if (PreferenceHelper.isWiFiDisabled()) {
+            if (preferenceHelper.isWiFiDisabled()) {
                 toggleWifi(true);
             }
-            if (PreferenceHelper.isSoundAndVibrationDisabled()) {
+            if (preferenceHelper.isSoundAndVibrationDisabled()) {
                 toggleSound(true);
             }
-            if (PreferenceHelper.isDndModeActive()) {
+            if (preferenceHelper.isDndModeActive()) {
                 toggleDndMode(true);
             }
         }
 
-        getSessionManager().stopTimer();
+        currentSessionManager.stopTimer();
         stopForeground(true);
         updateLongBreakStreak(sessionType);
 
-        finalizeSession(sessionType, getSessionManager().getElapsedMinutesAtStop());
+        finalizeSession(sessionType, currentSessionManager.getElapsedMinutesAtStop());
 
         onStartEvent(sessionType == SessionType.WORK ? SessionType.BREAK : SessionType.WORK);
     }
 
     private void updateLongBreakStreak(SessionType sessionType) {
-        if (PreferenceHelper.isLongBreakEnabled()) {
+        if (preferenceHelper.isLongBreakEnabled()) {
             if (sessionType == SessionType.LONG_BREAK) {
-                PreferenceHelper.resetCurrentStreak();
+                preferenceHelper.resetCurrentStreak();
             } else if (sessionType == SessionType.WORK){
-                PreferenceHelper.incrementCurrentStreak();
+                preferenceHelper.incrementCurrentStreak();
             }
-            Log.d(TAG, "PreferenceHelper.getCurrentStreak: " + PreferenceHelper.getCurrentStreak());
-            Log.d(TAG, "PreferenceHelper.lastWorkFinishedAt: " + PreferenceHelper.lastWorkFinishedAt());
+            Log.d(TAG, "preferenceHelper.getCurrentStreak: " + preferenceHelper.getCurrentStreak());
+            Log.d(TAG, "preferenceHelper.lastWorkFinishedAt: " + preferenceHelper.lastWorkFinishedAt());
         }
-    }
-
-    private CurrentSessionManager getSessionManager() {
-        return GoodtimeApplication.getCurrentSessionManager();
     }
 
     private void acquireScreenLock() {
@@ -300,8 +305,8 @@ public class TimerService extends LifecycleService {
     }
 
     private void updateNotificationProgress() {
-        mNotificationHelper.updateNotificationProgress(
-                getSessionManager().getCurrentSession());
+        notificationHelper.updateNotificationProgress(
+                currentSessionManager.getCurrentSession());
     }
 
     private void toggleSound(boolean restore) {
@@ -317,12 +322,12 @@ public class TimerService extends LifecycleService {
         Thread t = new Thread(() -> {
             final AudioManager aManager = (AudioManager) getSystemService(AUDIO_SERVICE);
             if (restore) {
-                if (mPreviousRingerMode == RINGER_MODE_SILENT) {
+                if (previousRingerMode == RINGER_MODE_SILENT) {
                     return;
                 }
-                aManager.setRingerMode(mPreviousRingerMode);
+                aManager.setRingerMode(previousRingerMode);
             } else {
-                mPreviousRingerMode = aManager.getRingerMode();
+                previousRingerMode = aManager.getRingerMode();
                 aManager.setRingerMode(RINGER_MODE_SILENT);
             }
         });
@@ -357,9 +362,9 @@ public class TimerService extends LifecycleService {
         Runnable r = () -> {
             WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
             if (restore) {
-                wifiManager.setWifiEnabled(mPreviousWifiMode);
+                wifiManager.setWifiEnabled(previousWifiMode);
             } else {
-                mPreviousWifiMode = wifiManager.isWifiEnabled();
+                previousWifiMode = wifiManager.isWifiEnabled();
                 wifiManager.setWifiEnabled(false);
             }
         };
@@ -369,16 +374,16 @@ public class TimerService extends LifecycleService {
 
     //TODO: clean-up this mess
     private void finalizeSession(SessionType sessionType, int minutes) {
-        getSessionManager().stopTimer();
-        PreferenceHelper.resetAdd60SecondsCounter();
-        getSessionManager().getCurrentSession().setDuration(
-                TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)));
+        currentSessionManager.stopTimer();
+        preferenceHelper.resetAdd60SecondsCounter();
+        currentSessionManager.getCurrentSession().setDuration(
+                TimeUnit.MINUTES.toMillis(preferenceHelper.getSessionDuration(SessionType.WORK)));
 
         if (sessionType != SessionType.WORK) {
             return;
         }
 
-        final String label = getSessionManager().getCurrentSession().getLabel().getValue();
+        final String label = currentSessionManager.getCurrentSession().getLabel().getValue();
         final long endTime = System.currentTimeMillis();
 
         Handler handler = new Handler();
@@ -396,7 +401,7 @@ public class TimerService extends LifecycleService {
                     Log.d(TAG, "finalizeSession, saving session finished at" + formatTime(endTime));
                 } catch (Exception e) {
                     // the label was deleted in the meantime so set it to null and save the unlabeled session
-                    handler.post(() -> getSessionManager().getCurrentSession().setLabel(null));
+                    handler.post(() -> currentSessionManager.getCurrentSession().setLabel(null));
                     Session session = new Session(
                             0,
                             endTime,

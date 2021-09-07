@@ -35,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.BL.CurrentSession;
+import com.apps.adrcotfas.goodtime.BL.CurrentSessionManager;
 import com.apps.adrcotfas.goodtime.BL.GoodtimeApplication;
 import com.apps.adrcotfas.goodtime.BL.NotificationHelper;
 import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
@@ -69,6 +70,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -90,6 +92,11 @@ import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.ENABLE_SCREE
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.WORK_DURATION;
 import static com.apps.adrcotfas.goodtime.Util.BatteryUtils.isIgnoringBatteryOptimizations;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class TimerActivity
         extends
         BaseActivity
@@ -97,9 +104,11 @@ public class TimerActivity
         SharedPreferences.OnSharedPreferenceChangeListener,
         SelectLabelDialog.OnLabelSelectedListener, FinishedSessionDialog.Listener {
 
+    @Inject PreferenceHelper preferenceHelper;
+    @Inject CurrentSessionManager currentSessionManager;
+    
     private static final String TAG = TimerActivity.class.getSimpleName();
 
-    private final CurrentSession mCurrentSession = GoodtimeApplication.getInstance().getCurrentSession();
     private FinishedSessionDialog mDialogSessionFinished;
     private FullscreenHelper mFullscreenHelper;
     private long mBackPressedAt;
@@ -137,7 +146,7 @@ public class TimerActivity
     }
 
     private void skip() {
-        if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
+        if (getCurrentSession().getTimerState().getValue() != TimerState.INACTIVE) {
             Intent skipIntent = new IntentWithAction(TimerActivity.this, TimerService.class,
                     Constants.ACTION.SKIP);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -153,15 +162,15 @@ public class TimerActivity
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
 
-        if (PreferenceHelper.isFirstRun()) {
+        if (preferenceHelper.isFirstRun()) {
             // show app intro
             Intent i = new Intent(TimerActivity.this, MainIntroActivity.class);
             startActivity(i);
 
-            PreferenceHelper.consumeFirstRun();
+            preferenceHelper.consumeFirstRun();
         }
 
-        ThemeHelper.setTheme(this);
+        ThemeHelper.setTheme(this, preferenceHelper.isAmoledTheme());
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         mBlackCover = binding.blackCover;
@@ -201,7 +210,7 @@ public class TimerActivity
      */
     private void showTutorialSnackbars() {
         final int MESSAGE_SIZE = 4;
-        int i = PreferenceHelper.getLastIntroStep();
+        int i = preferenceHelper.getLastIntroStep();
 
         if (i < MESSAGE_SIZE) {
 
@@ -220,12 +229,12 @@ public class TimerActivity
             mTutorialDot.setVisibility(View.VISIBLE);
             mTutorialDot.animate().translationX(0).translationY(0);
             mTutorialDot.clearAnimation();
-            mTutorialDot.setAnimation(animations.get(PreferenceHelper.getLastIntroStep()));
+            mTutorialDot.setAnimation(animations.get(preferenceHelper.getLastIntroStep()));
 
-            Snackbar s = Snackbar.make(mToolbar, messages.get(PreferenceHelper.getLastIntroStep()), Snackbar.LENGTH_INDEFINITE)
+            Snackbar s = Snackbar.make(mToolbar, messages.get(preferenceHelper.getLastIntroStep()), Snackbar.LENGTH_INDEFINITE)
                     .setAction("OK", view -> {
                         int nextStep = i + 1;
-                        PreferenceHelper.setLastIntroStep(nextStep);
+                        preferenceHelper.setLastIntroStep(nextStep);
                         showTutorialSnackbars();
                     })
                     .setAnchorView(mToolbar)
@@ -267,14 +276,14 @@ public class TimerActivity
             @Override
             public void onSwipeBottom(View view) {
                 onStopSession();
-                if (PreferenceHelper.isScreensaverEnabled()) {
+                if (preferenceHelper.isScreensaverEnabled()) {
                     recreate();
                 }
             }
 
             @Override
             public void onSwipeTop(View view) {
-                if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
+                if (getCurrentSession().getTimerState().getValue() != TimerState.INACTIVE) {
                     onAdd60SecondsButtonClick();
                 }
             }
@@ -298,7 +307,7 @@ public class TimerActivity
             @Override
             public void onRelease(View view) {
                 mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.scale));
-                if (mCurrentSession.getTimerState().getValue() == TimerState.PAUSED) {
+                if (getCurrentSession().getTimerState().getValue() == TimerState.PAUSED) {
                     final Handler handler = new Handler();
                     handler.postDelayed(() -> mTimeLabel.startAnimation(
                             loadAnimation(getApplicationContext(), R.anim.blink)), 300);
@@ -308,13 +317,13 @@ public class TimerActivity
     }
 
     private void onSkipSession() {
-        if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
+        if (getCurrentSession().getTimerState().getValue() != TimerState.INACTIVE) {
             onSkipButtonClick();
         }
     }
 
     private void onStopSession() {
-        if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
+        if (getCurrentSession().getTimerState().getValue() != TimerState.INACTIVE) {
             onStopButtonClick();
         }
     }
@@ -343,7 +352,7 @@ public class TimerActivity
         }
 
         // initialize notification channels on the first run
-        if (PreferenceHelper.isFirstRun()) {
+        if (preferenceHelper.isFirstRun()) {
             new NotificationHelper(this);
         }
 
@@ -352,7 +361,7 @@ public class TimerActivity
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.registerOnSharedPreferenceChangeListener(this);
-        toggleKeepScreenOn(PreferenceHelper.isScreenOnEnabled());
+        toggleKeepScreenOn(preferenceHelper.isScreenOnEnabled());
         toggleFullscreenMode();
 
         showTutorialSnackbars();
@@ -362,10 +371,10 @@ public class TimerActivity
 
         // then only reason we're doing this here is because a FinishSessionEvent
         // comes together with a "bring activity on top"
-        if (PreferenceHelper.isFlashingNotificationEnabled() && mViewModel.enableFlashingNotification) {
+        if (preferenceHelper.isFlashingNotificationEnabled() && mViewModel.enableFlashingNotification) {
             mWhiteCover.setVisibility(View.VISIBLE);
-            if ((PreferenceHelper.isAutoStartBreak() && (mCurrentSessionType == SessionType.BREAK || mCurrentSessionType == SessionType.LONG_BREAK))
-                    || (PreferenceHelper.isAutoStartWork() && mCurrentSessionType == SessionType.WORK)) {
+            if ((preferenceHelper.isAutoStartBreak() && (mCurrentSessionType == SessionType.BREAK || mCurrentSessionType == SessionType.LONG_BREAK))
+                    || (preferenceHelper.isAutoStartWork() && mCurrentSessionType == SessionType.WORK)) {
                 startFlashingNotificationShort();
             } else {
                 startFlashingNotification();
@@ -387,11 +396,7 @@ public class TimerActivity
         menuInflater.inflate(R.menu.menu_main, menu);
 
         MenuItem batteryButton = menu.findItem(R.id.action_battery_optimization);
-        if (!isIgnoringBatteryOptimizations(this)) {
-            batteryButton.setVisible(true);
-        } else {
-            batteryButton.setVisible(false);
-        }
+        batteryButton.setVisible(!isIgnoringBatteryOptimizations(this));
 
         mLabelButton = menu.findItem(R.id.action_current_label);
         mLabelButton.getIcon().setColorFilter(
@@ -422,7 +427,7 @@ public class TimerActivity
                         .setPositiveButton(android.R.string.ok, (dialog, which)
                                 -> {
                             mSessionViewModel.deleteSessionsFinishedToday();
-                            PreferenceHelper.resetCurrentStreak();
+                            preferenceHelper.resetCurrentStreak();
                         })
                         .setNegativeButton(android.R.string.cancel, (dialog, which) -> {})
                         .show();
@@ -439,14 +444,14 @@ public class TimerActivity
     }
 
     private void setupEvents() {
-        mCurrentSession.getDuration().observe(TimerActivity.this, this::updateTimeLabel);
-        mCurrentSession.getSessionType().observe(TimerActivity.this, sessionType -> {
+        getCurrentSession().getDuration().observe(TimerActivity.this, this::updateTimeLabel);
+        getCurrentSession().getSessionType().observe(TimerActivity.this, sessionType -> {
             mCurrentSessionType = sessionType;
             setupLabelView();
             setTimeLabelColor();
         });
 
-        mCurrentSession.getTimerState().observe(TimerActivity.this, timerState -> {
+        getCurrentSession().getTimerState().observe(TimerActivity.this, timerState -> {
             if (timerState == TimerState.INACTIVE) {
                 setupLabelView();
                 setTimeLabelColor();
@@ -463,10 +468,15 @@ public class TimerActivity
         });
     }
 
+    @NonNull
+    private CurrentSession getCurrentSession() {
+        return currentSessionManager.getCurrentSession();
+    }
+
     @SuppressLint("WrongConstant")
     @Override
     public void onBackPressed() {
-        if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
+        if (getCurrentSession().getTimerState().getValue() != TimerState.INACTIVE) {
             moveTaskToBack(true);
         } else {
             if (mBackPressedAt + 2000 > System.currentTimeMillis()) {
@@ -487,7 +497,7 @@ public class TimerActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         final MenuItem alertMenuItem = menu.findItem(R.id.action_sessions_counter);
         alertMenuItem.setVisible(false);
-        boolean sessionsCounterEnabled = PreferenceHelper.isSessionsCounterEnabled();
+        boolean sessionsCounterEnabled = preferenceHelper.isSessionsCounterEnabled();
         if (sessionsCounterEnabled) {
             FrameLayout mSessionsCounter = (FrameLayout) alertMenuItem.getActionView();
             mSessionsCounterText = mSessionsCounter.findViewById(R.id.view_alert_count_textview);
@@ -522,8 +532,8 @@ public class TimerActivity
     @Subscribe
     public void onEventMainThread(Object o) {
         if (o instanceof Constants.FinishWorkEvent) {
-            if (PreferenceHelper.isAutoStartBreak()) {
-                if (PreferenceHelper.isFlashingNotificationEnabled()) {
+            if (preferenceHelper.isAutoStartBreak()) {
+                if (preferenceHelper.isFlashingNotificationEnabled()) {
                     mViewModel.enableFlashingNotification = true;
                 }
             } else {
@@ -531,8 +541,8 @@ public class TimerActivity
                 showFinishedSessionUI();
             }
         } else if (o instanceof Constants.FinishBreakEvent || o instanceof Constants.FinishLongBreakEvent) {
-            if (PreferenceHelper.isAutoStartWork()) {
-                if (PreferenceHelper.isFlashingNotificationEnabled()) {
+            if (preferenceHelper.isAutoStartWork()) {
+                if (preferenceHelper.isFlashingNotificationEnabled()) {
                     mViewModel.enableFlashingNotification = true;
                 }
             } else {
@@ -544,11 +554,11 @@ public class TimerActivity
                 mDialogSessionFinished.dismissAllowingStateLoss();
             }
             mViewModel.showFinishDialog = false;
-            if (!PreferenceHelper.isAutoStartBreak() && !PreferenceHelper.isAutoStartWork()) {
+            if (!preferenceHelper.isAutoStartBreak() && !preferenceHelper.isAutoStartWork()) {
                 stopFlashingNotification();
             }
         } else if (o instanceof Constants.OneMinuteLeft) {
-            if (PreferenceHelper.isFlashingNotificationEnabled()) {
+            if (preferenceHelper.isFlashingNotificationEnabled()) {
                 startFlashingNotificationShort();
             }
         }
@@ -561,7 +571,7 @@ public class TimerActivity
 
         String currentFormattedTick;
 
-        boolean isMinutesStyle = PreferenceHelper.getTimerStyle().equals(getResources().getString(R.string.pref_timer_style_minutes_value));
+        boolean isMinutesStyle = preferenceHelper.getTimerStyle().equals(getResources().getString(R.string.pref_timer_style_minutes_value));
         if (isMinutesStyle) {
             currentFormattedTick = String.valueOf(TimeUnit.SECONDS.toMinutes((minutes * 60) + seconds + 59));
         } else {
@@ -575,7 +585,7 @@ public class TimerActivity
 
         Log.v(TAG, "drawing the time label.");
 
-        if (PreferenceHelper.isScreensaverEnabled() && seconds == 1 && mCurrentSession.getTimerState().getValue() != TimerState.PAUSED) {
+        if (preferenceHelper.isScreensaverEnabled() && seconds == 1 && getCurrentSession().getTimerState().getValue() != TimerState.PAUSED) {
             teleportTimeView();
         }
 
@@ -583,7 +593,7 @@ public class TimerActivity
 
     private void start(SessionType sessionType) {
         Intent startIntent = new Intent();
-        switch (mCurrentSession.getTimerState().getValue()) {
+        switch (getCurrentSession().getTimerState().getValue()) {
             case INACTIVE:
                 startIntent = new IntentWithAction(TimerActivity.this, TimerService.class,
                         Constants.ACTION.START, sessionType);
@@ -625,7 +635,7 @@ public class TimerActivity
 
     private void showEditLabelDialog() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        SelectLabelDialog.newInstance(this, PreferenceHelper.getCurrentSessionLabel().title, false)
+        SelectLabelDialog.newInstance(this, preferenceHelper.getCurrentSessionLabel().title, false)
                 .show(fragmentManager, DIALOG_SELECT_LABEL_TAG);
     }
 
@@ -643,7 +653,7 @@ public class TimerActivity
     }
 
     private void toggleFullscreenMode() {
-        if (PreferenceHelper.isFullscreenEnabled()) {
+        if (preferenceHelper.isFullscreenEnabled()) {
             if (mFullscreenHelper == null) {
                 mFullscreenHelper = new FullscreenHelper(findViewById(R.id.main), getSupportActionBar());
             } else {
@@ -674,18 +684,18 @@ public class TimerActivity
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
             case WORK_DURATION:
-                if (GoodtimeApplication.getInstance().getCurrentSession().getTimerState().getValue()
+                if (getCurrentSession().getTimerState().getValue()
                         == TimerState.INACTIVE) {
-                    mCurrentSession.setDuration(TimeUnit.MINUTES.toMillis(PreferenceHelper.getSessionDuration(SessionType.WORK)));
+                    getCurrentSession().setDuration(TimeUnit.MINUTES.toMillis(preferenceHelper.getSessionDuration(SessionType.WORK)));
                 }
                 break;
             case ENABLE_SCREEN_ON:
-                toggleKeepScreenOn(PreferenceHelper.isScreenOnEnabled());
+                toggleKeepScreenOn(preferenceHelper.isScreenOnEnabled());
                 break;
             case AMOLED:
                 recreate();
             case ENABLE_SCREENSAVER_MODE:
-                if (!PreferenceHelper.isScreensaverEnabled()) {
+                if (!preferenceHelper.isScreensaverEnabled()) {
                     recreate();
                 }
                 break;
@@ -695,10 +705,9 @@ public class TimerActivity
     }
 
     private void setupLabelView() {
-        Label label = PreferenceHelper.getCurrentSessionLabel();
+        Label label = preferenceHelper.getCurrentSessionLabel();
 
-        if (label.title == null ||
-                label.title.equals(getString(R.string.label_unlabeled))) {
+        if (isInvalidLabel(label)) {
             mLabelChip.setVisibility(View.GONE);
             mLabelButton.setVisible(true);
             int color = ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_ALL_LABELS);
@@ -706,7 +715,7 @@ public class TimerActivity
                     color, PorterDuff.Mode.SRC_ATOP);
         } else {
             final int color = ThemeHelper.getColor(this, label.colorId);
-            if (PreferenceHelper.showCurrentLabel()) {
+            if (preferenceHelper.showCurrentLabel()) {
                 mLabelButton.setVisible(false);
                 mLabelChip.setVisibility(View.VISIBLE);
                 mLabelChip.setText(label.title);
@@ -720,14 +729,19 @@ public class TimerActivity
         }
     }
 
+    private boolean isInvalidLabel(Label label) {
+        return label.title.equals(PreferenceHelper.INVALID_LABEL) ||
+                label.title.equals(getString(R.string.label_unlabeled));
+    }
+
     private void setTimeLabelColor() {
-        Label label = PreferenceHelper.getCurrentSessionLabel();
+        Label label = preferenceHelper.getCurrentSessionLabel();
         if (mTimeLabel != null) {
             if (mCurrentSessionType == SessionType.BREAK || mCurrentSessionType == SessionType.LONG_BREAK) {
                 mTimeLabel.setTextColor(ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_BREAK));
                 return;
             }
-            if (label.title != null) {
+            if (!isInvalidLabel(label)) {
                 mTimeLabel.setTextColor(ThemeHelper.getColor(this, label.colorId));
             } else {
                 mTimeLabel.setTextColor(ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_UNLABELED));
@@ -738,10 +752,10 @@ public class TimerActivity
     @Override
     public void onLabelSelected(Label label) {
         if (label != null) {
-            GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(label.title);
-            PreferenceHelper.setCurrentSessionLabel(label);
+            getCurrentSession().setLabel(label.title);
+            preferenceHelper.setCurrentSessionLabel(label);
         } else {
-            GoodtimeApplication.getCurrentSessionManager().getCurrentSession().setLabel(null);
+            getCurrentSession().setLabel(null);
         }
         setupLabelView();
         setTimeLabelColor();
@@ -768,23 +782,17 @@ public class TimerActivity
     public void onFinishedSessionDialogPositiveButtonClick(SessionType sessionType) {
         if (sessionType == SessionType.WORK) {
             start(SessionType.BREAK);
-            delayToggleFullscreenMode();
         } else {
             start(SessionType.WORK);
-            delayToggleFullscreenMode();
         }
+        delayToggleFullscreenMode();
         stopFlashingNotification();
     }
 
     @Override
     public void onFinishedSessionDialogNeutralButtonClick(SessionType sessionType) {
-        if (sessionType == SessionType.WORK) {
-            EventBus.getDefault().post(new Constants.ClearNotificationEvent());
-            delayToggleFullscreenMode();
-        } else {
-            EventBus.getDefault().post(new Constants.ClearNotificationEvent());
-            delayToggleFullscreenMode();
-        }
+        EventBus.getDefault().post(new Constants.ClearNotificationEvent());
+        delayToggleFullscreenMode();
         stopFlashingNotification();
     }
 

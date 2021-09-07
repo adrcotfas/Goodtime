@@ -13,64 +13,28 @@
 
 package com.apps.adrcotfas.goodtime.BL;
 import android.app.Application;
-import android.content.SharedPreferences;
-
-import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.preference.PreferenceManager;
 
 import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.Settings.reminders.ReminderHelper;
 
 import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES;
-import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.WORK_DURATION;
-import static com.apps.adrcotfas.goodtime.Util.Constants.DEFAULT_WORK_DURATION_DEFAULT;
 
-/**
- * Maintains a global state of the app and the {@link CurrentSession}
- */
+import javax.inject.Inject;
+
+import dagger.hilt.android.HiltAndroidApp;
+
+@HiltAndroidApp
 public class GoodtimeApplication extends Application {
 
-    private static volatile GoodtimeApplication INSTANCE;
-    private static CurrentSessionManager mCurrentSessionManager;
-    private static SharedPreferences mPreferences;
-
-    private static ReminderHelper mReminderHelper;
-
-    public static GoodtimeApplication getInstance() {
-        return INSTANCE;
-    }
-
-    static { AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES); }
+    @Inject ReminderHelper reminderHelper;
+    @Inject PreferenceHelper preferenceHelper;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        INSTANCE = this;
-
-        mPreferences = getSharedPreferences(getPackageName() + "_private_preferences", MODE_PRIVATE);
-        PreferenceHelper.migratePreferences();
-
-        mCurrentSessionManager = new CurrentSessionManager(this, new CurrentSession(TimeUnit.MINUTES.toMillis(
-                PreferenceManager.getDefaultSharedPreferences(this)
-                        .getInt(WORK_DURATION, DEFAULT_WORK_DURATION_DEFAULT))));
-        mReminderHelper = new ReminderHelper(this);
-    }
-
-    public CurrentSession getCurrentSession() {
-        return mCurrentSessionManager.getCurrentSession();
-    }
-
-    public static CurrentSessionManager getCurrentSessionManager() {
-        return mCurrentSessionManager;
-    }
-
-    public static SharedPreferences getPrivatePreferences() {
-        return mPreferences;
-    }
-
-    public ReminderHelper getReminderHelper() {
-        return mReminderHelper;
+        AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES);
+        preferenceHelper.migratePreferences();
     }
 }

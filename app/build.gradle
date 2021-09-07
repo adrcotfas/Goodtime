@@ -1,15 +1,17 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-kapt'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     defaultConfig {
         applicationId "com.apps.adrcotfas.goodtime"
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 131
         versionName "2.2.7"
         resConfigs "ar-rSA",
@@ -145,9 +147,17 @@ dependencies {
 
     // In-app purchases
     googleImplementation 'com.anjlab.android.iab.v3:library:1.1.0'
+    googleImplementation 'com.github.akshaaatt:Google-IAP:1.1.8'
 
     //TODO: use the main repo when it's ready
     implementation 'com.github.adrcotfas:UltimateRingtonePicker:jitpack_fix-SNAPSHOT'
 
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    implementation 'com.google.dagger:hilt-android:2.38.1'
+    kapt 'com.google.dagger:hilt-compiler:2.38.1'
+}
+
+kapt {
+    correctErrorTypes true
 }

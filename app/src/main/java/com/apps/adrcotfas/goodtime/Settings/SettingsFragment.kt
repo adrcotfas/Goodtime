@@ -35,16 +35,21 @@ import android.widget.TimePicker
 import androidx.preference.*
 import com.apps.adrcotfas.goodtime.Util.*
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 import org.joda.time.LocalTime
 import xyz.aprildown.ultimateringtonepicker.RingtonePickerDialog
 import xyz.aprildown.ultimateringtonepicker.UltimateRingtonePicker
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultCallback,
     OnTimeSetListener {
     private var mPrefDisableSoundCheckbox: CheckBoxPreference? = null
     private var mPrefDndMode: CheckBoxPreference? = null
     private var mPrefReminder: SwitchPreferenceCompat? = null
+    
+    @Inject lateinit var preferenceHelper: PreferenceHelper
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings, rootKey)
@@ -55,7 +60,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
 
     private fun setupReminderPreference() {
         mPrefReminder = findPreference(PreferenceHelper.ENABLE_REMINDER)
-        mPrefReminder!!.summaryOn = StringUtils.formatTime(PreferenceHelper.getTimeOfReminder())
+        mPrefReminder!!.summaryOn = StringUtils.formatTime(preferenceHelper.getTimeOfReminder())
         mPrefReminder!!.summaryOff = ""
         mPrefReminder!!.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
@@ -65,7 +70,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
         mPrefReminder!!.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
                 if (newValue as Boolean) {
-                    val millis = PreferenceHelper.getTimeOfReminder()
+                    val millis = preferenceHelper.getTimeOfReminder()
                     val time = DateTime(millis)
                     val d = TimePickerDialogFixedNougatSpinner(
                         requireActivity(),
@@ -165,13 +170,13 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
         val insistentRingPref =
             findPreference<CheckBoxPreference>(PreferenceHelper.INSISTENT_RINGTONE)
         insistentRingPref!!.onPreferenceClickListener =
-            if (PreferenceHelper.isPro()) null else Preference.OnPreferenceClickListener {
+            if (preferenceHelper.isPro()) null else Preference.OnPreferenceClickListener {
                 launchUpgradeDialog(requireActivity().supportFragmentManager)
                 insistentRingPref.isChecked = false
                 true
             }
         insistentRingPref.onPreferenceChangeListener =
-            if (PreferenceHelper.isPro()) Preference.OnPreferenceChangeListener { _, newValue: Any ->
+            if (preferenceHelper.isPro()) Preference.OnPreferenceChangeListener { _, newValue: Any ->
                 val p1 = findPreference<CheckBoxPreference>(PreferenceHelper.AUTO_START_BREAK)
                 val p2 = findPreference<CheckBoxPreference>(PreferenceHelper.AUTO_START_WORK)
                 if (newValue as Boolean) {
@@ -183,10 +188,10 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
     }
 
     private fun handleRingtonePrefClick(preference: Preference) {
-        if (preference.key == PreferenceHelper.RINGTONE_BREAK_FINISHED && !PreferenceHelper.isPro()) {
+        if (preference.key == PreferenceHelper.RINGTONE_BREAK_FINISHED && !preferenceHelper.isPro()) {
             launchUpgradeDialog(requireActivity().supportFragmentManager)
         } else {
-            val selectedUri = Uri.parse(toRingtone(PreferenceHelper.getNotificationSoundFinished(preference.key)).uri)
+            val selectedUri = Uri.parse(toRingtone(preferenceHelper.getNotificationSoundFinished(preference.key)!!).uri)
             val settings = UltimateRingtonePicker.Settings(
                 preSelectUris = listOf(selectedUri),
                 systemRingtonePicker = UltimateRingtonePicker.SystemRingtonePicker(
@@ -214,7 +219,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
                                 Ringtone("", resources.getString(R.string.pref_ringtone_summary))
                             }
                             val json = Gson().toJson(ringtone)
-                            PreferenceHelper.setNotificationSoundFinished(preference.key, json)
+                            preferenceHelper.setNotificationSoundFinished(preference.key, json)
                             summary = ringtone.name
                             callChangeListener(ringtone)
                         }
@@ -230,8 +235,8 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
         val prefBreak = findPreference<Preference>(PreferenceHelper.RINGTONE_BREAK_FINISHED)
         val defaultSummary = resources.getString(
             R.string.pref_ringtone_summary)
-        prefWork!!.summary = toRingtone(PreferenceHelper.getNotificationSoundWorkFinished(), defaultSummary).name
-        prefBreak!!.summary = toRingtone(PreferenceHelper.getNotificationSoundBreakFinished(), defaultSummary).name
+        prefWork!!.summary = toRingtone(preferenceHelper.getNotificationSoundWorkFinished()!!, defaultSummary).name
+        prefBreak!!.summary = toRingtone(preferenceHelper.getNotificationSoundBreakFinished()!!, defaultSummary).name
 
         prefWork.setOnPreferenceClickListener {
             handleRingtonePrefClick(prefWork)
@@ -242,13 +247,13 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
             true
         }
 
-        if (PreferenceHelper.isPro()) {
+        if (preferenceHelper.isPro()) {
             prefWork.onPreferenceChangeListener = null
         } else {
-            PreferenceHelper.setNotificationSoundBreakFinished(PreferenceHelper.getNotificationSoundWorkFinished())
+            preferenceHelper.setNotificationSoundBreakFinished(preferenceHelper.getNotificationSoundWorkFinished()!!)
             prefWork.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, newValue: Any? ->
-                    PreferenceHelper.setNotificationSoundBreakFinished(Gson().toJson(newValue))
+                    preferenceHelper.setNotificationSoundBreakFinished(Gson().toJson(newValue))
                     prefBreak.summary = prefWork.summary
                     true
                 }
@@ -267,7 +272,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
         val screensaverPref =
             findPreference<CheckBoxPreference>(PreferenceHelper.ENABLE_SCREENSAVER_MODE)
         findPreference<Preference>(PreferenceHelper.ENABLE_SCREENSAVER_MODE)!!.onPreferenceClickListener =
-            if (PreferenceHelper.isPro()) null else Preference.OnPreferenceClickListener {
+            if (preferenceHelper.isPro()) null else Preference.OnPreferenceClickListener {
                 launchUpgradeDialog(requireActivity().supportFragmentManager)
                 screensaverPref!!.isChecked = false
                 true
@@ -286,15 +291,15 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
     private fun setupTheme() {
         val prefAmoled = findPreference<SwitchPreferenceCompat>(PreferenceHelper.AMOLED)
         prefAmoled!!.onPreferenceClickListener =
-            if (PreferenceHelper.isPro()) null else Preference.OnPreferenceClickListener {
+            if (preferenceHelper.isPro()) null else Preference.OnPreferenceClickListener {
                 launchUpgradeDialog(requireActivity().supportFragmentManager)
                 prefAmoled.isChecked = true
                 true
             }
         prefAmoled.onPreferenceChangeListener =
-            if (PreferenceHelper.isPro()) Preference.OnPreferenceChangeListener { _, _ ->
+            if (preferenceHelper.isPro()) Preference.OnPreferenceChangeListener { _, _ ->
                 ThemeHelper.setTheme(
-                    activity as SettingsActivity?
+                    activity as SettingsActivity?, preferenceHelper.isAmoledTheme()
                 )
                 requireActivity().recreate()
                 true
@@ -339,7 +344,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
         val pref =
             findPreference<SwitchPreferenceCompat>(PreferenceHelper.ENABLE_FLASHING_NOTIFICATION)
         pref!!.onPreferenceClickListener =
-            if (PreferenceHelper.isPro()) null else Preference.OnPreferenceClickListener {
+            if (preferenceHelper.isPro()) null else Preference.OnPreferenceClickListener {
                 launchUpgradeDialog(requireActivity().supportFragmentManager)
                 pref.isChecked = false
                 true
@@ -350,7 +355,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
         val pref =
             findPreference<SwitchPreferenceCompat>(PreferenceHelper.ENABLE_ONE_MINUTE_BEFORE_NOTIFICATION)
         pref!!.onPreferenceClickListener =
-            if (PreferenceHelper.isPro()) null else Preference.OnPreferenceClickListener {
+            if (preferenceHelper.isPro()) null else Preference.OnPreferenceClickListener {
                 launchUpgradeDialog(requireActivity().supportFragmentManager)
                 pref.isChecked = false
                 true
@@ -406,7 +411,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
 
     override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
         val millis = LocalTime(hourOfDay, minute).toDateTimeToday().millis
-        PreferenceHelper.setTimeOfReminder(millis)
+        preferenceHelper.setTimeOfReminder(millis)
         mPrefReminder!!.summaryOn = StringUtils.formatTime(millis)
         mPrefReminder!!.isChecked = true
     }

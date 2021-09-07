@@ -13,46 +13,58 @@
 package com.apps.adrcotfas.goodtime.BL
 
 import android.content.Context
-import android.content.ContextWrapper
-import android.media.MediaPlayer
-import android.os.Vibrator
+import android.content.Context.AUDIO_SERVICE
+import android.content.Context.VIBRATOR_SERVICE
+import android.media.AudioAttributes.*
 import android.media.AudioManager
-import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper
+import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Vibrator
+import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper
 import com.apps.adrcotfas.goodtime.Settings.toRingtone
 import com.apps.adrcotfas.goodtime.Util.VibrationPatterns
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.IOException
+import javax.inject.Inject
 
-internal class RingtoneAndVibrationPlayer(context: Context?) : ContextWrapper(context) {
-    private var mMediaPlayer: MediaPlayer? = null
-    private var mVibrator: Vibrator? = null
-    private val mAudioManager: AudioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+class RingtoneAndVibrationPlayer @Inject constructor(
+    @ApplicationContext val context: Context,
+    val preferenceHelper: PreferenceHelper
+) {
+    private var mediaPlayer: MediaPlayer? = null
+    private var vibrator: Vibrator? = null
+    private val audioManager: AudioManager =
+        context.getSystemService(AUDIO_SERVICE) as AudioManager
+
     fun play(sessionType: SessionType, insistent: Boolean) {
         try {
-            mVibrator = this.getSystemService(VIBRATOR_SERVICE) as Vibrator
-            if (PreferenceHelper.isRingtoneEnabled()) {
+            vibrator = context.getSystemService(VIBRATOR_SERVICE) as Vibrator
+            if (preferenceHelper.isRingtoneEnabled()) {
                 val ringtoneRaw =
-                    if (sessionType == SessionType.WORK) PreferenceHelper.getNotificationSoundWorkFinished()
-                    else PreferenceHelper.getNotificationSoundBreakFinished()
+                    if (sessionType == SessionType.WORK) preferenceHelper.getNotificationSoundWorkFinished()
+                    else preferenceHelper.getNotificationSoundBreakFinished()
 
-                val uri = Uri.parse(toRingtone(ringtoneRaw).uri)
+                val uri = Uri.parse(toRingtone(ringtoneRaw!!).uri)
 
-                mMediaPlayer = MediaPlayer()
-                mMediaPlayer!!.setDataSource(this, uri)
-                mAudioManager.mode = AudioManager.MODE_NORMAL
-                mMediaPlayer!!.setAudioStreamType(if (PreferenceHelper.isPriorityAlarm()) AudioManager.STREAM_ALARM else AudioManager.STREAM_NOTIFICATION)
-                mMediaPlayer!!.isLooping = insistent
-                mMediaPlayer!!.prepareAsync()
-                mMediaPlayer!!.setOnPreparedListener { mp: MediaPlayer? ->
+                mediaPlayer = MediaPlayer()
+                mediaPlayer!!.setDataSource(context, uri)
+                audioManager.mode = AudioManager.MODE_NORMAL
+                val attributes = Builder()
+                    .setUsage(if (preferenceHelper.isPriorityAlarm()) USAGE_ALARM else USAGE_NOTIFICATION)
+                    .build()
+                mediaPlayer!!.setAudioAttributes(attributes)
+                mediaPlayer!!.isLooping = insistent
+                mediaPlayer!!.prepareAsync()
+                mediaPlayer!!.setOnPreparedListener {
                     // TODO: check duration of custom ringtones which may be much longer than notification sounds.
                     // If it's n seconds long and we're in continuous mode,
                     // schedule a stop after x seconds.
-                    mMediaPlayer!!.start()
+                    mediaPlayer!!.start()
                 }
             }
-            val vibrationType = PreferenceHelper.getVibrationType()
+            val vibrationType = preferenceHelper.getVibrationType()
             if (vibrationType > 0) {
-                mVibrator!!.vibrate(
+                vibrator!!.vibrate(
                     VibrationPatterns.LIST[vibrationType],
                     if (insistent) 2 else -1
                 )
@@ -65,13 +77,13 @@ internal class RingtoneAndVibrationPlayer(context: Context?) : ContextWrapper(co
     }
 
     fun stop() {
-        if (mMediaPlayer != null && mVibrator != null) {
-            mMediaPlayer!!.reset()
-            mMediaPlayer!!.release()
-            mMediaPlayer = null
+        if (mediaPlayer != null && vibrator != null) {
+            mediaPlayer!!.reset()
+            mediaPlayer!!.release()
+            mediaPlayer = null
         }
-        if (mVibrator != null) {
-            mVibrator!!.cancel()
+        if (vibrator != null) {
+            vibrator!!.cancel()
         }
     }
 
