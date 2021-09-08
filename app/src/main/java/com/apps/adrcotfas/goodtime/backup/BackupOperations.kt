@@ -156,7 +156,7 @@ class BackupOperations {
                         fos.write(",".toByteArray())
                         fos.write(s.duration.toLong().toString().toByteArray())
                         fos.write(",".toByteArray())
-                        fos.write(s.label.toByteArray())
+                        fos.write(if (s.label != null) s.label!!.toByteArray() else "".toByteArray())
                         fos.write("\n".toByteArray())
                     }
                     fos.flush()
