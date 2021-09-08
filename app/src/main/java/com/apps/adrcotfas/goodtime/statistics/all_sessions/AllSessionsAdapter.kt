@@ -56,16 +56,9 @@ class AllSessionsAdapter internal constructor(labels: List<Label>) :
         return session.id
     }
 
-    private fun getColor(label: String): Int {
-        var color = 0
-        for (l in labels) {
-            if (l.title == label) {
-                color = ThemeHelper.getColor(mContext.get()!!, l.colorId)
-                break
-            }
-        }
-        return color
-    }
+    private fun getColor(label: String?) = ThemeHelper.getColor(
+        mContext.get()!!, labels.findLast {
+            it.title == label } ?.colorId ?: ThemeHelper.COLOR_INDEX_UNLABELED)
 
     fun setData(newSessions: List<Session>) {
         val postDiffCallback = PostDiffCallback(mEntries, newSessions)

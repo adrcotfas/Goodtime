@@ -12,7 +12,7 @@
  */
 package com.apps.adrcotfas.goodtime.database
 
-import androidx.annotation.NonNull
+import androidx.annotation.Nullable
 import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -31,9 +31,8 @@ class Session(
     @field:PrimaryKey(autoGenerate = true)var id: Long,
     var timestamp: Long,
     var duration: Int,
-    @NonNull
-    @ColumnInfo(name = "label", defaultValue = "")
-    var label: String
+    @Nullable
+    var label: String?
 ) {
     @ColumnInfo(name = "archived", defaultValue = "0")
     var archived = false

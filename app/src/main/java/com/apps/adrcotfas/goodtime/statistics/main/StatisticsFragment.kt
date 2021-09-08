@@ -413,7 +413,8 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun refreshPieChart(sessions: List<Session>, labels: List<Label>) {
-        val totalTimePerLabel: MutableMap<String, Int> = HashMap()
+        // Nullable String key for the unlabeled sessions
+        val totalTimePerLabel: MutableMap<String?, Int> = HashMap()
         val pieStatsType = PieStatsType.values()[pieChartType.selectedItemPosition]
         val today = LocalDate()
         val todayStart = today.toDateTimeAtStartOfDay().millis
