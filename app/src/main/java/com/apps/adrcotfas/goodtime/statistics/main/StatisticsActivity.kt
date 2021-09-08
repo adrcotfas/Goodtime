@@ -15,7 +15,6 @@ package com.apps.adrcotfas.goodtime.statistics.main
 import com.apps.adrcotfas.goodtime.util.UpgradeDialogHelper.Companion.launchUpgradeDialog
 import com.apps.adrcotfas.goodtime.statistics.main.SelectLabelDialog.Companion.newInstance
 import dagger.hilt.android.AndroidEntryPoint
-import com.apps.adrcotfas.goodtime.common.BaseActivity
 import com.apps.adrcotfas.goodtime.statistics.main.SelectLabelDialog.OnLabelSelectedListener
 import com.apps.adrcotfas.goodtime.main.LabelsViewModel
 import javax.inject.Inject
@@ -29,6 +28,7 @@ import androidx.core.view.MenuItemCompat
 import android.content.res.ColorStateList
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.apps.adrcotfas.goodtime.database.Label
@@ -37,7 +37,7 @@ import com.apps.adrcotfas.goodtime.statistics.all_sessions.AddEditEntryDialog
 import com.apps.adrcotfas.goodtime.statistics.all_sessions.AllSessionsFragment
 
 @AndroidEntryPoint
-class StatisticsActivity : BaseActivity(), OnLabelSelectedListener {
+class StatisticsActivity : AppCompatActivity(), OnLabelSelectedListener {
     private var mLabelsViewModel: LabelsViewModel? = null
     private var mMenuItemCrtLabel: MenuItem? = null
     private var mIsMainView = false

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adrian Cotfas
+ * Copyright 2020-2021 Adrian Cotfas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy of the License at
@@ -16,41 +16,27 @@ package com.apps.adrcotfas.goodtime.upgrade
 import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.anjlab.android.iab.v3.BillingProcessor
-import com.anjlab.android.iab.v3.Constants.BILLING_RESPONSE_RESULT_BILLING_UNAVAILABLE
-import com.anjlab.android.iab.v3.Constants.BILLING_RESPONSE_RESULT_SERVICE_UNAVAILABLE
-import com.anjlab.android.iab.v3.TransactionDetails
 import com.apps.adrcotfas.goodtime.R
-import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
-import com.apps.adrcotfas.goodtime.util.Constants
 import com.apps.adrcotfas.goodtime.databinding.DialogUpgradeBinding
+import com.apps.adrcotfas.goodtime.util.showOnce
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class UpgradeDialog
-    : DialogFragment(), BillingProcessor.IBillingHandler {
+    : DialogFragment(){
 
-    private var readyToPurchase = false
-    private lateinit var billingProcessor : BillingProcessor
     private lateinit var binding : DialogUpgradeBinding
-
-    @Inject lateinit var preferenceHelper: PreferenceHelper
+    @Inject lateinit var billingHelper: BillingHelper
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        isOpen = true
         binding = DataBindingUtil.inflate(
                 LayoutInflater.from(requireActivity()), R.layout.dialog_upgrade, null, false)
-        billingProcessor = BillingProcessor.newBillingProcessor(
-                requireActivity(), getString(R.string.licence_key), getString(R.string.merchant_id), this)
-        billingProcessor.initialize()
 
         binding.recycler.apply {
             layoutManager = LinearLayoutManager(context)
@@ -69,21 +55,7 @@ class UpgradeDialog
         }
 
         binding.buttonPro.setOnClickListener {
-            if (!billingProcessor.isOneTimePurchaseSupported) {
-                Toast.makeText(
-                        requireActivity(),
-                        "In-app billing service is unavailable, please upgrade Android Market/Play to version >= 3.9.16",
-                        Toast.LENGTH_LONG).show()
-            }
-            if (!readyToPurchase) {
-                Toast.makeText(
-                        requireActivity(),
-                        "Billing not initialized",
-                        Toast.LENGTH_LONG).show()
-            } else {
-                billingProcessor.purchase(requireActivity(), Constants.sku)
-                dismiss()
-            }
+            billingHelper.purchase(requireActivity())
         }
 
         val builder = AlertDialog.Builder(requireActivity())
@@ -92,68 +64,15 @@ class UpgradeDialog
         return builder.create()
     }
 
-    override fun onBillingInitialized() {
-        readyToPurchase = true
-        billingProcessor.loadOwnedPurchasesFromGoogle()
-        if (billingProcessor.isPurchased(Constants.sku)) {
-            // should not happen
-            binding.buttonPro.visibility = View.GONE
-            preferenceHelper.setPro(true)
-        } else {
-            if (billingProcessor.isPurchased(Constants.sku)) {
-                binding.buttonPro.visibility = View.GONE
-                preferenceHelper.setPro(true)
-            } else {
-                preferenceHelper.setPro(false)
-            }
-
-        }
-    }
-
-    override fun onPurchaseHistoryRestored() {
-        var found = false
-        for (sku in billingProcessor.listOwnedProducts()) {
-            if (sku == Constants.sku) {
-                binding.buttonPro.isEnabled = false
-                found = true
-            }
-        }
-        preferenceHelper.setPro(found)
-    }
-
-    override fun onProductPurchased(productId: String, details: TransactionDetails?) {
-        preferenceHelper.setPro(true)
-        binding.buttonPro.isEnabled = false
-        dismiss()
-    }
-
-    override fun onBillingError(errorCode: Int, error: Throwable?) {
-        when (errorCode) {
-            BILLING_RESPONSE_RESULT_BILLING_UNAVAILABLE -> Toast.makeText(
-                    requireActivity(),
-                    "Billing API version is not supported for the type requested",
-                    Toast.LENGTH_LONG).show()
-            BILLING_RESPONSE_RESULT_SERVICE_UNAVAILABLE -> Toast.makeText(
-                    requireActivity(),
-                    "Network connection is down",
-                    Toast.LENGTH_LONG).show()
-        }
-    }
-
     override fun onDestroy() {
-        billingProcessor.release()
-        isOpen = false
+        billingHelper.destroy()
         super.onDestroy()
     }
 
     companion object {
-        private var isOpen = false
-        @JvmStatic
         fun showNewInstance(fragmentManager: FragmentManager) {
-            if (!isOpen) {
                 val dialog = UpgradeDialog()
-                dialog.show(fragmentManager, UpgradeDialog::class.java.simpleName)
-            }
+                dialog.showOnce(fragmentManager, UpgradeDialog::class.java.simpleName)
         }
     }
 }

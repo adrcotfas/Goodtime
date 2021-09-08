@@ -1,69 +1,45 @@
 package com.apps.adrcotfas.goodtime.upgrade
 
-import android.content.Context
-import com.apps.adrcotfas.goodtime.main.IBillingHelper
-import com.anjlab.android.iab.v3.BillingProcessor.IBillingHandler
-import com.anjlab.android.iab.v3.BillingProcessor
-import com.anjlab.android.iab.v3.TransactionDetails
+import android.app.Activity
 import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
-import android.content.Intent
-import com.apps.adrcotfas.goodtime.R
-import com.apps.adrcotfas.goodtime.util.Constants
+import com.limerse.iap.DataWrappers
+import com.limerse.iap.IapConnector
+import com.limerse.iap.PurchaseServiceListener
 import javax.inject.Inject
 
-class BillingHelper @Inject constructor(context: Context, val preferenceHelper: PreferenceHelper) : IBillingHelper, IBillingHandler {
-
-    private val mBillingProcessor: BillingProcessor = BillingProcessor.newBillingProcessor(
-        context,
-        context.getString(R.string.licence_key),
-        context.getString(R.string.merchant_id), this
-    )
-
-    override fun onProductPurchased(productId: String, details: TransactionDetails?) {
-        // do nothing here
-    }
-
-    override fun onPurchaseHistoryRestored() {
-        var found = false
-        for (sku in mBillingProcessor.listOwnedProducts()) {
-            if (sku == Constants.sku) {
-                found = true
-                break
-            }
-        }
-        preferenceHelper.setPro(found)
-    }
-
-    override fun onBillingError(errorCode: Int, error: Throwable?) {
-        // do nothing here
-    }
-
-    override fun onBillingInitialized() {
-        mBillingProcessor.loadOwnedPurchasesFromGoogle()
-        if (mBillingProcessor.isPurchased(Constants.sku)) {
-            preferenceHelper.setPro(true)
-        }
-    }
-
-    override fun refresh() {
-        mBillingProcessor.loadOwnedPurchasesFromGoogle()
-    }
-
-    override fun release() {
-        mBillingProcessor.release()
-    }
-
-    override fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
-        return run {
-            mBillingProcessor.loadOwnedPurchasesFromGoogle()
-            if (mBillingProcessor.isPurchased(Constants.sku)) {
-                preferenceHelper.setPro(true)
-            }
-            mBillingProcessor.handleActivityResult(requestCode, resultCode, data)
-        }
-    }
+//TODO:
+// - handle refunds
+// - make IAP library errors visible to the user
+// - listen for billing client ready / purchases fetched to enable the buy buttons
+class BillingHelper @Inject constructor(private val iapConnector: IapConnector,
+                                        private val preferenceHelper: PreferenceHelper) {
 
     init {
-        mBillingProcessor.initialize()
+        iapConnector.addPurchaseListener(object : PurchaseServiceListener {
+            override fun onPricesUpdated(iapKeyPrices: Map<String, String>) {
+            }
+
+            override fun onProductPurchased(purchaseInfo: DataWrappers.PurchaseInfo) {
+                validateUpgrade(purchaseInfo)
+            }
+
+            override fun onProductRestored(purchaseInfo: DataWrappers.PurchaseInfo) {
+                validateUpgrade(purchaseInfo)
+            }
+        })
+    }
+
+    fun purchase(activity: Activity) {
+        iapConnector.purchase(activity, SKU)
+    }
+
+    fun destroy() {
+        iapConnector.destroy()
+    }
+
+    private fun validateUpgrade(it: DataWrappers.PurchaseInfo) {
+        if (it.sku == SKU) {
+            preferenceHelper.setPro(true)
+        }
     }
 }

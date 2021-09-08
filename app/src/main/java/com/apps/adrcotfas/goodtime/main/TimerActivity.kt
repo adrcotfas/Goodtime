@@ -16,7 +16,6 @@ package com.apps.adrcotfas.goodtime.main
 import com.apps.adrcotfas.goodtime.settings.reminders.ReminderHelper.Companion.removeNotification
 import com.apps.adrcotfas.goodtime.util.BatteryUtils.Companion.isIgnoringBatteryOptimizations
 import dagger.hilt.android.AndroidEntryPoint
-import com.apps.adrcotfas.goodtime.common.BaseActivity
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import com.apps.adrcotfas.goodtime.statistics.main.SelectLabelDialog.OnLabelSelectedListener
 import javax.inject.Inject
@@ -65,6 +64,7 @@ import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
@@ -72,6 +72,7 @@ import com.apps.adrcotfas.goodtime.BuildConfig
 import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding
+import com.apps.adrcotfas.goodtime.upgrade.BillingHelper
 import com.apps.adrcotfas.goodtime.util.*
 import com.apps.adrcotfas.goodtime.util.Constants.ClearNotificationEvent
 import org.joda.time.LocalDate
@@ -79,7 +80,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
-class TimerActivity : BaseActivity(), OnSharedPreferenceChangeListener, OnLabelSelectedListener,
+class TimerActivity : AppCompatActivity(), OnSharedPreferenceChangeListener, OnLabelSelectedListener,
     FinishedSessionDialog.Listener {
 
     @Inject
@@ -87,6 +88,9 @@ class TimerActivity : BaseActivity(), OnSharedPreferenceChangeListener, OnLabelS
 
     @Inject
     lateinit var currentSessionManager: CurrentSessionManager
+
+    @Inject lateinit var billingHelper: BillingHelper
+
     private var mDialogSessionFinished: FinishedSessionDialog? = null
     private var mFullscreenHelper: FullscreenHelper? = null
     private var mBackPressedAt: Long = 0
@@ -343,6 +347,7 @@ class TimerActivity : BaseActivity(), OnSharedPreferenceChangeListener, OnLabelS
         val pref = PreferenceManager.getDefaultSharedPreferences(this)
         pref.unregisterOnSharedPreferenceChangeListener(this)
         EventBus.getDefault().unregister(this)
+        billingHelper.destroy()
         super.onDestroy()
     }
 

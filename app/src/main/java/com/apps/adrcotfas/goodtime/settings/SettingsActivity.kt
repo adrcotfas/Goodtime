@@ -13,18 +13,18 @@
 package com.apps.adrcotfas.goodtime.settings
 
 import dagger.hilt.android.AndroidEntryPoint
-import com.apps.adrcotfas.goodtime.common.BaseActivity
 import javax.inject.Inject
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import com.apps.adrcotfas.goodtime.util.ThemeHelper
 import androidx.databinding.DataBindingUtil
 import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.databinding.GenericMainBinding
 
 @AndroidEntryPoint
-class SettingsActivity : BaseActivity() {
+class SettingsActivity : AppCompatActivity() {
 
     @Inject
     lateinit var preferenceHelper: PreferenceHelper
