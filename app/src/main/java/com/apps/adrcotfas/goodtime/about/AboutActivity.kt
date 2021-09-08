@@ -190,7 +190,7 @@ class AboutActivity : MaterialAboutActivity() {
             Intent.EXTRA_TEXT, """
      
      My device info: 
-     ${DeviceInfo.getDeviceInfo()}
+     ${DeviceInfo.deviceInfo}
      App version: ${BuildConfig.VERSION_NAME}
      """.trimIndent()
         )

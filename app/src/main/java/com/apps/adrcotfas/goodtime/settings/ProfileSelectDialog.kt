@@ -1,132 +1,111 @@
-package com.apps.adrcotfas.goodtime.settings;
+package com.apps.adrcotfas.goodtime.settings
 
-import android.annotation.SuppressLint;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
+import androidx.preference.PreferenceDialogFragmentCompat
+import com.apps.adrcotfas.goodtime.settings.ProfileSelectAdapter.OnProfileSelectedListener
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.annotation.SuppressLint
+import com.apps.adrcotfas.goodtime.R
+import android.content.DialogInterface
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModelProvider
+import androidx.preference.ListPreference
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.preference.ListPreference;
-import androidx.preference.PreferenceDialogFragmentCompat;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.apps.adrcotfas.goodtime.R;
-
-
-public class ProfileSelectDialog extends PreferenceDialogFragmentCompat implements ProfileSelectAdapter.OnProfileSelectedListener{
-
-    private static final String SAVE_STATE_INDEX = "ListPreferenceDialogFragment.index";
-    private static final String SAVE_STATE_ENTRIES = "ListPreferenceDialogFragment.entries";
-
-    @SuppressWarnings("WeakerAccess") /* synthetic access */
-            int mClickedDialogEntryIndex;
-    private CharSequence[] mEntries;
-
-    private ProfilesViewModel mProfilesViewModel;
-
-    private ProfileSelectAdapter mAdapter;
-    private RecyclerView mRecyclerView;
-
-    public static ProfileSelectDialog newInstance(String key) {
-        final ProfileSelectDialog fragment =
-                new ProfileSelectDialog();
-        final Bundle b = new Bundle(1);
-        b.putString(ARG_KEY, key);
-        fragment.setArguments(b);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+class ProfileSelectDialog : PreferenceDialogFragmentCompat(), OnProfileSelectedListener {
+    var mClickedDialogEntryIndex/* synthetic access */ = 0
+    private lateinit var mEntries: Array<CharSequence>
+    private var mProfilesViewModel: ProfilesViewModel? = null
+    private var mAdapter: ProfileSelectAdapter? = null
+    private lateinit var mRecyclerView: RecyclerView
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
-            final ListPreference preference = getListPreference();
-
-            if (preference.getEntries() == null || preference.getEntryValues() == null) {
-                throw new IllegalStateException(
-                        "ListPreference requires an entries array and an entryValues array.");
-            }
-            mClickedDialogEntryIndex = preference.findIndexOfValue(preference.getValue());
-            mEntries = preference.getEntries();
+            val preference = listPreference
+            check(!(preference.entries == null || preference.entryValues == null)) { "ListPreference requires an entries array and an entryValues array." }
+            mClickedDialogEntryIndex = preference.findIndexOfValue(preference.value)
+            mEntries = preference.entries
         } else {
-            mClickedDialogEntryIndex = savedInstanceState.getInt(SAVE_STATE_INDEX, 0);
-            mEntries = savedInstanceState.getCharSequenceArray(SAVE_STATE_ENTRIES);
+            mClickedDialogEntryIndex = savedInstanceState.getInt(SAVE_STATE_INDEX, 0)
+            mEntries = savedInstanceState.getCharSequenceArray(SAVE_STATE_ENTRIES)!!
         }
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(SAVE_STATE_INDEX, mClickedDialogEntryIndex);
-        outState.putCharSequenceArray(SAVE_STATE_ENTRIES, mEntries);
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(SAVE_STATE_INDEX, mClickedDialogEntryIndex)
+        outState.putCharSequenceArray(SAVE_STATE_ENTRIES, mEntries)
     }
 
-    private ListPreference getListPreference() {
-        return (ListPreference) getPreference();
+    private val listPreference: ListPreference
+        get() = preference as ListPreference
+
+    override fun onPrepareDialogBuilder(builder: AlertDialog.Builder) {
+        super.onPrepareDialogBuilder(builder)
+        mProfilesViewModel = ViewModelProvider(this).get(ProfilesViewModel::class.java)
+        val inflater = LayoutInflater.from(context)
+        @SuppressLint("InflateParams") val dialogView =
+            inflater.inflate(R.layout.dialog_select_profile, null)
+        mRecyclerView = dialogView.findViewById(R.id.list)
+        mAdapter = ProfileSelectAdapter(requireContext(), mEntries, mClickedDialogEntryIndex, this)
+        mRecyclerView.apply {
+            adapter = mAdapter
+            val lm = LinearLayoutManager(context)
+            layoutManager = lm
+            itemAnimator = DefaultItemAnimator()
+        }
+        builder.setTitle(listPreference.title)
+        builder.setView(dialogView)
+        builder.setNegativeButton(android.R.string.cancel) { _: DialogInterface?, _: Int -> }
+        builder.setPositiveButton(null, null)
     }
 
-    @Override
-    protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
-        super.onPrepareDialogBuilder(builder);
-
-        mProfilesViewModel = ViewModelProviders.of(this).get(ProfilesViewModel.class);
-        LayoutInflater inflater = LayoutInflater.from(getContext());
-        @SuppressLint("InflateParams")
-        View dialogView = inflater.inflate(R.layout.dialog_select_profile, null);
-
-        mRecyclerView = dialogView.findViewById(R.id.list);
-        mAdapter = new ProfileSelectAdapter(getContext(), mEntries, mClickedDialogEntryIndex, this);
-        mRecyclerView.setAdapter(mAdapter);
-
-        LinearLayoutManager lm = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(lm);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-
-        builder.setTitle(getListPreference().getTitle());
-        builder.setView(dialogView);
-
-        builder.setNegativeButton(android.R.string.cancel, (di, i) -> { });
-        builder.setPositiveButton(null, null);
-    }
-
-    @Override
-    public void onDialogClosed(boolean positiveResult) {
+    override fun onDialogClosed(positiveResult: Boolean) {
         if (positiveResult && mClickedDialogEntryIndex >= 0) {
-            String value = mEntries[mClickedDialogEntryIndex].toString();
-            final ListPreference preference = getListPreference();
+            val value = mEntries[mClickedDialogEntryIndex].toString()
+            val preference = listPreference
             if (preference.callChangeListener(value)) {
-                preference.setValue(value);
-                preference.setSummary(value);
+                preference.value = value
+                preference.summary = value
             }
         }
     }
 
-    @Override
-    public void onDelete(int position) {
-        if (getListPreference().getValue().equals(mEntries[position].toString())){
-            mClickedDialogEntryIndex = 0;
+    override fun onDelete(position: Int) {
+        if (listPreference.value == mEntries[position].toString()) {
+            mClickedDialogEntryIndex = 0
             // if we're deleting the selected profile, fall back to the default one
-            getListPreference().setValue(mEntries[0].toString());
-            getListPreference().setValueIndex(0);
-
-            mClickedDialogEntryIndex = 0;
-            ProfileSelectDialog.this.onClick(getDialog(),
-                    DialogInterface.BUTTON_POSITIVE);
+            listPreference.value = mEntries[0].toString()
+            listPreference.setValueIndex(0)
+            mClickedDialogEntryIndex = 0
+            onClick(
+                dialog,
+                DialogInterface.BUTTON_POSITIVE
+            )
         }
-        mProfilesViewModel.deleteProfile(mEntries[position].toString());
+        mProfilesViewModel!!.deleteProfile(mEntries[position].toString())
     }
 
-    @Override
-    public void onSelect(int position) {
-        mClickedDialogEntryIndex = position;
-                    ProfileSelectDialog.this.onClick(getDialog(),
-                            DialogInterface.BUTTON_POSITIVE);
-        getDialog().dismiss();
+    override fun onSelect(position: Int) {
+        mClickedDialogEntryIndex = position
+        onClick(
+            dialog,
+            DialogInterface.BUTTON_POSITIVE
+        )
+        dialog!!.dismiss()
+    }
+
+    companion object {
+        private const val SAVE_STATE_INDEX = "ListPreferenceDialogFragment.index"
+        private const val SAVE_STATE_ENTRIES = "ListPreferenceDialogFragment.entries"
+        fun newInstance(key: String?): ProfileSelectDialog {
+            val fragment = ProfileSelectDialog()
+            val b = Bundle(1)
+            b.putString(ARG_KEY, key)
+            fragment.arguments = b
+            return fragment
+        }
     }
 }

@@ -1,7 +1,7 @@
 package com.apps.adrcotfas.goodtime.di
 
 import android.content.Context
-import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper
+import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
 import com.apps.adrcotfas.goodtime.upgrade.BillingHelper
 import com.limerse.iap.IapConnector
 import dagger.Module

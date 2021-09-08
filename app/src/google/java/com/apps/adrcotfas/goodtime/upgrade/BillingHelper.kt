@@ -1,14 +1,14 @@
 package com.apps.adrcotfas.goodtime.upgrade
 
 import android.content.Context
-import com.apps.adrcotfas.goodtime.Main.IBillingHelper
+import com.apps.adrcotfas.goodtime.main.IBillingHelper
 import com.anjlab.android.iab.v3.BillingProcessor.IBillingHandler
 import com.anjlab.android.iab.v3.BillingProcessor
 import com.anjlab.android.iab.v3.TransactionDetails
-import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper
+import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
 import android.content.Intent
 import com.apps.adrcotfas.goodtime.R
-import com.apps.adrcotfas.goodtime.Util.Constants
+import com.apps.adrcotfas.goodtime.util.Constants
 import javax.inject.Inject
 
 class BillingHelper @Inject constructor(context: Context, val preferenceHelper: PreferenceHelper) : IBillingHelper, IBillingHandler {
@@ -53,7 +53,7 @@ class BillingHelper @Inject constructor(context: Context, val preferenceHelper: 
         mBillingProcessor.release()
     }
 
-    override fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent): Boolean {
+    override fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
         return run {
             mBillingProcessor.loadOwnedPurchasesFromGoogle()
             if (mBillingProcessor.isPurchased(Constants.sku)) {

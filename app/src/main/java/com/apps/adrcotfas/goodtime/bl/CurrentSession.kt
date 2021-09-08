@@ -24,7 +24,7 @@ class CurrentSession(durationInput: Long, label: String) {
     private val _duration = MutableLiveData<Long>()
     private val _timerState = MutableLiveData<TimerState>()
     private val _sessionType = MutableLiveData<SessionType>()
-    private val _label = MutableLiveData<String?>()
+    private val _label = MutableLiveData<String>()
 
     init {
         _duration.value = durationInput
@@ -39,7 +39,7 @@ class CurrentSession(durationInput: Long, label: String) {
         get() = _timerState
     val sessionType: LiveData<SessionType>
         get() = _sessionType
-    val label: LiveData<String?>
+    val label: LiveData<String>
         get() = _label
 
     fun setDuration(newDuration: Long) {
@@ -54,7 +54,7 @@ class CurrentSession(durationInput: Long, label: String) {
         _sessionType.value = type
     }
 
-    fun setLabel(label: String?) {
+    fun setLabel(label: String) {
         _label.value = label
     }
 }

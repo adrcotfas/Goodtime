@@ -298,9 +298,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
             }
         prefAmoled.onPreferenceChangeListener =
             if (preferenceHelper.isPro()) Preference.OnPreferenceChangeListener { _, _ ->
-                ThemeHelper.setTheme(
-                    activity as SettingsActivity?, preferenceHelper.isAmoledTheme()
-                )
+                ThemeHelper.setTheme(activity as SettingsActivity, preferenceHelper.isAmoledTheme())
                 requireActivity().recreate()
                 true
             } else null

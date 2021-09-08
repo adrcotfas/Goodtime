@@ -3,16 +3,15 @@ package com.apps.adrcotfas.goodtime.common
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.apps.adrcotfas.goodtime.BL.addOnProductRestoredListener
 import com.apps.adrcotfas.goodtime.upgrade.BillingHelper
-import com.limerse.iap.IapConnector
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 abstract class BaseActivity : AppCompatActivity() {
 
-    private lateinit var billingHelper: BillingHelper
+    @Inject
+    lateinit var billingHelper: BillingHelper
 
     //TODO: switch to IapConnector
 //    @Inject

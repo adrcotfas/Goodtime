@@ -66,7 +66,6 @@ class PreferenceHelper(val context: Context) {
         private const val WORK_STREAK = "pref_WORK_STREAK"
         private const val LAST_WORK_FINISHED_AT = "pref_last_work_finished_at"
         private const val CURRENT_SESSION_LABEL = "pref_current_session_label"
-        const val INVALID_LABEL = "invalid_label"
         private const val CURRENT_SESSION_COLOR = "pref_current_session_color"
         private const val INTRO_SNACKBAR_STEP = "pref_intro_snackbar_step"
         private const val INTRO_ARCHIVE_LABEL = "pref_intro_archive_label"
@@ -182,8 +181,8 @@ class PreferenceHelper(val context: Context) {
         get() = Label(
             preferences
                 .getString(
-                    CURRENT_SESSION_LABEL, INVALID_LABEL
-                ),
+                    CURRENT_SESSION_LABEL, ""
+                )!!,
             preferences.getInt(
                 CURRENT_SESSION_COLOR, 0
             )
@@ -200,7 +199,7 @@ class PreferenceHelper(val context: Context) {
 
     fun consumeFirstRun() = preferencesPrivate.edit().putBoolean(FIRST_RUN, false).apply()
 
-    fun setProfile25_5() {
+    fun setProfile25to5() {
         setUnsavedProfileActive(false)
         preferences.edit()
             .putString(PROFILE, Constants.PROFILE_NAME_DEFAULT)
@@ -213,7 +212,7 @@ class PreferenceHelper(val context: Context) {
     }
 
 
-    fun setProfile52_17() {
+    fun setProfile52to17() {
         setUnsavedProfileActive(false)
         preferences.edit()
             .putString(PROFILE, Constants.PROFILE_NAME_52_17)

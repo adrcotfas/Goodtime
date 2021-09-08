@@ -2,6 +2,7 @@ package com.apps.adrcotfas.goodtime.di
 
 import android.content.Context
 import com.apps.adrcotfas.goodtime.bl.CurrentSessionManager
+import com.apps.adrcotfas.goodtime.bl.NotificationHelper
 import com.apps.adrcotfas.goodtime.bl.RingtoneAndVibrationPlayer
 import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
 import com.apps.adrcotfas.goodtime.settings.reminders.ReminderHelper
@@ -31,4 +32,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideReminderHelper(@ApplicationContext context: Context, preferenceHelper: PreferenceHelper) = ReminderHelper(context, preferenceHelper)
+
+    @Provides
+    @Singleton
+    fun provideNotificationHelper(@ApplicationContext context: Context) = NotificationHelper(context)
 }
