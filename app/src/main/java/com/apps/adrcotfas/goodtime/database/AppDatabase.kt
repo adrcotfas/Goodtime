@@ -15,7 +15,6 @@ package com.apps.adrcotfas.goodtime.database
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
-import android.widget.Toast
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
@@ -30,13 +29,13 @@ import java.util.concurrent.ThreadPoolExecutor
 
 @Database(
     entities = [Session::class, Label::class, Profile::class],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun sessionModel(): SessionDao?
-    abstract fun labelDao(): LabelDao?
-    abstract fun profileDao(): ProfileDao?
+    abstract fun sessionModel(): SessionDao
+    abstract fun labelDao(): LabelDao
+    abstract fun profileDao(): ProfileDao
 
     companion object {
         private const val TAG = "GoodtimeDatabase"
@@ -98,7 +97,6 @@ abstract class AppDatabase : RoomDatabase() {
             Thread.UncaughtExceptionHandler { thread, throwable ->
                 val message = "uncaught exception in a LocalDatabase thread, resetting the database"
                 Log.e(TAG, message, throwable)
-                Toast.makeText(GoodtimeApplication.context, message, Toast.LENGTH_SHORT).show()
                 synchronized(LOCK) {
                     // there is no active local database to clean up
                     if (INSTANCE == null) return@UncaughtExceptionHandler

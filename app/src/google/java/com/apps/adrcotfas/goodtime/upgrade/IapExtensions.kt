@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.BL
+package com.apps.adrcotfas.goodtime.bl
 
 import com.limerse.iap.DataWrappers
 import com.limerse.iap.IapConnector

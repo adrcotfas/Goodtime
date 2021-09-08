@@ -16,7 +16,7 @@
 
         <Preference
             android:key="pref_timer_duration"
-            app:fragment="com.apps.adrcotfas.goodtime.Settings.DurationsSettingsFragment"
+            app:fragment="com.apps.adrcotfas.goodtime.settings.DurationsSettingsFragment"
             android:title="@string/pref_timer_duration"
             android:summary="@string/timer_durations"
             android:icon="@drawable/ic_status_goodtime"/>

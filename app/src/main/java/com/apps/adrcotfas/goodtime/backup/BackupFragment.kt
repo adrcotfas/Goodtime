@@ -24,21 +24,12 @@ import android.app.Activity
 import com.apps.adrcotfas.goodtime.database.AppDatabase
 import android.content.DialogInterface
 import android.widget.Toast
-import androidx.core.content.FileProvider
-import android.net.Uri
-import android.os.Handler
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.databinding.DialogBackupBinding
-import com.apps.adrcotfas.goodtime.util.FileUtils
-import com.apps.adrcotfas.goodtime.util.StringUtils
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.lang.Exception
 
 class BackupFragment : BottomSheetDialogFragment() {
     private lateinit var sessionViewModel: SessionViewModel

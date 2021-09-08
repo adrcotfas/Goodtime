@@ -63,7 +63,7 @@
             android:theme="@style/AboutTheme" />
 
         <activity
-            android:name=".statistics.Main.StatisticsActivity"
+            android:name=".statistics.main.StatisticsActivity"
             android:label="@string/statistics"
             android:parentActivityName=".main.TimerActivity" />
 

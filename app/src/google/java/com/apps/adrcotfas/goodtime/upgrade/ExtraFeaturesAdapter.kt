@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.apps.adrcotfas.goodtime.R
-import com.apps.adrcotfas.goodtime.Util.ThemeHelper
+import com.apps.adrcotfas.goodtime.util.ThemeHelper
 
 class ExtraFeaturesAdapter(
         private val context: Context,

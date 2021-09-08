@@ -28,8 +28,8 @@ import com.anjlab.android.iab.v3.Constants.BILLING_RESPONSE_RESULT_BILLING_UNAVA
 import com.anjlab.android.iab.v3.Constants.BILLING_RESPONSE_RESULT_SERVICE_UNAVAILABLE
 import com.anjlab.android.iab.v3.TransactionDetails
 import com.apps.adrcotfas.goodtime.R
-import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper
-import com.apps.adrcotfas.goodtime.Util.Constants
+import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
+import com.apps.adrcotfas.goodtime.util.Constants
 import com.apps.adrcotfas.goodtime.databinding.DialogUpgradeBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

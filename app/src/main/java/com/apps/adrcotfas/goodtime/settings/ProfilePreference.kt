@@ -1,50 +1,45 @@
-package com.apps.adrcotfas.goodtime.settings;
+package com.apps.adrcotfas.goodtime.settings
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.util.AttributeSet;
+import kotlin.jvm.JvmOverloads
+import com.apps.adrcotfas.goodtime.settings.ProfilePreference.ProfileChangeListener
+import android.annotation.SuppressLint
+import android.content.Context
+import android.util.AttributeSet
+import androidx.core.content.res.TypedArrayUtils
+import androidx.preference.ListPreference
+import com.apps.adrcotfas.goodtime.R
 
-import androidx.core.content.res.TypedArrayUtils;
-import androidx.preference.ListPreference;
-
-import com.apps.adrcotfas.goodtime.R;
-
-public class ProfilePreference extends ListPreference {
-
-    public interface ProfileChangeListener {
-        void onProfileChange(CharSequence newValue);
+class ProfilePreference @JvmOverloads constructor(
+    context: Context?,
+    attrs: AttributeSet?,
+    defStyleAttr: Int,
+    defStyleRes: Int = 0
+) : ListPreference(context, attrs, defStyleAttr, defStyleRes) {
+    interface ProfileChangeListener {
+        fun onProfileChange(newValue: CharSequence?)
     }
 
-    private ProfileChangeListener mChangeListener;
-
-    public ProfilePreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
-    public ProfilePreference(Context context, AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
-    }
+    private var mChangeListener: ProfileChangeListener? = null
 
     @SuppressLint("RestrictedApi")
-    public ProfilePreference(Context context, AttributeSet attrs) {
-        this(context, attrs, TypedArrayUtils.getAttr(context, R.attr.dialogPreferenceStyle,
-                android.R.attr.dialogPreferenceStyle));
+    constructor(context: Context?, attrs: AttributeSet?) : this(
+        context, attrs, TypedArrayUtils.getAttr(
+            context!!, R.attr.dialogPreferenceStyle,
+            android.R.attr.dialogPreferenceStyle
+        )
+    ) {
     }
 
-    public ProfilePreference(Context context) {
-        this(context, null);
+    constructor(context: Context?) : this(context, null) {}
+
+    fun attachListener(changeListener: ProfileChangeListener?) {
+        mChangeListener = changeListener
     }
 
-
-    public void attachListener(ProfileChangeListener changeListener) {
-        mChangeListener = changeListener;
-    }
-
-    @Override
-    public void setValue(String value) {
-        super.setValue(value);
-        if (mChangeListener != null){
-            mChangeListener.onProfileChange(getValue());
+    override fun setValue(value: String) {
+        super.setValue(value)
+        if (mChangeListener != null) {
+            mChangeListener!!.onProfileChange(getValue())
         }
     }
 }
