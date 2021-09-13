@@ -116,7 +116,7 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnDateSetListener, OnTim
                 ).show()
             } else {
                 val duration = min(binding.duration.text.toString().toInt(), 240)
-                val label = mViewModel.label.value ?: ""
+                val label = mViewModel.label.value
                 val sessionToAdd = Session(
                     0, mViewModel.date.value!!
                         .millis, duration, label
