@@ -11,7 +11,7 @@
  * either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-package com.apps.adrcotfas.goodtime.upgrade
+package com.apps.adrcotfas.goodtime.ui.upgrade_dialog
 
 import android.app.Dialog
 import android.os.Bundle
@@ -20,19 +20,20 @@ import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.databinding.DialogUpgradeBinding
 import com.apps.adrcotfas.goodtime.util.showOnce
+import com.apps.adrcotfas.goodtime.viewmodel.MakePurchasesViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class UpgradeDialog
     : DialogFragment(){
 
     private lateinit var binding : DialogUpgradeBinding
-    @Inject lateinit var billingHelper: BillingHelper
+    private val viewModel : MakePurchasesViewModel by viewModels()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         binding = DataBindingUtil.inflate(
@@ -54,19 +55,19 @@ class UpgradeDialog
                     ))
         }
 
+        viewModel.canBuyPro().observe(this, {
+            binding.buttonPro.isEnabled = it
+        })
+
         binding.buttonPro.setOnClickListener {
-            billingHelper.purchase(requireActivity())
+            viewModel.buyPro(requireActivity())
+            dismiss()
         }
 
         val builder = AlertDialog.Builder(requireActivity())
                 .setView(binding.root)
                 .setTitle("")
         return builder.create()
-    }
-
-    override fun onDestroy() {
-        billingHelper.destroy()
-        super.onDestroy()
     }
 
     companion object {

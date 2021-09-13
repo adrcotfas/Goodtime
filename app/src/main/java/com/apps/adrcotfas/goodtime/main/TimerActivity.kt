@@ -38,7 +38,6 @@ import androidx.lifecycle.ViewModelProvider
 import android.view.animation.Animation
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.BaseTransientBottomBar
-import androidx.core.content.ContextCompat
 import android.annotation.SuppressLint
 import com.apps.adrcotfas.goodtime.settings.SettingsActivity
 import com.apps.adrcotfas.goodtime.bl.NotificationHelper
@@ -63,8 +62,8 @@ import android.util.Log
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
@@ -72,7 +71,7 @@ import com.apps.adrcotfas.goodtime.BuildConfig
 import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding
-import com.apps.adrcotfas.goodtime.upgrade.BillingHelper
+import com.apps.adrcotfas.goodtime.ui.ActivityWithBilling
 import com.apps.adrcotfas.goodtime.util.*
 import com.apps.adrcotfas.goodtime.util.Constants.ClearNotificationEvent
 import org.joda.time.LocalDate
@@ -80,16 +79,14 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
-class TimerActivity : AppCompatActivity(), OnSharedPreferenceChangeListener, OnLabelSelectedListener,
+class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
+    OnLabelSelectedListener,
     FinishedSessionDialog.Listener {
 
-    @Inject
-    lateinit var preferenceHelper: PreferenceHelper
+    private lateinit var binding: ActivityMainBinding
 
     @Inject
     lateinit var currentSessionManager: CurrentSessionManager
-
-    @Inject lateinit var billingHelper: BillingHelper
 
     private var mDialogSessionFinished: FinishedSessionDialog? = null
     private var mFullscreenHelper: FullscreenHelper? = null
@@ -99,7 +96,7 @@ class TimerActivity : AppCompatActivity(), OnSharedPreferenceChangeListener, OnL
     private var mLabelButton: MenuItem? = null
     private var mBoundsView: View? = null
     private var mTimeLabel: TextView? = null
-    private var mToolbar: Toolbar? = null
+    private lateinit var mToolbar: Toolbar
     private var mTutorialDot: ImageView? = null
     private var mLabelChip: Chip? = null
     private var mSessionViewModel: SessionViewModel? = null
@@ -146,8 +143,7 @@ class TimerActivity : AppCompatActivity(), OnSharedPreferenceChangeListener, OnL
             preferenceHelper.consumeFirstRun()
         }
         ThemeHelper.setTheme(this, preferenceHelper.isAmoledTheme())
-        val binding: ActivityMainBinding =
-            DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         mBlackCover = binding.blackCover
         mWhiteCover = binding.whiteCover
         mToolbar = binding.bar
@@ -158,7 +154,7 @@ class TimerActivity : AppCompatActivity(), OnSharedPreferenceChangeListener, OnL
         mLabelChip!!.setOnClickListener { showEditLabelDialog() }
         setupTimeLabelEvents()
         setSupportActionBar(mToolbar)
-        supportActionBar?.setTitle(null)
+        supportActionBar?.title = null
 
         // dismiss it at orientation change
         val selectLabelDialog =
@@ -171,6 +167,12 @@ class TimerActivity : AppCompatActivity(), OnSharedPreferenceChangeListener, OnL
             RateThisApp.showRateDialogIfNeeded(this)
         }
         mViewModel = ViewModelProvider(this).get(TimerActivityViewModel::class.java)
+    }
+
+    override fun showSnackBar(@StringRes resourceId: Int) {
+        if (this::binding.isInitialized) {
+            Snackbar.make(binding.root, getString(resourceId), Snackbar.LENGTH_LONG).setAnchorView(mToolbar).show()
+        }
     }
 
     /**
@@ -197,7 +199,7 @@ class TimerActivity : AppCompatActivity(), OnSharedPreferenceChangeListener, OnL
             mTutorialDot!!.clearAnimation()
             mTutorialDot!!.animation = animations[preferenceHelper.lastIntroStep]
             val s = Snackbar.make(
-                mToolbar!!,
+                mToolbar,
                 messages[preferenceHelper.lastIntroStep],
                 Snackbar.LENGTH_INDEFINITE
             )
@@ -207,14 +209,11 @@ class TimerActivity : AppCompatActivity(), OnSharedPreferenceChangeListener, OnL
                     showTutorialSnackbars()
                 }
                 .setAnchorView(mToolbar)
-                .setActionTextColor(resources.getColor(R.color.teal200))
             s.behavior = object : BaseTransientBottomBar.Behavior() {
                 override fun canSwipeDismissView(child: View): Boolean {
                     return false
                 }
             }
-            val tv = s.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-            tv?.setTextColor(ContextCompat.getColor(this, R.color.white))
             s.show()
         } else {
             mTutorialDot!!.animate().translationX(0f).translationY(0f)
@@ -347,7 +346,6 @@ class TimerActivity : AppCompatActivity(), OnSharedPreferenceChangeListener, OnL
         val pref = PreferenceManager.getDefaultSharedPreferences(this)
         pref.unregisterOnSharedPreferenceChangeListener(this)
         EventBus.getDefault().unregister(this)
-        billingHelper.destroy()
         super.onDestroy()
     }
 
@@ -356,9 +354,12 @@ class TimerActivity : AppCompatActivity(), OnSharedPreferenceChangeListener, OnL
         menuInflater.inflate(R.menu.menu_main, menu)
         val batteryButton = menu.findItem(R.id.action_battery_optimization)
         batteryButton.isVisible = !isIgnoringBatteryOptimizations(this)
-        mLabelButton = menu.findItem(R.id.action_current_label).also { it.icon.setColorFilter(
-            ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_ALL_LABELS), PorterDuff.Mode.SRC_ATOP
-        )}
+        mLabelButton = menu.findItem(R.id.action_current_label).also {
+            it.icon.setColorFilter(
+                ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_ALL_LABELS),
+                PorterDuff.Mode.SRC_ATOP
+            )
+        }
         //TODO: move this to onResume
         setupEvents()
         return super.onCreateOptionsMenu(menu)
@@ -434,355 +435,356 @@ class TimerActivity : AppCompatActivity(), OnSharedPreferenceChangeListener, OnL
     private val currentSession: CurrentSession
         get() = currentSessionManager.currentSession
 
-            @SuppressLint("WrongConstant")
-            override fun onBackPressed() {
-                if (currentSession.timerState.value !== TimerState.INACTIVE) {
-                    moveTaskToBack(true)
-                } else {
-                    if (mBackPressedAt + 2000 > System.currentTimeMillis()) {
-                        super.onBackPressed()
-                    } else {
-                        try {
-                            Toast.makeText(
-                                baseContext,
-                                R.string.action_press_back_button,
-                                Toast.LENGTH_SHORT
-                            )
-                                .show()
-                        } catch (th: Throwable) {
-                            // ignoring this exception
-                        }
-                    }
-                    mBackPressedAt = System.currentTimeMillis()
-                }
-            }
-
-            override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-                val alertMenuItem = menu.findItem(R.id.action_sessions_counter)
-                alertMenuItem.isVisible = false
-                val sessionsCounterEnabled = preferenceHelper.isSessionsCounterEnabled
-                if (sessionsCounterEnabled) {
-                    val mSessionsCounter = alertMenuItem.actionView as FrameLayout
-                    mSessionsCounterText = mSessionsCounter.findViewById(R.id.view_alert_count_textview)
-                    mSessionsCounter.setOnClickListener { onOptionsItemSelected(alertMenuItem) }
-                    mSessionViewModel = ViewModelProvider(this).get(SessionViewModel::class.java)
-                    mSessionViewModel!!.allSessionsByEndTime.observe(this, { sessions: List<Session> ->
-                        val today = LocalDate()
-                        var statsToday = 0
-                        for (s in sessions) {
-                            val crt = LocalDate(Date(s.timestamp))
-                            if (crt.isEqual(today)) {
-                                statsToday++
-                            }
-                            if (crt.isBefore(today)) {
-                                break
-                            }
-                        }
-                        if (mSessionsCounterText != null) {
-                            mSessionsCounterText!!.text = statsToday.toString()
-                        }
-                        alertMenuItem.isVisible = true
-                    })
-                }
-                return super.onPrepareOptionsMenu(menu)
-            }
-
-            /**
-             * Called when an event is posted to the EventBus
-             * @param o holds the type of the Event
-             */
-            @Subscribe
-            fun onEventMainThread(o: Any?) {
-                if (o is FinishWorkEvent) {
-                    if (preferenceHelper.isAutoStartBreak()) {
-                        if (preferenceHelper.isFlashingNotificationEnabled()) {
-                            mViewModel!!.enableFlashingNotification = true
-                        }
-                    } else {
-                        mViewModel!!.dialogPendingType = SessionType.WORK
-                        showFinishedSessionUI()
-                    }
-                } else if (o is FinishBreakEvent || o is FinishLongBreakEvent) {
-                    if (preferenceHelper.isAutoStartWork()) {
-                        if (preferenceHelper.isFlashingNotificationEnabled()) {
-                            mViewModel!!.enableFlashingNotification = true
-                        }
-                    } else {
-                        mViewModel!!.dialogPendingType = SessionType.BREAK
-                        showFinishedSessionUI()
-                    }
-                } else if (o is StartSessionEvent) {
-                    if (mDialogSessionFinished != null) {
-                        mDialogSessionFinished!!.dismissAllowingStateLoss()
-                    }
-                    mViewModel!!.showFinishDialog = false
-                    if (!preferenceHelper.isAutoStartBreak() && !preferenceHelper.isAutoStartWork()) {
-                        stopFlashingNotification()
-                    }
-                } else if (o is OneMinuteLeft) {
-                    if (preferenceHelper.isFlashingNotificationEnabled()) {
-                        startFlashingNotificationShort()
-                    }
-                }
-            }
-
-            private fun updateTimeLabel(millis: Long) {
-                var seconds = TimeUnit.MILLISECONDS.toSeconds(millis)
-                val minutes = TimeUnit.SECONDS.toMinutes(seconds)
-                seconds -= minutes * 60
-                val currentFormattedTick: String
-                val isMinutesStyle =
-                    preferenceHelper.timerStyle == resources.getString(R.string.pref_timer_style_minutes_value)
-                currentFormattedTick = if (isMinutesStyle) {
-                    TimeUnit.SECONDS.toMinutes(minutes * 60 + seconds + 59).toString()
-                } else {
-                    ((if (minutes > 9) minutes else "0$minutes")
-                        .toString() + ":"
-                            + if (seconds > 9) seconds else "0$seconds")
-                }
-                mTimeLabel!!.text = currentFormattedTick
-                Log.v(TAG, "drawing the time label.")
-                if (preferenceHelper.isScreensaverEnabled() && seconds == 1L && currentSession.timerState.value !== TimerState.PAUSED) {
-                    teleportTimeView()
-                }
-            }
-
-            private fun start(sessionType: SessionType) {
-                var startIntent = Intent()
-                when (currentSession.timerState.value) {
-                    TimerState.INACTIVE -> startIntent = IntentWithAction(
-                        this@TimerActivity, TimerService::class.java,
-                        Constants.ACTION.START, sessionType
+    @SuppressLint("WrongConstant")
+    override fun onBackPressed() {
+        if (currentSession.timerState.value !== TimerState.INACTIVE) {
+            moveTaskToBack(true)
+        } else {
+            if (mBackPressedAt + 2000 > System.currentTimeMillis()) {
+                super.onBackPressed()
+            } else {
+                try {
+                    Toast.makeText(
+                        baseContext,
+                        R.string.action_press_back_button,
+                        Toast.LENGTH_SHORT
                     )
-                    TimerState.ACTIVE, TimerState.PAUSED -> startIntent = IntentWithAction(
-                        this@TimerActivity,
-                        TimerService::class.java,
-                        Constants.ACTION.TOGGLE
-                    )
-                    else -> Log.wtf(TAG, "Invalid timer state.")
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(startIntent)
-                } else {
-                    startService(startIntent)
+                        .show()
+                } catch (th: Throwable) {
+                    // ignoring this exception
                 }
             }
-
-            private fun stop() {
-                val stopIntent: Intent =
-                    IntentWithAction(this@TimerActivity, TimerService::class.java, Constants.ACTION.STOP)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(stopIntent)
-                } else {
-                    startService(stopIntent)
-                }
-                mWhiteCover!!.visibility = View.GONE
-                mWhiteCover!!.clearAnimation()
-            }
-
-            private fun add60Seconds() {
-                val stopIntent: Intent = IntentWithAction(
-                    this@TimerActivity,
-                    TimerService::class.java,
-                    Constants.ACTION.ADD_SECONDS
-                )
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(stopIntent)
-                } else {
-                    startService(stopIntent)
-                }
-            }
-
-            private fun showEditLabelDialog() {
-                val fragmentManager = supportFragmentManager
-                SelectLabelDialog.newInstance(this, preferenceHelper.currentSessionLabel.title, false)
-                    .show(fragmentManager, DIALOG_SELECT_LABEL_TAG)
-            }
-
-            private fun showFinishedSessionUI() {
-                if (mViewModel!!.isActive) {
-                    mViewModel!!.showFinishDialog = false
-                    mViewModel!!.enableFlashingNotification = true
-                    Log.i(TAG, "Showing the finish dialog.")
-                    mDialogSessionFinished = FinishedSessionDialog.newInstance(this).also { it.show(supportFragmentManager, TAG) }
-                } else {
-                    mViewModel!!.showFinishDialog = true
-                    mViewModel!!.enableFlashingNotification = false
-                }
-            }
-
-            private fun toggleFullscreenMode() {
-                if (preferenceHelper.isFullscreenEnabled()) {
-                    if (mFullscreenHelper == null) {
-                        mFullscreenHelper = FullscreenHelper(findViewById(R.id.main), supportActionBar)
-                    } else {
-                        mFullscreenHelper!!.hide()
-                    }
-                } else {
-                    if (mFullscreenHelper != null) {
-                        mFullscreenHelper!!.disable()
-                        mFullscreenHelper = null
-                    }
-                }
-            }
-
-            private fun delayToggleFullscreenMode() {
-                val handler = Handler()
-                handler.postDelayed({ toggleFullscreenMode() }, 300)
-            }
-
-            private fun toggleKeepScreenOn(enabled: Boolean) {
-                if (enabled) {
-                    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                } else {
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                }
-            }
-
-            override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-                when (key) {
-                    PreferenceHelper.WORK_DURATION -> if (currentSession.timerState.value
-                        === TimerState.INACTIVE
-                    ) {
-                        currentSession.setDuration(
-                            TimeUnit.MINUTES.toMillis(
-                                preferenceHelper.getSessionDuration(SessionType.WORK)
-                            )
-                        )
-                    }
-                    PreferenceHelper.ENABLE_SCREEN_ON -> toggleKeepScreenOn(preferenceHelper.isScreenOnEnabled())
-                    PreferenceHelper.AMOLED -> {
-                        recreate()
-                        if (!preferenceHelper.isScreensaverEnabled()) {
-                            recreate()
-                        }
-                    }
-                    PreferenceHelper.ENABLE_SCREENSAVER_MODE -> if (!preferenceHelper.isScreensaverEnabled()) {
-                        recreate()
-                    }
-                    else -> {
-                    }
-                }
-            }
-
-            private fun setupLabelView() {
-                val label = preferenceHelper.currentSessionLabel
-                if (isInvalidLabel(label)) {
-                    mLabelChip!!.visibility = View.GONE
-                    mLabelButton!!.isVisible = true
-                    val color = ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_ALL_LABELS)
-                    mLabelButton!!.icon.setColorFilter(
-                        color, PorterDuff.Mode.SRC_ATOP
-                    )
-                } else {
-                    val color = ThemeHelper.getColor(this, label.colorId)
-                    if (preferenceHelper.showCurrentLabel()) {
-                        mLabelButton!!.isVisible = false
-                        mLabelChip!!.visibility = View.VISIBLE
-                        mLabelChip!!.text = label.title
-                        mLabelChip!!.chipBackgroundColor = ColorStateList.valueOf(color)
-                    } else {
-                        mLabelChip!!.visibility = View.GONE
-                        mLabelButton!!.isVisible = true
-                        mLabelButton!!.icon.setColorFilter(
-                            color, PorterDuff.Mode.SRC_ATOP
-                        )
-                    }
-                }
-            }
-
-            private fun isInvalidLabel(label: Label): Boolean {
-                return label.title == "" || label.title == getString(R.string.label_unlabeled)
-            }
-
-            private fun setTimeLabelColor() {
-                val label = preferenceHelper.currentSessionLabel
-                if (mTimeLabel != null) {
-                    if (mCurrentSessionType === SessionType.BREAK || mCurrentSessionType === SessionType.LONG_BREAK) {
-                        mTimeLabel!!.setTextColor(ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_BREAK))
-                        return
-                    }
-                    if (!isInvalidLabel(label)) {
-                        mTimeLabel!!.setTextColor(ThemeHelper.getColor(this, label.colorId))
-                    } else {
-                        mTimeLabel!!.setTextColor(
-                            ThemeHelper.getColor(
-                                this,
-                                ThemeHelper.COLOR_INDEX_UNLABELED
-                            )
-                        )
-                    }
-                }
-            }
-
-            override fun onLabelSelected(label: Label) {
-                currentSession.setLabel(label.title)
-                preferenceHelper.currentSessionLabel = label
-                setupLabelView()
-                setTimeLabelColor()
-            }
-
-            private fun teleportTimeView() {
-                val margin = ThemeHelper.dpToPx(this, 48f)
-                val maxX = mBoundsView!!.width - mTimeLabel!!.width - margin
-                val maxY = mBoundsView!!.height - mTimeLabel!!.height - margin
-                val boundX = maxX - margin
-                val boundY = maxY - margin
-                if (boundX > 0 && boundY > 0) {
-                    val r = Random()
-                    val newX = r.nextInt(boundX) + margin
-                    val newY = r.nextInt(boundY) + margin
-                    mTimeLabel!!.animate().x(newX.toFloat()).y(newY.toFloat()).duration = 100
-                }
-            }
-
-            override fun onFinishedSessionDialogPositiveButtonClick(sessionType: SessionType) {
-                if (sessionType === SessionType.WORK) {
-                    start(SessionType.BREAK)
-                } else {
-                    start(SessionType.WORK)
-                }
-                delayToggleFullscreenMode()
-                stopFlashingNotification()
-            }
-
-            override fun onFinishedSessionDialogNeutralButtonClick(sessionType: SessionType) {
-                EventBus.getDefault().post(ClearNotificationEvent())
-                delayToggleFullscreenMode()
-                stopFlashingNotification()
-            }
-
-            private fun startFlashingNotification() {
-                mWhiteCover!!.visibility = View.VISIBLE
-                mWhiteCover!!.startAnimation(
-                    AnimationUtils.loadAnimation(
-                        applicationContext, R.anim.blink_screen
-                    )
-                )
-            }
-
-            private fun startFlashingNotificationShort() {
-                mWhiteCover!!.visibility = View.VISIBLE
-                val anim = AnimationUtils.loadAnimation(applicationContext, R.anim.blink_screen_3_times)
-                anim.setAnimationListener(object : Animation.AnimationListener {
-                    override fun onAnimationStart(animation: Animation) {}
-                    override fun onAnimationEnd(animation: Animation) {
-                        stopFlashingNotification()
-                    }
-
-                    override fun onAnimationRepeat(animation: Animation) {}
-                })
-                mWhiteCover!!.startAnimation(anim)
-            }
-
-            private fun stopFlashingNotification() {
-                mWhiteCover!!.visibility = View.GONE
-                mWhiteCover!!.clearAnimation()
-                mViewModel!!.enableFlashingNotification = false
-            }
-
-            companion object {
-            private val TAG = TimerActivity::class.java.simpleName
-            private const val DIALOG_SELECT_LABEL_TAG = "dialogSelectLabel"
+            mBackPressedAt = System.currentTimeMillis()
         }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val alertMenuItem = menu.findItem(R.id.action_sessions_counter)
+        alertMenuItem.isVisible = false
+        val sessionsCounterEnabled = preferenceHelper.isSessionsCounterEnabled
+        if (sessionsCounterEnabled) {
+            val mSessionsCounter = alertMenuItem.actionView as FrameLayout
+            mSessionsCounterText = mSessionsCounter.findViewById(R.id.view_alert_count_textview)
+            mSessionsCounter.setOnClickListener { onOptionsItemSelected(alertMenuItem) }
+            mSessionViewModel = ViewModelProvider(this).get(SessionViewModel::class.java)
+            mSessionViewModel!!.allSessionsByEndTime.observe(this, { sessions: List<Session> ->
+                val today = LocalDate()
+                var statsToday = 0
+                for (s in sessions) {
+                    val crt = LocalDate(Date(s.timestamp))
+                    if (crt.isEqual(today)) {
+                        statsToday++
+                    }
+                    if (crt.isBefore(today)) {
+                        break
+                    }
+                }
+                if (mSessionsCounterText != null) {
+                    mSessionsCounterText!!.text = statsToday.toString()
+                }
+                alertMenuItem.isVisible = true
+            })
+        }
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    /**
+     * Called when an event is posted to the EventBus
+     * @param o holds the type of the Event
+     */
+    @Subscribe
+    fun onEventMainThread(o: Any?) {
+        if (o is FinishWorkEvent) {
+            if (preferenceHelper.isAutoStartBreak()) {
+                if (preferenceHelper.isFlashingNotificationEnabled()) {
+                    mViewModel!!.enableFlashingNotification = true
+                }
+            } else {
+                mViewModel!!.dialogPendingType = SessionType.WORK
+                showFinishedSessionUI()
+            }
+        } else if (o is FinishBreakEvent || o is FinishLongBreakEvent) {
+            if (preferenceHelper.isAutoStartWork()) {
+                if (preferenceHelper.isFlashingNotificationEnabled()) {
+                    mViewModel!!.enableFlashingNotification = true
+                }
+            } else {
+                mViewModel!!.dialogPendingType = SessionType.BREAK
+                showFinishedSessionUI()
+            }
+        } else if (o is StartSessionEvent) {
+            if (mDialogSessionFinished != null) {
+                mDialogSessionFinished!!.dismissAllowingStateLoss()
+            }
+            mViewModel!!.showFinishDialog = false
+            if (!preferenceHelper.isAutoStartBreak() && !preferenceHelper.isAutoStartWork()) {
+                stopFlashingNotification()
+            }
+        } else if (o is OneMinuteLeft) {
+            if (preferenceHelper.isFlashingNotificationEnabled()) {
+                startFlashingNotificationShort()
+            }
+        }
+    }
+
+    private fun updateTimeLabel(millis: Long) {
+        var seconds = TimeUnit.MILLISECONDS.toSeconds(millis)
+        val minutes = TimeUnit.SECONDS.toMinutes(seconds)
+        seconds -= minutes * 60
+        val currentFormattedTick: String
+        val isMinutesStyle =
+            preferenceHelper.timerStyle == resources.getString(R.string.pref_timer_style_minutes_value)
+        currentFormattedTick = if (isMinutesStyle) {
+            TimeUnit.SECONDS.toMinutes(minutes * 60 + seconds + 59).toString()
+        } else {
+            ((if (minutes > 9) minutes else "0$minutes")
+                .toString() + ":"
+                    + if (seconds > 9) seconds else "0$seconds")
+        }
+        mTimeLabel!!.text = currentFormattedTick
+        Log.v(TAG, "drawing the time label.")
+        if (preferenceHelper.isScreensaverEnabled() && seconds == 1L && currentSession.timerState.value !== TimerState.PAUSED) {
+            teleportTimeView()
+        }
+    }
+
+    private fun start(sessionType: SessionType) {
+        var startIntent = Intent()
+        when (currentSession.timerState.value) {
+            TimerState.INACTIVE -> startIntent = IntentWithAction(
+                this@TimerActivity, TimerService::class.java,
+                Constants.ACTION.START, sessionType
+            )
+            TimerState.ACTIVE, TimerState.PAUSED -> startIntent = IntentWithAction(
+                this@TimerActivity,
+                TimerService::class.java,
+                Constants.ACTION.TOGGLE
+            )
+            else -> Log.wtf(TAG, "Invalid timer state.")
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(startIntent)
+        } else {
+            startService(startIntent)
+        }
+    }
+
+    private fun stop() {
+        val stopIntent: Intent =
+            IntentWithAction(this@TimerActivity, TimerService::class.java, Constants.ACTION.STOP)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(stopIntent)
+        } else {
+            startService(stopIntent)
+        }
+        mWhiteCover!!.visibility = View.GONE
+        mWhiteCover!!.clearAnimation()
+    }
+
+    private fun add60Seconds() {
+        val stopIntent: Intent = IntentWithAction(
+            this@TimerActivity,
+            TimerService::class.java,
+            Constants.ACTION.ADD_SECONDS
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(stopIntent)
+        } else {
+            startService(stopIntent)
+        }
+    }
+
+    private fun showEditLabelDialog() {
+        val fragmentManager = supportFragmentManager
+        SelectLabelDialog.newInstance(this, preferenceHelper.currentSessionLabel.title, false)
+            .show(fragmentManager, DIALOG_SELECT_LABEL_TAG)
+    }
+
+    private fun showFinishedSessionUI() {
+        if (mViewModel!!.isActive) {
+            mViewModel!!.showFinishDialog = false
+            mViewModel!!.enableFlashingNotification = true
+            Log.i(TAG, "Showing the finish dialog.")
+            mDialogSessionFinished = FinishedSessionDialog.newInstance(this)
+                .also { it.show(supportFragmentManager, TAG) }
+        } else {
+            mViewModel!!.showFinishDialog = true
+            mViewModel!!.enableFlashingNotification = false
+        }
+    }
+
+    private fun toggleFullscreenMode() {
+        if (preferenceHelper.isFullscreenEnabled()) {
+            if (mFullscreenHelper == null) {
+                mFullscreenHelper = FullscreenHelper(findViewById(R.id.main), supportActionBar)
+            } else {
+                mFullscreenHelper!!.hide()
+            }
+        } else {
+            if (mFullscreenHelper != null) {
+                mFullscreenHelper!!.disable()
+                mFullscreenHelper = null
+            }
+        }
+    }
+
+    private fun delayToggleFullscreenMode() {
+        val handler = Handler()
+        handler.postDelayed({ toggleFullscreenMode() }, 300)
+    }
+
+    private fun toggleKeepScreenOn(enabled: Boolean) {
+        if (enabled) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        when (key) {
+            PreferenceHelper.WORK_DURATION -> if (currentSession.timerState.value
+                === TimerState.INACTIVE
+            ) {
+                currentSession.setDuration(
+                    TimeUnit.MINUTES.toMillis(
+                        preferenceHelper.getSessionDuration(SessionType.WORK)
+                    )
+                )
+            }
+            PreferenceHelper.ENABLE_SCREEN_ON -> toggleKeepScreenOn(preferenceHelper.isScreenOnEnabled())
+            PreferenceHelper.AMOLED -> {
+                recreate()
+                if (!preferenceHelper.isScreensaverEnabled()) {
+                    recreate()
+                }
+            }
+            PreferenceHelper.ENABLE_SCREENSAVER_MODE -> if (!preferenceHelper.isScreensaverEnabled()) {
+                recreate()
+            }
+            else -> {
+            }
+        }
+    }
+
+    private fun setupLabelView() {
+        val label = preferenceHelper.currentSessionLabel
+        if (isInvalidLabel(label)) {
+            mLabelChip!!.visibility = View.GONE
+            mLabelButton!!.isVisible = true
+            val color = ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_ALL_LABELS)
+            mLabelButton!!.icon.setColorFilter(
+                color, PorterDuff.Mode.SRC_ATOP
+            )
+        } else {
+            val color = ThemeHelper.getColor(this, label.colorId)
+            if (preferenceHelper.showCurrentLabel()) {
+                mLabelButton!!.isVisible = false
+                mLabelChip!!.visibility = View.VISIBLE
+                mLabelChip!!.text = label.title
+                mLabelChip!!.chipBackgroundColor = ColorStateList.valueOf(color)
+            } else {
+                mLabelChip!!.visibility = View.GONE
+                mLabelButton!!.isVisible = true
+                mLabelButton!!.icon.setColorFilter(
+                    color, PorterDuff.Mode.SRC_ATOP
+                )
+            }
+        }
+    }
+
+    private fun isInvalidLabel(label: Label): Boolean {
+        return label.title == "" || label.title == getString(R.string.label_unlabeled)
+    }
+
+    private fun setTimeLabelColor() {
+        val label = preferenceHelper.currentSessionLabel
+        if (mTimeLabel != null) {
+            if (mCurrentSessionType === SessionType.BREAK || mCurrentSessionType === SessionType.LONG_BREAK) {
+                mTimeLabel!!.setTextColor(ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_BREAK))
+                return
+            }
+            if (!isInvalidLabel(label)) {
+                mTimeLabel!!.setTextColor(ThemeHelper.getColor(this, label.colorId))
+            } else {
+                mTimeLabel!!.setTextColor(
+                    ThemeHelper.getColor(
+                        this,
+                        ThemeHelper.COLOR_INDEX_UNLABELED
+                    )
+                )
+            }
+        }
+    }
+
+    override fun onLabelSelected(label: Label) {
+        currentSession.setLabel(label.title)
+        preferenceHelper.currentSessionLabel = label
+        setupLabelView()
+        setTimeLabelColor()
+    }
+
+    private fun teleportTimeView() {
+        val margin = ThemeHelper.dpToPx(this, 48f)
+        val maxX = mBoundsView!!.width - mTimeLabel!!.width - margin
+        val maxY = mBoundsView!!.height - mTimeLabel!!.height - margin
+        val boundX = maxX - margin
+        val boundY = maxY - margin
+        if (boundX > 0 && boundY > 0) {
+            val r = Random()
+            val newX = r.nextInt(boundX) + margin
+            val newY = r.nextInt(boundY) + margin
+            mTimeLabel!!.animate().x(newX.toFloat()).y(newY.toFloat()).duration = 100
+        }
+    }
+
+    override fun onFinishedSessionDialogPositiveButtonClick(sessionType: SessionType) {
+        if (sessionType === SessionType.WORK) {
+            start(SessionType.BREAK)
+        } else {
+            start(SessionType.WORK)
+        }
+        delayToggleFullscreenMode()
+        stopFlashingNotification()
+    }
+
+    override fun onFinishedSessionDialogNeutralButtonClick(sessionType: SessionType) {
+        EventBus.getDefault().post(ClearNotificationEvent())
+        delayToggleFullscreenMode()
+        stopFlashingNotification()
+    }
+
+    private fun startFlashingNotification() {
+        mWhiteCover!!.visibility = View.VISIBLE
+        mWhiteCover!!.startAnimation(
+            AnimationUtils.loadAnimation(
+                applicationContext, R.anim.blink_screen
+            )
+        )
+    }
+
+    private fun startFlashingNotificationShort() {
+        mWhiteCover!!.visibility = View.VISIBLE
+        val anim = AnimationUtils.loadAnimation(applicationContext, R.anim.blink_screen_3_times)
+        anim.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {
+                stopFlashingNotification()
+            }
+
+            override fun onAnimationRepeat(animation: Animation) {}
+        })
+        mWhiteCover!!.startAnimation(anim)
+    }
+
+    private fun stopFlashingNotification() {
+        mWhiteCover!!.visibility = View.GONE
+        mWhiteCover!!.clearAnimation()
+        mViewModel!!.enableFlashingNotification = false
+    }
+
+    companion object {
+        private val TAG = TimerActivity::class.java.simpleName
+        private const val DIALOG_SELECT_LABEL_TAG = "dialogSelectLabel"
+    }
 }
