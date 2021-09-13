@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.upgrade
+package com.apps.adrcotfas.goodtime.ui.upgrade_dialog
 
 import android.app.Dialog
 import android.content.Intent

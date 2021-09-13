@@ -13,7 +13,7 @@
 package com.apps.adrcotfas.goodtime.util
 
 import androidx.fragment.app.FragmentManager
-import com.apps.adrcotfas.goodtime.upgrade.UpgradeDialog.Companion.showNewInstance
+import com.apps.adrcotfas.goodtime.ui.upgrade_dialog.UpgradeDialog.Companion.showNewInstance
 
 class UpgradeDialogHelper {
     companion object {
