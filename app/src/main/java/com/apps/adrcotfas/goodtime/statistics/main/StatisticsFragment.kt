@@ -12,6 +12,7 @@
  */
 package com.apps.adrcotfas.goodtime.statistics.main
 
+import com.apps.adrcotfas.goodtime.statistics.ChartMarker
 import android.widget.TextView
 import androidx.lifecycle.LiveData
 import com.github.mikephil.charting.charts.LineChart
@@ -49,6 +50,7 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.animation.Easing
 import com.apps.adrcotfas.goodtime.util.StringUtils
+import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.ValueFormatter
 import org.joda.time.DateTime
@@ -519,7 +521,6 @@ class StatisticsFragment : Fragment() {
         chartHistory.apply {
             moveViewToX(data.xMax)
             this.data = data
-            data.isHighlightEnabled = false
             axisLeft.axisMinimum = 0f
             axisLeft.axisMaximum = if (isDurationType) 60f else 8f
             val visibleXCount = ThemeHelper.pxToDp(requireContext(), chartHistory.width)
@@ -591,6 +592,7 @@ class StatisticsFragment : Fragment() {
             animateY(500, Easing.EaseOutCubic)
             legend.isEnabled = false
             isDoubleTapToZoomEnabled = false
+            marker = ChartMarker(requireContext(), R.layout.view_chart_marker)
             setScaleEnabled(false)
             invalidate()
             notifyDataSetChanged()
@@ -687,15 +689,18 @@ class StatisticsFragment : Fragment() {
 
     private fun generateLineDataSet(entries: List<Entry>, color: Int): LineDataSet {
         val set = LineDataSet(entries, null)
-        set.color = color
-        set.setCircleColor(color)
-        set.setDrawFilled(true)
-        set.fillColor = color
-        set.lineWidth = 3f
-        set.circleRadius = 3f
-        set.setDrawCircleHole(false)
-        set.disableDashedLine()
-        set.setDrawValues(false)
+        set.apply {
+            this.color = color
+            setCircleColor(color)
+            setDrawFilled(true)
+            fillColor = color
+            lineWidth = 3f
+            circleRadius = 3f
+            setDrawCircleHole(false)
+            disableDashedLine()
+            setDrawValues(false)
+            highLightColor = R.color.true_transparent
+        }
         return set
     }
 
@@ -737,6 +742,7 @@ class StatisticsFragment : Fragment() {
             animateY(500, Easing.EaseOutCubic)
             legend.isEnabled = false
             isDoubleTapToZoomEnabled = false
+            marker = ChartMarker(requireContext(), R.layout.view_chart_marker, ChartMarker.MarkerType.PERCENTAGE)
             setScaleEnabled(false)
             invalidate()
             notifyDataSetChanged()
@@ -755,6 +761,7 @@ class StatisticsFragment : Fragment() {
             for (i in sessionsPerHour.indices) {
                 yVals.add(BarEntry(i.toFloat(), 0f))
             }
+            //TODO: use overview value(could be time) instead of hardcoded "nr of sessions" for an accurate productive chart
             val nrOfSessions = sessions.size.toLong()
             if (nrOfSessions > 0) {
                 // hour of day
