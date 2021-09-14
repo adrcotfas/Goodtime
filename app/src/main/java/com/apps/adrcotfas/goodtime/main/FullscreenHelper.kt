@@ -14,6 +14,7 @@ package com.apps.adrcotfas.goodtime.main
 
 import android.annotation.SuppressLint
 import android.os.Handler
+import android.os.Looper
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.ActionBar
@@ -24,7 +25,7 @@ internal class FullscreenHelper(
     private val mActionBar: ActionBar?
 ) {
     private var mVisible = true
-    private val mHideHandler = Handler()
+    private val mHideHandler = Handler(Looper.getMainLooper())
     private val mHidePart2Runnable = Runnable {
         mContentView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LOW_PROFILE
                 or View.SYSTEM_UI_FLAG_FULLSCREEN

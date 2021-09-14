@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.goodtime.settings
 
 import androidx.preference.PreferenceDialogFragmentCompat
-import androidx.lifecycle.ViewModelProvider
 import android.annotation.SuppressLint
 import android.app.Dialog
 import com.apps.adrcotfas.goodtime.R
@@ -11,13 +10,17 @@ import android.text.TextUtils
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.viewModels
 import androidx.preference.ListPreference
 import com.apps.adrcotfas.goodtime.database.Profile
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.ArrayList
 
+@AndroidEntryPoint
 class SaveCustomProfileDialog : PreferenceDialogFragmentCompat() {
 
-    private lateinit var viewModel: ProfilesViewModel
+    private val viewModel: ProfilesViewModel by viewModels()
+
     private lateinit var profileToAdd: Profile
     private lateinit var title: String
     private lateinit var crtProfileName: String
@@ -25,8 +28,6 @@ class SaveCustomProfileDialog : PreferenceDialogFragmentCompat() {
 
     override fun onPrepareDialogBuilder(builder: AlertDialog.Builder) {
         super.onPrepareDialogBuilder(builder)
-        viewModel = ViewModelProvider(this).get(ProfilesViewModel::class.java)
-
         val profilePreference = preference as ListPreference
 
         @SuppressLint("InflateParams") val dialogView =

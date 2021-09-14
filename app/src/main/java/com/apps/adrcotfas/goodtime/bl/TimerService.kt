@@ -38,10 +38,13 @@ import com.apps.adrcotfas.goodtime.main.TimerActivity
 import android.annotation.TargetApi
 import android.os.Handler
 import android.util.Log
+import androidx.lifecycle.lifecycleScope
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.util.Constants
 import com.apps.adrcotfas.goodtime.util.StringUtils
+import kotlinx.coroutines.*
 import java.lang.Exception
+import java.lang.Runnable
 import java.util.concurrent.TimeUnit
 
 /**
@@ -52,10 +55,13 @@ class TimerService : LifecycleService() {
 
     @Inject
     lateinit var notificationHelper: NotificationHelper
+
     @Inject
     lateinit var ringtoneAndVibrationPlayer: RingtoneAndVibrationPlayer
+
     @Inject
     lateinit var preferenceHelper: PreferenceHelper
+
     @Inject
     lateinit var currentSessionManager: CurrentSessionManager
 
@@ -379,42 +385,29 @@ class TimerService : LifecycleService() {
         if (sessionType !== SessionType.WORK) {
             return
         }
-        val label = currentSessionManager.currentSession.label.value?: ""
+        val label = currentSessionManager.currentSession.label.value ?: ""
         val endTime = System.currentTimeMillis()
-        val handler = Handler()
-        val r = Runnable {
-            Log.d(TAG, "finalizeSession / elapsed minutes: $minutes")
-            if (minutes > 0) {
-                try {
-                    val session = Session(
-                        0,
-                        endTime,
-                        minutes,
-                        label
-                    )
-                    getDatabase(applicationContext).sessionModel()!!.addSession(session)
-                    Log.d(
-                        TAG,
-                        "finalizeSession, saving session finished at" + StringUtils.formatTime(
-                            endTime
-                        )
-                    )
-                } catch (e: Exception) {
-                    // the label was deleted in the meantime so set it to null and save the unlabeled session
-                    handler.post { currentSessionManager.currentSession.setLabel("") }
-                    val session = Session(
-                        0,
-                        endTime,
-                        minutes,
-                        ""
-                    )
-                    getDatabase(applicationContext).sessionModel()!!.addSession(session)
-                }
+        Log.d(TAG, "finalizeSession / elapsed minutes: $minutes")
+        if (minutes > 0) {
+            try {
+                Log.d(TAG, "finalizeSession, saving session finished at" + StringUtils.formatTime(endTime))
+                val session = Session(0, endTime, minutes, label)
+                addSession(session)
+            } catch (e: Exception) {
+                // the label was deleted in the meantime so set it to null and save the unlabeled session
+                currentSessionManager.currentSession.setLabel("")
+                val session = Session(0, endTime, minutes, null)
+                addSession(session)
             }
         }
-        val t = Thread(r)
-        Log.d(TAG, "finalizeSession, start thread")
-        t.start()
+    }
+
+    private fun addSession(session: Session) {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                getDatabase(applicationContext).sessionModel().addSession(session)
+            }
+        }
     }
 
     private fun bringActivityToFront() {

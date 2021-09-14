@@ -15,7 +15,6 @@ package com.apps.adrcotfas.goodtime.viewmodel
 import android.app.Activity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import com.apps.adrcotfas.goodtime.BillingRepository
 import com.apps.adrcotfas.goodtime.BillingRepository.Companion.SKU_PREMIUM
@@ -32,16 +31,5 @@ class MakePurchasesViewModel @Inject constructor(private val billingRepository: 
 
     fun buyPro(activity: Activity) {
         billingRepository.buySku(activity, SKU_PREMIUM)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    class MakePurchasesViewModelFactory(private val billingRepository: BillingRepository) :
-        ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(MakePurchasesViewModel::class.java)) {
-                return MakePurchasesViewModel(billingRepository) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
     }
 }

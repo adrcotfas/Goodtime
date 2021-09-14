@@ -33,17 +33,17 @@ interface LabelDao {
     fun getColor(title: String): LiveData<Int>
 
     @Query("update Label SET title = :newTitle WHERE title = :title")
-    fun editLabelName(title: String, newTitle: String?)
+    suspend fun editLabelName(title: String, newTitle: String?)
 
     @Query("update Label SET colorId = :colorId WHERE title = :title")
-    fun editLabelColor(title: String, colorId: Int)
+    suspend fun editLabelColor(title: String, colorId: Int)
 
     @Query("update Label SET `order` = :order WHERE title = :title")
-    fun editLabelOrder(title: String, order: Int)
+    suspend fun editLabelOrder(title: String, order: Int)
 
     @Query("delete from Label where title = :title")
-    fun deleteLabel(title: String)
+    suspend fun deleteLabel(title: String)
 
     @Query("update Label SET archived = :archived WHERE title = :title")
-    fun toggleLabelArchiveState(title: String, archived: Boolean)
+    suspend fun toggleLabelArchiveState(title: String, archived: Boolean)
 }

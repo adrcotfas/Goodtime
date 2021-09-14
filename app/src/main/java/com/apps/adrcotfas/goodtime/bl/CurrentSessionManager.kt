@@ -31,6 +31,7 @@ import com.apps.adrcotfas.goodtime.util.Constants.UpdateTimerProgressEvent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.lang.IllegalArgumentException
 import java.util.concurrent.TimeUnit
+import kotlin.math.min
 
 /**
  * This class manages and modifies the mutable members of [CurrentSession]
@@ -42,7 +43,7 @@ class CurrentSessionManager @Inject constructor(@ApplicationContext val context:
 
     var currentSession = CurrentSession(TimeUnit.MINUTES.toMillis(preferenceHelper.getSessionDuration(SessionType.WORK)), preferenceHelper.currentSessionLabel.title)
 
-    private var timer: AppCountDownTimer? = null
+    private lateinit var timer: AppCountDownTimer
     private var remaining : Long = 0 // [ms]
 
     private val alarmReceiver: AlarmReceiver = AlarmReceiver(object : AlarmReceiver.OnAlarmReceivedListener{
@@ -65,7 +66,7 @@ class CurrentSessionManager @Inject constructor(@ApplicationContext val context:
                     && sessionDuration > TimeUnit.MINUTES.toMillis(1)
         )
         timer = AppCountDownTimer(sessionDuration)
-        timer!!.start()
+        timer.start()
     }
 
     fun toggleTimer() {
@@ -78,13 +79,13 @@ class CurrentSessionManager @Inject constructor(@ApplicationContext val context:
                     preferenceHelper.oneMinuteBeforeNotificationEnabled()
                             && remaining > TimeUnit.MINUTES.toMillis(1)
                 )
-                timer!!.start()
+                timer.start()
                 currentSession.setTimerState(TimerState.ACTIVE)
             }
             TimerState.ACTIVE -> {
                 Log.v(TAG, "toggleTimer UNPAUSED")
                 cancelAlarm()
-                timer!!.cancel()
+                timer.cancel()
                 timer = AppCountDownTimer(remaining)
                 currentSession.setTimerState(TimerState.PAUSED)
             }
@@ -94,9 +95,7 @@ class CurrentSessionManager @Inject constructor(@ApplicationContext val context:
 
     fun stopTimer() {
         cancelAlarm()
-        if (timer != null) {
-            timer!!.cancel()
-        }
+        timer.cancel()
         currentSession.setTimerState(TimerState.INACTIVE)
         currentSession.setSessionType(SessionType.INVALID)
     }
@@ -195,8 +194,8 @@ class CurrentSessionManager @Inject constructor(@ApplicationContext val context:
         Log.v(TAG, "add60Seconds")
         val extra: Long = 60000 //TimeUnit.SECONDS.toMillis(60);
         cancelAlarm()
-        timer!!.cancel()
-        remaining = Math.min(remaining + extra, TimeUnit.MINUTES.toMillis(240))
+        timer.cancel()
+        remaining = min(remaining + extra, TimeUnit.MINUTES.toMillis(240))
         timer = AppCountDownTimer(remaining)
         if (currentSession.timerState.value != TimerState.PAUSED) {
             scheduleAlarm(
@@ -205,7 +204,7 @@ class CurrentSessionManager @Inject constructor(@ApplicationContext val context:
                 preferenceHelper.oneMinuteBeforeNotificationEnabled()
                         && remaining > TimeUnit.MINUTES.toMillis(1)
             )
-            timer!!.start()
+            timer.start()
             currentSession.setTimerState(TimerState.ACTIVE)
         } else {
             currentSession.setDuration(remaining)
@@ -218,6 +217,7 @@ class CurrentSessionManager @Inject constructor(@ApplicationContext val context:
      * to [.start] until the countdown is done and [.onFinish]
      * is called.
      */(millisInFuture: Long) : CountDownTimer(millisInFuture, 1000) {
+
         private val TAG = AppCountDownTimer::class.java.simpleName
 
         /**

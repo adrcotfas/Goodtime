@@ -18,7 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-fun <R> CoroutineScope.executeAsyncTask(
+fun <R> CoroutineScope.execute(
     onPreExecute: () -> Unit,
     doInBackground: () -> R,
     onPostExecute: (R) -> Unit

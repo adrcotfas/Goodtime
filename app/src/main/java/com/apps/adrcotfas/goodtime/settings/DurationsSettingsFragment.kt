@@ -10,8 +10,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import com.apps.adrcotfas.goodtime.R
-import androidx.lifecycle.ViewModelProvider
 import androidx.preference.Preference
 import com.apps.adrcotfas.goodtime.database.Profile
 import com.apps.adrcotfas.goodtime.util.Constants
@@ -28,7 +28,9 @@ class DurationsSettingsFragment : PreferenceFragmentCompat(), ProfileChangeListe
     private lateinit var prefLongBreakDuration: ProperSeekBarPreference
     private lateinit var prefSessionsBeforeLongBreak: ProperSeekBarPreference
     private var profiles: List<Profile> = ArrayList()
-    private lateinit var viewModel: ProfilesViewModel
+
+    private val viewModel: ProfilesViewModel by viewModels()
+
     private lateinit var saveCustomProfileButton: Preference
 
     @Inject
@@ -47,9 +49,6 @@ class DurationsSettingsFragment : PreferenceFragmentCompat(), ProfileChangeListe
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings_durations, rootKey)
-        viewModel = ViewModelProvider(requireActivity()).get(
-            ProfilesViewModel::class.java
-        )
         viewModel.profiles.observe(this, { profiles: List<Profile> ->
             this.profiles = profiles
             setupProfiles()

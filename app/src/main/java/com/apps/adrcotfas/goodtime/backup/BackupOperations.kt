@@ -25,7 +25,7 @@ import com.apps.adrcotfas.goodtime.database.AppDatabase
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.util.FileUtils
 import com.apps.adrcotfas.goodtime.util.StringUtils
-import com.apps.adrcotfas.goodtime.util.executeAsyncTask
+import com.apps.adrcotfas.goodtime.util.execute
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.*
@@ -36,7 +36,7 @@ class BackupOperations {
         private const val TAG = "BackupOperations"
 
         fun doImport(scope: LifecycleCoroutineScope, context: Context, uri: Uri) {
-            scope.executeAsyncTask(
+            scope.execute(
                 onPreExecute = {},
                 doInBackground = {
                     lateinit var tmpFile: File
@@ -49,7 +49,7 @@ class BackupOperations {
                             FileUtils.copy(inputStream!!, tmpFile)
 
                             // some basic checks before importing
-                            if (!FileUtils.isSQLite3File(tmpFile)) return@executeAsyncTask false
+                            if (!FileUtils.isSQLite3File(tmpFile)) return@execute false
 
                             // then use the tmp file to create the db file
                             val inStream = FileInputStream(tmpFile)
@@ -62,11 +62,11 @@ class BackupOperations {
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
-                        return@executeAsyncTask false
+                        return@execute false
                     } finally {
                         tmpFile.delete()
                     }
-                    return@executeAsyncTask true
+                    return@execute true
                 },
                 onPostExecute = {
                     val success = it

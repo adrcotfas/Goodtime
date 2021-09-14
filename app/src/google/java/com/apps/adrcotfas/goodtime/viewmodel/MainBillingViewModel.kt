@@ -33,15 +33,4 @@ class MainBillingViewModel @Inject constructor(private val billingRepository: Bi
 
     val billingLifecycleObserver: LifecycleObserver
         get() = billingRepository.billingLifecycleObserver
-
-    @Suppress("UNCHECKED_CAST")
-    class MainBillingViewModelFactory(private val billingRepository: BillingRepository) :
-        ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(MainBillingViewModel::class.java)) {
-                return MainBillingViewModel(billingRepository) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
-    }
 }

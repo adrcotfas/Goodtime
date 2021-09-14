@@ -37,8 +37,8 @@ import com.apps.adrcotfas.goodtime.databinding.DrawerMainBinding
 @AndroidEntryPoint
 class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
 
-    private var navigationView: NavigationView? = null
-    private var layout: NestedScrollView? = null
+    private lateinit var navigationView: NavigationView
+    private lateinit var layout: NestedScrollView
 
     @Inject
     lateinit var preferenceHelper: PreferenceHelper
@@ -54,7 +54,7 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
             binding.separator1.visibility = View.GONE
             binding.upgrade.visibility = View.GONE
         } else {
-            binding.upgrade.setOnClickListener { v: View? ->
+            binding.upgrade.setOnClickListener {
                 launchUpgradeDialog(requireActivity().supportFragmentManager)
                 if (dialog != null) {
                     dialog!!.dismiss()
@@ -72,7 +72,7 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
         super.onStart()
         val dialog = dialog
         if (dialog != null) {
-            layout!!.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+            layout.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
         }
         val view = view
         view?.post {
@@ -89,7 +89,7 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        navigationView!!.setNavigationItemSelectedListener { item: MenuItem ->
+        navigationView.setNavigationItemSelectedListener { item: MenuItem ->
             when (item.itemId) {
                 R.id.edit_labels -> if (preferenceHelper.isPro()) {
                     val intent = Intent(activity, AddEditLabelActivity::class.java)

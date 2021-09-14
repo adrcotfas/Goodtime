@@ -8,16 +8,20 @@ import android.annotation.SuppressLint
 import com.apps.adrcotfas.goodtime.R
 import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.preference.ListPreference
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProfileSelectDialog : PreferenceDialogFragmentCompat(), OnProfileSelectedListener {
+
+    private val viewModel: ProfilesViewModel by viewModels()
+
     var mClickedDialogEntryIndex/* synthetic access */ = 0
     private lateinit var mEntries: Array<CharSequence>
-    private var mProfilesViewModel: ProfilesViewModel? = null
     private var mAdapter: ProfileSelectAdapter? = null
     private lateinit var mRecyclerView: RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +48,6 @@ class ProfileSelectDialog : PreferenceDialogFragmentCompat(), OnProfileSelectedL
 
     override fun onPrepareDialogBuilder(builder: AlertDialog.Builder) {
         super.onPrepareDialogBuilder(builder)
-        mProfilesViewModel = ViewModelProvider(this).get(ProfilesViewModel::class.java)
         val inflater = LayoutInflater.from(context)
         @SuppressLint("InflateParams") val dialogView =
             inflater.inflate(R.layout.dialog_select_profile, null)
@@ -85,7 +88,7 @@ class ProfileSelectDialog : PreferenceDialogFragmentCompat(), OnProfileSelectedL
                 DialogInterface.BUTTON_POSITIVE
             )
         }
-        mProfilesViewModel!!.deleteProfile(mEntries[position].toString())
+        viewModel.deleteProfile(mEntries[position].toString())
     }
 
     override fun onSelect(position: Int) {

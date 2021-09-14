@@ -36,16 +36,16 @@ interface SessionDao {
     fun getSessions(label: String): LiveData<List<Session>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addSession(session: Session)
+    suspend fun addSession(session: Session)
 
     @Query("update Session SET timestamp = :timestamp, duration = :duration, label = :label WHERE id = :id")
-    fun editSession(id: Long, timestamp: Long, duration: Long, label: String?)
+    suspend fun editSession(id: Long, timestamp: Long, duration: Long, label: String?)
 
     @Query("update Session SET label = :label WHERE id = :id")
-    fun editLabel(id: Long, label: String?)
+    suspend fun editLabel(id: Long, label: String?)
 
     @Query("delete from Session where id = :id")
-    fun deleteSession(id: Long)
+    suspend fun deleteSession(id: Long)
 
     /**
      * Deletes sessions finished at a later timestamp than the one provided as input.
@@ -53,8 +53,8 @@ interface SessionDao {
      * @param timestamp Sessions finished later than this timestamp will be deleted
      */
     @Query("delete from Session where timestamp >= :timestamp")
-    fun deleteSessionsAfter(timestamp: Long)
+    suspend fun deleteSessionsAfter(timestamp: Long)
 
     @Query("delete from Session")
-    fun deleteAllSessions()
+    suspend fun deleteAllSessions()
 }

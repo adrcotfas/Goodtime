@@ -422,7 +422,6 @@ class ProperSeekBarPreference @JvmOverloads constructor(
         }
 
         companion object {
-            @JvmField
             val CREATOR: Creator<SavedState?> = object : Creator<SavedState?> {
                 override fun createFromParcel(`in`: Parcel): SavedState {
                     return SavedState(`in`)

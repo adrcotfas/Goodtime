@@ -32,10 +32,10 @@ import android.view.View.OnFocusChangeListener
 import com.takisoft.colorpicker.ColorPickerDialog
 import android.view.inputmethod.EditorInfo
 import android.widget.*
+import androidx.activity.viewModels
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,17 +47,17 @@ import com.apps.adrcotfas.goodtime.statistics.Utils.getInvalidLabel
 @AndroidEntryPoint
 class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
 
-    private lateinit var mLabelsViewModel: LabelsViewModel
-    private lateinit var mLabels: MutableList<Label>
-    private lateinit var mRecyclerView: RecyclerView
-    private lateinit var mCustomAdapter: AddEditLabelsAdapter
-    private lateinit var mItemTouchHelper: ItemTouchHelper
-    private lateinit var mLabelToAdd: Label
-    private lateinit var mEmptyState: LinearLayout
-    private lateinit var mAddLabelView: EditText
-    private lateinit var mImageRightContainer: FrameLayout
-    private lateinit var mImageLeft: ImageView
-    private lateinit var mImageLeftContainer: FrameLayout
+    private val viewModel: LabelsViewModel by viewModels()
+    private lateinit var labels: MutableList<Label>
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: AddEditLabelsAdapter
+    private lateinit var itemTouchHelper: ItemTouchHelper
+    private lateinit var labelToAdd: Label
+    private lateinit var emptyState: LinearLayout
+    private lateinit var addLabelView: EditText
+    private lateinit var imageRight: FrameLayout
+    private lateinit var imageLeft: ImageView
+    private lateinit var imageLeftContainer: FrameLayout
 
     @Inject
     lateinit var preferenceHelper: PreferenceHelper
@@ -70,61 +70,58 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
         ThemeHelper.setTheme(this, preferenceHelper.isAmoledTheme())
         val binding: ActivityAddEditLabelsBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_add_edit_labels)
-        mLabelsViewModel = ViewModelProvider(this).get(LabelsViewModel::class.java)
         setSupportActionBar(binding.toolbarWrapper.toolbar)
-        if (supportActionBar != null) {
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        }
-        mRecyclerView = binding.labelList
-        mEmptyState = binding.emptyState
-        mAddLabelView = binding.addLabel.text
-        mImageRightContainer = binding.addLabel.imageRightContainer
-        mImageLeft = binding.addLabel.imageLeft
-        mImageLeftContainer = binding.addLabel.imageLeftContainer
-        val labelsLiveData = mLabelsViewModel.allLabels
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        recyclerView = binding.labelList
+        emptyState = binding.emptyState
+        addLabelView = binding.addLabel.text
+        imageRight = binding.addLabel.imageRightContainer
+        imageLeft = binding.addLabel.imageLeft
+        imageLeftContainer = binding.addLabel.imageLeftContainer
+        val labelsLiveData = viewModel.allLabels
         labelsLiveData.observe(this, { labels: List<Label> ->
-            mLabels = labels as MutableList<Label>
-            mCustomAdapter = AddEditLabelsAdapter(this, mLabels, this)
-            mRecyclerView.adapter = mCustomAdapter
+            this.labels = labels as MutableList<Label>
+            adapter = AddEditLabelsAdapter(this, this.labels, this)
+            recyclerView.adapter = adapter
             val lm = LinearLayoutManager(this)
             lm.reverseLayout = true
             lm.stackFromEnd = true
-            mRecyclerView.layoutManager = lm
-            mRecyclerView.itemAnimator = DefaultItemAnimator()
+            recyclerView.layoutManager = lm
+            recyclerView.itemAnimator = DefaultItemAnimator()
             labelsLiveData.removeObservers(this@AddEditLabelActivity)
             binding.progressBar.visibility = View.GONE
             updateRecyclerViewVisibility()
-            val callback: ItemTouchHelper.Callback = SimpleItemTouchHelperCallback(mCustomAdapter)
-            mItemTouchHelper = ItemTouchHelper(callback)
-            mItemTouchHelper.attachToRecyclerView(mRecyclerView)
+            val callback: ItemTouchHelper.Callback = SimpleItemTouchHelperCallback(adapter)
+            itemTouchHelper = ItemTouchHelper(callback)
+            itemTouchHelper.attachToRecyclerView(recyclerView)
         })
-        mLabelToAdd = getInvalidLabel(this)
-        mImageRightContainer.setOnClickListener {
+        labelToAdd = getInvalidLabel(this)
+        imageRight.setOnClickListener {
             addLabel()
             updateRecyclerViewVisibility()
-            ThemeHelper.clearFocusEditText(mAddLabelView, this)
+            ThemeHelper.clearFocusEditText(addLabelView, this)
         }
-        mImageLeftContainer.setOnClickListener {
+        imageLeftContainer.setOnClickListener {
             ThemeHelper.requestFocusEditText(
-                mAddLabelView,
+                addLabelView,
                 this
             )
         }
-        mAddLabelView.onFocusChangeListener =
+        addLabelView.onFocusChangeListener =
             OnFocusChangeListener { _: View?, hasFocus: Boolean ->
-                mImageRightContainer.visibility = if (hasFocus) View.VISIBLE else View.INVISIBLE
-                mImageLeft.setImageDrawable(resources.getDrawable(if (hasFocus) R.drawable.ic_palette else R.drawable.ic_add))
-                mImageLeftContainer.setOnClickListener(if (hasFocus) View.OnClickListener {
+                imageRight.visibility = if (hasFocus) View.VISIBLE else View.INVISIBLE
+                imageLeft.setImageDrawable(resources.getDrawable(if (hasFocus) R.drawable.ic_palette else R.drawable.ic_add))
+                imageLeftContainer.setOnClickListener(if (hasFocus) View.OnClickListener {
                     val p = ColorPickerDialog.Params.Builder(this@AddEditLabelActivity)
                         .setColors(ThemeHelper.getPalette(this))
-                        .setSelectedColor(ThemeHelper.getColor(this, mLabelToAdd.colorId))
+                        .setSelectedColor(ThemeHelper.getColor(this, labelToAdd.colorId))
                         .build()
                     val dialog = ColorPickerDialog(
                         this@AddEditLabelActivity,
                         R.style.DialogTheme,
                         { c: Int ->
-                            mLabelToAdd.colorId = ThemeHelper.getIndexOfColor(this, c)
-                            mImageLeft.setColorFilter(c)
+                            labelToAdd.colorId = ThemeHelper.getIndexOfColor(this, c)
+                            imageLeft.setColorFilter(c)
                         },
                         p
                     )
@@ -132,26 +129,26 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
                     dialog.show()
                 } else View.OnClickListener {
                     ThemeHelper.requestFocusEditText(
-                        mAddLabelView,
+                        addLabelView,
                         this
                     )
                 })
-                mImageLeft.setColorFilter(
+                imageLeft.setColorFilter(
                     ThemeHelper.getColor(
                         this,
-                        if (hasFocus) mLabelToAdd.colorId else ThemeHelper.COLOR_INDEX_UNLABELED
+                        if (hasFocus) labelToAdd.colorId else ThemeHelper.COLOR_INDEX_UNLABELED
                     )
                 )
                 if (!hasFocus) {
-                    mLabelToAdd = getInvalidLabel(this)
-                    mAddLabelView.setText("")
+                    labelToAdd = getInvalidLabel(this)
+                    addLabelView.setText("")
                 }
             }
-        mAddLabelView.setOnEditorActionListener { _: TextView?, actionId: Int, _: KeyEvent? ->
+        addLabelView.setOnEditorActionListener { _: TextView?, actionId: Int, _: KeyEvent? ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 addLabel()
                 updateRecyclerViewVisibility()
-                ThemeHelper.clearFocusEditText(mAddLabelView, this)
+                ThemeHelper.clearFocusEditText(addLabelView, this)
                 return@setOnEditorActionListener true
             }
             false
@@ -159,11 +156,11 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
     }
 
     override fun onDragStarted(viewHolder: RecyclerView.ViewHolder) {
-        mItemTouchHelper.startDrag(viewHolder)
+        itemTouchHelper.startDrag(viewHolder)
     }
 
     override fun onEditLabel(label: String, newLabel: String) {
-        mLabelsViewModel.editLabelName(label, newLabel)
+        viewModel.editLabelName(label, newLabel)
         val crtLabel = preferenceHelper.currentSessionLabel
         if (crtLabel.title == label) {
             preferenceHelper.currentSessionLabel = Label(newLabel, crtLabel.colorId)
@@ -171,7 +168,7 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
     }
 
     override fun onEditColor(label: String, newColor: Int) {
-        mLabelsViewModel.editLabelColor(label, newColor)
+        viewModel.editLabelColor(label, newColor)
         val crtLabel = preferenceHelper.currentSessionLabel
         if (crtLabel.title != "" && crtLabel.title == label) {
             preferenceHelper.currentSessionLabel = Label(label, newColor)
@@ -179,14 +176,16 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
     }
 
     override fun onToggleArchive(label: Label, adapterPosition: Int) {
-        mLabelsViewModel.toggleLabelArchive(label.title, label.archived)
+        viewModel.toggleLabelArchive(label.title, label.archived)
         val crtLabel = preferenceHelper.currentSessionLabel
         if (label.archived && crtLabel.title != "" && crtLabel.title == label.title) {
             currentSessionManager.currentSession.setLabel("")
-            preferenceHelper.currentSessionLabel = Label("", ThemeHelper.getColor(
-                this,
-                ThemeHelper.COLOR_INDEX_UNLABELED
-            ))
+            preferenceHelper.currentSessionLabel = Label(
+                "", ThemeHelper.getColor(
+                    this,
+                    ThemeHelper.COLOR_INDEX_UNLABELED
+                )
+            )
         }
         if (label.archived && !preferenceHelper.archivedLabelHintWasShown) {
             showArchivedLabelHint()
@@ -198,19 +197,16 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
      */
     private fun showArchivedLabelHint() {
         val s = Snackbar.make(
-            mRecyclerView,
+            recyclerView,
             getString(R.string.tutorial_archive_label),
             Snackbar.LENGTH_INDEFINITE
         )
             .setAction("OK") { preferenceHelper.archivedLabelHintWasShown = true }
-            .setActionTextColor(resources.getColor(R.color.teal200))
         s.behavior = object : BaseTransientBottomBar.Behavior() {
             override fun canSwipeDismissView(child: View): Boolean {
                 return false
             }
         }
-        val tv = s.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-        tv?.setTextColor(ContextCompat.getColor(this, R.color.white))
         s.show()
     }
 
@@ -223,13 +219,13 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
     }
 
     override fun onDeleteLabel(label: Label, position: Int) {
-        mLabels.remove(label)
-        mCustomAdapter.notifyItemRemoved(position)
-        mLabelsViewModel.deleteLabel(label.title)
+        labels.remove(label)
+        adapter.notifyItemRemoved(position)
+        viewModel.deleteLabel(label.title)
 
         // workaround for edge case: clipping animation of last cached entry
-        if (mCustomAdapter.itemCount == 0) {
-            mCustomAdapter.notifyDataSetChanged()
+        if (adapter.itemCount == 0) {
+            adapter.notifyDataSetChanged()
         }
         val crtSessionLabel = currentSessionManager.currentSession.label.value
         if (crtSessionLabel != null && crtSessionLabel == label.title) {
@@ -238,10 +234,12 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
 
         // the label attached to the current session was deleted
         if (label.title == preferenceHelper.currentSessionLabel.title) {
-            preferenceHelper.currentSessionLabel = Label("", ThemeHelper.getColor(
-                this,
-                ThemeHelper.COLOR_INDEX_UNLABELED
-            ))
+            preferenceHelper.currentSessionLabel = Label(
+                "", ThemeHelper.getColor(
+                    this,
+                    ThemeHelper.COLOR_INDEX_UNLABELED
+                )
+            )
         }
         updateRecyclerViewVisibility()
     }
@@ -251,34 +249,36 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
      * rearrangement that was done inside the adapter.
      */
     override fun onLabelRearranged() {
-        for (i in mLabels.indices) {
-            mLabelsViewModel.editLabelOrder(mLabels[i].title, i)
+        for (i in labels.indices) {
+            viewModel.editLabelOrder(labels[i].title, i)
         }
     }
 
     private fun updateRecyclerViewVisibility() {
-        if (mCustomAdapter.itemCount == 0) {
-            mRecyclerView.visibility = View.GONE
-            mEmptyState.visibility = View.VISIBLE
+        if (adapter.itemCount == 0) {
+            recyclerView.visibility = View.GONE
+            emptyState.visibility = View.VISIBLE
         } else {
-            mRecyclerView.visibility = View.VISIBLE
-            mEmptyState.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+            emptyState.visibility = View.GONE
         }
     }
 
     private fun addLabel() {
-        mLabelToAdd =
-            Label(mAddLabelView.text.toString().trim { it <= ' ' }, mLabelToAdd.colorId)
-        if (labelIsGoodToAdd(this, mLabels, mLabelToAdd.title, "")) {
-            mLabels.add(mLabelToAdd)
-            mCustomAdapter.notifyItemInserted(mLabels.size)
-            mRecyclerView.scrollToPosition(mLabels.size - 1)
-            mLabelsViewModel.addLabel(mLabelToAdd)
-            mLabelToAdd = Label("", ThemeHelper.getColor(
-                this,
-                ThemeHelper.COLOR_INDEX_UNLABELED
-            ))
-            mAddLabelView.setText("")
+        labelToAdd =
+            Label(addLabelView.text.toString().trim { it <= ' ' }, labelToAdd.colorId)
+        if (labelIsGoodToAdd(this, labels, labelToAdd.title, "")) {
+            labels.add(labelToAdd)
+            adapter.notifyItemInserted(labels.size)
+            recyclerView.scrollToPosition(labels.size - 1)
+            viewModel.addLabel(labelToAdd)
+            labelToAdd = Label(
+                "", ThemeHelper.getColor(
+                    this,
+                    ThemeHelper.COLOR_INDEX_UNLABELED
+                )
+            )
+            addLabelView.setText("")
         }
     }
 
