@@ -24,7 +24,6 @@ import android.view.ViewGroup
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.apps.adrcotfas.goodtime.R
-import androidx.lifecycle.ViewModelProvider
 import android.content.res.ColorStateList
 import android.view.View
 import com.apps.adrcotfas.goodtime.util.ThemeHelper
@@ -36,21 +35,25 @@ import com.apps.adrcotfas.goodtime.util.DatePickerFragment
 import android.widget.TimePicker
 import android.widget.DatePicker
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.databinding.DialogAddEntryBinding
 import com.apps.adrcotfas.goodtime.util.StringUtils
+import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 import java.util.*
 import kotlin.math.min
 
+@AndroidEntryPoint
 class AddEditEntryDialog : BottomSheetDialogFragment(), OnDateSetListener, OnTimeSetListener,
     OnLabelSelectedListener {
 
-    private lateinit var mViewModel: AddEditEntryDialogViewModel
-    private lateinit var mSessionViewModel: SessionViewModel
-    private lateinit var mLabelsViewModel: LabelsViewModel
-    private var mSessionToEdit: Session? = null
+    private val viewModel: AddEditEntryDialogViewModel by viewModels()
+    private val sessionViewModel: SessionViewModel by viewModels()
+    private val labelsViewModel: LabelsViewModel by viewModels()
+
+    private var sessionToEdit: Session? = null
 
     @SuppressLint("ResourceType")
     override fun onCreateView(
@@ -64,23 +67,20 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnDateSetListener, OnTim
             ), R.layout.dialog_add_entry, null, false
         )
         val view = binding.root
-        val viewModelProvider = ViewModelProvider(this)
-        mViewModel = viewModelProvider.get(AddEditEntryDialogViewModel::class.java)
-        mSessionViewModel = viewModelProvider.get(SessionViewModel::class.java)
-        mLabelsViewModel = viewModelProvider.get(LabelsViewModel::class.java)
-        mViewModel.duration.observe(viewLifecycleOwner, { d: Int ->
+
+        viewModel.duration.observe(viewLifecycleOwner, { d: Int ->
             val duration = d.toString()
             binding.duration.setText(duration)
             binding.duration.setSelection(duration.length)
         })
-        mViewModel.date.observe(viewLifecycleOwner, { date: DateTime ->
+        viewModel.date.observe(viewLifecycleOwner, { date: DateTime ->
             binding.editDate.text = StringUtils.formatDate(date.millis)
             binding.editTime.text = StringUtils.formatTime(date.millis)
         })
-        mViewModel.label.observe(viewLifecycleOwner, { label: String? ->
+        viewModel.label.observe(viewLifecycleOwner, { label: String? ->
             if (label != null && label != getString(R.string.label_unlabeled)) {
                 binding.labelChip.text = label
-                mLabelsViewModel.getColorOfLabel(label)
+                labelsViewModel.getColorOfLabel(label)
                     .observe(viewLifecycleOwner, { color: Int? ->
                         binding.labelChip.chipBackgroundColor = ColorStateList.valueOf(
                             ThemeHelper.getColor(
@@ -104,7 +104,7 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnDateSetListener, OnTim
         binding.labelChip.setOnClickListener {
             // open another dialog to select the chip
             val fragmentManager = requireActivity().supportFragmentManager
-            SelectLabelDialog.newInstance(this, mViewModel.label.value?: "", false)
+            SelectLabelDialog.newInstance(this, viewModel.label.value?: "", false)
                 .show(fragmentManager, StatisticsActivity.DIALOG_SELECT_LABEL_TAG)
         }
         binding.save.setOnClickListener {
@@ -116,31 +116,31 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnDateSetListener, OnTim
                 ).show()
             } else {
                 val duration = min(binding.duration.text.toString().toInt(), 240)
-                val label = mViewModel.label.value
+                val label = viewModel.label.value
                 val sessionToAdd = Session(
-                    0, mViewModel.date.value!!
+                    0, viewModel.date.value!!
                         .millis, duration, label
                 )
-                if (mViewModel.sessionToEditId != AddEditEntryDialogViewModel.INVALID_SESSION_TO_EDIT_ID.toLong()) {
-                    mSessionViewModel.editSession(
-                        mViewModel.sessionToEditId,
+                if (viewModel.sessionToEditId != AddEditEntryDialogViewModel.INVALID_SESSION_TO_EDIT_ID.toLong()) {
+                    sessionViewModel.editSession(
+                        viewModel.sessionToEditId,
                         sessionToAdd.timestamp,
                         sessionToAdd.duration.toLong(),
                         sessionToAdd.label
                     )
                 } else {
-                    mSessionViewModel.addSession(sessionToAdd)
+                    sessionViewModel.addSession(sessionToAdd)
                 }
                 dismiss()
             }
         }
 
         // this is for the edit dialog
-        if (mSessionToEdit != null) {
-            mViewModel.date.value = DateTime(mSessionToEdit!!.timestamp)
-            mViewModel.duration.value = mSessionToEdit!!.duration
-            mViewModel.label.value = mSessionToEdit!!.label
-            mViewModel.sessionToEditId = mSessionToEdit!!.id
+        if (sessionToEdit != null) {
+            viewModel.date.value = DateTime(sessionToEdit!!.timestamp)
+            viewModel.duration.value = sessionToEdit!!.duration
+            viewModel.label.value = sessionToEdit!!.label
+            viewModel.sessionToEditId = sessionToEdit!!.id
             binding.header.text = getString(R.string.session_edit_session)
         }
         return view
@@ -149,7 +149,7 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnDateSetListener, OnTim
     private val calendar: Calendar
         get() {
             val calendar = Calendar.getInstance()
-            val date = mViewModel.date.value
+            val date = viewModel.date.value
             if (date != null) {
                 calendar.time = date.toDate()
             }
@@ -169,15 +169,15 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnDateSetListener, OnTim
     }
 
     override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
-        mViewModel.date.value =
-            if (mViewModel.date.value == null) DateTime() else mViewModel.date.value!!
+        viewModel.date.value =
+            if (viewModel.date.value == null) DateTime() else viewModel.date.value!!
                 .withHourOfDay(hourOfDay)
                 .withMinuteOfHour(minute)
     }
 
     override fun onDateSet(view: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        mViewModel.date.value =
-            if (mViewModel.date.value == null) DateTime() else mViewModel.date.value!!
+        viewModel.date.value =
+            if (viewModel.date.value == null) DateTime() else viewModel.date.value!!
                 .withYear(year)
                 .withMonthOfYear(monthOfYear + 1)
                 .withDayOfMonth(dayOfMonth)
@@ -185,9 +185,9 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnDateSetListener, OnTim
 
     override fun onLabelSelected(label: Label) {
         if (label.title != "unlabeled") {
-            mViewModel.label.setValue(label.title)
+            viewModel.label.setValue(label.title)
         } else {
-            mViewModel.label.setValue(null)
+            viewModel.label.setValue(null)
         }
     }
 
@@ -200,7 +200,7 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnDateSetListener, OnTim
         @JvmStatic
         fun newInstance(session: Session?): AddEditEntryDialog {
             val dialog = AddEditEntryDialog()
-            dialog.mSessionToEdit = session
+            dialog.sessionToEdit = session
             return dialog
         }
     }

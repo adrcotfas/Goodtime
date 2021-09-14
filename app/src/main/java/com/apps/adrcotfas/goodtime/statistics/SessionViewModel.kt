@@ -14,18 +14,25 @@ package com.apps.adrcotfas.goodtime.statistics
 
 import com.apps.adrcotfas.goodtime.database.AppDatabase.Companion.getDatabase
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import com.apps.adrcotfas.goodtime.database.SessionDao
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.apps.adrcotfas.goodtime.database.AppDatabase
 import com.apps.adrcotfas.goodtime.database.Session
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.joda.time.LocalDate
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import javax.inject.Inject
 
-class SessionViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class SessionViewModel @Inject constructor(database: AppDatabase
+) : ViewModel() {
 
-    private val dao: SessionDao = getDatabase(application).sessionModel()
-    private val executorService: ExecutorService = Executors.newSingleThreadExecutor()
+    private val dao: SessionDao = database.sessionModel()
 
     val allSessionsByEndTime: LiveData<List<Session>>
         get() = dao.allSessionsByEndTime
@@ -35,11 +42,13 @@ class SessionViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun addSession(session: Session) {
-        executorService.execute { dao.addSession(session) }
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.addSession(session)
+        }
     }
 
     fun editSession(id: Long?, endTime: Long, totalTime: Long, label: String?) {
-        executorService.execute {
+        viewModelScope.launch(Dispatchers.IO) {
             dao.editSession(
                 id!!, endTime, totalTime, label
             )
@@ -47,7 +56,7 @@ class SessionViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun editLabel(id: Long?, label: String?) {
-        executorService.execute {
+        viewModelScope.launch(Dispatchers.IO) {
             dao.editLabel(
                 id!!, label
             )
@@ -55,11 +64,13 @@ class SessionViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun deleteSession(id: Long) {
-        executorService.execute { dao.deleteSession(id) }
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.deleteSession(id)
+        }
     }
 
     fun deleteSessionsFinishedToday() {
-        executorService.execute {
+        viewModelScope.launch(Dispatchers.IO) {
             dao.deleteSessionsAfter(
                 LocalDate().toDateTimeAtStartOfDay().millis
             )

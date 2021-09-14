@@ -25,20 +25,20 @@ import com.apps.adrcotfas.goodtime.R
 import android.content.Intent
 import com.apps.adrcotfas.goodtime.labels.AddEditLabelActivity
 import com.apps.adrcotfas.goodtime.main.LabelsViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.chip.Chip
 import android.content.res.ColorStateList
 import com.apps.adrcotfas.goodtime.util.ThemeHelper
 import android.content.DialogInterface
 import android.os.Handler
 import android.view.View
-import com.apps.adrcotfas.goodtime.settings.ProfilesViewModel
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.database.Profile
 import com.apps.adrcotfas.goodtime.databinding.DialogSelectLabelBinding
+import com.apps.adrcotfas.goodtime.settings.ProfilesViewModel
 import com.apps.adrcotfas.goodtime.statistics.Utils
 import java.lang.ref.WeakReference
 
@@ -65,9 +65,14 @@ class SelectLabelDialog : DialogFragment() {
     /**
      * The extended version of this dialog is used in the Statistics
      * where it also contains "all" as a label.
-     * The regular version contains an extra neutral button for selecting the current profile.
      */
     private var mIsExtendedVersion = false
+
+    /**
+     * The neutral button used to change the profile
+     */
+    private var showProfileSelection = false
+
     private var mAlertDialog: AlertDialog? = null
     @SuppressLint("ResourceType")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -88,10 +93,8 @@ class SelectLabelDialog : DialogFragment() {
                 mAlertDialog!!.dismiss()
             }
         }
-        val labelsVm = ViewModelProvider(this).get(
-            LabelsViewModel::class.java
-        )
-        labelsVm.labels.observe(this, { labels: List<Label> ->
+        val viewModel : LabelsViewModel by viewModels()
+        viewModel.labels.observe(this, { labels: List<Label> ->
             var i = 0
             if (mIsExtendedVersion) {
                 val chip = Chip(requireContext())
@@ -127,16 +130,12 @@ class SelectLabelDialog : DialogFragment() {
                 }
                 binding.labels.addView(chip)
             }
-            val handler = Handler()
-            handler.postDelayed({
-                binding.progressBar.visibility = View.GONE
-                if (binding.labels.childCount == 0) {
-                    binding.emptyState.visibility = View.VISIBLE
-                } else {
-                    binding.emptyState.visibility = View.GONE
-                    binding.labelsView.visibility = View.VISIBLE
-                }
-            }, 100)
+            if (binding.labels.childCount == 0) {
+                binding.emptyState.visibility = View.VISIBLE
+            } else {
+                binding.emptyState.visibility = View.GONE
+                binding.labelsView.visibility = View.VISIBLE
+            }
         })
         val builder = AlertDialog.Builder(requireContext())
             .setView(binding.root)
@@ -157,7 +156,7 @@ class SelectLabelDialog : DialogFragment() {
                 dismiss()
             }
             .setNegativeButton(android.R.string.cancel) { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
-        if (!mIsExtendedVersion) {
+        if (showProfileSelection) {
             builder.setNeutralButton(
                 if (preferenceHelper.isUnsavedProfileActive()) resources.getString(R.string.Profile) else preferenceHelper.profile,
                 null
@@ -168,10 +167,8 @@ class SelectLabelDialog : DialogFragment() {
                 //TODO: Clean-up this mess
                 val neutral = mAlertDialog!!.getButton(DialogInterface.BUTTON_NEUTRAL)
                 neutral.setOnClickListener {
-                    val profilesVm = ViewModelProvider(this@SelectLabelDialog).get(
-                        ProfilesViewModel::class.java
-                    )
-                    val profilesLiveData = profilesVm.profiles
+                    val profilesViewModel : ProfilesViewModel by viewModels()
+                    val profilesLiveData = profilesViewModel.profiles
                     profilesLiveData.observe(this@SelectLabelDialog, { profiles: List<Profile> ->
                         mProfiles = profiles
                         var profileIdx = 0
@@ -252,12 +249,14 @@ class SelectLabelDialog : DialogFragment() {
         fun newInstance(
             listener: OnLabelSelectedListener,
             label: String,
-            isExtendedVersion: Boolean
+            isExtendedVersion: Boolean,
+            showProfileSelection: Boolean = false
         ): SelectLabelDialog {
             val dialog = SelectLabelDialog()
             dialog.mCallback = WeakReference(listener)
             dialog.mLabel = label
             dialog.mIsExtendedVersion = isExtendedVersion
+            dialog.showProfileSelection = showProfileSelection
             return dialog
         }
     }

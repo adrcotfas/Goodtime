@@ -12,21 +12,25 @@
  */
 package com.apps.adrcotfas.goodtime.main
 
-import com.apps.adrcotfas.goodtime.database.AppDatabase.Companion.getDatabase
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import android.content.Context
+import androidx.lifecycle.*
+import com.apps.adrcotfas.goodtime.database.AppDatabase
 import com.apps.adrcotfas.goodtime.database.LabelDao
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.LiveData
 import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.statistics.Utils
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LabelsViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class LabelsViewModel @Inject constructor(
+    @ApplicationContext context: Context,
+    database: AppDatabase
+) : ViewModel() {
 
-    private val dao: LabelDao = getDatabase(application).labelDao()
-    private val executorService: ExecutorService = Executors.newSingleThreadExecutor()
+    private val dao: LabelDao = database.labelDao()
 
     /**
      * The current selected label in the Statistics view
@@ -51,31 +55,43 @@ class LabelsViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun addLabel(label: Label) {
-        executorService.execute { dao.addLabel(label) }
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.addLabel(label)
+        }
     }
 
     fun editLabelName(label: String, newLabel: String?) {
-        executorService.execute { dao.editLabelName(label, newLabel) }
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.editLabelName(label, newLabel)
+        }
     }
 
     fun editLabelColor(label: String, color: Int) {
-        executorService.execute { dao.editLabelColor(label, color) }
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.editLabelColor(label, color)
+        }
     }
 
     fun editLabelOrder(label: String, newOrder: Int) {
-        executorService.execute { dao.editLabelOrder(label, newOrder) }
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.editLabelOrder(label, newOrder)
+        }
     }
 
     fun toggleLabelArchive(label: String, archived: Boolean) {
-        executorService.execute { dao.toggleLabelArchiveState(label, archived) }
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.toggleLabelArchiveState(label, archived)
+        }
     }
 
     fun deleteLabel(label: String) {
-        executorService.execute { dao.deleteLabel(label) }
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.deleteLabel(label)
+        }
     }
 
     init {
         crtExtendedLabel.value =
-            Utils.getInstanceTotalLabel(application.baseContext)
+            Utils.getInstanceTotalLabel(context)
     }
 }

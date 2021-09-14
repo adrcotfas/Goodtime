@@ -14,9 +14,12 @@ package com.apps.adrcotfas.goodtime.statistics.all_sessions
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.MutableLiveData
+import dagger.hilt.android.lifecycle.HiltViewModel
 import org.joda.time.DateTime
+import javax.inject.Inject
 
-class AddEditEntryDialogViewModel : ViewModel() {
+@HiltViewModel
+class AddEditEntryDialogViewModel @Inject constructor(): ViewModel() {
     var duration = MutableLiveData<Int>()
     var date = MutableLiveData<DateTime>()
     var label = MutableLiveData<String?>()

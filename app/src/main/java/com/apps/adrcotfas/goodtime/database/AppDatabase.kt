@@ -51,7 +51,6 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        @JvmStatic
         fun getDatabase(context: Context): AppDatabase {
             if (INSTANCE == null || !INSTANCE!!.isOpen) {
                 synchronized(LOCK) {

@@ -30,23 +30,30 @@ import android.os.Handler
 import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentAllSessionsBinding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.ArrayList
 
+@AndroidEntryPoint
 class AllSessionsFragment : Fragment(), OnLabelSelectedListener {
     private var mAdapter: AllSessionsAdapter? = null
     private var mActionMode: ActionMode? = null
     private var mSelectedEntries: MutableList<Long> = ArrayList()
     private var mIsMultiSelect = false
     private var mMenu: Menu? = null
-    private var mSessionViewModel: SessionViewModel? = null
-    private var mLabelsViewModel: LabelsViewModel? = null
+
+    private val sessionViewModel: SessionViewModel by activityViewModels()
+    private val labelsViewModel: LabelsViewModel by activityViewModels()
+
     private var mSessionToEdit: Session? = null
     private var mSessions: List<Session> = ArrayList()
     private lateinit var sessionsLiveDataAll: LiveData<List<Session>>
@@ -66,23 +73,21 @@ class AllSessionsFragment : Fragment(), OnLabelSelectedListener {
             container,
             false
         )
-        mSessionViewModel = ViewModelProvider(this).get(SessionViewModel::class.java)
-        mLabelsViewModel = ViewModelProvider(requireActivity()).get(LabelsViewModel::class.java)
-        sessionsLiveDataAll = mSessionViewModel!!.allSessionsByEndTime
-        sessionsLiveDataUnlabeled = mSessionViewModel!!.allSessionsUnlabeled
-        if (mLabelsViewModel!!.crtExtendedLabel.value != null) {
+        sessionsLiveDataAll = sessionViewModel.allSessionsByEndTime
+        sessionsLiveDataUnlabeled = sessionViewModel.allSessionsUnlabeled
+        if (labelsViewModel!!.crtExtendedLabel.value != null) {
             sessionsLiveDataCrtLabel =
-                mSessionViewModel!!.getSessions(mLabelsViewModel!!.crtExtendedLabel.value!!.title)
+                sessionViewModel.getSessions(labelsViewModel!!.crtExtendedLabel.value!!.title)
         }
         mEmptyState = binding.emptyState
         mProgressBar = binding.progressBar
         val view = binding.root
         mRecyclerView = binding.mainRecylcerView
         mRecyclerView!!.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-        mLabelsViewModel!!.labels.observe(viewLifecycleOwner, { labels: List<Label> ->
+        labelsViewModel!!.labels.observe(viewLifecycleOwner, { labels: List<Label> ->
             mAdapter = AllSessionsAdapter(labels)
             mRecyclerView!!.adapter = mAdapter
-            mLabelsViewModel!!.crtExtendedLabel.observe(
+            labelsViewModel!!.crtExtendedLabel.observe(
                 viewLifecycleOwner,
                 { refreshCurrentLabel() })
             mRecyclerView!!.addItemDecoration(
@@ -118,8 +123,8 @@ class AllSessionsFragment : Fragment(), OnLabelSelectedListener {
     }
 
     private fun refreshCurrentLabel() {
-        if (mLabelsViewModel!!.crtExtendedLabel.value != null && mAdapter != null) {
-            when (mLabelsViewModel!!.crtExtendedLabel.value!!.title) {
+        if (labelsViewModel!!.crtExtendedLabel.value != null && mAdapter != null) {
+            when (labelsViewModel!!.crtExtendedLabel.value!!.title) {
                 getString(R.string.label_all) -> {
                     sessionsLiveDataAll.observe(viewLifecycleOwner, { sessions: List<Session> ->
                         sessionsLiveDataUnlabeled.removeObservers(this)
@@ -142,7 +147,7 @@ class AllSessionsFragment : Fragment(), OnLabelSelectedListener {
                 }
                 else -> {
                     sessionsLiveDataCrtLabel =
-                        mSessionViewModel!!.getSessions(mLabelsViewModel!!.crtExtendedLabel.value!!.title)
+                        sessionViewModel!!.getSessions(labelsViewModel!!.crtExtendedLabel.value!!.title)
                     sessionsLiveDataCrtLabel.observe(
                         viewLifecycleOwner,
                         { sessions: List<Session> ->
@@ -184,7 +189,7 @@ class AllSessionsFragment : Fragment(), OnLabelSelectedListener {
             // hack bellow to avoid multiple dialogs because of observe
             if (mSelectedEntries.size == 1) {
                 val sessionId = mAdapter!!.mSelectedEntries[0]
-                mSessionViewModel!!.getSession(sessionId).observe(
+                sessionViewModel.getSession(sessionId).observe(
                     this@AllSessionsFragment,
                     { session: Session? -> mSessionToEdit = session })
             }
@@ -193,7 +198,7 @@ class AllSessionsFragment : Fragment(), OnLabelSelectedListener {
 
     private fun deleteSessions() {
         for (i in mAdapter!!.mSelectedEntries) {
-            mSessionViewModel!!.deleteSession(i)
+            sessionViewModel.deleteSession(i)
         }
         mAdapter!!.mSelectedEntries.clear()
         if (mActionMode != null) {
@@ -276,8 +281,8 @@ class AllSessionsFragment : Fragment(), OnLabelSelectedListener {
     }
 
     private fun updateRecyclerViewVisibility() {
-        val handler = Handler()
-        handler.postDelayed({
+        lifecycleScope.launch {
+            delay(100)
             mProgressBar!!.visibility = View.GONE
             if (mSessions.isEmpty()) {
                 mRecyclerView!!.visibility = View.GONE
@@ -286,13 +291,13 @@ class AllSessionsFragment : Fragment(), OnLabelSelectedListener {
                 mRecyclerView!!.visibility = View.VISIBLE
                 mEmptyState!!.visibility = View.GONE
             }
-        }, 200)
+        }
     }
 
     override fun onLabelSelected(label: Label) {
         val title = if (label.title == "unlabeled") null else label.title
         for (i in mSelectedEntries) {
-            mSessionViewModel!!.editLabel(i, title)
+            sessionViewModel.editLabel(i, title)
         }
         if (mActionMode != null) {
             mActionMode!!.finish()

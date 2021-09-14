@@ -17,10 +17,10 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProvider
 import com.apps.adrcotfas.goodtime.R
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import java.lang.ClassCastException
 
 class FinishedSessionDialog : DialogFragment() {
@@ -46,11 +46,9 @@ class FinishedSessionDialog : DialogFragment() {
 
     @SuppressLint("ResourceType")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val viewModel = ViewModelProvider(requireActivity()).get(
-            TimerActivityViewModel::class.java
-        )
         isCancelable = false
         val builder = AlertDialog.Builder(requireContext())
+        val viewModel: TimerActivityViewModel by activityViewModels()
         val sessionType = viewModel.dialogPendingType
         if (sessionType === SessionType.WORK) {
             builder.setTitle(R.string.action_finished_session)

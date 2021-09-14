@@ -20,7 +20,6 @@ import com.apps.adrcotfas.goodtime.main.LabelsViewModel
 import javax.inject.Inject
 import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProvider
 import com.apps.adrcotfas.goodtime.util.ThemeHelper
 import androidx.databinding.DataBindingUtil
 import com.apps.adrcotfas.goodtime.R
@@ -28,6 +27,7 @@ import androidx.core.view.MenuItemCompat
 import android.content.res.ColorStateList
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
@@ -38,24 +38,24 @@ import com.apps.adrcotfas.goodtime.statistics.all_sessions.AllSessionsFragment
 
 @AndroidEntryPoint
 class StatisticsActivity : AppCompatActivity(), OnLabelSelectedListener {
-    private var mLabelsViewModel: LabelsViewModel? = null
+
+    private val labelsViewModel: LabelsViewModel by viewModels()
     private var mMenuItemCrtLabel: MenuItem? = null
     private var mIsMainView = false
 
-    @JvmField
     @Inject
-    var preferenceHelper: PreferenceHelper? = null
+    lateinit var preferenceHelper: PreferenceHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mLabelsViewModel = ViewModelProvider(this).get(LabelsViewModel::class.java)
-        ThemeHelper.setTheme(this, preferenceHelper!!.isAmoledTheme())
+        ThemeHelper.setTheme(this, preferenceHelper.isAmoledTheme())
         val binding: StatisticsActivityMainBinding =
             DataBindingUtil.setContentView(this, R.layout.statistics_activity_main)
         setSupportActionBar(binding.toolbarWrapper.toolbar)
         if (supportActionBar != null) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         }
-        mLabelsViewModel!!.crtExtendedLabel.observe(
+        labelsViewModel.crtExtendedLabel.observe(
             this,
             { refreshCurrentLabel() })
         mIsMainView = false
@@ -82,13 +82,13 @@ class StatisticsActivity : AppCompatActivity(), OnLabelSelectedListener {
     }
 
     private fun refreshCurrentLabel() {
-        if (mLabelsViewModel!!.crtExtendedLabel.value != null && mMenuItemCrtLabel != null) {
+        if (labelsViewModel.crtExtendedLabel.value != null && mMenuItemCrtLabel != null) {
             MenuItemCompat.setIconTintList(
                 mMenuItemCrtLabel,
                 ColorStateList.valueOf(
                     ThemeHelper.getColor(
                         this,
-                        mLabelsViewModel!!.crtExtendedLabel.value!!.colorId
+                        labelsViewModel.crtExtendedLabel.value!!.colorId
                     )
                 )
             )
@@ -109,7 +109,7 @@ class StatisticsActivity : AppCompatActivity(), OnLabelSelectedListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val fragmentManager = supportFragmentManager
         when (item.itemId) {
-            R.id.action_add -> if (preferenceHelper!!.isPro()) {
+            R.id.action_add -> if (preferenceHelper.isPro()) {
                 val newFragment = AddEditEntryDialog()
                 newFragment.show(fragmentManager, DIALOG_ADD_ENTRY_TAG)
             } else {
@@ -117,7 +117,7 @@ class StatisticsActivity : AppCompatActivity(), OnLabelSelectedListener {
             }
             R.id.action_select_label -> newInstance(
                 this,
-                mLabelsViewModel!!.crtExtendedLabel.value!!.title,
+                labelsViewModel.crtExtendedLabel.value!!.title,
                 true
             )
                 .show(fragmentManager, DIALOG_SELECT_LABEL_TAG)
@@ -137,7 +137,7 @@ class StatisticsActivity : AppCompatActivity(), OnLabelSelectedListener {
     }
 
     override fun onLabelSelected(label: Label) {
-        mLabelsViewModel!!.crtExtendedLabel.value = label
+        labelsViewModel.crtExtendedLabel.value = label
     }
 
     override fun onBackPressed() {

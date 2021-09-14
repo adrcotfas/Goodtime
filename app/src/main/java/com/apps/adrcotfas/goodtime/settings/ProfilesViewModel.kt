@@ -1,28 +1,33 @@
 package com.apps.adrcotfas.goodtime.settings
 
-import com.apps.adrcotfas.goodtime.database.AppDatabase.Companion.getDatabase
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import com.apps.adrcotfas.goodtime.database.ProfileDao
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.apps.adrcotfas.goodtime.database.AppDatabase
 import com.apps.adrcotfas.goodtime.database.Profile
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ProfilesViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class ProfilesViewModel @Inject constructor(database: AppDatabase) : ViewModel() {
 
-    private val dao: ProfileDao = getDatabase(application).profileDao()
-    private val executorService: ExecutorService = Executors.newSingleThreadExecutor()
+    private val dao: ProfileDao = database.profileDao()
 
     val profiles: LiveData<List<Profile>>
         get() = dao.profiles
 
     fun addProfile(profile: Profile) {
-        executorService.execute { dao.addProfile(profile) }
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.addProfile(profile)
+        }
     }
 
     fun deleteProfile(name: String) {
-        executorService.execute { dao.deleteProfile(name) }
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.deleteProfile(name)
+        }
     }
-
 }

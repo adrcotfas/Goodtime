@@ -29,13 +29,11 @@ import android.view.ViewGroup
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.apps.adrcotfas.goodtime.R
-import androidx.lifecycle.ViewModelProvider
 import android.widget.ArrayAdapter
 import android.widget.AdapterView
 import com.apps.adrcotfas.goodtime.util.ThemeHelper
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import android.util.TypedValue
-import android.os.Handler
 import androidx.annotation.ColorInt
 import android.view.MotionEvent
 import com.github.mikephil.charting.formatter.PercentFormatter
@@ -43,6 +41,8 @@ import android.text.TextPaint
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentMainBinding
@@ -50,15 +50,18 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.animation.Easing
 import com.apps.adrcotfas.goodtime.util.StringUtils
-import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.ValueFormatter
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import java.lang.StringBuilder
 import java.util.*
 import kotlin.math.ceil
 
+@AndroidEntryPoint
 class StatisticsFragment : Fragment() {
     //TODO: move to separate file
     private class Stats(
@@ -95,8 +98,10 @@ class StatisticsFragment : Fragment() {
     private val xValues: MutableList<LocalDate> = ArrayList()
     private lateinit var overview: StatsView
     private lateinit var overviewDescription: StatsView
-    private lateinit var labelsViewModel: LabelsViewModel
-    private lateinit var sessionViewModel: SessionViewModel
+
+    private val sessionViewModel: SessionViewModel by activityViewModels()
+    private val labelsViewModel: LabelsViewModel by activityViewModels()
+
     private lateinit var parentView: LinearLayout
     private lateinit var progressBar: ProgressBar
     private var displayDensity = 1f
@@ -138,10 +143,6 @@ class StatisticsFragment : Fragment() {
         pieChart = binding.pieChartSection.pieChart
         pieEmptyState = binding.pieChartSection.emptyState
         setupPieChart()
-        labelsViewModel = ViewModelProvider(requireActivity()).get(LabelsViewModel::class.java)
-        sessionViewModel = ViewModelProvider(requireActivity()).get(
-            SessionViewModel::class.java
-        )
         labelsViewModel.crtExtendedLabel.observe(
             viewLifecycleOwner,
             { refreshUi() })
@@ -374,11 +375,11 @@ class StatisticsFragment : Fragment() {
                         refreshPieChart(sessions, labels)
                     })
                 }
-                val handler = Handler()
-                handler.postDelayed({
+                lifecycleScope.launch {
+                    delay(100)
                     progressBar.visibility = View.GONE
                     parentView.visibility = View.VISIBLE
-                }, 200)
+                }
             })
         }
     }
@@ -699,7 +700,7 @@ class StatisticsFragment : Fragment() {
             setDrawCircleHole(false)
             disableDashedLine()
             setDrawValues(false)
-            highLightColor = R.color.true_transparent
+            highLightColor = color
         }
         return set
     }

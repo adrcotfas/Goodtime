@@ -26,13 +26,16 @@ import android.content.DialogInterface
 import android.widget.Toast
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.databinding.DialogBackupBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BackupFragment : BottomSheetDialogFragment() {
-    private lateinit var sessionViewModel: SessionViewModel
+
+    private val sessionViewModel: SessionViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,7 +44,6 @@ class BackupFragment : BottomSheetDialogFragment() {
     ): View {
         val binding: DialogBackupBinding =
             DataBindingUtil.inflate(inflater, R.layout.dialog_backup, container, false)
-        sessionViewModel = ViewModelProvider(requireActivity()).get(SessionViewModel::class.java)
         binding.exportBackup.setOnClickListener { exportBackup() }
         binding.importBackup.setOnClickListener { importBackup() }
         binding.exportCsv.setOnClickListener { exportCsv() }

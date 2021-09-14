@@ -5,7 +5,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:minWidth="400dp"
-        android:minHeight="125dp"
         android:paddingTop="12dp">
 
         <RelativeLayout
@@ -48,14 +47,6 @@
             </FrameLayout>
 
         </RelativeLayout>
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_margin="32dp"
-            style="?android:attr/progressBarStyle"/>
 
         <TextView
             android:id="@+id/empty_state"
