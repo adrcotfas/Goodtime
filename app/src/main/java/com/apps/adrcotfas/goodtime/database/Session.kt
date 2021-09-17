@@ -13,10 +13,9 @@
 package com.apps.adrcotfas.goodtime.database
 
 import androidx.annotation.Nullable
-import androidx.room.PrimaryKey
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
+import androidx.room.*
+import com.apps.adrcotfas.goodtime.util.millis
+import java.time.LocalDateTime
 
 @Entity(
     foreignKeys = [ForeignKey(
@@ -36,4 +35,7 @@ class Session(
 ) {
     @ColumnInfo(name = "archived", defaultValue = "0")
     var archived = false
+
+    @Ignore
+    constructor() : this(0, LocalDateTime.now().millis, 0, null)
 }

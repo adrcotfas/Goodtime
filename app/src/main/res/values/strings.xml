@@ -120,7 +120,8 @@
     <string name="notification_channel_name">Goodtime Notifications</string>
 
     <string name="reminder_notification_channel_name">"Goodtime Reminder Notifications"</string>
-    <string name="reminder_title">"Daily reminder"</string>
+    <string name="reminder_title">"Productivity reminder"</string>
+    <string name="reminder_time">"Reminder time"</string>
     <string name="reminder_text">"It's time to be productive!"</string>
 
     <string name="settings">Settings</string>

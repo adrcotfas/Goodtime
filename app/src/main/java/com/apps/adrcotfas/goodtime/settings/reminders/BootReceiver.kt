@@ -17,7 +17,7 @@ class BootReceiver : BroadcastReceiver() {
         try {
             if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
                 Log.d(TAG, "onBootComplete")
-                reminderHelper.scheduleNotification()
+                reminderHelper.scheduleNotifications()
             }
         } catch (e: RuntimeException) {
             Log.wtf(TAG, "Could not process intent")

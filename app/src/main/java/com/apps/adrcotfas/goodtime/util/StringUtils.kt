@@ -12,24 +12,17 @@
  */
 package com.apps.adrcotfas.goodtime.util
 
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.time.temporal.TemporalAdjusters
 import java.util.*
 import kotlin.math.roundToInt
 
 object StringUtils {
 
-    private val monthFormatter = DateTimeFormat.forPattern("EEE', 'MMM d', ' yyyy")
-    private val timeFormatter = DateTimeFormat.forPattern("HH:mm")
-    private val backUpFormatter = DateTimeFormat.forPattern("yyyy-MM-dd-HH-mm")
-    private val dayOfWeekFormatter = DateTimeFormat.forPattern("E")
-    private val hourOfDayFormatter = DateTimeFormat.forPattern("hh")
-    private val meridianFormatter = DateTimeFormat.forPattern("a")
+    private val backUpFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm")
+    private val dayOfWeekFormatter = DateTimeFormatter.ofPattern("E")
     private val suffixes: NavigableMap<Long, String> = TreeMap()
 
     /**
@@ -51,30 +44,8 @@ object StringUtils {
         return if (hasDecimal) (truncated / 10.0).toString() + suffix else (truncated / 10).toString() + suffix
     }
 
-    fun formatMinutes(minutes: Long): String {
-        val days = minutes / 1440
-        val hours = minutes / 60 % 24
-        val remMin = minutes % 60
-        val result: String = if (minutes != 0L) {
-            ((if (days != 0L) "${days}d" else "")
-                + (if (hours != 0L) "" + hours.toString() + "h" else "")
-                + if (remMin != 0L) " " + remMin.toString() + "m" else "")
-        } else {
-            "0m"
-        }
-        return result
-    }
-
-    fun formatDate(millis: Long): String {
-        return monthFormatter.print(millis)
-    }
-
-    fun formatTime(millis: Long): String {
-        return timeFormatter.print(millis)
-    }
-
     fun formatDateAndTime(millis: Long): String {
-        return backUpFormatter.print(millis)
+        return millis.toLocalDateTime().format(backUpFormatter)
     }
 
     @JvmStatic
@@ -102,16 +73,17 @@ object StringUtils {
     }
 
     fun toDayOfWeek(value: Int): String {
-        return dayOfWeekFormatter.withLocale(Locale.getDefault())
-            .print(DateTime().withDayOfWeek(value))
+        return LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.of(value))).format(dayOfWeekFormatter)
     }
 
-    fun toHourOfDay(value: Int): String {
-        val date = DateTime().withHourOfDay(value)
-        return """
-               ${hourOfDayFormatter.print(date)}
-               ${meridianFormatter.print(date)}
-               """.trimIndent()
+    fun toHourOfDay(hour: Int, is24HourFormat: Boolean): String {
+        val time = LocalTime.now().withHour(hour)
+        return time.format(
+            DateTimeFormatter.ofPattern(
+                if (is24HourFormat) "HH"
+                else "hh a"
+            )
+        ).replace(" ", "\n")
     }
 
     init {

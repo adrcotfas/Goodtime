@@ -101,7 +101,7 @@ object ThemeHelper {
             return context.resources.getColor(R.color.teal200)
         }
         if (colorIndex == COLOR_INDEX_BREAK) {
-            return context.resources.getColor(R.color.grey_500)
+            return context.resources.getColor(R.color.grey500)
         }
         val colors = getPalette(context)
         return if (colorIndex < colors.size) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Adrian Cotfas
+ * Copyright 2016-2021 Adrian Cotfas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy of the License at
@@ -26,7 +26,6 @@ import com.apps.adrcotfas.goodtime.statistics.main.RecyclerItemClickListener
 import com.apps.adrcotfas.goodtime.statistics.main.SelectLabelDialog
 import com.apps.adrcotfas.goodtime.statistics.main.StatisticsActivity
 import android.content.DialogInterface
-import android.os.Handler
 import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -73,21 +72,21 @@ class AllSessionsFragment : Fragment(), OnLabelSelectedListener {
             container,
             false
         )
-        sessionsLiveDataAll = sessionViewModel.allSessionsByEndTime
+        sessionsLiveDataAll = sessionViewModel.allSessions
         sessionsLiveDataUnlabeled = sessionViewModel.allSessionsUnlabeled
-        if (labelsViewModel!!.crtExtendedLabel.value != null) {
+        if (labelsViewModel.crtExtendedLabel.value != null) {
             sessionsLiveDataCrtLabel =
-                sessionViewModel.getSessions(labelsViewModel!!.crtExtendedLabel.value!!.title)
+                sessionViewModel.getSessions(labelsViewModel.crtExtendedLabel.value!!.title)
         }
         mEmptyState = binding.emptyState
         mProgressBar = binding.progressBar
         val view = binding.root
         mRecyclerView = binding.mainRecylcerView
         mRecyclerView!!.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-        labelsViewModel!!.labels.observe(viewLifecycleOwner, { labels: List<Label> ->
+        labelsViewModel.labels.observe(viewLifecycleOwner, { labels: List<Label> ->
             mAdapter = AllSessionsAdapter(labels)
             mRecyclerView!!.adapter = mAdapter
-            labelsViewModel!!.crtExtendedLabel.observe(
+            labelsViewModel.crtExtendedLabel.observe(
                 viewLifecycleOwner,
                 { refreshCurrentLabel() })
             mRecyclerView!!.addItemDecoration(

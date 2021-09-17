@@ -43,9 +43,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/edit_date"
-                android:drawableStart="@drawable/ic_clock"
                 android:layout_alignParentStart="true"
-                style="@style/AllSessionsAddEditDialogRow"/>
+                style="@style/AllSessionsAddEditDialogRow"
+                app:drawableStartCompat="@drawable/ic_clock" />
 
             <TextView
                 android:id="@+id/edit_time"
@@ -88,9 +88,9 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginBottom="24dp"
-            android:drawableStart="@drawable/ic_done"
             android:text="@string/save"
-            style="@style/AllSessionsAddEditDialogRow"/>
+            style="@style/AllSessionsAddEditDialogRow"
+            app:drawableStartCompat="@drawable/ic_done" />
 
     </LinearLayout>
 </layout>

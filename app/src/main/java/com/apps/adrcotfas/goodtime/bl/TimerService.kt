@@ -36,12 +36,12 @@ import android.app.NotificationManager
 import android.net.wifi.WifiManager
 import com.apps.adrcotfas.goodtime.main.TimerActivity
 import android.annotation.TargetApi
-import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.util.Constants
-import com.apps.adrcotfas.goodtime.util.StringUtils
+import com.apps.adrcotfas.goodtime.util.toFormattedTime
+import com.apps.adrcotfas.goodtime.util.toLocalTime
 import kotlinx.coroutines.*
 import java.lang.Exception
 import java.lang.Runnable
@@ -390,7 +390,7 @@ class TimerService : LifecycleService() {
         Log.d(TAG, "finalizeSession / elapsed minutes: $minutes")
         if (minutes > 0) {
             try {
-                Log.d(TAG, "finalizeSession, saving session finished at" + StringUtils.formatTime(endTime))
+                Log.d(TAG, "finalizeSession, saving session finished at" + endTime.toLocalTime().toFormattedTime())
                 val session = Session(0, endTime, minutes, label)
                 addSession(session)
             } catch (e: Exception) {

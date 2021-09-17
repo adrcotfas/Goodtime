@@ -21,7 +21,8 @@ import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.database.Profile
 import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.util.Constants
-import org.joda.time.LocalTime
+import java.time.DayOfWeek
+import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 
 class PreferenceHelper(val context: Context) {
@@ -29,9 +30,9 @@ class PreferenceHelper(val context: Context) {
     val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val preferencesPrivate: SharedPreferences =
         context.getSharedPreferences(
-        context.packageName + "_private_preferences",
-        Context.MODE_PRIVATE
-    )
+            context.packageName + "_private_preferences",
+            Context.MODE_PRIVATE
+        )
 
     companion object {
         private const val PRO = "pref_blana"
@@ -74,8 +75,8 @@ class PreferenceHelper(val context: Context) {
         private const val SHOW_CURRENT_LABEL = "pref_show_label"
         private const val ADD_60_SECONDS_COUNTER = "pref_add_60_seconds_times"
         private const val UNSAVED_PROFILE_ACTIVE = "pref_custom_pref_active"
-        const val ENABLE_REMINDER = "pref_enable_reminder"
-        const val REMINDER_TIME_VALUE = "pref_reminder_time_value"
+        const val REMINDER_TIME = "pref_reminder_time"
+        const val REMINDER_DAYS = "pref_reminder_days"
     }
 
     fun migratePreferences() {
@@ -111,11 +112,17 @@ class PreferenceHelper(val context: Context) {
     fun isRingtoneEnabled() = preferences.getBoolean(ENABLE_RINGTONE, true)
     fun isPriorityAlarm() = preferences.getBoolean(PRIORITY_ALARM, false)
     fun isRingtoneInsistent() = preferences.getBoolean(INSISTENT_RINGTONE, false)
-    fun isFlashingNotificationEnabled() = preferences.getBoolean(ENABLE_FLASHING_NOTIFICATION, false)
+    fun isFlashingNotificationEnabled() =
+        preferences.getBoolean(ENABLE_FLASHING_NOTIFICATION, false)
+
     fun getNotificationSoundWorkFinished() = preferences.getString(RINGTONE_WORK_FINISHED, "")
-    fun setNotificationSoundWorkFinished(newValue: String) = setNotificationSoundFinished(RINGTONE_WORK_FINISHED, newValue)
+    fun setNotificationSoundWorkFinished(newValue: String) =
+        setNotificationSoundFinished(RINGTONE_WORK_FINISHED, newValue)
+
     fun getNotificationSoundBreakFinished() = preferences.getString(RINGTONE_BREAK_FINISHED, "")
-    fun setNotificationSoundBreakFinished(newValue: String) = setNotificationSoundFinished(RINGTONE_BREAK_FINISHED, newValue)
+    fun setNotificationSoundBreakFinished(newValue: String) =
+        setNotificationSoundFinished(RINGTONE_BREAK_FINISHED, newValue)
+
     fun getNotificationSoundFinished(key: String): String? {
         assert(key == RINGTONE_WORK_FINISHED || key == RINGTONE_BREAK_FINISHED)
         return preferences
@@ -136,7 +143,9 @@ class PreferenceHelper(val context: Context) {
     fun isWiFiDisabled() = preferences.getBoolean(DISABLE_WIFI, false)
     fun isScreenOnEnabled() = preferences.getBoolean(ENABLE_SCREEN_ON, true)
     fun isScreensaverEnabled() = preferences.getBoolean(ENABLE_SCREENSAVER_MODE, false)
-    fun oneMinuteBeforeNotificationEnabled() = preferences.getBoolean(ENABLE_ONE_MINUTE_BEFORE_NOTIFICATION, false)
+    fun oneMinuteBeforeNotificationEnabled() =
+        preferences.getBoolean(ENABLE_ONE_MINUTE_BEFORE_NOTIFICATION, false)
+
     fun isAutoStartBreak() = preferences.getBoolean(AUTO_START_BREAK, false)
     fun isAutoStartWork() = preferences.getBoolean(AUTO_START_WORK, false)
     fun isAmoledTheme() = preferences.getBoolean(AMOLED, true)
@@ -188,11 +197,11 @@ class PreferenceHelper(val context: Context) {
             )
         )
         set(label) {
-        preferences.edit()
-            .putString(CURRENT_SESSION_LABEL, label.title).apply()
-        preferences.edit()
-            .putInt(CURRENT_SESSION_COLOR, label.colorId).apply()
-    }
+            preferences.edit()
+                .putString(CURRENT_SESSION_LABEL, label.title).apply()
+            preferences.edit()
+                .putInt(CURRENT_SESSION_COLOR, label.colorId).apply()
+        }
 
 
     fun isFirstRun() = preferencesPrivate.getBoolean(FIRST_RUN, true)
@@ -243,7 +252,8 @@ class PreferenceHelper(val context: Context) {
                 context.resources.getString(R.string.pref_profile_default)
             )
 
-    fun setTimerStyle(value: Int) = preferences.edit().putString(TIMER_STYLE, value.toString()).apply()
+    fun setTimerStyle(value: Int) =
+        preferences.edit().putString(TIMER_STYLE, value.toString()).apply()
 
     val timerStyle: String?
         get() = preferences
@@ -306,20 +316,20 @@ class PreferenceHelper(val context: Context) {
 
     fun isUnsavedProfileActive() = preferencesPrivate.getBoolean(UNSAVED_PROFILE_ACTIVE, false)
 
-    fun setUnsavedProfileActive(state: Boolean) = preferencesPrivate.edit().putBoolean(UNSAVED_PROFILE_ACTIVE, state).apply()
+    fun setUnsavedProfileActive(state: Boolean) =
+        preferencesPrivate.edit().putBoolean(UNSAVED_PROFILE_ACTIVE, state).apply()
 
-    fun isReminderEnabled() = preferences
-        .getBoolean(ENABLE_REMINDER, false)
+    fun isReminderEnabled() = getReminderDays().contains(true)
+    fun isReminderEnabledFor(dayOfWeek: DayOfWeek) = getReminderDays()[dayOfWeek.ordinal]
+    fun getReminderDays() = getBooleanArray(REMINDER_DAYS, 7)
+    fun getReminderTime() = preferences.getInt(REMINDER_TIME, LocalTime.of(9, 0).toSecondOfDay())
+    fun setReminderTime(secondOfDay: Int) = preferences.edit().putInt(REMINDER_TIME, secondOfDay).apply()
 
-
-    fun getTimeOfReminder(): Long {
-        val defaultTime = LocalTime(9, 0).toDateTimeToday().millis
-        return preferences
-            .getLong(REMINDER_TIME_VALUE, defaultTime)
-    }
-
-    fun setTimeOfReminder(time: Long) {
-        preferences.edit()
-            .putLong(REMINDER_TIME_VALUE, time).apply()
+    fun getBooleanArray(key: String, size: Int): BooleanArray {
+        val result = BooleanArray(size)
+        for (i in 0 until size) {
+            result[i] = preferences.getBoolean(key + "_" + i, false)
+        }
+        return result
     }
 }

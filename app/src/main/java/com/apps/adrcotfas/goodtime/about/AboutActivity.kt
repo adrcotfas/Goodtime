@@ -43,7 +43,7 @@ class AboutActivity : MaterialAboutActivity() {
 
     override fun getMaterialAboutList(c: Context): MaterialAboutList {
         val builder1 = MaterialAboutCard.Builder()
-        val colorIcon = R.color.gray50
+        val colorIcon = R.color.grey50
         builder1.addItem(
             MaterialAboutTitleItem.Builder()
                 .text(getString(R.string.app_name_long))

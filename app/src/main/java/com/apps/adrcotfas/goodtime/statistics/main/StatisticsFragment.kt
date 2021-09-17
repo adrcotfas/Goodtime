@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Adrian Cotfas
+ * Copyright 2016-2021 Adrian Cotfas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy of the License at
@@ -12,6 +12,7 @@
  */
 package com.apps.adrcotfas.goodtime.statistics.main
 
+import android.annotation.SuppressLint
 import com.apps.adrcotfas.goodtime.statistics.ChartMarker
 import android.widget.TextView
 import androidx.lifecycle.LiveData
@@ -31,13 +32,13 @@ import androidx.databinding.DataBindingUtil
 import com.apps.adrcotfas.goodtime.R
 import android.widget.ArrayAdapter
 import android.widget.AdapterView
-import com.apps.adrcotfas.goodtime.util.ThemeHelper
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import android.util.TypedValue
 import androidx.annotation.ColorInt
 import android.view.MotionEvent
 import com.github.mikephil.charting.formatter.PercentFormatter
 import android.text.TextPaint
+import android.text.format.DateFormat
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -46,37 +47,33 @@ import androidx.lifecycle.lifecycleScope
 import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentMainBinding
+import com.apps.adrcotfas.goodtime.util.*
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.animation.Easing
-import com.apps.adrcotfas.goodtime.util.StringUtils
+import com.apps.adrcotfas.goodtime.util.StringUtils.formatLong
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.ValueFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.joda.time.DateTime
-import org.joda.time.LocalDate
-import java.lang.StringBuilder
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoField
+import java.time.temporal.TemporalAdjusters
 import java.util.*
 import kotlin.math.ceil
 
 @AndroidEntryPoint
 class StatisticsFragment : Fragment() {
-    //TODO: move to separate file
     private class Stats(
         var today: Long,
         var week: Long,
         var month: Long,
         var total: Long
-    )
-
-    //TODO: move to separate file and remove duplicate code
-    private class StatsView(
-        var today: TextView,
-        var week: TextView,
-        var month: TextView,
-        var total: TextView
     )
 
     private var sessionsToObserve: LiveData<List<Session>>? = null
@@ -94,10 +91,8 @@ class StatisticsFragment : Fragment() {
     private lateinit var headerOverview: TextView
     private lateinit var headerHistory: TextView
     private lateinit var headerProductiveTime: TextView
-    private lateinit var xAxisFormatter: CustomXAxisFormatter
+    private lateinit var xAxisFormatter: DayWeekMonthXAxisFormatter
     private val xValues: MutableList<LocalDate> = ArrayList()
-    private lateinit var overview: StatsView
-    private lateinit var overviewDescription: StatsView
 
     private val sessionViewModel: SessionViewModel by activityViewModels()
     private val labelsViewModel: LabelsViewModel by activityViewModels()
@@ -105,14 +100,17 @@ class StatisticsFragment : Fragment() {
     private lateinit var parentView: LinearLayout
     private lateinit var progressBar: ProgressBar
     private var displayDensity = 1f
+
+    private lateinit var binding: StatisticsFragmentMainBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding: StatisticsFragmentMainBinding = DataBindingUtil.inflate(
-            inflater, R.layout.statistics_fragment_main, container, false
-        )
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.statistics_fragment_main, container, false)
+
         val view = binding.root
         displayDensity = resources.displayMetrics.density
         setHasOptionsMenu(true)
@@ -120,18 +118,6 @@ class StatisticsFragment : Fragment() {
         progressBar = binding.progressBar
         chartHistory = binding.history.chart
         chartProductiveHours = binding.productiveHours.barChart
-        overview = StatsView(
-            binding.overview.todayValue,
-            binding.overview.weekValue,
-            binding.overview.monthValue,
-            binding.overview.totalValue
-        )
-        overviewDescription = StatsView(
-            binding.overview.todayDescription,
-            binding.overview.weekDescription,
-            binding.overview.monthDescription,
-            binding.overview.totalDescription
-        )
         statsType = binding.overview.statsType
         rangeType = binding.history.rangeType
         productiveTimeType = binding.productiveHours.timeType
@@ -163,58 +149,88 @@ class StatisticsFragment : Fragment() {
         return view
     }
 
-    private fun refreshStats(sessions: List<Session>) {
-        val isDurationType = statsType.selectedItemPosition == SpinnerStatsType.DURATION.ordinal
-        val today = LocalDate()
-        val thisWeekStart = today.dayOfWeek().withMinimumValue()
-        val thisWeekEnd = today.dayOfWeek().withMaximumValue()
-        val thisMonthStart = today.dayOfMonth().withMinimumValue()
-        val thisMonthEnd = today.dayOfMonth().withMaximumValue()
+    private fun calculateOverviewStats(sessions: List<Session>, isDurationType: Boolean): Stats {
+        val today = LocalDate.now()
+        val thisWeekStart: LocalDate =
+            today.with(TemporalAdjusters.previousOrSame(firstDayOfWeek()))
+        val thisWeekEnd: LocalDate = today.with(TemporalAdjusters.nextOrSame(lastDayOfWeek()))
+        val thisMonthStart: LocalDate = today.with(TemporalAdjusters.firstDayOfMonth())
+        val thisMonthEnd: LocalDate = today.with(TemporalAdjusters.lastDayOfMonth())
         val stats = Stats(0, 0, 0, 0)
         for (s in sessions) {
+            val crt =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(s.timestamp), ZoneId.systemDefault())
+                    .toLocalDate()
             val increment = if (isDurationType) s.duration.toLong() else 1L
-            val crt = LocalDate(Date(s.timestamp))
             if (crt.isEqual(today)) {
                 stats.today += increment
             }
-            if (crt.isAfter(thisWeekStart.minusDays(1)) && crt.isBefore(thisWeekEnd.plusDays(1))) {
+            if ((crt >= thisWeekStart) && (crt <= thisWeekEnd)) {
                 stats.week += increment
             }
-            if (crt.isAfter(thisMonthStart.minusDays(1)) && crt.isBefore(thisMonthEnd.plusDays(1))) {
+            if ((crt >= thisMonthStart) && (crt <= thisMonthEnd)) {
                 stats.month += increment
             }
             if (isDurationType) {
                 stats.total += increment
             }
         }
+
         if (!isDurationType) {
             stats.total += sessions.size.toLong()
         }
+        return stats
+    }
+
+    private fun formatMinutes(minutes: Long): String {
+        val days = minutes / 1440
+        val hours = minutes / 60 % 24
+        val remMin = minutes % 60
+        val result: String = if (minutes != 0L) {
+            ((if (days != 0L) "${days}d" else "")
+                    + (if (hours != 0L) "" + hours.toString() + "h" else "")
+                    + if (remMin != 0L) " " + remMin.toString() + "m" else "")
+        } else {
+            "0m"
+        }
+        return result
+    }
+
+    /**
+     * @param value minutes or number of sessions, depending on isDurationType
+     * @param isDurationType specifies if the value is in seconds or number of sessions
+     */
+    private fun formatMinutesOrNumSessionsToOverviewTime(value: Long, isDurationType: Boolean): String {
+        return if (isDurationType) {
+            formatMinutes(value)
+        } else {
+            formatLong(value)
+        }
+    }
+
+    private fun getThisWeekNumber() =
+        LocalDate.now().with(TemporalAdjusters.previousOrSame(firstDayOfWeek())).get(
+            ChronoField.ALIGNED_WEEK_OF_YEAR
+        )
+
+    private fun getCurrentMonthString(): String =
+        LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM"))
+
+    @SuppressLint("SetTextI18n")
+    private fun refreshStats(sessions: List<Session>) {
+        val isDurationType = statsType.selectedItemPosition == SpinnerStatsType.DURATION.ordinal
+        val stats = calculateOverviewStats(sessions, isDurationType)
+
+        val overview = binding.overview
         overview.apply {
-            this.today.text =
-                if (isDurationType) StringUtils.formatMinutes(stats.today) else StringUtils.formatLong(
-                    stats.today
-                )
-            week.text =
-                if (isDurationType) StringUtils.formatMinutes(stats.week) else StringUtils.formatLong(
-                    stats.week
-                )
-            month.text =
-                if (isDurationType) StringUtils.formatMinutes(stats.month) else StringUtils.formatLong(
-                    stats.month
-                )
-            total.text =
-                if (isDurationType) StringUtils.formatMinutes(stats.total) else StringUtils.formatLong(
-                    stats.total
-                )
+            todayValue.text = formatMinutesOrNumSessionsToOverviewTime(stats.today, isDurationType)
+            weekValue.text = formatMinutesOrNumSessionsToOverviewTime(stats.week, isDurationType)
+            monthValue.text = formatMinutesOrNumSessionsToOverviewTime(stats.month, isDurationType)
+            totalValue.text = formatMinutesOrNumSessionsToOverviewTime(stats.total, isDurationType)
+            weekDescription.text =
+                "${resources.getString(R.string.statistics_week)} ${getThisWeekNumber()}"
+            monthDescription.text = getCurrentMonthString()
         }
-        overviewDescription.week.text =
-            "${resources.getString(R.string.statistics_week)} ${thisWeekStart.weekOfWeekyear}"
-        val sb = StringBuilder(thisMonthEnd.toString("MMMM"))
-        if (sb.isNotEmpty()) {
-            sb.setCharAt(0, Character.toUpperCase(sb[0]))
-        }
-        overviewDescription.month.text = sb.toString()
     }
 
     private fun setupSpinners() {
@@ -254,7 +270,7 @@ class StatisticsFragment : Fragment() {
                     position: Int,
                     id: Long
                 ) {
-                    xAxisFormatter.setRangeType(SpinnerRangeType.values()[position])
+                    xAxisFormatter.setRangeType(HistorySpinnerRangeType.values()[position])
                     refreshUi()
                 }
 
@@ -270,9 +286,15 @@ class StatisticsFragment : Fragment() {
             adapter = timeTypeAdapter
             setSelection(0, false)
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(adapterView: AdapterView<*>?, view: View, i: Int, l: Long) {
+                override fun onItemSelected(
+                    adapterView: AdapterView<*>?,
+                    view: View,
+                    i: Int,
+                    l: Long
+                ) {
                     refreshUi()
                 }
+
                 override fun onNothingSelected(adapterView: AdapterView<*>?) {}
             }
         }
@@ -293,6 +315,7 @@ class StatisticsFragment : Fragment() {
                 ) {
                     refreshUi()
                 }
+
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
         }
@@ -302,7 +325,8 @@ class StatisticsFragment : Fragment() {
         // generate according to spinner
         if (productiveTimeType.selectedItemPosition == SpinnerProductiveTimeType.HOUR_OF_DAY.ordinal) {
             generateProductiveTimeChart(sessions, SpinnerProductiveTimeType.HOUR_OF_DAY, color)
-            val visibleXCount = ThemeHelper.pxToDp(requireContext(), chartHistory.width).toInt() / 36
+            val visibleXCount =
+                ThemeHelper.pxToDp(requireContext(), chartHistory.width).toInt() / 36
             chartProductiveHours.apply {
                 setVisibleXRangeMaximum(visibleXCount.toFloat())
                 setVisibleXRangeMinimum(visibleXCount.toFloat())
@@ -331,6 +355,7 @@ class StatisticsFragment : Fragment() {
             moveViewToX(maxIdx.toFloat())
             invalidate()
             notifyDataSetChanged()
+            highlightValue(null) // clear any marker
         }
     }
 
@@ -340,18 +365,18 @@ class StatisticsFragment : Fragment() {
         if (label != null) {
             sessionsToObserve?.removeObservers(this)
             val color = ThemeHelper.getColor(requireContext(), label.colorId)
-            overview.apply {
-                today.setTextColor(color)
-                week.setTextColor(color)
-                month.setTextColor(color)
-                total.setTextColor(color)
+            binding.overview.apply {
+                todayValue.setTextColor(color)
+                weekValue.setTextColor(color)
+                monthValue.setTextColor(color)
+                totalValue.setTextColor(color)
             }
             headerOverview.setTextColor(color)
             headerHistory.setTextColor(color)
             headerProductiveTime.setTextColor(color)
             when (label.title) {
                 getString(R.string.label_all) -> {
-                    sessionsToObserve = sessionViewModel.allSessionsByEndTime
+                    sessionsToObserve = sessionViewModel.allSessionsUnarchived
                     showPieChart = true
                 }
                 "unlabeled" -> {
@@ -398,7 +423,7 @@ class StatisticsFragment : Fragment() {
             description.isEnabled = false
             setExtraOffsets(8f, 8f, 8f, 8f)
             highlightValues(null)
-            setEntryLabelColor(resources.getColor(R.color.grey_500))
+            setEntryLabelColor(resources.getColor(R.color.grey500))
             setEntryLabelTextSize(11f)
             transparentCircleRadius = 0f
             dragDecelerationFrictionCoef = 0.95f
@@ -419,24 +444,26 @@ class StatisticsFragment : Fragment() {
         // Nullable String key for the unlabeled sessions
         val totalTimePerLabel: MutableMap<String?, Int> = HashMap()
         val pieStatsType = PieStatsType.values()[pieChartType.selectedItemPosition]
-        val today = LocalDate()
-        val todayStart = today.toDateTimeAtStartOfDay().millis
-        val thisWeekStart = today.dayOfWeek().withMinimumValue().toDateTimeAtStartOfDay().millis
-        val thisMonthStart = today.dayOfMonth().withMinimumValue().toDateTimeAtStartOfDay().millis
+
+        val today = LocalDate.now()
+        val todayStart = today.atStartOfDay(ZoneId.systemDefault()).toLocalDate()
+        val thisWeekStart: LocalDate = today.with(TemporalAdjusters.previousOrSame(firstDayOfWeek()))
+        val thisMonthStart: LocalDate = today.with(TemporalAdjusters.firstDayOfMonth())
+
         val filteredSessions: MutableList<Session> = ArrayList(sessions)
         when (pieStatsType) {
             PieStatsType.TODAY -> for (s in sessions) {
-                if (s.timestamp < todayStart) {
+                if (s.timestamp.toLocalDate() < todayStart) {
                     filteredSessions.remove(s)
                 }
             }
             PieStatsType.THIS_WEEK -> for (s in sessions) {
-                if (s.timestamp < thisWeekStart) {
+                if (s.timestamp.toLocalDate() < thisWeekStart) {
                     filteredSessions.remove(s)
                 }
             }
             PieStatsType.THIS_MONTH -> for (s in sessions) {
-                if (s.timestamp < thisMonthStart) {
+                if (s.timestamp.toLocalDate() < thisMonthStart) {
                     filteredSessions.remove(s)
                 }
             }
@@ -471,7 +498,12 @@ class StatisticsFragment : Fragment() {
         for (p in entries) {
             if (labels.isEmpty()) {
                 p.label = getString(R.string.unlabeled)
-                colors.add(ThemeHelper.getColor(requireContext(), ThemeHelper.COLOR_INDEX_ALL_LABELS))
+                colors.add(
+                    ThemeHelper.getColor(
+                        requireContext(),
+                        ThemeHelper.COLOR_INDEX_ALL_LABELS
+                    )
+                )
                 break
             }
             for (l in labels) {
@@ -490,7 +522,7 @@ class StatisticsFragment : Fragment() {
                 }
             }
         }
-        val grey500 = resources.getColor(R.color.grey_500)
+        val grey500 = resources.getColor(R.color.grey500)
         val dataSet = PieDataSet(entries, "")
         dataSet.colors = colors
         dataSet.yValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE
@@ -508,7 +540,7 @@ class StatisticsFragment : Fragment() {
             pieChart.setUsePercentValues(false)
             data.setValueFormatter(object : ValueFormatter() {
                 override fun getFormattedValue(value: Float): String {
-                    return StringUtils.formatMinutes(value.toLong())
+                    return formatMinutes(value.toLong())
                 }
             })
         }
@@ -530,6 +562,7 @@ class StatisticsFragment : Fragment() {
             setVisibleXRangeMinimum(visibleXCount.toFloat())
             xAxis.labelCount = visibleXCount
             axisLeft.setLabelCount(5, true)
+            highlightValue(null) // clear marker selection
         }
         val yMax = data.yMax
         if (sessions.isNotEmpty() && yMax >= (if (isDurationType) 60f else 8f)) {
@@ -567,14 +600,14 @@ class StatisticsFragment : Fragment() {
         )
         val yAxis = chartHistory.axisLeft
         yAxis.valueFormatter = CustomYAxisFormatter()
-        yAxis.textColor = resources.getColor(R.color.grey_500)
+        yAxis.textColor = resources.getColor(R.color.grey500)
         yAxis.textSize = resources.getDimension(R.dimen.tinyTextSize) / displayDensity
         yAxis.setDrawAxisLine(false)
         val xAxis = chartHistory.xAxis
-        xAxis.textColor = resources.getColor(R.color.grey_500)
+        xAxis.textColor = resources.getColor(R.color.grey500)
         xAxis.position = XAxis.XAxisPosition.BOTTOM
-        val rangeType = SpinnerRangeType.values()[rangeType.selectedItemPosition]
-        xAxisFormatter = CustomXAxisFormatter(xValues, rangeType)
+        val rangeType = HistorySpinnerRangeType.values()[rangeType.selectedItemPosition]
+        xAxisFormatter = DayWeekMonthXAxisFormatter(xValues, rangeType)
         xAxis.valueFormatter = xAxisFormatter
         xAxis.setAvoidFirstLastClipping(false)
         xAxis.textSize = resources.getDimension(R.dimen.tinyTextSize) / displayDensity
@@ -602,15 +635,16 @@ class StatisticsFragment : Fragment() {
 
     private fun generateHistoryChartData(sessions: List<Session>, color: Int): LineData {
         val statsType = SpinnerStatsType.values()[statsType.selectedItemPosition]
-        val rangeType = SpinnerRangeType.values()[rangeType.selectedItemPosition]
-        val dummyIntervalRange = ThemeHelper.pxToDp(requireContext(), chartHistory.width).toInt() / 24
+        val rangeType = HistorySpinnerRangeType.values()[rangeType.selectedItemPosition]
+        val dummyIntervalRange =
+            ThemeHelper.pxToDp(requireContext(), chartHistory.width).toLong() / 24L
         val yValues: MutableList<Entry> = ArrayList()
         val tree = TreeMap<LocalDate, Int>()
 
         // generate dummy data
-        val dummyEnd = LocalDate().plusDays(1)
+        val dummyEnd = LocalDate.now().plusDays(1)
         when (rangeType) {
-            SpinnerRangeType.DAYS -> {
+            HistorySpinnerRangeType.DAYS -> {
                 val dummyBegin = dummyEnd.minusDays(dummyIntervalRange)
                 var i = dummyBegin
                 while (i.isBefore(dummyEnd)) {
@@ -618,44 +652,45 @@ class StatisticsFragment : Fragment() {
                     i = i.plusDays(1)
                 }
             }
-            SpinnerRangeType.WEEKS -> {
-                val dummyBegin =
-                    dummyEnd.minusWeeks(dummyIntervalRange).dayOfWeek().withMinimumValue()
+            HistorySpinnerRangeType.WEEKS -> {
+                val dummyBegin = dummyEnd.minusWeeks(dummyIntervalRange).with(
+                    TemporalAdjusters.firstInMonth(firstDayOfWeek()))
                 var i: LocalDate = dummyBegin
                 while (i.isBefore(dummyEnd)) {
                     tree[i] = 0
                     i = i.plusWeeks(1)
                 }
             }
-            SpinnerRangeType.MONTHS -> {
+            HistorySpinnerRangeType.MONTHS -> {
                 val dummyBegin = dummyEnd.minusMonths(dummyIntervalRange)
                 var i: LocalDate = dummyBegin
                 while (i.isBefore(dummyEnd)) {
                     tree[i] = 0
-                    i = i.plusMonths(1).dayOfMonth().withMinimumValue()
+                    i = i.plusMonths(1).withDayOfMonth(1)
                 }
             }
         }
 
+        val isDurationType = statsType == SpinnerStatsType.DURATION
         // this is to sum up entries from the same day for visualization
         for (i in sessions.indices) {
-            val localTime: LocalDate = when (rangeType) {
-                SpinnerRangeType.DAYS -> LocalDate(
-                    Date(
-                        sessions[i].timestamp
-                    )
-                )
-                SpinnerRangeType.WEEKS -> LocalDate(Date(sessions[i].timestamp)).dayOfWeek()
-                    .withMinimumValue()
-                SpinnerRangeType.MONTHS -> LocalDate(Date(sessions[i].timestamp)).dayOfMonth()
-                    .withMinimumValue()
+            val millis = sessions[i].timestamp
+            val localDate =
+                Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate()
+            val localTime = when (rangeType) {
+                HistorySpinnerRangeType.DAYS ->
+                    localDate
+                HistorySpinnerRangeType.WEEKS ->
+                    localDate.with(
+                        TemporalAdjusters.previousOrSame(firstDayOfWeek()))
+
+                HistorySpinnerRangeType.MONTHS ->
+                    localDate.with(TemporalAdjusters.firstDayOfMonth())
             }
             if (!tree.containsKey(localTime)) {
-                tree[localTime] =
-                    if (statsType == SpinnerStatsType.DURATION) sessions[i].duration else 1
+                tree[localTime] = if (isDurationType) sessions[i].duration else 1
             } else {
-                tree[localTime] = (tree[localTime]!!
-                        + if (statsType == SpinnerStatsType.DURATION) sessions[i].duration else 1)
+                tree[localTime] = (tree[localTime]!! + if (isDurationType) sessions[i].duration else 1)
             }
         }
         if (tree.size > 0) {
@@ -665,16 +700,16 @@ class StatisticsFragment : Fragment() {
             for (crt in tree.keys) {
                 // visualize intermediate days/weeks/months in case of days without completed sessions
                 val beforeWhat: LocalDate = when (rangeType) {
-                    SpinnerRangeType.DAYS -> crt.minusDays(1)
-                    SpinnerRangeType.WEEKS -> crt.minusWeeks(1)
-                    SpinnerRangeType.MONTHS -> crt.minusMonths(1)
+                    HistorySpinnerRangeType.DAYS -> crt.minusDays(1)
+                    HistorySpinnerRangeType.WEEKS -> crt.minusWeeks(1)
+                    HistorySpinnerRangeType.MONTHS -> crt.minusMonths(1)
                 }
                 while (previousTime.isBefore(beforeWhat)) {
                     yValues.add(Entry(i.toFloat(), 0f))
                     previousTime = when (rangeType) {
-                        SpinnerRangeType.DAYS -> previousTime.plusDays(1)
-                        SpinnerRangeType.WEEKS -> previousTime.plusWeeks(1)
-                        SpinnerRangeType.MONTHS -> previousTime.plusMonths(1)
+                        HistorySpinnerRangeType.DAYS -> previousTime.plusDays(1)
+                        HistorySpinnerRangeType.WEEKS -> previousTime.plusWeeks(1)
+                        HistorySpinnerRangeType.MONTHS -> previousTime.plusMonths(1)
                     }
                     xValues.add(previousTime)
                     ++i
@@ -700,7 +735,7 @@ class StatisticsFragment : Fragment() {
             setDrawCircleHole(false)
             disableDashedLine()
             setDrawValues(false)
-            highLightColor = color
+            highlightLineWidth = 0.0000001f // for some reason 0f does not do the trick
         }
         return set
     }
@@ -712,14 +747,14 @@ class StatisticsFragment : Fragment() {
                 return StringUtils.toPercentage(value)
             }
         }
-        yAxis.textColor = resources.getColor(R.color.grey_500)
+        yAxis.textColor = resources.getColor(R.color.grey500)
         yAxis.granularity = 0.25f
         yAxis.textSize = resources.getDimension(R.dimen.tinyTextSize) / displayDensity
         yAxis.axisMaximum = 1f
         yAxis.setDrawGridLines(true)
         yAxis.setDrawAxisLine(false)
         val xAxis = chartProductiveHours.xAxis
-        xAxis.textColor = resources.getColor(R.color.grey_500)
+        xAxis.textColor = resources.getColor(R.color.grey500)
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.setAvoidFirstLastClipping(false)
         xAxis.textSize = resources.getDimension(R.dimen.tinyTextSize) / displayDensity
@@ -743,7 +778,11 @@ class StatisticsFragment : Fragment() {
             animateY(500, Easing.EaseOutCubic)
             legend.isEnabled = false
             isDoubleTapToZoomEnabled = false
-            marker = ChartMarker(requireContext(), R.layout.view_chart_marker, ChartMarker.MarkerType.PERCENTAGE)
+            marker = ChartMarker(
+                requireContext(),
+                R.layout.view_chart_marker,
+                ChartMarker.MarkerType.PERCENTAGE
+            )
             setScaleEnabled(false)
             invalidate()
             notifyDataSetChanged()
@@ -767,7 +806,7 @@ class StatisticsFragment : Fragment() {
             if (nrOfSessions > 0) {
                 // hour of day
                 for (s in sessions) {
-                    val crtHourOfDay = DateTime(s.timestamp).hourOfDay
+                    val crtHourOfDay = s.timestamp.toLocalTime().hour
                     sessionsPerHour[crtHourOfDay] = sessionsPerHour[crtHourOfDay] + 1
                 }
                 for (i in sessionsPerHour.indices) {
@@ -785,8 +824,8 @@ class StatisticsFragment : Fragment() {
             if (nrOfSessions > 0) {
                 // day of week
                 for (s in sessions) {
-                    val crtDayOfWeek = LocalDate(s.timestamp).dayOfWeek - 1
-                    sessionsPerDay[crtDayOfWeek] = sessionsPerDay[crtDayOfWeek] + 1
+                    val crtDayOfWeek = s.timestamp.toLocalDateTime().dayOfWeek.value - 1
+                    ++sessionsPerDay[crtDayOfWeek]
                 }
                 for (i in sessionsPerDay.indices) {
                     yVals[i] = BarEntry(i.toFloat(), sessionsPerDay[i].toFloat() / nrOfSessions)
@@ -808,7 +847,7 @@ class StatisticsFragment : Fragment() {
         chartProductiveHours.apply {
             xAxis.valueFormatter = null
             this.data = data
-            xAxis.valueFormatter = ProductiveTimeXAxisFormatter(type)
+            xAxis.valueFormatter = ProductiveTimeXAxisFormatter(type, DateFormat.is24HourFormat(requireContext()))
             invalidate()
             notifyDataSetChanged()
         }

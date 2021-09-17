@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'kotlin-parcelize'
     id 'dagger.hilt.android.plugin'
     id 'com.google.android.gms.oss-licenses-plugin'
 }
@@ -134,9 +135,6 @@ dependencies {
 
     // Statistics
     implementation 'com.github.PhilJay:MPAndroidChart:3.1.0'
-
-    // Time
-    implementation 'joda-time:joda-time:2.10.5'
 
     // RecyclerView selection framework
     implementation 'androidx.recyclerview:recyclerview-selection:1.1.0'
