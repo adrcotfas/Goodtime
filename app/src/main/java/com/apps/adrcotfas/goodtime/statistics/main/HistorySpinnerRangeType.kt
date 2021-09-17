@@ -12,6 +12,6 @@
  */
 package com.apps.adrcotfas.goodtime.statistics.main
 
-enum class SpinnerRangeType {
+enum class HistorySpinnerRangeType {
     DAYS, WEEKS, MONTHS
 }

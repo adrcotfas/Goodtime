@@ -12,10 +12,6 @@
  */
 package com.apps.adrcotfas.goodtime.statistics
 
-import com.apps.adrcotfas.goodtime.database.AppDatabase.Companion.getDatabase
-import android.app.Application
-import android.content.Context
-import androidx.lifecycle.AndroidViewModel
 import com.apps.adrcotfas.goodtime.database.SessionDao
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -25,17 +21,28 @@ import com.apps.adrcotfas.goodtime.database.Session
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.joda.time.LocalDate
+import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 
 @HiltViewModel
-class SessionViewModel @Inject constructor(database: AppDatabase
+class SessionViewModel @Inject constructor(
+    database: AppDatabase
 ) : ViewModel() {
 
     private val dao: SessionDao = database.sessionModel()
 
-    val allSessionsByEndTime: LiveData<List<Session>>
-        get() = dao.allSessionsByEndTime
+    val allSessions: LiveData<List<Session>>
+        get() = dao.allSessions
+
+    val allSessionsUnlabeled: LiveData<List<Session>>
+        get() = dao.allSessionsUnlabeled
+
+    val allSessionsUnarchived: LiveData<List<Session>>
+        get() = dao.allSessionsUnarchived
+
+    val allSessionsUnarchivedToday: LiveData<List<Session>>
+        get() = dao.getAllSessionsUnarchivedToday()
 
     fun getSession(id: Long): LiveData<Session> {
         return dao.getSession(id)
@@ -47,10 +54,10 @@ class SessionViewModel @Inject constructor(database: AppDatabase
         }
     }
 
-    fun editSession(id: Long?, endTime: Long, totalTime: Long, label: String?) {
+    fun editSession(session: Session) {
         viewModelScope.launch(Dispatchers.IO) {
             dao.editSession(
-                id!!, endTime, totalTime, label
+                session.id, session.timestamp, session.duration, session.label
             )
         }
     }
@@ -72,7 +79,8 @@ class SessionViewModel @Inject constructor(database: AppDatabase
     fun deleteSessionsFinishedToday() {
         viewModelScope.launch(Dispatchers.IO) {
             dao.deleteSessionsAfter(
-                LocalDate().toDateTimeAtStartOfDay().millis
+                LocalDate.now().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()
+                    .toEpochMilli()
             )
         }
     }
@@ -80,10 +88,4 @@ class SessionViewModel @Inject constructor(database: AppDatabase
     fun getSessions(label: String): LiveData<List<Session>> {
         return dao.getSessions(label)
     }
-
-    val allSessionsUnlabeled: LiveData<List<Session>>
-        get() = dao.allSessionsUnlabeled
-    val allSessions: LiveData<List<Session>>
-        get() = dao.allSessions
-
 }

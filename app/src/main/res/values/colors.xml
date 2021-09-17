@@ -4,18 +4,20 @@
     <color name="teal200">#80CBC4</color>
     <color name="teal300">#4DB6AC</color>
 
-    <color name="gray900">#212121</color>
-    <color name="gray1000">#141414</color>
-    <color name="gray1100">#111111</color>
+    <color name="grey50">#FAFAFA</color>
+    <color name="grey200">#EEEEEE</color>
+    <color name="grey500">#9E9E9E</color>
+    <color name="grey800">#424242</color>
+    <color name="grey900">#212121</color>
+    <color name="grey1000">#141414</color>
+    <color name="grey1200">#0A0A0A</color>
 
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
-    <color name="gray50">#FAFAFA</color>
 
     <color name="transparent_dark">#1AFFFFFF</color>
     <color name="transparent">#1effffff</color>
     <color name="true_transparent">#00FFFFFF</color>
-    <color name="grey_500">#9E9E9E</color>
 
     <integer-array name="lightPalette">
         <item>@color/white</item>

@@ -14,13 +14,12 @@ import android.content.*
 import android.content.Context.ALARM_SERVICE
 import android.content.Context.NOTIFICATION_SERVICE
 import android.util.Log
-import com.apps.adrcotfas.goodtime.main.TimerActivity
 import androidx.core.app.NotificationCompat
-import androidx.preference.PreferenceManager
-import com.apps.adrcotfas.goodtime.util.StringUtils
+import com.apps.adrcotfas.goodtime.main.TimerActivity
+import com.apps.adrcotfas.goodtime.util.StringUtils.formatDateAndTime
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.joda.time.DateTime
-import org.joda.time.LocalTime
+import java.time.*
+import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
 class ReminderHelper@Inject constructor(
@@ -28,28 +27,14 @@ class ReminderHelper@Inject constructor(
     val preferenceHelper: PreferenceHelper
 ) : OnSharedPreferenceChangeListener {
 
-    private val pendingIntent : PendingIntent by lazy {
-        val intent = Intent(context, ReminderReceiver::class.java)
-        intent.action = REMINDER_ACTION
-        PendingIntent.getBroadcast(
-            context,
-            REMINDER_REQUEST_CODE,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-    }
+    private var pendingIntents : Array<PendingIntent?> = arrayOfNulls(7)
     private val alarmManager: AlarmManager by lazy {
         context.getSystemService(ALARM_SERVICE) as AlarmManager
     }
 
     init {
-        PreferenceManager.getDefaultSharedPreferences(context)
-            .registerOnSharedPreferenceChangeListener(this)
+        preferenceHelper.preferences.registerOnSharedPreferenceChangeListener(this)
         initChannelIfNeeded()
-        if (preferenceHelper.isReminderEnabled()) {
-            toggleBootReceiver(true)
-            scheduleNotification()
-        }
     }
 
     @TargetApi(Build.VERSION_CODES.O)
@@ -70,15 +55,22 @@ class ReminderHelper@Inject constructor(
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
-        if (key == PreferenceHelper.ENABLE_REMINDER) {
-            Log.d(TAG, "onSharedPreferenceChanged")
-            toggleBootReceiver(preferenceHelper.isReminderEnabled())
-            if (preferenceHelper.isReminderEnabled()) {
-                scheduleNotification()
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        if (key.contains(PreferenceHelper.REMINDER_DAYS)) {
+            Log.d(TAG, "onSharedPreferenceChanged: $key")
+            val idx = key.last().toInt() - '0'.toInt()
+            val reminderDay = DayOfWeek.of(idx + 1)
+            if (preferenceHelper.isReminderEnabledFor(reminderDay)) {
+                toggleBootReceiver(true)
+                scheduleNotification(reminderDay)
             } else {
-                unscheduledNotification()
+                cancelNotification(reminderDay)
+                toggleBootReceiver(false)
             }
+        } else if (key == PreferenceHelper.REMINDER_TIME) {
+            Log.d(TAG, "onSharedPreferenceChanged: REMINDER_TIME")
+            cancelNotifications()
+            scheduleNotifications()
         }
     }
 
@@ -94,28 +86,73 @@ class ReminderHelper@Inject constructor(
         )
     }
 
-    private fun unscheduledNotification() {
-        Log.d(TAG, "unscheduledNotification")
-        alarmManager.cancel(pendingIntent)
-    }
-
-    fun scheduleNotification() {
-        if (preferenceHelper.isReminderEnabled()) {
-            var calendarMillis: Long = preferenceHelper.getTimeOfReminder()
-            Log.d(TAG, "time of reminder: ${StringUtils.formatDateAndTime(calendarMillis)}")
-            val now = DateTime()
-            Log.d(TAG, "now: ${StringUtils.formatDateAndTime(now.millis)}")
-            if (now.isAfter(calendarMillis)) {
-                calendarMillis = LocalTime(calendarMillis).toDateTimeToday().plusDays(1).millis
-            }
-            Log.d(TAG, "scheduleNotification at: ${StringUtils.formatDateAndTime(calendarMillis)}")
-            alarmManager.setInexactRepeating(
-                AlarmManager.RTC_WAKEUP,
-                calendarMillis,
-                AlarmManager.INTERVAL_DAY,
-                pendingIntent
+    private fun getReminderPendingIntent(index: Int): PendingIntent {
+        if (pendingIntents[index] == null) {
+            val intent = Intent(context, ReminderReceiver::class.java)
+            intent.action = REMINDER_ACTION
+            pendingIntents[index] = PendingIntent.getBroadcast(
+                context,
+                REMINDER_REQUEST_CODE + index,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         }
+        return pendingIntents[index]!!
+    }
+
+    private fun cancelNotifications() {
+        Log.d(TAG, "cancelNotifications")
+        for (day in DayOfWeek.values()) {
+            cancelNotification(day)
+        }
+    }
+
+    private fun cancelNotification(day: DayOfWeek) {
+        Log.d(TAG, "cancelNotification for $day")
+        val reminderPendingIntent = getReminderPendingIntent(day.ordinal)
+        alarmManager.cancel(reminderPendingIntent)
+    }
+
+    fun scheduleNotifications() {
+        if (preferenceHelper.isReminderEnabled()) {
+            for (i in preferenceHelper.getReminderDays().withIndex()) {
+                if (i.value) {
+                    val reminderDay = DayOfWeek.of(i.index + 1)
+                    scheduleNotification(reminderDay)
+                }
+            }
+        }
+    }
+
+    private fun scheduleNotification(reminderDay: DayOfWeek) {
+        val now = LocalDateTime.now()
+        Log.d(TAG, "now: ${now.toLocalTime()}")
+
+        val time = LocalTime.ofSecondOfDay(preferenceHelper.getReminderTime().toLong())
+        Log.d(TAG, "time of reminder: $time")
+
+        var reminderTime = now
+            .withHour(time.hour)
+            .withMinute(time.minute)
+            .withSecond(0)
+            .with(TemporalAdjusters.nextOrSame(reminderDay))
+
+        if (reminderTime.isBefore(now)) {
+            Log.d(TAG, "reminderTime is before now; schedule for next week")
+            reminderTime = reminderTime.plusWeeks(1)
+        }
+
+        Log.d(TAG, "reminderTime: $reminderTime")
+
+        val reminderMillis = reminderTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+        Log.d(TAG, "scheduleNotification at: " + formatDateAndTime(reminderMillis))
+        alarmManager.setInexactRepeating(
+            AlarmManager.RTC_WAKEUP,
+            reminderMillis,
+            AlarmManager.INTERVAL_DAY * 7,
+            getReminderPendingIntent(reminderDay.ordinal)
+        )
     }
 
     companion object {
@@ -125,7 +162,6 @@ class ReminderHelper@Inject constructor(
         const val REMINDER_REQUEST_CODE = 11
         private const val REMINDER_NOTIFICATION_ID = 99
 
-        @JvmStatic
         fun notifyReminder(context: Context) {
             val openMainIntent = Intent(context, TimerActivity::class.java)
             val pendingIntent = PendingIntent.getActivity(
@@ -147,8 +183,6 @@ class ReminderHelper@Inject constructor(
                 context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.notify(REMINDER_NOTIFICATION_ID, builder.build())
         }
-
-        @JvmStatic
         fun removeNotification(context: Context) {
             val notificationManager =
                 context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager

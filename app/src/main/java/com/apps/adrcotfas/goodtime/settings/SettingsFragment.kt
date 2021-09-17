@@ -15,7 +15,6 @@ package com.apps.adrcotfas.goodtime.settings
 import com.apps.adrcotfas.goodtime.util.BatteryUtils.Companion.isIgnoringBatteryOptimizations
 import com.apps.adrcotfas.goodtime.util.UpgradeDialogHelper.Companion.launchUpgradeDialog
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
-import android.app.TimePickerDialog.OnTimeSetListener
 import android.os.Bundle
 import com.apps.adrcotfas.goodtime.R
 import android.view.LayoutInflater
@@ -31,61 +30,57 @@ import android.net.Uri
 import android.provider.Settings
 import android.text.format.DateFormat
 import android.view.View
-import android.widget.TimePicker
 import androidx.preference.*
+import com.apps.adrcotfas.goodtime.ui.common.TimePickerDialogBuilder
 import com.apps.adrcotfas.goodtime.util.*
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import org.joda.time.DateTime
-import org.joda.time.LocalTime
 import xyz.aprildown.ultimateringtonepicker.RingtonePickerDialog
 import xyz.aprildown.ultimateringtonepicker.UltimateRingtonePicker
+import java.time.DayOfWeek
+import java.time.LocalTime
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultCallback,
-    OnTimeSetListener {
-    private var mPrefDisableSoundCheckbox: CheckBoxPreference? = null
-    private var mPrefDndMode: CheckBoxPreference? = null
-    private var mPrefReminder: SwitchPreferenceCompat? = null
-    
-    @Inject lateinit var preferenceHelper: PreferenceHelper
+class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultCallback {
+    private lateinit var prefDisableSoundCheckbox: CheckBoxPreference
+    private lateinit var prefDndMode: CheckBoxPreference
+
+    @Inject
+    lateinit var preferenceHelper: PreferenceHelper
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings, rootKey)
-        mPrefDisableSoundCheckbox = findPreference(PreferenceHelper.DISABLE_SOUND_AND_VIBRATION)
-        mPrefDndMode = findPreference(PreferenceHelper.DND_MODE)
         setupReminderPreference()
+        prefDisableSoundCheckbox = findPreference(PreferenceHelper.DISABLE_SOUND_AND_VIBRATION)!!
+        prefDndMode = findPreference(PreferenceHelper.DND_MODE)!!
     }
 
     private fun setupReminderPreference() {
-        mPrefReminder = findPreference(PreferenceHelper.ENABLE_REMINDER)
-        mPrefReminder!!.summaryOn = StringUtils.formatTime(preferenceHelper.getTimeOfReminder())
-        mPrefReminder!!.summaryOff = ""
-        mPrefReminder!!.onPreferenceClickListener =
-            Preference.OnPreferenceClickListener {
-                mPrefReminder!!.isChecked = !mPrefReminder!!.isChecked
-                true
+        // restore from preferences
+        val dayOfWeekPref = findPreference<DayOfWeekPreference>(PreferenceHelper.REMINDER_DAYS)
+        dayOfWeekPref!!.setCheckedDays(preferenceHelper.getBooleanArray(
+            PreferenceHelper.REMINDER_DAYS, DayOfWeek.values().size))
+
+        val timePickerPref : Preference = findPreference(PreferenceHelper.REMINDER_TIME)!!
+        timePickerPref.setOnPreferenceClickListener {
+            val dialog = TimePickerDialogBuilder(requireContext())
+                .buildDialog(LocalTime.ofSecondOfDay(preferenceHelper.getReminderTime().toLong()))
+            dialog.addOnPositiveButtonClickListener {
+                val newValue = LocalTime.of(dialog.hour, dialog.minute).toSecondOfDay()
+                preferenceHelper.setReminderTime(newValue)
+                updateReminderTimeSummary(timePickerPref)
             }
-        mPrefReminder!!.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
-                if (newValue as Boolean) {
-                    val millis = preferenceHelper.getTimeOfReminder()
-                    val time = DateTime(millis)
-                    val d = TimePickerDialogFixedNougatSpinner(
-                        requireActivity(),
-                        R.style.DialogTheme,
-                        this@SettingsFragment,
-                        time.hourOfDay,
-                        time.minuteOfHour,
-                        DateFormat.is24HourFormat(context)
-                    )
-                    d.show()
-                    true
-                } else {
-                    false
-                }
-            }
+            dialog.show(parentFragmentManager, "MaterialTimePicker")
+            true
+        }
+        updateReminderTimeSummary(timePickerPref)
+    }
+
+    private fun updateReminderTimeSummary(timePickerPref: Preference) {
+        timePickerPref.summary = secondsOfDayToTimerFormat(
+            preferenceHelper.getReminderTime(), DateFormat.is24HourFormat(context)
+        )
     }
 
     override fun onCreateView(
@@ -128,7 +123,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
         }
         findPreference<Preference>(PreferenceHelper.DISABLE_WIFI)!!.isVisible =
             Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
-        mPrefDndMode!!.isVisible = true
+        prefDndMode.isVisible = true
     }
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
@@ -191,7 +186,8 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
         if (preference.key == PreferenceHelper.RINGTONE_BREAK_FINISHED && !preferenceHelper.isPro()) {
             launchUpgradeDialog(requireActivity().supportFragmentManager)
         } else {
-            val selectedUri = Uri.parse(toRingtone(preferenceHelper.getNotificationSoundFinished(preference.key)!!).uri)
+            val selectedUri =
+                Uri.parse(toRingtone(preferenceHelper.getNotificationSoundFinished(preference.key)!!).uri)
             val settings = UltimateRingtonePicker.Settings(
                 preSelectUris = listOf(selectedUri),
                 systemRingtonePicker = UltimateRingtonePicker.SystemRingtonePicker(
@@ -234,9 +230,12 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
         val prefWork = findPreference<Preference>(PreferenceHelper.RINGTONE_WORK_FINISHED)
         val prefBreak = findPreference<Preference>(PreferenceHelper.RINGTONE_BREAK_FINISHED)
         val defaultSummary = resources.getString(
-            R.string.pref_ringtone_summary)
-        prefWork!!.summary = toRingtone(preferenceHelper.getNotificationSoundWorkFinished()!!, defaultSummary).name
-        prefBreak!!.summary = toRingtone(preferenceHelper.getNotificationSoundBreakFinished()!!, defaultSummary).name
+            R.string.pref_ringtone_summary
+        )
+        prefWork!!.summary =
+            toRingtone(preferenceHelper.getNotificationSoundWorkFinished()!!, defaultSummary).name
+        prefBreak!!.summary =
+            toRingtone(preferenceHelper.getNotificationSoundBreakFinished()!!, defaultSummary).name
 
         prefWork.setOnPreferenceClickListener {
             handleRingtonePrefClick(prefWork)
@@ -317,19 +316,19 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
 
     private fun setupDisableSoundCheckBox() {
         if (isNotificationPolicyAccessDenied) {
-            updateDisableSoundCheckBoxSummary(mPrefDisableSoundCheckbox, false)
-            mPrefDisableSoundCheckbox!!.isChecked = false
-            mPrefDisableSoundCheckbox!!.onPreferenceClickListener =
+            updateDisableSoundCheckBoxSummary(prefDisableSoundCheckbox, false)
+            prefDisableSoundCheckbox.isChecked = false
+            prefDisableSoundCheckbox.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener {
                     requestNotificationPolicyAccess()
                     false
                 }
         } else {
-            updateDisableSoundCheckBoxSummary(mPrefDisableSoundCheckbox, true)
-            mPrefDisableSoundCheckbox!!.onPreferenceClickListener =
+            updateDisableSoundCheckBoxSummary(prefDisableSoundCheckbox, true)
+            prefDisableSoundCheckbox.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener {
-                    if (mPrefDndMode!!.isChecked) {
-                        mPrefDndMode!!.isChecked = false
+                    if (prefDndMode.isChecked) {
+                        prefDndMode.isChecked = false
                         true
                     } else {
                         false
@@ -362,19 +361,19 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
 
     private fun setupDnDCheckBox() {
         if (isNotificationPolicyAccessDenied) {
-            updateDisableSoundCheckBoxSummary(mPrefDndMode, false)
-            mPrefDndMode!!.isChecked = false
-            mPrefDndMode!!.onPreferenceClickListener =
+            updateDisableSoundCheckBoxSummary(prefDndMode, false)
+            prefDndMode.isChecked = false
+            prefDndMode.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener {
                     requestNotificationPolicyAccess()
                     false
                 }
         } else {
-            updateDisableSoundCheckBoxSummary(mPrefDndMode, true)
-            mPrefDndMode!!.onPreferenceClickListener =
+            updateDisableSoundCheckBoxSummary(prefDndMode, true)
+            prefDndMode.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener {
-                    if (mPrefDisableSoundCheckbox!!.isChecked) {
-                        mPrefDisableSoundCheckbox!!.isChecked = false
+                    if (prefDisableSoundCheckbox.isChecked) {
+                        prefDisableSoundCheckbox.isChecked = false
                         true
                     } else {
                         false
@@ -405,13 +404,6 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
             newValue
         findPreference<Preference>(PreferenceHelper.PRIORITY_ALARM)!!.isVisible =
             newValue
-    }
-
-    override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
-        val millis = LocalTime(hourOfDay, minute).toDateTimeToday().millis
-        preferenceHelper.setTimeOfReminder(millis)
-        mPrefReminder!!.summaryOn = StringUtils.formatTime(millis)
-        mPrefReminder!!.isChecked = true
     }
 
     companion object {

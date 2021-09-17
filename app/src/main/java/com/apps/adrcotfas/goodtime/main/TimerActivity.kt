@@ -76,7 +76,6 @@ import com.apps.adrcotfas.goodtime.util.*
 import com.apps.adrcotfas.goodtime.util.Constants.ClearNotificationEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.joda.time.LocalDate
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -477,20 +476,9 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
             val mSessionsCounter = alertMenuItem.actionView as FrameLayout
             sessionsCounterText = mSessionsCounter.findViewById(R.id.view_alert_count_textview)
             mSessionsCounter.setOnClickListener { onOptionsItemSelected(alertMenuItem) }
-            sessionViewModel.allSessionsByEndTime.observe(this, { sessions: List<Session> ->
-                val today = LocalDate()
-                var statsToday = 0
-                for (s in sessions) {
-                    val crt = LocalDate(Date(s.timestamp))
-                    if (crt.isEqual(today)) {
-                        statsToday++
-                    }
-                    if (crt.isBefore(today)) {
-                        break
-                    }
-                }
+            sessionViewModel.allSessionsUnarchivedToday.observe(this, { sessions: List<Session> ->
                 if (sessionsCounterText != null) {
-                    sessionsCounterText!!.text = statsToday.toString()
+                    sessionsCounterText!!.text = sessions.count().toString()
                 }
                 alertMenuItem.isVisible = true
             })

@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/shape_rectangle_neutral" >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/shape_rectangle_neutral">
 
     <TextView
         android:id="@+id/tvContent"
@@ -11,8 +12,10 @@
         android:layout_centerHorizontal="true"
         android:text=""
         android:textSize="@dimen/regularTextSize"
-        android:padding="2dp"
-        android:textColor="@color/grey_500"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="4dp"
+        tools:text="0"
+        android:textColor="@color/grey500"
         android:ellipsize="end"
         android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceSmall" />

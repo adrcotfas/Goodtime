@@ -8,7 +8,21 @@
         android:title="@string/pref_disable_battery_optimization"
         android:summary="@string/pref_disable_battery_optimization_summary"
         android:icon="@drawable/ic_exclamation"
-        app:isPreferenceVisible="false"/>
+        android:shouldDisableView="true"
+        app:isPreferenceVisible="false" />
+
+    <com.apps.adrcotfas.goodtime.settings.DayOfWeekPreference
+        app:key="pref_reminder_days"
+        app:layout="@layout/preference_days_of_week"
+        app:allowDividerAbove="false"
+        app:iconSpaceReserved="false"/>
+
+    <Preference
+        app:key="pref_reminder_time"
+        app:title="@string/reminder_time"
+        android:dependency="pref_reminder_days"
+        app:layout="@layout/preference_compact"
+        app:iconSpaceReserved="false"/>
 
     <PreferenceCategory
         android:title="@string/pref_header_general"
@@ -100,7 +114,7 @@
             android:summary="@string/pref_ringtone_summary"
             android:title="@string/pref_ringtone"
             android:dependency="pref_enable_ringtone"
-            app:layout="@layout/preference_compact"
+            app:layout="@layout/preference_default"
             app:iconSpaceReserved="false"/>
 
         <Preference
@@ -108,7 +122,7 @@
             android:summary="@string/pref_ringtone_summary"
             android:title="@string/pref_ringtone_break"
             android:dependency="pref_enable_ringtone"
-            app:layout="@layout/preference_compact"
+            app:layout="@layout/preference_default"
             app:iconSpaceReserved="false"/>
 
         <ListPreference
@@ -155,14 +169,6 @@
             android:title="@string/pref_ringtone_insistent"
             android:summary="@string/pref_ringtone_insistent_summary"
             app:iconSpaceReserved="false"/>
-
-        <SwitchPreferenceCompat
-            android:key="pref_enable_reminder"
-            android:title="@string/reminder_title"
-            android:defaultValue="false"
-            android:persistent="true"
-            android:icon="@drawable/ic_reminder"/>
-
     </PreferenceCategory>
 
     <PreferenceCategory

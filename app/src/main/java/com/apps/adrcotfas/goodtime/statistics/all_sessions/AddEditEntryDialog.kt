@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Adrian Cotfas
+ * Copyright 2016-2021 Adrian Cotfas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy of the License at
@@ -13,8 +13,6 @@
 package com.apps.adrcotfas.goodtime.statistics.all_sessions
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import android.app.DatePickerDialog.OnDateSetListener
-import android.app.TimePickerDialog.OnTimeSetListener
 import com.apps.adrcotfas.goodtime.statistics.main.SelectLabelDialog.OnLabelSelectedListener
 import com.apps.adrcotfas.goodtime.statistics.SessionViewModel
 import com.apps.adrcotfas.goodtime.main.LabelsViewModel
@@ -26,34 +24,31 @@ import androidx.databinding.DataBindingUtil
 import com.apps.adrcotfas.goodtime.R
 import android.content.res.ColorStateList
 import android.view.View
-import com.apps.adrcotfas.goodtime.util.ThemeHelper
 import com.apps.adrcotfas.goodtime.statistics.main.SelectLabelDialog
 import com.apps.adrcotfas.goodtime.statistics.main.StatisticsActivity
 import android.widget.Toast
-import com.apps.adrcotfas.goodtime.util.TimePickerFragment
-import com.apps.adrcotfas.goodtime.util.DatePickerFragment
-import android.widget.TimePicker
-import android.widget.DatePicker
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.databinding.DialogAddEntryBinding
-import com.apps.adrcotfas.goodtime.util.StringUtils
+import com.apps.adrcotfas.goodtime.ui.common.DatePickerDialogHelper
+import com.apps.adrcotfas.goodtime.ui.common.TimePickerDialogBuilder
+import com.apps.adrcotfas.goodtime.util.*
 import dagger.hilt.android.AndroidEntryPoint
-import org.joda.time.DateTime
-import java.util.*
-import kotlin.math.min
+import java.lang.Integer.min
+import java.time.LocalTime
 
 @AndroidEntryPoint
-class AddEditEntryDialog : BottomSheetDialogFragment(), OnDateSetListener, OnTimeSetListener,
-    OnLabelSelectedListener {
+class AddEditEntryDialog : BottomSheetDialogFragment(), OnLabelSelectedListener {
 
     private val viewModel: AddEditEntryDialogViewModel by viewModels()
     private val sessionViewModel: SessionViewModel by viewModels()
     private val labelsViewModel: LabelsViewModel by viewModels()
 
-    private var sessionToEdit: Session? = null
+    private lateinit var binding: DialogAddEntryBinding
+
+    private lateinit var candidateSession: Session
+    private var isEditDialog: Boolean = false
 
     @SuppressLint("ResourceType")
     override fun onCreateView(
@@ -61,53 +56,30 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnDateSetListener, OnTim
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding: DialogAddEntryBinding = DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
             LayoutInflater.from(
                 context
             ), R.layout.dialog_add_entry, null, false
         )
-        val view = binding.root
 
-        viewModel.duration.observe(viewLifecycleOwner, { d: Int ->
-            val duration = d.toString()
-            binding.duration.setText(duration)
-            binding.duration.setSelection(duration.length)
-        })
-        viewModel.date.observe(viewLifecycleOwner, { date: DateTime ->
-            binding.editDate.text = StringUtils.formatDate(date.millis)
-            binding.editTime.text = StringUtils.formatTime(date.millis)
-        })
-        viewModel.label.observe(viewLifecycleOwner, { label: String? ->
-            if (label != null && label != getString(R.string.label_unlabeled)) {
-                binding.labelChip.text = label
-                labelsViewModel.getColorOfLabel(label)
-                    .observe(viewLifecycleOwner, { color: Int? ->
-                        binding.labelChip.chipBackgroundColor = ColorStateList.valueOf(
-                            ThemeHelper.getColor(
-                                requireContext(), color!!
-                            )
-                        )
-                    })
-                binding.labelDrawable.setImageDrawable(resources.getDrawable(R.drawable.ic_label))
-            } else {
-                binding.labelChip.text = resources.getString(R.string.label_add)
-                binding.labelChip.chipBackgroundColor = ColorStateList.valueOf(
-                    ThemeHelper.getColor(
-                        requireContext(), ThemeHelper.COLOR_INDEX_UNLABELED
-                    )
-                )
-                binding.labelDrawable.setImageDrawable(resources.getDrawable(R.drawable.ic_label_off))
-            }
-        })
-        binding.editDate.setOnClickListener { onDateViewClick() }
-        binding.editTime.setOnClickListener { onTimeViewClick() }
-        binding.labelChip.setOnClickListener {
-            // open another dialog to select the chip
-            val fragmentManager = requireActivity().supportFragmentManager
-            SelectLabelDialog.newInstance(this, viewModel.label.value?: "", false)
-                .show(fragmentManager, StatisticsActivity.DIALOG_SELECT_LABEL_TAG)
+        viewModel.session = candidateSession
+
+        if (isEditDialog) {
+            binding.header.text = getString(R.string.session_edit_session)
         }
+
+        setupDateAndTimePickers()
+        setupDuration()
+        setupLabel()
+        setupSaveButton()
+
+        return binding.root
+    }
+
+    private fun setupSaveButton() {
         binding.save.setOnClickListener {
+            val durationValue = binding.duration.text.toString().toIntOrNull()
+            viewModel.session.duration = min(durationValue ?: 0, 240)
             if (binding.duration.text.toString().isEmpty()) {
                 Toast.makeText(
                     activity,
@@ -115,80 +87,91 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnDateSetListener, OnTim
                     Toast.LENGTH_LONG
                 ).show()
             } else {
-                val duration = min(binding.duration.text.toString().toInt(), 240)
-                val label = viewModel.label.value
-                val sessionToAdd = Session(
-                    0, viewModel.date.value!!
-                        .millis, duration, label
-                )
-                if (viewModel.sessionToEditId != AddEditEntryDialogViewModel.INVALID_SESSION_TO_EDIT_ID.toLong()) {
-                    sessionViewModel.editSession(
-                        viewModel.sessionToEditId,
-                        sessionToAdd.timestamp,
-                        sessionToAdd.duration.toLong(),
-                        sessionToAdd.label
-                    )
-                } else {
-                    sessionViewModel.addSession(sessionToAdd)
+                sessionViewModel.apply {
+                    if (isEditDialog) {
+                        editSession(viewModel.session)
+                    } else {
+                        addSession(viewModel.session)
+                    }
                 }
                 dismiss()
             }
         }
-
-        // this is for the edit dialog
-        if (sessionToEdit != null) {
-            viewModel.date.value = DateTime(sessionToEdit!!.timestamp)
-            viewModel.duration.value = sessionToEdit!!.duration
-            viewModel.label.value = sessionToEdit!!.label
-            viewModel.sessionToEditId = sessionToEdit!!.id
-            binding.header.text = getString(R.string.session_edit_session)
-        }
-        return view
     }
 
-    private val calendar: Calendar
-        get() {
-            val calendar = Calendar.getInstance()
-            val date = viewModel.date.value
-            if (date != null) {
-                calendar.time = date.toDate()
+    private fun setupLabel() {
+        val label = viewModel.session.label
+        refreshLabel(label)
+
+        binding.labelChip.setOnClickListener {
+            SelectLabelDialog.newInstance(this, viewModel.session.label ?: "", false)
+                .showOnce(parentFragmentManager, StatisticsActivity.DIALOG_SELECT_LABEL_TAG)
+        }
+    }
+
+    private fun refreshLabel(label: String?) {
+        if (label != null && label != getString(R.string.label_unlabeled)) {
+            binding.labelChip.text = label
+            labelsViewModel.getColorOfLabel(label)
+                .observe(viewLifecycleOwner, { color: Int? ->
+                    binding.labelChip.chipBackgroundColor = ColorStateList.valueOf(
+                        ThemeHelper.getColor(
+                            requireContext(), color!!
+                        )
+                    )
+                })
+            binding.labelDrawable.setImageDrawable(resources.getDrawable(R.drawable.ic_label))
+        } else {
+            binding.labelChip.text = resources.getString(R.string.label_add)
+            binding.labelChip.chipBackgroundColor = ColorStateList.valueOf(
+                ThemeHelper.getColor(
+                    requireContext(), ThemeHelper.COLOR_INDEX_UNLABELED
+                )
+            )
+            binding.labelDrawable.setImageDrawable(resources.getDrawable(R.drawable.ic_label_off))
+        }
+    }
+
+    private fun setupDuration() {
+        if (isEditDialog) {
+            val duration = viewModel.session.duration.toString()
+            binding.duration.setText(duration)
+            binding.duration.setSelection(duration.length)
+        }
+    }
+
+    private fun setupDateAndTimePickers() {
+        val timestamp = viewModel.session.timestamp
+        val localTime = timestamp.toLocalTime()
+        val localDate = timestamp.toLocalDate()
+
+        binding.editTime.text = TimeUtils.formatTime(localTime)
+        binding.editDate.text = TimeUtils.formatDateLong(localDate)
+
+        binding.editTime.setOnClickListener {
+            val dialog = TimePickerDialogBuilder(requireContext()).buildDialog(localTime)
+            dialog.addOnPositiveButtonClickListener {
+                val newLocalTime = LocalTime.of(dialog.hour, dialog.minute)
+                viewModel.session.timestamp = Pair(localDate, newLocalTime).toLocalDateTime().millis
+                binding.editTime.text = newLocalTime.toFormattedTime()
             }
-            return calendar
+            dialog.show(parentFragmentManager, "MaterialTimePicker")
         }
 
-    private fun onTimeViewClick() {
-        val d = TimePickerFragment.newInstance(this@AddEditEntryDialog, calendar)
-        val fragmentManager = parentFragmentManager
-        d.show(fragmentManager, StatisticsActivity.DIALOG_TIME_PICKER_TAG)
-    }
-
-    private fun onDateViewClick() {
-        val d: DialogFragment = DatePickerFragment.newInstance(this@AddEditEntryDialog, calendar)
-        val fragmentManager = parentFragmentManager
-        d.show(fragmentManager, StatisticsActivity.DIALOG_DATE_PICKER_TAG)
-    }
-
-    override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
-        viewModel.date.value =
-            if (viewModel.date.value == null) DateTime() else viewModel.date.value!!
-                .withHourOfDay(hourOfDay)
-                .withMinuteOfHour(minute)
-    }
-
-    override fun onDateSet(view: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        viewModel.date.value =
-            if (viewModel.date.value == null) DateTime() else viewModel.date.value!!
-                .withYear(year)
-                .withMonthOfYear(monthOfYear + 1)
-                .withDayOfMonth(dayOfMonth)
+        binding.editDate.setOnClickListener {
+            val picker = DatePickerDialogHelper.buildDatePicker(timestamp)
+            picker.addOnPositiveButtonClickListener {
+                val newLocalDate = it.toLocalDate()
+                viewModel.session.timestamp = Pair(newLocalDate, localTime).toLocalDateTime().millis
+                binding.editDate.text = TimeUtils.formatDateLong(localDate) //TODO: extract as extension function
+            }
+            picker.show(parentFragmentManager, "MaterialDatePicker")
+        }
     }
 
     override fun onLabelSelected(label: Label) {
-        if (label.title != "unlabeled") {
-            viewModel.label.setValue(label.title)
-        } else {
-            viewModel.label.setValue(null)
-        }
+        viewModel.session.label = if (label.title != "unlabeled") label.title else null
+        refreshLabel(label.title)
     }
 
     companion object {
@@ -197,10 +180,10 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnDateSetListener, OnTim
          * @param session the session
          * @return the new instance initialized with the existing session's data
          */
-        @JvmStatic
         fun newInstance(session: Session?): AddEditEntryDialog {
             val dialog = AddEditEntryDialog()
-            dialog.sessionToEdit = session
+            dialog.candidateSession = session ?: Session()
+            dialog.isEditDialog = (session != null)
             return dialog
         }
     }

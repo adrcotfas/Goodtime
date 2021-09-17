@@ -110,7 +110,7 @@ class StatisticsActivity : AppCompatActivity(), OnLabelSelectedListener {
         val fragmentManager = supportFragmentManager
         when (item.itemId) {
             R.id.action_add -> if (preferenceHelper.isPro()) {
-                val newFragment = AddEditEntryDialog()
+                val newFragment = AddEditEntryDialog.newInstance(null)
                 newFragment.show(fragmentManager, DIALOG_ADD_ENTRY_TAG)
             } else {
                 launchUpgradeDialog(supportFragmentManager)

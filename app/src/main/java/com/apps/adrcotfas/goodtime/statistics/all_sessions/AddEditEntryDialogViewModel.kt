@@ -13,25 +13,11 @@
 package com.apps.adrcotfas.goodtime.statistics.all_sessions
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.MutableLiveData
+import com.apps.adrcotfas.goodtime.database.Session
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.joda.time.DateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class AddEditEntryDialogViewModel @Inject constructor(): ViewModel() {
-    var duration = MutableLiveData<Int>()
-    var date = MutableLiveData<DateTime>()
-    var label = MutableLiveData<String?>()
-    var sessionToEditId: Long
-
-    companion object {
-        var INVALID_SESSION_TO_EDIT_ID = -1
-    }
-
-    init {
-        date.value = DateTime()
-        label.value = null
-        sessionToEditId = INVALID_SESSION_TO_EDIT_ID.toLong()
-    }
+    var session = Session()
 }
