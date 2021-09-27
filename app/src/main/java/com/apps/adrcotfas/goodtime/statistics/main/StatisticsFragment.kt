@@ -39,7 +39,6 @@ import android.view.MotionEvent
 import com.github.mikephil.charting.formatter.PercentFormatter
 import android.text.TextPaint
 import android.text.format.DateFormat
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -57,10 +56,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoField
 import java.time.temporal.TemporalAdjusters
@@ -200,7 +196,10 @@ class StatisticsFragment : Fragment() {
      * @param value minutes or number of sessions, depending on isDurationType
      * @param isDurationType specifies if the value is in seconds or number of sessions
      */
-    private fun formatMinutesOrNumSessionsToOverviewTime(value: Long, isDurationType: Boolean): String {
+    private fun formatMinutesOrNumSessionsToOverviewTime(
+        value: Long,
+        isDurationType: Boolean
+    ): String {
         return if (isDurationType) {
             formatMinutes(value)
         } else {
@@ -322,24 +321,21 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun refreshProductiveTimeChart(sessions: List<Session>, color: Int) {
-        // generate according to spinner
-        if (productiveTimeType.selectedItemPosition == SpinnerProductiveTimeType.HOUR_OF_DAY.ordinal) {
-            generateProductiveTimeChart(sessions, SpinnerProductiveTimeType.HOUR_OF_DAY, color)
-            val visibleXCount =
-                ThemeHelper.pxToDp(requireContext(), chartHistory.width).toInt() / 36
-            chartProductiveHours.apply {
-                setVisibleXRangeMaximum(visibleXCount.toFloat())
-                setVisibleXRangeMinimum(visibleXCount.toFloat())
-                xAxis.labelCount = visibleXCount
-            }
+        val productiveTimeType =
+            ProductiveTimeType.values()[productiveTimeType.selectedItemPosition]
+        val visibleXCount = if (productiveTimeType == ProductiveTimeType.HOUR_OF_DAY) {
+            ThemeHelper.pxToDp(requireContext(), chartHistory.width).toInt() / 36
         } else {
-            generateProductiveTimeChart(sessions, SpinnerProductiveTimeType.DAY_OF_WEEK, color)
-            chartProductiveHours.apply {
-                setVisibleXRangeMaximum(7f)
-                setVisibleXRangeMinimum(7f)
-                xAxis.labelCount = 7
-            }
+            DayOfWeek.values().size
         }
+
+        generateProductiveTimeChart(sessions, productiveTimeType, color)
+        chartProductiveHours.apply {
+            setVisibleXRangeMaximum(visibleXCount.toFloat())
+            setVisibleXRangeMinimum(visibleXCount.toFloat())
+            xAxis.labelCount = visibleXCount
+        }
+
         chartProductiveHours.barData.setDrawValues(false)
         val b = chartProductiveHours.data.dataSets[0]
         var maxY = 0f
@@ -447,7 +443,8 @@ class StatisticsFragment : Fragment() {
 
         val today = LocalDate.now()
         val todayStart = today.atStartOfDay(ZoneId.systemDefault()).toLocalDate()
-        val thisWeekStart: LocalDate = today.with(TemporalAdjusters.previousOrSame(firstDayOfWeek()))
+        val thisWeekStart: LocalDate =
+            today.with(TemporalAdjusters.previousOrSame(firstDayOfWeek()))
         val thisMonthStart: LocalDate = today.with(TemporalAdjusters.firstDayOfMonth())
 
         val filteredSessions: MutableList<Session> = ArrayList(sessions)
@@ -654,7 +651,8 @@ class StatisticsFragment : Fragment() {
             }
             HistorySpinnerRangeType.WEEKS -> {
                 val dummyBegin = dummyEnd.minusWeeks(dummyIntervalRange).with(
-                    TemporalAdjusters.firstInMonth(firstDayOfWeek()))
+                    TemporalAdjusters.firstInMonth(firstDayOfWeek())
+                )
                 var i: LocalDate = dummyBegin
                 while (i.isBefore(dummyEnd)) {
                     tree[i] = 0
@@ -682,7 +680,8 @@ class StatisticsFragment : Fragment() {
                     localDate
                 HistorySpinnerRangeType.WEEKS ->
                     localDate.with(
-                        TemporalAdjusters.previousOrSame(firstDayOfWeek()))
+                        TemporalAdjusters.previousOrSame(firstDayOfWeek())
+                    )
 
                 HistorySpinnerRangeType.MONTHS ->
                     localDate.with(TemporalAdjusters.firstDayOfMonth())
@@ -690,7 +689,8 @@ class StatisticsFragment : Fragment() {
             if (!tree.containsKey(localTime)) {
                 tree[localTime] = if (isDurationType) sessions[i].duration else 1
             } else {
-                tree[localTime] = (tree[localTime]!! + if (isDurationType) sessions[i].duration else 1)
+                tree[localTime] =
+                    (tree[localTime]!! + if (isDurationType) sessions[i].duration else 1)
             }
         }
         if (tree.size > 0) {
@@ -791,51 +791,49 @@ class StatisticsFragment : Fragment() {
 
     private fun generateProductiveTimeChart(
         sessions: List<Session>,
-        type: SpinnerProductiveTimeType,
+        type: ProductiveTimeType,
         color: Int
     ) {
-        val yVals = ArrayList<BarEntry>()
-        if (type == SpinnerProductiveTimeType.HOUR_OF_DAY) {
-            val sessionsPerHour = MutableList(24) { 0L }
-            // dummy values
-            for (i in sessionsPerHour.indices) {
-                yVals.add(BarEntry(i.toFloat(), 0f))
-            }
-            //TODO: use overview value(could be time) instead of hardcoded "nr of sessions" for an accurate productive chart
-            val nrOfSessions = sessions.size.toLong()
-            if (nrOfSessions > 0) {
-                // hour of day
-                for (s in sessions) {
-                    val crtHourOfDay = s.timestamp.toLocalTime().hour
-                    sessionsPerHour[crtHourOfDay] = sessionsPerHour[crtHourOfDay] + 1
-                }
-                for (i in sessionsPerHour.indices) {
-                    yVals[i] = BarEntry(i.toFloat(), sessionsPerHour[i].toFloat() / nrOfSessions)
-                }
-            }
-        } else if (type == SpinnerProductiveTimeType.DAY_OF_WEEK) {
-            val sessionsPerDay = MutableList(7) { 0L }
 
-            // dummy values
-            for (i in sessionsPerDay.indices) {
-                yVals.add(BarEntry(i.toFloat(), 0f))
-            }
-            val nrOfSessions = sessions.size.toLong()
-            if (nrOfSessions > 0) {
-                // day of week
-                for (s in sessions) {
-                    val crtDayOfWeek = s.timestamp.toLocalDateTime().dayOfWeek.value - 1
-                    ++sessionsPerDay[crtDayOfWeek]
-                }
-                for (i in sessionsPerDay.indices) {
-                    yVals[i] = BarEntry(i.toFloat(), sessionsPerDay[i].toFloat() / nrOfSessions)
-                }
-            }
-        } else {
-            Log.wtf(TAG, "Something went wrong in generateProductiveTimeChart")
-            return
+        val values = ArrayList<BarEntry>()
+        val productiveTimeType = SpinnerStatsType.values()[statsType.selectedItemPosition]
+        val sessionsPerProductiveTimeType =
+            MutableList(if (type == ProductiveTimeType.HOUR_OF_DAY) 24 else DayOfWeek.values().size) { 0L }
+        for (i in sessionsPerProductiveTimeType.indices) {
+            values.add(BarEntry(i.toFloat(), 0f))
         }
-        val set1 = BarDataSet(yVals, "")
+
+        if (productiveTimeType == SpinnerStatsType.DURATION) {
+            var totalTime = 0L
+            for (s in sessions) {
+                totalTime += s.duration
+                val crtIndex =
+                    if (type == ProductiveTimeType.HOUR_OF_DAY) s.timestamp.toLocalTime().hour
+                    else s.timestamp.toLocalDateTime().dayOfWeek.value - 1
+                sessionsPerProductiveTimeType[crtIndex] =
+                    sessionsPerProductiveTimeType[crtIndex] + s.duration
+            }
+            for (i in sessionsPerProductiveTimeType.indices) {
+                values[i] =
+                    BarEntry(i.toFloat(), sessionsPerProductiveTimeType[i].toFloat() / totalTime)
+            }
+
+        } else if (productiveTimeType == SpinnerStatsType.NR_OF_SESSIONS) {
+            for (s in sessions) {
+                val crtIndex =
+                    if (type == ProductiveTimeType.HOUR_OF_DAY) s.timestamp.toLocalTime().hour
+                    else s.timestamp.toLocalDateTime().dayOfWeek.value - 1
+                ++sessionsPerProductiveTimeType[crtIndex]
+            }
+            for (i in sessionsPerProductiveTimeType.indices) {
+                values[i] = BarEntry(
+                    i.toFloat(),
+                    sessionsPerProductiveTimeType[i].toFloat() / sessions.size
+                )
+            }
+        }
+
+        val set1 = BarDataSet(values, "")
         set1.color = color
         set1.highLightAlpha = 0
         set1.setDrawIcons(false)
@@ -847,7 +845,8 @@ class StatisticsFragment : Fragment() {
         chartProductiveHours.apply {
             xAxis.valueFormatter = null
             this.data = data
-            xAxis.valueFormatter = ProductiveTimeXAxisFormatter(type, DateFormat.is24HourFormat(requireContext()))
+            xAxis.valueFormatter =
+                ProductiveTimeXAxisFormatter(type, DateFormat.is24HourFormat(requireContext()))
             invalidate()
             notifyDataSetChanged()
         }

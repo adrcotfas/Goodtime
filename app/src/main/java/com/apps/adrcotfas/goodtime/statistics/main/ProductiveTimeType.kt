@@ -12,6 +12,6 @@
  */
 package com.apps.adrcotfas.goodtime.statistics.main
 
-enum class SpinnerProductiveTimeType {
+enum class ProductiveTimeType {
     DAY_OF_WEEK, HOUR_OF_DAY
 }
