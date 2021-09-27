@@ -46,6 +46,7 @@ import androidx.lifecycle.lifecycleScope
 import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.databinding.StatisticsFragmentMainBinding
+import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
 import com.apps.adrcotfas.goodtime.util.*
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.components.XAxis
@@ -61,6 +62,8 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoField
 import java.time.temporal.TemporalAdjusters
 import java.util.*
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import kotlin.math.ceil
 
 @AndroidEntryPoint
@@ -92,6 +95,9 @@ class StatisticsFragment : Fragment() {
 
     private val sessionViewModel: SessionViewModel by activityViewModels()
     private val labelsViewModel: LabelsViewModel by activityViewModels()
+
+    @Inject
+    lateinit var preferenceHelper: PreferenceHelper
 
     private lateinit var parentView: LinearLayout
     private lateinit var progressBar: ProgressBar
@@ -385,6 +391,14 @@ class StatisticsFragment : Fragment() {
                 }
             }
             sessionsToObserve?.observe(viewLifecycleOwner, { sessions: List<Session> ->
+
+                // Adjust the finished sessions according to the configured workday start
+                sessions.forEach {
+                    it.timestamp -= TimeUnit.SECONDS.toMillis(
+                        preferenceHelper.getStartOfDay().toLong()
+                    )
+                }
+
                 refreshStats(sessions)
                 refreshHistoryChart(sessions, color)
                 refreshProductiveTimeChart(sessions, color)
@@ -794,7 +808,6 @@ class StatisticsFragment : Fragment() {
         type: ProductiveTimeType,
         color: Int
     ) {
-
         val values = ArrayList<BarEntry>()
         val productiveTimeType = SpinnerStatsType.values()[statsType.selectedItemPosition]
         val sessionsPerProductiveTimeType =
@@ -806,6 +819,12 @@ class StatisticsFragment : Fragment() {
         if (productiveTimeType == SpinnerStatsType.DURATION) {
             var totalTime = 0L
             for (s in sessions) {
+                // When showing hours, re-adjust the displayed values to the real values
+                if (type == ProductiveTimeType.HOUR_OF_DAY) {
+                    s.timestamp += TimeUnit.SECONDS.toMillis(
+                        preferenceHelper.getStartOfDay().toLong()
+                    )
+                }
                 totalTime += s.duration
                 val crtIndex =
                     if (type == ProductiveTimeType.HOUR_OF_DAY) s.timestamp.toLocalTime().hour
@@ -820,6 +839,12 @@ class StatisticsFragment : Fragment() {
 
         } else if (productiveTimeType == SpinnerStatsType.NR_OF_SESSIONS) {
             for (s in sessions) {
+                // When showing hours, re-adjust the displayed values to the real values
+                if (type == ProductiveTimeType.HOUR_OF_DAY) {
+                    s.timestamp -= TimeUnit.SECONDS.toMillis(
+                        preferenceHelper.getStartOfDay().toLong()
+                    )
+                }
                 val crtIndex =
                     if (type == ProductiveTimeType.HOUR_OF_DAY) s.timestamp.toLocalTime().hour
                     else s.timestamp.toLocalDateTime().dayOfWeek.value - 1
