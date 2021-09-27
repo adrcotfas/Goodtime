@@ -77,6 +77,7 @@ class PreferenceHelper(val context: Context) {
         private const val UNSAVED_PROFILE_ACTIVE = "pref_custom_pref_active"
         const val REMINDER_TIME = "pref_reminder_time"
         const val REMINDER_DAYS = "pref_reminder_days"
+        const val WORK_DAY_START = "pref_work_day_start"
     }
 
     fun migratePreferences() {
@@ -322,8 +323,12 @@ class PreferenceHelper(val context: Context) {
     fun isReminderEnabled() = getReminderDays().contains(true)
     fun isReminderEnabledFor(dayOfWeek: DayOfWeek) = getReminderDays()[dayOfWeek.ordinal]
     fun getReminderDays() = getBooleanArray(REMINDER_DAYS, 7)
+
     fun getReminderTime() = preferences.getInt(REMINDER_TIME, LocalTime.of(9, 0).toSecondOfDay())
     fun setReminderTime(secondOfDay: Int) = preferences.edit().putInt(REMINDER_TIME, secondOfDay).apply()
+
+    fun getStartOfDay() = preferences.getInt(WORK_DAY_START, LocalTime.of(0, 0).toSecondOfDay())
+    fun setStartOfDay(secondOfDay: Int) = preferences.edit().putInt(WORK_DAY_START, secondOfDay).apply()
 
     fun getBooleanArray(key: String, size: Int): BooleanArray {
         val result = BooleanArray(size)

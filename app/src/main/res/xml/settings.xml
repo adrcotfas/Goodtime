@@ -35,6 +35,12 @@
             android:summary="@string/timer_durations"
             android:icon="@drawable/ic_status_goodtime"/>
 
+        <Preference
+            app:key="pref_work_day_start"
+            app:title="@string/pref_work_day_start"
+            app:layout="@layout/preference_compact"
+            app:iconSpaceReserved="false"/>
+
         <ListPreference
             android:dialogTitle="@string/pref_timer_style"
             android:key="pref_timer_style"

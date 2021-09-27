@@ -52,34 +52,57 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings, rootKey)
         setupReminderPreference()
+        setupStartOfDayPreference()
         prefDisableSoundCheckbox = findPreference(PreferenceHelper.DISABLE_SOUND_AND_VIBRATION)!!
         prefDndMode = findPreference(PreferenceHelper.DND_MODE)!!
+    }
+
+    private fun setupTimePickerPreference(
+        preference: Preference,
+        getTimeAction: () -> Int,
+        setTimeAction: (Int) -> Unit
+    ) {
+        preference.setOnPreferenceClickListener {
+            val dialog = TimePickerDialogBuilder(requireContext())
+                .buildDialog(LocalTime.ofSecondOfDay(getTimeAction().toLong()))
+            dialog.addOnPositiveButtonClickListener {
+                val newValue = LocalTime.of(dialog.hour, dialog.minute).toSecondOfDay()
+                setTimeAction(newValue)
+                updateTimePickerPreferenceSummary(preference, getTimeAction())
+            }
+            dialog.show(parentFragmentManager, "MaterialTimePicker")
+            true
+        }
+        updateTimePickerPreferenceSummary(preference, getTimeAction())
     }
 
     private fun setupReminderPreference() {
         // restore from preferences
         val dayOfWeekPref = findPreference<DayOfWeekPreference>(PreferenceHelper.REMINDER_DAYS)
-        dayOfWeekPref!!.setCheckedDays(preferenceHelper.getBooleanArray(
-            PreferenceHelper.REMINDER_DAYS, DayOfWeek.values().size))
+        dayOfWeekPref!!.setCheckedDays(
+            preferenceHelper.getBooleanArray(
+                PreferenceHelper.REMINDER_DAYS, DayOfWeek.values().size
+            )
+        )
 
-        val timePickerPref : Preference = findPreference(PreferenceHelper.REMINDER_TIME)!!
-        timePickerPref.setOnPreferenceClickListener {
-            val dialog = TimePickerDialogBuilder(requireContext())
-                .buildDialog(LocalTime.ofSecondOfDay(preferenceHelper.getReminderTime().toLong()))
-            dialog.addOnPositiveButtonClickListener {
-                val newValue = LocalTime.of(dialog.hour, dialog.minute).toSecondOfDay()
-                preferenceHelper.setReminderTime(newValue)
-                updateReminderTimeSummary(timePickerPref)
-            }
-            dialog.show(parentFragmentManager, "MaterialTimePicker")
-            true
-        }
-        updateReminderTimeSummary(timePickerPref)
+        val timePickerPref: Preference = findPreference(PreferenceHelper.REMINDER_TIME)!!
+        setupTimePickerPreference(
+            timePickerPref,
+            { preferenceHelper.getReminderTime() },
+            { preferenceHelper.setReminderTime(it) })
     }
 
-    private fun updateReminderTimeSummary(timePickerPref: Preference) {
-        timePickerPref.summary = secondsOfDayToTimerFormat(
-            preferenceHelper.getReminderTime(), DateFormat.is24HourFormat(context)
+    private fun setupStartOfDayPreference() {
+        val pref: Preference = findPreference(PreferenceHelper.WORK_DAY_START)!!
+        setupTimePickerPreference(
+            pref,
+            { preferenceHelper.getStartOfDay() },
+            { preferenceHelper.setStartOfDay(it) })
+    }
+
+    private fun updateTimePickerPreferenceSummary(pref: Preference, secondOfDay: Int) {
+        pref.summary = secondsOfDayToTimerFormat(
+            secondOfDay, DateFormat.is24HourFormat(context)
         )
     }
 
