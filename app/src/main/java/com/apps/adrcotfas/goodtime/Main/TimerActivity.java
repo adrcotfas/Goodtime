@@ -66,6 +66,7 @@ import org.joda.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -256,16 +257,19 @@ public class TimerActivity
         {
             @Override
             public void onSwipeRight(View view) {
+                Log.d(TAG, "OnSwipeTouchListener - onSwipeRight");
                 onSkipSession();
             }
 
             @Override
             public void onSwipeLeft(View view) {
+                Log.d(TAG, "OnSwipeTouchListener - onSwipeLeft");
                 onSkipSession();
             }
 
             @Override
             public void onSwipeBottom(View view) {
+                Log.d(TAG, "OnSwipeTouchListener - onSwipeBottom");
                 onStopSession();
                 if (PreferenceHelper.isScreensaverEnabled()) {
                     recreate();
@@ -274,6 +278,7 @@ public class TimerActivity
 
             @Override
             public void onSwipeTop(View view) {
+                Log.d(TAG, "OnSwipeTouchListener - onSwipeTop");
                 if (mCurrentSession.getTimerState().getValue() != TimerState.INACTIVE) {
                     onAdd60SecondsButtonClick();
                 }
@@ -281,22 +286,26 @@ public class TimerActivity
 
             @Override
             public void onClick(View view) {
+                Log.d(TAG, "OnSwipeTouchListener - onClick");
                 onStartButtonClick(view);
             }
 
             @Override
             public void onLongClick(View view) {
+                Log.d(TAG, "OnSwipeTouchListener - onLongClick");
                 Intent settingsIntent = new Intent(TimerActivity.this, SettingsActivity.class);
                 startActivity(settingsIntent);
             }
 
             @Override
             public void onPress(View view) {
+                Log.d(TAG, "OnSwipeTouchListener - onPress");
                 mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.scale_reversed));
             }
 
             @Override
             public void onRelease(View view) {
+                Log.d(TAG, "OnSwipeTouchListener - onRelease");
                 mTimeLabel.startAnimation(loadAnimation(getApplicationContext(), R.anim.scale));
                 if (mCurrentSession.getTimerState().getValue() == TimerState.PAUSED) {
                     final Handler handler = new Handler();
