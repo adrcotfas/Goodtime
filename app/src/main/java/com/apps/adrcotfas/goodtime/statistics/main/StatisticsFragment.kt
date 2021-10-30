@@ -189,7 +189,7 @@ class StatisticsFragment : Fragment() {
         val hours = minutes / 60 % 24
         val remMin = minutes % 60
         val result: String = if (minutes != 0L) {
-            ((if (days != 0L) "${days}d" else "")
+            ((if (days != 0L) "${days}d\n" else "")
                     + (if (hours != 0L) "" + hours.toString() + "h" else "")
                     + if (remMin != 0L) " " + remMin.toString() + "m" else "")
         } else {
