@@ -33,8 +33,8 @@ class Session(
     @Nullable
     var label: String?
 ) {
-    @ColumnInfo(name = "archived", defaultValue = "0")
-    var archived = false
+    @ColumnInfo(defaultValue = "0")
+    var archived: Boolean = false
 
     @Ignore
     constructor() : this(0, LocalDateTime.now().millis, 0, null)

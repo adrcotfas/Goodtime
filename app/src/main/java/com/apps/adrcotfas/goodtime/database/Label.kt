@@ -17,7 +17,20 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 
 @Entity(primaryKeys = ["title", "archived"])
-class Label(@ColumnInfo(name = "title", defaultValue = "") @NonNull var title: String, var colorId: Int) {
-    var order = 0
-    var archived = false
+class Label(
+    @ColumnInfo(defaultValue = "")
+    @NonNull
+    var title: String,
+
+    @ColumnInfo(defaultValue = "0")
+    @NonNull
+    var colorId: Int) {
+
+    @ColumnInfo(defaultValue = "0")
+    @NonNull
+    var order: Int= 0
+
+    @ColumnInfo(defaultValue = "0")
+    @NonNull
+    var archived: Boolean = false
 }
