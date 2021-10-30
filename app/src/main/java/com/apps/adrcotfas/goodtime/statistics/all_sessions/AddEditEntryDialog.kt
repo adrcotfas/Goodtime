@@ -163,7 +163,7 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnLabelSelectedListener 
             picker.addOnPositiveButtonClickListener {
                 val newLocalDate = it.toLocalDate()
                 viewModel.session.timestamp = Pair(newLocalDate, localTime).toLocalDateTime().millis
-                binding.editDate.text = TimeUtils.formatDateLong(localDate) //TODO: extract as extension function
+                binding.editDate.text = TimeUtils.formatDateLong(newLocalDate) //TODO: extract as extension function
             }
             picker.show(parentFragmentManager, "MaterialDatePicker")
         }
