@@ -27,6 +27,7 @@
         android:name="com.apps.adrcotfas.goodtime.bl.GoodtimeApplication"
         android:allowBackup="true"
         android:fullBackupOnly="true"
+        android:restoreAnyVersion="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
