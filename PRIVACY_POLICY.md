@@ -13,6 +13,7 @@ Goodtime Productivity does not have permission to access the Internet.
 
 ### Third parties
 The app is distributed through Google Play and uses Google Play Services which may collect information used to identify you.
+If you got the app from F-Droid, there's no need to worry about this.
 
 ### Contact
 
