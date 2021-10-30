@@ -28,10 +28,10 @@ interface SessionDao {
     @get:Query("select * from Session ORDER BY timestamp DESC")
     val allSessions: LiveData<List<Session>>
 
-    @get:Query("select * from Session where archived is 0 OR archived is NULL ORDER BY timestamp DESC")
+    @get:Query("select * from Session where (archived is 0 OR archived is NULL) ORDER BY timestamp DESC")
     val allSessionsUnarchived: LiveData<List<Session>>
 
-    @Query("select * from Session where archived is 0 OR archived is NULL and timestamp >= :startOfToday and timestamp < :startOfTomorrow ORDER BY timestamp DESC")
+    @Query("select * from Session where (archived is 0 OR archived is NULL) and timestamp >= :startOfToday and timestamp < :startOfTomorrow ORDER BY timestamp DESC")
     fun getAllSessionsUnarchivedToday(startOfToday : Long = startOfTodayMillis(), startOfTomorrow : Long = startOfTomorrowMillis()): LiveData<List<Session>>
 
     @get:Query("select * from Session where label is NULL ORDER BY timestamp DESC")
