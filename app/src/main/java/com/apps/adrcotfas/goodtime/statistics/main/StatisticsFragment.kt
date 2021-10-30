@@ -674,7 +674,7 @@ class StatisticsFragment : Fragment() {
                 }
             }
             HistorySpinnerRangeType.MONTHS -> {
-                val dummyBegin = dummyEnd.minusMonths(dummyIntervalRange)
+                val dummyBegin = dummyEnd.minusMonths(dummyIntervalRange).withDayOfMonth(1)
                 var i: LocalDate = dummyBegin
                 while (i.isBefore(dummyEnd)) {
                     tree[i] = 0
