@@ -17,8 +17,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.room.Room
 import com.apps.adrcotfas.goodtime.bl.GoodtimeApplication
 import java.io.File
@@ -45,11 +43,6 @@ abstract class AppDatabase : RoomDatabase() {
         const val DATABASE_NAME = "goodtime-db"
         private val LOCK = Any()
         private var INSTANCE: AppDatabase? = null
-        private val MIGRATION_4_5: Migration = object : Migration(4, 5) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                // do nothing here; it seems to be needed by the switch to kapt room compiler
-            }
-        }
 
         fun getDatabase(context: Context): AppDatabase {
             if (INSTANCE == null || !INSTANCE!!.isOpen) {
@@ -84,8 +77,7 @@ abstract class AppDatabase : RoomDatabase() {
 
             val db = Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                 .setJournalMode(JournalMode.TRUNCATE)
-                .addMigrations(MIGRATION_4_5)
-                .fallbackToDestructiveMigration()
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                 .setQueryExecutor(executor)
                 .build()
             dbToInstanceId[db.hashCode()] = instanceId
