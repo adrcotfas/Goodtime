@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.apps.adrcotfas.goodtime">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Used by RingtonePreference to allow adding custom ringtones -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -20,6 +19,8 @@
     <!-- For the option of removing the app from the battery optimization -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
 
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
     <application
         android:name="com.apps.adrcotfas.goodtime.BL.GoodtimeApplication"
         android:allowBackup="true"
@@ -33,7 +34,8 @@
             android:name="com.apps.adrcotfas.goodtime.Main.TimerActivity"
             android:showOnLockScreen="true"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -42,39 +44,45 @@
         <activity
             android:name=".Settings.SettingsActivity"
             android:label="@string/settings"
-            android:parentActivityName=".Main.TimerActivity">
+            android:parentActivityName=".Main.TimerActivity"
+            android:exported="false">
         </activity>
 
         <activity
             android:name=".About.AboutActivity"
             android:label="@string/about"
             android:theme="@style/AboutTheme"
-            android:parentActivityName=".Main.TimerActivity">
+            android:parentActivityName=".Main.TimerActivity"
+            android:exported="false">
         </activity>
 
         <activity
             android:name=".About.LicencesActivity"
             android:label="@string/about_open_source_licences"
             android:theme="@style/AboutTheme"
-            android:parentActivityName=".About.AboutActivity">
+            android:parentActivityName=".About.AboutActivity"
+            android:exported="false">
         </activity>
 
         <activity
             android:name=".Statistics.Main.StatisticsActivity"
             android:label="@string/statistics"
-            android:parentActivityName=".Main.TimerActivity">
+            android:parentActivityName=".Main.TimerActivity"
+            android:exported="false">
         </activity>
 
         <activity
             android:name=".AddEditLabels.AddEditLabelActivity"
             android:label="@string/label_dialog_edit"
-            android:parentActivityName=".Main.TimerActivity">
+            android:parentActivityName=".Main.TimerActivity"
+            android:exported="false">
         </activity>
 
         <activity
             android:name=".Main.MainIntroActivity"
             android:theme="@style/Theme.Intro"
-            android:parentActivityName=".Main.TimerActivity">
+            android:parentActivityName=".Main.TimerActivity"
+            android:exported="false">
         </activity>
 
         <service
@@ -92,13 +100,15 @@
                 android:resource="@xml/file_paths"/>
         </provider>
 
-        <receiver android:name=".Settings.reminders.BootReceiver">
+        <receiver android:name=".Settings.reminders.BootReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".Settings.reminders.ReminderReceiver">
+        <receiver android:name=".Settings.reminders.ReminderReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="buddy.reminder_action"/>
             </intent-filter>

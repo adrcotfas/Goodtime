@@ -177,13 +177,13 @@ public class NotificationHelper extends ContextWrapper {
 
     private PendingIntent createActivityIntent() {
         Intent openMainIntent = new Intent(this, TimerActivity.class);
-        return PendingIntent.getActivity(this, 0, openMainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getActivity(this, 0, openMainIntent, PendingIntent.FLAG_IMMUTABLE);
     }
 
     private static NotificationCompat.Action buildStopAction(Context context) {
 
         PendingIntent stopPendingIntent = PendingIntent.getService(context, STOP_ID,
-                new IntentWithAction(context, TimerService.class, Constants.ACTION.STOP), PendingIntent.FLAG_UPDATE_CURRENT);
+                new IntentWithAction(context, TimerService.class, Constants.ACTION.STOP), PendingIntent.FLAG_IMMUTABLE);
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_stop,
@@ -193,7 +193,7 @@ public class NotificationHelper extends ContextWrapper {
 
     private static NotificationCompat.Action buildResumeAction(Context context) {
         PendingIntent togglePendingIntent = PendingIntent.getService(context, RESUME_ID,
-                new IntentWithAction(context, TimerService.class, Constants.ACTION.TOGGLE), PendingIntent.FLAG_UPDATE_CURRENT);
+                new IntentWithAction(context, TimerService.class, Constants.ACTION.TOGGLE), PendingIntent.FLAG_IMMUTABLE);
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_resume,
@@ -204,7 +204,7 @@ public class NotificationHelper extends ContextWrapper {
     private static NotificationCompat.Action buildPauseAction(Context context) {
 
         PendingIntent togglePendingIntent = PendingIntent.getService(context, PAUSE_ID,
-                new IntentWithAction(context, TimerService.class, Constants.ACTION.TOGGLE), PendingIntent.FLAG_UPDATE_CURRENT);
+                new IntentWithAction(context, TimerService.class, Constants.ACTION.TOGGLE), PendingIntent.FLAG_IMMUTABLE);
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_notification_pause,
