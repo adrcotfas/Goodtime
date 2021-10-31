@@ -26,7 +26,7 @@ import java.lang.RuntimeException
 
 object ThemeHelper {
 
-    const val COLOR_INDEX_UNLABELED = 0
+    const val COLOR_INDEX_UNLABELED = 17 // index of white in the palette
     const val COLOR_INDEX_ALL_LABELS = 42
     const val COLOR_INDEX_BREAK = 43
 
