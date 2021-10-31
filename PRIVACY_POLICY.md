@@ -3,13 +3,13 @@
 
 ### Personal data
 
-The developer of Goodtime Productivity values your privacy and does not collect, store nor sell any of your personal data.
-The developer does not use analytics, does not track you nor serve ads in Goodtime Productivity.
-
-There is only one situation in which the developer would see your email address and that is when you would submit feedback or bug reports to the mailing list. This data is solely meant for debugging purposes and improvements.
-If at any time you wish for the developer to delete your emails, please let him know at [goodtime-app@googlegroups.com](mailto:goodtime-app@googlegroups.com).
+The developer of Goodtime Productivity values your privacy and does not collect, store nor sell any of your data.
+The developer does not use analytics, does not track you nor serves ads in Goodtime Productivity.
 
 Goodtime Productivity does not have permission to access the Internet.
+
+If you have activated the Backup functionality in your phone's settings, a copy of your data will be stored in Google's servers.
+The developer of Goodtime Productivity does not have access to this data but you can use it to restore the app's preferences, statistics, and labels.
 
 ### Third parties
 The app is distributed through Google Play and uses Google Play Services which may collect information used to identify you.
