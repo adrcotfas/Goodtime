@@ -70,7 +70,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
                 setTimeAction(newValue)
                 updateTimePickerPreferenceSummary(preference, getTimeAction())
             }
-            dialog.show(parentFragmentManager, "MaterialTimePicker")
+            dialog.showOnce(parentFragmentManager, "MaterialTimePicker")
             true
         }
         updateTimePickerPreferenceSummary(preference, getTimeAction())
@@ -157,7 +157,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
             PreferenceHelper.VIBRATION_TYPE -> {
                 val dialog = VibrationPreferenceDialogFragment.newInstance(preference.key)
                 dialog.setTargetFragment(this, 0)
-                dialog.show(parentFragmentManager, null)
+                dialog.showOnce(parentFragmentManager, "VibrationType")
             }
             else -> {
                 super.onDisplayPreferenceDialog(preference)
@@ -245,7 +245,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
                     }
                 }
             )
-            dialog.show(parentFragmentManager, null)
+            dialog.showOnce(parentFragmentManager, "RingtonePref")
         }
     }
 

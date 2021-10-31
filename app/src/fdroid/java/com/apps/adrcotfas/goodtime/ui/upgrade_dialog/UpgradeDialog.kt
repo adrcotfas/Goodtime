@@ -44,7 +44,7 @@ class UpgradeDialog : DialogFragment() {
     companion object {
         fun showNewInstance(fragmentManager: FragmentManager) {
             val dialog = UpgradeDialog()
-            dialog.show(fragmentManager, "")
+            dialog.showOnce(fragmentManager, "UpgradeDialog")
         }
     }
 }

@@ -155,7 +155,7 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnLabelSelectedListener 
                 viewModel.session.timestamp = Pair(localDate, newLocalTime).toLocalDateTime().millis
                 binding.editTime.text = newLocalTime.toFormattedTime()
             }
-            dialog.show(parentFragmentManager, "MaterialTimePicker")
+            dialog.showOnce(parentFragmentManager, "MaterialTimePicker")
         }
 
         binding.editDate.setOnClickListener {
