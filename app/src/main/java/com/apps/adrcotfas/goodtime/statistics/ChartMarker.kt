@@ -7,6 +7,7 @@ import android.content.Context
 import android.view.View
 import android.widget.TextView
 import com.apps.adrcotfas.goodtime.R
+import com.apps.adrcotfas.goodtime.util.StringUtils
 
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
@@ -21,7 +22,8 @@ class ChartMarker(
 
     enum class MarkerType {
         INTEGER,
-        PERCENTAGE
+        PERCENTAGE,
+        MINUTES
     }
 
     private var tvContent: TextView? = null
@@ -32,7 +34,11 @@ class ChartMarker(
 
     @SuppressLint("SetTextI18n")
     override fun refreshContent(e: Entry, highlight: Highlight?) {
-        val value = if (markerType == MarkerType.PERCENTAGE) "${(e.y * 100).toInt()}%" else e.y.toInt().toString()
+        val value = when(markerType) {
+            MarkerType.PERCENTAGE -> "${(e.y * 100).toInt()}%"
+            MarkerType.INTEGER -> e.y.toInt().toString()
+            MarkerType.MINUTES -> StringUtils.formatMinutes(e.y.toLong())
+        }
         tvContent!!.text = value
         super.refreshContent(e, highlight)
     }
