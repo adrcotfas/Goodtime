@@ -93,7 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.58" />
+            app:layout_constraintGuide_percent="0.62" />
 
         <View
             android:id="@+id/overlay"
