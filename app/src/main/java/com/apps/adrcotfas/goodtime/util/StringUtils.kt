@@ -94,4 +94,18 @@ object StringUtils {
         suffixes[1000000000000000L] = "P"
         suffixes[1000000000000000000L] = "E"
     }
+
+    fun formatMinutes(minutes: Long): String {
+        val days = minutes / 1440
+        val hours = minutes / 60 % 24
+        val remMin = minutes % 60
+        val result: String = if (minutes != 0L) {
+            ((if (days != 0L) "${days}d\n" else "")
+                    + (if (hours != 0L) "" + hours.toString() + "h" else "")
+                    + if (remMin != 0L) " " + remMin.toString() + "m" else "")
+        } else {
+            "0m"
+        }
+        return result
+    }
 }

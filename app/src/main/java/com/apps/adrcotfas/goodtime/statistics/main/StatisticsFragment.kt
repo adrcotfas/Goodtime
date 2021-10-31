@@ -52,6 +52,7 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.animation.Easing
 import com.apps.adrcotfas.goodtime.util.StringUtils.formatLong
+import com.apps.adrcotfas.goodtime.util.StringUtils.formatMinutes
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.ValueFormatter
 import dagger.hilt.android.AndroidEntryPoint
@@ -182,20 +183,6 @@ class StatisticsFragment : Fragment() {
             stats.total += sessions.size.toLong()
         }
         return stats
-    }
-
-    private fun formatMinutes(minutes: Long): String {
-        val days = minutes / 1440
-        val hours = minutes / 60 % 24
-        val remMin = minutes % 60
-        val result: String = if (minutes != 0L) {
-            ((if (days != 0L) "${days}d\n" else "")
-                    + (if (hours != 0L) "" + hours.toString() + "h" else "")
-                    + if (remMin != 0L) " " + remMin.toString() + "m" else "")
-        } else {
-            "0m"
-        }
-        return result
     }
 
     /**
@@ -573,6 +560,7 @@ class StatisticsFragment : Fragment() {
             setVisibleXRangeMinimum(visibleXCount.toFloat())
             xAxis.labelCount = visibleXCount
             axisLeft.setLabelCount(5, true)
+            marker = ChartMarker(requireContext(), R.layout.view_chart_marker, if (isDurationType) ChartMarker.MarkerType.MINUTES else ChartMarker.MarkerType.INTEGER)
             highlightValue(null) // clear marker selection
         }
         val yMax = data.yMax
@@ -637,7 +625,7 @@ class StatisticsFragment : Fragment() {
             animateY(500, Easing.EaseOutCubic)
             legend.isEnabled = false
             isDoubleTapToZoomEnabled = false
-            marker = ChartMarker(requireContext(), R.layout.view_chart_marker)
+            marker = ChartMarker(requireContext(), R.layout.view_chart_marker, ChartMarker.MarkerType.MINUTES)
             setScaleEnabled(false)
             invalidate()
             notifyDataSetChanged()
