@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="th" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"ระยะเวลาของการพัก"</string>
     <string name="pref_disable_sound_and_vibration">"ปิดเสียงและการสั่นเตือน"</string>
-    <string name="pref_dnd">"Do not disturb mode"</string>
+    <string name="pref_dnd">"โหมดห้ามรบกวน"</string>
     <string name="pref_disable_wifi">"ปิดสัญญาณอินเตอร์เน็ต"</string>
     <string name="pref_fullscreen">"โหมดเต็มหน้าจอ"</string>
     <string name="pref_header_notifications">"การแจ้งเตือน"</string>
@@ -15,7 +15,7 @@
     <string name="pref_sessions_before_long_break">"จำนวนช่วงงานก่อนเริ่มต้นการพักระยะยาว"</string>
     <string name="pref_enable_long_break">"เปิดใช้งานการหยุดพักยาว"</string>
     <string name="pref_vibrate">"การสั่นเตือน"</string>
-    <string name="pref_vibration_type_none">None</string>
+    <string name="pref_vibration_type_none">ไม่มี</string>
     <string name="pref_vibration_type_soft">Soft</string>
     <string name="pref_vibration_type_strong">Strong</string>
     <string name="pref_vibration_type_sos">SOS</string>
@@ -27,11 +27,11 @@
     <string name="pref_priority_alarm_summary">"The notification sound behaves like an alarm"</string>
     <string name="pref_ringtone_insistent">"การแจ้งเตือนที่ยืนหยัด"</string>
     <string name="pref_ringtone_insistent_summary">"ทำซ้ำการแจ้งเตือนจนกว่าจะมีการยกเลิก"</string>
-    <string name="pref_ringtone_break">การแจ้งเตือนการแบ่งเสร็จสิ้น</string>
-    <string name="pref_auto_start_break">"Auto start break"</string>
+    <string name="pref_ringtone_break">เสียงแจ้งเตือนเมื่อการหยุดพักเสร็จสิ้น</string>
+    <string name="pref_auto_start_break">"เริ่มการหยุดพักอัตโนมัติ"</string>
     <string name="pref_auto_start_work">"เริ่มทำงานอัตโนมัติ"</string>
-    <string name="pref_auto_start_break_summary">เริ่มต้นพักหลังจากเซสชันการทำงานโดยไม่มีการโต้ตอบกับผู้ใช้</string>
-    <string name="pref_auto_start_work_summary">เริ่มเซสชันการทำงานหลังจากหยุดโดยไม่มีการโต้ตอบกับผู้ใช้</string>
+    <string name="pref_auto_start_break_summary">เริ่มหยุดพักหลังจากเซสชันการทำงานโดยไม่มีการโต้ตอบกับผู้ใช้</string>
+    <string name="pref_auto_start_work_summary">เริ่มเซสชันการทำงานหลังจากหยุดพักโดยไม่มีการโต้ตอบกับผู้ใช้</string>
     <string name="pref_disable_battery_optimization">การแจ้งเตือนที่ถูกต้อง</string>
     <string name="pref_flashing_notification">Flash the screen</string>
     <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
@@ -44,7 +44,7 @@
     <string name="about_no_email">"ไม่พบอีเมลของคุณ"</string>
     <string name="about_rate_this_app">ให้คะแนนแอพพลิเคชั่นนี้</string>
     <string name="about_version">เวอร์ชัน</string>
-    <string name="about_source_code">รหัสแหล่งที่มา</string>
+    <string name="about_source_code">ซอร์สโค้ด</string>
     <string name="about_app_intro">แอพแนะนำ</string>
     <string name="backup">การสำรองข้อมูล</string>
     <string name="backup_import_title">"นำเข้าข้อมูลสำรอง"</string>
@@ -107,8 +107,8 @@
     <string name="empty_state_no_items">ไม่มีรายการ</string>
     <string name="notification_channel_name">การแจ้งเตือน Goodtime</string>
     <string name="reminder_notification_channel_name">"Goodtime Reminder Notifications"</string>
-    <string name="reminder_title">"Daily reminder"</string>
-    <string name="reminder_text">"It's time to be productive!"</string>
+    <string name="reminder_title">"การแจ้งเตือนประจำวัน"</string>
+    <string name="reminder_text">"ถึงเวลาที่จะโปรดักทีฟแล้ว!"</string>
     <string name="settings">การตั้งค่า</string>
     <string name="state">สถานะ</string>
     <string name="feedback">ผลตอบรับ</string>
@@ -137,7 +137,7 @@
     <string name="update_pro_9">ธีมส์</string>
     <string name="update_pro_10">แยกเสียงการแจ้งเตือนสำหรับการทำงานและทำลาย</string>
     <string name="update_pro_11">การแจ้งเตือนที่ยืนหยัด</string>
-    <string name="update_pro_12">One time payment</string>
+    <string name="update_pro_12">การชำระเงินครั้งเดียว</string>
     <string name="update_pro_13">คุณสมบัติในอนาคตทั้งหมดฟรี</string>
     <string name="update_pro_message">Upgrade to support open-source and ad-free software and enjoy some awesome features!</string>
     <string name="Profile">ข้อมูลส่วนตัว</string>
@@ -156,12 +156,12 @@
     <string name="action_reset_counter">"สิ่งนี้จะรีเซ็ตเซสชันที่เสร็จสิ้นแล้วของวันนี้"</string>
     <string name="action_reset_counter_title">รีเซ็ตหรือไม่</string>
     <string name="tutorial_title">แนะนำการเล่นเบื้องต้น</string>
-    <string name="other_apps">Other apps</string>
-    <string name="unlabeled">unlabeled</string>
+    <string name="other_apps">แอพอื่นๆ</string>
+    <string name="unlabeled">ไม่มีป้ายชื่อ</string>
     <string name="pref_show_label">View current label</string>
     <string name="pref_show_label_summary">Shows the current label on the main screen</string>
     <string name="pref_one_minute_left_notification">Pre-notification</string>
-    <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
-    <string name="donate_message">Donate to support open-source and ad-free software!</string>
-    <string name="donate">Donate</string>
+    <string name="pref_one_minute_left_notification_summary">แจ้งเตือนหนึ่งนาทีก่อนเซสชั่นการทำงานสิ้นสุด</string>
+    <string name="donate_message">โดเนทเพื่อสนับสนุนซอฟต์แวร์โอเพนซอร์สที่ปราศจากโฆษณา</string>
+    <string name="donate">โดเนท</string>
 </resources>
