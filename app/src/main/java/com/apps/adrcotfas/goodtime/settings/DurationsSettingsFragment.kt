@@ -15,6 +15,7 @@ import com.apps.adrcotfas.goodtime.R
 import androidx.preference.Preference
 import com.apps.adrcotfas.goodtime.database.Profile
 import com.apps.adrcotfas.goodtime.util.Constants
+import com.apps.adrcotfas.goodtime.util.showOnce
 import java.util.ArrayList
 
 @AndroidEntryPoint
@@ -137,7 +138,7 @@ class DurationsSettingsFragment : PreferenceFragmentCompat(), ProfileChangeListe
         if (preference is ProperSeekBarPreference) {
             val dialog = ProperSeekBarPreferenceDialog.newInstance(preference.getKey(), this)
             dialog.setTargetFragment(this, 0)
-            dialog.show(parentFragmentManager, null)
+            dialog.showOnce(parentFragmentManager, "ProperSeekBar")
         } else if (preference.key == PreferenceHelper.SAVE_CUSTOM_PROFILE) {
             if (preferenceHelper.isPro()) {
                 val profile = if (prefEnableLongBreak.isChecked) Profile(
@@ -158,14 +159,14 @@ class DurationsSettingsFragment : PreferenceFragmentCompat(), ProfileChangeListe
                     prefProfile
                 )
                 dialog.setTargetFragment(this, 0)
-                dialog.show(parentFragmentManager, null)
+                dialog.showOnce(parentFragmentManager, "SaveCustomProfile")
             } else {
                 launchUpgradeDialog(requireActivity().supportFragmentManager)
             }
         } else if (preference.key == PreferenceHelper.PROFILE) {
             val dialog = ProfileSelectDialog.newInstance(PreferenceHelper.PROFILE)
             dialog.setTargetFragment(this, 0)
-            dialog.show(parentFragmentManager, null)
+            dialog.showOnce(parentFragmentManager, "ProfileSelect")
         } else {
             super.onDisplayPreferenceDialog(preference)
         }
