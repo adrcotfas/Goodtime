@@ -121,7 +121,7 @@ dependencies {
     implementation 'androidx.preference:preference-ktx:1.1.1'
 
     // Color picker for the labels
-    implementation 'com.takisoft.preferencex:preferencex-colorpicker:1.1.0'
+    implementation 'com.takisoft.colorpicker:colorpicker:1.0.0'
 
     // EventBus
     implementation 'org.greenrobot:eventbus:3.2.0'
