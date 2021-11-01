@@ -856,7 +856,6 @@ class StatisticsFragment : Fragment() {
         data.setValueTextSize(10f)
         data.barWidth = 0.4f
         chartProductiveHours.apply {
-            xAxis.valueFormatter = null
             this.data = data
             xAxis.valueFormatter =
                 ProductiveTimeXAxisFormatter(type, DateFormat.is24HourFormat(requireContext()))
