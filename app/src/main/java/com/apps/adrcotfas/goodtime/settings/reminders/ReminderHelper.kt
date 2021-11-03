@@ -55,7 +55,11 @@ class ReminderHelper@Inject constructor(
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
+        // some weird crash in the pre-report required this
+        if (key == null) {
+            return
+        }
         if (key.contains(PreferenceHelper.REMINDER_DAYS)) {
             Log.d(TAG, "onSharedPreferenceChanged: $key")
             val idx = key.last().toInt() - '0'.toInt()
