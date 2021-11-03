@@ -786,6 +786,7 @@ class StatisticsFragment : Fragment() {
                 ChartMarker.MarkerType.PERCENTAGE
             )
             setScaleEnabled(false)
+            //TODO: do we need these here?
             invalidate()
             notifyDataSetChanged()
         }
@@ -822,7 +823,7 @@ class StatisticsFragment : Fragment() {
             }
             for (i in sessionsPerProductiveTimeType.indices) {
                 values[i] =
-                    BarEntry(i.toFloat(), sessionsPerProductiveTimeType[i].toFloat() / totalTime)
+                    BarEntry(i.toFloat(), if (totalTime == 0L) 0f else sessionsPerProductiveTimeType[i].toFloat() / totalTime)
             }
 
         } else if (productiveTimeType == SpinnerStatsType.NR_OF_SESSIONS) {
