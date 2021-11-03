@@ -385,27 +385,36 @@ class TimerService : LifecycleService() {
         if (sessionType !== SessionType.WORK) {
             return
         }
-        val label = currentSessionManager.currentSession.label.value ?: ""
+
+        val labelVal = currentSessionManager.currentSession.label.value
+        val labelValProper = if (labelVal == null || labelVal == "" || labelVal == "unlabeled") null else labelVal
+
         val endTime = System.currentTimeMillis()
         Log.d(TAG, "finalizeSession / elapsed minutes: $minutes")
         if (minutes > 0) {
-            try {
-                Log.d(TAG, "finalizeSession, saving session finished at" + endTime.toLocalTime().toFormattedTime())
-                val session = Session(0, endTime, minutes, label)
-                addSession(session)
-            } catch (e: Exception) {
-                // the label was deleted in the meantime so set it to null and save the unlabeled session
-                currentSessionManager.currentSession.setLabel("")
-                val session = Session(0, endTime, minutes, null)
-                addSession(session)
-            }
+            Log.d(
+                TAG,
+                "finalizeSession, saving session finished at" + endTime.toLocalTime()
+                    .toFormattedTime()
+            )
+            val session = Session(0, endTime, minutes, labelValProper)
+            addSession(session)
         }
     }
 
     private fun addSession(session: Session) {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                getDatabase(applicationContext).sessionModel().addSession(session)
+                try {
+                    getDatabase(applicationContext).sessionModel().addSession(session)
+                } catch (e: Exception) {
+                    // the label was deleted in the meantime so set it to null and save the unlabeled session
+                    withContext(Dispatchers.Main) {
+                        currentSessionManager.currentSession.setLabel("")
+                    }
+                    val newSession = session.apply { label = null }
+                    getDatabase(applicationContext).sessionModel().addSession(newSession)
+                }
             }
         }
     }
