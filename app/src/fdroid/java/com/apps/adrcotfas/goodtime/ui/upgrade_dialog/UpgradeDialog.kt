@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.databinding.DialogUpgradeBinding
+import com.apps.adrcotfas.goodtime.util.showOnce
 
 class UpgradeDialog : DialogFragment() {
 
