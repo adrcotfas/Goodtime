@@ -111,7 +111,7 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
                     this,
                     REMINDER_REQUEST_CODE,
                     intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent.FLAG_IMMUTABLE);
         }
         return pendingIntent;
     }
@@ -145,7 +145,7 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
 
     public static void notifyReminder(Context context) {
         Intent openMainIntent = new Intent(context, TimerActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, openMainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, openMainIntent, PendingIntent.FLAG_IMMUTABLE);
 
         final NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, GOODTIME_REMINDER_NOTIFICATION)
