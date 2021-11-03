@@ -19,6 +19,7 @@ import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -37,6 +38,7 @@ import com.apps.adrcotfas.goodtime.Util.UpgradeDialogHelper;
 import com.apps.adrcotfas.goodtime.Util.StringUtils;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
 import com.apps.adrcotfas.goodtime.Util.TimePickerDialogFixedNougatSpinner;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.takisoft.preferencex.PreferenceFragmentCompat;
 import com.takisoft.preferencex.RingtonePreferenceDialogFragmentCompat;
 import com.takisoft.preferencex.RingtonePreference;
@@ -56,6 +58,11 @@ import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.DISABLE_SOUN
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.DND_MODE;
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.VIBRATION_TYPE;
 import static com.apps.adrcotfas.goodtime.Util.BatteryUtils.isIgnoringBatteryOptimizations;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import ca.antonious.materialdaypicker.MaterialDayPicker;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements ActivityCompat.OnRequestPermissionsResultCallback, TimePickerDialog.OnTimeSetListener {
 
@@ -82,23 +89,42 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
             return true;
         });
         mPrefReminder.setOnPreferenceChangeListener((preference, newValue) -> {
-            if ((boolean)newValue) {
+            if ((boolean) newValue) {
                 final long millis = PreferenceHelper.getTimeOfReminder();
                 final DateTime time = new DateTime(millis);
 
-                TimePickerDialogFixedNougatSpinner d = new TimePickerDialogFixedNougatSpinner(
-                        requireActivity(),
-                        (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                                ? R.style.DialogTheme : AlertDialog.THEME_HOLO_DARK,
-                        SettingsFragment.this,
-                        time.getHourOfDay(),
-                        time.getMinuteOfHour(),
-                        DateFormat.is24HourFormat(getContext()));
-                d.show();
-                return true;
+                if (Build.VERSION.SDK_INT < 8) {
+                    showLegacyTimePicker(time);
+                    return true;
+                }
+
+                MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(requireActivity());
+                LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+                final View timeAndWeekdayPickerView = layoutInflater.inflate(R.layout.time_and_weekday_picker, null);
+                TimePicker timePicker = timeAndWeekdayPickerView.findViewById(R.id.dialog_time_picker);
+                alertDialogBuilder
+                        .setView(timeAndWeekdayPickerView)
+                        .setNegativeButton("Close", (dialog, which) -> dialog.dismiss())
+                        .setPositiveButton("Set Reminder", (dialog, which) -> {
+                            MaterialDayPicker materialDayPicker = timeAndWeekdayPickerView.findViewById(R.id.day_picker);
+                            onTimeAndWeekdaySet(timePicker.getHour(),timePicker.getMinute(),materialDayPicker.getSelectedDays());
+                        })
+                        .show();
             }
             return false;
         });
+    }
+
+    private void showLegacyTimePicker(DateTime time) {
+        TimePickerDialogFixedNougatSpinner d = new TimePickerDialogFixedNougatSpinner(
+                requireActivity(),
+                (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                        ? R.style.DialogTheme : AlertDialog.THEME_HOLO_DARK,
+                SettingsFragment.this,
+                time.getHourOfDay(),
+                time.getMinuteOfHour(),
+                DateFormat.is24HourFormat(getContext()));
+        d.show();
     }
 
     @Override
@@ -153,8 +179,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
                 if (preference.getKey().equals(PreferenceHelper.RINGTONE_BREAK_FINISHED)
                         && !PreferenceHelper.isPro()) {
                     UpgradeDialogHelper.launchUpgradeDialog(requireActivity().getSupportFragmentManager());
-                }
-                else {
+                } else {
                     dialog.show(getParentFragmentManager(), null);
                 }
             } catch (NumberFormatException e) {
@@ -181,7 +206,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         CheckBoxPreference autoWork = findPreference(PreferenceHelper.AUTO_START_WORK);
         autoWork.setOnPreferenceChangeListener((preference, newValue) -> {
             final CheckBoxPreference pref = findPreference(PreferenceHelper.INSISTENT_RINGTONE);
-            if ((boolean)newValue) {
+            if ((boolean) newValue) {
                 pref.setChecked(false);
             }
             return true;
@@ -190,7 +215,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         CheckBoxPreference autoBreak = findPreference(PreferenceHelper.AUTO_START_BREAK);
         autoBreak.setOnPreferenceChangeListener((preference, newValue) -> {
             final CheckBoxPreference pref = findPreference(PreferenceHelper.INSISTENT_RINGTONE);
-            if ((boolean)newValue) {
+            if ((boolean) newValue) {
                 pref.setChecked(false);
             }
             return true;
@@ -205,7 +230,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         insistentRingPref.setOnPreferenceChangeListener(PreferenceHelper.isPro() ? (preference, newValue) -> {
             final CheckBoxPreference p1 = findPreference(PreferenceHelper.AUTO_START_BREAK);
             final CheckBoxPreference p2 = findPreference(PreferenceHelper.AUTO_START_WORK);
-            if ((boolean)newValue) {
+            if ((boolean) newValue) {
                 p1.setChecked(false);
                 p2.setChecked(false);
             }
@@ -262,7 +287,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
             return true;
         });
         prefAmoled.setOnPreferenceChangeListener(PreferenceHelper.isPro() ? (preference, newValue) -> {
-            ThemeHelper.setTheme((SettingsActivity)getActivity());
+            ThemeHelper.setTheme((SettingsActivity) getActivity());
             getActivity().recreate();
 
             return true;
@@ -279,7 +304,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
 
     private void setupDisableSoundCheckBox() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isNotificationPolicyAccessDenied()) {
-            updateDisableSoundCheckBoxSummary(mPrefDisableSoundCheckbox,false);
+            updateDisableSoundCheckBoxSummary(mPrefDisableSoundCheckbox, false);
             mPrefDisableSoundCheckbox.setChecked(false);
             mPrefDisableSoundCheckbox.setOnPreferenceClickListener(
                     preference -> {
@@ -366,6 +391,38 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
         PreferenceHelper.setTimeOfReminder(millis);
         mPrefReminder.setSummaryOn(StringUtils.formatTime(millis));
         mPrefReminder.setChecked(true);
+    }
+
+
+    public void onTimeAndWeekdaySet(int hourOfDay, int minute, List<MaterialDayPicker.Weekday> selectedWeekdays) {
+        final long millis = calculateNextAlertInMillis(hourOfDay, minute, selectedWeekdays);
+        PreferenceHelper.setTimeOfReminder(millis);
+        mPrefReminder.setSummaryOn(StringUtils.formatDateAndTime(millis));
+        mPrefReminder.setChecked(true);
+    }
+
+    private long calculateNextAlertInMillis(int hourOfDay, int minute, List<MaterialDayPicker.Weekday> selectedWeekdays) {
+        DateTime nowTime = new LocalTime().toDateTimeToday();
+        DateTime nextReminderTime = new LocalTime(hourOfDay, minute).toDateTimeToday();
+
+        if (nowTime.isAfter(nextReminderTime)) {
+            nextReminderTime = nextReminderTime.plusDays(1);
+        }
+
+        if (selectedWeekdays.isEmpty()) {
+            return nextReminderTime.getMillis();
+        }
+
+        List <Integer> selectedWeekdaysAsNumber = new ArrayList<>();
+        for (MaterialDayPicker.Weekday selectedWeekday : selectedWeekdays) {
+            selectedWeekdaysAsNumber.add(selectedWeekday.ordinal());
+        }
+
+        while (!selectedWeekdaysAsNumber.contains(nextReminderTime.getDayOfWeek())) {
+            nextReminderTime = nextReminderTime.plusDays(1);
+        }
+
+        return nextReminderTime.getMillis();
     }
 }
 

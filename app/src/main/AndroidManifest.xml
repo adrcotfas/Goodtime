@@ -85,6 +85,12 @@
             android:exported="false">
         </activity>
 
+        <activity
+            android:name="com.apps.adrcotfas.goodtime.TimeAndWeekdayPicker"
+            android:exported="false"
+
+            />
+
         <service
             android:name="com.apps.adrcotfas.goodtime.BL.TimerService"
             android:enabled="true"
