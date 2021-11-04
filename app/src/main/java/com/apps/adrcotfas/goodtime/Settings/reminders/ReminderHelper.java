@@ -28,6 +28,8 @@ import org.joda.time.LocalTime;
 
 import static android.app.AlarmManager.RTC_WAKEUP;
 
+import java.util.List;
+
 public class ReminderHelper extends ContextWrapper implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "ReminderHelper";
@@ -124,20 +126,23 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
     public void scheduleNotification() {
         if (PreferenceHelper.isReminderEnabled()) {
 
-            long calendarMillis = PreferenceHelper.getTimeOfReminder();
-            Log.d(TAG, "time of reminder: " + StringUtils.formatDateAndTime(calendarMillis));
+            long currentUpcomingReminderMillis = PreferenceHelper.getTimeOfReminder();
+            List<Integer> weekdaysOfReminder = PreferenceHelper.getWeekdaysOfReminder();
+            Log.d(TAG, "time of reminder: " + StringUtils.formatDateAndTime(currentUpcomingReminderMillis));
 
-            final DateTime now = new DateTime();
-            Log.d(TAG, "now: %s" + StringUtils.formatDateAndTime(now.getMillis()));
-            if (now.isAfter(calendarMillis)) {
-                calendarMillis  = new LocalTime(calendarMillis).toDateTimeToday().plusDays(1).getMillis();
-            }
+            DateTime reminderTime = new DateTime(currentUpcomingReminderMillis);
 
-            Log.d(TAG, "scheduleNotification at: " + StringUtils.formatDateAndTime(calendarMillis));
+            long nextReminderMillis = UpcomingReminder.Companion.calculateNextAlertInMillis(
+                    reminderTime.getHourOfDay(),
+                    reminderTime.getMinuteOfHour(),
+                    weekdaysOfReminder
+            );
+
+            Log.d(TAG, "scheduleNotification at: " + StringUtils.formatDateAndTime(nextReminderMillis));
 
             getAlarmManager().setInexactRepeating(
                     RTC_WAKEUP,
-                    calendarMillis,
+                    nextReminderMillis,
                     AlarmManager.INTERVAL_DAY,
                     getReminderPendingIntent());
         }

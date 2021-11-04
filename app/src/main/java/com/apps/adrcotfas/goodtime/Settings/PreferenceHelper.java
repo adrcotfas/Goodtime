@@ -22,7 +22,12 @@ import com.apps.adrcotfas.goodtime.R;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import org.joda.time.LocalTime;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
@@ -80,6 +85,7 @@ public class PreferenceHelper {
 
     public final static String ENABLE_REMINDER = "pref_enable_reminder";
     public final static String REMINDER_TIME_VALUE = "pref_reminder_time_value";
+    public final static String REMINDER_WEEKDAYS_VALUE = "pref_reminder_weekdays_value";
 
     public static void migratePreferences() {
         int version = getDefaultSharedPreferences(GoodtimeApplication.getInstance())
@@ -409,5 +415,27 @@ public class PreferenceHelper {
     public static void setTimeOfReminder(long time) {
         getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
                 .putLong(REMINDER_TIME_VALUE, time).apply();
+    }
+
+    public static void setWeekdaysOfReminder(List<Integer> selectedWeekdaysAsNumbers) {
+        String weekdays = new JSONArray(selectedWeekdaysAsNumbers).toString();
+        getDefaultSharedPreferences(GoodtimeApplication.getInstance()).edit()
+                .putString(REMINDER_WEEKDAYS_VALUE, weekdays).apply();
+    }
+
+    public static List<Integer> getWeekdaysOfReminder() {
+        String weekdaysString = getDefaultSharedPreferences(GoodtimeApplication.getInstance())
+                .getString(REMINDER_WEEKDAYS_VALUE, "[]");
+        List<Integer> selectedWeekdays = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(weekdaysString);
+            for (int index = 0; index< jsonArray.length();index++){
+                selectedWeekdays.add(jsonArray.getInt(index));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return selectedWeekdays;
     }
 }

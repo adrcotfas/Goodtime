@@ -19,7 +19,6 @@ import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -34,6 +33,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Settings.reminders.UpcomingReminder;
 import com.apps.adrcotfas.goodtime.Util.UpgradeDialogHelper;
 import com.apps.adrcotfas.goodtime.Util.StringUtils;
 import com.apps.adrcotfas.goodtime.Util.ThemeHelper;
@@ -57,6 +57,7 @@ import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.DISABLE_SOUN
 
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.DND_MODE;
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.VIBRATION_TYPE;
+import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.getWeekdaysOfReminder;
 import static com.apps.adrcotfas.goodtime.Util.BatteryUtils.isIgnoringBatteryOptimizations;
 
 import java.util.ArrayList;
@@ -395,34 +396,21 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
 
 
     public void onTimeAndWeekdaySet(int hourOfDay, int minute, List<MaterialDayPicker.Weekday> selectedWeekdays) {
-        final long millis = calculateNextAlertInMillis(hourOfDay, minute, selectedWeekdays);
+        List<Integer> selectedWeekdaysAsNumbers = getWeekdaysAsNumbers(selectedWeekdays);
+        final long millis = UpcomingReminder.Companion.calculateNextAlertInMillis(hourOfDay, minute, selectedWeekdaysAsNumbers);
         PreferenceHelper.setTimeOfReminder(millis);
+        PreferenceHelper.setWeekdaysOfReminder(selectedWeekdaysAsNumbers);
         mPrefReminder.setSummaryOn(StringUtils.formatDateAndTime(millis));
         mPrefReminder.setChecked(true);
     }
 
-    private long calculateNextAlertInMillis(int hourOfDay, int minute, List<MaterialDayPicker.Weekday> selectedWeekdays) {
-        DateTime nowTime = new LocalTime().toDateTimeToday();
-        DateTime nextReminderTime = new LocalTime(hourOfDay, minute).toDateTimeToday();
-
-        if (nowTime.isAfter(nextReminderTime)) {
-            nextReminderTime = nextReminderTime.plusDays(1);
-        }
-
-        if (selectedWeekdays.isEmpty()) {
-            return nextReminderTime.getMillis();
-        }
-
+    @NonNull
+    private List<Integer> getWeekdaysAsNumbers(List<MaterialDayPicker.Weekday> selectedWeekdays) {
         List <Integer> selectedWeekdaysAsNumber = new ArrayList<>();
         for (MaterialDayPicker.Weekday selectedWeekday : selectedWeekdays) {
             selectedWeekdaysAsNumber.add(selectedWeekday.ordinal());
         }
-
-        while (!selectedWeekdaysAsNumber.contains(nextReminderTime.getDayOfWeek())) {
-            nextReminderTime = nextReminderTime.plusDays(1);
-        }
-
-        return nextReminderTime.getMillis();
+        return selectedWeekdaysAsNumber;
     }
 }
 
