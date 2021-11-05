@@ -140,10 +140,9 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
 
             Log.d(TAG, "scheduleNotification at: " + StringUtils.formatDateAndTime(nextReminderMillis));
 
-            getAlarmManager().setInexactRepeating(
+            getAlarmManager().set(
                     RTC_WAKEUP,
                     nextReminderMillis,
-                    AlarmManager.INTERVAL_DAY,
                     getReminderPendingIntent());
         }
     }

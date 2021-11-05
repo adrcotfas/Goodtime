@@ -111,6 +111,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
                             onTimeAndWeekdaySet(timePicker.getHour(),timePicker.getMinute(),materialDayPicker.getSelectedDays());
                         })
                         .show();
+                return true;
             }
             return false;
         });
