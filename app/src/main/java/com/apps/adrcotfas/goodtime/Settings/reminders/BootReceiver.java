@@ -19,7 +19,7 @@ public class BootReceiver extends BroadcastReceiver {
         try {
             if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
                 Log.d(TAG, "onBootComplete");
-                GoodtimeApplication.getInstance().getReminderHelper().scheduleNotification();
+                GoodtimeApplication.getInstance().getReminderHelper().scheduleNotification(context);
             }
         }
         catch (RuntimeException e) {

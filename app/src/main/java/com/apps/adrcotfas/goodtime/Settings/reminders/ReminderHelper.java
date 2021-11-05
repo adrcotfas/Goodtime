@@ -50,7 +50,7 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
         }
         if (PreferenceHelper.isReminderEnabled()) {
             enableBootReceiver();
-            scheduleNotification();
+            scheduleNotification(context);
         }
     }
 
@@ -72,10 +72,10 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
             Log.d(TAG, "onSharedPreferenceChanged");
             if (PreferenceHelper.isReminderEnabled()) {
                 enableBootReceiver();
-                scheduleNotification();
+                scheduleNotification(getApplicationContext());
             } else {
                 disableBootReceiver();
-                unscheduledNotification();
+                unscheduledNotification(getApplicationContext());
             }
         }
     }
@@ -105,12 +105,12 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
         return alarmManager;
     }
 
-    private PendingIntent getReminderPendingIntent() {
+    private static PendingIntent getReminderPendingIntent(Context context) {
         if (pendingIntent == null) {
-            Intent intent = new Intent(this, ReminderReceiver.class);
+            Intent intent = new Intent(context, ReminderReceiver.class);
             intent.setAction(REMINDER_ACTION);
             pendingIntent = PendingIntent.getBroadcast(
-                    this,
+                    context,
                     REMINDER_REQUEST_CODE,
                     intent,
                     PendingIntent.FLAG_IMMUTABLE);
@@ -118,12 +118,12 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
         return pendingIntent;
     }
 
-    private void unscheduledNotification() {
+    private void unscheduledNotification(Context context) {
         Log.d(TAG, "unscheduledNotification");
-        getAlarmManager().cancel(getReminderPendingIntent());
+        getAlarmManager().cancel(getReminderPendingIntent(context));
     }
 
-    public void scheduleNotification() {
+    public static void scheduleNotification(Context context) {
         if (PreferenceHelper.isReminderEnabled()) {
 
             long currentUpcomingReminderMillis = PreferenceHelper.getTimeOfReminder();
@@ -140,10 +140,11 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
 
             Log.d(TAG, "scheduleNotification at: " + StringUtils.formatDateAndTime(nextReminderMillis));
 
-            getAlarmManager().set(
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+            alarmManager.set(
                     RTC_WAKEUP,
                     nextReminderMillis,
-                    getReminderPendingIntent());
+                    getReminderPendingIntent(context));
         }
     }
 

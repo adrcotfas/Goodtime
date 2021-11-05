@@ -12,5 +12,6 @@ public class ReminderReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive");
         ReminderHelper.notifyReminder(context);
+        ReminderHelper.scheduleNotification(context);
     }
 }
