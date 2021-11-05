@@ -57,7 +57,6 @@ import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.DISABLE_SOUN
 
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.DND_MODE;
 import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.VIBRATION_TYPE;
-import static com.apps.adrcotfas.goodtime.Settings.PreferenceHelper.getWeekdaysOfReminder;
 import static com.apps.adrcotfas.goodtime.Util.BatteryUtils.isIgnoringBatteryOptimizations;
 
 import java.util.ArrayList;
@@ -103,11 +102,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Activi
                 LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
                 final View timeAndWeekdayPickerView = layoutInflater.inflate(R.layout.time_and_weekday_picker, null);
                 TimePicker timePicker = timeAndWeekdayPickerView.findViewById(R.id.dialog_time_picker);
+                MaterialDayPicker materialDayPicker = timeAndWeekdayPickerView.findViewById(R.id.day_picker);
+                materialDayPicker.setSelectedDays(PreferenceHelper.getWeekdaysOfReminder());
                 alertDialogBuilder
                         .setView(timeAndWeekdayPickerView)
                         .setNegativeButton("Close", (dialog, which) -> dialog.dismiss())
                         .setPositiveButton("Set Reminder", (dialog, which) -> {
-                            MaterialDayPicker materialDayPicker = timeAndWeekdayPickerView.findViewById(R.id.day_picker);
+
                             onTimeAndWeekdaySet(timePicker.getHour(),timePicker.getMinute(),materialDayPicker.getSelectedDays());
                         })
                         .show();

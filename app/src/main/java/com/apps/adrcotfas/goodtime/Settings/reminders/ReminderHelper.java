@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 
@@ -23,12 +24,13 @@ import com.apps.adrcotfas.goodtime.Settings.PreferenceHelper;
 import com.apps.adrcotfas.goodtime.Util.StringUtils;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalTime;
-
 
 import static android.app.AlarmManager.RTC_WAKEUP;
 
+import java.util.HashMap;
 import java.util.List;
+
+import ca.antonious.materialdaypicker.MaterialDayPicker;
 
 public class ReminderHelper extends ContextWrapper implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -52,6 +54,19 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
             enableBootReceiver();
             scheduleNotification(context);
         }
+    }
+
+    @NonNull
+    public static HashMap<Integer, MaterialDayPicker.Weekday> createWeekdayNumberMapping() {
+        HashMap<Integer, MaterialDayPicker.Weekday> weekdayNumberMapping = new HashMap<>();
+        weekdayNumberMapping.put(0, MaterialDayPicker.Weekday.SUNDAY);
+        weekdayNumberMapping.put(1, MaterialDayPicker.Weekday.MONDAY);
+        weekdayNumberMapping.put(2, MaterialDayPicker.Weekday.TUESDAY);
+        weekdayNumberMapping.put(3, MaterialDayPicker.Weekday.WEDNESDAY);
+        weekdayNumberMapping.put(4, MaterialDayPicker.Weekday.THURSDAY);
+        weekdayNumberMapping.put(5, MaterialDayPicker.Weekday.FRIDAY);
+        weekdayNumberMapping.put(6, MaterialDayPicker.Weekday.SATURDAY);
+        return weekdayNumberMapping;
     }
 
     @TargetApi(Build.VERSION_CODES.O)
@@ -127,7 +142,7 @@ public class ReminderHelper extends ContextWrapper implements SharedPreferences.
         if (PreferenceHelper.isReminderEnabled()) {
 
             long currentUpcomingReminderMillis = PreferenceHelper.getTimeOfReminder();
-            List<Integer> weekdaysOfReminder = PreferenceHelper.getWeekdaysOfReminder();
+            List<Integer> weekdaysOfReminder = PreferenceHelper.getWeekdaysOfReminderAsNumber();
             Log.d(TAG, "time of reminder: " + StringUtils.formatDateAndTime(currentUpcomingReminderMillis));
 
             DateTime reminderTime = new DateTime(currentUpcomingReminderMillis);

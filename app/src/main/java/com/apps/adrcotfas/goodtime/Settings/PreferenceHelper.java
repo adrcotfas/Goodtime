@@ -19,18 +19,21 @@ import com.apps.adrcotfas.goodtime.BuildConfig;
 import com.apps.adrcotfas.goodtime.Label;
 import com.apps.adrcotfas.goodtime.Profile;
 import com.apps.adrcotfas.goodtime.R;
+import com.apps.adrcotfas.goodtime.Settings.reminders.ReminderHelper;
 import com.apps.adrcotfas.goodtime.Util.Constants;
 
 import org.joda.time.LocalTime;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+
+import ca.antonious.materialdaypicker.MaterialDayPicker;
 
 public class PreferenceHelper {
 
@@ -423,7 +426,7 @@ public class PreferenceHelper {
                 .putString(REMINDER_WEEKDAYS_VALUE, weekdays).apply();
     }
 
-    public static List<Integer> getWeekdaysOfReminder() {
+    public static List<Integer> getWeekdaysOfReminderAsNumber() {
         String weekdaysString = getDefaultSharedPreferences(GoodtimeApplication.getInstance())
                 .getString(REMINDER_WEEKDAYS_VALUE, "[]");
         List<Integer> selectedWeekdays = new ArrayList<>();
@@ -438,4 +441,15 @@ public class PreferenceHelper {
 
         return selectedWeekdays;
     }
+
+    public static List<MaterialDayPicker.Weekday> getWeekdaysOfReminder() {
+        List<MaterialDayPicker.Weekday> weekdays = new ArrayList<>();
+        List<Integer> weekdaysAsNumbers = getWeekdaysOfReminderAsNumber();
+        HashMap<Integer, MaterialDayPicker.Weekday> weekdayNumberMapping = ReminderHelper.createWeekdayNumberMapping();
+        for (int index = 0; index < weekdaysAsNumbers.size(); index++)  {
+            weekdays.add(weekdayNumberMapping.get(weekdaysAsNumbers.get(index)));
+        }
+        return weekdays;
+    }
+
 }
