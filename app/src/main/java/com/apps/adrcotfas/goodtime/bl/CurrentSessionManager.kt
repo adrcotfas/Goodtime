@@ -95,7 +95,9 @@ class CurrentSessionManager @Inject constructor(@ApplicationContext val context:
 
     fun stopTimer() {
         cancelAlarm()
-        timer.cancel()
+        if (this::timer.isInitialized) {
+            timer.cancel()
+        }
         currentSession.setTimerState(TimerState.INACTIVE)
         currentSession.setSessionType(SessionType.INVALID)
     }
