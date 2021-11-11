@@ -381,9 +381,7 @@ class StatisticsFragment : Fragment() {
 
                 // Adjust the finished sessions according to the configured workday start
                 sessions.forEach {
-                    it.timestamp -= TimeUnit.SECONDS.toMillis(
-                        preferenceHelper.getStartOfDay().toLong()
-                    )
+                    it.timestamp -= preferenceHelper.getStartOfDayDeltaMillis()
                 }
 
                 refreshStats(sessions)
@@ -810,9 +808,7 @@ class StatisticsFragment : Fragment() {
             for (s in sessions) {
                 // When showing hours, re-adjust the displayed values to the real values
                 if (type == ProductiveTimeType.HOUR_OF_DAY) {
-                    s.timestamp += TimeUnit.SECONDS.toMillis(
-                        preferenceHelper.getStartOfDay().toLong()
-                    )
+                    s.timestamp += preferenceHelper.getStartOfDayDeltaMillis()
                 }
                 totalTime += s.duration
                 val crtIndex =
@@ -830,9 +826,7 @@ class StatisticsFragment : Fragment() {
             for (s in sessions) {
                 // When showing hours, re-adjust the displayed values to the real values
                 if (type == ProductiveTimeType.HOUR_OF_DAY) {
-                    s.timestamp -= TimeUnit.SECONDS.toMillis(
-                        preferenceHelper.getStartOfDay().toLong()
-                    )
+                    s.timestamp -= preferenceHelper.getStartOfDayDeltaMillis()
                 }
                 val crtIndex =
                     if (type == ProductiveTimeType.HOUR_OF_DAY) s.timestamp.toLocalTime().hour

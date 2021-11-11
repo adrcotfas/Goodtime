@@ -337,4 +337,5 @@ class PreferenceHelper(val context: Context) {
         }
         return result
     }
+    fun getStartOfDayDeltaMillis(): Long = TimeUnit.SECONDS.toMillis(getStartOfDay().toLong())
 }

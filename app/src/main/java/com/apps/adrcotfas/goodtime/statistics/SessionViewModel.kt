@@ -76,12 +76,9 @@ class SessionViewModel @Inject constructor(
         }
     }
 
-    fun deleteSessionsFinishedToday() {
+    fun deleteSessionsFinishedAfter(timestamp: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            dao.deleteSessionsAfter(
-                LocalDate.now().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()
-                    .toEpochMilli()
-            )
+            dao.deleteSessionsAfter(timestamp)
         }
     }
 

@@ -388,7 +388,8 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
                     .setTitle(R.string.action_reset_counter_title)
                     .setMessage(R.string.action_reset_counter)
                     .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
-                        sessionViewModel.deleteSessionsFinishedToday()
+                        sessionViewModel.deleteSessionsFinishedAfter(startOfTodayMillis() +
+                            preferenceHelper.getStartOfDayDeltaMillis())
                         preferenceHelper.resetCurrentStreak()
                     }
                     .setNegativeButton(android.R.string.cancel) { _: DialogInterface?, _: Int -> }
@@ -479,13 +480,10 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
             sessionsCounterText = mSessionsCounter.findViewById(R.id.view_alert_count_textview)
             mSessionsCounter.setOnClickListener { onOptionsItemSelected(alertMenuItem) }
 
+            val startOfDayDeltaMillis = preferenceHelper.getStartOfDayDeltaMillis()
             sessionViewModel.getAllSessionsUnarchived(
-                startOfTodayMillis() + TimeUnit.SECONDS.toMillis(
-                    preferenceHelper.getStartOfDay().toLong()
-                ),
-                startOfTomorrowMillis() + TimeUnit.SECONDS.toMillis(
-                    preferenceHelper.getStartOfDay().toLong()
-                )
+                startOfTodayMillis() + startOfDayDeltaMillis,
+                startOfTomorrowMillis() + startOfDayDeltaMillis
             ).observe(this, { sessions: List<Session> ->
                 if (sessionsCounterText != null) {
                     sessionsCounterText!!.text = sessions.count().toString()
