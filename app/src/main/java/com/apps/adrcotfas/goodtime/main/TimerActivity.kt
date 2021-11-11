@@ -280,7 +280,8 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
                     lifecycleScope.launch {
                         delay(300)
                         timeView.startAnimation(
-                            AnimationUtils.loadAnimation(applicationContext, R.anim.blink))
+                            AnimationUtils.loadAnimation(applicationContext, R.anim.blink)
+                        )
                     }
                 }
             }
@@ -429,7 +430,8 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
                     lifecycleScope.launch {
                         delay(300)
                         timeView.startAnimation(
-                            AnimationUtils.loadAnimation(applicationContext, R.anim.blink))
+                            AnimationUtils.loadAnimation(applicationContext, R.anim.blink)
+                        )
                     }
                 }
                 else -> {
@@ -476,7 +478,15 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
             val mSessionsCounter = alertMenuItem.actionView as FrameLayout
             sessionsCounterText = mSessionsCounter.findViewById(R.id.view_alert_count_textview)
             mSessionsCounter.setOnClickListener { onOptionsItemSelected(alertMenuItem) }
-            sessionViewModel.allSessionsUnarchivedToday.observe(this, { sessions: List<Session> ->
+
+            sessionViewModel.getAllSessionsUnarchived(
+                startOfTodayMillis() + TimeUnit.SECONDS.toMillis(
+                    preferenceHelper.getStartOfDay().toLong()
+                ),
+                startOfTomorrowMillis() + TimeUnit.SECONDS.toMillis(
+                    preferenceHelper.getStartOfDay().toLong()
+                )
+            ).observe(this, { sessions: List<Session> ->
                 if (sessionsCounterText != null) {
                     sessionsCounterText!!.text = sessions.count().toString()
                 }

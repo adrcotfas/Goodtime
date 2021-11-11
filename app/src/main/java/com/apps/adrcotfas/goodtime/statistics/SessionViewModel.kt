@@ -41,8 +41,8 @@ class SessionViewModel @Inject constructor(
     val allSessionsUnarchived: LiveData<List<Session>>
         get() = dao.allSessionsUnarchived
 
-    val allSessionsUnarchivedToday: LiveData<List<Session>>
-        get() = dao.getAllSessionsUnarchivedToday()
+    fun getAllSessionsUnarchived(startMillis: Long, endMillis: Long): LiveData<List<Session>>
+        = dao.getAllSessionsUnarchived(startMillis, endMillis)
 
     fun getSession(id: Long): LiveData<Session> {
         return dao.getSession(id)
