@@ -35,6 +35,7 @@ import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.databinding.StatisticsActivityMainBinding
 import com.apps.adrcotfas.goodtime.statistics.all_sessions.AddEditEntryDialog
 import com.apps.adrcotfas.goodtime.statistics.all_sessions.AllSessionsFragment
+import com.apps.adrcotfas.goodtime.util.showOnce
 
 @AndroidEntryPoint
 class StatisticsActivity : AppCompatActivity(), OnLabelSelectedListener {
@@ -111,7 +112,7 @@ class StatisticsActivity : AppCompatActivity(), OnLabelSelectedListener {
         when (item.itemId) {
             R.id.action_add -> if (preferenceHelper.isPro()) {
                 val newFragment = AddEditEntryDialog.newInstance(null)
-                newFragment.show(fragmentManager, DIALOG_ADD_ENTRY_TAG)
+                newFragment.showOnce(fragmentManager, DIALOG_ADD_ENTRY_TAG)
             } else {
                 launchUpgradeDialog(supportFragmentManager)
             }
@@ -120,7 +121,7 @@ class StatisticsActivity : AppCompatActivity(), OnLabelSelectedListener {
                 labelsViewModel.crtExtendedLabel.value!!.title,
                 true
             )
-                .show(fragmentManager, DIALOG_SELECT_LABEL_TAG)
+                .showOnce(fragmentManager, DIALOG_SELECT_LABEL_TAG)
             R.id.action_view_list -> toggleStatisticsView()
         }
         return super.onOptionsItemSelected(item)

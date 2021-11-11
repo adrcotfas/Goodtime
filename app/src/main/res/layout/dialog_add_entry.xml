@@ -1,11 +1,12 @@
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:orientation="vertical"
         app:behavior_hideable="true"
         app:behavior_peekHeight="200dp"
@@ -23,16 +24,16 @@
 
         <EditText
             android:id="@+id/duration"
+            style="@style/AllSessionsAddEditDialogRowEdit"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:drawableStart="@drawable/ic_duration"
-            android:inputType="numberDecimal"
             android:digits="0123456789"
-            android:singleLine="true"
-            android:maxLength="3"
-            android:imeOptions="actionDone"
+            android:drawableStart="@drawable/ic_duration"
             android:hint="@string/add_duration_minutes"
-            style="@style/AllSessionsAddEditDialogRowEdit" />
+            android:imeOptions="actionDone"
+            android:inputType="numberDecimal"
+            android:maxLength="3"
+            android:singleLine="true" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -40,56 +41,58 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/edit_date"
+                style="@style/AllSessionsAddEditDialogRow"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/edit_date"
                 android:layout_alignParentStart="true"
-                style="@style/AllSessionsAddEditDialogRow"
                 app:drawableStartCompat="@drawable/ic_clock" />
 
             <TextView
                 android:id="@+id/edit_time"
-                android:layout_width="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_height="match_parent"
                 style="@style/AllSessionsAddEditDialogRowEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
                 tools:ignore="RelativeOverlap" />
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/label_container"
+            style="@style/AllSessionsAddEditDialogRow"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:orientation="horizontal"
-            style="@style/AllSessionsAddEditDialogRow">
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/label_drawable"
-                android:contentDescription="@string/labels"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
-                android:src="@drawable/ic_label_off"
-                android:layout_centerVertical="true" />
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/labels"
+                android:src="@drawable/ic_label_off" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/label_chip"
+                style="@style/ChipStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/label_drawable"
-
                 android:layout_centerVertical="true"
                 android:layout_marginStart="32dp"
-                android:text="@string/label_add"
-                style="@style/ChipStyleSmall"/>
+                android:layout_toEndOf="@id/label_drawable"
+                android:clickable="false"
+                android:focusable="false"
+                android:text="@string/label_add" />
         </RelativeLayout>
 
         <TextView
             android:id="@+id/save"
+            style="@style/AllSessionsAddEditDialogRow"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginBottom="24dp"
             android:text="@string/save"
-            style="@style/AllSessionsAddEditDialogRow"
             app:drawableStartCompat="@drawable/ic_done" />
 
     </LinearLayout>

@@ -12,7 +12,6 @@
  */
 package com.apps.adrcotfas.goodtime.statistics.all_sessions
 
-import com.apps.adrcotfas.goodtime.statistics.all_sessions.AddEditEntryDialog.Companion.newInstance
 import com.apps.adrcotfas.goodtime.statistics.main.SelectLabelDialog.OnLabelSelectedListener
 import com.apps.adrcotfas.goodtime.statistics.SessionViewModel
 import com.apps.adrcotfas.goodtime.main.LabelsViewModel
@@ -250,8 +249,8 @@ class AllSessionsFragment : Fragment(), OnLabelSelectedListener {
                     )
                         .show(fragmentManager, StatisticsActivity.DIALOG_SELECT_LABEL_TAG)
                 } else if (mSessionToEdit != null) {
-                    val newFragment = newInstance(mSessionToEdit)
-                    newFragment.show(fragmentManager, StatisticsActivity.DIALOG_SELECT_LABEL_TAG)
+                    val newFragment = AddEditEntryDialog.newInstance(mSessionToEdit)
+                    newFragment.show(fragmentManager, StatisticsActivity.DIALOG_ADD_ENTRY_TAG)
                     mActionMode!!.finish()
                 }
                 R.id.action_select_all -> selectAll()
