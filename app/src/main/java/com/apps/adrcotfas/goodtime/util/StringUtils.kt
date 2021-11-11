@@ -65,7 +65,7 @@ object StringUtils {
                 millis!!
             ), ZoneId.systemDefault()
         )
-        return date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
+        return "${date.format(DateTimeFormatter.ofPattern("EEEE"))} ${date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))}"
     }
 
     fun toPercentage(value: Float): String {
