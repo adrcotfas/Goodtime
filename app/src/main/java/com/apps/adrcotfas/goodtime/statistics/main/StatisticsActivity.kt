@@ -68,9 +68,6 @@ class StatisticsActivity : AppCompatActivity(), OnLabelSelectedListener {
 
     private fun dismissDialogs() {
         val fragmentManager = supportFragmentManager
-        val dialogAddEntry =
-            fragmentManager.findFragmentByTag(DIALOG_ADD_ENTRY_TAG) as DialogFragment?
-        dialogAddEntry?.dismiss()
         val dialogSelectLabel =
             fragmentManager.findFragmentByTag(DIALOG_SELECT_LABEL_TAG) as DialogFragment?
         dialogSelectLabel?.dismiss()

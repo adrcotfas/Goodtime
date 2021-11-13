@@ -62,7 +62,9 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnLabelSelectedListener 
             ), R.layout.dialog_add_entry, null, false
         )
 
-        viewModel.session = candidateSession
+        if (savedInstanceState == null) {
+            viewModel.session = candidateSession
+        }
 
         if (isEditDialog) {
             binding.header.text = getString(R.string.session_edit_session)
