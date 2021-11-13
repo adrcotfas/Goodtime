@@ -4,7 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'dagger.hilt.android.plugin'
-    id 'com.google.android.gms.oss-licenses-plugin'
+    id 'com.jaredsburrows.license'
 }
 
 android {
@@ -130,8 +130,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
 
     // About
-    //implementation 'com.github.daniel-stoneuk:material-about-library:x.y.z'
-    implementation 'com.github.adrcotfas:material-about-library:a65545f360'
+    implementation 'com.github.daniel-stoneuk:material-about-library:3.1.2'
 
     // Statistics
     implementation 'com.github.PhilJay:MPAndroidChart:3.1.0'
@@ -153,9 +152,6 @@ dependencies {
     googleImplementation "com.android.billingclient:billing-ktx:4.0.0"
 
     implementation 'xyz.aprildown:UltimateRingtonePicker:3.1.0'
-
-    // open source licences list
-    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 
     implementation 'com.google.code.gson:gson:2.8.6'
 

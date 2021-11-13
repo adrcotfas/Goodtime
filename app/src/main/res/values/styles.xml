@@ -362,6 +362,7 @@
         <item name="toolbarStyle">@style/AboutTheme.ToolbarStyle</item>
         <item name="cardViewColor">@color/black</item>
         <item name="materialCardViewStyle">@style/CardViewStyle</item>
+        <item name="alertDialogTheme">@style/DialogTheme</item>
     </style>
 
     <style name="AboutTheme.ToolbarStyle" parent="Widget.MaterialComponents.Toolbar">

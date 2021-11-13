@@ -57,13 +57,6 @@
             android:theme="@style/AboutTheme" />
 
         <activity
-            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-            android:theme="@style/AboutTheme" />
-        <activity
-            android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
-            android:theme="@style/AboutTheme" />
-
-        <activity
             android:name=".statistics.main.StatisticsActivity"
             android:label="@string/statistics"
             android:parentActivityName=".main.TimerActivity" />

@@ -32,7 +32,7 @@ import android.content.Context
 import android.net.Uri
 import android.widget.Toast
 import com.apps.adrcotfas.goodtime.BuildConfig
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.apps.adrcotfas.goodtime.util.showOnce
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -86,7 +86,7 @@ class AboutActivity : MaterialAboutActivity() {
                     .sizeDp(18)
             )
             .setOnClickAction {
-                startActivity(Intent(this, OssLicensesMenuActivity::class.java))
+                OpenSourceLicensesDialog().showOnce(supportFragmentManager, "licenses")
             }
             .build())
         builder1.addItem(MaterialAboutActionItem.Builder()
