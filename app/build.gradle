@@ -14,8 +14,8 @@ android {
         applicationId "com.apps.adrcotfas.goodtime"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 140
-        versionName "2.5.2"
+        versionCode 141
+        versionName "2.5.3"
         resConfigs "ar-rSA",
                 "bn-rBD",
                 "bs-rBA",
@@ -155,8 +155,8 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.8.6'
 
-    implementation 'com.google.dagger:hilt-android:2.38.1'
-    kapt 'com.google.dagger:hilt-compiler:2.38.1'
+    implementation 'com.google.dagger:hilt-android:2.40.3'
+    kapt 'com.google.dagger:hilt-compiler:2.40.3'
 }
 
 kapt {
