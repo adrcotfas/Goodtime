@@ -738,16 +738,11 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
     }
 
     private fun teleportTimeView() {
-        val margin = ThemeHelper.dpToPx(this, 48f)
-        val maxX = boundsView.width - timeView!!.width - margin
-        val maxY = boundsView.height - timeView!!.height - margin
-        val boundX = maxX - margin
-        val boundY = maxY - margin
-        if (boundX > 0 && boundY > 0) {
+        val maxY = boundsView.height - timeView.height
+        if (maxY > 0) {
             val r = Random()
-            val newX = r.nextInt(boundX) + margin
-            val newY = r.nextInt(boundY) + margin
-            timeView!!.animate().x(newX.toFloat()).y(newY.toFloat()).duration = 100
+            val newY = r.nextInt(maxY)
+            timeView.animate().y(newY.toFloat()).duration = 100
         }
     }
 
