@@ -200,7 +200,7 @@ class TimerService : LifecycleService() {
         if (sessionType === SessionType.LONG_BREAK) {
             preferenceHelper.resetCurrentStreak()
         }
-        stopForeground(true)
+        stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
         finalizeSession(sessionType, currentSessionManager.elapsedMinutesAtStop)
     }
@@ -230,7 +230,7 @@ class TimerService : LifecycleService() {
             }
         }
         ringtoneAndVibrationPlayer.play(sessionType, preferenceHelper.isRingtoneInsistent())
-        stopForeground(true)
+        stopForeground(STOP_FOREGROUND_REMOVE)
         updateLongBreakStreak(sessionType)
 
         // store what was done to the database
@@ -276,7 +276,7 @@ class TimerService : LifecycleService() {
             }
         }
         currentSessionManager.stopTimer()
-        stopForeground(true)
+        stopForeground(STOP_FOREGROUND_REMOVE)
         updateLongBreakStreak(sessionType)
         finalizeSession(sessionType, currentSessionManager.elapsedMinutesAtStop)
         onStartEvent(if (sessionType === SessionType.WORK) SessionType.BREAK else SessionType.WORK)

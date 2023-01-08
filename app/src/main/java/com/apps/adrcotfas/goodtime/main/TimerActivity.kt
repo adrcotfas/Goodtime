@@ -362,7 +362,7 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
         val batteryButton = menu.findItem(R.id.action_battery_optimization)
         batteryButton.isVisible = !isIgnoringBatteryOptimizations(this)
         labelButton = menu.findItem(R.id.action_current_label).also {
-            it.icon.setColorFilter(
+            it.icon?.setColorFilter(
                 ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_ALL_LABELS),
                 PorterDuff.Mode.SRC_ATOP
             )
@@ -410,14 +410,14 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
 
     private fun setupEvents() {
         currentSession.duration.observe(
-            this,
-            { millis: Long -> updateTimeLabel(millis) })
-        currentSession.sessionType.observe(this, { sessionType: SessionType ->
+            this
+        ) { millis: Long -> updateTimeLabel(millis) }
+        currentSession.sessionType.observe(this) { sessionType: SessionType ->
             currentSessionType = sessionType
             setupLabelView()
             setTimeLabelColor()
-        })
-        currentSession.timerState.observe(this, { timerState: TimerState ->
+        }
+        currentSession.timerState.observe(this) { timerState: TimerState ->
             when {
                 timerState === TimerState.INACTIVE -> {
                     setupLabelView()
@@ -431,7 +431,7 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
                     lifecycleScope.launch {
                         delay(300)
                         timeView.startAnimation(
-                            AnimationUtils.loadAnimation(applicationContext, R.anim.blink)
+                                AnimationUtils.loadAnimation(applicationContext, R.anim.blink)
                         )
                     }
                 }
@@ -442,7 +442,7 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
                     }
                 }
             }
-        })
+        }
     }
 
     private val currentSession: CurrentSession
@@ -484,12 +484,12 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
             sessionViewModel.getAllSessionsUnarchived(
                 startOfTodayMillis() + startOfDayDeltaMillis,
                 startOfTomorrowMillis() + startOfDayDeltaMillis
-            ).observe(this, { sessions: List<Session> ->
+            ).observe(this) { sessions: List<Session> ->
                 if (sessionsCounterText != null) {
                     sessionsCounterText!!.text = sessions.count().toString()
                 }
                 alertMenuItem.isVisible = true
-            })
+            }
         }
         return super.onPrepareOptionsMenu(menu)
     }
@@ -547,7 +547,7 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
                 .toString() + ":"
                     + if (seconds > 9) seconds else "0$seconds")
         }
-        timeView!!.text = currentFormattedTick
+        timeView.text = currentFormattedTick
         Log.v(TAG, "drawing the time label.")
         if (preferenceHelper.isScreensaverEnabled() && seconds == 1L && currentSession.timerState.value !== TimerState.PAUSED) {
             teleportTimeView()
@@ -583,8 +583,8 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
         } else {
             startService(stopIntent)
         }
-        whiteCover!!.visibility = View.GONE
-        whiteCover!!.clearAnimation()
+        whiteCover.visibility = View.GONE
+        whiteCover.clearAnimation()
     }
 
     private fun add60Seconds() {
@@ -683,23 +683,23 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
     private fun setupLabelView() {
         val label = preferenceHelper.currentSessionLabel
         if (isInvalidLabel(label)) {
-            labelChip!!.visibility = View.GONE
-            labelButton!!.isVisible = true
+            labelChip.visibility = View.GONE
+            labelButton.isVisible = true
             val color = ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_ALL_LABELS)
-            labelButton!!.icon.setColorFilter(
+            labelButton.icon?.setColorFilter(
                 color, PorterDuff.Mode.SRC_ATOP
             )
         } else {
             val color = ThemeHelper.getColor(this, label.colorId)
             if (preferenceHelper.showCurrentLabel()) {
-                labelButton!!.isVisible = false
-                labelChip!!.visibility = View.VISIBLE
-                labelChip!!.text = label.title
-                labelChip!!.chipBackgroundColor = ColorStateList.valueOf(color)
+                labelButton.isVisible = false
+                labelChip.visibility = View.VISIBLE
+                labelChip.text = label.title
+                labelChip.chipBackgroundColor = ColorStateList.valueOf(color)
             } else {
-                labelChip!!.visibility = View.GONE
-                labelButton!!.isVisible = true
-                labelButton!!.icon.setColorFilter(
+                labelChip.visibility = View.GONE
+                labelButton.isVisible = true
+                labelButton.icon?.setColorFilter(
                     color, PorterDuff.Mode.SRC_ATOP
                 )
             }
@@ -712,21 +712,19 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
 
     private fun setTimeLabelColor() {
         val label = preferenceHelper.currentSessionLabel
-        if (timeView != null) {
-            if (currentSessionType === SessionType.BREAK || currentSessionType === SessionType.LONG_BREAK) {
-                timeView!!.setTextColor(ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_BREAK))
-                return
-            }
-            if (!isInvalidLabel(label)) {
-                timeView!!.setTextColor(ThemeHelper.getColor(this, label.colorId))
-            } else {
-                timeView!!.setTextColor(
-                    ThemeHelper.getColor(
-                        this,
-                        ThemeHelper.COLOR_INDEX_UNLABELED
-                    )
+        if (currentSessionType === SessionType.BREAK || currentSessionType === SessionType.LONG_BREAK) {
+            timeView.setTextColor(ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_BREAK))
+            return
+        }
+        if (!isInvalidLabel(label)) {
+            timeView.setTextColor(ThemeHelper.getColor(this, label.colorId))
+        } else {
+            timeView.setTextColor(
+                ThemeHelper.getColor(
+                    this,
+                    ThemeHelper.COLOR_INDEX_UNLABELED
                 )
-            }
+            )
         }
     }
 
@@ -763,8 +761,8 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
     }
 
     private fun startFlashingNotification() {
-        whiteCover!!.visibility = View.VISIBLE
-        whiteCover!!.startAnimation(
+        whiteCover.visibility = View.VISIBLE
+        whiteCover.startAnimation(
             AnimationUtils.loadAnimation(
                 applicationContext, R.anim.blink_screen
             )
@@ -772,7 +770,7 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
     }
 
     private fun startFlashingNotificationShort() {
-        whiteCover!!.visibility = View.VISIBLE
+        whiteCover.visibility = View.VISIBLE
         val anim = AnimationUtils.loadAnimation(applicationContext, R.anim.blink_screen_3_times)
         anim.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {}
@@ -782,11 +780,11 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
 
             override fun onAnimationRepeat(animation: Animation) {}
         })
-        whiteCover!!.startAnimation(anim)
+        whiteCover.startAnimation(anim)
     }
 
     private fun stopFlashingNotification() {
-        whiteCover!!.visibility = View.GONE
+        whiteCover.visibility = View.GONE
         whiteCover.clearAnimation()
         mainViewModel.enableFlashingNotification = false
     }
