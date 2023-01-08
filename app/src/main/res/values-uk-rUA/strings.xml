@@ -132,8 +132,8 @@
     <string name="update_pro_1">Кольорові мітки</string>
     <string name="update_pro_4">Ручне додавати сесій</string>
     <string name="update_pro_5">Редагування завершених сесій</string>
-    <string name="update_pro_6">Резервне копіювання експорту та імпорту</string>
-    <string name="update_pro_7">Експорт до CSV статистика</string>
+    <string name="update_pro_6">Експорт та імпорт резервних копій</string>
+    <string name="update_pro_7">Експорт статистичних даних у CSV</string>
     <string name="update_pro_9">Теми</string>
     <string name="update_pro_10">Окремі звукові сповіщення для роботи і перерви</string>
     <string name="update_pro_11">Наполегливі сповіщення</string>
@@ -162,6 +162,6 @@
     <string name="pref_show_label_summary">Показує поточну мітку на головному екрані</string>
     <string name="pref_one_minute_left_notification">Попереднє сповіщення</string>
     <string name="pref_one_minute_left_notification_summary">Сповіщати за одну хвилину до закінчення робочого сеансу</string>
-    <string name="donate_message">Підтримайте що б підтримати додаток без реклими та відкритим кодом!</string>
+    <string name="donate_message">Пожертвуйте на підтримку програмного забезпечення з відкритим кодом та без реклами!</string>
     <string name="donate">Підтримати</string>
 </resources>

@@ -84,7 +84,7 @@
     <string name="tutorial_swipe_left">החלק ימינה או שמאלה כדי לדלג על הסשן הנוכחי</string>
     <string name="tutorial_swipe_up">החלק למעלה כדי להוסיף עוד דקה</string>
     <string name="tutorial_swipe_down">החלק מטה על הטיימר כדי לעצור</string>
-    <string name="tutorial_archive_label">העברת תווית לארכיון. היא לא תהיה גלויה לבחירה או סטטיסטיקות.</string>
+    <string name="tutorial_archive_label">העברת תווית לארכיון. היא לא תהיה זמינה לבחירה ולא תופיע בסטטיסטיקות.</string>
     <string name="intro_avoid_distractions">"המנעו מהסחות דעת"</string>
     <string name="intro_avoid_distractions_description">"השאר את עבודתך על המסלול בעזרת סשנים מתוזמנים הנתמכים ע\"י האפליקציה."</string>
     <string name="intro_clear_mind">"נקה את הראש"</string>
@@ -122,7 +122,7 @@
     <string name="statistics_this_month">החודש</string>
     <string name="statistics_total">סך הכל</string>
     <string name="statistics_productive_time">הזמן הפרודוקטיבי</string>
-    <string name="statistics_pie_chart">פילוג עבודה</string>
+    <string name="statistics_pie_chart">התפלגות העבודה</string>
     <string name="spinner_stats_duration">זמן</string>
     <string name="spinner_stats_nr_of_sessions">סשנים</string>
     <string name="spinner_range_hours">שעות</string>

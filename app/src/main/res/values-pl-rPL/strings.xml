@@ -2,12 +2,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="pl" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"Czas trwania przerwy"</string>
     <string name="pref_disable_sound_and_vibration">"Wyłącz dźwięk i wibracje"</string>
-    <string name="pref_dnd">"Do not disturb mode"</string>
+    <string name="pref_dnd">"Tryb Nie przeszkadzać"</string>
     <string name="pref_disable_wifi">"Wyłącz Wi-Fi"</string>
     <string name="pref_fullscreen">"Tryb pełnoekranowy"</string>
     <string name="pref_header_notifications">"Powiadomienia"</string>
     <string name="pref_header_general">"Główne"</string>
-    <string name="pref_keep_screen_on">"Utrzymuj włączony ekran"</string>
+    <string name="pref_keep_screen_on">"Pozostaw włączony ekran"</string>
     <string name="pref_long_break_duration">"Czas trwania długiej przerwy"</string>
     <string name="pref_ringtone">"Powiadomienie o zakończeniu pracy"</string>
     <string name="pref_ringtone_summary">"Ustaw dźwięk powiadomienia"</string>
@@ -33,7 +33,7 @@
     <string name="pref_auto_start_break_summary">Rozpocznij przerwę po sesji roboczej bez interakcji użytkownika</string>
     <string name="pref_auto_start_work_summary">Rozpocznij sesję roboczą po przerwie bez interakcji użytkownika</string>
     <string name="pref_disable_battery_optimization">Dokładne powiadomienia</string>
-    <string name="pref_flashing_notification">Flash the screen</string>
+    <string name="pref_flashing_notification">Miganie ekranu</string>
     <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
     <string name="pref_disable_battery_optimization_summary">Wyłącz optymalizację baterii dla tej aplikacji</string>
     <string name="pref_screen_saver">Tryb wygaszacza ekranu</string>
@@ -163,5 +163,5 @@
     <string name="pref_one_minute_left_notification">Pre-notification</string>
     <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
     <string name="donate_message">Donate to support open-source and ad-free software!</string>
-    <string name="donate">Donate</string>
+    <string name="donate">Przekaż darowiznę</string>
 </resources>

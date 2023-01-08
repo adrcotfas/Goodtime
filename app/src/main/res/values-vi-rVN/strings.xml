@@ -15,7 +15,7 @@
     <string name="pref_sessions_before_long_break">"Số phiên làm việc để có được 1 phiên nghỉ dài"</string>
     <string name="pref_enable_long_break">"Cho phép nghỉ dài"</string>
     <string name="pref_vibrate">"Chế độ rung"</string>
-    <string name="pref_vibration_type_none">Không rung</string>
+    <string name="pref_vibration_type_none">Không</string>
     <string name="pref_vibration_type_soft">Nhẹ</string>
     <string name="pref_vibration_type_strong">Mạnh</string>
     <string name="pref_vibration_type_sos">SOS</string>

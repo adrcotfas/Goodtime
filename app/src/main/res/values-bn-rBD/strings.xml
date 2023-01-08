@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="bn" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"বিরতির সময়সীমা"</string>
     <string name="pref_disable_sound_and_vibration">"শব্দ ও কম্পন বন্ধ"</string>
-    <string name="pref_dnd">"Do not disturb mode"</string>
+    <string name="pref_dnd">"বিরক্ত করবেন না মোড"</string>
     <string name="pref_disable_wifi">"ওয়াই-ফাই বন্ধ"</string>
     <string name="pref_fullscreen">"ফুলস্ক্রিন মোড"</string>
     <string name="pref_header_notifications">"বিজ্ঞপ্তিগুলি"</string>
@@ -18,8 +18,8 @@
     <string name="pref_vibration_type_none">কোনটি নয়</string>
     <string name="pref_vibration_type_soft">নরম</string>
     <string name="pref_vibration_type_strong">জোড়ালো</string>
-    <string name="pref_vibration_type_sos">SOS</string>
-    <string name="pref_vibration_type_heartbeat">Heartbeat</string>
+    <string name="pref_vibration_type_sos">বিপদ সংকেত</string>
+    <string name="pref_vibration_type_heartbeat">হৃদস্পন্দন</string>
     <string name="pref_amoled">"ডার্ক থিম"</string>
     <string name="pref_header_during_work_sessions">কার্য অধিবেশন চলাকালীন</string>
     <string name="pref_enable_ringtone">"নটিফিকেশন শব্দ"</string>
