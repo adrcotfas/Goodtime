@@ -36,10 +36,6 @@
             tools:ignore="ContentDescription"
             tools:src="@android:drawable/sym_action_call" />
 
-        <androidx.legacy.widget.Space
-            android:layout_width="@dimen/mi_baseline"
-            android:layout_height="wrap_content" />
-
         <com.heinrichreimersoftware.materialintro.view.parallax.ParallaxLinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
