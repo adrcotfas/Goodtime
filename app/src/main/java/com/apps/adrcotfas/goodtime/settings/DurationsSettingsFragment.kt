@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.apps.adrcotfas.goodtime.R
 import androidx.preference.Preference
+import androidx.preference.SeekBarPreference
 import com.apps.adrcotfas.goodtime.database.Profile
 import com.apps.adrcotfas.goodtime.util.Constants
 import com.apps.adrcotfas.goodtime.util.showOnce
@@ -20,14 +21,14 @@ import java.util.ArrayList
 
 @AndroidEntryPoint
 class DurationsSettingsFragment : PreferenceFragmentCompat(), ProfileChangeListener,
-    ProperSeekBarPreferenceDialog.Listener {
+    SeekBarPreferenceDialog.Listener {
 
     private lateinit var prefProfile: ProfilePreference
-    private lateinit var prefWorkDuration: ProperSeekBarPreference
-    private lateinit var prefBreakDuration: ProperSeekBarPreference
+    private lateinit var prefWorkDuration: SeekBarPreference
+    private lateinit var prefBreakDuration: SeekBarPreference
     private lateinit var prefEnableLongBreak: SwitchPreferenceCompat
-    private lateinit var prefLongBreakDuration: ProperSeekBarPreference
-    private lateinit var prefSessionsBeforeLongBreak: ProperSeekBarPreference
+    private lateinit var prefLongBreakDuration: SeekBarPreference
+    private lateinit var prefSessionsBeforeLongBreak: SeekBarPreference
     private var profiles: List<Profile> = ArrayList()
 
     private val viewModel: ProfilesViewModel by viewModels()
@@ -43,17 +44,17 @@ class DurationsSettingsFragment : PreferenceFragmentCompat(), ProfileChangeListe
         savedInstanceState: Bundle?
     ): View {
         val view = super.onCreateView(inflater, container, savedInstanceState)
-        view!!.alpha = 0f
+        view.alpha = 0f
         view.animate().alpha(1f).duration = 150
         return view
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings_durations, rootKey)
-        viewModel.profiles.observe(this, { profiles: List<Profile> ->
+        viewModel.profiles.observe(this) { profiles: List<Profile> ->
             this.profiles = profiles
             setupProfiles()
-        })
+        }
         setupDurations()
         saveCustomProfileButton = findPreference(PreferenceHelper.SAVE_CUSTOM_PROFILE)!!
         saveCustomProfileButton.isVisible = preferenceHelper.isUnsavedProfileActive()
@@ -101,6 +102,18 @@ class DurationsSettingsFragment : PreferenceFragmentCompat(), ProfileChangeListe
                 onDurationsChanged()
                 true
             }
+        listOf(
+            prefWorkDuration,
+            prefBreakDuration,
+            prefLongBreakDuration,
+            prefSessionsBeforeLongBreak
+        ).forEach { it ->
+            it.setOnPreferenceClickListener {
+                SeekBarPreferenceDialog.newInstance(it as SeekBarPreference, this)
+                    .showOnce(parentFragmentManager, "SeekbarPreference")
+                true
+            }
+        }
     }
 
     private fun setupProfiles() {
@@ -135,11 +148,7 @@ class DurationsSettingsFragment : PreferenceFragmentCompat(), ProfileChangeListe
     }
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
-        if (preference is ProperSeekBarPreference) {
-            val dialog = ProperSeekBarPreferenceDialog.newInstance(preference.getKey(), this)
-            dialog.setTargetFragment(this, 0)
-            dialog.showOnce(parentFragmentManager, "ProperSeekBar")
-        } else if (preference.key == PreferenceHelper.SAVE_CUSTOM_PROFILE) {
+        if (preference.key == PreferenceHelper.SAVE_CUSTOM_PROFILE) {
             if (preferenceHelper.isPro()) {
                 val profile = if (prefEnableLongBreak.isChecked) Profile(
                     "",

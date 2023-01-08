@@ -45,7 +45,7 @@ class ProfileSelectAdapter(
             holder.text.isChecked = mProfiles[mClickedDialogEntryIndex] == profile
         }
         holder.deleteButton.visibility = if (showDeleteButton) View.VISIBLE else View.GONE
-        holder.deleteButton.setOnClickListener { v: View? ->
+        holder.deleteButton.setOnClickListener { _: View? ->
             mCallback.onDelete(position)
             mProfiles.removeAt(position)
             notifyItemRemoved(position)
@@ -53,7 +53,7 @@ class ProfileSelectAdapter(
             if (position == mClickedDialogEntryIndex) {
                 mClickedDialogEntryIndex = 0
                 // 1 because of the predefined profiles (25/5 is 0, 52/17 is 1)
-            } else if (position > 1 && position < mClickedDialogEntryIndex) {
+            } else if (position in 2 until mClickedDialogEntryIndex) {
                 --mClickedDialogEntryIndex
             }
         }

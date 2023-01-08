@@ -77,27 +77,31 @@ class ProfileSelectDialog : PreferenceDialogFragmentCompat(), OnProfileSelectedL
     }
 
     override fun onDelete(position: Int) {
-        if (listPreference.value == mEntries[position].toString()) {
-            mClickedDialogEntryIndex = 0
-            // if we're deleting the selected profile, fall back to the default one
-            listPreference.value = mEntries[0].toString()
-            listPreference.setValueIndex(0)
-            mClickedDialogEntryIndex = 0
-            onClick(
-                dialog,
-                DialogInterface.BUTTON_POSITIVE
-            )
+        dialog?.let {
+            if (listPreference.value == mEntries[position].toString()) {
+                mClickedDialogEntryIndex = 0
+                // if we're deleting the selected profile, fall back to the default one
+                listPreference.value = mEntries[0].toString()
+                listPreference.setValueIndex(0)
+                mClickedDialogEntryIndex = 0
+                onClick(
+                        dialog!!,
+                        DialogInterface.BUTTON_POSITIVE
+                )
+            }
+            viewModel.deleteProfile(mEntries[position].toString())
         }
-        viewModel.deleteProfile(mEntries[position].toString())
     }
 
     override fun onSelect(position: Int) {
-        mClickedDialogEntryIndex = position
-        onClick(
-            dialog,
-            DialogInterface.BUTTON_POSITIVE
-        )
-        dialog!!.dismiss()
+        dialog?.let {
+            mClickedDialogEntryIndex = position
+            onClick(
+                    dialog!!,
+                    DialogInterface.BUTTON_POSITIVE
+            )
+            dialog!!.dismiss()
+        }
     }
 
     companion object {

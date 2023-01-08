@@ -1,19 +1,22 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="16dp"
-    android:minWidth="300dp">
+<layout>
 
-    <EditText
-        android:id="@+id/value"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="22dp"
-        android:layout_marginEnd="32dp"
-        android:inputType="numberDecimal"
-        android:digits="0123456789"
-        android:singleLine="true"
-        android:maxLength="3"/>
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        android:minWidth="300dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="22dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="32dp"
+            android:digits="0123456789"
+            android:inputType="numberDecimal"
+            android:maxLength="3"
+            android:singleLine="true" />
+    </LinearLayout>
+</layout>

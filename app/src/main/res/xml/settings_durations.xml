@@ -13,7 +13,7 @@
         android:enabled="false"
         app:iconSpaceReserved="false"/>
 
-    <com.apps.adrcotfas.goodtime.settings.ProperSeekBarPreference
+    <SeekBarPreference
         android:key="pref_work_duration"
         android:title="@string/pref_work_duration"
         app:min="1"
@@ -22,7 +22,7 @@
         android:max="240"
         app:iconSpaceReserved="false"/>
 
-    <com.apps.adrcotfas.goodtime.settings.ProperSeekBarPreference
+    <SeekBarPreference
         android:key="pref_break_duration"
         android:title="@string/pref_break_duration"
         app:min="1"
@@ -37,7 +37,7 @@
         android:title="@string/pref_enable_long_break"
         app:iconSpaceReserved="false"/>
 
-    <com.apps.adrcotfas.goodtime.settings.ProperSeekBarPreference
+    <SeekBarPreference
         android:key="pref_long_break_duration"
         android:title="@string/pref_long_break_duration"
         android:dependency="pref_enable_long_break"
@@ -47,7 +47,7 @@
         android:max="240"
         app:iconSpaceReserved="false"/>
 
-    <com.apps.adrcotfas.goodtime.settings.ProperSeekBarPreference
+    <SeekBarPreference
         android:key="pref_sessions_before_long_break"
         android:title="@string/pref_sessions_before_long_break"
         android:dependency="pref_enable_long_break"

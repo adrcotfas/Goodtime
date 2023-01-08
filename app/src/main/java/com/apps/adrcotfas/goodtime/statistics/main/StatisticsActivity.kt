@@ -57,8 +57,8 @@ class StatisticsActivity : AppCompatActivity(), OnLabelSelectedListener {
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         }
         labelsViewModel.crtExtendedLabel.observe(
-            this,
-            { refreshCurrentLabel() })
+            this
+        ) { refreshCurrentLabel() }
         mIsMainView = false
         toggleStatisticsView()
 
@@ -82,7 +82,7 @@ class StatisticsActivity : AppCompatActivity(), OnLabelSelectedListener {
     private fun refreshCurrentLabel() {
         if (labelsViewModel.crtExtendedLabel.value != null && mMenuItemCrtLabel != null) {
             MenuItemCompat.setIconTintList(
-                mMenuItemCrtLabel,
+                mMenuItemCrtLabel!!,
                 ColorStateList.valueOf(
                     ThemeHelper.getColor(
                         this,

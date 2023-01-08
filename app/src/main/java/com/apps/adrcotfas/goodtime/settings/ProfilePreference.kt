@@ -10,7 +10,7 @@ import androidx.preference.ListPreference
 import com.apps.adrcotfas.goodtime.R
 
 class ProfilePreference @JvmOverloads constructor(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet?,
     defStyleAttr: Int,
     defStyleRes: Int = 0
@@ -22,15 +22,15 @@ class ProfilePreference @JvmOverloads constructor(
     private var mChangeListener: ProfileChangeListener? = null
 
     @SuppressLint("RestrictedApi")
-    constructor(context: Context?, attrs: AttributeSet?) : this(
+    constructor(context: Context, attrs: AttributeSet?) : this(
         context, attrs, TypedArrayUtils.getAttr(
-            context!!, R.attr.dialogPreferenceStyle,
+            context, R.attr.dialogPreferenceStyle,
             android.R.attr.dialogPreferenceStyle
         )
     ) {
     }
 
-    constructor(context: Context?) : this(context, null) {}
+    constructor(context: Context) : this(context, null)
 
     fun attachListener(changeListener: ProfileChangeListener?) {
         mChangeListener = changeListener
