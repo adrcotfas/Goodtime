@@ -2,12 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/action_battery_optimization"
-        android:icon="@drawable/ic_exclamation"
-        android:title="@string/pref_disable_battery_optimization"
-        android:visible="false"
-        app:showAsAction="always"/>
-
     <item android:id="@+id/action_current_label"
         android:icon="@drawable/ic_label"
         android:title="@string/label_current"

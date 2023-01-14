@@ -111,7 +111,11 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
     private var currentSessionType = SessionType.INVALID
 
     fun onStartButtonClick(view: View) {
-        start(SessionType.WORK)
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S && !isIgnoringBatteryOptimizations(this)) {
+            showBatteryOptimizationDialog()
+        } else {
+            start(SessionType.WORK)
+        }
     }
 
     fun onStopButtonClick() {
@@ -359,8 +363,6 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.menu_main, menu)
-        val batteryButton = menu.findItem(R.id.action_battery_optimization)
-        batteryButton.isVisible = !isIgnoringBatteryOptimizations(this)
         labelButton = menu.findItem(R.id.action_current_label).also {
             it.icon?.setColorFilter(
                 ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_ALL_LABELS),
@@ -381,7 +383,6 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
                     bottomNavigationDrawerFragment.tag
                 )
             }
-            R.id.action_battery_optimization -> showBatteryOptimizationDialog()
             R.id.action_current_label -> showEditLabelDialog()
             R.id.action_sessions_counter -> {
                 AlertDialog.Builder(this)
