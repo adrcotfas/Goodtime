@@ -82,12 +82,12 @@ class AllSessionsFragment : Fragment(), OnLabelSelectedListener {
         val view = binding.root
         mRecyclerView = binding.mainRecylcerView
         mRecyclerView!!.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-        labelsViewModel.labels.observe(viewLifecycleOwner, { labels: List<Label> ->
+        labelsViewModel.labels.observe(viewLifecycleOwner) { labels: List<Label> ->
             mAdapter = AllSessionsAdapter(labels)
             mRecyclerView!!.adapter = mAdapter
             labelsViewModel.crtExtendedLabel.observe(
-                viewLifecycleOwner,
-                { refreshCurrentLabel() })
+                viewLifecycleOwner
+            ) { refreshCurrentLabel() }
             mRecyclerView!!.addItemDecoration(
                 DividerItemDecoration(
                     activity, LinearLayoutManager.VERTICAL
@@ -116,45 +116,45 @@ class AllSessionsFragment : Fragment(), OnLabelSelectedListener {
                         }
                     })
             )
-        })
+        }
         return view
     }
 
     private fun refreshCurrentLabel() {
-        if (labelsViewModel!!.crtExtendedLabel.value != null && mAdapter != null) {
-            when (labelsViewModel!!.crtExtendedLabel.value!!.title) {
+        if (labelsViewModel.crtExtendedLabel.value != null && mAdapter != null) {
+            when (labelsViewModel.crtExtendedLabel.value!!.title) {
                 getString(R.string.label_all) -> {
-                    sessionsLiveDataAll.observe(viewLifecycleOwner, { sessions: List<Session> ->
+                    sessionsLiveDataAll.observe(viewLifecycleOwner) { sessions: List<Session> ->
                         sessionsLiveDataUnlabeled.removeObservers(this)
                         sessionsLiveDataCrtLabel.removeObservers(this)
                         mAdapter!!.setData(sessions)
                         mSessions = sessions
                         updateRecyclerViewVisibility()
-                    })
+                    }
                 }
                 "unlabeled" -> {
                     sessionsLiveDataUnlabeled.observe(
-                        viewLifecycleOwner,
-                        { sessions: List<Session> ->
-                            sessionsLiveDataAll.removeObservers(this)
-                            sessionsLiveDataCrtLabel.removeObservers(this)
-                            mAdapter!!.setData(sessions)
-                            mSessions = sessions
-                            updateRecyclerViewVisibility()
-                        })
+                        viewLifecycleOwner
+                    ) { sessions: List<Session> ->
+                        sessionsLiveDataAll.removeObservers(this)
+                        sessionsLiveDataCrtLabel.removeObservers(this)
+                        mAdapter!!.setData(sessions)
+                        mSessions = sessions
+                        updateRecyclerViewVisibility()
+                    }
                 }
                 else -> {
                     sessionsLiveDataCrtLabel =
-                        sessionViewModel!!.getSessions(labelsViewModel!!.crtExtendedLabel.value!!.title)
+                        sessionViewModel.getSessions(labelsViewModel.crtExtendedLabel.value!!.title)
                     sessionsLiveDataCrtLabel.observe(
-                        viewLifecycleOwner,
-                        { sessions: List<Session> ->
-                            sessionsLiveDataAll.removeObservers(this)
-                            sessionsLiveDataUnlabeled.removeObservers(this)
-                            mAdapter!!.setData(sessions)
-                            mSessions = sessions
-                            updateRecyclerViewVisibility()
-                        })
+                        viewLifecycleOwner
+                    ) { sessions: List<Session> ->
+                        sessionsLiveDataAll.removeObservers(this)
+                        sessionsLiveDataUnlabeled.removeObservers(this)
+                        mAdapter!!.setData(sessions)
+                        mSessions = sessions
+                        updateRecyclerViewVisibility()
+                    }
                 }
             }
         }
@@ -188,8 +188,8 @@ class AllSessionsFragment : Fragment(), OnLabelSelectedListener {
             if (mSelectedEntries.size == 1) {
                 val sessionId = mAdapter!!.mSelectedEntries[0]
                 sessionViewModel.getSession(sessionId).observe(
-                    this@AllSessionsFragment,
-                    { session: Session? -> mSessionToEdit = session })
+                    this@AllSessionsFragment
+                ) { session: Session? -> mSessionToEdit = session }
             }
         }
     }

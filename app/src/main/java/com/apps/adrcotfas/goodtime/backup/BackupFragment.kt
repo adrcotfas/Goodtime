@@ -80,18 +80,18 @@ class BackupFragment : BottomSheetDialogFragment() {
 
     private fun exportCsv() {
         val sessionsLiveData = sessionViewModel.allSessions
-        sessionsLiveData.observe(viewLifecycleOwner, { sessions: List<Session> ->
+        sessionsLiveData.observe(viewLifecycleOwner) { sessions: List<Session> ->
             if (sessions.isEmpty()) {
-                    Toast.makeText(
-                        requireActivity(),
-                        R.string.backup_no_completed_sessions,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                Toast.makeText(
+                    requireActivity(),
+                    R.string.backup_no_completed_sessions,
+                    Toast.LENGTH_SHORT
+                ).show()
                 dismiss()
             } else {
                 BackupOperations.doExportToCSV(lifecycleScope, requireContext(), sessions)
             }
-        })
+        }
     }
 
     companion object {
