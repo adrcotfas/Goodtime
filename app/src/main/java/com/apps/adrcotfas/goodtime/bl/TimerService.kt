@@ -200,7 +200,7 @@ class TimerService : LifecycleService() {
         if (sessionType === SessionType.LONG_BREAK) {
             preferenceHelper.resetCurrentStreak()
         }
-        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopForeground()
         stopSelf()
         finalizeSession(sessionType, currentSessionManager.elapsedMinutesAtStop)
     }
@@ -230,7 +230,7 @@ class TimerService : LifecycleService() {
             }
         }
         ringtoneAndVibrationPlayer.play(sessionType, preferenceHelper.isRingtoneInsistent())
-        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopForeground()
         updateLongBreakStreak(sessionType)
 
         // store what was done to the database
@@ -276,7 +276,7 @@ class TimerService : LifecycleService() {
             }
         }
         currentSessionManager.stopTimer()
-        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopForeground()
         updateLongBreakStreak(sessionType)
         finalizeSession(sessionType, currentSessionManager.elapsedMinutesAtStop)
         onStartEvent(if (sessionType === SessionType.WORK) SessionType.BREAK else SessionType.WORK)
@@ -387,7 +387,8 @@ class TimerService : LifecycleService() {
         }
 
         val labelVal = currentSessionManager.currentSession.label.value
-        val labelValProper = if (labelVal == null || labelVal == "" || labelVal == "unlabeled") null else labelVal
+        val labelValProper =
+            if (labelVal == null || labelVal == "" || labelVal == "unlabeled") null else labelVal
 
         val endTime = System.currentTimeMillis()
         Log.d(TAG, "finalizeSession / elapsed minutes: $minutes")
@@ -417,6 +418,13 @@ class TimerService : LifecycleService() {
                 }
             }
         }
+    }
+
+    private fun stopForeground() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        else
+            stopForeground(true)
     }
 
     private fun bringActivityToFront() {
