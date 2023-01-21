@@ -4,6 +4,9 @@
     package="com.apps.adrcotfas.goodtime">
 
     <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32"/>
+
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <!-- Used by the UltimateRingtonePicker to allow adding custom ringtones -->
@@ -22,7 +25,6 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- Used on Android P and later for the timer foreground service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <!-- TODO: enable when targeting API level 31:   <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />-->
     <!-- For the option of removing the app from the battery optimization -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 

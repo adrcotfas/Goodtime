@@ -201,7 +201,7 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
             getString(R.string.tutorial_archive_label),
             Snackbar.LENGTH_INDEFINITE
         )
-            .setAction("OK") { preferenceHelper.archivedLabelHintWasShown = true }
+            .setAction(getString(android.R.string.ok)) { preferenceHelper.archivedLabelHintWasShown = true }
         s.behavior = object : BaseTransientBottomBar.Behavior() {
             override fun canSwipeDismissView(child: View): Boolean {
                 return false

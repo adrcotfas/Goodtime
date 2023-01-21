@@ -20,14 +20,10 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import com.apps.adrcotfas.goodtime.statistics.main.SelectLabelDialog.OnLabelSelectedListener
 import javax.inject.Inject
 import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
-import com.apps.adrcotfas.goodtime.bl.CurrentSessionManager
 import android.widget.TextView
 import com.google.android.material.chip.Chip
 import com.apps.adrcotfas.goodtime.statistics.SessionViewModel
-import com.apps.adrcotfas.goodtime.bl.SessionType
-import com.apps.adrcotfas.goodtime.bl.TimerState
 import android.content.Intent
-import com.apps.adrcotfas.goodtime.bl.TimerService
 import android.os.Build
 import android.os.Bundle
 import org.greenrobot.eventbus.EventBus
@@ -38,12 +34,12 @@ import android.view.animation.Animation
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.content.ContextWrapper
 import com.apps.adrcotfas.goodtime.settings.SettingsActivity
-import com.apps.adrcotfas.goodtime.bl.NotificationHelper
 import android.content.SharedPreferences
 import android.graphics.PorterDuff
 import android.content.DialogInterface
-import com.apps.adrcotfas.goodtime.bl.CurrentSession
 import android.widget.Toast
 import android.widget.FrameLayout
 import org.greenrobot.eventbus.Subscribe
@@ -61,6 +57,7 @@ import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
@@ -68,6 +65,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.apps.adrcotfas.goodtime.BuildConfig
+import com.apps.adrcotfas.goodtime.bl.*
 import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding
@@ -111,11 +109,7 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
     private var currentSessionType = SessionType.INVALID
 
     fun onStartButtonClick(view: View) {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S && !isIgnoringBatteryOptimizations(this)) {
-            showBatteryOptimizationDialog()
-        } else {
-            start(SessionType.WORK)
-        }
+        start(SessionType.WORK)
     }
 
     fun onStopButtonClick() {
@@ -214,7 +208,7 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
                 messages[preferenceHelper.lastIntroStep],
                 Snackbar.LENGTH_INDEFINITE
             )
-                .setAction("OK") {
+                .setAction(getString(android.R.string.ok)) {
                     val nextStep = i + 1
                     preferenceHelper.lastIntroStep = nextStep
                     showTutorialSnackbars()
@@ -363,6 +357,8 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.menu_main, menu)
+        val batteryButton = menu.findItem(R.id.action_battery_optimization)
+        batteryButton.isVisible = !isIgnoringBatteryOptimizations(this)
         labelButton = menu.findItem(R.id.action_current_label).also {
             it.icon?.setColorFilter(
                 ThemeHelper.getColor(this, ThemeHelper.COLOR_INDEX_ALL_LABELS),
@@ -383,14 +379,17 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
                     bottomNavigationDrawerFragment.tag
                 )
             }
+            R.id.action_battery_optimization -> showBatteryOptimizationDialog()
             R.id.action_current_label -> showEditLabelDialog()
             R.id.action_sessions_counter -> {
                 AlertDialog.Builder(this)
                     .setTitle(R.string.action_reset_counter_title)
                     .setMessage(R.string.action_reset_counter)
                     .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
-                        sessionViewModel.deleteSessionsFinishedAfter(startOfTodayMillis() +
-                            preferenceHelper.getStartOfDayDeltaMillis())
+                        sessionViewModel.deleteSessionsFinishedAfter(
+                            startOfTodayMillis() +
+                                    preferenceHelper.getStartOfDayDeltaMillis()
+                        )
                         preferenceHelper.resetCurrentStreak()
                     }
                     .setNegativeButton(android.R.string.cancel) { _: DialogInterface?, _: Int -> }
@@ -432,7 +431,7 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
                     lifecycleScope.launch {
                         delay(300)
                         timeView.startAnimation(
-                                AnimationUtils.loadAnimation(applicationContext, R.anim.blink)
+                            AnimationUtils.loadAnimation(applicationContext, R.anim.blink)
                         )
                     }
                 }
@@ -555,7 +554,47 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
         }
     }
 
+    private fun scheduleAlarmPermissionGranted(): Boolean {
+        val alarmManager: AlarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        return if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                    && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+            && !alarmManager.canScheduleExactAlarms()
+        ) {
+            showAlarmPermissionSnackbar()
+            false
+        } else {
+            true
+        }
+    }
+
+    private fun showAlarmPermissionSnackbar() {
+        val s = Snackbar.make(
+            toolbar,
+            getString(R.string.settings_grant_permission),
+            Snackbar.LENGTH_INDEFINITE
+        )
+            .setAction(getString(android.R.string.ok)) {
+                askForAlarmPermission(this)
+            }
+            .setAnchorView(toolbar)
+        s.behavior = object : BaseTransientBottomBar.Behavior() {
+            override fun canSwipeDismissView(child: View): Boolean {
+                return false
+            }
+        }
+        s.show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun askForAlarmPermission(contextWrapper: ContextWrapper) {
+        val intent = Intent().apply {
+            action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+        }
+        contextWrapper.startActivity(intent)
+    }
+
     private fun start(sessionType: SessionType) {
+        if (!scheduleAlarmPermissionGranted()) return
         var startIntent = Intent()
         when (currentSession.timerState.value) {
             TimerState.INACTIVE -> startIntent = IntentWithAction(
