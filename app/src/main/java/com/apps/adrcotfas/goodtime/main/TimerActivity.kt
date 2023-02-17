@@ -540,8 +540,13 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
         val currentFormattedTick: String
         val isMinutesStyle =
             preferenceHelper.timerStyle == resources.getString(R.string.pref_timer_style_minutes_value)
+        val isForwardTimer = preferenceHelper.isForwardTimer()
         currentFormattedTick = if (isMinutesStyle) {
-            TimeUnit.SECONDS.toMinutes(minutes * 60 + seconds + 59).toString()
+            if(isForwardTimer) {
+                TimeUnit.SECONDS.toMinutes((preferenceHelper.getSessionDurationOnly() * 60) - (minutes * 60 + seconds + 59)).toString()
+            }else{
+                TimeUnit.SECONDS.toMinutes(minutes * 60 + seconds + 59).toString()
+            }
         } else {
             ((if (minutes > 9) minutes else "0$minutes")
                 .toString() + ":"

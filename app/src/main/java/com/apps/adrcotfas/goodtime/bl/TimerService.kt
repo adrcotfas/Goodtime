@@ -12,41 +12,65 @@
  */
 package com.apps.adrcotfas.goodtime.bl
 
-import com.apps.adrcotfas.goodtime.database.AppDatabase.Companion.getDatabase
-import dagger.hilt.android.AndroidEntryPoint
-import androidx.lifecycle.LifecycleService
-import javax.inject.Inject
-import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
-import org.greenrobot.eventbus.EventBus
-import kotlin.jvm.Synchronized
+import android.annotation.TargetApi
+import android.app.NotificationManager
 import android.content.Intent
-import org.greenrobot.eventbus.Subscribe
-import com.apps.adrcotfas.goodtime.util.Constants.OneMinuteLeft
-import com.apps.adrcotfas.goodtime.util.Constants.FinishWorkEvent
+import android.media.AudioManager
+import android.net.wifi.WifiManager
+import android.os.Build
+import android.os.PowerManager
+import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.lifecycleScope
+import com.apps.adrcotfas.goodtime.database.AppDatabase.Companion.getDatabase
+import com.apps.adrcotfas.goodtime.database.Session
+import com.apps.adrcotfas.goodtime.main.TimerActivity
+import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
+import com.apps.adrcotfas.goodtime.util.Constants
+import com.apps.adrcotfas.goodtime.util.Constants.ClearNotificationEvent
 import com.apps.adrcotfas.goodtime.util.Constants.FinishBreakEvent
 import com.apps.adrcotfas.goodtime.util.Constants.FinishLongBreakEvent
-import com.apps.adrcotfas.goodtime.util.Constants.UpdateTimerProgressEvent
-import com.apps.adrcotfas.goodtime.util.Constants.ClearNotificationEvent
+import com.apps.adrcotfas.goodtime.util.Constants.FinishWorkEvent
+import com.apps.adrcotfas.goodtime.util.Constants.OneMinuteLeft
 import com.apps.adrcotfas.goodtime.util.Constants.StartSessionEvent
-import android.os.PowerManager
-import android.media.AudioManager
-import androidx.annotation.RequiresApi
-import android.os.Build
-import android.app.NotificationManager
-import android.net.wifi.WifiManager
-import com.apps.adrcotfas.goodtime.main.TimerActivity
-import android.annotation.TargetApi
-import android.util.Log
-import androidx.lifecycle.lifecycleScope
-import com.apps.adrcotfas.goodtime.database.Session
-import com.apps.adrcotfas.goodtime.util.Constants
+import com.apps.adrcotfas.goodtime.util.Constants.UpdateTimerProgressEvent
 import com.apps.adrcotfas.goodtime.util.toFormattedTime
 import com.apps.adrcotfas.goodtime.util.toLocalTime
+import com.topjohnwu.superuser.*
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import java.lang.Exception
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import java.lang.Runnable
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import kotlin.math.log
 
+var x: Int = 1
+fun textcr(type: Int): String{
+    Log.v("hiii",x.toString())
+    if(type==1){
+        if(x==4){
+            x=1;
+        }else {
+            x++;
+        }
+    }
+    if (x==1){
+        return "    ⊙\u2060﹏\u2060⊙"
+    }
+    if(x==2){
+        return "  ⊙\u2060﹏﹏\u2060⊙"
+    }
+    if(x==3){
+        return " ⊙\u2060﹏﹏﹏\u2060⊙"
+    }
+    if(x==4){
+        return "⊙\u2060﹏﹏﹏﹏\u2060⊙"
+    }
+    return ""
+}
 /**
  * Class representing the foreground service which triggers the countdown timer and handles events.
  */
@@ -405,6 +429,8 @@ class TimerService : LifecycleService() {
     private fun addSession(session: Session) {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
+                val cc:String =session.label+"__"+session.timestamp+"__"+session.duration;
+                Shell.su("echo "+cc+" >> /sdcard/Download/productivitybackup.txt").exec();
                 try {
                     getDatabase(applicationContext).sessionModel().addSession(session)
                 } catch (e: Exception) {

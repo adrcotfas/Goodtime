@@ -96,6 +96,11 @@ android {
 }
 
 dependencies {
+    def libsuVersion = '5.0.3'
+    implementation "com.github.topjohnwu.libsu:core:${libsuVersion}"
+    implementation "com.github.topjohnwu.libsu:service:${libsuVersion}"
+
+
     // to use the latest java features (needed java.time)
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 

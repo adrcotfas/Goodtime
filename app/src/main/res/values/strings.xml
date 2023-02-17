@@ -7,6 +7,7 @@
     <string name="pref_dnd">"Do not disturb mode"</string>
     <string name="pref_disable_wifi">"Disable Wi-Fi"</string>
     <string name="pref_fullscreen">"Fullscreen mode"</string>
+    <string name="forward_timer">"Forward Timer</string>
     <string name="pref_header_notifications">"Notifications"</string>
     <string name="pref_header_general">"General"</string>
     <string name="pref_keep_screen_on">"Keep the screen on"</string>
