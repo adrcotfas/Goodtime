@@ -104,7 +104,7 @@ class NotificationHelper @Inject constructor(context: Context) : ContextWrapper(
                     .setContentText(getString(R.string.action_continue))
             } else {
                 builder.addAction(buildStopAction(this))
-                    .addAction(buildPauseAction(this))
+                    //.addAction(buildPauseAction(this))
                     .setContentTitle(getString(R.string.action_progress_work))
                     .setContentText(textcr(0))
             }
