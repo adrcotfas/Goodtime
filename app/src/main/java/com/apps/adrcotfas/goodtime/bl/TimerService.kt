@@ -47,6 +47,33 @@ import java.lang.Exception
 import java.lang.Runnable
 import java.util.concurrent.TimeUnit
 
+
+var x: Int = 1
+fun textcr(type: Int): String{
+    Log.v("hiii",x.toString())
+    if(type==1){
+        if(x==4){
+            x=1;
+        }else {
+            x++;
+        }
+    }
+    if (x==1){
+        return "    ⊙\u2060﹏\u2060⊙"
+    }
+    if(x==2){
+        return "  ⊙\u2060﹏﹏\u2060⊙"
+    }
+    if(x==3){
+        return " ⊙\u2060﹏﹏﹏\u2060⊙"
+    }
+    if(x==4){
+        return "⊙\u2060﹏﹏﹏﹏\u2060⊙"
+    }
+    return ""
+}
+
+
 /**
  * Class representing the foreground service which triggers the countdown timer and handles events.
  */

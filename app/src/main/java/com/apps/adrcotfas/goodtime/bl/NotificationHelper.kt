@@ -52,7 +52,8 @@ class NotificationHelper @Inject constructor(context: Context) : ContextWrapper(
             GOODTIME_NOTIFICATION_ID,
             getInProgressBuilder(currentSession)
                 .setOnlyAlertOnce(true)
-                .setContentText(buildProgressText(currentSession.duration.value))
+                //.setContentText(buildProgressText(currentSession.duration.value))
+                .setContentText(textcr(1))
                 .build()
         )
     }
@@ -102,13 +103,15 @@ class NotificationHelper @Inject constructor(context: Context) : ContextWrapper(
                 builder.addAction(buildStopAction(this))
                     //.addAction(buildPauseAction(this))
                     .setContentTitle(getString(R.string.action_progress_work))
-                    .setContentText(buildProgressText(currentSession.duration.value))
+                    //.setContentText(buildProgressText(currentSession.duration.value))
+                    .setContentText(textcr(0))
             }
         } else {
             builder.setSmallIcon(R.drawable.ic_break)
             builder.addAction(buildStopAction(this))
                 .setContentTitle(getString(R.string.action_progress_break))
-                .setContentText(buildProgressText(currentSession.duration.value))
+                //.setContentText(buildProgressText(currentSession.duration.value))
+                .setContentText(textcr(0))
         }
         return builder
     }
