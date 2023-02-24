@@ -399,13 +399,7 @@ class TimerService : LifecycleService() {
                     .toFormattedTime()
             )
             val session = Session(0, endTime, minutes, labelValProper)
-            addSession(session)
-        }
-    }
-
-    private fun addSession(session: Session) {
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
+            lifecycleScope.launch {
                 try {
                     getDatabase(applicationContext).sessionModel().addSession(session)
                 } catch (e: Exception) {
