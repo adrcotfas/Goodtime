@@ -52,6 +52,7 @@ class PreferenceHelper(val context: Context) {
         const val RINGTONE_BREAK_FINISHED = "pref_notification_sound_break"
         const val VIBRATION_TYPE = "pref_vibration_type"
         private const val ENABLE_FULLSCREEN = "pref_fullscreen"
+        const val FORWARD_TIMER = "forward_timer"
         const val DISABLE_SOUND_AND_VIBRATION = "pref_disable_sound_and_vibration"
         const val DND_MODE = "pref_dnd"
         const val DISABLE_WIFI = "pref_disable_wifi"
@@ -107,6 +108,10 @@ class PreferenceHelper(val context: Context) {
         return duration
     }
 
+    fun getSessionDurationOnly():Long {
+        return preferences.getInt(WORK_DURATION, 25).toLong()
+    }
+
 
     fun isLongBreakEnabled() = preferences.getBoolean(ENABLE_LONG_BREAK, false)
     private fun getSessionsBeforeLongBreak() = preferences.getInt(SESSIONS_BEFORE_LONG_BREAK, 4)
@@ -139,6 +144,7 @@ class PreferenceHelper(val context: Context) {
     fun getVibrationType() = preferences.getString(VIBRATION_TYPE, "2")!!.toInt()
 
     fun isFullscreenEnabled() = preferences.getBoolean(ENABLE_FULLSCREEN, false)
+    fun isForwardTimer() = preferences.getBoolean(FORWARD_TIMER,false)
     fun isSoundAndVibrationDisabled() = preferences.getBoolean(DISABLE_SOUND_AND_VIBRATION, false)
     fun isDndModeActive() = preferences.getBoolean(DND_MODE, false)
     fun isWiFiDisabled() = preferences.getBoolean(DISABLE_WIFI, false)
