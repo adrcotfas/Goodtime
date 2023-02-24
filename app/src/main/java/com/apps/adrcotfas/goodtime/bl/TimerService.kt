@@ -23,6 +23,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
+import androidx.room.Transaction
 import com.apps.adrcotfas.goodtime.database.AppDatabase.Companion.getDatabase
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.main.TimerActivity
@@ -37,7 +38,6 @@ import com.apps.adrcotfas.goodtime.util.Constants.StartSessionEvent
 import com.apps.adrcotfas.goodtime.util.Constants.UpdateTimerProgressEvent
 import com.apps.adrcotfas.goodtime.util.toFormattedTime
 import com.apps.adrcotfas.goodtime.util.toLocalTime
-import com.topjohnwu.superuser.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
@@ -422,15 +422,7 @@ class TimerService : LifecycleService() {
                     .toFormattedTime()
             )
             val session = Session(0, endTime, minutes, labelValProper)
-            addSession(session)
-        }
-    }
-
-    private fun addSession(session: Session) {
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                val cc:String =session.label+"__"+session.timestamp+"__"+session.duration;
-                Shell.su("echo "+cc+" >> /sdcard/Download/productivitybackup.txt").exec();
+            lifecycleScope.launch {
                 try {
                     getDatabase(applicationContext).sessionModel().addSession(session)
                 } catch (e: Exception) {
@@ -444,6 +436,7 @@ class TimerService : LifecycleService() {
             }
         }
     }
+
 
     private fun bringActivityToFront() {
         val activityIntent = Intent(this, TimerActivity::class.java)
