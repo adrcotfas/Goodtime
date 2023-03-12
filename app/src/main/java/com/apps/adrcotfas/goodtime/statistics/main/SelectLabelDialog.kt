@@ -12,35 +12,34 @@
  */
 package com.apps.adrcotfas.goodtime.statistics.main
 
-import com.apps.adrcotfas.goodtime.util.UpgradeDialogHelper.Companion.launchUpgradeDialog
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
-import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.os.Bundle
-import androidx.databinding.DataBindingUtil
-import android.view.LayoutInflater
-import com.apps.adrcotfas.goodtime.R
-import android.content.Intent
-import com.apps.adrcotfas.goodtime.labels.AddEditLabelActivity
-import com.apps.adrcotfas.goodtime.main.LabelsViewModel
-import com.google.android.material.chip.Chip
-import android.content.res.ColorStateList
-import com.apps.adrcotfas.goodtime.util.ThemeHelper
 import android.content.DialogInterface
-import android.os.Handler
+import android.content.Intent
+import android.content.res.ColorStateList
+import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.res.ResourcesCompat
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.database.Profile
 import com.apps.adrcotfas.goodtime.databinding.DialogSelectLabelBinding
+import com.apps.adrcotfas.goodtime.labels.AddEditLabelActivity
+import com.apps.adrcotfas.goodtime.main.LabelsViewModel
+import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
 import com.apps.adrcotfas.goodtime.settings.ProfilesViewModel
 import com.apps.adrcotfas.goodtime.statistics.Utils
+import com.apps.adrcotfas.goodtime.util.ThemeHelper
+import com.apps.adrcotfas.goodtime.util.UpgradeDialogHelper.Companion.launchUpgradeDialog
+import com.google.android.material.chip.Chip
+import dagger.hilt.android.AndroidEntryPoint
 import java.lang.ref.WeakReference
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SelectLabelDialog : DialogFragment() {
@@ -74,10 +73,11 @@ class SelectLabelDialog : DialogFragment() {
     private var showProfileSelection = false
 
     private var mAlertDialog: AlertDialog? = null
+
     @SuppressLint("ResourceType")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val binding: DialogSelectLabelBinding = DataBindingUtil.inflate(
-            LayoutInflater.from(context),
+            layoutInflater,
             R.layout.dialog_select_label,
             null,
             false
@@ -93,8 +93,8 @@ class SelectLabelDialog : DialogFragment() {
                 mAlertDialog!!.dismiss()
             }
         }
-        val viewModel : LabelsViewModel by viewModels()
-        viewModel.labels.observe(this, { labels: List<Label> ->
+        val viewModel: LabelsViewModel by viewModels()
+        viewModel.labels.observe(this) { labels: List<Label> ->
             var i = 0
             if (mIsExtendedVersion) {
                 val chip = Chip(requireContext())
@@ -107,8 +107,9 @@ class SelectLabelDialog : DialogFragment() {
                     )
                 )
                 chip.isCheckable = true
-                chip.chipIcon = resources.getDrawable(R.drawable.ic_check_off)
-                chip.checkedIcon = resources.getDrawable(R.drawable.ic_check)
+                chip.chipIcon =
+                    ResourcesCompat.getDrawable(resources, R.drawable.ic_check_off, null)
+                chip.checkedIcon = ResourcesCompat.getDrawable(resources, R.drawable.ic_check, null)
                 chip.id = i++
                 if (chip.text.toString() == mLabel) {
                     chip.isChecked = true
@@ -122,8 +123,8 @@ class SelectLabelDialog : DialogFragment() {
                 chip.chipBackgroundColor =
                     ColorStateList.valueOf(ThemeHelper.getColor(requireContext(), crt.colorId))
                 chip.isCheckable = true
-                chip.chipIcon = resources.getDrawable(R.drawable.ic_check_off)
-                chip.checkedIcon = resources.getDrawable(R.drawable.ic_check)
+                chip.chipIcon = ResourcesCompat.getDrawable(resources,R.drawable.ic_check_off, null)
+                chip.checkedIcon = ResourcesCompat.getDrawable(resources,R.drawable.ic_check, null)
                 chip.id = i++
                 if (crt.title == mLabel) {
                     chip.isChecked = true
@@ -136,7 +137,7 @@ class SelectLabelDialog : DialogFragment() {
                 binding.emptyState.visibility = View.GONE
                 binding.labelsView.visibility = View.VISIBLE
             }
-        })
+        }
         val builder = AlertDialog.Builder(requireContext())
             .setView(binding.root)
             .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
@@ -167,9 +168,9 @@ class SelectLabelDialog : DialogFragment() {
                 //TODO: Clean-up this mess
                 val neutral = mAlertDialog!!.getButton(DialogInterface.BUTTON_NEUTRAL)
                 neutral.setOnClickListener {
-                    val profilesViewModel : ProfilesViewModel by viewModels()
+                    val profilesViewModel: ProfilesViewModel by viewModels()
                     val profilesLiveData = profilesViewModel.profiles
-                    profilesLiveData.observe(this@SelectLabelDialog, { profiles: List<Profile> ->
+                    profilesLiveData.observe(this@SelectLabelDialog) { profiles: List<Profile> ->
                         mProfiles = profiles
                         var profileIdx = 0
                         val arrayAdapter = ArrayAdapter<String>(
@@ -214,7 +215,7 @@ class SelectLabelDialog : DialogFragment() {
                             }
                             .setNegativeButton(android.R.string.cancel) { dialog1: DialogInterface, _: Int -> dialog1.dismiss() }
                         profileDialogBuilder.show()
-                    })
+                    }
                 }
             }
         } else {

@@ -13,36 +13,35 @@
 package com.apps.adrcotfas.goodtime.labels
 
 import android.content.Context
-import dagger.hilt.android.AndroidEntryPoint
-import androidx.appcompat.app.AppCompatActivity
-import com.apps.adrcotfas.goodtime.labels.AddEditLabelsAdapter.OnEditLabelListener
-import com.apps.adrcotfas.goodtime.main.LabelsViewModel
-import javax.inject.Inject
-import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
-import com.apps.adrcotfas.goodtime.bl.CurrentSessionManager
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
-import com.apps.adrcotfas.goodtime.util.ThemeHelper
-import androidx.databinding.DataBindingUtil
-import com.apps.adrcotfas.goodtime.R
-import com.apps.adrcotfas.goodtime.main.SimpleItemTouchHelperCallback
 import android.view.View.OnFocusChangeListener
-import com.takisoft.colorpicker.ColorPickerDialog
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.activity.viewModels
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.snackbar.BaseTransientBottomBar
-import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.apps.adrcotfas.goodtime.R
+import com.apps.adrcotfas.goodtime.bl.CurrentSessionManager
 import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.databinding.ActivityAddEditLabelsBinding
-import com.apps.adrcotfas.goodtime.statistics.Utils.getInvalidLabel
+import com.apps.adrcotfas.goodtime.labels.AddEditLabelsAdapter.OnEditLabelListener
+import com.apps.adrcotfas.goodtime.main.LabelsViewModel
+import com.apps.adrcotfas.goodtime.main.SimpleItemTouchHelperCallback
+import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
+import com.apps.adrcotfas.goodtime.statistics.Utils.getInvalidLabelWithRandomColor
+import com.apps.adrcotfas.goodtime.util.ThemeHelper
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
+import com.takisoft.colorpicker.ColorPickerDialog
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
@@ -79,7 +78,7 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
         imageLeft = binding.addLabel.imageLeft
         imageLeftContainer = binding.addLabel.imageLeftContainer
         val labelsLiveData = viewModel.allLabels
-        labelsLiveData.observe(this, { labels: List<Label> ->
+        labelsLiveData.observe(this) { labels: List<Label> ->
             this.labels = labels as MutableList<Label>
             adapter = AddEditLabelsAdapter(this, this.labels, this)
             recyclerView.adapter = adapter
@@ -94,8 +93,8 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
             val callback: ItemTouchHelper.Callback = SimpleItemTouchHelperCallback(adapter)
             itemTouchHelper = ItemTouchHelper(callback)
             itemTouchHelper.attachToRecyclerView(recyclerView)
-        })
-        labelToAdd = getInvalidLabel(this)
+        }
+        labelToAdd = getInvalidLabelWithRandomColor(this)
         imageRight.setOnClickListener {
             addLabel()
             updateRecyclerViewVisibility()
@@ -140,7 +139,7 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
                     )
                 )
                 if (!hasFocus) {
-                    labelToAdd = getInvalidLabel(this)
+                    labelToAdd = getInvalidLabelWithRandomColor(this)
                     addLabelView.setText("")
                 }
             }

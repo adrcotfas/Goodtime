@@ -567,6 +567,7 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     private fun showAlarmPermissionSnackbar() {
         val s = Snackbar.make(
             toolbar,

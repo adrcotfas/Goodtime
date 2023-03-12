@@ -34,12 +34,11 @@ object Utils {
         )
     }
 
-    fun getInvalidLabel(context: Context): Label {
+    fun getInvalidLabelWithRandomColor(context: Context): Label {
+        val randomColor = ThemeHelper.getPalette(context).indices.random()
         return Label(
-            "", ThemeHelper.getColor(
-                context,
-                ThemeHelper.COLOR_INDEX_UNLABELED
-            )
+            "",
+            randomColor
         )
     }
 }
