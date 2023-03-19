@@ -44,28 +44,28 @@ class TimeUtils {
             return time.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
         }
 
-        fun firstDayOfCurrentWeekMillis() : Long {
+        fun firstDayOfCurrentWeekMillis(): Long {
             return LocalDate.now()
-                    .atStartOfDay()
-                    .with(TemporalAdjusters.previousOrSame(firstDayOfWeek()))
-                    .atZone(ZoneId.systemDefault())
-                    .toInstant().toEpochMilli()
+                .atStartOfDay()
+                .with(TemporalAdjusters.previousOrSame(firstDayOfWeek()))
+                .atZone(ZoneId.systemDefault())
+                .toInstant().toEpochMilli()
         }
 
         fun firstDayOfLastWeekMillis(): Long {
             return LocalDate.now()
-                    .minus(1, ChronoUnit.WEEKS)
-                    .atStartOfDay()
-                    .with(TemporalAdjusters.previousOrSame(firstDayOfWeek()))
-                    .atZone(ZoneId.systemDefault())
-                    .toInstant().toEpochMilli()
+                .minus(1, ChronoUnit.WEEKS)
+                .atStartOfDay()
+                .with(TemporalAdjusters.previousOrSame(firstDayOfWeek()))
+                .atZone(ZoneId.systemDefault())
+                .toInstant().toEpochMilli()
         }
 
         fun nowMillis(): Long {
             return LocalDateTime.now()
-                    .atZone(ZoneId.systemDefault())
-                    .toInstant()
-                    .toEpochMilli()
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
         }
     }
 }
@@ -80,31 +80,50 @@ fun secondsOfDayToTimerFormat(seconds: Int, is24HourFormat: Boolean = true): Str
     )
 }
 
-fun Long.toLocalDateTime() : LocalDateTime {
+fun Long.toLocalDateTime(): LocalDateTime {
     return Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault()).toLocalDateTime()
 }
 
-fun Long.toLocalDate() : LocalDate {
+fun Long.toLocalDate(): LocalDate {
     return Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault()).toLocalDate()
 }
 
-fun Long.toLocalTime() : LocalTime {
+// The following two functions are required to convert from Zone date time to UTC date time and back
+// MaterialDatePicker uses UTC time
+fun Long.toUtcLocalDateTime(): LocalDateTime =
+    Instant.ofEpochMilli(this).atZone(ZoneId.ofOffset("UTC", ZoneOffset.UTC)).toLocalDateTime()
+
+fun Long.toZoneLocalDateTime(): LocalDate =
+    toUtcLocalDateTime().atZone(ZoneId.systemDefault()).toLocalDate()
+
+fun Long.toLocalTime(): LocalTime {
     return Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault()).toLocalTime()
 }
 
-fun Pair<LocalDate, LocalTime>.toLocalDateTime() : LocalDateTime {
+fun Long.toUtcMillis() = toLocalDateTime().atZone(ZoneId.ofOffset("UTC", ZoneOffset.UTC))
+    .toInstant().toEpochMilli()
+
+fun Pair<LocalDate, LocalTime>.toLocalDateTime(): LocalDateTime {
     return LocalDateTime.of(this.first, this.second)
 }
 
 val LocalDateTime.millis
     get() = this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
-fun LocalTime.toFormattedTime(): String = this.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
-fun LocalDate.toFormattedDate(): String = this.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
-fun LocalDateTime.toFormattedDateTime(): String = this.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
+fun LocalTime.toFormattedTime(): String =
+    this.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
 
-fun startOfTodayMillis() = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-fun startOfTomorrowMillis() = LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+fun LocalDate.toFormattedDate(): String =
+    this.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
+
+fun LocalDateTime.toFormattedDateTime(): String =
+    this.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
+
+fun startOfTodayMillis() =
+    LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+fun startOfTomorrowMillis() =
+    LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
 fun firstDayOfWeek(): DayOfWeek =
     WeekFields.of(Locale.getDefault()).firstDayOfWeek

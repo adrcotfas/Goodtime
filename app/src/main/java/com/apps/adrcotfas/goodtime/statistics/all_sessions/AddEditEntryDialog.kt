@@ -27,6 +27,7 @@ import android.view.View
 import com.apps.adrcotfas.goodtime.statistics.main.SelectLabelDialog
 import com.apps.adrcotfas.goodtime.statistics.main.StatisticsActivity
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.viewModels
 import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.database.Session
@@ -37,6 +38,7 @@ import com.apps.adrcotfas.goodtime.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Integer.min
 import java.time.LocalTime
+import java.util.*
 
 @AndroidEntryPoint
 class AddEditEntryDialog : BottomSheetDialogFragment(), OnLabelSelectedListener {
@@ -115,14 +117,20 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnLabelSelectedListener 
         if (label != null && label != getString(R.string.label_unlabeled)) {
             binding.labelChip.text = label
             labelsViewModel.getColorOfLabel(label)
-                .observe(viewLifecycleOwner, { color: Int? ->
+                .observe(viewLifecycleOwner) { color: Int? ->
                     binding.labelChip.chipBackgroundColor = ColorStateList.valueOf(
                         ThemeHelper.getColor(
                             requireContext(), color!!
                         )
                     )
-                })
-            binding.labelDrawable.setImageDrawable(resources.getDrawable(R.drawable.ic_label))
+                }
+            binding.labelDrawable.setImageDrawable(
+                ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ic_label,
+                    null
+                )
+            )
         } else {
             binding.labelChip.text = resources.getString(R.string.label_add)
             binding.labelChip.chipBackgroundColor = ColorStateList.valueOf(
@@ -130,7 +138,13 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnLabelSelectedListener 
                     requireContext(), ThemeHelper.COLOR_INDEX_UNLABELED
                 )
             )
-            binding.labelDrawable.setImageDrawable(resources.getDrawable(R.drawable.ic_label_off))
+            binding.labelDrawable.setImageDrawable(
+                ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ic_label_off,
+                    null
+                )
+            )
         }
     }
 
@@ -161,9 +175,13 @@ class AddEditEntryDialog : BottomSheetDialogFragment(), OnLabelSelectedListener 
         }
 
         binding.editDate.setOnClickListener {
-            val picker = DatePickerDialogHelper.buildDatePicker(timestamp)
+            val picker =
+                DatePickerDialogHelper.buildDatePicker(
+                    timestamp.toUtcMillis()
+                )
             picker.addOnPositiveButtonClickListener {
-                val newLocalDate = it.toLocalDate()
+                val newLocalDate =
+                    it.toZoneLocalDateTime()
                 viewModel.session.timestamp = Pair(newLocalDate, localTime).toLocalDateTime().millis
                 binding.editDate.text =
                     TimeUtils.formatDateLong(newLocalDate) //TODO: extract as extension function
