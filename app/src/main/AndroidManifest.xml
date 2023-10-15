@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.apps.adrcotfas.goodtime">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
 
@@ -10,7 +9,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <!-- Used by the UltimateRingtonePicker to allow adding custom ringtones -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
     <!-- Used to enable and disable WiFi during work sessions -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
@@ -78,6 +77,7 @@
             android:name="com.apps.adrcotfas.goodtime.bl.TimerService"
             android:enabled="true"
             android:exported="false" />
+        <!--            android:foregroundServiceType="specialUse"-->
 
         <provider
             android:name="androidx.core.content.FileProvider"

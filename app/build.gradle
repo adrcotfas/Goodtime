@@ -16,48 +16,7 @@ android {
         targetSdkVersion 33
         versionCode 151
         versionName "2.5.8"
-        resConfigs "ar-rSA",
-                "bn-rBD",
-                "bs-rBA",
-                "ca-rES",
-                "cs-rCZ",
-                "da-rDK",
-                "de-rDE",
-                "el-rGR",
-                "en-rUS",
-                "es-rES",
-                "eu-rES",
-                "fi-rFI",
-                "fr-rFR",
-                "gl-rES",
-                "hi-rIN",
-                "hr-rHR",
-                "hu-rHU",
-                "in-rID",
-                "it-rIT",
-                "iw-rIL",
-                "ja-rJP",
-                "ko-rKR",
-                "lt-rLT",
-                "lv-rLV",
-                "nl-rNL",
-                "no-rNO",
-                "pl-rPL",
-                "pt-rBR",
-                "pt-rPT",
-                "ro-rRO",
-                "ru-rRU",
-                "sk-rSK",
-                "sl-rSI",
-                "sr-rCS",
-                "sr-rSP",
-                "sv-rSE",
-                "th-rTH",
-                "tr-rTR",
-                "uk-rUA",
-                "vi-rVN",
-                "zh-rCN",
-                "zh-rTW"
+        resourceConfigurations += ['ar-rSA', 'bn-rBD', 'bs-rBA', 'ca-rES', 'cs-rCZ', 'da-rDK', 'de-rDE', 'el-rGR', 'en-rUS', 'es-rES', 'eu-rES', 'fi-rFI', 'fr-rFR', 'gl-rES', 'hi-rIN', 'hr-rHR', 'hu-rHU', 'in-rID', 'it-rIT', 'iw-rIL', 'ja-rJP', 'ko-rKR', 'lt-rLT', 'lv-rLV', 'nl-rNL', 'no-rNO', 'pl-rPL', 'pt-rBR', 'pt-rPT', 'ro-rRO', 'ru-rRU', 'sk-rSK', 'sl-rSI', 'sr-rCS', 'sr-rSP', 'sv-rSE', 'th-rTH', 'tr-rTR', 'uk-rUA', 'vi-rVN', 'zh-rCN', 'zh-rTW']
     }
 
     dataBinding {
@@ -85,14 +44,15 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
         coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = JavaVersion.VERSION_17
     }
+    namespace 'com.apps.adrcotfas.goodtime'
 }
 
 dependencies {
@@ -149,7 +109,7 @@ dependencies {
     // In-app purchases
     googleImplementation "com.android.billingclient:billing-ktx:4.0.0"
 
-    implementation 'xyz.aprildown:UltimateRingtonePicker:3.1.0'
+    implementation 'xyz.aprildown:UltimateRingtonePicker:3.2.0'
 
     implementation 'com.google.code.gson:gson:2.9.0'
 
