@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">Уведомлять за минуту до окончания рабочей сессии</string>
     <string name="donate_message">Сделайте пожертвование для поддержки приложений без рекламы и с открытым исходным кодом!</string>
     <string name="donate">Сделать пожертвование</string>
+    <string name="enable_notifications">Включить уведомления</string>
+    <string name="grant_permission_for_notifications">Предоставьте разрешение на уведомления</string>
 </resources>

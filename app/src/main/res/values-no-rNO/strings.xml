@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">Varsle ett minutt før arbeidsøkten avsluttes</string>
     <string name="donate_message">Doner for å støtte åpen kildekode og reklamefri programvare!</string>
     <string name="donate">Doner</string>
+    <string name="enable_notifications">Aktiver varslinger</string>
+    <string name="grant_permission_for_notifications">Gi tillatelse for varslinger</string>
 </resources>

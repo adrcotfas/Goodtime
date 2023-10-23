@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">Çalışma oturumu bitmeden bir dakika önce haber ver</string>
     <string name="donate_message">Açık kaynak ve reklamsız yazılımları desteklemek için bağış yap!</string>
     <string name="donate">Bağış yap</string>
+    <string name="enable_notifications">Bildirimleri etkinleştir</string>
+    <string name="grant_permission_for_notifications">Bildirimler için izin ver</string>
 </resources>

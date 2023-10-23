@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">Сповіщати за одну хвилину до закінчення робочого сеансу</string>
     <string name="donate_message">Пожертвуйте на підтримку програмного забезпечення з відкритим кодом та без реклами!</string>
     <string name="donate">Підтримати</string>
+    <string name="enable_notifications">Увімкнути сповіщення</string>
+    <string name="grant_permission_for_notifications">Надайте дозвіл на сповіщення</string>
 </resources>

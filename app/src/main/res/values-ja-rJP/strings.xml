@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">作業セッションが終了する1分前に通知する</string>
     <string name="donate_message">寄付をしてオープンソースかつ広告なしのソフトウェアを支援してください！</string>
     <string name="donate">寄付</string>
+    <string name="enable_notifications">通知を有効にする</string>
+    <string name="grant_permission_for_notifications">通知の許可を付与</string>
 </resources>

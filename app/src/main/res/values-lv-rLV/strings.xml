@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
     <string name="donate_message">Donate to support open-source and ad-free software!</string>
     <string name="donate">Donate</string>
+    <string name="enable_notifications">Ieslēgt paziņojumus</string>
+    <string name="grant_permission_for_notifications">Paredzēt atļauju paziņojumiem</string>
 </resources>

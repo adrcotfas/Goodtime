@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">Obavijesti jednu minutu prije nego što radna sesija završi</string>
     <string name="donate_message">Donirajte u naš program otvorenih izvora i bez reklama!</string>
     <string name="donate">Donirajte</string>
+    <string name="enable_notifications">Omogući obavijesti</string>
+    <string name="grant_permission_for_notifications">Dajte dozvolu za obavijesti</string>
 </resources>

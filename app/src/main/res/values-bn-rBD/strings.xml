@@ -164,4 +164,7 @@
     <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
     <string name="donate_message">Donate to support open-source and ad-free software!</string>
     <string name="donate">Donate</string>
+
+    <string name="enable_notifications">বিজ্ঞপ্তি সক্ষম করুন</string>
+    <string name="grant_permission_for_notifications">বিজ্ঞপ্তির জন্য অনুমতি দিন</string>
 </resources>

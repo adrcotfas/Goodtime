@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">แจ้งเตือนหนึ่งนาทีก่อนเซสชั่นการทำงานสิ้นสุด</string>
     <string name="donate_message">โดเนทเพื่อสนับสนุนซอฟต์แวร์โอเพนซอร์สที่ปราศจากโฆษณา</string>
     <string name="donate">โดเนท</string>
+    <string name="enable_notifications">เปิดใช้งานการแจ้งเตือน</string>
+    <string name="grant_permission_for_notifications">อนุญาตให้แจ้งเตือน</string>
 </resources>

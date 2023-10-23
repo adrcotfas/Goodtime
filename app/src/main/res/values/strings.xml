@@ -189,5 +189,7 @@
     <string name="donate">Donate</string>
     <string name="message_premium">Enjoy the PRO version!</string>
     <string name="pref_work_day_start">Workday start</string>
+    <string name="enable_notifications">Enable notifications</string>
+    <string name="grant_permission_for_notifications">Grant permission for notifications</string>
 
 </resources>

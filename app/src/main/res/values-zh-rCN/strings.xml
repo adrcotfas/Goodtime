@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">工作会话结束前一分钟进行通知</string>
     <string name="donate_message">捐赠支持开源和无广告软件！</string>
     <string name="donate">捐赠</string>
+    <string name="enable_notifications">启用通知</string>
+    <string name="grant_permission_for_notifications">授予通知权限</string>
 </resources>

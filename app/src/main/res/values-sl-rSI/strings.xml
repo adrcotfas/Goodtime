@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">Obvestilo me minuto pred iztekom dela</string>
     <string name="donate_message">Doniraj in podpri odprtokodni sistem brez oglasov!</string>
     <string name="donate">Doniraj</string>
+    <string name="enable_notifications">Omogoči obvestila</string>
+    <string name="grant_permission_for_notifications">Dajte dovoljenje za obvestila</string>
 </resources>

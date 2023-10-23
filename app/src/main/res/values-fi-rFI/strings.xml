@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">Ilmoita minuutti ennen kuin työistunto päättyy</string>
     <string name="donate_message">Lahjoita tukeaksesi avoimen lähdekoodin ja mainosvapaita ohjelmistoja!</string>
     <string name="donate">Lahjoita</string>
+    <string name="enable_notifications">Ota ilmoitukset käyttöön</string>
+    <string name="grant_permission_for_notifications">Myönnä lupa ilmoituksille</string>
 </resources>

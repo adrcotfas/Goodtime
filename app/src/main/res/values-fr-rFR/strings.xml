@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">Notifier une minute avant la fin d\'une session de travail</string>
     <string name="donate_message">Faire un don pour soutenir ce logiciel open-source et sans publicité !</string>
     <string name="donate">Faire un don</string>
+    <string name="enable_notifications">Activer les notifications</string>
+    <string name="grant_permission_for_notifications">Accorder l\'autorisation pour les notifications</string>
 </resources>

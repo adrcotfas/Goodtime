@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">Notifiera en minut innan sessionen avslutas</string>
     <string name="donate_message">Donera för att stödja öppen källkod och appar fria från reklam!</string>
     <string name="donate">Donation</string>
+    <string name="enable_notifications">Aktivera aviseringar</string>
+    <string name="grant_permission_for_notifications">Ge tillåtelse för aviseringar</string>
 </resources>

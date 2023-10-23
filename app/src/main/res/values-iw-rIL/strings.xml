@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">מודיע דקה לפני שמסתיים סשן העבודה</string>
     <string name="donate_message">תרום לתמיכה בתוכנת קוד פתוח ללא פרסומות!</string>
     <string name="donate">תרום</string>
+    <string name="enable_notifications">הפעל התראות</string>
+    <string name="grant_permission_for_notifications">הענק הרשאה להתראות</string>
 </resources>

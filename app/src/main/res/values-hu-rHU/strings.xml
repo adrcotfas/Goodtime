@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">Értesítés egy perccel a munkamenet vége előtt</string>
     <string name="donate_message">Donate to support open-source and ad-free software!</string>
     <string name="donate">Adományozás</string>
+    <string name="enable_notifications">Engedélyezze az értesítéseket</string>
+    <string name="grant_permission_for_notifications">Engedélyezze az értesítéseket</string>
 </resources>

@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">Báo cho biết 1 phút trước khi thời gian kết thúc</string>
     <string name="donate_message">Đóbg góp để ủng hộ nguồn mở và phần mềm không quảng cáo!</string>
     <string name="donate">Ủng hộ tác giả</string>
+    <string name="enable_notifications">Bật thông báo</string>
+    <string name="grant_permission_for_notifications">Cấp quyền thông báo</string>
 </resources>

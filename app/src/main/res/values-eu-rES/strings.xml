@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">Jakinarazi lan-saioa bukatu baino minutu bat lehenago</string>
     <string name="donate_message">Dirua eman kode irekiko eta iragarkirik gabeko softwarea babesteko!</string>
     <string name="donate">Dohaintza</string>
+    <string name="enable_notifications">Aktibatu jakinarazpenak</string>
+    <string name="grant_permission_for_notifications">Jakinarazpenetarako baimena eman</string>
 </resources>

@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">工作結束前一分鐘通知</string>
     <string name="donate_message">捐款支持開源和無廣告軟體！</string>
     <string name="donate">捐款</string>
+    <string name="enable_notifications">啟用通知</string>
+    <string name="grant_permission_for_notifications">授權通知權限</string>
 </resources>

@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">Benachrichtigung eine Minute bevor eine Arbeitssitzung endet</string>
     <string name="donate_message">Spenden Sie zur Unterstützung von Open-Source und werbefreier Software!</string>
     <string name="donate">Spenden</string>
+    <string name="enable_notifications">Benachrichtigungen aktivieren</string>
+    <string name="grant_permission_for_notifications">Berechtigung für Benachrichtigungen erteilen</string>
 </resources>

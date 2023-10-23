@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">업무 구간이 끝나기 1분 전에 알립니다</string>
     <string name="donate_message">광고 없는 오픈소스 앱을 후원해주세요!</string>
     <string name="donate">기부하기</string>
+    <string name="enable_notifications">알림 활성화</string>
+    <string name="grant_permission_for_notifications">알림 권한 부여</string>
 </resources>

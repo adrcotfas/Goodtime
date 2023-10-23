@@ -164,4 +164,6 @@
     <string name="pref_one_minute_left_notification_summary">Upozornit minutu před koncem pracovní sese</string>
     <string name="donate_message">Přispět na podporu open-source softwaru bez reklam!</string>
     <string name="donate">Přispět</string>
+    <string name="enable_notifications">Povolit oznámení</string>
+    <string name="grant_permission_for_notifications">Udělit oprávnění k oznámením</string>
 </resources>
