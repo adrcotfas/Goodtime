@@ -35,7 +35,7 @@ class PreferenceHelper(val context: Context) {
         )
 
     companion object {
-        private const val PRO = "pref_blana"
+        internal const val PRO = "pref_blana"
         private const val PREFERENCES_VERSION = 2
         private const val PREFERENCES_VERSION_INTERNAL = "pref_version"
         private const val FIRST_RUN = "pref_first_run"
@@ -62,6 +62,7 @@ class PreferenceHelper(val context: Context) {
         const val AUTO_START_WORK = "pref_auto_start_work"
         const val AMOLED = "pref_amoled"
         const val DISABLE_BATTERY_OPTIMIZATION = "pref_disable_battery_optimization"
+        const val ENABLE_NOTIFICATIONS = "pref_enable_notifications"
         const val SAVE_CUSTOM_PROFILE = "pref_save_custom_profile"
         const val ENABLE_FLASHING_NOTIFICATION = "pref_flashing_notification"
         private const val WORK_STREAK = "pref_WORK_STREAK"

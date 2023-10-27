@@ -8,8 +8,4 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 abstract class ActivityWithBilling : AppCompatActivity() {
-    @Inject
-    lateinit var preferenceHelper: PreferenceHelper
-
-    abstract fun showSnackBar(@StringRes resourceId: Int)
 }

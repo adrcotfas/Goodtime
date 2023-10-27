@@ -62,7 +62,7 @@ class ReminderHelper@Inject constructor(
         }
         if (key.contains(PreferenceHelper.REMINDER_DAYS)) {
             Log.d(TAG, "onSharedPreferenceChanged: $key")
-            val idx = key.last().toInt() - '0'.toInt()
+            val idx = key.last().code - '0'.code
             val reminderDay = DayOfWeek.of(idx + 1)
             if (preferenceHelper.isReminderEnabledFor(reminderDay)) {
                 toggleBootReceiver(true)
@@ -106,7 +106,7 @@ class ReminderHelper@Inject constructor(
 
     private fun cancelNotifications() {
         Log.d(TAG, "cancelNotifications")
-        for (day in DayOfWeek.values()) {
+        for (day in DayOfWeek.entries) {
             cancelNotification(day)
         }
     }

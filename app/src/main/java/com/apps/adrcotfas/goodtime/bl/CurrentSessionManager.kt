@@ -12,25 +12,22 @@
  */
 package com.apps.adrcotfas.goodtime.bl
 
-import android.content.ContextWrapper
-import javax.inject.Inject
-import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
-import com.apps.adrcotfas.goodtime.bl.CurrentSessionManager.AppCountDownTimer
-import android.content.IntentFilter
-import com.apps.adrcotfas.goodtime.util.Constants.ACTION
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.os.CountDownTimer
 import android.os.SystemClock
 import android.util.Log
+import com.apps.adrcotfas.goodtime.bl.CurrentSessionManager.AppCountDownTimer
+import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
 import com.apps.adrcotfas.goodtime.util.Constants
-import org.greenrobot.eventbus.EventBus
 import com.apps.adrcotfas.goodtime.util.Constants.UpdateTimerProgressEvent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.lang.IllegalArgumentException
+import org.greenrobot.eventbus.EventBus
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import kotlin.math.min
 
 /**
@@ -45,13 +42,6 @@ class CurrentSessionManager @Inject constructor(@ApplicationContext val context:
 
     private lateinit var timer: AppCountDownTimer
     private var remaining : Long = 0 // [ms]
-
-    private val alarmReceiver: AlarmReceiver = AlarmReceiver(object : AlarmReceiver.OnAlarmReceivedListener{
-        override fun onAlarmReceived() {
-            currentSession.setTimerState(TimerState.INACTIVE)
-        }
-    })
-
     private var sessionDuration: Long = 0
 
     fun startTimer(sessionType: SessionType) {
@@ -73,8 +63,13 @@ class CurrentSessionManager @Inject constructor(@ApplicationContext val context:
         when (currentSession.timerState.value) {
             TimerState.PAUSED -> {
                 Log.v(TAG, "toggleTimer PAUSED")
+                val sessionType = currentSession.sessionType.value
+                if (sessionType == null) {
+                    Log.wtf(TAG, "invalid session type")
+                    return
+                }
                 scheduleAlarm(
-                    currentSession.sessionType.value,
+                    sessionType,
                     remaining,
                     preferenceHelper.oneMinuteBeforeNotificationEnabled()
                             && remaining > TimeUnit.MINUTES.toMillis(1)
@@ -131,21 +126,21 @@ class CurrentSessionManager @Inject constructor(@ApplicationContext val context:
         }
 
     private fun scheduleAlarm(
-        sessionType: SessionType?,
+        sessionType: SessionType,
         duration: Long,
         remindOneMinuteLeft: Boolean
     ) {
-        this.registerReceiver(alarmReceiver, IntentFilter(ACTION.FINISHED))
         val triggerAtMillis = duration + SystemClock.elapsedRealtime()
-        Log.v(TAG, "scheduleAlarm " + sessionType.toString())
+        Log.v(TAG, "scheduleAlarm $sessionType at $triggerAtMillis" )
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.ELAPSED_REALTIME_WAKEUP,
             triggerAtMillis, getAlarmPendingIntent(sessionType)
         )
         if (remindOneMinuteLeft && sessionType == SessionType.WORK) {
-            Log.v(TAG, "scheduled one minute left")
             val triggerAtMillisOneMinuteLeft =
                 duration - TimeUnit.MINUTES.toMillis(1) + SystemClock.elapsedRealtime()
+            Log.v(TAG, "scheduled one minute left alarm at $triggerAtMillisOneMinuteLeft")
+            if(triggerAtMillisOneMinuteLeft <= 1000) return
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 triggerAtMillisOneMinuteLeft, oneMinuteLeftAlarmPendingIntent
@@ -158,24 +153,15 @@ class CurrentSessionManager @Inject constructor(@ApplicationContext val context:
         alarmManager.cancel(intent)
         val intentOneMinuteLeft = oneMinuteLeftAlarmPendingIntent
         alarmManager.cancel(intentOneMinuteLeft)
-        unregisterAlarmReceiver()
-    }
-
-    private fun unregisterAlarmReceiver() {
-        Log.v(TAG, "unregisterAlarmReceiver")
-        try {
-            unregisterReceiver(alarmReceiver)
-        } catch (e: IllegalArgumentException) {
-            Log.w(TAG, "AlarmReceiver is already unregistered.")
-        }
     }
 
     private val alarmManager: AlarmManager
         get() = applicationContext.getSystemService(ALARM_SERVICE) as AlarmManager
 
     private fun getAlarmPendingIntent(sessionType: SessionType?): PendingIntent {
-        val intent = Intent(ACTION.FINISHED)
-        intent.putExtra(Constants.SESSION_TYPE, sessionType.toString())
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
+            putExtra(Constants.SESSION_TYPE, sessionType.toString())
+        }
         return PendingIntent.getBroadcast(
             applicationContext, 0,
             intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -184,8 +170,9 @@ class CurrentSessionManager @Inject constructor(@ApplicationContext val context:
 
     private val oneMinuteLeftAlarmPendingIntent: PendingIntent
         get() {
-            val intent = Intent(ACTION.FINISHED)
-            intent.putExtra(Constants.ONE_MINUTE_LEFT, true)
+            val intent = Intent(context, AlarmReceiver::class.java).apply {
+                putExtra(Constants.ONE_MINUTE_LEFT, true)
+            }
             return PendingIntent.getBroadcast(
                 applicationContext, 1,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -200,8 +187,13 @@ class CurrentSessionManager @Inject constructor(@ApplicationContext val context:
         remaining = min(remaining + extra, TimeUnit.MINUTES.toMillis(240))
         timer = AppCountDownTimer(remaining)
         if (currentSession.timerState.value != TimerState.PAUSED) {
+            val sessionType = currentSession.sessionType.value
+            if (sessionType == null) {
+                Log.wtf(TAG, "invalid session type")
+                return
+            }
             scheduleAlarm(
-                currentSession.sessionType.value,
+                sessionType,
                 remaining,
                 preferenceHelper.oneMinuteBeforeNotificationEnabled()
                         && remaining > TimeUnit.MINUTES.toMillis(1)

@@ -24,6 +24,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- Used on Android P and later for the timer foreground service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <!-- For the option of removing the app from the battery optimization -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
@@ -76,8 +77,12 @@
         <service
             android:name="com.apps.adrcotfas.goodtime.bl.TimerService"
             android:enabled="true"
-            android:exported="false" />
-        <!--            android:foregroundServiceType="specialUse"-->
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="this_service_handles_the_ongoing_timer_countdown_notifications_and_other_related_work" />
+        </service>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -88,6 +93,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <receiver
+            android:name=".bl.AlarmReceiver"
+            android:exported="false" />
 
         <receiver
             android:name=".settings.reminders.BootReceiver"

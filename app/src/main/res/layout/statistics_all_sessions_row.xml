@@ -6,7 +6,7 @@
     <data>
 
         <variable
-            name="item"
+            name="session"
             type="com.apps.adrcotfas.goodtime.database.Session" />
 
         <import type="android.view.View" />
@@ -27,7 +27,7 @@
             android:layout_centerVertical="true"
             android:paddingVertical="6dp"
             android:singleLine="true"
-            android:text="@{Integer.toString(item.duration)}"
+            android:text="@{Integer.toString(session.duration)}"
             android:textSize="@dimen/regularTextSize"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -43,7 +43,7 @@
             android:layout_marginVertical="2dp"
             android:layout_marginStart="8dp"
             android:singleLine="true"
-            android:text="@{com.apps.adrcotfas.goodtime.util.StringUtils.formatDateForStatistics(item.timestamp)}"
+            android:text="@{com.apps.adrcotfas.goodtime.util.StringUtils.formatDateForStatistics(session.timestamp)}"
             android:textSize="@dimen/smallerTextSize"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toTopOf="parent"
@@ -57,7 +57,7 @@
             android:layout_marginVertical="2dp"
             android:layout_marginEnd="16dp"
             android:singleLine="true"
-            android:text="@{com.apps.adrcotfas.goodtime.util.StringUtils.formatTimeForStatistics(item.timestamp)}"
+            android:text="@{com.apps.adrcotfas.goodtime.util.StringUtils.formatTimeForStatistics(session.timestamp)}"
             android:textSize="@dimen/smallerTextSize"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/date"
@@ -72,9 +72,9 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:clickable="false"
-            android:text="@{item.label}"
+            android:text="@{session.label}"
 
-            android:visibility="@{item.label == null ? View.INVISIBLE : View.VISIBLE}"
+            android:visibility="@{session.label == null ? View.INVISIBLE : View.VISIBLE}"
             app:layout_constrainedWidth="true"
 
             app:layout_constraintBottom_toBottomOf="parent"

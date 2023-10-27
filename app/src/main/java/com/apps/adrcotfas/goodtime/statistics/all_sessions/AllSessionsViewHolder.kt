@@ -26,7 +26,7 @@ class AllSessionsViewHolder internal constructor(itemView: View) : RecyclerView.
 
     val rowOverlay: View = binding.overlay
     fun bind(item: Session, color: ColorStateList) {
-        binding.item = item
+        binding.session = item
         binding.status.chipBackgroundColor = color
     }
 

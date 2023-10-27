@@ -11,6 +11,14 @@
         android:shouldDisableView="true"
         app:isPreferenceVisible="false" />
 
+    <Preference
+        android:key="pref_enable_notifications"
+        android:title="@string/enable_notifications"
+        android:summary="@string/grant_permission_for_notifications"
+        android:icon="@drawable/ic_exclamation"
+        android:shouldDisableView="true"
+        app:isPreferenceVisible="false" />
+
     <com.apps.adrcotfas.goodtime.settings.DayOfWeekPreference
         app:key="pref_reminder_days"
         app:layout="@layout/preference_days_of_week"

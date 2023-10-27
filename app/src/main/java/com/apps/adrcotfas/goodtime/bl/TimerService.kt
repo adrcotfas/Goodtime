@@ -349,7 +349,6 @@ class TimerService : LifecycleService() {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     private fun togglePriorityMode(restore: Boolean) {
         val t = Thread {
             val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -428,7 +427,6 @@ class TimerService : LifecycleService() {
         application.startActivity(activityIntent)
     }
 
-    @get:TargetApi(Build.VERSION_CODES.M)
     private val isNotificationPolicyAccessGranted: Boolean
         get() {
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager

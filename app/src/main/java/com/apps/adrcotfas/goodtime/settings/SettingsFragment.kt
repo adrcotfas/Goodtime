@@ -12,27 +12,35 @@
  */
 package com.apps.adrcotfas.goodtime.settings
 
-import com.apps.adrcotfas.goodtime.util.BatteryUtils.Companion.isIgnoringBatteryOptimizations
-import com.apps.adrcotfas.goodtime.util.UpgradeDialogHelper.Companion.launchUpgradeDialog
-import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
-import android.os.Bundle
-import com.apps.adrcotfas.goodtime.R
-import android.view.LayoutInflater
-import android.view.ViewGroup
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.os.Build
 import android.annotation.TargetApi
 import android.app.NotificationManager
+import android.app.Service
 import android.content.Context
+import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
+import android.os.Bundle
 import android.provider.Settings
 import android.text.format.DateFormat
+import android.view.LayoutInflater
 import android.view.View
-import androidx.preference.*
+import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
+import androidx.preference.CheckBoxPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreferenceCompat
+import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.ui.common.TimePickerDialogBuilder
-import com.apps.adrcotfas.goodtime.util.*
+import com.apps.adrcotfas.goodtime.util.BatteryUtils.Companion.isIgnoringBatteryOptimizations
+import com.apps.adrcotfas.goodtime.util.ThemeHelper
+import com.apps.adrcotfas.goodtime.util.UpgradeDialogHelper.Companion.launchUpgradeDialog
+import com.apps.adrcotfas.goodtime.util.secondsOfDayToTimerFormat
+import com.apps.adrcotfas.goodtime.util.showOnce
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import xyz.aprildown.ultimateringtonepicker.RingtonePickerDialog
@@ -48,6 +56,10 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
 
     @Inject
     lateinit var preferenceHelper: PreferenceHelper
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings, rootKey)
@@ -81,7 +93,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
         val dayOfWeekPref = findPreference<DayOfWeekPreference>(PreferenceHelper.REMINDER_DAYS)
         dayOfWeekPref!!.setCheckedDays(
             preferenceHelper.getBooleanArray(
-                PreferenceHelper.REMINDER_DAYS, DayOfWeek.values().size
+                PreferenceHelper.REMINDER_DAYS, DayOfWeek.entries.size
             )
         )
 
@@ -112,7 +124,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
         savedInstanceState: Bundle?
     ): View {
         val view = super.onCreateView(inflater, container, savedInstanceState)
-        view!!.alpha = 0f
+        view.alpha = 0f
         view.animate().alpha(1f).duration = 100
         return view
     }
@@ -129,11 +141,45 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
         setupDnDCheckBox()
         setupFlashingNotificationPref()
         setupOneMinuteLeftNotificationPref()
-        val disableBatteryOptimizationPref =
-            findPreference<Preference>(PreferenceHelper.DISABLE_BATTERY_OPTIMIZATION)
+        setupDisableBatteryOptimization()
+        findPreference<Preference>(PreferenceHelper.DISABLE_WIFI)!!.isVisible =
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+
+        setupNotificationPref()
+    }
+
+    private fun setupNotificationPref() {
+        val pref = findPreference<Preference>(PreferenceHelper.ENABLE_NOTIFICATIONS)!!
+        val notificationManager =
+            requireContext().getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
+
+        val showPref = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+                !notificationManager.areNotificationsEnabled()
+        pref.isVisible = showPref
+
+        if (showPref) {
+            pref.setOnPreferenceClickListener {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                    && !shouldShowRequestPermissionRationale(POST_NOTIFICATIONS)
+                ) {
+                    requestPermissionLauncher.launch(POST_NOTIFICATIONS)
+                } else {
+                    val settingsIntent: Intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().packageName)
+                    startActivity(settingsIntent)
+                }
+                true
+            }
+        }
+    }
+
+    @SuppressLint("BatteryLife")
+    private fun setupDisableBatteryOptimization() {
+        val pref = findPreference<Preference>(PreferenceHelper.DISABLE_BATTERY_OPTIMIZATION)
         if (!isIgnoringBatteryOptimizations(requireContext())) {
-            disableBatteryOptimizationPref!!.isVisible = true
-            disableBatteryOptimizationPref.onPreferenceClickListener =
+            pref!!.isVisible = true
+            pref.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener {
                     val intent = Intent()
                     intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
@@ -142,11 +188,8 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
                     true
                 }
         } else {
-            disableBatteryOptimizationPref!!.isVisible = false
+            pref!!.isVisible = false
         }
-        findPreference<Preference>(PreferenceHelper.DISABLE_WIFI)!!.isVisible =
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
-        prefDndMode.isVisible = true
     }
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
@@ -154,11 +197,13 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
             PreferenceHelper.TIMER_STYLE -> {
                 super.onDisplayPreferenceDialog(preference)
             }
+
             PreferenceHelper.VIBRATION_TYPE -> {
                 val dialog = VibrationPreferenceDialogFragment.newInstance(preference.key)
                 dialog.setTargetFragment(this, 0)
                 dialog.showOnce(parentFragmentManager, "VibrationType")
             }
+
             else -> {
                 super.onDisplayPreferenceDialog(preference)
             }

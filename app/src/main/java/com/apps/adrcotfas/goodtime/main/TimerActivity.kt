@@ -87,6 +87,9 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
     @Inject
     lateinit var currentSessionManager: CurrentSessionManager
 
+    @Inject
+    lateinit var preferenceHelper: PreferenceHelper
+
     private var sessionFinishedDialog: FinishedSessionDialog? = null
 
     private var fullscreenHelper: FullscreenHelper? = null
@@ -170,13 +173,6 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
             RateThisApp.onCreate(this)
             // If the condition is satisfied, "Rate this app" dialog will be shown
             RateThisApp.showRateDialogIfNeeded(this)
-        }
-    }
-
-    override fun showSnackBar(@StringRes resourceId: Int) {
-        if (this::binding.isInitialized) {
-            Snackbar.make(binding.root, getString(resourceId), Snackbar.LENGTH_LONG)
-                .setAnchorView(toolbar).show()
         }
     }
 
@@ -448,7 +444,6 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
     private val currentSession: CurrentSession
         get() = currentSessionManager.currentSession
 
-    @SuppressLint("WrongConstant")
     override fun onBackPressed() {
         if (currentSession.timerState.value !== TimerState.INACTIVE) {
             moveTaskToBack(true)
@@ -695,7 +690,7 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         when (key) {
             PreferenceHelper.WORK_DURATION -> if (currentSession.timerState.value
                 === TimerState.INACTIVE
@@ -715,6 +710,15 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
             }
             PreferenceHelper.ENABLE_SCREENSAVER_MODE -> if (!preferenceHelper.isScreensaverEnabled()) {
                 recreate()
+            }
+            PreferenceHelper.PRO -> {
+                if (preferenceHelper.isPro()) {
+                    Toast.makeText(
+                        this,
+                        getString(R.string.message_premium),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
             else -> {
             }

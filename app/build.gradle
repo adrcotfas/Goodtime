@@ -2,18 +2,18 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
     id 'kotlin-parcelize'
-    id 'dagger.hilt.android.plugin'
+    id 'com.google.dagger.hilt.android'
     id 'com.jaredsburrows.license'
 }
 
 android {
-    compileSdkVersion 33
-
     defaultConfig {
+        compileSdk 34
         applicationId "com.apps.adrcotfas.goodtime"
         minSdkVersion 23
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 151
         versionName "2.5.8"
         resourceConfigurations += ['ar-rSA', 'bn-rBD', 'bs-rBA', 'ca-rES', 'cs-rCZ', 'da-rDK', 'de-rDE', 'el-rGR', 'en-rUS', 'es-rES', 'eu-rES', 'fi-rFI', 'fr-rFR', 'gl-rES', 'hi-rIN', 'hr-rHR', 'hu-rHU', 'in-rID', 'it-rIT', 'iw-rIL', 'ja-rJP', 'ko-rKR', 'lt-rLT', 'lv-rLV', 'nl-rNL', 'no-rNO', 'pl-rPL', 'pt-rBR', 'pt-rPT', 'ro-rRO', 'ru-rRU', 'sk-rSK', 'sl-rSI', 'sr-rCS', 'sr-rSP', 'sv-rSE', 'th-rTH', 'tr-rTR', 'uk-rUA', 'vi-rVN', 'zh-rCN', 'zh-rTW']
@@ -31,7 +31,7 @@ android {
         }
     }
 
-    flavorDimensions("cevafin")
+    flavorDimensions = ["cevafin"]
     productFlavors {
         google {
             dimension "cevafin"
@@ -57,26 +57,26 @@ android {
 
 dependencies {
     // to use the latest java features (needed java.time)
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.2'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
-    implementation "androidx.core:core-ktx:1.9.0"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.0"
+    implementation "androidx.core:core-ktx:1.12.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.2"
 
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    implementation 'androidx.room:room-runtime:2.5.0'
-    implementation 'androidx.room:room-ktx:2.5.0'
-    kapt "androidx.room:room-compiler:2.5.0"
+    implementation 'androidx.room:room-runtime:2.6.0'
+    implementation 'androidx.room:room-ktx:2.6.0'
+    ksp "androidx.room:room-compiler:2.6.0"
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
     // Preferences
-    implementation 'androidx.preference:preference-ktx:1.2.0'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
 
     // Color picker for the labels
     implementation 'com.takisoft.colorpicker:colorpicker:1.0.0'
@@ -85,7 +85,7 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.3.1'
 
     // Material components
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.10.0'
 
     // About
     implementation 'com.github.daniel-stoneuk:material-about-library:3.1.2'
@@ -106,17 +106,18 @@ dependencies {
     // App rating
     implementation 'io.github.kobakei:ratethisapp:1.2.0'
 
-    // In-app purchases
-    googleImplementation "com.android.billingclient:billing-ktx:4.0.0"
+    // IAP
+    def billing_version = "6.0.1"
+    implementation "com.android.billingclient:billing-ktx:$billing_version"
 
     implementation 'xyz.aprildown:UltimateRingtonePicker:3.2.0'
 
-    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.10'
 
-    implementation 'com.google.dagger:hilt-android:2.44.2'
-    kapt 'com.google.dagger:hilt-compiler:2.44.2'
+    implementation 'com.google.dagger:hilt-android:2.48.1'
+    kapt 'com.google.dagger:hilt-compiler:2.48.1'
 
-    implementation "androidx.fragment:fragment-ktx:1.5.5"
+    implementation "androidx.fragment:fragment-ktx:1.6.1"
 }
 
 kapt {

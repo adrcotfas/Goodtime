@@ -22,12 +22,14 @@ import com.apps.adrcotfas.goodtime.util.Constants
 import com.apps.adrcotfas.goodtime.util.Constants.FinishWorkEvent
 import com.apps.adrcotfas.goodtime.util.Constants.FinishBreakEvent
 import com.apps.adrcotfas.goodtime.util.Constants.FinishLongBreakEvent
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class AlarmReceiver(val listener: OnAlarmReceivedListener) : BroadcastReceiver() {
+@AndroidEntryPoint
+class AlarmReceiver : BroadcastReceiver() {
 
-    interface OnAlarmReceivedListener {
-        fun onAlarmReceived()
-    }
+    @Inject
+    lateinit var currentSessionManager: CurrentSessionManager
 
     companion object{
         private val TAG = AlarmReceiver::class.java.simpleName
@@ -42,8 +44,8 @@ class AlarmReceiver(val listener: OnAlarmReceivedListener) : BroadcastReceiver()
         }
         val sessionType = SessionType.valueOf(intent.getStringExtra(Constants.SESSION_TYPE)!!)
         Log.v(TAG, "onReceive $sessionType")
-        
-        listener.onAlarmReceived()
+
+        currentSessionManager.currentSession.setTimerState(TimerState.INACTIVE)
 
         when (sessionType) {
             SessionType.WORK -> EventBus.getDefault().post(FinishWorkEvent())

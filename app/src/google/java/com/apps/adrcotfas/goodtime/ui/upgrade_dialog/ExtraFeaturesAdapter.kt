@@ -21,6 +21,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.util.ThemeHelper
@@ -47,7 +48,7 @@ class ExtraFeaturesAdapter(
         private val icon: ImageView = itemView.findViewById(R.id.icon)
         fun bind(context : Context, item: Pair<String, Int>) {
             text.text = item.first
-            icon.setImageDrawable(context.resources.getDrawable(item.second))
+            icon.setImageDrawable(ResourcesCompat.getDrawable(context.resources, item.second, null))
             icon.setColorFilter(ThemeHelper.getColor(context, ThemeHelper.COLOR_INDEX_UNLABELED))
         }
 

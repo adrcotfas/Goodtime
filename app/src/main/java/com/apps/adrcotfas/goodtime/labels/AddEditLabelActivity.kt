@@ -22,6 +22,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -109,7 +110,13 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
         addLabelView.onFocusChangeListener =
             OnFocusChangeListener { _: View?, hasFocus: Boolean ->
                 imageRight.visibility = if (hasFocus) View.VISIBLE else View.INVISIBLE
-                imageLeft.setImageDrawable(resources.getDrawable(if (hasFocus) R.drawable.ic_palette else R.drawable.ic_add))
+                imageLeft.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        (if (hasFocus) R.drawable.ic_palette else R.drawable.ic_add),
+                        null
+                    )
+                )
                 imageLeftContainer.setOnClickListener(if (hasFocus) View.OnClickListener {
                     val p = ColorPickerDialog.Params.Builder(this@AddEditLabelActivity)
                         .setColors(ThemeHelper.getPalette(this))
@@ -200,7 +207,9 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
             getString(R.string.tutorial_archive_label),
             Snackbar.LENGTH_INDEFINITE
         )
-            .setAction(getString(android.R.string.ok)) { preferenceHelper.archivedLabelHintWasShown = true }
+            .setAction(getString(android.R.string.ok)) {
+                preferenceHelper.archivedLabelHintWasShown = true
+            }
         s.behavior = object : BaseTransientBottomBar.Behavior() {
             override fun canSwipeDismissView(child: View): Boolean {
                 return false

@@ -60,11 +60,12 @@ abstract class OnSwipeTouchListener(context: Context?) : OnTouchListener {
         }
 
         override fun onFling(
-            e1: MotionEvent,
+            e1: MotionEvent?,
             e2: MotionEvent,
             velocityX: Float,
             velocityY: Float
         ): Boolean {
+            if (e1 == null) return false
             var result = false
             try {
                 val diffY = e2.y - e1.y
