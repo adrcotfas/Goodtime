@@ -30,12 +30,10 @@ import com.apps.adrcotfas.goodtime.util.Constants.ClearNotificationEvent
 import com.apps.adrcotfas.goodtime.util.Constants.StartSessionEvent
 import android.os.PowerManager
 import android.media.AudioManager
-import androidx.annotation.RequiresApi
 import android.os.Build
 import android.app.NotificationManager
 import android.net.wifi.WifiManager
 import com.apps.adrcotfas.goodtime.main.TimerActivity
-import android.annotation.TargetApi
 import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import com.apps.adrcotfas.goodtime.database.Session

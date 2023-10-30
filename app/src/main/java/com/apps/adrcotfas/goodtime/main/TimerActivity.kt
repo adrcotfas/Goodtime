@@ -58,7 +58,6 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment

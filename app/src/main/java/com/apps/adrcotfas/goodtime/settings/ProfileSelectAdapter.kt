@@ -2,7 +2,6 @@ package com.apps.adrcotfas.goodtime.settings
 
 import android.annotation.SuppressLint
 import android.content.Context
-import com.apps.adrcotfas.goodtime.settings.ProfileSelectAdapter.OnProfileSelectedListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +33,7 @@ class ProfileSelectAdapter(
         return ViewHolder(view)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
         val profile = mProfiles[position].toString()
 
@@ -80,7 +80,7 @@ class ProfileSelectAdapter(
     init {
         inflater = LayoutInflater.from(context)
         mContext = WeakReference(context)
-        mProfiles = ArrayList(Arrays.asList(*profiles))
+        mProfiles = ArrayList(listOf(*profiles))
         mClickedDialogEntryIndex = selectedIndex
         mCallback = callback
     }

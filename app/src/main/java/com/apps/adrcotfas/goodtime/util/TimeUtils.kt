@@ -34,7 +34,7 @@ class TimeUtils {
             WeekFields.of(Locale.getDefault()).firstDayOfWeek
 
         fun lastDayOfWeek(): DayOfWeek =
-            DayOfWeek.of((firstDayOfWeek().value + 5) % DayOfWeek.values().size + 1)
+            DayOfWeek.of((firstDayOfWeek().value + 5) % DayOfWeek.entries.size + 1)
 
         fun formatDateLong(date: LocalDate): String {
             return date.format(DateTimeFormatter.ofPattern("EEE', 'MMM d', ' yyyy"))
@@ -129,4 +129,4 @@ fun firstDayOfWeek(): DayOfWeek =
     WeekFields.of(Locale.getDefault()).firstDayOfWeek
 
 fun lastDayOfWeek(): DayOfWeek =
-    DayOfWeek.of((firstDayOfWeek().value + 5) % DayOfWeek.values().size + 1)
+    DayOfWeek.of((firstDayOfWeek().value + 5) % DayOfWeek.entries.size + 1)

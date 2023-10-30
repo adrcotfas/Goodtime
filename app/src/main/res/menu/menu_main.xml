@@ -6,7 +6,7 @@
         android:icon="@drawable/ic_exclamation"
         android:title="@string/pref_disable_battery_optimization"
         android:visible="false"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
     <item android:id="@+id/action_current_label"
         android:icon="@drawable/ic_label"

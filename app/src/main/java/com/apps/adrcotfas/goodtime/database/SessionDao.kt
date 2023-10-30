@@ -17,8 +17,6 @@ import androidx.lifecycle.LiveData
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.apps.adrcotfas.goodtime.util.startOfTodayMillis
-import com.apps.adrcotfas.goodtime.util.startOfTomorrowMillis
 
 @Dao
 interface SessionDao {

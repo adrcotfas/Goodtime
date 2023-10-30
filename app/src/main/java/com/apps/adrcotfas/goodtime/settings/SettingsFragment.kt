@@ -457,7 +457,6 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
         }
     }
 
-    @get:TargetApi(Build.VERSION_CODES.M)
     private val isNotificationPolicyAccessDenied: Boolean
         get() {
             val notificationManager =

@@ -1,11 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dialog_edit_label_row"
     android:orientation="horizontal"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="?attr/android:windowBackground"
-    tools:targetApi="lollipop">
+    android:background="?attr/android:windowBackground">
 
     <FrameLayout
         android:id="@+id/scroll_icon_container"

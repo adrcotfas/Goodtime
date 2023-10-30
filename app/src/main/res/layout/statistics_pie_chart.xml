@@ -1,5 +1,6 @@
 <layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/parent"
         android:layout_width="match_parent"
@@ -45,7 +46,7 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:src="@drawable/ic_list_large"
-                    android:tint="@color/grey500"
+                    app:tint="@color/grey500"
                     android:gravity="center"/>
 
                 <TextView

@@ -39,7 +39,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AboutActivity : MaterialAboutActivity() {
 
-    @Inject lateinit var preferenceHelper: PreferenceHelper
+    @Inject
+    lateinit var preferenceHelper: PreferenceHelper
 
     override fun getMaterialAboutList(c: Context): MaterialAboutList {
         val builder1 = MaterialAboutCard.Builder()
@@ -118,30 +119,32 @@ class AboutActivity : MaterialAboutActivity() {
             }
             .build())
         val builder2 = MaterialAboutCard.Builder()
-        builder2.addItem(MaterialAboutActionItem.Builder()
-            .text(getString(R.string.feedback))
-            .icon(
-                IconicsDrawable(c)
-                    .icon(CommunityMaterial.Icon.cmd_email)
-                    .color(ContextCompat.getColor(c, colorIcon))
-                    .sizeDp(18)
-            )
-            .setOnClickAction { openFeedback() }.build()
+        builder2.addItem(
+            MaterialAboutActionItem.Builder()
+                .text(getString(R.string.feedback))
+                .icon(
+                    IconicsDrawable(c)
+                        .icon(CommunityMaterial.Icon.cmd_email)
+                        .color(ContextCompat.getColor(c, colorIcon))
+                        .sizeDp(18)
+                )
+                .setOnClickAction { openFeedback() }.build()
         )
-        builder2.addItem(MaterialAboutActionItem.Builder()
-            .text(getString(R.string.about_translate))
-            .icon(
-                IconicsDrawable(c)
-                    .icon(CommunityMaterial.Icon2.cmd_web)
-                    .color(ContextCompat.getColor(c, colorIcon))
-                    .sizeDp(18)
-            )
-            .setOnClickAction {
-                val url = getString(R.string.app_translation_url)
-                val i = Intent(Intent.ACTION_VIEW)
-                i.data = Uri.parse(url)
-                startActivity(i)
-            }.build()
+        builder2.addItem(
+            MaterialAboutActionItem.Builder()
+                .text(getString(R.string.about_translate))
+                .icon(
+                    IconicsDrawable(c)
+                        .icon(CommunityMaterial.Icon2.cmd_web)
+                        .color(ContextCompat.getColor(c, colorIcon))
+                        .sizeDp(18)
+                )
+                .setOnClickAction {
+                    val url = getString(R.string.app_translation_url)
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data = Uri.parse(url)
+                    startActivity(i)
+                }.build()
         )
         builder2.addItem(
             ConvenienceBuilder.createRateActionItem(
@@ -155,20 +158,21 @@ class AboutActivity : MaterialAboutActivity() {
             )
         )
         val builder3 = MaterialAboutCard.Builder()
-        builder3.addItem(MaterialAboutActionItem.Builder()
-            .text(getString(R.string.other_apps))
-            .icon(
-                IconicsDrawable(c)
-                    .icon(CommunityMaterial.Icon.cmd_application)
-                    .color(ContextCompat.getColor(c, colorIcon))
-                    .sizeDp(18)
-            )
-            .setOnClickAction {
-                val url = "https://play.google.com/store/apps/developer?id=Goodtime"
-                val i = Intent(Intent.ACTION_VIEW)
-                i.data = Uri.parse(url)
-                startActivity(i)
-            }.build()
+        builder3.addItem(
+            MaterialAboutActionItem.Builder()
+                .text(getString(R.string.other_apps))
+                .icon(
+                    IconicsDrawable(c)
+                        .icon(CommunityMaterial.Icon.cmd_application)
+                        .color(ContextCompat.getColor(c, colorIcon))
+                        .sizeDp(18)
+                )
+                .setOnClickAction {
+                    val url = "https://play.google.com/store/apps/developer?id=Goodtime"
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data = Uri.parse(url)
+                    startActivity(i)
+                }.build()
         )
         return MaterialAboutList.Builder()
             .addCard(builder1.build())
@@ -177,9 +181,7 @@ class AboutActivity : MaterialAboutActivity() {
             .build()
     }
 
-    override fun getActivityTitle(): CharSequence? {
-        return getString(R.string.mal_title_about)
-    }
+    override fun getActivityTitle() = getString(R.string.mal_title_about)
 
     private fun openFeedback() {
         val email = Intent(Intent.ACTION_SENDTO)

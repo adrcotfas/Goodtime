@@ -38,7 +38,6 @@ import com.apps.adrcotfas.goodtime.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Integer.min
 import java.time.LocalTime
-import java.util.*
 
 @AndroidEntryPoint
 class AddEditEntryDialog : BottomSheetDialogFragment(), OnLabelSelectedListener {

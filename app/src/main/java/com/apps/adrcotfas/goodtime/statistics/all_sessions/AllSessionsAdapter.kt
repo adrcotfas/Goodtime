@@ -12,6 +12,7 @@
  */
 package com.apps.adrcotfas.goodtime.statistics.all_sessions
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.ViewGroup
 import android.view.LayoutInflater
@@ -68,6 +69,7 @@ class AllSessionsAdapter internal constructor(labels: List<Label>) :
         diffResult.dispatchUpdatesTo(this)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setSelectedItems(selectedItems: MutableList<Long>) {
         mSelectedEntries = selectedItems
         notifyDataSetChanged()

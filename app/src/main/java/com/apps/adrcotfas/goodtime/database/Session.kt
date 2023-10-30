@@ -12,7 +12,6 @@
  */
 package com.apps.adrcotfas.goodtime.database
 
-import androidx.annotation.Nullable
 import androidx.room.*
 import com.apps.adrcotfas.goodtime.util.millis
 import java.time.LocalDateTime
@@ -30,7 +29,6 @@ class Session(
     @field:PrimaryKey(autoGenerate = true)var id: Long,
     var timestamp: Long,
     var duration: Int,
-    @Nullable
     var label: String?
 ) {
     @ColumnInfo(defaultValue = "0")

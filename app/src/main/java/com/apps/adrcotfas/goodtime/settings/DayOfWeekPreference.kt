@@ -18,7 +18,7 @@ class DayOfWeekPreference @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : Preference(context, attrs, defStyleAttr) {
 
-    private var selectedDays = BooleanArray(DayOfWeek.values().size)
+    private var selectedDays = BooleanArray(DayOfWeek.entries.size)
     private lateinit var chipGroup: ChipGroup
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
@@ -35,7 +35,7 @@ class DayOfWeekPreference @JvmOverloads constructor(
 
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val firstDayOfWeek = TimeUtils.firstDayOfWeek()
-        for (i in DayOfWeek.values().indices) {
+        for (i in DayOfWeek.entries.toTypedArray().indices) {
             val currentDay = DayOfWeek.of(i + 1)
             val chipLayout = inflater.inflate(R.layout.preference_days_of_week_item, chipGroup, false)
             val chip = chipLayout.findViewById<Chip>(R.id.chip)

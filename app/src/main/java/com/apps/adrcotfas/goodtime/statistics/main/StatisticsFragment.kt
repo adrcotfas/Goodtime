@@ -63,7 +63,6 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoField
 import java.time.temporal.TemporalAdjusters
 import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.math.ceil
 
@@ -133,8 +132,8 @@ class StatisticsFragment : Fragment() {
         pieEmptyState = binding.pieChartSection.emptyState
         setupPieChart()
         labelsViewModel.crtExtendedLabel.observe(
-            viewLifecycleOwner,
-            { refreshUi() })
+            viewLifecycleOwner
+        ) { refreshUi() }
         setupSpinners()
         setupHistoryChart()
         setupProductiveTimeChart()
@@ -262,7 +261,7 @@ class StatisticsFragment : Fragment() {
                     position: Int,
                     id: Long
                 ) {
-                    xAxisFormatter.setRangeType(HistorySpinnerRangeType.values()[position])
+                    xAxisFormatter.setRangeType(HistorySpinnerRangeType.entries[position])
                     refreshUi()
                 }
 
@@ -315,11 +314,11 @@ class StatisticsFragment : Fragment() {
 
     private fun refreshProductiveTimeChart(sessions: List<Session>, color: Int) {
         val productiveTimeType =
-            ProductiveTimeType.values()[productiveTimeType.selectedItemPosition]
+            ProductiveTimeType.entries[productiveTimeType.selectedItemPosition]
         val visibleXCount = if (productiveTimeType == ProductiveTimeType.HOUR_OF_DAY) {
             ThemeHelper.pxToDp(requireContext(), chartHistory.width).toInt() / 36
         } else {
-            DayOfWeek.values().size
+            DayOfWeek.entries.size
         }
 
         generateProductiveTimeChart(sessions, productiveTimeType, color)
@@ -377,7 +376,7 @@ class StatisticsFragment : Fragment() {
                     showPieChart = false
                 }
             }
-            sessionsToObserve?.observe(viewLifecycleOwner, { sessions: List<Session> ->
+            sessionsToObserve?.observe(viewLifecycleOwner) { sessions: List<Session> ->
 
                 // Adjust the finished sessions according to the configured workday start
                 sessions.forEach {
@@ -390,17 +389,17 @@ class StatisticsFragment : Fragment() {
                 pieChartSection.visibility = if (showPieChart) View.VISIBLE else View.GONE
                 if (showPieChart) {
                     val labelsLd = labelsViewModel.labels
-                    labelsLd.observe(viewLifecycleOwner, { labels: List<Label> ->
+                    labelsLd.observe(viewLifecycleOwner) { labels: List<Label> ->
                         labelsLd.removeObservers(requireActivity())
                         refreshPieChart(sessions, labels)
-                    })
+                    }
                 }
                 lifecycleScope.launch {
                     delay(100)
                     progressBar.visibility = View.GONE
                     parentView.visibility = View.VISIBLE
                 }
-            })
+            }
         }
     }
 
@@ -438,7 +437,7 @@ class StatisticsFragment : Fragment() {
     private fun refreshPieChart(sessions: List<Session>, labels: List<Label>) {
         // Nullable String key for the unlabeled sessions
         val totalTimePerLabel: MutableMap<String?, Int> = HashMap()
-        val pieStatsType = PieStatsType.values()[pieChartType.selectedItemPosition]
+        val pieStatsType = PieStatsType.entries[pieChartType.selectedItemPosition]
 
         val today = LocalDate.now()
         val todayStart = today.atStartOfDay(ZoneId.systemDefault()).toLocalDate()
@@ -603,7 +602,7 @@ class StatisticsFragment : Fragment() {
         val xAxis = chartHistory.xAxis
         xAxis.textColor = resources.getColor(R.color.grey500)
         xAxis.position = XAxis.XAxisPosition.BOTTOM
-        val rangeType = HistorySpinnerRangeType.values()[rangeType.selectedItemPosition]
+        val rangeType = HistorySpinnerRangeType.entries[rangeType.selectedItemPosition]
         xAxisFormatter = DayWeekMonthXAxisFormatter(xValues, rangeType)
         xAxis.valueFormatter = xAxisFormatter
         xAxis.setAvoidFirstLastClipping(false)
@@ -631,8 +630,8 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun generateHistoryChartData(sessions: List<Session>, color: Int): LineData {
-        val statsType = SpinnerStatsType.values()[statsType.selectedItemPosition]
-        val rangeType = HistorySpinnerRangeType.values()[rangeType.selectedItemPosition]
+        val statsType = SpinnerStatsType.entries[statsType.selectedItemPosition]
+        val rangeType = HistorySpinnerRangeType.entries[rangeType.selectedItemPosition]
         val dummyIntervalRange =
             ThemeHelper.pxToDp(requireContext(), chartHistory.width).toLong() / 24L
         val yValues: MutableList<Entry> = ArrayList()
@@ -796,9 +795,9 @@ class StatisticsFragment : Fragment() {
         color: Int
     ) {
         val values = ArrayList<BarEntry>()
-        val productiveTimeType = SpinnerStatsType.values()[statsType.selectedItemPosition]
+        val productiveTimeType = SpinnerStatsType.entries[statsType.selectedItemPosition]
         val sessionsPerProductiveTimeType =
-            MutableList(if (type == ProductiveTimeType.HOUR_OF_DAY) 24 else DayOfWeek.values().size) { 0L }
+            MutableList(if (type == ProductiveTimeType.HOUR_OF_DAY) 24 else DayOfWeek.entries.size) { 0L }
         for (i in sessionsPerProductiveTimeType.indices) {
             values.add(BarEntry(i.toFloat(), 0f))
         }

@@ -12,6 +12,7 @@
  */
 package com.apps.adrcotfas.goodtime.labels
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
@@ -226,6 +227,7 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
         return super.onOptionsItemSelected(item)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onDeleteLabel(label: Label, position: Int) {
         labels.remove(label)
         adapter.notifyItemRemoved(position)
@@ -291,8 +293,6 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
     }
 
     companion object {
-        private val TAG = AddEditLabelActivity::class.java.simpleName
-
         /**
          * Used for checking label names before adding or renaming existing ones.
          * Checks for invalid strings like empty ones, spaces or duplicates

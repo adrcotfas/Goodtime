@@ -23,8 +23,6 @@ object Constants {
     const val DEFAULT_BREAK_DURATION_5217 = 17
     const val SESSION_TYPE = "goodtime.session.type"
     const val ONE_MINUTE_LEFT = "goodtime.one.minute.left"
-    const val sku = "upgraded_version"
-
 
     interface ACTION {
         companion object {

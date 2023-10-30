@@ -254,7 +254,7 @@ class PreferenceHelper(val context: Context) {
                 context.resources.getString(R.string.pref_profile_default)
             )
 
-    fun setTimerStyle(value: Int) =
+    private fun setTimerStyle(value: Int) =
         preferences.edit().putString(TIMER_STYLE, value.toString()).apply()
 
     val timerStyle: String?

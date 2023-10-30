@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.goodtime.settings
 
 import kotlin.jvm.JvmOverloads
-import com.apps.adrcotfas.goodtime.settings.ProfilePreference.ProfileChangeListener
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
@@ -27,8 +26,7 @@ class ProfilePreference @JvmOverloads constructor(
             context, R.attr.dialogPreferenceStyle,
             android.R.attr.dialogPreferenceStyle
         )
-    ) {
-    }
+    )
 
     constructor(context: Context) : this(context, null)
 

@@ -67,7 +67,6 @@
                 app:iconPadding="12dp"
                 app:cornerRadius="16dp"
                 android:paddingEnd="22dp"
-                android:paddingRight="22dp"
                 app:backgroundTint="@color/teal300"
                 app:icon="@drawable/ic_crown"
                 app:iconTint="@color/white"
