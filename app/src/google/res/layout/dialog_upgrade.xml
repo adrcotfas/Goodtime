@@ -57,18 +57,18 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_pro"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="64sp"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/upgrade"
                 android:textSize="@dimen/regularTextSize"
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 app:iconPadding="12dp"
-                app:cornerRadius="16dp"
+                app:cornerRadius="32dp"
                 android:paddingEnd="22dp"
                 app:backgroundTint="@color/teal300"
-                app:icon="@drawable/ic_crown"
+                app:icon="@drawable/ic_heart"
                 app:iconTint="@color/white"
                 tools:ignore="RtlSymmetry" />
         </LinearLayout>

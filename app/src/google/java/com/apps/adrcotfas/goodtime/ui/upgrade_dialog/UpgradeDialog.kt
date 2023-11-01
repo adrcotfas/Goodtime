@@ -78,6 +78,12 @@ class UpgradeDialog : DialogFragment() {
             binding.buttonPro.isEnabled = it
         }
 
+        viewModel.productDetails.observe(this) {
+            if (it != null) {
+                binding.buttonPro.text = "${it.oneTimePurchaseOfferDetails?.formattedPrice}"
+            }
+        }
+
         binding.buttonPro.setOnClickListener {
             viewModel.buy(requireActivity())
             dismiss()

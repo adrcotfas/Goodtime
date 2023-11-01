@@ -23,6 +23,7 @@ import androidx.annotation.Keep
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.ProductDetails
@@ -42,6 +43,7 @@ class BillingViewModel @Keep @Inject constructor(
         BillingClientWrapper(application, viewModelScope)
     private val _billingConnectionState = MutableLiveData(false)
     val billingConnectionState: LiveData<Boolean> = _billingConnectionState
+    val productDetails = billingClient.productDetails.asLiveData()
 
     // Start the billing connection when the viewModel is initialized.
     init {

@@ -6,6 +6,6 @@
     android:layout_marginTop="8dp"
     android:layout_marginBottom="8dp"
     android:gravity="center_vertical"
-    app:drawableStartCompat="@drawable/ic_crown"
+    app:drawableStartCompat="@drawable/ic_heart"
     android:text="@string/upgrade"
     style="@style/UpgradeButton" />
