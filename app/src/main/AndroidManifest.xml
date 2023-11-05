@@ -36,7 +36,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning,InnerclassSeparator">
+        android:localeConfig="@xml/locales_config"
+        tools:ignore="GoogleAppIndexingWarning,InnerclassSeparator"
+        tools:targetApi="tiramisu">
         <activity
             android:name="com.apps.adrcotfas.goodtime.main.TimerActivity"
             android:exported="true"
