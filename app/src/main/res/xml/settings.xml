@@ -29,7 +29,6 @@
         app:key="pref_reminder_time"
         app:title="@string/reminder_time"
         android:dependency="pref_reminder_days"
-        app:layout="@layout/preference_compact"
         app:iconSpaceReserved="false"/>
 
     <PreferenceCategory
@@ -46,7 +45,6 @@
         <Preference
             app:key="pref_work_day_start"
             app:title="@string/pref_work_day_start"
-            app:layout="@layout/preference_compact"
             app:iconSpaceReserved="false"/>
 
         <ListPreference
@@ -128,7 +126,6 @@
             android:summary="@string/pref_ringtone_summary"
             android:title="@string/pref_ringtone"
             android:dependency="pref_enable_ringtone"
-            app:layout="@layout/preference_default"
             app:iconSpaceReserved="false"/>
 
         <Preference
@@ -136,7 +133,6 @@
             android:summary="@string/pref_ringtone_summary"
             android:title="@string/pref_ringtone_break"
             android:dependency="pref_enable_ringtone"
-            app:layout="@layout/preference_default"
             app:iconSpaceReserved="false"/>
 
         <ListPreference
