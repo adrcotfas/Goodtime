@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Pertraukos laikas"</string>
     <string name="pref_disable_sound_and_vibration">"Išjungti garsus ir vibraciją"</string>
     <string name="pref_dnd">"Do not disturb mode"</string>
-    <string name="pref_disable_wifi">"Išjungti Wi-Fi (Internetą)"</string>
     <string name="pref_fullscreen">"Pilno ekrano režimas"</string>
     <string name="pref_header_notifications">"Pranešimai"</string>
     <string name="pref_header_general">"Bendra"</string>

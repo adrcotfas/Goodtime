@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Trajanje pauze"</string>
     <string name="pref_disable_sound_and_vibration">"Isključi zvuk i vibracije"</string>
     <string name="pref_dnd">"Način bez ometanja"</string>
-    <string name="pref_disable_wifi">"Isključi Wi-Fi"</string>
     <string name="pref_fullscreen">"Preko cijelog ekrana"</string>
     <string name="pref_header_notifications">"Obavijesti"</string>
     <string name="pref_header_general">"Opće postavke"</string>

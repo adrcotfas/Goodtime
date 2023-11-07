@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"বিরতির সময়সীমা"</string>
     <string name="pref_disable_sound_and_vibration">"শব্দ ও কম্পন বন্ধ"</string>
     <string name="pref_dnd">"বিরক্ত করবেন না মোড"</string>
-    <string name="pref_disable_wifi">"ওয়াই-ফাই বন্ধ"</string>
     <string name="pref_fullscreen">"ফুলস্ক্রিন মোড"</string>
     <string name="pref_header_notifications">"বিজ্ঞপ্তিগুলি"</string>
     <string name="pref_header_general">"সাধারন"</string>

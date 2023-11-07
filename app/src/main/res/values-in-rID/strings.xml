@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Durasi istirahat"</string>
     <string name="pref_disable_sound_and_vibration">"Nonaktifkan suara dan getaran"</string>
     <string name="pref_dnd">"Mode jangan ganggu"</string>
-    <string name="pref_disable_wifi">"Non aktifkan Wi-Fi"</string>
     <string name="pref_fullscreen">"Mode layar penuh"</string>
     <string name="pref_header_notifications">"Notifikasi"</string>
     <string name="pref_header_general">"Umum"</string>

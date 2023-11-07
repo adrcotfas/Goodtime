@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Pausendauer"</string>
     <string name="pref_disable_sound_and_vibration">"Ton und Vibration ausschalten"</string>
     <string name="pref_dnd">"\"Bitte nicht stören\" Modus"</string>
-    <string name="pref_disable_wifi">"WLAN ausschalten"</string>
     <string name="pref_fullscreen">"Vollbildmodus"</string>
     <string name="pref_header_notifications">"Benachrichtigungen"</string>
     <string name="pref_header_general">"Sitzungen"</string>

@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Délka přestávky"</string>
     <string name="pref_disable_sound_and_vibration">"Vypnout zvuk a vibraci"</string>
     <string name="pref_dnd">"Režim Nerušit"</string>
-    <string name="pref_disable_wifi">"Vypnout Wi-Fi"</string>
     <string name="pref_fullscreen">"Režim celé obrazovky"</string>
     <string name="pref_header_notifications">"Upozornění"</string>
     <string name="pref_header_general">"Obecné"</string>

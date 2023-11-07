@@ -142,9 +142,6 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
         setupFlashingNotificationPref()
         setupOneMinuteLeftNotificationPref()
         setupDisableBatteryOptimization()
-        findPreference<Preference>(PreferenceHelper.DISABLE_WIFI)!!.isVisible =
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
-
         setupNotificationPref()
     }
 

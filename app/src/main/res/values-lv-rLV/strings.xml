@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Pārtraukuma ilgums"</string>
     <string name="pref_disable_sound_and_vibration">"Deaktivizēt skaņu un vibrā"</string>
     <string name="pref_dnd">"Do not disturb mode"</string>
-    <string name="pref_disable_wifi">"Deaktivizēt Wi-Fi"</string>
     <string name="pref_fullscreen">"Pilnekrāna režīms"</string>
     <string name="pref_header_notifications">"Paziņojumi"</string>
     <string name="pref_header_general">"Vispārēji"</string>

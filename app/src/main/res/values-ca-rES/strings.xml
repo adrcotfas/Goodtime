@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Durada del descans"</string>
     <string name="pref_disable_sound_and_vibration">"Desactivar el so i la vibració"</string>
     <string name="pref_dnd">"Do not disturb mode"</string>
-    <string name="pref_disable_wifi">"Desactivar la Wi-Fi"</string>
     <string name="pref_fullscreen">"Mode pantalla completa"</string>
     <string name="pref_header_notifications">"General"</string>
     <string name="pref_header_general">"Sessions"</string>

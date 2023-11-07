@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Duur van de pauze"</string>
     <string name="pref_disable_sound_and_vibration">"Schakel geluid en trilling uit"</string>
     <string name="pref_dnd">"Niet storen"</string>
-    <string name="pref_disable_wifi">"Schakel Wi-Fi uit"</string>
     <string name="pref_fullscreen">"Fullscreen-modus"</string>
     <string name="pref_header_notifications">"Meldingen"</string>
     <string name="pref_header_general">"Algemeen"</string>

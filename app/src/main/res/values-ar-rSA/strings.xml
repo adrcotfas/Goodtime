@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"مدة الإستراحة"</string>
     <string name="pref_disable_sound_and_vibration">"الغاء الصوت والاهتزاز"</string>
     <string name="pref_dnd">"وضع عدم الإزعاج"</string>
-    <string name="pref_disable_wifi">"إلغاء إتصال الواي فاي"</string>
     <string name="pref_fullscreen">"وضع الشاشة الكاملة"</string>
     <string name="pref_header_notifications">"الإشعارات"</string>
     <string name="pref_header_general">"عام"</string>

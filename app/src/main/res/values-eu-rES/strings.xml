@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Etenaldiaren iraupena"</string>
     <string name="pref_disable_sound_and_vibration">"Desgaitu soinua eta bibrazioa"</string>
     <string name="pref_dnd">"\"Ez molestatu\" modua"</string>
-    <string name="pref_disable_wifi">"Desgaitu Wi-Fia"</string>
     <string name="pref_fullscreen">"Pantaila osoko modua"</string>
     <string name="pref_header_notifications">"Jakinarazpenak"</string>
     <string name="pref_header_general">"Orokorra"</string>

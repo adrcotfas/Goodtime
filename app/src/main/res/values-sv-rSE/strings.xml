@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Pauslängd"</string>
     <string name="pref_disable_sound_and_vibration">"Avaktivera ljud och vibration"</string>
     <string name="pref_dnd">"Stör ej-läge"</string>
-    <string name="pref_disable_wifi">"Avaktivera Wi-Fi"</string>
     <string name="pref_fullscreen">"Helskärmsläge"</string>
     <string name="pref_header_notifications">"Aviseringar"</string>
     <string name="pref_header_general">"Allmänt"</string>

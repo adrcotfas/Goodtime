@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Varighed af pause"</string>
     <string name="pref_disable_sound_and_vibration">"Slå lyd og vibration fra"</string>
     <string name="pref_dnd">"Do not disturb mode"</string>
-    <string name="pref_disable_wifi">"Slå Wi-Fi fra"</string>
     <string name="pref_fullscreen">"Fuldskærmstilstand"</string>
     <string name="pref_header_notifications">"Underretninger"</string>
     <string name="pref_header_general">"Generelt"</string>

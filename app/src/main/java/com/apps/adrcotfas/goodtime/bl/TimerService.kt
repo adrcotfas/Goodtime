@@ -12,38 +12,36 @@
  */
 package com.apps.adrcotfas.goodtime.bl
 
-import com.apps.adrcotfas.goodtime.database.AppDatabase.Companion.getDatabase
-import dagger.hilt.android.AndroidEntryPoint
-import androidx.lifecycle.LifecycleService
-import javax.inject.Inject
-import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
-import org.greenrobot.eventbus.EventBus
-import kotlin.jvm.Synchronized
+import android.app.NotificationManager
 import android.content.Intent
-import org.greenrobot.eventbus.Subscribe
-import com.apps.adrcotfas.goodtime.util.Constants.OneMinuteLeft
-import com.apps.adrcotfas.goodtime.util.Constants.FinishWorkEvent
-import com.apps.adrcotfas.goodtime.util.Constants.FinishBreakEvent
-import com.apps.adrcotfas.goodtime.util.Constants.FinishLongBreakEvent
-import com.apps.adrcotfas.goodtime.util.Constants.UpdateTimerProgressEvent
-import com.apps.adrcotfas.goodtime.util.Constants.ClearNotificationEvent
-import com.apps.adrcotfas.goodtime.util.Constants.StartSessionEvent
-import android.os.PowerManager
 import android.media.AudioManager
 import android.os.Build
-import android.app.NotificationManager
-import android.net.wifi.WifiManager
-import com.apps.adrcotfas.goodtime.main.TimerActivity
+import android.os.PowerManager
 import android.util.Log
+import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
+import com.apps.adrcotfas.goodtime.database.AppDatabase.Companion.getDatabase
 import com.apps.adrcotfas.goodtime.database.Session
+import com.apps.adrcotfas.goodtime.main.TimerActivity
+import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
 import com.apps.adrcotfas.goodtime.util.Constants
+import com.apps.adrcotfas.goodtime.util.Constants.ClearNotificationEvent
+import com.apps.adrcotfas.goodtime.util.Constants.FinishBreakEvent
+import com.apps.adrcotfas.goodtime.util.Constants.FinishLongBreakEvent
+import com.apps.adrcotfas.goodtime.util.Constants.FinishWorkEvent
+import com.apps.adrcotfas.goodtime.util.Constants.OneMinuteLeft
+import com.apps.adrcotfas.goodtime.util.Constants.StartSessionEvent
+import com.apps.adrcotfas.goodtime.util.Constants.UpdateTimerProgressEvent
 import com.apps.adrcotfas.goodtime.util.toFormattedTime
 import com.apps.adrcotfas.goodtime.util.toLocalTime
-import kotlinx.coroutines.*
-import java.lang.Exception
-import java.lang.Runnable
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 /**
  * Class representing the foreground service which triggers the countdown timer and handles events.
@@ -64,7 +62,6 @@ class TimerService : LifecycleService() {
     lateinit var currentSessionManager: CurrentSessionManager
 
     private var previousRingerMode = 0
-    private var previousWifiMode = false
 
     override fun onCreate() {
         super.onCreate()
@@ -152,9 +149,6 @@ class TimerService : LifecycleService() {
         Log.d(TAG, "onStartEvent: $sessionTypeTmp")
         currentSessionManager.startTimer(sessionTypeTmp)
         if (sessionTypeTmp === SessionType.WORK) {
-            if (preferenceHelper.isWiFiDisabled()) {
-                toggleWifi(false)
-            }
             if (preferenceHelper.isSoundAndVibrationDisabled()) {
                 toggleSound(false)
             }
@@ -184,9 +178,7 @@ class TimerService : LifecycleService() {
 
     private fun onStopEvent() {
         Log.d(TAG, "onStopEvent")
-        if (preferenceHelper.isWiFiDisabled()) {
-            toggleWifi(true)
-        }
+
         if (preferenceHelper.isSoundAndVibrationDisabled()) {
             toggleSound(true)
         }
@@ -217,9 +209,6 @@ class TimerService : LifecycleService() {
         acquireScreenLock()
         bringActivityToFront()
         if (sessionType === SessionType.WORK) {
-            if (preferenceHelper.isWiFiDisabled()) {
-                toggleWifi(true)
-            }
             if (preferenceHelper.isSoundAndVibrationDisabled()) {
                 toggleSound(true)
             }
@@ -263,9 +252,6 @@ class TimerService : LifecycleService() {
             this@TimerService.hashCode().toString() + " onSkipEvent " + sessionType.toString()
         )
         if (sessionType === SessionType.WORK) {
-            if (preferenceHelper.isWiFiDisabled()) {
-                toggleWifi(true)
-            }
             if (preferenceHelper.isSoundAndVibrationDisabled()) {
                 toggleSound(true)
             }
@@ -356,20 +342,6 @@ class TimerService : LifecycleService() {
                 manager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY)
             }
         }
-        t.start()
-    }
-
-    private fun toggleWifi(restore: Boolean) {
-        val r = Runnable {
-            val wifiManager = this.getSystemService(WIFI_SERVICE) as WifiManager
-            if (restore) {
-                wifiManager.isWifiEnabled = previousWifiMode
-            } else {
-                previousWifiMode = wifiManager.isWifiEnabled
-                wifiManager.isWifiEnabled = false
-            }
-        }
-        val t = Thread(r)
         t.start()
     }
 

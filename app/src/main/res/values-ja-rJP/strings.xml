@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"休憩の長さ"</string>
     <string name="pref_disable_sound_and_vibration">"通知音と振動を無効にする"</string>
     <string name="pref_dnd">"マナーモード"</string>
-    <string name="pref_disable_wifi">"Wi-Fiを無効にする"</string>
     <string name="pref_fullscreen">"全画面モード"</string>
     <string name="pref_header_notifications">"通知"</string>
     <string name="pref_header_general">"全般"</string>

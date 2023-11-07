@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"ระยะเวลาของการพัก"</string>
     <string name="pref_disable_sound_and_vibration">"ปิดเสียงและการสั่นเตือน"</string>
     <string name="pref_dnd">"โหมดห้ามรบกวน"</string>
-    <string name="pref_disable_wifi">"ปิดสัญญาณอินเตอร์เน็ต"</string>
     <string name="pref_fullscreen">"โหมดเต็มหน้าจอ"</string>
     <string name="pref_header_notifications">"การแจ้งเตือน"</string>
     <string name="pref_header_general">"ทั่วไป"</string>

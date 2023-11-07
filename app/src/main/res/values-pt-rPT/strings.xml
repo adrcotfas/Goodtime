@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Duração da pausa"</string>
     <string name="pref_disable_sound_and_vibration">"Desativar som e vibração"</string>
     <string name="pref_dnd">"Modo não incomodar"</string>
-    <string name="pref_disable_wifi">"Desativar Wi-Fi"</string>
     <string name="pref_fullscreen">"Modo ecrã inteiro"</string>
     <string name="pref_header_notifications">"Notificações"</string>
     <string name="pref_header_general">"Geral"</string>

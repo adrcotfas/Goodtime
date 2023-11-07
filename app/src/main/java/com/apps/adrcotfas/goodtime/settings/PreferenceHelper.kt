@@ -54,7 +54,6 @@ class PreferenceHelper(val context: Context) {
         private const val ENABLE_FULLSCREEN = "pref_fullscreen"
         const val DISABLE_SOUND_AND_VIBRATION = "pref_disable_sound_and_vibration"
         const val DND_MODE = "pref_dnd"
-        const val DISABLE_WIFI = "pref_disable_wifi"
         const val ENABLE_SCREEN_ON = "pref_keep_screen_on"
         const val ENABLE_SCREENSAVER_MODE = "pref_screen_saver"
         const val ENABLE_ONE_MINUTE_BEFORE_NOTIFICATION = "pref_one_minute_left_notification"
@@ -142,7 +141,6 @@ class PreferenceHelper(val context: Context) {
     fun isFullscreenEnabled() = preferences.getBoolean(ENABLE_FULLSCREEN, false)
     fun isSoundAndVibrationDisabled() = preferences.getBoolean(DISABLE_SOUND_AND_VIBRATION, false)
     fun isDndModeActive() = preferences.getBoolean(DND_MODE, false)
-    fun isWiFiDisabled() = preferences.getBoolean(DISABLE_WIFI, false)
     fun isScreenOnEnabled() = preferences.getBoolean(ENABLE_SCREEN_ON, true)
     fun isScreensaverEnabled() = preferences.getBoolean(ENABLE_SCREENSAVER_MODE, false)
     fun oneMinuteBeforeNotificationEnabled() =

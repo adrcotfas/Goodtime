@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Διάρκεια διαλείμματος"</string>
     <string name="pref_disable_sound_and_vibration">"Απενεργοποίησε τον ήχο και τη δόνηση"</string>
     <string name="pref_dnd">"Do not disturb mode"</string>
-    <string name="pref_disable_wifi">"Απενεργοποίησε το Wi-Fi"</string>
     <string name="pref_fullscreen">"Λειτουργία πλήρους οθόνης"</string>
     <string name="pref_header_notifications">"Ειδοποιήσεις"</string>
     <string name="pref_header_general">"Γενικά"</string>

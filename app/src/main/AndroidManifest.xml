@@ -11,10 +11,6 @@
     <!-- Used by the UltimateRingtonePicker to allow adding custom ringtones -->
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
-    <!-- Used to enable and disable WiFi during work sessions -->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
     <!-- Used to enable and disable sound during work sessions -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />

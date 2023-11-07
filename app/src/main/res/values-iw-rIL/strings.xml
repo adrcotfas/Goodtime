@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"משך הפסקה"</string>
     <string name="pref_disable_sound_and_vibration">"השבת צליל ורטט"</string>
     <string name="pref_dnd">"הפעל מצב \"נא לא להפריע\""</string>
-    <string name="pref_disable_wifi">"השבת Wi-Fi"</string>
     <string name="pref_fullscreen">"מצב מסך מלא"</string>
     <string name="pref_header_notifications">"התראות"</string>
     <string name="pref_header_general">"כללי"</string>

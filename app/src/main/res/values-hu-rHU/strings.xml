@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Szünet időtartama"</string>
     <string name="pref_disable_sound_and_vibration">"Hang és rezgés letiltása"</string>
     <string name="pref_dnd">"„Ne zavarjanak” mód"</string>
-    <string name="pref_disable_wifi">"Wi-Fi kikapcsolása"</string>
     <string name="pref_fullscreen">"Teljes képernyős mód"</string>
     <string name="pref_header_notifications">"Értesítések"</string>
     <string name="pref_header_general">"Általános"</string>

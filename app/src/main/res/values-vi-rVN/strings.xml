@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Thời lượng phiên nghỉ"</string>
     <string name="pref_disable_sound_and_vibration">"Tắt âm thanh và rung"</string>
     <string name="pref_dnd">"Chế độ không làm phiền"</string>
-    <string name="pref_disable_wifi">"Tắt kết nối Wi-Fi"</string>
     <string name="pref_fullscreen">"Chế độ toàn màn hình"</string>
     <string name="pref_header_notifications">"Thông báo"</string>
     <string name="pref_header_general">"Chung"</string>

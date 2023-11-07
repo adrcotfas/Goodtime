@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"Тривалість перерви"</string>
     <string name="pref_disable_sound_and_vibration">"Вимкнути звук та вібрацію"</string>
     <string name="pref_dnd">"Режим \"Не турбувати\""</string>
-    <string name="pref_disable_wifi">"Вимкнути Wi-Fi"</string>
     <string name="pref_fullscreen">"Повноекранний режим"</string>
     <string name="pref_header_notifications">"Сповіщення"</string>
     <string name="pref_header_general">"Загальне"</string>

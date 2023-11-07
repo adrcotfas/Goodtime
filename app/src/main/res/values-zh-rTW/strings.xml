@@ -3,7 +3,6 @@
     <string name="pref_break_duration">"休息時長"</string>
     <string name="pref_disable_sound_and_vibration">"停用音效及震動"</string>
     <string name="pref_dnd">"「零打擾」模式"</string>
-    <string name="pref_disable_wifi">"停用Wi-Fi"</string>
     <string name="pref_fullscreen">"全螢幕模式"</string>
     <string name="pref_header_notifications">"顯示通知"</string>
     <string name="pref_header_general">"一般設定"</string>
