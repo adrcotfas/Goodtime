@@ -108,7 +108,7 @@ dependencies {
 
     // IAP
     def billing_version = "6.0.1"
-    implementation "com.android.billingclient:billing-ktx:$billing_version"
+    googleImplementation "com.android.billingclient:billing-ktx:$billing_version"
 
     implementation 'xyz.aprildown:UltimateRingtonePicker:3.2.0'
 
