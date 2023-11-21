@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import java.lang.Exception
 
 /**
  * The [BillingClientWrapper] isolates the Google Play Billing's [BillingClient] methods needed
@@ -81,24 +82,28 @@ class BillingClientWrapper(
 
     // Establish a connection to Google Play.
     fun startBillingConnection(billingConnectionState: MutableLiveData<Boolean>) {
-        billingClient.startConnection(object : BillingClientStateListener {
-            override fun onBillingSetupFinished(billingResult: BillingResult) {
-                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                    Log.i(TAG, "Billing response OK")
-                    // The BillingClient is ready. You can query purchases and product details here
-                    queryPurchases()
-                    queryProductDetails()
-                    billingConnectionState.postValue(true)
-                } else {
-                    Log.e(TAG, billingResult.debugMessage)
+        try {
+            billingClient.startConnection(object : BillingClientStateListener {
+                override fun onBillingSetupFinished(billingResult: BillingResult) {
+                    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                        Log.i(TAG, "Billing response OK")
+                        // The BillingClient is ready. You can query purchases and product details here
+                        queryPurchases()
+                        queryProductDetails()
+                        billingConnectionState.postValue(true)
+                    } else {
+                        Log.e(TAG, billingResult.debugMessage)
+                    }
                 }
-            }
 
-            override fun onBillingServiceDisconnected() {
-                Log.i(TAG, "Billing connection disconnected")
-                startBillingConnection(billingConnectionState)
-            }
-        })
+                override fun onBillingServiceDisconnected() {
+                    Log.i(TAG, "Billing connection disconnected")
+                    startBillingConnection(billingConnectionState)
+                }
+            })
+        } catch (e: Exception) {
+            Log.e(TAG, "Billing connection failed $e")
+        }
     }
 
     // Query Google Play Billing for existing purchases.
