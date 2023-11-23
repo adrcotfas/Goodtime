@@ -1,0 +1,45 @@
+import kotlin.Boolean;
+
+CREATE TABLE IF NOT EXISTS Session (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    timestamp INTEGER NOT NULL,
+    duration INTEGER NOT NULL,
+    label TEXT DEFAULT NULL,
+    notes TEXT DEFAULT NULL,
+    isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
+    FOREIGN KEY(label, isArchived) REFERENCES Label(name, isArchived)
+    ON UPDATE CASCADE
+    ON DELETE SET DEFAULT
+);
+
+CREATE INDEX idx_archived ON Session(isArchived);
+CREATE INDEX idx_profile ON Session(label);
+
+insert:
+INSERT OR REPLACE INTO Session(id, timestamp, duration, label, notes, isArchived)
+VALUES(?, ?, ?, ?, ?, ?);
+
+update:
+UPDATE Session
+SET timestamp = :newTimestamp, duration = :newDuration, label = :newLabel, notes = :newNotes
+WHERE id = :id;
+
+getAll:
+SELECT *
+FROM Session  ORDER BY timestamp DESC;
+
+getByIsArchived:
+SELECT *
+FROM Session WHERE isArchived IS ? ORDER BY timestamp DESC;
+
+getByLabel:
+SELECT *
+FROM Session WHERE label IS ? ORDER BY timestamp DESC;
+
+delete:
+DELETE FROM Session
+WHERE id = ?;
+
+deleteAfter:
+DELETE FROM Session
+WHERE timestamp >= :timestamp;

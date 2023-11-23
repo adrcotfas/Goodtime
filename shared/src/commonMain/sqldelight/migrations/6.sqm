@@ -1,0 +1,50 @@
+import kotlin.Boolean;
+
+PRAGMA foreign_keys=off;
+
+CREATE TABLE IF NOT EXISTS LabelTmp (
+    name TEXT NOT NULL,
+    colorIndex INTEGER NOT NULL,
+    orderIndex INTEGER NOT NULL,
+    isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
+    isCountdown INTEGER AS Boolean NOT NULL DEFAULT 1,
+    workDuration INTEGER NOT NULL DEFAULT 25,
+    breakDuration INTEGER NOT NULL DEFAULT 5,
+    longBreakDuration INTEGER NOT NULL DEFAULT 15,
+    sessionsBeforeLongBreak INTEGER NOT NULL DEFAULT 4,
+    workBreakRatio INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY(name, isArchived)
+);
+
+INSERT INTO LabelTmp(name, colorIndex, orderIndex, isArchived) SELECT title, colorId, 'order', archived FROM Label;
+DROP TABLE Label;
+ALTER TABLE LabelTmp RENAME TO Label;
+
+CREATE TABLE IF NOT EXISTS SessionTmp (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    timestamp INTEGER NOT NULL,
+    duration INTEGER NOT NULL,
+    label TEXT DEFAULT NULL,
+    notes TEXT DEFAULT NULL,
+    isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
+    FOREIGN KEY(label, isArchived) REFERENCES Label(name, isArchived)
+    ON UPDATE CASCADE
+    ON DELETE SET DEFAULT
+);
+
+INSERT INTO SessionTmp(id, timestamp, duration, label, isArchived)
+SELECT `id`, `timestamp`, `duration`, `label`, `archived` FROM Session;
+DROP TABLE Session;
+ALTER TABLE SessionTmp RENAME TO Session;
+
+-- set unlabeled sessions' label column(if empty) to NULL
+UPDATE Session
+SET label = CASE WHEN LENGTH(label) = 0 THEN NULL ELSE label END;
+
+CREATE INDEX idx_archived ON Session(isArchived);
+CREATE INDEX idx_profile ON Session(label);
+
+PRAGMA foreign_keys=on;
+
+DROP TABLE `Profile`;
+DROP TABLE room_master_table;
