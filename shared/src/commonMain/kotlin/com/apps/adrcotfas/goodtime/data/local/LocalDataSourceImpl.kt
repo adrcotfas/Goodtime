@@ -67,6 +67,7 @@ class LocalDataSourceImpl(private val database: Database) : LocalDataSource {
                 name = label.name,
                 colorIndex = label.colorIndex,
                 orderIndex = label.orderIndex,
+                shouldFollowDefaultTimeProfile = label.shouldFollowDefaultTimeProfile,
                 isCountdown = label.isCountdown,
                 workDuration = label.workDuration,
                 breakDuration = label.breakDuration,
@@ -93,6 +94,18 @@ class LocalDataSourceImpl(private val database: Database) : LocalDataSource {
     override suspend fun updateLabelOrderIndex(name: String, newOrderIndex: Long) {
         withContext(coroutineScope) {
             database.labelQueries.updateOrderIndex(newOrderIndex = newOrderIndex, name = name)
+        }
+    }
+
+    override suspend fun updateShouldFollowDefaultTimeProfile(
+        name: String,
+        newShouldFollowDefaultTimeProfile: Boolean
+    ) {
+        withContext(coroutineScope) {
+            database.labelQueries.updateShouldFollowDefaultTimeProfile(
+                newShouldFollowDefaultTimeProfile = newShouldFollowDefaultTimeProfile,
+                name = name
+            )
         }
     }
 

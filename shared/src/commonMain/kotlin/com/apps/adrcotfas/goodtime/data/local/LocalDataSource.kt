@@ -18,6 +18,7 @@ interface LocalDataSource {
     suspend fun updateLabelName(name: String, newName: String)
     suspend fun updateLabelColorIndex(name: String, newColorIndex: Long)
     suspend fun updateLabelOrderIndex(name: String, newOrderIndex: Long)
+    suspend fun updateShouldFollowDefaultTimeProfile(name:String, newShouldFollowDefaultTimeProfile: Boolean)
     suspend fun updateLabelIsArchived(name: String, newIsArchived: Boolean)
     fun getAllLabels(): Flow<List<Label>>
     fun getAllLabelsByArchived(isArchived: Boolean): Flow<List<Label>>

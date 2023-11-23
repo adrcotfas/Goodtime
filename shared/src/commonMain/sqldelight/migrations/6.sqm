@@ -6,13 +6,14 @@ CREATE TABLE IF NOT EXISTS LabelTmp (
     name TEXT NOT NULL,
     colorIndex INTEGER NOT NULL,
     orderIndex INTEGER NOT NULL,
-    isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
+    shouldFollowDefaultTimeProfile INTEGER  AS Boolean NOT NULL DEFAULT 1,
     isCountdown INTEGER AS Boolean NOT NULL DEFAULT 1,
     workDuration INTEGER NOT NULL DEFAULT 25,
     breakDuration INTEGER NOT NULL DEFAULT 5,
     longBreakDuration INTEGER NOT NULL DEFAULT 15,
     sessionsBeforeLongBreak INTEGER NOT NULL DEFAULT 4,
     workBreakRatio INTEGER NOT NULL DEFAULT 0,
+    isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
     PRIMARY KEY(name, isArchived)
 );
 
