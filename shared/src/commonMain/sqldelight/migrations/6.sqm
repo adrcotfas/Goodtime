@@ -21,7 +21,7 @@ DROP TABLE Label;
 ALTER TABLE LabelTmp RENAME TO Label;
 
 CREATE TABLE IF NOT EXISTS SessionTmp (
-    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp INTEGER NOT NULL,
     duration INTEGER NOT NULL,
     label TEXT DEFAULT NULL,
@@ -48,3 +48,4 @@ PRAGMA foreign_keys=on;
 
 DROP TABLE `Profile`;
 DROP TABLE room_master_table;
+DROP TABLE android_metadata;

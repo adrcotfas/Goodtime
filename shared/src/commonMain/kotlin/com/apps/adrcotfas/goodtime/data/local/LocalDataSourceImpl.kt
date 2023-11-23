@@ -15,7 +15,6 @@ class LocalDataSourceImpl(private val database: Database) : LocalDataSource {
     override suspend fun insertSession(session: Session) {
         withContext(coroutineScope) {
             database.sessionQueries.insert(
-                id = session.id,
                 timestamp = session.timestamp,
                 duration = session.duration,
                 label = session.label,

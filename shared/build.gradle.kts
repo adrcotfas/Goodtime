@@ -64,6 +64,7 @@ sqldelight {
         create("Database") {
             packageName.set("com.apps.adrcotfas.goodtime.data.local")
             version = 6
+            verifyMigrations = true
         }
     }
 }

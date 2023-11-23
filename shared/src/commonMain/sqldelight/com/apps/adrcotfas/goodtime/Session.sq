@@ -1,7 +1,7 @@
 import kotlin.Boolean;
 
 CREATE TABLE IF NOT EXISTS Session (
-    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp INTEGER NOT NULL,
     duration INTEGER NOT NULL,
     label TEXT DEFAULT NULL,
@@ -17,7 +17,7 @@ CREATE INDEX idx_profile ON Session(label);
 
 insert:
 INSERT OR REPLACE INTO Session(id, timestamp, duration, label, notes, isArchived)
-VALUES(?, ?, ?, ?, ?, ?);
+VALUES(NULL, ?, ?, ?, ?, ?);
 
 update:
 UPDATE Session

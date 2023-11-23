@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-            localDataSource.getAllSessions()
+            localDataSource.getAllLabels()
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .collect { it.forEach { label -> println("$label") } }
         }
