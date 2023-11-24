@@ -24,15 +24,15 @@ UPDATE Session
 SET timestamp = :newTimestamp, duration = :newDuration, label = :newLabel, notes = :newNotes
 WHERE id = :id;
 
-getAll:
+selectAll:
 SELECT *
 FROM Session  ORDER BY timestamp DESC;
 
-getByIsArchived:
+selectByIsArchived:
 SELECT *
 FROM Session WHERE isArchived IS ? ORDER BY timestamp DESC;
 
-getByLabel:
+selectByLabel:
 SELECT *
 FROM Session WHERE label IS ? ORDER BY timestamp DESC;
 
@@ -43,3 +43,6 @@ WHERE id = ?;
 deleteAfter:
 DELETE FROM Session
 WHERE timestamp >= :timestamp;
+
+deleteAll:
+DELETE FROM Session;

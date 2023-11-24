@@ -12,7 +12,7 @@ kotlin {
             }
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -25,19 +25,30 @@ kotlin {
     }
 
     sourceSets {
-        androidMain.dependencies {
-            implementation(libs.sqldelight.driver.android)
+        all {
+            languageSettings.apply {
+                optIn("kotlin.RequiresOptIn")
+                optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+                optIn("kotlin.time.ExperimentalTime")
+            }
         }
-        iosMain.dependencies {
-            implementation(libs.sqldelight.driver.native)
-        }
-
         commonMain.dependencies {
             implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines)
         }
         commonTest.dependencies {
-            implementation(libs.kotlin.test)
+            implementation(libs.bundles.shared.commonTest)
+        }
+        androidMain.dependencies {
+            implementation(libs.sqldelight.driver.android)
+        }
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(libs.bundles.shared.androidTest)
+            }
+        }
+        iosMain.dependencies {
+            implementation(libs.sqldelight.driver.native)
         }
     }
 

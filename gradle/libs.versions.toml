@@ -3,12 +3,16 @@ agp = "8.3.0-alpha14"
 android-minSdk = "24"
 android-compileSdk = "34"
 android-targetSdk = "34"
-kotlin = "1.9.21"
+kotlin = "1.9.20"
 compose = "1.5.4"
 compose-compiler = "1.5.4"
 compose-material3 = "1.1.2"
 androidx-activityCompose = "1.8.1"
 sqldelight = "2.0.0"
+
+coroutines = "1.7.3"
+
+androidx-test-junit = "1.1.5"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -19,10 +23,15 @@ compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview"
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+
 sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-driver-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
+
+androidx-test-junit = { module = "androidx.test.ext:junit-ktx", version.ref = "androidx-test-junit" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -31,3 +40,14 @@ kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+
+[bundles]
+shared-commonTest = [
+    "kotlin-test",
+    "coroutines-test"
+]
+shared-androidTest = [
+    "androidx-test-junit",
+    "coroutines-test",
+    "sqldelight-driver-jvm"
+]

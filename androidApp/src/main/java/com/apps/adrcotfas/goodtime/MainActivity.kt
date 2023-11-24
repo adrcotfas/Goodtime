@@ -12,7 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.apps.adrcotfas.goodtime.data.local.DatabaseDriverFactory
-import com.apps.adrcotfas.goodtime.data.local.LocalDataSourceImpl
+import com.apps.adrcotfas.goodtime.data.local.LocalDataSource
 import com.apps.adrcotfas.goodtime.data.local.Database
 import kotlinx.coroutines.launch
 
@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
 
     //TODO: move to ViewModel with DI
     private val localDataSource =
-        LocalDataSourceImpl(
+        LocalDataSource(
             Database(
                 driver = DatabaseDriverFactory(this).create())
         )
@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-            localDataSource.getAllLabels()
+            localDataSource.selectAllLabels()
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .collect { it.forEach { label -> println("$label") } }
         }

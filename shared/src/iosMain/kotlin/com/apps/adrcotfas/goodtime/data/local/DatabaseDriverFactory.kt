@@ -13,7 +13,7 @@ actual class DatabaseDriverFactory {
                 config.copy(
                     extendedConfig = DatabaseConfiguration.Extended(foreignKeyConstraints = true)
                 )
-            },
+            }
         )
     }
 }

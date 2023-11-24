@@ -50,13 +50,16 @@ updateIsArchived:
 UPDATE Label
 SET isArchived = ? WHERE name = :name;
 
-getAll:
+selectAll:
 SELECT *
 FROM Label ORDER BY orderIndex;
 
-getByIsArchived:
+selectByIsArchived:
 SELECT *
 FROM Label WHERE isArchived IS ?;
 
 delete:
 DELETE FROM Label WHERE name = ?;
+
+deleteAll:
+DELETE FROM Label;
