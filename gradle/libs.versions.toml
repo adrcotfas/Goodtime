@@ -1,10 +1,13 @@
 [versions]
 agp = "8.3.0-alpha14"
-kotlin = "1.9.20"
+android-minSdk = "24"
+android-compileSdk = "34"
+android-targetSdk = "34"
+kotlin = "1.9.21"
 compose = "1.5.4"
 compose-compiler = "1.5.4"
 compose-material3 = "1.1.2"
-androidx-activityCompose = "1.8.0"
+androidx-activityCompose = "1.8.1"
 sqldelight = "2.0.0"
 
 [libraries]

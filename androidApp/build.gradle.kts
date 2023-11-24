@@ -4,12 +4,13 @@ plugins {
 }
 
 android {
-    namespace = "com.apps.adrcotfas.goodtime"
-    compileSdk = 34
+    val packageName = "com.apps.adrcotfas.goodtime"
+    namespace = packageName
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
-        applicationId = "com.apps.adrcotfas.goodtime"
-        minSdk = 26
-        targetSdk = 34
+        applicationId = packageName
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 300
         versionName = "3.0.0"
     }

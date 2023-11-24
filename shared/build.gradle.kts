@@ -53,9 +53,9 @@ kotlin {
 
 android {
     namespace = "com.apps.adrcotfas.goodtime.shared"
-    compileSdk = 34
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.android.minSdk.get().toInt()
     }
 }
 
