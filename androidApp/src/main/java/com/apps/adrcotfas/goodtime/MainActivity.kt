@@ -11,19 +11,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.apps.adrcotfas.goodtime.data.local.DatabaseDriverFactory
 import com.apps.adrcotfas.goodtime.data.local.LocalDataSource
-import com.apps.adrcotfas.goodtime.data.local.Database
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.core.component.KoinComponent
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), KoinComponent {
 
     //TODO: move to ViewModel with DI
-    private val localDataSource =
-        LocalDataSource(
-            Database(
-                driver = DatabaseDriverFactory(this).create())
-        )
+    private val localDataSource: LocalDataSource by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

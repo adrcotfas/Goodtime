@@ -16,6 +16,8 @@ coroutines = "1.7.3"
 kotlinx-serialization = "1.6.2"
 kotlinx-datetime = "0.4.1"
 
+koin = "3.5.0"
+
 androidx-test-junit = "1.1.5"
 
 [libraries]
@@ -41,6 +43,10 @@ sqldelight-driver-native = { module = "app.cash.sqldelight:native-driver", versi
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
 androidx-datastore-core-okio = { module = "androidx.datastore:datastore-core-okio", version.ref = "androidx-datastore" }
 
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
+
 androidx-test-junit = { module = "androidx.test.ext:junit-ktx", version.ref = "androidx-test-junit" }
 
 [plugins]
@@ -56,7 +62,8 @@ kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", vers
 [bundles]
 shared-commonTest = [
     "kotlin-test",
-    "coroutines-test"
+    "coroutines-test",
+    "koin-test",
 ]
 shared-androidTest = [
     "androidx-test-junit",

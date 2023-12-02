@@ -34,12 +34,11 @@ kotlin {
             }
         }
         commonMain.dependencies {
+            implementation(libs.koin.core)
             implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines)
-            libs.androidx.datastore.apply {
-                implementation(preferences.core)
-                implementation(core.okio)
-            }
+            implementation(libs.androidx.datastore.preferences.core)
+            implementation(libs.androidx.datastore.core.okio)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.datetime)
         }
