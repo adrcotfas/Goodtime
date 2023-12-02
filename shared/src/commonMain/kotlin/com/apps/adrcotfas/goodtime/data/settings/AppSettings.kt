@@ -4,6 +4,7 @@ import kotlinx.datetime.LocalTime
 import kotlinx.serialization.*
 
 data class AppSettings(
+    private val version: Int = 1,
     val productivityReminderSettings: ProductivityReminderSettings,
     val uiSettings: UiSettings,
 
