@@ -79,10 +79,14 @@ class LocalDataSourceTest {
 
     @Test
     fun `Select entities by Label`() = runTest {
-        val sessions = dataSource.selectSessionsByLabel(LABEL_NAME).first()
-        assertEquals(0, sessions.size, "There should be no sessions with this label")
+        val filteredSessions = dataSource.selectSessionsByLabel(LABEL_NAME).first()
+        assertEquals(0, filteredSessions.size, "There should be no sessions with this label")
 
-        dataSource.updateSession(sessions.first().id, sessions.first().copy(label = LABEL_NAME))
+        val allSessions = dataSource.selectAllSessions().first()
+        dataSource.updateSession(
+            allSessions.first().id,
+            allSessions.first().copy(label = LABEL_NAME)
+        )
         assertEquals(
             1,
             dataSource.selectSessionsByLabel(LABEL_NAME).first().size,
