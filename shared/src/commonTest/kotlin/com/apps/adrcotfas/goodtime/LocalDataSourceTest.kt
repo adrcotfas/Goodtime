@@ -80,14 +80,99 @@ class LocalDataSourceTest {
     }
 
     @Test
+    fun `Select entities by Label`() = runTest {
+        val sessions = dataSource.selectSessionsByLabel(LABEL_NAME).first()
+        assertEquals(0, sessions.size, "There should be no sessions with this label")
+
+        dataSource.updateSession(sessions.first().id, sessions.first().copy(label = LABEL_NAME))
+        assertEquals(
+            1,
+            dataSource.selectSessionsByLabel(LABEL_NAME).first().size,
+            "updateSession failed"
+        )
+    }
+
+    @Test
+    fun `Select session after timestamp`() = runTest {
+        val sessions = dataSource.selectAllSessions().first()
+        dataSource.updateSession(sessions.first().id, sessions.first().copy(timestamp = 100))
+        assertEquals(1, dataSource.selectAllSessions().first().size, "There should be one session")
+        dataSource.deleteSessionAfter(150)
+        assertEquals(
+            1,
+            dataSource.selectAllSessions().first().size,
+            "deleteSessionAfter failed; There should be one session"
+        )
+        dataSource.deleteSessionAfter(99)
+        assertEquals(0, dataSource.selectAllSessions().first().size, "deleteSessionAfter failed")
+
+        dataSource.insertSession(session)
+        dataSource.updateSession(
+            dataSource.selectAllSessions().first().first().id,
+            session.copy(timestamp = 100)
+        )
+        assertEquals(1, dataSource.selectAllSessions().first().size, "There should be one session")
+        dataSource.deleteSessionAfter(100)
+        assertEquals(0, dataSource.selectAllSessions().first().size, "deleteSessionAfter failed")
+    }
+
+    @Test
+    fun `Select entities by IsArchived`() = runTest {
+        val expectedArchivedSessions = 3
+        repeat(expectedArchivedSessions) {
+            dataSource.insertSession(session.copy(isArchived = true))
+        }
+
+        val sessions = dataSource.selectSessionsByIsArchived(true).first()
+        assertEquals(expectedArchivedSessions, sessions.size, "selectSessionsByIsArchived failed")
+
+        dataSource.insertLabel(label.copy(name = "ceva", isArchived = true))
+        dataSource.insertLabel(label.copy(name = "fin", isArchived = true))
+
+        val labels = dataSource.selectLabelsByArchived(true).first()
+        assertEquals(2, labels.size, "selectLabelsByArchived failed")
+    }
+
+    @Test
+    fun `Update label properties`() = runTest {
+        val expectedColorIndex = 9L
+        val expectedOrderIndex = 10L
+        dataSource.updateLabelColorIndex(LABEL_NAME, expectedColorIndex)
+        dataSource.updateLabelOrderIndex(LABEL_NAME, expectedOrderIndex)
+        dataSource.updateShouldFollowDefaultTimeProfile(LABEL_NAME, true)
+
+        val label = dataSource.selectAllLabels().first().first()
+        assertEquals(expectedColorIndex, label.colorIndex, "updateLabelColorIndex failed")
+        assertEquals(expectedOrderIndex, label.orderIndex, "updateLabelOrderIndex failed")
+        assertEquals(
+            true,
+            label.shouldFollowDefaultTimeProfile,
+            "updateShouldFollowDefaultTimeProfile failed"
+        )
+    }
+
+    @Test
     fun `Delete entities`() = runTest {
         dataSource.deleteAllSessions()
         val sessions = dataSource.selectAllSessions().first()
         assertTrue(sessions.isEmpty(), "deleteAllSessions failed")
 
+        dataSource.insertSession(session)
+        assertEquals(1, dataSource.selectAllSessions().first().size, "insertSession failed")
+
+        val sessionId = dataSource.selectAllSessions().first().first().id
+        dataSource.deleteSession(sessionId)
+        assertEquals(0, dataSource.selectAllSessions().first().size, "deleteSession failed")
+
         dataSource.deleteAllLabels()
         val labels = dataSource.selectAllLabels().first()
         assertTrue(labels.isEmpty(), "selectAllLabels failed")
+
+        val labelToDeleteName = "ceva"
+        dataSource.insertLabel(label.copy(name = labelToDeleteName))
+        assertEquals(1, dataSource.selectAllLabels().first().size, "insertLabel failed")
+        dataSource.deleteLabel(labelToDeleteName)
+        assertEquals(0, dataSource.selectAllLabels().first().size, "deleteLabel failed")
     }
 
     companion object {

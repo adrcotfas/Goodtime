@@ -125,7 +125,7 @@ class LocalDataSource(private val database: Database) {
         return database.labelQueries.selectAll().asFlow().mapToList(coroutineScope)
     }
 
-    fun selectAllLabelsByArchived(isArchived: Boolean): Flow<List<Label>> {
+    fun selectLabelsByArchived(isArchived: Boolean): Flow<List<Label>> {
         return database.labelQueries.selectByIsArchived(isArchived).asFlow()
             .mapToList(coroutineScope)
     }

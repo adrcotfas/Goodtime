@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS Label (
     name TEXT NOT NULL,
     colorIndex INTEGER NOT NULL,
     orderIndex INTEGER NOT NULL,
-    shouldFollowDefaultTimeProfile INTEGER  AS Boolean NOT NULL DEFAULT 1,
+    shouldFollowDefaultTimeProfile INTEGER AS Boolean NOT NULL DEFAULT 1,
     isCountdown INTEGER AS Boolean NOT NULL DEFAULT 1,
     workDuration INTEGER NOT NULL DEFAULT 25,
     breakDuration INTEGER NOT NULL DEFAULT 5,
