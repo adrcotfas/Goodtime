@@ -9,7 +9,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
-class LocalDataSource(private val database: Database) {
+class DatabaseHelper(private val database: Database) {
 
     private val coroutineScope = Dispatchers.IO
     suspend fun insertSession(session: Session) {

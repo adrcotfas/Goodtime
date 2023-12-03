@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import com.apps.adrcotfas.goodtime.data.local.Database
 import com.apps.adrcotfas.goodtime.data.local.DatabaseDriverFactory
-import com.apps.adrcotfas.goodtime.data.local.LocalDataSource
+import com.apps.adrcotfas.goodtime.data.local.DatabaseHelper
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepositoryImpl
 import okio.Path.Companion.toPath
@@ -28,8 +28,8 @@ fun insertKoin(appModule: Module): KoinApplication {
 expect val platformModule: Module
 
 private val coreModule = module {
-    single<LocalDataSource> {
-        LocalDataSource(Database(driver = get<DatabaseDriverFactory>().create()))
+    single<DatabaseHelper> {
+        DatabaseHelper(Database(driver = get<DatabaseDriverFactory>().create()))
     }
     single<SettingsRepository> {
         SettingsRepositoryImpl(get<DataStore<Preferences>>())

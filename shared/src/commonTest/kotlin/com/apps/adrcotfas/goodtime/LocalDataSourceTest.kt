@@ -1,8 +1,7 @@
 package com.apps.adrcotfas.goodtime
 
 import com.apps.adrcotfas.goodtime.data.local.Database
-import com.apps.adrcotfas.goodtime.data.local.LocalDataSource
-import kotlinx.coroutines.delay
+import com.apps.adrcotfas.goodtime.data.local.DatabaseHelper
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlin.test.BeforeTest
@@ -12,11 +11,11 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class LocalDataSourceTest {
-    private lateinit var dataSource: LocalDataSource
+    private lateinit var dataSource: DatabaseHelper
 
     @BeforeTest
     fun setup() = runTest {
-        dataSource = LocalDataSource(Database(driver = testDbConnection()))
+        dataSource = DatabaseHelper(Database(driver = testDbConnection()))
         dataSource.deleteAllSessions()
         dataSource.deleteAllLabels()
         dataSource.insertLabel(label)
@@ -58,7 +57,6 @@ class LocalDataSourceTest {
 
         val newLabelName = "new"
         dataSource.updateLabelName(LABEL_NAME, newLabelName)
-        delay(1000)
         assertEquals(
             newLabelName,
             dataSource.selectAllSessions().first().first().label,
