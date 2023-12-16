@@ -11,7 +11,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.apps.adrcotfas.goodtime.data.local.DatabaseHelper
+import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinComponent
@@ -20,14 +22,26 @@ class MainActivity : ComponentActivity(), KoinComponent {
 
     //TODO: move to ViewModel with DI
     private val localDataSource: DatabaseHelper by inject()
+    private val settingsRepository: SettingsRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-            localDataSource.selectAllLabels()
-                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                .collect { it.forEach { label -> println("$label") } }
+            settingsRepository.saveAutoStartBreak(true)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                settingsRepository.settings.collect { settings ->
+                    println("Settings: $settings")
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                localDataSource.selectAllLabels()
+                    .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                    .collect { it.forEach { label -> println("$label") } }
+            }
         }
 
         setContent {

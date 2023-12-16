@@ -36,7 +36,7 @@ private val coreModule = module {
     }
 }
 
-internal const val dataStoreFileName = "goodtime_productivity_preferences"
+internal const val dataStoreFileName = "goodtime_productivity.preferences_pb"
 internal fun getDataStore(producePath: () -> String): DataStore<Preferences> {
     return PreferenceDataStoreFactory.createWithPath(produceFile = { producePath().toPath() })
 }
