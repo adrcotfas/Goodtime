@@ -34,19 +34,27 @@ data class ProductivityReminderSettings(
 )
 
 @Serializable
-data class DefaultTimerProfile(
-    val isCountdown: Boolean = true,
-    /** Work duration in minutes; invalid for isCountdown false */
-    val workDuration: Int = 25,
-    /** Break duration in minutes */
-    val breakDuration: Int = 5,
-    /** Long break duration in minutes */
-    val longBreakDuration: Int = 15,
-    /** Number of sessions before long break or 0 to have this feature disabled */
-    val sessionsBeforeLongBreak: Int = 4,
-    /** only valid with isCountdown false **/
-    val workBreakRatio: Int = 3
-)
+sealed class DefaultTimerProfile {
+    @Serializable
+    @SerialName("countdown")
+    data class Countdown(
+        /** Work duration in minutes; invalid for isCountdown false */
+        val workDuration: Int = 25,
+        /** Break duration in minutes */
+        val breakDuration: Int = 5,
+        /** Long break duration in minutes */
+        val longBreakDuration: Int = 15,
+        /** Number of sessions before long break or 0 to have this feature disabled */
+        val sessionsBeforeLongBreak: Int = 4
+    ) : DefaultTimerProfile()
+
+    @Serializable
+    @SerialName("flow")
+    data class Flow(
+        /** only valid with isCountdown false **/
+        val workBreakRatio: Int = 3
+    ): DefaultTimerProfile()
+}
 
 @Serializable
 data class UiSettings(

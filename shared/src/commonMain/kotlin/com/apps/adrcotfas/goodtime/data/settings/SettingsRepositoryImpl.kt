@@ -38,7 +38,7 @@ class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : Se
             } ?: UiSettings(),
             defaultTimerProfile = it[Keys.defaultTimerProfileKey]?.let { d ->
                 Json.decodeFromString<DefaultTimerProfile>(d)
-            } ?: DefaultTimerProfile(),
+            } ?: DefaultTimerProfile.Countdown(),
             notificationSoundEnabled = it[Keys.notificationSoundEnabledKey] ?: true,
             workFinishedSound = it[Keys.workFinishedSoundKey] ?: "",
             breakFinishedSound = it[Keys.breakFinishedSoundKey] ?: "",
