@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime
 
+import com.apps.adrcotfas.goodtime.data.local.DatabaseExtension.invoke
 import com.apps.adrcotfas.goodtime.data.local.Database
 import com.apps.adrcotfas.goodtime.data.local.DatabaseHelper
 import kotlinx.coroutines.flow.first
@@ -148,7 +149,7 @@ class LocalDataSourceTest {
         assertEquals(expectedOrderIndex, label.orderIndex, "updateLabelOrderIndex failed")
         assertEquals(
             true,
-            label.shouldFollowDefaultTimeProfile,
+            label.useDefaultTimeProfile,
             "updateShouldFollowDefaultTimeProfile failed"
         )
     }
@@ -191,7 +192,7 @@ class LocalDataSourceTest {
             name = LABEL_NAME,
             colorIndex = 0,
             orderIndex = 0,
-            shouldFollowDefaultTimeProfile = false,
+            useDefaultTimeProfile = false,
             isCountdown = false,
             workDuration = 0,
             breakDuration = 0,

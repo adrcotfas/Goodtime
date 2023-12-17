@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.apps.adrcotfas.goodtime.data.TimerProfile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.*
@@ -37,8 +38,8 @@ class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : Se
                 Json.decodeFromString<UiSettings>(u)
             } ?: UiSettings(),
             defaultTimerProfile = it[Keys.defaultTimerProfileKey]?.let { d ->
-                Json.decodeFromString<DefaultTimerProfile>(d)
-            } ?: DefaultTimerProfile.Countdown(),
+                Json.decodeFromString<TimerProfile>(d)
+            } ?: TimerProfile.Countdown(),
             notificationSoundEnabled = it[Keys.notificationSoundEnabledKey] ?: true,
             workFinishedSound = it[Keys.workFinishedSoundKey] ?: "",
             breakFinishedSound = it[Keys.breakFinishedSoundKey] ?: "",
@@ -65,7 +66,7 @@ class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : Se
         dataStore.edit { it[Keys.uiSettingsKey] = Json.encodeToString(settings) }
     }
 
-    override suspend fun saveDefaultTimerProfile(settings: DefaultTimerProfile) {
+    override suspend fun saveDefaultTimerProfile(settings: TimerProfile) {
         dataStore.edit { it[Keys.defaultTimerProfileKey] = Json.encodeToString(settings) }
     }
 

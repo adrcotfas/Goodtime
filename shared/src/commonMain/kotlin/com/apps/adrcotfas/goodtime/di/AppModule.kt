@@ -3,6 +3,7 @@ package com.apps.adrcotfas.goodtime.di
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import com.apps.adrcotfas.goodtime.data.local.DatabaseExtension.invoke
 import com.apps.adrcotfas.goodtime.data.local.Database
 import com.apps.adrcotfas.goodtime.data.local.DatabaseDriverFactory
 import com.apps.adrcotfas.goodtime.data.local.DatabaseHelper

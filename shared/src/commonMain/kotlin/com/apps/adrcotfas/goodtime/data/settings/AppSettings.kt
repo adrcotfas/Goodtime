@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.data.settings
 
+import com.apps.adrcotfas.goodtime.data.TimerProfile
 import kotlinx.datetime.LocalTime
 import kotlinx.serialization.*
 
@@ -8,7 +9,7 @@ data class AppSettings(
     val productivityReminderSettings: ProductivityReminderSettings,
     val uiSettings: UiSettings,
 
-    val defaultTimerProfile: DefaultTimerProfile,
+    val defaultTimerProfile: TimerProfile,
     val notificationSoundEnabled: Boolean,
     /** The name/URI of the sound file or empty for default*/
     val workFinishedSound: String,
@@ -32,29 +33,6 @@ data class ProductivityReminderSettings(
     /** The time of the reminder represented in seconds of the day */
     val productivityReminderSecondOfDay: Int = LocalTime(9, 0).toSecondOfDay(),
 )
-
-@Serializable
-sealed class DefaultTimerProfile {
-    @Serializable
-    @SerialName("countdown")
-    data class Countdown(
-        /** Work duration in minutes; invalid for isCountdown false */
-        val workDuration: Int = 25,
-        /** Break duration in minutes */
-        val breakDuration: Int = 5,
-        /** Long break duration in minutes */
-        val longBreakDuration: Int = 15,
-        /** Number of sessions before long break or 0 to have this feature disabled */
-        val sessionsBeforeLongBreak: Int = 4
-    ) : DefaultTimerProfile()
-
-    @Serializable
-    @SerialName("flow")
-    data class Flow(
-        /** only valid with isCountdown false **/
-        val workBreakRatio: Int = 3
-    ): DefaultTimerProfile()
-}
 
 @Serializable
 data class UiSettings(

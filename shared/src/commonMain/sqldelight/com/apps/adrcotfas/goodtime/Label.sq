@@ -1,16 +1,22 @@
 import kotlin.Boolean;
+import kotlin.Int;
 
 CREATE TABLE IF NOT EXISTS Label (
     name TEXT NOT NULL,
     colorIndex INTEGER NOT NULL,
     orderIndex INTEGER NOT NULL,
-    shouldFollowDefaultTimeProfile INTEGER AS Boolean NOT NULL DEFAULT 1,
+    useDefaultTimeProfile INTEGER AS Boolean NOT NULL DEFAULT 1,
+
+    -- countdown columns
     isCountdown INTEGER AS Boolean NOT NULL DEFAULT 1,
-    workDuration INTEGER NOT NULL DEFAULT 25,
-    breakDuration INTEGER NOT NULL DEFAULT 5,
-    longBreakDuration INTEGER NOT NULL DEFAULT 15,
-    sessionsBeforeLongBreak INTEGER NOT NULL DEFAULT 4,
-    workBreakRatio INTEGER NOT NULL DEFAULT 0,
+    workDuration INTEGER AS Int NOT NULL DEFAULT 25,
+    breakDuration INTEGER AS Int NOT NULL DEFAULT 5,
+    longBreakDuration INTEGER AS Int NOT NULL DEFAULT 15,
+    sessionsBeforeLongBreak INTEGER AS Int NOT NULL DEFAULT 4,
+
+    -- flow column
+    workBreakRatio INTEGER AS Int NOT NULL DEFAULT 3,
+
     isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
     PRIMARY KEY(name, isArchived)
 );
@@ -20,7 +26,7 @@ INSERT OR IGNORE INTO Label(
     name,
     colorIndex,
     orderIndex,
-    shouldFollowDefaultTimeProfile,
+    useDefaultTimeProfile,
     isCountdown,
     workDuration,
     breakDuration,
@@ -44,7 +50,7 @@ SET orderIndex = :newOrderIndex WHERE name = :name;
 
 updateShouldFollowDefaultTimeProfile:
 UPDATE Label
-SET shouldFollowDefaultTimeProfile = :newShouldFollowDefaultTimeProfile WHERE name = :name;
+SET useDefaultTimeProfile = :newShouldFollowDefaultTimeProfile WHERE name = :name;
 
 updateIsArchived:
 UPDATE Label

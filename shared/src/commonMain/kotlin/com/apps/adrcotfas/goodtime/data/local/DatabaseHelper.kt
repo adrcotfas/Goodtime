@@ -73,7 +73,7 @@ class DatabaseHelper(private val database: Database) {
                 name = label.name,
                 colorIndex = label.colorIndex,
                 orderIndex = label.orderIndex,
-                shouldFollowDefaultTimeProfile = label.shouldFollowDefaultTimeProfile,
+                useDefaultTimeProfile = label.useDefaultTimeProfile,
                 isCountdown = label.isCountdown,
                 workDuration = label.workDuration,
                 breakDuration = label.breakDuration,
