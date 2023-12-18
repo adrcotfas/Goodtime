@@ -1,8 +1,18 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.kotlinx.serialization)
+}
+
+android {
+    namespace = "com.apps.adrcotfas.goodtime.shared"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    defaultConfig {
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 }
 
 kotlin {
@@ -13,17 +23,9 @@ kotlin {
             }
         }
     }
-
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "shared"
-            isStatic = true
-        }
-    }
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     sourceSets {
         all {
@@ -67,14 +69,19 @@ kotlin {
             }
         }
     }
-}
 
-android {
-    namespace = "com.apps.adrcotfas.goodtime.shared"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    cocoapods {
+        summary = "Productivity app for focus and time management"
+        homepage = "https://github.com/adrcotfas/goodtime"
+        version = "1.0"
+        ios.deploymentTarget = "16.0"
+        podfile = project.file("../iosApp/Podfile")
+        framework {
+            baseName = "shared"
+            isStatic = false // SwiftUI preview requires dynamic framework
+            linkerOpts("-lsqlite3")
+        }
+        extraSpecAttributes["swift_version"] = "\"5.0\"" // <- SKIE Needs this!
     }
 }
 
@@ -86,6 +93,7 @@ sqldelight {
             verifyMigrations = true
         }
     }
+    linkSqlite = true
 }
 
 //TODO:

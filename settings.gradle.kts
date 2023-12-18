@@ -1,4 +1,3 @@
-rootProject.name = "Productivity"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 pluginManagement {
     repositories {
@@ -15,5 +14,6 @@ dependencyResolutionManagement {
     }
 }
 
+rootProject.name = "goodtime-productivity"
 include(":androidApp")
 include(":shared")
