@@ -798,7 +798,7 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
         timeView.animate().apply {
             y(newY.toFloat())
             x(newX.toFloat())
-            duration = 3500
+            duration = 2000
         }.start()
     }
 
