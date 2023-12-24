@@ -58,6 +58,17 @@
             android:title="@string/pref_timer_style"
             app:iconSpaceReserved="false"/>
 
+        <ListPreference
+            android:dialogTitle="@string/pref_timer_font"
+            android:key="pref_timer_font"
+            android:entries="@array/pref_timer_font"
+            android:defaultValue="@string/pref_timer_font_roboto_mono_thin_value"
+            android:entryValues="@array/pref_timer_font_values"
+            android:persistent="true"
+            android:summary="%s"
+            android:title="@string/pref_timer_font"
+            app:iconSpaceReserved="false"/>
+
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref_fullscreen"

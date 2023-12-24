@@ -71,6 +71,7 @@ class PreferenceHelper(val context: Context) {
         private const val INTRO_SNACKBAR_STEP = "pref_intro_snackbar_step"
         private const val INTRO_ARCHIVE_LABEL = "pref_intro_archive_label"
         const val TIMER_STYLE = "pref_timer_style"
+        const val TIMER_FONT = "pref_timer_font"
         private const val SESSIONS_COUNTER = "pref_sessions_counter"
         private const val SHOW_CURRENT_LABEL = "pref_show_label"
         private const val ADD_60_SECONDS_COUNTER = "pref_add_60_seconds_times"
@@ -137,7 +138,6 @@ class PreferenceHelper(val context: Context) {
     }
 
     fun getVibrationType() = preferences.getString(VIBRATION_TYPE, "2")!!.toInt()
-
     fun isFullscreenEnabled() = preferences.getBoolean(ENABLE_FULLSCREEN, false)
     fun isSoundAndVibrationDisabled() = preferences.getBoolean(DISABLE_SOUND_AND_VIBRATION, false)
     fun isDndModeActive() = preferences.getBoolean(DND_MODE, false)
@@ -259,6 +259,12 @@ class PreferenceHelper(val context: Context) {
         get() = preferences
             .getString(
                 TIMER_STYLE, "0"
+            )
+
+    val timerFont: String?
+        get() = preferences
+            .getString(
+                TIMER_FONT, "roboto_mono_thin"
             )
 
     val isSessionsCounterEnabled: Boolean

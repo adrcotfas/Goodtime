@@ -195,6 +195,10 @@ class SettingsFragment : PreferenceFragmentCompat(), OnRequestPermissionsResultC
                 super.onDisplayPreferenceDialog(preference)
             }
 
+            PreferenceHelper.TIMER_FONT -> {
+                super.onDisplayPreferenceDialog(preference)
+            }
+
             PreferenceHelper.VIBRATION_TYPE -> {
                 val dialog = VibrationPreferenceDialogFragment.newInstance(preference.key)
                 dialog.setTargetFragment(this, 0)

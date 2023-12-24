@@ -13,68 +13,71 @@
 package com.apps.adrcotfas.goodtime.main
 
 
-import com.apps.adrcotfas.goodtime.settings.reminders.ReminderHelper.Companion.removeNotification
-import com.apps.adrcotfas.goodtime.util.BatteryUtils.Companion.isIgnoringBatteryOptimizations
-import dagger.hilt.android.AndroidEntryPoint
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import com.apps.adrcotfas.goodtime.statistics.main.SelectLabelDialog.OnLabelSelectedListener
-import javax.inject.Inject
-import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
-import android.widget.TextView
-import com.google.android.material.chip.Chip
-import com.apps.adrcotfas.goodtime.statistics.SessionViewModel
-import android.content.Intent
-import android.os.Build
-import android.os.Bundle
-import org.greenrobot.eventbus.EventBus
-import androidx.databinding.DataBindingUtil
-import com.apps.adrcotfas.goodtime.R
-import com.kobakei.ratethisapp.RateThisApp
-import android.view.animation.Animation
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.content.ContextWrapper
-import com.apps.adrcotfas.goodtime.settings.SettingsActivity
-import android.content.SharedPreferences
-import android.graphics.PorterDuff
 import android.content.DialogInterface
-import android.widget.Toast
-import android.widget.FrameLayout
-import org.greenrobot.eventbus.Subscribe
-import com.apps.adrcotfas.goodtime.util.Constants.FinishWorkEvent
-import com.apps.adrcotfas.goodtime.util.Constants.FinishBreakEvent
-import com.apps.adrcotfas.goodtime.util.Constants.FinishLongBreakEvent
-import com.apps.adrcotfas.goodtime.util.Constants.StartSessionEvent
-import com.apps.adrcotfas.goodtime.util.Constants.OneMinuteLeft
-import com.apps.adrcotfas.goodtime.statistics.main.SelectLabelDialog
+import android.content.Intent
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.content.res.ColorStateList
+import android.graphics.PorterDuff
+import android.graphics.Typeface
 import android.net.Uri
+import android.os.Build
+import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.*
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.res.ResourcesCompat
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.apps.adrcotfas.goodtime.BuildConfig
+import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.bl.*
 import com.apps.adrcotfas.goodtime.database.Label
 import com.apps.adrcotfas.goodtime.database.Session
 import com.apps.adrcotfas.goodtime.databinding.ActivityMainBinding
+import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
+import com.apps.adrcotfas.goodtime.settings.SettingsActivity
+import com.apps.adrcotfas.goodtime.settings.reminders.ReminderHelper.Companion.removeNotification
+import com.apps.adrcotfas.goodtime.statistics.SessionViewModel
+import com.apps.adrcotfas.goodtime.statistics.main.SelectLabelDialog
+import com.apps.adrcotfas.goodtime.statistics.main.SelectLabelDialog.OnLabelSelectedListener
 import com.apps.adrcotfas.goodtime.ui.ActivityWithBilling
 import com.apps.adrcotfas.goodtime.util.*
+import com.apps.adrcotfas.goodtime.util.BatteryUtils.Companion.isIgnoringBatteryOptimizations
 import com.apps.adrcotfas.goodtime.util.Constants.ClearNotificationEvent
+import com.apps.adrcotfas.goodtime.util.Constants.FinishBreakEvent
+import com.apps.adrcotfas.goodtime.util.Constants.FinishLongBreakEvent
+import com.apps.adrcotfas.goodtime.util.Constants.FinishWorkEvent
+import com.apps.adrcotfas.goodtime.util.Constants.OneMinuteLeft
+import com.apps.adrcotfas.goodtime.util.Constants.StartSessionEvent
+import com.google.android.material.chip.Chip
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
+import com.kobakei.ratethisapp.RateThisApp
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
@@ -411,6 +414,7 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
             currentSessionType = sessionType
             setupLabelView()
             setTimeLabelColor()
+            setTimeLabelFont()
         }
         currentSession.timerState.observe(this) { timerState: TimerState ->
             when {
@@ -770,6 +774,15 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
                 )
             )
         }
+    }
+
+    private fun setTimeLabelFont() {
+        val fontSetting = preferenceHelper.timerFont
+
+        val fontResourceId = resources.getIdentifier(fontSetting, "font", packageName)
+        val customFont = ResourcesCompat.getFont(this, fontResourceId)
+
+        timeView.typeface = customFont
     }
 
     override fun onLabelSelected(label: Label) {

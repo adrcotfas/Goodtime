@@ -371,7 +371,6 @@
 
     <style name="TimerStyle">
         <item name="android:textColor">@color/white</item>
-        <item name="fontFamily">@font/timer_font</item>
     </style>
 
     <style name="Button" parent="Widget.MaterialComponents.Button.TextButton">

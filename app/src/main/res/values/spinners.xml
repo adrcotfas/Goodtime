@@ -17,6 +17,22 @@
         <item>@string/pref_timer_style_minutes_value</item>
     </string-array>
 
+    <string-array name="pref_timer_font">
+        <item>@string/pref_timer_font_chivo_mono</item>
+        <item>@string/pref_timer_font_eirian</item>
+        <item>@string/pref_timer_font_roboto_mono_thin</item>
+    </string-array>
+
+    <string name="pref_timer_font_chivo_mono_value" translatable="false">chivo_mono</string>
+    <string name="pref_timer_font_eirian_value" translatable="false">eirian</string>
+    <string name="pref_timer_font_roboto_mono_thin_value" translatable="false">roboto_mono_thin</string>
+
+    <string-array name="pref_timer_font_values">
+        <item>@string/pref_timer_font_chivo_mono_value</item>
+        <item>@string/pref_timer_font_eirian_value</item>
+        <item>@string/pref_timer_font_roboto_mono_thin_value</item>
+    </string-array>
+
     <string-array name="spinner_stats_type">
         <item>@string/spinner_stats_nr_of_sessions</item>
         <item>@string/spinner_stats_duration</item>
@@ -53,6 +69,9 @@
     <string name="pref_vibration_values_strong" translatable="false">2</string>
     <string name="pref_vibration_values_sos" translatable="false">3</string>
     <string name="pref_vibration_values_heartbeat" translatable="false">4</string>
+    <string name="pref_timer_font_chivo_mono" translatable="false">Chivo</string>
+    <string name="pref_timer_font_eirian" translatable="false">Eirian</string>
+    <string name="pref_timer_font_roboto_mono_thin" translatable="false">Roboto Thin</string>
 
     <string-array name="pref_vibration_values">
         <item>@string/pref_vibration_values_none</item>
