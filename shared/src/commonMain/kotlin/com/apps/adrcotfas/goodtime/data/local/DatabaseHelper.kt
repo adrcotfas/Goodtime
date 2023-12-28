@@ -7,6 +7,7 @@ import com.apps.adrcotfas.goodtime.Session
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class DatabaseHelper(private val database: Database) {
@@ -119,6 +120,11 @@ class DatabaseHelper(private val database: Database) {
         withContext(coroutineScope) {
             database.labelQueries.updateIsArchived(newIsArchived, name)
         }
+    }
+
+    fun selectLabelByName(name: String): Flow<Label> {
+        return database.labelQueries.selectByName(name).asFlow().mapToList(coroutineScope)
+            .map { it.first() }
     }
 
     fun selectAllLabels(): Flow<List<Label>> {

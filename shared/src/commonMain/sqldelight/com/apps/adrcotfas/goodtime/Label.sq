@@ -60,6 +60,10 @@ selectAll:
 SELECT *
 FROM Label ORDER BY orderIndex;
 
+selectByName:
+SELECT *
+FROM Label WHERE name = ?;
+
 selectByIsArchived:
 SELECT *
 FROM Label WHERE isArchived IS ?;
