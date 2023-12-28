@@ -8,6 +8,8 @@ interface SettingsRepository {
     suspend fun saveReminderSettings(settings: ProductivityReminderSettings)
     suspend fun saveUiSettings(settings: UiSettings)
     suspend fun saveDefaultTimerProfile(settings: TimerProfile)
+    suspend fun saveCurrentLabelName(label: String)
+    suspend fun saveCurrentLabelNameAsUnlabeled()
     suspend fun saveNotificationSoundEnabled(enabled: Boolean)
     suspend fun saveWorkFinishedSound(sound: String?)
     suspend fun saveBreakFinishedSound(sound: String?)

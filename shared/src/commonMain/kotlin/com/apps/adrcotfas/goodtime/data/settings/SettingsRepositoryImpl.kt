@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.apps.adrcotfas.goodtime.data.TimerProfile
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
@@ -18,6 +19,7 @@ class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : Se
             stringPreferencesKey("productivityReminderSettingsKey")
         val uiSettingsKey = stringPreferencesKey("uiSettingsKey")
         val defaultTimerProfileKey = stringPreferencesKey("defaultTimerProfileKey")
+        val currentLabelNameKey = stringPreferencesKey("currentLabelKey")
         val notificationSoundEnabledKey = booleanPreferencesKey("notificationSoundEnabledKey")
         val workFinishedSoundKey = stringPreferencesKey("workFinishedSoundKey")
         val breakFinishedSoundKey = stringPreferencesKey("breakFinishedSoundKey")
@@ -37,6 +39,7 @@ class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : Se
             uiSettings = it[Keys.uiSettingsKey]?.let { u ->
                 Json.decodeFromString<UiSettings>(u)
             } ?: UiSettings(),
+            currentLabelName = it[Keys.currentLabelNameKey] ?: "",
             defaultTimerProfile = it[Keys.defaultTimerProfileKey]?.let { d ->
                 Json.decodeFromString<TimerProfile>(d)
             } ?: TimerProfile.Countdown(),
@@ -54,7 +57,7 @@ class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : Se
             autoStartBreak = it[Keys.autoStartBreakKey] ?: false,
             dndDuringWork = it[Keys.dndDuringWorkKey] ?: false
         )
-    }
+    }.distinctUntilChanged()
 
     override suspend fun saveReminderSettings(
         settings: ProductivityReminderSettings
@@ -69,6 +72,12 @@ class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : Se
     override suspend fun saveDefaultTimerProfile(settings: TimerProfile) {
         dataStore.edit { it[Keys.defaultTimerProfileKey] = Json.encodeToString(settings) }
     }
+
+    override suspend fun saveCurrentLabelName(label: String) {
+        dataStore.edit { it[Keys.currentLabelNameKey] = label }
+    }
+
+    override suspend fun saveCurrentLabelNameAsUnlabeled() = saveCurrentLabelName("")
 
     override suspend fun saveNotificationSoundEnabled(enabled: Boolean) {
         dataStore.edit { it[Keys.notificationSoundEnabledKey] = enabled }

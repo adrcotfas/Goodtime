@@ -9,6 +9,7 @@ data class AppSettings(
     val productivityReminderSettings: ProductivityReminderSettings,
     val uiSettings: UiSettings,
 
+    val currentLabelName: String,
     val defaultTimerProfile: TimerProfile,
     val notificationSoundEnabled: Boolean,
     /** The name/URI of the sound file or empty for default*/
