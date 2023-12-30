@@ -1,48 +1,48 @@
 import kotlin.Boolean;
 
-CREATE TABLE IF NOT EXISTS Session (
+CREATE TABLE IF NOT EXISTS localSession (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp INTEGER NOT NULL,
     duration INTEGER NOT NULL,
     label TEXT DEFAULT NULL,
     notes TEXT DEFAULT NULL,
     isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
-    FOREIGN KEY(label, isArchived) REFERENCES Label(name, isArchived)
+    FOREIGN KEY(label, isArchived) REFERENCES localLabel(name, isArchived)
     ON UPDATE CASCADE
     ON DELETE SET DEFAULT
 );
 
-CREATE INDEX idx_archived ON Session(isArchived);
-CREATE INDEX idx_profile ON Session(label);
+CREATE INDEX idx_archived ON localSession(isArchived);
+CREATE INDEX idx_profile ON localSession(label);
 
 insert:
-INSERT OR REPLACE INTO Session(id, timestamp, duration, label, notes, isArchived)
+INSERT OR REPLACE INTO localSession(id, timestamp, duration, label, notes, isArchived)
 VALUES(NULL, ?, ?, ?, ?, ?);
 
 update:
-UPDATE Session
+UPDATE localSession
 SET timestamp = :newTimestamp, duration = :newDuration, label = :newLabel, notes = :newNotes
 WHERE id = :id;
 
 selectAll:
 SELECT *
-FROM Session  ORDER BY timestamp DESC;
+FROM localSession  ORDER BY timestamp DESC;
 
 selectByIsArchived:
 SELECT *
-FROM Session WHERE isArchived IS ? ORDER BY timestamp DESC;
+FROM localSession WHERE isArchived IS ? ORDER BY timestamp DESC;
 
 selectByLabel:
 SELECT *
-FROM Session WHERE label IS ? ORDER BY timestamp DESC;
+FROM localSession WHERE label IS ? ORDER BY timestamp DESC;
 
 delete:
-DELETE FROM Session
+DELETE FROM localSession
 WHERE id = ?;
 
 deleteAfter:
-DELETE FROM Session
+DELETE FROM localSession
 WHERE timestamp >= :timestamp;
 
 deleteAll:
-DELETE FROM Session;
+DELETE FROM localSession;

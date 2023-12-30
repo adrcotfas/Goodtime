@@ -1,7 +1,7 @@
 import kotlin.Boolean;
 import kotlin.Int;
 
-CREATE TABLE IF NOT EXISTS Label (
+CREATE TABLE IF NOT EXISTS localLabel (
     name TEXT NOT NULL,
     colorIndex INTEGER NOT NULL,
     orderIndex INTEGER NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS Label (
 );
 
 insert:
-INSERT OR IGNORE INTO Label(
+INSERT OR IGNORE INTO localLabel(
     name,
     colorIndex,
     orderIndex,
@@ -37,39 +37,49 @@ INSERT OR IGNORE INTO Label(
 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 updateName:
-UPDATE Label
+UPDATE localLabel
 SET name = :newName WHERE name = :name;
 
 updateColorIndex:
-UPDATE Label
+UPDATE localLabel
 SET colorIndex = :newColorIndex WHERE name = :name;
 
 updateOrderIndex:
-UPDATE Label
+UPDATE localLabel
 SET orderIndex = :newOrderIndex WHERE name = :name;
 
 updateShouldFollowDefaultTimeProfile:
-UPDATE Label
+UPDATE localLabel
 SET useDefaultTimeProfile = :newShouldFollowDefaultTimeProfile WHERE name = :name;
 
+updateTimerProfile:
+UPDATE localLabel
+SET isCountdown = :newIsCountdown,
+    workDuration = :newWorkDuration,
+    breakDuration = :newBreakDuration,
+    longBreakDuration = :newLongBreakDuration,
+    sessionsBeforeLongBreak = :newSessionsBeforeLongBreak,
+    workBreakRatio = :newWorkBreakRatio
+WHERE name = :name;
+
 updateIsArchived:
-UPDATE Label
+UPDATE localLabel
 SET isArchived = ? WHERE name = :name;
 
 selectAll:
 SELECT *
-FROM Label ORDER BY orderIndex;
+FROM localLabel ORDER BY orderIndex;
 
 selectByName:
 SELECT *
-FROM Label WHERE name = ?;
+FROM localLabel WHERE name = ?;
 
 selectByIsArchived:
 SELECT *
-FROM Label WHERE isArchived IS ?;
+FROM localLabel WHERE isArchived IS ?;
 
 delete:
-DELETE FROM Label WHERE name = ?;
+DELETE FROM localLabel WHERE name = ?;
 
 deleteAll:
-DELETE FROM Label;
+DELETE FROM localLabel;

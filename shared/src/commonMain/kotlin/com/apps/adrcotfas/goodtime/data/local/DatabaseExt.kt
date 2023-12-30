@@ -2,13 +2,13 @@ package com.apps.adrcotfas.goodtime.data.local
 
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.db.SqlDriver
-import com.apps.adrcotfas.goodtime.Label
+import com.apps.adrcotfas.goodtime.LocalLabel
 
-object DatabaseExtension {
+object DatabaseExt {
     operator fun Database.Companion.invoke(driver: SqlDriver): Database {
         return Database(
             driver = driver,
-            LabelAdapter = Label.Adapter(
+            localLabelAdapter = LocalLabel.Adapter(
                 IntColumnAdapter,
                 IntColumnAdapter,
                 IntColumnAdapter,

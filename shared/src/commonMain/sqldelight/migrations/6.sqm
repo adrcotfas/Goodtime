@@ -2,7 +2,7 @@ import kotlin.Boolean;
 
 PRAGMA foreign_keys=off;
 
-CREATE TABLE IF NOT EXISTS LabelTmp (
+CREATE TABLE IF NOT EXISTS labelTmp (
     name TEXT NOT NULL,
     colorIndex INTEGER NOT NULL,
     orderIndex INTEGER NOT NULL,
@@ -22,33 +22,33 @@ CREATE TABLE IF NOT EXISTS LabelTmp (
     PRIMARY KEY(name, isArchived)
 );
 
-INSERT INTO LabelTmp(name, colorIndex, orderIndex, isArchived) SELECT title, colorId, 'order', archived FROM Label;
+INSERT INTO labelTmp(name, colorIndex, orderIndex, isArchived) SELECT title, colorId, 'order', archived FROM Label;
 DROP TABLE Label;
-ALTER TABLE LabelTmp RENAME TO Label;
+ALTER TABLE labelTmp RENAME TO localLabel;
 
-CREATE TABLE IF NOT EXISTS SessionTmp (
+CREATE TABLE IF NOT EXISTS sessionTmp (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp INTEGER NOT NULL,
     duration INTEGER NOT NULL,
     label TEXT DEFAULT NULL,
     notes TEXT DEFAULT NULL,
     isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
-    FOREIGN KEY(label, isArchived) REFERENCES Label(name, isArchived)
+    FOREIGN KEY(label, isArchived) REFERENCES localLabel(name, isArchived)
     ON UPDATE CASCADE
     ON DELETE SET DEFAULT
 );
 
-INSERT INTO SessionTmp(id, timestamp, duration, label, isArchived)
+INSERT INTO sessionTmp(id, timestamp, duration, label, isArchived)
 SELECT `id`, `timestamp`, `duration`, `label`, `archived` FROM Session;
 DROP TABLE Session;
-ALTER TABLE SessionTmp RENAME TO Session;
+ALTER TABLE sessionTmp RENAME TO localSession;
 
 -- set unlabeled sessions' label column(if empty) to NULL
-UPDATE Session
+UPDATE localSession
 SET label = CASE WHEN LENGTH(label) = 0 THEN NULL ELSE label END;
 
-CREATE INDEX idx_archived ON Session(isArchived);
-CREATE INDEX idx_profile ON Session(label);
+CREATE INDEX idx_archived ON localSession(isArchived);
+CREATE INDEX idx_profile ON localSession(label);
 
 PRAGMA foreign_keys=on;
 
