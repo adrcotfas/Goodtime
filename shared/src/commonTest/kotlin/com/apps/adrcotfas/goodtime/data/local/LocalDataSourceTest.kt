@@ -1,8 +1,9 @@
-package com.apps.adrcotfas.goodtime
+package com.apps.adrcotfas.goodtime.data.local
 
-import com.apps.adrcotfas.goodtime.data.local.DatabaseExtension.invoke
-import com.apps.adrcotfas.goodtime.data.local.Database
-import com.apps.adrcotfas.goodtime.data.local.DatabaseHelper
+import com.apps.adrcotfas.goodtime.data.local.DatabaseExt.invoke
+import com.apps.adrcotfas.goodtime.data.model.Label
+import com.apps.adrcotfas.goodtime.data.model.Session
+import com.apps.adrcotfas.goodtime.data.model.TimerProfile
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlin.test.BeforeTest
@@ -12,11 +13,11 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class LocalDataSourceTest {
-    private lateinit var dataSource: DatabaseHelper
+    private lateinit var dataSource: LocalDataRepositoryImpl
 
     @BeforeTest
     fun setup() = runTest {
-        dataSource = DatabaseHelper(Database(driver = testDbConnection()))
+        dataSource = LocalDataRepositoryImpl(Database(driver = testDbConnection()))
         dataSource.deleteAllSessions()
         dataSource.deleteAllLabels()
         dataSource.insertLabel(label)
@@ -132,7 +133,7 @@ class LocalDataSourceTest {
             dataSource.insertSession(session.copy(isArchived = true))
         }
 
-        val sessions = dataSource.selectSessionsByIsArchived(true).first()
+        val sessions = dataSource.selectByIsArchived(true).first()
         assertEquals(expectedArchivedSessions, sessions.size, "selectSessionsByIsArchived failed")
 
         dataSource.insertLabel(label.copy(name = "ceva", isArchived = true))
@@ -199,12 +200,7 @@ class LocalDataSourceTest {
             colorIndex = 0,
             orderIndex = 0,
             useDefaultTimeProfile = false,
-            isCountdown = false,
-            workDuration = 0,
-            breakDuration = 0,
-            longBreakDuration = 0,
-            sessionsBeforeLongBreak = 0,
-            workBreakRatio = 0,
+            timerProfile = TimerProfile(),
             isArchived = false
         )
         private val session = Session(
