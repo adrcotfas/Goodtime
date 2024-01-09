@@ -8,40 +8,49 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.apps.adrcotfas.goodtime.data.local.DatabaseHelper
+import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
+import com.apps.adrcotfas.goodtime.data.model.TimerProfile
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
+import com.apps.adrcotfas.goodtime.data.timer.TimerDataRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class MainActivity : ComponentActivity(), KoinComponent {
 
     //TODO: move to ViewModel with DI
-    private val localDataSource: DatabaseHelper by inject()
+    private val localDataRepo: LocalDataRepository by inject()
     private val settingsRepository: SettingsRepository by inject()
+    private val timerDataRepo: TimerDataRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launch {
-            settingsRepository.saveAutoStartBreak(true)
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                settingsRepository.settings.collect { settings ->
-                    println("Settings: $settings")
-                }
-            }
-        }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                localDataSource.selectAllLabels()
-                    .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                    .collect { it.forEach { label -> println("$label") } }
-            }
+            timerDataRepo.start()
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                localDataRepo.selectAllLabels()
+//                    .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+//                    .collect { it.forEach { label -> println(label.name) } }
+//            }
+//            localDataRepo.updateDefaultLabelTimerProfile(TimerProfile(false, 333, 333, 333))
+//            delay(2000)
+//            localDataRepo.updateDefaultLabelTimerProfile(TimerProfile(false, 666, 666, 666))
+//            delay(2000)
+
+//            delay(2000)
+//            timerDataRepo.setLabelId(5)
+//            delay(2000)
+//            localDataRepo.updateLabelName("p", "p2")
+//            delay(2000)
+//            localDataRepo.updateDefaultLabelTimerProfile(TimerProfile(true, 111, 111, 111))
+//            delay(2000)
+//            timerDataRepo.setLabelId(1)
+//            delay(2000)
+//            timerDataRepo.setLabelId(5)
         }
 
         setContent {

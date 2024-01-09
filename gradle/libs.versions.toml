@@ -3,26 +3,29 @@ agp = "8.2.0"
 android-minSdk = "24"
 android-compileSdk = "34"
 android-targetSdk = "34"
+espressoCore = "3.5.1"
 kotlin = "1.9.20"
 compose = "1.5.4"
 compose-compiler = "1.5.4"
 compose-material3 = "1.1.2"
-androidx-activityCompose = "1.8.1"
+androidx-activityCompose = "1.8.2"
 sqldelight = "2.0.0"
 
-androidx-datastore = "1.1.0-alpha06"
+androidx-datastore = "1.1.0-alpha07"
 
 coroutines = "1.7.3"
 kotlinx-serialization = "1.6.2"
-kotlinx-datetime = "0.4.1"
+kotlinx-datetime = "0.5.0"
 
 koin = "3.5.0"
 
 androidx-test-junit = "1.1.5"
 robolectric = "4.11.1"
+turbine = "1.0.0"
+
+okio = "3.7.0"
 
 [libraries]
-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
@@ -44,14 +47,19 @@ sqldelight-driver-native = { module = "app.cash.sqldelight:native-driver", versi
 sqldelight-primitive-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
 
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
-androidx-datastore-core-okio = { module = "androidx.datastore:datastore-core-okio", version.ref = "androidx-datastore" }
+okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 
-androidx-test-junit = { module = "androidx.test.ext:junit-ktx", version.ref = "androidx-test-junit" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 roboelectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+androidx-test-junit = { module = "androidx.test.ext:junit-ktx", version.ref = "androidx-test-junit" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-junit" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -68,10 +76,15 @@ shared-commonTest = [
     "kotlin-test",
     "coroutines-test",
     "koin-test",
+    "turbine",
+    "okio-fakefilesystem"
 ]
 shared-androidTest = [
+    "androidx-junit",
     "androidx-test-junit",
+    "androidx-espresso-core",
     "coroutines-test",
     "roboelectric",
-    "sqldelight-driver-jvm"
+    "sqldelight-driver-jvm",
+    "turbine"
 ]

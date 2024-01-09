@@ -2,7 +2,6 @@ package com.apps.adrcotfas.goodtime.data.local
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository.Companion.DEFAULT_LABEL_NAME
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.Session
 import com.apps.adrcotfas.goodtime.data.model.TimerProfile
@@ -12,6 +11,7 @@ import com.apps.adrcotfas.goodtime.data.model.toLocal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
@@ -27,7 +27,8 @@ internal class LocalDataRepositoryImpl(
 
     private fun insertDefaultLabel() {
         val localLabel = Label(
-            name = DEFAULT_LABEL_NAME,
+            id = 0,
+            name = null,
             colorIndex = 0,
             orderIndex = 0,
             useDefaultTimeProfile = true,
@@ -91,7 +92,7 @@ internal class LocalDataRepositoryImpl(
     }
 
     override suspend fun insertLabel(label: Label) {
-        if (label.name == DEFAULT_LABEL_NAME) return
+        if (label.name == null) return
         withContext(coroutineContext) {
             val localLabel = label.toLocal()
             database.localLabelQueries.insert(localLabel)
@@ -99,21 +100,18 @@ internal class LocalDataRepositoryImpl(
     }
 
     override suspend fun updateLabelName(name: String, newName: String) {
-        if (name == DEFAULT_LABEL_NAME) return
         withContext(coroutineContext) {
             database.localLabelQueries.updateName(newName = newName, name = name)
         }
     }
 
     override suspend fun updateLabelColorIndex(name: String, newColorIndex: Long) {
-        if (name == DEFAULT_LABEL_NAME) return
         withContext(coroutineContext) {
             database.localLabelQueries.updateColorIndex(newColorIndex = newColorIndex, name = name)
         }
     }
 
     override suspend fun updateLabelOrderIndex(name: String, newOrderIndex: Long) {
-        if (name == DEFAULT_LABEL_NAME) return
         withContext(coroutineContext) {
             database.localLabelQueries.updateOrderIndex(newOrderIndex = newOrderIndex, name = name)
         }
@@ -123,8 +121,6 @@ internal class LocalDataRepositoryImpl(
         name: String,
         newShouldFollowDefaultTimeProfile: Boolean
     ) {
-        //TODO: at least log these attempts with warning
-        if (name == DEFAULT_LABEL_NAME) return
         withContext(coroutineContext) {
             database.localLabelQueries.updateShouldFollowDefaultTimeProfile(
                 newShouldFollowDefaultTimeProfile = newShouldFollowDefaultTimeProfile,
@@ -133,11 +129,11 @@ internal class LocalDataRepositoryImpl(
         }
     }
 
-    override suspend fun updateDefaultLabelTimerProfile(newTimerProfile: TimerProfile) =
-        updateLabelTimerProfile(
-            DEFAULT_LABEL_NAME,
-            newTimerProfile
-        )
+    override suspend fun updateDefaultLabelTimerProfile(newTimerProfile: TimerProfile) {
+        withContext(coroutineContext) {
+            database.localLabelQueries.updateTimerProfile(null, newTimerProfile)
+        }
+    }
 
     override suspend fun updateLabelTimerProfile(name: String, newTimerProfile: TimerProfile) {
         withContext(coroutineContext) {
@@ -147,14 +143,23 @@ internal class LocalDataRepositoryImpl(
 
     override fun selectDefaultLabel(): Flow<Label> {
         return database.localLabelQueries
-            .selectByName(DEFAULT_LABEL_NAME, mapper = ::toExternalLabelMapper)
+            .selectByName(null, mapper = ::toExternalLabelMapper)
             .asFlow()
             .mapToList(coroutineContext)
+            .filterNot { it.isEmpty() }
+            .map { it.first() }
+    }
+
+    override fun selectLabelById(id: Long): Flow<Label> {
+        return database.localLabelQueries
+            .selectById(id, mapper = ::toExternalLabelMapper)
+            .asFlow()
+            .mapToList(coroutineContext)
+            .filterNot { it.isEmpty() }
             .map { it.first() }
     }
 
     override suspend fun updateLabelIsArchived(name: String, newIsArchived: Boolean) {
-        if (name == DEFAULT_LABEL_NAME) return
         withContext(coroutineContext) {
             database.localLabelQueries.updateIsArchived(newIsArchived, name)
         }
@@ -165,6 +170,7 @@ internal class LocalDataRepositoryImpl(
             .selectByName(name, mapper = ::toExternalLabelMapper)
             .asFlow()
             .mapToList(coroutineContext)
+            .filterNot { it.isEmpty() }
             .map { it.first() }
     }
 
@@ -182,7 +188,6 @@ internal class LocalDataRepositoryImpl(
     }
 
     override suspend fun deleteLabel(name: String) {
-        if (name == DEFAULT_LABEL_NAME) return
         withContext(coroutineContext) {
             database.localLabelQueries.delete(name)
         }

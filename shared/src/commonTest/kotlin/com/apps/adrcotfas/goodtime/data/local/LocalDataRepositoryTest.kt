@@ -12,8 +12,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class LocalDataSourceTest {
-    private lateinit var dataSource: LocalDataRepositoryImpl
+class LocalDataRepositoryTest {
+    private lateinit var dataSource: LocalDataRepository
 
     @BeforeTest
     fun setup() = runTest {
@@ -196,6 +196,7 @@ class LocalDataSourceTest {
 
         private const val LABEL_NAME = "label_name"
         private val label = Label(
+            id = 0,
             name = LABEL_NAME,
             colorIndex = 0,
             orderIndex = 0,

@@ -22,7 +22,7 @@ fun LocalLabelQueries.insert(label: LocalLabel) {
     )
 }
 
-fun LocalLabelQueries.updateTimerProfile(name: String, newTimerProfile: TimerProfile) {
+fun LocalLabelQueries.updateTimerProfile(name: String?, newTimerProfile: TimerProfile) {
     updateTimerProfile(
         name = name,
         newIsCountdown = newTimerProfile.isCountdown,
@@ -38,7 +38,7 @@ fun LocalSessionQueries.insert(session: LocalSession) {
     insert(
         timestamp = session.timestamp,
         duration = session.duration,
-        label = session.label,
+        labelName = session.labelName,
         notes = session.notes,
         isArchived = session.isArchived
     )
@@ -48,7 +48,7 @@ fun LocalSessionQueries.update(id: Long, newSession: LocalSession) {
     update(
         newTimestamp = newSession.timestamp,
         newDuration = newSession.duration,
-        newLabel = newSession.label,
+        newLabel = newSession.labelName,
         newNotes = newSession.notes,
         id = id
     )

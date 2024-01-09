@@ -1,8 +1,7 @@
-package com.apps.adrcotfas.goodtime
+package com.apps.adrcotfas.goodtime.data.local
 
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
-import com.apps.adrcotfas.goodtime.data.local.Database
 import java.util.Properties
 
 internal actual fun testDbConnection(): SqlDriver = JdbcSqliteDriver(

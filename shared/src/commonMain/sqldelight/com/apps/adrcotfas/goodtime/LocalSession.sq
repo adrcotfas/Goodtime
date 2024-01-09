@@ -4,24 +4,24 @@ CREATE TABLE IF NOT EXISTS localSession (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp INTEGER NOT NULL,
     duration INTEGER NOT NULL,
-    label TEXT DEFAULT NULL,
+    labelName TEXT DEFAULT NULL,
     notes TEXT DEFAULT NULL,
     isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
-    FOREIGN KEY(label, isArchived) REFERENCES localLabel(name, isArchived)
+    FOREIGN KEY(labelName, isArchived) REFERENCES localLabel(name, isArchived)
     ON UPDATE CASCADE
     ON DELETE SET DEFAULT
 );
 
 CREATE INDEX idx_archived ON localSession(isArchived);
-CREATE INDEX idx_profile ON localSession(label);
+CREATE INDEX idx_profile ON localSession(labelName);
 
 insert:
-INSERT OR REPLACE INTO localSession(id, timestamp, duration, label, notes, isArchived)
+INSERT OR REPLACE INTO localSession(id, timestamp, duration, labelName, notes, isArchived)
 VALUES(NULL, ?, ?, ?, ?, ?);
 
 update:
 UPDATE localSession
-SET timestamp = :newTimestamp, duration = :newDuration, label = :newLabel, notes = :newNotes
+SET timestamp = :newTimestamp, duration = :newDuration, labelName = :newLabel, notes = :newNotes
 WHERE id = :id;
 
 selectAll:
@@ -34,7 +34,7 @@ FROM localSession WHERE isArchived IS ? ORDER BY timestamp DESC;
 
 selectByLabel:
 SELECT *
-FROM localSession WHERE label IS ? ORDER BY timestamp DESC;
+FROM localSession WHERE labelName IS ? ORDER BY timestamp DESC;
 
 delete:
 DELETE FROM localSession

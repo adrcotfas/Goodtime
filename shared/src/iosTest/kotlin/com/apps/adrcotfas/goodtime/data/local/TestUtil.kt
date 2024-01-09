@@ -1,10 +1,8 @@
-package com.apps.adrcotfas.goodtime
+package com.apps.adrcotfas.goodtime.data.local
 
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import co.touchlab.sqliter.DatabaseConfiguration
-import com.apps.adrcotfas.goodtime.data.local.DATABASE_NAME
-import com.apps.adrcotfas.goodtime.data.local.Database
 
 internal actual fun testDbConnection(): SqlDriver {
     return NativeSqliteDriver(

@@ -2,7 +2,8 @@ import kotlin.Boolean;
 import kotlin.Int;
 
 CREATE TABLE IF NOT EXISTS localLabel (
-    name TEXT NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT DEFAULT NULL,
     colorIndex INTEGER NOT NULL,
     orderIndex INTEGER NOT NULL,
     useDefaultTimeProfile INTEGER AS Boolean NOT NULL DEFAULT 1,
@@ -18,11 +19,12 @@ CREATE TABLE IF NOT EXISTS localLabel (
     workBreakRatio INTEGER AS Int NOT NULL DEFAULT 3,
 
     isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
-    PRIMARY KEY(name, isArchived)
+    UNIQUE (name, isArchived)
 );
 
 insert:
 INSERT OR IGNORE INTO localLabel(
+    id,
     name,
     colorIndex,
     orderIndex,
@@ -34,7 +36,7 @@ INSERT OR IGNORE INTO localLabel(
     sessionsBeforeLongBreak,
     workBreakRatio,
     isArchived)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES(NULL,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 updateName:
 UPDATE localLabel
@@ -69,6 +71,10 @@ SET isArchived = ? WHERE name = :name;
 selectAll:
 SELECT *
 FROM localLabel ORDER BY orderIndex;
+
+selectById:
+SELECT *
+FROM localLabel WHERE id = ?;
 
 selectByName:
 SELECT *

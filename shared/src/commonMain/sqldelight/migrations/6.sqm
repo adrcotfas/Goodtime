@@ -3,23 +3,24 @@ import kotlin.Boolean;
 PRAGMA foreign_keys=off;
 
 CREATE TABLE IF NOT EXISTS labelTmp (
-    name TEXT NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT DEFAULT NULL,
     colorIndex INTEGER NOT NULL,
     orderIndex INTEGER NOT NULL,
-    useDefaultTimeProfile INTEGER  AS Boolean NOT NULL DEFAULT 1,
-    isCountdown INTEGER AS Boolean NOT NULL DEFAULT 1,
+    useDefaultTimeProfile INTEGER AS Boolean NOT NULL DEFAULT 1,
 
     -- countdown columns
-    workDuration INTEGER NOT NULL DEFAULT 25,
-    breakDuration INTEGER NOT NULL DEFAULT 5,
-    longBreakDuration INTEGER NOT NULL DEFAULT 15,
-    sessionsBeforeLongBreak INTEGER NOT NULL DEFAULT 4,
+    isCountdown INTEGER AS Boolean NOT NULL DEFAULT 1,
+    workDuration INTEGER AS Int NOT NULL DEFAULT 25,
+    breakDuration INTEGER AS Int NOT NULL DEFAULT 5,
+    longBreakDuration INTEGER AS Int NOT NULL DEFAULT 15,
+    sessionsBeforeLongBreak INTEGER AS Int NOT NULL DEFAULT 4,
 
     -- flow column
-    workBreakRatio INTEGER NOT NULL DEFAULT 3,
+    workBreakRatio INTEGER AS Int NOT NULL DEFAULT 3,
 
     isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
-    PRIMARY KEY(name, isArchived)
+    UNIQUE (name, isArchived)
 );
 
 INSERT INTO labelTmp(name, colorIndex, orderIndex, isArchived) SELECT title, colorId, 'order', archived FROM Label;
@@ -30,25 +31,25 @@ CREATE TABLE IF NOT EXISTS sessionTmp (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp INTEGER NOT NULL,
     duration INTEGER NOT NULL,
-    label TEXT DEFAULT NULL,
+    labelName TEXT DEFAULT NULL,
     notes TEXT DEFAULT NULL,
     isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
-    FOREIGN KEY(label, isArchived) REFERENCES localLabel(name, isArchived)
+    FOREIGN KEY(labelName, isArchived) REFERENCES localLabel(name, isArchived)
     ON UPDATE CASCADE
     ON DELETE SET DEFAULT
 );
 
-INSERT INTO sessionTmp(id, timestamp, duration, label, isArchived)
+INSERT INTO sessionTmp(id, timestamp, duration, labelName, isArchived)
 SELECT `id`, `timestamp`, `duration`, `label`, `archived` FROM Session;
 DROP TABLE Session;
 ALTER TABLE sessionTmp RENAME TO localSession;
 
 -- set unlabeled sessions' label column(if empty) to NULL
 UPDATE localSession
-SET label = CASE WHEN LENGTH(label) = 0 THEN NULL ELSE label END;
+SET labelName = CASE WHEN LENGTH(labelName) = 0 THEN NULL ELSE labelName END;
 
 CREATE INDEX idx_archived ON localSession(isArchived);
-CREATE INDEX idx_profile ON localSession(label);
+CREATE INDEX idx_profile ON localSession(labelName);
 
 PRAGMA foreign_keys=on;
 

@@ -41,7 +41,7 @@ kotlin {
             implementation(libs.sqldelight.coroutines)
             implementation(libs.sqldelight.primitive.adapters)
             implementation(libs.androidx.datastore.preferences.core)
-            implementation(libs.androidx.datastore.core.okio)
+            implementation(libs.okio)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.datetime)
         }

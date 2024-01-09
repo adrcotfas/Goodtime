@@ -5,6 +5,7 @@ import com.apps.adrcotfas.goodtime.LocalSession
 
 fun Label.toLocal(): LocalLabel {
     return LocalLabel(
+        id = id,
         name = name,
         colorIndex = colorIndex,
         orderIndex = orderIndex,
@@ -20,7 +21,8 @@ fun Label.toLocal(): LocalLabel {
 }
 
 fun toExternalLabelMapper(
-    name: String,
+    id: Long,
+    name: String?,
     colorIndex: Long,
     orderIndex: Long,
     useDefaultTimeProfile: Boolean,
@@ -32,6 +34,7 @@ fun toExternalLabelMapper(
     workBreakRatio: Int,
     isArchived: Boolean,
 ) = Label(
+    id = id,
     name = name,
     colorIndex = colorIndex,
     orderIndex = orderIndex,
@@ -51,7 +54,7 @@ fun Session.toLocal() = LocalSession(
     id = id,
     timestamp = timestamp,
     duration = duration,
-    label = label,
+    labelName = label,
     notes = notes,
     isArchived = isArchived
 )

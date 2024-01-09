@@ -13,7 +13,7 @@ class ModelMappingsExtTest {
             id = 1,
             timestamp = 2,
             duration = 3,
-            label = "label",
+            labelName = "label",
             notes = "notes",
             isArchived = true
         )
@@ -21,7 +21,7 @@ class ModelMappingsExtTest {
             localSession.id,
             localSession.timestamp,
             localSession.duration,
-            localSession.label,
+            localSession.labelName,
             localSession.notes,
             localSession.isArchived)
         assertEquals(localSession, session.toLocal())
@@ -42,7 +42,7 @@ class ModelMappingsExtTest {
             localSession.id,
             localSession.timestamp,
             localSession.duration,
-            localSession.label,
+            localSession.labelName,
             localSession.notes,
             localSession.isArchived))
     }
@@ -50,6 +50,7 @@ class ModelMappingsExtTest {
     @Test
     fun `Convert local label to external and back`() {
         val localLabel = LocalLabel(
+            id = 0,
             name = "name",
             colorIndex = 1,
             orderIndex = 2,
@@ -63,6 +64,7 @@ class ModelMappingsExtTest {
             isArchived = true
         )
         val label = toExternalLabelMapper(
+            localLabel.id,
             localLabel.name,
             localLabel.colorIndex,
             localLabel.orderIndex,
@@ -81,6 +83,7 @@ class ModelMappingsExtTest {
     @Test
     fun `Convert external label to local and back`() {
         val label = Label(
+            id = 0,
             name = "name",
             colorIndex = 1,
             orderIndex = 2,
@@ -97,6 +100,7 @@ class ModelMappingsExtTest {
         )
         val localLabel = label.toLocal()
         assertEquals(label, toExternalLabelMapper(
+            localLabel.id,
             localLabel.name,
             localLabel.colorIndex,
             localLabel.orderIndex,
