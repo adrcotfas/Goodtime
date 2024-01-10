@@ -15,6 +15,7 @@ interface LocalDataRepository {
     fun selectAllSessions(): Flow<List<Session>>
     fun selectByIsArchived(isArchived: Boolean): Flow<List<Session>>
     fun selectSessionsByLabel(label: String?): Flow<List<Session>>
+    fun selectLastInsertSessionId(): Long?
     suspend fun deleteSession(id: Long)
     suspend fun deleteSessionAfter(timestamp: Long)
     suspend fun deleteAllSessions()

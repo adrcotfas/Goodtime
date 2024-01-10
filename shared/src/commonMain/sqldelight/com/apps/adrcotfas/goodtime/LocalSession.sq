@@ -36,6 +36,9 @@ selectByLabel:
 SELECT *
 FROM localSession WHERE labelName IS ? ORDER BY timestamp DESC;
 
+selectLastInsertSessionId:
+SELECT last_insert_rowid();
+
 delete:
 DELETE FROM localSession
 WHERE id = ?;

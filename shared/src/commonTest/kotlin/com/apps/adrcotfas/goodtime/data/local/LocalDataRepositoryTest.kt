@@ -144,6 +144,20 @@ class LocalDataRepositoryTest {
     }
 
     @Test
+    fun `Select last insert session autoincrement id`() = runTest {
+        val firstId = dataSource.selectLastInsertSessionId()
+        assertNotNull(firstId, "selectLastInsertSessionId failed")
+        dataSource.insertSession(session)
+        val secondId = dataSource.selectLastInsertSessionId()
+        dataSource.insertSession(session)
+        val thirdId = dataSource.selectLastInsertSessionId()
+        assertTrue(
+            thirdId == secondId!! + 1 && secondId == firstId + 1,
+            "selectLastInsertSessionId autoincrement failed"
+        )
+    }
+
+    @Test
     fun `Update label properties`() = runTest {
         val expectedColorIndex = 9L
         val expectedOrderIndex = 10L

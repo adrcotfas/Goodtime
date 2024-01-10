@@ -73,6 +73,11 @@ internal class LocalDataRepositoryImpl(
             .mapToList(coroutineContext)
     }
 
+    override fun selectLastInsertSessionId(): Long? {
+        return database.localSessionQueries
+            .selectLastInsertSessionId().executeAsOneOrNull()
+    }
+
     override suspend fun deleteSession(id: Long) {
         withContext(coroutineContext) {
             database.localSessionQueries.delete(id)
