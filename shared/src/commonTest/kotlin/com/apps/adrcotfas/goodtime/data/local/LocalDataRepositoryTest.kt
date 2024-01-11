@@ -39,7 +39,7 @@ class LocalDataRepositoryTest {
         )
         val labels = dataSource.selectAllLabels().first()
         assertNotNull(
-            labels.find { it == label },
+            labels.find { it.sameAs(label) },
             "Could not find label"
         )
     }
@@ -206,6 +206,15 @@ class LocalDataRepositoryTest {
                     label == other.label &&
                     notes == other.notes &&
                     isArchived == other.isArchived
+        }
+
+        private fun Label.sameAs(label: Label): Boolean {
+            return name == label.name &&
+                    colorIndex == label.colorIndex &&
+                    orderIndex == label.orderIndex &&
+                    useDefaultTimeProfile == label.useDefaultTimeProfile &&
+                    timerProfile == label.timerProfile &&
+                    isArchived == label.isArchived
         }
 
         private const val LABEL_NAME = "label_name"
