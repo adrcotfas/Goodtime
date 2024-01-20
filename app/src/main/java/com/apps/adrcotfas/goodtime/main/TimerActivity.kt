@@ -543,7 +543,7 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
         }
         timeView.text = currentFormattedTick
         Log.v(TAG, "drawing the time label.")
-        if (preferenceHelper.isScreensaverEnabled() && seconds == 1L && currentSession.timerState.value !== TimerState.PAUSED) {
+        if (preferenceHelper.isScreensaverEnabled() && (seconds % 30 == 1L) && currentSession.timerState.value !== TimerState.PAUSED) {
             teleportTimeView()
         }
     }
@@ -780,12 +780,26 @@ class TimerActivity : ActivityWithBilling(), OnSharedPreferenceChangeListener,
     }
 
     private fun teleportTimeView() {
-        val maxY = boundsView.height - timeView.height
-        if (maxY > 0) {
-            val r = Random()
-            val newY = r.nextInt(maxY)
-            timeView.animate().y(newY.toFloat()).duration = 100
+        if (boundsView.height - timeView.height <= 0) {
+            return
         }
+
+        val offsetXRange = (boundsView.width * 0.005).toInt() .. (boundsView.width * 0.02).toInt()
+        val offsetYRange = (boundsView.height * 0.015).toInt() .. (boundsView.height * 0.05).toInt()
+
+        val randomOffsetX = offsetXRange.random() *
+                if (timeView.x >= (boundsView.width - timeView.width) / 2) -1 else 1
+        val randomOffsetY = offsetYRange.random() *
+                if (timeView.y >= (boundsView.height - timeView.height) / 2) -1 else 1
+
+        val newX = timeView.x + randomOffsetX
+        val newY = timeView.y + randomOffsetY
+
+        timeView.animate().apply {
+            y(newY.toFloat())
+            x(newX.toFloat())
+            duration = 2000
+        }.start()
     }
 
     override fun onFinishedSessionDialogPositiveButtonClick(sessionType: SessionType) {
