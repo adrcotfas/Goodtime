@@ -17,9 +17,4 @@ actual val platformModule: Module = module {
             producePath = { get<Context>().filesDir.resolve(SETTINGS_FILE_NAME).absolutePath }
         )
     }
-    single<DataStore<Preferences>>(named(TIMER_DATA_NAME)) {
-        getDataStore(
-            producePath = { get<Context>().filesDir.resolve(TIMER_DATA_FILE_NAME).absolutePath }
-        )
-    }
 }

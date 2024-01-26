@@ -26,15 +26,7 @@ internal class LocalDataRepositoryImpl(
     }
 
     private fun insertDefaultLabel() {
-        val localLabel = Label(
-            id = 0,
-            name = null,
-            colorIndex = 0,
-            orderIndex = 0,
-            useDefaultTimeProfile = true,
-            timerProfile = TimerProfile(),
-            isArchived = false
-        ).toLocal()
+        val localLabel = Label().toLocal()
         database.localLabelQueries.insert(localLabel)
     }
 
@@ -149,15 +141,6 @@ internal class LocalDataRepositoryImpl(
     override fun selectDefaultLabel(): Flow<Label> {
         return database.localLabelQueries
             .selectByName(null, mapper = ::toExternalLabelMapper)
-            .asFlow()
-            .mapToList(coroutineContext)
-            .filterNot { it.isEmpty() }
-            .map { it.first() }
-    }
-
-    override fun selectLabelById(id: Long): Flow<Label> {
-        return database.localLabelQueries
-            .selectById(id, mapper = ::toExternalLabelMapper)
             .asFlow()
             .mapToList(coroutineContext)
             .filterNot { it.isEmpty() }

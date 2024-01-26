@@ -32,7 +32,6 @@ interface LocalDataRepository {
     suspend fun updateDefaultLabelTimerProfile(newTimerProfile: TimerProfile)
     suspend fun updateLabelTimerProfile(name: String, newTimerProfile: TimerProfile)
     fun selectDefaultLabel(): Flow<Label>
-    fun selectLabelById(id: Long): Flow<Label>
     fun selectLabelByName(name: String): Flow<Label>
     fun selectAllLabels(): Flow<List<Label>>
     fun selectLabelsByArchived(isArchived: Boolean): Flow<List<Label>>

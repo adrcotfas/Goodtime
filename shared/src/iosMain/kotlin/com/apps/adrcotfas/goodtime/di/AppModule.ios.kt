@@ -33,11 +33,4 @@ actual val platformModule: Module = module {
             }
         )
     }
-    single<DataStore<Preferences>>(named(TIMER_DATA_NAME)) {
-        getDataStore(
-            producePath = {
-                requireNotNull(documentDirectory).path + "/$TIMER_DATA_FILE_NAME"
-            }
-        )
-    }
 }

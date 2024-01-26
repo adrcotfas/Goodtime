@@ -5,22 +5,23 @@ import kotlinx.serialization.*
 
 data class AppSettings(
     private val version: Int = 1,
-    val productivityReminderSettings: ProductivityReminderSettings,
-    val uiSettings: UiSettings,
+    val productivityReminderSettings: ProductivityReminderSettings = ProductivityReminderSettings(),
+    val uiSettings: UiSettings = UiSettings(),
 
-    val notificationSoundEnabled: Boolean,
+    val notificationSoundEnabled: Boolean = true,
     /** The name/URI of the sound file or empty for default*/
-    val workFinishedSound: String,
+    val workFinishedSound: String = "",
     /** The name/URI of the sound file or empty for default*/
-    val breakFinishedSound: String,
-    val vibrationStrength: VibrationStrength,
-    val flashType: FlashType,
-    val insistentNotification: Boolean,
+    val breakFinishedSound: String = "",
+    val vibrationStrength: VibrationStrength = VibrationStrength.MEDIUM,
+    val flashType: FlashType = FlashType.OFF,
+    val insistentNotification: Boolean = false,
     /** only valid with insistentNotification off **/
-    val autoStartWork: Boolean,
+    val autoStartWork: Boolean = false,
     /** only valid with insistentNotification off and for countdown timers **/
-    val autoStartBreak: Boolean,
-    val dndDuringWork: Boolean,
+    val autoStartBreak: Boolean = false,
+    val dndDuringWork: Boolean = false,
+    val currentTimerData: CurrentTimerData = CurrentTimerData()
 )
 
 @Serializable
@@ -55,3 +56,9 @@ enum class FlashType {
     SCREEN,
     CAMERA
 }
+
+@Serializable
+data class CurrentTimerData(
+    val labelName: String? = null,
+    val streak: Int = 0
+)

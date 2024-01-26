@@ -10,8 +10,9 @@ import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepositoryImpl
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepositoryImpl
-import com.apps.adrcotfas.goodtime.data.timer.TimerDataRepository
-import com.apps.adrcotfas.goodtime.data.timer.TimerDataRepositoryImpl
+import com.apps.adrcotfas.goodtime.domain.TimeProvider
+import com.apps.adrcotfas.goodtime.domain.TimeProviderImpl
+import com.apps.adrcotfas.goodtime.domain.TimerManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -42,10 +43,15 @@ private val coreModule = module {
     single<SettingsRepository> {
         SettingsRepositoryImpl(get<DataStore<Preferences>>(named(SETTINGS_NAME)))
     }
-    single<TimerDataRepository> {
-        TimerDataRepositoryImpl(
-            get<DataStore<Preferences>>(named(TIMER_DATA_NAME)),
+    single<TimeProvider> {
+        TimeProviderImpl()
+    }
+    single<TimerManager> {
+        TimerManager(
             get<LocalDataRepository>(),
+            get<SettingsRepository>(),
+            emptyList(),
+            get<TimeProvider>(),
             CoroutineScope(Dispatchers.IO)
         )
     }
@@ -53,8 +59,6 @@ private val coreModule = module {
 
 internal const val SETTINGS_NAME = "productivity_settings.preferences"
 internal const val SETTINGS_FILE_NAME = SETTINGS_NAME + "_pb"
-internal const val TIMER_DATA_NAME = "productivity_timer_data.preferences"
-internal const val TIMER_DATA_FILE_NAME = TIMER_DATA_NAME + "_pb"
 
 internal fun getDataStore(producePath: () -> String): DataStore<Preferences> {
     return PreferenceDataStoreFactory.createWithPath(produceFile = { producePath().toPath() })

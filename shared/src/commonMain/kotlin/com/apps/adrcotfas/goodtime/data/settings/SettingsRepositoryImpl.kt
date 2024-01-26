@@ -1,15 +1,15 @@
 package com.apps.adrcotfas.goodtime.data.settings
 
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : SettingsRepository {
 
@@ -26,6 +26,7 @@ class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : Se
         val autoStartWorkKey = booleanPreferencesKey("autoStartWorkKey")
         val autoStartBreakKey = booleanPreferencesKey("autoStartBreakKey")
         val dndDuringWorkKey = booleanPreferencesKey("dndDuringWorkKey")
+        val currentTimerDataKey = stringPreferencesKey("currentTimerKey")
     }
 
     override val settings: Flow<AppSettings> = dataStore.data.map {
@@ -48,7 +49,10 @@ class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : Se
             insistentNotification = it[Keys.insistentNotificationKey] ?: false,
             autoStartWork = it[Keys.autoStartWorkKey] ?: false,
             autoStartBreak = it[Keys.autoStartBreakKey] ?: false,
-            dndDuringWork = it[Keys.dndDuringWorkKey] ?: false
+            dndDuringWork = it[Keys.dndDuringWorkKey] ?: false,
+            currentTimerData = it[Keys.currentTimerDataKey]?.let { c ->
+                Json.decodeFromString<CurrentTimerData>(c)
+            } ?: CurrentTimerData()
         )
     }.distinctUntilChanged()
 
@@ -96,5 +100,9 @@ class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : Se
 
     override suspend fun saveDndDuringWork(enabled: Boolean) {
         dataStore.edit { it[Keys.dndDuringWorkKey] = enabled }
+    }
+
+    override suspend fun saveCurrentTimerData(timerData: CurrentTimerData) {
+        dataStore.edit { it[Keys.currentTimerDataKey] = Json.encodeToString(timerData) }
     }
 }

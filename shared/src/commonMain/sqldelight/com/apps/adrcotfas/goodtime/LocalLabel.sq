@@ -3,7 +3,7 @@ import kotlin.Int;
 
 CREATE TABLE IF NOT EXISTS localLabel (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT DEFAULT NULL,
+    name TEXT UNIQUE DEFAULT NULL,
     colorIndex INTEGER NOT NULL,
     orderIndex INTEGER NOT NULL,
     useDefaultTimeProfile INTEGER AS Boolean NOT NULL DEFAULT 1,
@@ -71,10 +71,6 @@ SET isArchived = ? WHERE name = :name;
 selectAll:
 SELECT *
 FROM localLabel ORDER BY orderIndex;
-
-selectById:
-SELECT *
-FROM localLabel WHERE id = ?;
 
 selectByName:
 SELECT *

@@ -1,10 +1,11 @@
 import kotlin.Boolean;
+import kotlin.Int;
 
 PRAGMA foreign_keys=off;
 
 CREATE TABLE IF NOT EXISTS labelTmp (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT DEFAULT NULL,
+    name TEXT UNIQUE DEFAULT NULL,
     colorIndex INTEGER NOT NULL,
     orderIndex INTEGER NOT NULL,
     useDefaultTimeProfile INTEGER AS Boolean NOT NULL DEFAULT 1,

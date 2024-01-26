@@ -1,5 +1,8 @@
 package com.apps.adrcotfas.goodtime.data.model
 
+import com.apps.adrcotfas.goodtime.domain.TimerType
+import kotlin.time.Duration.Companion.minutes
+
 data class TimerProfile(
     val isCountdown: Boolean = true,
     /** Work duration in minutes; invalid for isCountdown false */
@@ -20,4 +23,20 @@ data class TimerProfile(
         const val DEFAULT_SESSIONS_BEFORE_LONG_BREAK = 4
         const val DEFAULT_WORK_BREAK_RATIO = 3
     }
+}
+
+/**
+ * Returns the end time of the timer in milliseconds since Unix Epoch.
+ * If the timer is not a countdown timer, returns 0.
+ * @param timerType the type of the timer
+ * @param now the current time in milliseconds since Unix Epoch
+ */
+fun TimerProfile.endTime(timerType: TimerType, now: Long): Long {
+    return if (isCountdown) {
+        now + when (timerType) {
+            TimerType.WORK -> workDuration
+            TimerType.BREAK -> breakDuration
+            TimerType.LONG_BREAK -> longBreakDuration
+        }.minutes.inWholeMilliseconds
+    } else 0
 }
