@@ -11,6 +11,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.DurationUnit
 
 class LocalDataRepositoryTest {
     private lateinit var dataSource: LocalDataRepository
@@ -50,8 +52,9 @@ class LocalDataRepositoryTest {
         dataSource.updateSession(
             session.id, Session(
                 id = session.id,
-                timestamp = 10,
-                duration = 30,
+                startTimestamp = 10,
+                endTimestamp = 1.minutes.inWholeMilliseconds,
+                duration = 1.minutes.toLong(DurationUnit.MINUTES),
                 label = LABEL_NAME,
                 notes = null,
                 isArchived = false
@@ -100,30 +103,6 @@ class LocalDataRepositoryTest {
             dataSource.selectSessionsByLabel(LABEL_NAME).first().size,
             "updateSession failed"
         )
-    }
-
-    @Test
-    fun `Select session after timestamp`() = runTest {
-        val sessions = dataSource.selectAllSessions().first()
-        dataSource.updateSession(sessions.first().id, sessions.first().copy(timestamp = 100))
-        assertEquals(1, dataSource.selectAllSessions().first().size, "There should be one session")
-        dataSource.deleteSessionAfter(150)
-        assertEquals(
-            1,
-            dataSource.selectAllSessions().first().size,
-            "deleteSessionAfter failed; There should be one session"
-        )
-        dataSource.deleteSessionAfter(99)
-        assertEquals(0, dataSource.selectAllSessions().first().size, "deleteSessionAfter failed")
-
-        dataSource.insertSession(session)
-        dataSource.updateSession(
-            dataSource.selectAllSessions().first().first().id,
-            session.copy(timestamp = 100)
-        )
-        assertEquals(1, dataSource.selectAllSessions().first().size, "There should be one session")
-        dataSource.deleteSessionAfter(100)
-        assertEquals(0, dataSource.selectAllSessions().first().size, "deleteSessionAfter failed")
     }
 
     @Test
@@ -201,7 +180,8 @@ class LocalDataRepositoryTest {
 
     companion object {
         private fun Session.sameAs(other: Session): Boolean {
-            return timestamp == other.timestamp &&
+            return startTimestamp == other.startTimestamp &&
+                    endTimestamp == other.endTimestamp &&
                     duration == other.duration &&
                     label == other.label &&
                     notes == other.notes &&
@@ -229,7 +209,8 @@ class LocalDataRepositoryTest {
         )
         private val session = Session(
             id = 0,
-            timestamp = 0,
+            startTimestamp = 0,
+            endTimestamp = 25.minutes.inWholeMilliseconds,
             duration = 25,
             label = null,
             notes = null,

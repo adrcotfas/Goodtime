@@ -30,18 +30,19 @@ ALTER TABLE labelTmp RENAME TO localLabel;
 
 CREATE TABLE IF NOT EXISTS sessionTmp (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    timestamp INTEGER NOT NULL,
-    duration INTEGER NOT NULL,
-    labelName TEXT DEFAULT NULL,
-    notes TEXT DEFAULT NULL,
-    isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
-    FOREIGN KEY(labelName, isArchived) REFERENCES localLabel(name, isArchived)
-    ON UPDATE CASCADE
-    ON DELETE SET DEFAULT
+        startTimestamp INTEGER NOT NULL,
+        endTimestamp INTEGER NOT NULL,
+        duration INTEGER NOT NULL,
+        labelName TEXT DEFAULT NULL,
+        notes TEXT DEFAULT NULL,
+        isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
+        FOREIGN KEY(labelName, isArchived) REFERENCES localLabel(name, isArchived)
+        ON UPDATE CASCADE
+        ON DELETE SET DEFAULT
 );
 
-INSERT INTO sessionTmp(id, timestamp, duration, labelName, isArchived)
-SELECT `id`, `timestamp`, `duration`, `label`, `archived` FROM Session;
+INSERT INTO sessionTmp(id, startTimestamp, endTimestamp, duration, labelName, isArchived)
+SELECT `id`, (`timestamp` - (`duration` * 60 * 1000)), timestamp, `duration`, `label`, `archived` FROM Session;
 DROP TABLE Session;
 ALTER TABLE sessionTmp RENAME TO localSession;
 

@@ -17,7 +17,6 @@ interface LocalDataRepository {
     fun selectSessionsByLabel(label: String?): Flow<List<Session>>
     fun selectLastInsertSessionId(): Long?
     suspend fun deleteSession(id: Long)
-    suspend fun deleteSessionAfter(timestamp: Long)
     suspend fun deleteAllSessions()
 
     suspend fun insertLabel(label: Label)

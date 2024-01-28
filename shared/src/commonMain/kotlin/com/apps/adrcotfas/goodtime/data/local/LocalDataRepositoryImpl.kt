@@ -76,12 +76,6 @@ internal class LocalDataRepositoryImpl(
         }
     }
 
-    override suspend fun deleteSessionAfter(timestamp: Long) {
-        withContext(coroutineContext) {
-            database.localSessionQueries.deleteAfter(timestamp)
-        }
-    }
-
     override suspend fun deleteAllSessions() {
         withContext(coroutineContext) {
             database.localSessionQueries.deleteAll()

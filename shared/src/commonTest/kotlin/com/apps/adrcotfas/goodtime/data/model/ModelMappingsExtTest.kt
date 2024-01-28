@@ -4,6 +4,8 @@ import com.apps.adrcotfas.goodtime.LocalLabel
 import com.apps.adrcotfas.goodtime.LocalSession
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.DurationUnit
 
 class ModelMappingsExtTest {
 
@@ -11,15 +13,17 @@ class ModelMappingsExtTest {
     fun `Convert local session to external and back`() {
         val localSession = LocalSession(
             id = 1,
-            timestamp = 2,
-            duration = 3,
+            startTimestamp = 1,
+            endTimestamp = 3.minutes.inWholeMilliseconds,
+            duration = 3.minutes.toLong(DurationUnit.MINUTES),
             labelName = "label",
             notes = "notes",
             isArchived = true
         )
         val session = toExternalSessionMapper(
             localSession.id,
-            localSession.timestamp,
+            localSession.startTimestamp,
+            localSession.endTimestamp,
             localSession.duration,
             localSession.labelName,
             localSession.notes,
@@ -31,8 +35,9 @@ class ModelMappingsExtTest {
     fun `Convert external session to local and back`() {
         val session = Session(
             id = 1,
-            timestamp = 2,
-            duration = 3,
+            startTimestamp = 1,
+            endTimestamp = 3.minutes.inWholeMilliseconds,
+            duration = 3.minutes.toLong(DurationUnit.MINUTES),
             label = "label",
             notes = "notes",
             isArchived = true
@@ -40,7 +45,8 @@ class ModelMappingsExtTest {
         val localSession = session.toLocal()
         assertEquals(session, toExternalSessionMapper(
             localSession.id,
-            localSession.timestamp,
+            localSession.startTimestamp,
+            localSession.endTimestamp,
             localSession.duration,
             localSession.labelName,
             localSession.notes,

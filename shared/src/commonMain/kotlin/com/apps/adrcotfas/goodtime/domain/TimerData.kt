@@ -20,8 +20,6 @@ data class TimerData(
     val type: TimerType = TimerType.WORK,
     // used to differentiate between a work session prolonged by pausing the timer
     // and a work session prolonged by adding minutes
-    //TODO: update Session to hold startTime, endTime and duration so that
-    // we can compute the duration of the interruptions if any
     val minutesAdded: Int = 0,
 )
 

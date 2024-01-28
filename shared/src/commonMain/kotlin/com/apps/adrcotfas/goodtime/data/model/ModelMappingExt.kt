@@ -52,7 +52,8 @@ fun toExternalLabelMapper(
 
 fun Session.toLocal() = LocalSession(
     id = id,
-    timestamp = timestamp,
+    startTimestamp = startTimestamp,
+    endTimestamp = endTimestamp,
     duration = duration,
     labelName = label,
     notes = notes,
@@ -61,14 +62,16 @@ fun Session.toLocal() = LocalSession(
 
 fun toExternalSessionMapper(
     id: Long,
-    timestamp: Long,
+    startTimestamp: Long,
+    endTimestamp: Long,
     duration: Long,
     label: String?,
     notes: String?,
     isArchived: Boolean
 ) = Session(
     id = id,
-    timestamp = timestamp,
+    startTimestamp = startTimestamp,
+    endTimestamp = endTimestamp,
     duration = duration,
     label = label,
     notes = notes,

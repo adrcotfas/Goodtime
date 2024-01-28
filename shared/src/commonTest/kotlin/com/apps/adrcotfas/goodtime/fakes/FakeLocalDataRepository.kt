@@ -48,12 +48,6 @@ class FakeLocalDataRepository(
         }
     }
 
-    override suspend fun deleteSessionAfter(timestamp: Long) {
-        _sessions.filter { it.timestamp > timestamp }.forEach {
-            _sessions.remove(it)
-        }
-    }
-
     override suspend fun deleteAllSessions() {
         _sessions.clear()
     }

@@ -36,7 +36,8 @@ fun LocalLabelQueries.updateTimerProfile(name: String?, newTimerProfile: TimerPr
 
 fun LocalSessionQueries.insert(session: LocalSession) {
     insert(
-        timestamp = session.timestamp,
+        startTimestamp = session.startTimestamp,
+        endTimestamp = session.endTimestamp,
         duration = session.duration,
         labelName = session.labelName,
         notes = session.notes,
@@ -46,7 +47,8 @@ fun LocalSessionQueries.insert(session: LocalSession) {
 
 fun LocalSessionQueries.update(id: Long, newSession: LocalSession) {
     update(
-        newTimestamp = newSession.timestamp,
+        newStartTimestamp = newSession.startTimestamp,
+        newEndTimestamp = newSession.endTimestamp,
         newDuration = newSession.duration,
         newLabel = newSession.labelName,
         newNotes = newSession.notes,
