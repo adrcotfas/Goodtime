@@ -50,8 +50,9 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.sqldelight.driver.android)
+            implementation(libs.androidx.lifecycle.viewmodel)
         }
-        val androidUnitTest by getting {
+        getByName("androidUnitTest") {
             dependencies {
                 implementation(libs.bundles.shared.androidTest)
             }
