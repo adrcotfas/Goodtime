@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.fakes
 
+import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.domain.Event
 import com.apps.adrcotfas.goodtime.domain.EventListener
 import com.apps.adrcotfas.goodtime.domain.TimerData
@@ -8,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class FakeEventListener : EventListener {
 
-    var timerData = TimerData()
+    var timerData = TimerData(Label())
     private val _labelId = MutableStateFlow<String?>(null)
     val labelId : StateFlow<String?> = _labelId
 

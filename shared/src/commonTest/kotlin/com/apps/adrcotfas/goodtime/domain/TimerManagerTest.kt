@@ -73,8 +73,9 @@ class TimerManagerTest {
         val startTime = timeProvider.now()
         val duration = 25.minutes.inWholeMilliseconds
         assertEquals(
-            timerManager.timerData,
+            timerManager.timerData.value,
             TimerData(
+                label = Label(),
                 startTime = startTime,
                 endTime = startTime + duration,
                 type = TimerType.WORK,
@@ -86,8 +87,9 @@ class TimerManagerTest {
         timeProvider.currentTime += elapsedTime
         timerManager.pause()
         assertEquals(
-            timerManager.timerData,
+            timerManager.timerData.value,
             TimerData(
+                label = Label(),
                 startTime = startTime,
                 endTime = 0,
                 tmpRemaining = duration - elapsedTime,
@@ -98,11 +100,12 @@ class TimerManagerTest {
             "remaining time should be one minute less"
         )
         timeProvider.currentTime += elapsedTime
-        val endTime = timerManager.timerData.tmpRemaining + timeProvider.currentTime
+        val endTime = timerManager.timerData.value.tmpRemaining + timeProvider.currentTime
         timerManager.resume()
         assertEquals(
-            timerManager.timerData,
+            timerManager.timerData.value,
             TimerData(
+                label = Label(),
                 startTime = startTime,
                 lastStartTime = timeProvider.currentTime,
                 endTime = endTime,
@@ -121,8 +124,9 @@ class TimerManagerTest {
         val startTime = timeProvider.now()
         val duration = 25.minutes.inWholeMilliseconds
         assertEquals(
-            timerManager.timerData,
+            timerManager.timerData.value,
             TimerData(
+                label = Label(),
                 startTime = startTime,
                 endTime = startTime + duration,
                 type = TimerType.WORK,
@@ -133,8 +137,9 @@ class TimerManagerTest {
         )
         timerManager.addOneMinute()
         assertEquals(
-            timerManager.timerData,
+            timerManager.timerData.value,
             TimerData(
+                label = Label(),
                 startTime = startTime,
                 endTime = startTime + duration + 1.minutes.inWholeMilliseconds,
                 type = TimerType.WORK,
@@ -152,8 +157,9 @@ class TimerManagerTest {
         val duration = 25.minutes.inWholeMilliseconds
         timerManager.finish()
         assertEquals(
-            timerManager.timerData,
+            timerManager.timerData.value,
             TimerData(
+                label = Label(),
                 startTime = startTime,
                 endTime = startTime + duration,
                 type = TimerType.WORK,
@@ -170,8 +176,8 @@ class TimerManagerTest {
         timerManager.start(TimerType.WORK)
         timerManager.reset()
         assertEquals(
-            timerManager.timerData,
-            TimerData(),
+            timerManager.timerData.value,
+            TimerData(label = Label()),
             "the timer should have been reset"
         )
         assertEquals(fakeEventListener.timerData.endTime, endTime)
@@ -182,8 +188,9 @@ class TimerManagerTest {
         timerManager.start(TimerType.WORK)
         timerManager.setLabelName(CUSTOM_LABEL_NAME)
         assertEquals(
-            timerManager.timerData,
+            timerManager.timerData.value,
             TimerData(
+                label = dummyLabel,
                 startTime = timeProvider.now(),
                 endTime = timeProvider.now() + 25.minutes.inWholeMilliseconds,
                 type = TimerType.WORK,

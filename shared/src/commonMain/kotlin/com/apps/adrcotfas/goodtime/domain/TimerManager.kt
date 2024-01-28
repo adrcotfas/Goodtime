@@ -1,12 +1,11 @@
 package com.apps.adrcotfas.goodtime.domain
 
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
-import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.endTime
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -14,6 +13,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.minutes
 
+/**
+ * Manages the timer state and provides methods to start, pause, resume and finish the timer.
+ * Wait for [isReady] to be true before calling any of the methods.
+ */
 class TimerManager(
     private val localDataRepo: LocalDataRepository,
     private val settingsRepo: SettingsRepository,
@@ -22,13 +25,11 @@ class TimerManager(
     private val coroutineScope: CoroutineScope,
 ) {
 
-    private val _isReady = MutableStateFlow(false)
-    val isReady: Flow<Boolean> = _isReady
+    private var _timerData: MutableStateFlow<TimerData> = MutableStateFlow(TimerData())
+    val timerData: StateFlow<TimerData> = _timerData
 
-    var timerData = TimerData()
-        private set
-
-    private lateinit var currentLabel: Label
+    private val _isReady: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isReady: StateFlow<Boolean> = _isReady
 
     init {
         coroutineScope.launch {
@@ -39,7 +40,7 @@ class TimerManager(
                     localDataRepo.selectLabelByName(it)
                 } ?: localDataRepo.selectDefaultLabel()
             }.distinctUntilChanged().collect {
-                currentLabel = it
+                _timerData.value = _timerData.value.copy(label = it)
                 _isReady.value = true
             }
         }
@@ -47,27 +48,29 @@ class TimerManager(
 
     fun start(timerType: TimerType) {
         val now = timeProvider.now()
-        timerData = timerData.copy(
+        _timerData.value = _timerData.value.copy(
             startTime = now,
-            endTime = currentLabel.timerProfile.endTime(timerType, now),
+            endTime = _timerData.value.label!!.timerProfile.endTime(timerType, now),
             type = timerType,
             state = TimerState.RUNNING,
             minutesAdded = 0
         )
-        listeners.forEach { it.onEvent(Event.StartEvent(timerData)) }
+        listeners.forEach { it.onEvent(Event.StartEvent(_timerData.value)) }
     }
 
     fun addOneMinute() {
-        timerData = timerData.copy(
-            endTime = timerData.endTime + 1.minutes.inWholeMilliseconds,
-            minutesAdded = timerData.minutesAdded + 1
+        val data = _timerData.value
+        _timerData.value = data.copy(
+            endTime = data.endTime + 1.minutes.inWholeMilliseconds,
+            minutesAdded = data.minutesAdded + 1
         )
         listeners.forEach { it.onEvent(Event.AddOneMinute) }
     }
 
     fun pause() {
-        timerData = timerData.copy(
-            tmpRemaining = timerData.endTime - timeProvider.now(),
+        val data = _timerData.value
+        _timerData.value = data.copy(
+            tmpRemaining = data.endTime - timeProvider.now(),
             endTime = 0,
             state = TimerState.PAUSED
         )
@@ -75,26 +78,28 @@ class TimerManager(
     }
 
     fun resume() {
+        val data = _timerData.value
         val now = timeProvider.now()
-        timerData = timerData.copy(
+        _timerData.value = data.copy(
             lastStartTime = now,
-            endTime = timerData.tmpRemaining + now,
+            endTime = data.tmpRemaining + now,
             state = TimerState.RUNNING,
             tmpRemaining = 0
         )
-        listeners.forEach { it.onEvent(Event.StartEvent(timerData)) }
+        listeners.forEach { it.onEvent(Event.StartEvent(_timerData.value)) }
     }
 
     fun finish() {
-        timerData = timerData.copy(
+        _timerData.value = _timerData.value.copy(
             state = TimerState.FINISHED
         )
         listeners.forEach { it.onEvent(Event.Finished) }
     }
 
     fun reset() {
-        listeners.forEach { it.onEvent(Event.Reset(timerData)) }
-        timerData = TimerData()
+        val label = _timerData.value.label
+        listeners.forEach { it.onEvent(Event.Reset(_timerData.value)) }
+        _timerData.value = TimerData(label = label)
     }
 
     suspend fun setLabelName(labelName: String?) {

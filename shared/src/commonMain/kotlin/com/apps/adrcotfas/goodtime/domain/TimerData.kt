@@ -1,11 +1,14 @@
 package com.apps.adrcotfas.goodtime.domain
 
+import com.apps.adrcotfas.goodtime.data.model.Label
+
 
 /**
  * Data class that captures the current timer state.
  * There can only be one running timer at a time.
  */
 data class TimerData(
+    val label: Label? = null,
     val startTime: Long = 0,
     // there can be another start time if the timer was paused and resumed
     // retain this so we can compute the amount of time the timer was paused
