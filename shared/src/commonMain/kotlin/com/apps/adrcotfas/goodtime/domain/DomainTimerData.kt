@@ -7,7 +7,7 @@ import com.apps.adrcotfas.goodtime.data.model.Label
  * Data class that captures the current timer state.
  * There can only be one running timer at a time.
  */
-data class TimerData(
+data class DomainTimerData(
     val label: Label? = null,
     val startTime: Long = 0,
     // there can be another start time if the timer was paused and resumed
@@ -20,7 +20,7 @@ data class TimerData(
     val type: TimerType = TimerType.WORK,
     // used to differentiate between a work session prolonged by pausing the timer
     // and a work session prolonged by adding minutes
-    val minutesAdded: Int = 0,
+    val minutesAdded: Int = 0
 )
 
 enum class TimerState {

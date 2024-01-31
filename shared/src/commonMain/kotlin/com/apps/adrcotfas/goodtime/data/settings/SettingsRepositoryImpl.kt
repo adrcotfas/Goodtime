@@ -1,11 +1,14 @@
 package com.apps.adrcotfas.goodtime.data.settings
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.IOException
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
@@ -29,27 +32,35 @@ class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : Se
         val currentTimerDataKey = stringPreferencesKey("currentTimerKey")
     }
 
-    override val settings: Flow<AppSettings> = dataStore.data.map {
-        AppSettings(
-            productivityReminderSettings = it[Keys.productivityReminderSettingsKey]?.let { p ->
-                Json.decodeFromString<ProductivityReminderSettings>(p)
-            } ?: ProductivityReminderSettings(),
-            uiSettings = it[Keys.uiSettingsKey]?.let { u ->
-                Json.decodeFromString<UiSettings>(u)
-            } ?: UiSettings(),
-            notificationSoundEnabled = it[Keys.notificationSoundEnabledKey] ?: true,
-            workFinishedSound = it[Keys.workFinishedSoundKey] ?: "",
-            breakFinishedSound = it[Keys.breakFinishedSoundKey] ?: "",
-            vibrationStrength = it[Keys.vibrationStrengthKey]?.let { v ->
-                Json.decodeFromString<VibrationStrength>(v)
-            } ?: VibrationStrength.MEDIUM,
-            flashType = it[Keys.flashTypeKey]?.let { f ->
-                Json.decodeFromString<FlashType>(f)
-            } ?: FlashType.OFF,
-            insistentNotification = it[Keys.insistentNotificationKey] ?: false,
-            autoStartWork = it[Keys.autoStartWorkKey] ?: false,
-            autoStartBreak = it[Keys.autoStartBreakKey] ?: false,
-            dndDuringWork = it[Keys.dndDuringWorkKey] ?: false,
+    override val settings: Flow<AppSettings> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                //TODO log error
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }.map {
+            AppSettings(
+                productivityReminderSettings = it[Keys.productivityReminderSettingsKey]?.let { p ->
+                    Json.decodeFromString<ProductivityReminderSettings>(p)
+                } ?: ProductivityReminderSettings(),
+                uiSettings = it[Keys.uiSettingsKey]?.let { u ->
+                    Json.decodeFromString<UiSettings>(u)
+                } ?: UiSettings(),
+                notificationSoundEnabled = it[Keys.notificationSoundEnabledKey] ?: true,
+                workFinishedSound = it[Keys.workFinishedSoundKey] ?: "",
+                breakFinishedSound = it[Keys.breakFinishedSoundKey] ?: "",
+                vibrationStrength = it[Keys.vibrationStrengthKey]?.let { v ->
+                    Json.decodeFromString<VibrationStrength>(v)
+                } ?: VibrationStrength.MEDIUM,
+                flashType = it[Keys.flashTypeKey]?.let { f ->
+                    Json.decodeFromString<FlashType>(f)
+                } ?: FlashType.OFF,
+                insistentNotification = it[Keys.insistentNotificationKey] ?: false,
+                autoStartWork = it[Keys.autoStartWorkKey] ?: false,
+                autoStartBreak = it[Keys.autoStartBreakKey] ?: false,
+                dndDuringWork = it[Keys.dndDuringWorkKey] ?: false,
             currentTimerData = it[Keys.currentTimerDataKey]?.let { c ->
                 Json.decodeFromString<CurrentTimerData>(c)
             } ?: CurrentTimerData()
