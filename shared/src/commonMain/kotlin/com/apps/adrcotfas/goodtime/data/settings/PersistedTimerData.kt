@@ -16,7 +16,7 @@ data class PersistedTimerData(
         val timeSinceBreakBudgetStart = now - breakBudgetStart
         return max(
             0,
-            (timeSinceBreakBudgetStart - breakBudget.minutes.inWholeMilliseconds).milliseconds.inWholeMinutes.toInt()
+            (breakBudget.minutes.inWholeMilliseconds - timeSinceBreakBudgetStart).milliseconds.inWholeMinutes.toInt()
         )
     }
 }

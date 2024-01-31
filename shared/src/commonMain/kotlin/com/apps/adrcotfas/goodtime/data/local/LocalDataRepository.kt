@@ -34,6 +34,7 @@ interface LocalDataRepository {
     fun selectLabelByName(name: String): Flow<Label>
     fun selectAllLabels(): Flow<List<Label>>
     fun selectLabelsByArchived(isArchived: Boolean): Flow<List<Label>>
+    fun selectLastInsertLabelId(): Long?
     suspend fun deleteLabel(name: String)
     suspend fun deleteAllLabels()
 }

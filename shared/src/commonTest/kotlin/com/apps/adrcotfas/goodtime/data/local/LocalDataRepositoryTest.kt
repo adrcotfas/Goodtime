@@ -23,7 +23,9 @@ class LocalDataRepositoryTest {
         dataSource.deleteAllSessions()
         dataSource.deleteAllLabels()
         dataSource.insertLabel(label)
+        label = label.copy(id = dataSource.selectLastInsertLabelId()!!)
         dataSource.insertSession(session)
+        session = session.copy(id = dataSource.selectLastInsertSessionId()!!)
     }
 
     @Test
@@ -36,12 +38,12 @@ class LocalDataRepositoryTest {
     fun `Select all Sessions`() = runTest {
         val sessions = dataSource.selectAllSessions().first()
         assertNotNull(
-            sessions.find { it.sameAs(session) },
+            sessions.find { it == session },
             "Could not find session"
         )
         val labels = dataSource.selectAllLabels().first()
         assertNotNull(
-            labels.find { it.sameAs(label) },
+            labels.find { it == label },
             "Could not find label"
         )
     }
@@ -179,26 +181,8 @@ class LocalDataRepositoryTest {
     }
 
     companion object {
-        private fun Session.sameAs(other: Session): Boolean {
-            return startTimestamp == other.startTimestamp &&
-                    endTimestamp == other.endTimestamp &&
-                    duration == other.duration &&
-                    label == other.label &&
-                    notes == other.notes &&
-                    isArchived == other.isArchived
-        }
-
-        private fun Label.sameAs(label: Label): Boolean {
-            return name == label.name &&
-                    colorIndex == label.colorIndex &&
-                    orderIndex == label.orderIndex &&
-                    useDefaultTimeProfile == label.useDefaultTimeProfile &&
-                    timerProfile == label.timerProfile &&
-                    isArchived == label.isArchived
-        }
-
         private const val LABEL_NAME = "label_name"
-        private val label = Label(
+        private var label = Label(
             id = 0,
             name = LABEL_NAME,
             colorIndex = 0,
@@ -207,7 +191,7 @@ class LocalDataRepositoryTest {
             timerProfile = TimerProfile(),
             isArchived = false
         )
-        private val session = Session(
+        private var session = Session(
             id = 0,
             startTimestamp = 0,
             endTimestamp = 25.minutes.inWholeMilliseconds,

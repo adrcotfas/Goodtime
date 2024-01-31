@@ -13,9 +13,6 @@ import com.apps.adrcotfas.goodtime.data.settings.SettingsRepositoryImpl
 import com.apps.adrcotfas.goodtime.domain.TimeProvider
 import com.apps.adrcotfas.goodtime.domain.TimeProviderImpl
 import com.apps.adrcotfas.goodtime.domain.TimerManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import okio.Path.Companion.toPath
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
@@ -51,8 +48,7 @@ private val coreModule = module {
             get<LocalDataRepository>(),
             get<SettingsRepository>(),
             emptyList(),
-            get<TimeProvider>(),
-            CoroutineScope(Dispatchers.IO)
+            get<TimeProvider>()
         )
     }
 }

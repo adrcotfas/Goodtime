@@ -8,17 +8,17 @@ import com.apps.adrcotfas.goodtime.data.model.TimerProfile
 import com.apps.adrcotfas.goodtime.data.model.toExternalLabelMapper
 import com.apps.adrcotfas.goodtime.data.model.toExternalSessionMapper
 import com.apps.adrcotfas.goodtime.data.model.toLocal
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.CoroutineContext
 
 internal class LocalDataRepositoryImpl(
     private val database: Database,
-    private val coroutineContext: CoroutineContext = Dispatchers.IO
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : LocalDataRepository {
 
     init {
@@ -31,14 +31,14 @@ internal class LocalDataRepositoryImpl(
     }
 
     override suspend fun insertSession(session: Session) {
-        withContext(coroutineContext) {
+        withContext(defaultDispatcher) {
             val localSession = session.toLocal()
             database.localSessionQueries.insert(localSession)
         }
     }
 
     override suspend fun updateSession(id: Long, newSession: Session) {
-        withContext(coroutineContext) {
+        withContext(defaultDispatcher) {
             val localSession = newSession.toLocal()
             database.localSessionQueries.update(id = id, newSession = localSession)
         }
@@ -48,21 +48,21 @@ internal class LocalDataRepositoryImpl(
         return database.localSessionQueries
             .selectAll(mapper = ::toExternalSessionMapper)
             .asFlow()
-            .mapToList(coroutineContext)
+            .mapToList(defaultDispatcher)
     }
 
     override fun selectByIsArchived(isArchived: Boolean): Flow<List<Session>> {
         return database.localSessionQueries
             .selectByIsArchived(isArchived, mapper = ::toExternalSessionMapper)
             .asFlow()
-            .mapToList(coroutineContext)
+            .mapToList(defaultDispatcher)
     }
 
     override fun selectSessionsByLabel(label: String?): Flow<List<Session>> {
         return database.localSessionQueries
             .selectByLabel(label, mapper = ::toExternalSessionMapper)
             .asFlow()
-            .mapToList(coroutineContext)
+            .mapToList(defaultDispatcher)
     }
 
     override fun selectLastInsertSessionId(): Long? {
@@ -71,39 +71,39 @@ internal class LocalDataRepositoryImpl(
     }
 
     override suspend fun deleteSession(id: Long) {
-        withContext(coroutineContext) {
+        withContext(defaultDispatcher) {
             database.localSessionQueries.delete(id)
         }
     }
 
     override suspend fun deleteAllSessions() {
-        withContext(coroutineContext) {
+        withContext(defaultDispatcher) {
             database.localSessionQueries.deleteAll()
         }
     }
 
     override suspend fun insertLabel(label: Label) {
         if (label.name == null) return
-        withContext(coroutineContext) {
+        withContext(defaultDispatcher) {
             val localLabel = label.toLocal()
             database.localLabelQueries.insert(localLabel)
         }
     }
 
     override suspend fun updateLabelName(name: String, newName: String) {
-        withContext(coroutineContext) {
+        withContext(defaultDispatcher) {
             database.localLabelQueries.updateName(newName = newName, name = name)
         }
     }
 
     override suspend fun updateLabelColorIndex(name: String, newColorIndex: Long) {
-        withContext(coroutineContext) {
+        withContext(defaultDispatcher) {
             database.localLabelQueries.updateColorIndex(newColorIndex = newColorIndex, name = name)
         }
     }
 
     override suspend fun updateLabelOrderIndex(name: String, newOrderIndex: Long) {
-        withContext(coroutineContext) {
+        withContext(defaultDispatcher) {
             database.localLabelQueries.updateOrderIndex(newOrderIndex = newOrderIndex, name = name)
         }
     }
@@ -112,7 +112,7 @@ internal class LocalDataRepositoryImpl(
         name: String,
         newShouldFollowDefaultTimeProfile: Boolean
     ) {
-        withContext(coroutineContext) {
+        withContext(defaultDispatcher) {
             database.localLabelQueries.updateShouldFollowDefaultTimeProfile(
                 newShouldFollowDefaultTimeProfile = newShouldFollowDefaultTimeProfile,
                 name = name
@@ -121,13 +121,13 @@ internal class LocalDataRepositoryImpl(
     }
 
     override suspend fun updateDefaultLabelTimerProfile(newTimerProfile: TimerProfile) {
-        withContext(coroutineContext) {
+        withContext(defaultDispatcher) {
             database.localLabelQueries.updateTimerProfile(null, newTimerProfile)
         }
     }
 
     override suspend fun updateLabelTimerProfile(name: String, newTimerProfile: TimerProfile) {
-        withContext(coroutineContext) {
+        withContext(defaultDispatcher) {
             database.localLabelQueries.updateTimerProfile(name, newTimerProfile)
         }
     }
@@ -136,13 +136,13 @@ internal class LocalDataRepositoryImpl(
         return database.localLabelQueries
             .selectByName(null, mapper = ::toExternalLabelMapper)
             .asFlow()
-            .mapToList(coroutineContext)
+            .mapToList(defaultDispatcher)
             .filterNot { it.isEmpty() }
             .map { it.first() }
     }
 
     override suspend fun updateLabelIsArchived(name: String, newIsArchived: Boolean) {
-        withContext(coroutineContext) {
+        withContext(defaultDispatcher) {
             database.localLabelQueries.updateIsArchived(newIsArchived, name)
         }
     }
@@ -151,7 +151,7 @@ internal class LocalDataRepositoryImpl(
         return database.localLabelQueries
             .selectByName(name, mapper = ::toExternalLabelMapper)
             .asFlow()
-            .mapToList(coroutineContext)
+            .mapToList(defaultDispatcher)
             .filterNot { it.isEmpty() }
             .map { it.first() }
     }
@@ -159,24 +159,29 @@ internal class LocalDataRepositoryImpl(
     override fun selectAllLabels(): Flow<List<Label>> {
         return database.localLabelQueries
             .selectAll(mapper = ::toExternalLabelMapper)
-            .asFlow().mapToList(coroutineContext)
+            .asFlow().mapToList(defaultDispatcher)
     }
 
     override fun selectLabelsByArchived(isArchived: Boolean): Flow<List<Label>> {
         return database.localLabelQueries
             .selectByIsArchived(isArchived, mapper = ::toExternalLabelMapper)
             .asFlow()
-            .mapToList(coroutineContext)
+            .mapToList(defaultDispatcher)
+    }
+
+    override fun selectLastInsertLabelId(): Long? {
+        return database.localLabelQueries
+            .selectLastInsertLabelId().executeAsOneOrNull()
     }
 
     override suspend fun deleteLabel(name: String) {
-        withContext(coroutineContext) {
+        withContext(defaultDispatcher) {
             database.localLabelQueries.delete(name)
         }
     }
 
     override suspend fun deleteAllLabels() {
-        withContext(coroutineContext) {
+        withContext(defaultDispatcher) {
             database.localLabelQueries.deleteAll()
         }
     }

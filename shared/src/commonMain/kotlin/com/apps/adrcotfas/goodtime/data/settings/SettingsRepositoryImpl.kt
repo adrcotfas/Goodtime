@@ -61,16 +61,18 @@ class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : Se
                 autoStartWork = it[Keys.autoStartWorkKey] ?: false,
                 autoStartBreak = it[Keys.autoStartBreakKey] ?: false,
                 dndDuringWork = it[Keys.dndDuringWorkKey] ?: false,
-            currentTimerData = it[Keys.currentTimerDataKey]?.let { c ->
-                Json.decodeFromString<CurrentTimerData>(c)
-            } ?: CurrentTimerData()
-        )
-    }.distinctUntilChanged()
+                persistedTimerData = it[Keys.currentTimerDataKey]?.let { c ->
+                    Json.decodeFromString<PersistedTimerData>(c)
+                } ?: PersistedTimerData()
+            )
+        }.distinctUntilChanged()
 
     override suspend fun saveReminderSettings(
         settings: ProductivityReminderSettings
     ) {
-        dataStore.edit { it[Keys.productivityReminderSettingsKey] = Json.encodeToString(settings) }
+        dataStore.edit {
+            it[Keys.productivityReminderSettingsKey] = Json.encodeToString(settings)
+        }
     }
 
     override suspend fun saveUiSettings(settings: UiSettings) {
@@ -113,7 +115,7 @@ class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : Se
         dataStore.edit { it[Keys.dndDuringWorkKey] = enabled }
     }
 
-    override suspend fun saveCurrentTimerData(timerData: CurrentTimerData) {
+    override suspend fun savePersistedTimerData(timerData: PersistedTimerData) {
         dataStore.edit { it[Keys.currentTimerDataKey] = Json.encodeToString(timerData) }
     }
 }

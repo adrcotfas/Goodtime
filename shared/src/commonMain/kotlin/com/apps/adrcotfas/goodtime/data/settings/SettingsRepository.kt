@@ -18,5 +18,5 @@ interface SettingsRepository {
     suspend fun saveAutoStartWork(enabled: Boolean)
     suspend fun saveAutoStartBreak(enabled: Boolean)
     suspend fun saveDndDuringWork(enabled: Boolean)
-    suspend fun saveCurrentTimerData(timerData: CurrentTimerData)
+    suspend fun savePersistedTimerData(timerData: PersistedTimerData)
 }

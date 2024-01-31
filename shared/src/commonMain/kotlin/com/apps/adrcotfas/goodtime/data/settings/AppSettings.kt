@@ -1,7 +1,7 @@
 package com.apps.adrcotfas.goodtime.data.settings
 
 import kotlinx.datetime.LocalTime
-import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
 
 data class AppSettings(
     private val version: Int = 1,
@@ -21,7 +21,7 @@ data class AppSettings(
     /** only valid with insistentNotification off and for countdown timers **/
     val autoStartBreak: Boolean = false,
     val dndDuringWork: Boolean = false,
-    val currentTimerData: CurrentTimerData = CurrentTimerData()
+    val persistedTimerData: PersistedTimerData = PersistedTimerData()
 )
 
 @Serializable
@@ -56,9 +56,3 @@ enum class FlashType {
     SCREEN,
     CAMERA
 }
-
-@Serializable
-data class CurrentTimerData(
-    val labelName: String? = null,
-    val streak: Int = 0
-)

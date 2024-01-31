@@ -80,6 +80,9 @@ selectByIsArchived:
 SELECT *
 FROM localLabel WHERE isArchived IS ?;
 
+selectLastInsertLabelId:
+SELECT last_insert_rowid();
+
 delete:
 DELETE FROM localLabel WHERE name = ?;
 

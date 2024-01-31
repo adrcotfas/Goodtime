@@ -1,16 +1,20 @@
 package com.apps.adrcotfas.goodtime.domain
 
-import app.cash.turbine.test
+import com.apps.adrcotfas.goodtime.data.local.Database
+import com.apps.adrcotfas.goodtime.data.local.DatabaseExt.invoke
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
+import com.apps.adrcotfas.goodtime.data.local.LocalDataRepositoryImpl
+import com.apps.adrcotfas.goodtime.data.local.testDbConnection
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.TimerProfile
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.fakes.FakeEventListener
-import com.apps.adrcotfas.goodtime.fakes.FakeLocalDataRepository
 import com.apps.adrcotfas.goodtime.fakes.FakeSettingsRepository
 import com.apps.adrcotfas.goodtime.fakes.FakeTimeProvider
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -35,7 +39,16 @@ class TimerManagerTest {
     @BeforeTest
     fun setup() = runTest(testDispatcher) {
         timeProvider.currentTime = 0L
-        localDataRepo = FakeLocalDataRepository(listOf(Label(), dummyLabel))
+        localDataRepo = LocalDataRepositoryImpl(
+            Database(driver = testDbConnection()),
+            defaultDispatcher = testDispatcher
+        )
+
+        localDataRepo.insertLabel(Label())
+        defaultLabel = defaultLabel.copy(id = localDataRepo.selectLastInsertLabelId()!!)
+        localDataRepo.insertLabel(dummyLabel)
+        dummyLabel = dummyLabel.copy(id = localDataRepo.selectLastInsertLabelId()!!)
+
         settingsRepo = FakeSettingsRepository()
 
         timerManager = TimerManager(
@@ -43,28 +56,37 @@ class TimerManagerTest {
             settingsRepo = settingsRepo,
             listeners = listOf(fakeEventListener),
             timeProvider,
-            coroutineScope = testScope
         )
-        timerManager.isReady.first()
+        testScope.launch { timerManager.init() }
+        timerManager.timerData.first { it.label != null }
     }
 
     @Test
     fun `Verify first run for default label and subsequently label changes`() = runTest {
-        settingsRepo.settings.test { assertEquals(awaitItem().currentTimerData.labelName, null) }
-        fakeEventListener.labelId.test { assertEquals(awaitItem(), null) }
+        assertEquals(timerManager.timerData.value.label, defaultLabel)
+        val currentLabel = settingsRepo.settings.stateIn(testScope).value.persistedTimerData
 
-        timerManager.setLabelName(CUSTOM_LABEL_NAME)
-        settingsRepo.settings.test {
-            assertEquals(
-                awaitItem().currentTimerData.labelName,
-                CUSTOM_LABEL_NAME
-            )
-        }
-        fakeEventListener.labelId.test { assertEquals(awaitItem(), CUSTOM_LABEL_NAME) }
+        settingsRepo.savePersistedTimerData(currentLabel.copy(labelName = CUSTOM_LABEL_NAME))
+        assertEquals(timerManager.timerData.value.label, dummyLabel)
+        assertEquals(
+            timerManager.timerData.value.persistedTimerData,
+            currentLabel.copy(labelName = CUSTOM_LABEL_NAME)
+        )
 
-        timerManager.setLabelName(null)
-        settingsRepo.settings.test { assertEquals(awaitItem().currentTimerData.labelName, null) }
-        fakeEventListener.labelId.test { assertEquals(awaitItem(), null) }
+        settingsRepo.savePersistedTimerData(currentLabel.copy(labelName = null))
+        assertEquals(timerManager.timerData.value.label, defaultLabel)
+        assertEquals(
+            timerManager.timerData.value.persistedTimerData,
+            currentLabel.copy(labelName = null)
+        )
+
+        val newTimerProfile = TimerProfile().copy(isCountdown = false, workBreakRatio = 42)
+        localDataRepo.updateDefaultLabelTimerProfile(newTimerProfile)
+        assertEquals(
+            timerManager.timerData.value.label!!.timerProfile,
+            newTimerProfile,
+            "Modifying the label did not trigger an update"
+        )
     }
 
     @Test
@@ -74,9 +96,10 @@ class TimerManagerTest {
         val duration = 25.minutes.inWholeMilliseconds
         assertEquals(
             timerManager.timerData.value,
-            TimerData(
-                label = Label(),
+            DomainTimerData(
+                label = defaultLabel,
                 startTime = startTime,
+                lastStartTime = startTime,
                 endTime = startTime + duration,
                 type = TimerType.WORK,
                 state = TimerState.RUNNING,
@@ -88,9 +111,10 @@ class TimerManagerTest {
         timerManager.pause()
         assertEquals(
             timerManager.timerData.value,
-            TimerData(
-                label = Label(),
+            DomainTimerData(
+                label = defaultLabel,
                 startTime = startTime,
+                lastStartTime = startTime,
                 endTime = 0,
                 tmpRemaining = duration - elapsedTime,
                 type = TimerType.WORK,
@@ -104,8 +128,8 @@ class TimerManagerTest {
         timerManager.resume()
         assertEquals(
             timerManager.timerData.value,
-            TimerData(
-                label = Label(),
+            DomainTimerData(
+                label = defaultLabel,
                 startTime = startTime,
                 lastStartTime = timeProvider.currentTime,
                 endTime = endTime,
@@ -125,9 +149,10 @@ class TimerManagerTest {
         val duration = 25.minutes.inWholeMilliseconds
         assertEquals(
             timerManager.timerData.value,
-            TimerData(
-                label = Label(),
+            DomainTimerData(
+                label = defaultLabel,
                 startTime = startTime,
+                lastStartTime = startTime,
                 endTime = startTime + duration,
                 type = TimerType.WORK,
                 state = TimerState.RUNNING,
@@ -138,9 +163,10 @@ class TimerManagerTest {
         timerManager.addOneMinute()
         assertEquals(
             timerManager.timerData.value,
-            TimerData(
-                label = Label(),
+            DomainTimerData(
+                label = defaultLabel,
                 startTime = startTime,
+                lastStartTime = startTime,
                 endTime = startTime + duration + 1.minutes.inWholeMilliseconds,
                 type = TimerType.WORK,
                 state = TimerState.RUNNING,
@@ -158,9 +184,10 @@ class TimerManagerTest {
         timerManager.finish()
         assertEquals(
             timerManager.timerData.value,
-            TimerData(
-                label = Label(),
+            DomainTimerData(
+                label = defaultLabel,
                 startTime = startTime,
+                lastStartTime = startTime,
                 endTime = startTime + duration,
                 type = TimerType.WORK,
                 state = TimerState.FINISHED,
@@ -177,7 +204,7 @@ class TimerManagerTest {
         timerManager.reset()
         assertEquals(
             timerManager.timerData.value,
-            TimerData(label = Label()),
+            DomainTimerData(),
             "the timer should have been reset"
         )
         assertEquals(fakeEventListener.timerData.endTime, endTime)
@@ -186,27 +213,17 @@ class TimerManagerTest {
     @Test
     fun `Change label from countdown to count-up while timer is running`() = runTest {
         timerManager.start(TimerType.WORK)
-        timerManager.setLabelName(CUSTOM_LABEL_NAME)
-        assertEquals(
-            timerManager.timerData.value,
-            TimerData(
-                label = dummyLabel,
-                startTime = timeProvider.now(),
-                endTime = timeProvider.now() + 25.minutes.inWholeMilliseconds,
-                type = TimerType.WORK,
-                state = TimerState.RUNNING,
-                minutesAdded = 0
-            )
-        )
+        val timerData = settingsRepo.settings.stateIn(testScope).value.persistedTimerData
+        settingsRepo.savePersistedTimerData(timerData.copy(labelName = CUSTOM_LABEL_NAME))
+        assertEquals(timerManager.timerData.value.label, dummyLabel)
     }
 
     companion object {
         private const val CUSTOM_LABEL_NAME = "dummy"
         private val dummyTimerProfile = TimerProfile().copy(isCountdown = false, workBreakRatio = 5)
-        private val dummyLabel = Label().copy(
-            id = 42,
-            name = CUSTOM_LABEL_NAME,
-            timerProfile = dummyTimerProfile
-        )
+
+        private var defaultLabel = Label()
+        private var dummyLabel =
+            Label().copy(name = CUSTOM_LABEL_NAME, timerProfile = dummyTimerProfile)
     }
 }

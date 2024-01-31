@@ -1,7 +1,7 @@
 package com.apps.adrcotfas.goodtime.domain
 
 import com.apps.adrcotfas.goodtime.data.model.Label
-
+import com.apps.adrcotfas.goodtime.data.settings.PersistedTimerData
 
 /**
  * Data class that captures the current timer state.
@@ -20,7 +20,8 @@ data class DomainTimerData(
     val type: TimerType = TimerType.WORK,
     // used to differentiate between a work session prolonged by pausing the timer
     // and a work session prolonged by adding minutes
-    val minutesAdded: Int = 0
+    val minutesAdded: Int = 0,
+    var persistedTimerData: PersistedTimerData = PersistedTimerData(),
 )
 
 enum class TimerState {
