@@ -38,7 +38,7 @@ class TimerManagerTest {
 
     @BeforeTest
     fun setup() = runTest(testDispatcher) {
-        timeProvider.currentTime = 0L
+        timeProvider.elapsedRealtime = 0L
         localDataRepo = LocalDataRepositoryImpl(
             Database(driver = testDbConnection()),
             defaultDispatcher = testDispatcher
@@ -92,7 +92,7 @@ class TimerManagerTest {
     @Test
     fun `Start then pause and resume a timer`() = runTest {
         timerManager.start(TimerType.WORK)
-        val startTime = timeProvider.now()
+        val startTime = timeProvider.elapsedRealtime()
         val duration = 25.minutes.inWholeMilliseconds
         assertEquals(
             timerManager.timerData.value,
@@ -107,7 +107,7 @@ class TimerManagerTest {
             )
         )
         val elapsedTime = 1.minutes.inWholeMilliseconds
-        timeProvider.currentTime += elapsedTime
+        timeProvider.elapsedRealtime += elapsedTime
         timerManager.pause()
         assertEquals(
             timerManager.timerData.value,
@@ -115,7 +115,7 @@ class TimerManagerTest {
                 label = defaultLabel,
                 startTime = startTime,
                 lastStartTime = startTime,
-                endTime = 0,
+                endTime = startTime + duration,
                 tmpRemaining = duration - elapsedTime,
                 type = TimerType.WORK,
                 state = TimerState.PAUSED,
@@ -123,15 +123,15 @@ class TimerManagerTest {
             ),
             "remaining time should be one minute less"
         )
-        timeProvider.currentTime += elapsedTime
-        val endTime = timerManager.timerData.value.tmpRemaining + timeProvider.currentTime
+        timeProvider.elapsedRealtime += elapsedTime
+        val endTime = timerManager.timerData.value.tmpRemaining + timeProvider.elapsedRealtime
         timerManager.resume()
         assertEquals(
             timerManager.timerData.value,
             DomainTimerData(
                 label = defaultLabel,
                 startTime = startTime,
-                lastStartTime = timeProvider.currentTime,
+                lastStartTime = timeProvider.elapsedRealtime,
                 endTime = endTime,
                 tmpRemaining = 0,
                 type = TimerType.WORK,
@@ -145,7 +145,7 @@ class TimerManagerTest {
     @Test
     fun `Add one minute`() = runTest {
         timerManager.start(TimerType.WORK)
-        val startTime = timeProvider.now()
+        val startTime = timeProvider.elapsedRealtime()
         val duration = 25.minutes.inWholeMilliseconds
         assertEquals(
             timerManager.timerData.value,
@@ -179,7 +179,7 @@ class TimerManagerTest {
     @Test
     fun `Timer finish`() = runTest {
         timerManager.start(TimerType.WORK)
-        val startTime = timeProvider.now()
+        val startTime = timeProvider.elapsedRealtime()
         val duration = 25.minutes.inWholeMilliseconds
         timerManager.finish()
         assertEquals(
@@ -199,15 +199,14 @@ class TimerManagerTest {
 
     @Test
     fun `Timer reset`() = runTest {
-        val endTime = timeProvider.now() + 25.minutes.inWholeMilliseconds
         timerManager.start(TimerType.WORK)
         timerManager.reset()
         assertEquals(
             timerManager.timerData.value,
-            DomainTimerData(),
+            DomainTimerData(label = defaultLabel),
             "the timer should have been reset"
         )
-        assertEquals(fakeEventListener.timerData.endTime, endTime)
+        assertEquals(fakeEventListener.events, listOf(Event.Start, Event.Reset))
     }
 
     @Test

@@ -10,9 +10,14 @@ import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepositoryImpl
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepositoryImpl
+import com.apps.adrcotfas.goodtime.domain.EventListener
 import com.apps.adrcotfas.goodtime.domain.TimeProvider
 import com.apps.adrcotfas.goodtime.domain.TimeProviderImpl
 import com.apps.adrcotfas.goodtime.domain.TimerManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import okio.Path.Companion.toPath
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
@@ -28,6 +33,12 @@ fun insertKoin(appModule: Module): KoinApplication {
             coreModule
         )
     }
+
+    val timerManager: TimerManager = koinApplication.koin.get()
+    CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+        timerManager.init()
+    }
+
     return koinApplication
 }
 
@@ -47,7 +58,7 @@ private val coreModule = module {
         TimerManager(
             get<LocalDataRepository>(),
             get<SettingsRepository>(),
-            emptyList(),
+            get<List<EventListener>>(),
             get<TimeProvider>()
         )
     }

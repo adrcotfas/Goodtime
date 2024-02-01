@@ -23,7 +23,6 @@ class TimerManager(
     private val _timerData: MutableStateFlow<DomainTimerData> = MutableStateFlow(DomainTimerData())
     val timerData: StateFlow<DomainTimerData> = _timerData
 
-    //TODO: call this in a global scope before the apps starts?
     suspend fun init() {
         settingsRepo.settings.map {
             it.persistedTimerData
@@ -37,28 +36,41 @@ class TimerManager(
         }
     }
 
-    fun start(timerType: TimerType) {
+    fun start(timerType: TimerType = _timerData.value.type) {
         if (_timerData.value.label == null) {
             //TODO: log error
+            return
         }
-        val now = timeProvider.now()
-        _timerData.value = _timerData.value.copy(
-            startTime = now,
-            lastStartTime = now,
-            endTime = _timerData.value.label!!.timerProfile.endTime(timerType, now),
-            type = timerType,
-            state = TimerState.RUNNING,
-            minutesAdded = 0
-        )
-        listeners.forEach { it.onEvent(Event.StartEvent(_timerData.value)) }
+
+        val elapsedRealTime = timeProvider.elapsedRealtime()
+        if (_timerData.value.state == TimerState.PAUSED) {
+            _timerData.value = _timerData.value.copy(
+                lastStartTime = elapsedRealTime,
+                endTime = elapsedRealTime + _timerData.value.tmpRemaining,
+                state = TimerState.RUNNING
+            )
+        } else {
+            _timerData.value = _timerData.value.copy(
+                startTime = elapsedRealTime,
+                lastStartTime = elapsedRealTime,
+                endTime = _timerData.value.label!!.timerProfile.endTime(timerType, elapsedRealTime),
+                type = timerType,
+                state = TimerState.RUNNING,
+                minutesAdded = 0
+            )
+        }
+        listeners.forEach { it.onEvent(Event.Start) }
         //TODO:
         // -alarm manager start
-        // -notification start
         // -toggle fullscreen
         // -toggle dnd mode
     }
 
     fun addOneMinute() {
+        if (_timerData.value.state != TimerState.RUNNING) {
+            //TODO: log error
+            return
+        }
         val data = _timerData.value
         _timerData.value = data.copy(
             endTime = data.endTime + 1.minutes.inWholeMilliseconds,
@@ -67,49 +79,73 @@ class TimerManager(
         listeners.forEach { it.onEvent(Event.AddOneMinute) }
         //TODO:
         // - alarm manager cancel, alarm manager reschedule
-        // - notification update
     }
 
     fun pause() {
+        if (_timerData.value.state != TimerState.RUNNING) {
+            //TODO: log error
+            return
+        }
         val data = _timerData.value
         _timerData.value = data.copy(
-            tmpRemaining = data.endTime - timeProvider.now(),
-            endTime = 0,
+            tmpRemaining = data.endTime - timeProvider.elapsedRealtime(),
             state = TimerState.PAUSED
         )
-        listeners.forEach { it.onEvent(Event.PauseEvent) }
+        listeners.forEach { it.onEvent(Event.Pause) }
         //TODO:
         // - alarm manager cancel
-        // - notification update
     }
 
     fun resume() {
+        if (_timerData.value.state != TimerState.PAUSED) {
+            //TODO: log error
+            return
+        }
         val data = _timerData.value
-        val now = timeProvider.now()
+        val elapsedRealTime = timeProvider.elapsedRealtime()
         _timerData.value = data.copy(
-            lastStartTime = now,
-            endTime = data.tmpRemaining + now,
+            lastStartTime = elapsedRealTime,
+            endTime = data.tmpRemaining + elapsedRealTime,
             state = TimerState.RUNNING,
             tmpRemaining = 0
         )
-        listeners.forEach { it.onEvent(Event.StartEvent(_timerData.value)) }
+        listeners.forEach { it.onEvent(Event.Start) }
         //TODO:
         // - alarm manager start
-        // - notification update
+    }
+
+    fun next() {
+        if (_timerData.value.state == TimerState.RESET) {
+            //TODO: log error
+            return
+        }
+        //TODO: save to stats if session is longer than 1 minute
+        val sessionType = _timerData.value.type
+        val state = _timerData.value.state
+        if (state == TimerState.RUNNING || state == TimerState.PAUSED) {
+            _timerData.value = _timerData.value.reset()
+        }
+        //TODO: compute if we need a long break
+        start(if (sessionType == TimerType.WORK) TimerType.BREAK else TimerType.WORK)
     }
 
     fun finish() {
+        if (_timerData.value.state == TimerState.RESET || _timerData.value.state == TimerState.FINISHED) {
+            //TODO: log error
+            return
+        }
+        //TODO: save to stats if session is longer than 1 minute
         _timerData.value = _timerData.value.copy(
             state = TimerState.FINISHED
         )
         listeners.forEach { it.onEvent(Event.Finished) }
-        //TODO: notification update(with actions)
     }
 
     fun reset() {
-        listeners.forEach { it.onEvent(Event.Reset(_timerData.value)) }
-        _timerData.value = DomainTimerData()
-        //TODO: alarm manager cancel, notification cancel
+        //TODO: save to stats if session is longer than 1 minute
+        listeners.forEach { it.onEvent(Event.Reset) }
+        _timerData.value = _timerData.value.reset()
+        //TODO: cancel alarm
         // -toggle fullscreen
         // -toggle dnd mode
     }

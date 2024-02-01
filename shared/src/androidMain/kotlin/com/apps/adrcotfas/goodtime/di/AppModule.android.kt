@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.apps.adrcotfas.goodtime.data.local.DatabaseDriverFactory
+import com.apps.adrcotfas.goodtime.domain.EventListener
+import com.apps.adrcotfas.goodtime.domain.TimerServiceHandler
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -16,5 +18,8 @@ actual val platformModule: Module = module {
         getDataStore(
             producePath = { get<Context>().filesDir.resolve(SETTINGS_FILE_NAME).absolutePath }
         )
+    }
+    single<List<EventListener>> {
+        listOf(get<TimerServiceHandler>())
     }
 }

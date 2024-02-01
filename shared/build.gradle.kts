@@ -51,6 +51,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.sqldelight.driver.android)
             implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.androidx.core.ktx)
         }
         getByName("androidUnitTest") {
             dependencies {

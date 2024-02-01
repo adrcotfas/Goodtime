@@ -9,6 +9,7 @@ import com.apps.adrcotfas.goodtime.data.settings.PersistedTimerData
  */
 data class DomainTimerData(
     val label: Label? = null,
+    var persistedTimerData: PersistedTimerData = PersistedTimerData(),
     val startTime: Long = 0,
     // there can be another start time if the timer was paused and resumed
     // retain this so we can compute the amount of time the timer was paused
@@ -21,12 +22,18 @@ data class DomainTimerData(
     // used to differentiate between a work session prolonged by pausing the timer
     // and a work session prolonged by adding minutes
     val minutesAdded: Int = 0,
-    var persistedTimerData: PersistedTimerData = PersistedTimerData(),
-)
+) {
+    fun reset(): DomainTimerData {
+        val tmpLabel = label
+        val tmpPersistedTimerData = persistedTimerData
+        return DomainTimerData(label = tmpLabel, persistedTimerData = tmpPersistedTimerData)
+    }
+}
 
 enum class TimerState {
     RESET, RUNNING, PAUSED, FINISHED
 }
+
 enum class TimerType {
     WORK, BREAK, LONG_BREAK
 }

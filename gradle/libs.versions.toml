@@ -6,6 +6,7 @@ agp = "8.2.0"
 android-minSdk = "24"
 android-compileSdk = "34"
 android-targetSdk = "34"
+coreKtx = "2.2.0"
 espressoCore = "3.5.1"
 kotlin = "1.9.20"
 compose = "1.5.4"
@@ -27,6 +28,7 @@ robolectric = "4.11.1"
 turbine = "1.0.0"
 
 okio = "3.7.0"
+core = "1.12.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -66,6 +68,7 @@ androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-t
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

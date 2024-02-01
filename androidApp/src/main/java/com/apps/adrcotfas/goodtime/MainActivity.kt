@@ -1,8 +1,13 @@
 package com.apps.adrcotfas.goodtime
 
+import android.Manifest
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
@@ -10,37 +15,29 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.lifecycleScope
-import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
-import com.apps.adrcotfas.goodtime.data.model.Label
-import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
-import com.apps.adrcotfas.goodtime.domain.TimerManager
 import com.apps.adrcotfas.goodtime.domain.TimerType
-import kotlinx.coroutines.launch
+import com.apps.adrcotfas.goodtime.viewmodel.MainViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
 class MainActivity : ComponentActivity(), KoinComponent {
 
-    //TODO: move to ViewModel with DI
-    private val localDataRepo: LocalDataRepository by inject()
-    private val settingsRepository: SettingsRepository by inject()
-    private val timerManager: TimerManager = getKoin().get()
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { }
+
+    private val viewModel: MainViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launch {
-            localDataRepo.insertLabel(Label().copy(name = "dummy"))
-//            repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                localDataRepo.selectAllLabels()
-//                    .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-//                    .collect { it.forEach { label -> println(label.name) } }
-//            }
-        }
-
         setContent {
+            LaunchedEffect(savedInstanceState) {
+                askForNotificationPermission()
+            }
             ApplicationTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -49,34 +46,42 @@ class MainActivity : ComponentActivity(), KoinComponent {
                     Column {
                         Button(
                             onClick = {
-                                lifecycleScope.launch {
-                                    timerManager.start(TimerType.WORK)
-                                }
+                                viewModel.startTimer(TimerType.WORK)
                             }
                         ) {
                             Text("start timer")
                         }
                         Button(
                             onClick = {
-                                lifecycleScope.launch {
-                                    timerManager.setLabelName("dummy")
-                                }
+                                viewModel.finish()
                             }
                         ) {
-                            Text("change label to dummy")
+                            Text("finish")
                         }
                         Button(
                             onClick = {
-                                lifecycleScope.launch {
-                                    timerManager.setLabelName(null)
-                                }
+                                viewModel.resetTimer()
                             }
                         ) {
-                            Text("change label to null")
+                            Text("stop")
                         }
                     }
                 }
             }
+        }
+    }
+
+    //TODO: clean-up
+    private fun askForNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+            && !shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)
+        ) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            val settingsIntent: Intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .putExtra(Settings.EXTRA_APP_PACKAGE, applicationContext.packageName)
+            startActivity(settingsIntent)
         }
     }
 }
