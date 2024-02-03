@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.domain
 
+import co.touchlab.kermit.Logger
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
 import com.apps.adrcotfas.goodtime.data.model.endTime
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
@@ -18,27 +19,31 @@ class TimerManager(
     private val settingsRepo: SettingsRepository,
     private val listeners: List<EventListener>,
     private val timeProvider: TimeProvider,
+    private val log: Logger
 ) {
 
     private val _timerData: MutableStateFlow<DomainTimerData> = MutableStateFlow(DomainTimerData())
     val timerData: StateFlow<DomainTimerData> = _timerData
 
     suspend fun init() {
+        log.v { "Initializing TimerManager..." }
         settingsRepo.settings.map {
             it.persistedTimerData
         }.flatMapLatest {
             _timerData.value.persistedTimerData = it
+            log.v { "new persistedTimerData: $it" }
             it.labelName?.let { labelName ->
                 localDataRepo.selectLabelByName(labelName)
             } ?: localDataRepo.selectDefaultLabel()
         }.distinctUntilChanged().collect {
             _timerData.value = _timerData.value.copy(label = it)
+            log.v { "new label: ${it.name}" }
         }
     }
 
     fun start(timerType: TimerType = _timerData.value.type) {
         if (_timerData.value.label == null) {
-            //TODO: log error
+            log.e { "Trying to start the timer without a label" }
             return
         }
 
@@ -59,6 +64,7 @@ class TimerManager(
                 minutesAdded = 0
             )
         }
+        log.v { "Starting timer: ${timerData.value}" }
         listeners.forEach { it.onEvent(Event.Start) }
         //TODO:
         // -alarm manager start
@@ -68,7 +74,7 @@ class TimerManager(
 
     fun addOneMinute() {
         if (_timerData.value.state != TimerState.RUNNING) {
-            //TODO: log error
+            log.e { "Trying to add one minute when the timer is not running" }
             return
         }
         val data = _timerData.value
@@ -76,6 +82,7 @@ class TimerManager(
             endTime = data.endTime + 1.minutes.inWholeMilliseconds,
             minutesAdded = data.minutesAdded + 1
         )
+        log.v { "Added one minute" }
         listeners.forEach { it.onEvent(Event.AddOneMinute) }
         //TODO:
         // - alarm manager cancel, alarm manager reschedule
@@ -83,7 +90,7 @@ class TimerManager(
 
     fun pause() {
         if (_timerData.value.state != TimerState.RUNNING) {
-            //TODO: log error
+            log.e { "Trying to pause the timer when it is not running" }
             return
         }
         val data = _timerData.value
@@ -91,6 +98,7 @@ class TimerManager(
             tmpRemaining = data.endTime - timeProvider.elapsedRealtime(),
             state = TimerState.PAUSED
         )
+        log.v { "Paused: ${timerData.value}" }
         listeners.forEach { it.onEvent(Event.Pause) }
         //TODO:
         // - alarm manager cancel
@@ -98,7 +106,7 @@ class TimerManager(
 
     fun resume() {
         if (_timerData.value.state != TimerState.PAUSED) {
-            //TODO: log error
+            log.e { "Trying to resume the timer when it is not paused" }
             return
         }
         val data = _timerData.value
@@ -109,6 +117,7 @@ class TimerManager(
             state = TimerState.RUNNING,
             tmpRemaining = 0
         )
+        log.v { "Resumed: ${timerData.value}" }
         listeners.forEach { it.onEvent(Event.Start) }
         //TODO:
         // - alarm manager start
@@ -116,7 +125,7 @@ class TimerManager(
 
     fun next() {
         if (_timerData.value.state == TimerState.RESET) {
-            //TODO: log error
+            log.e { "Trying to start the next session when the timer is reset" }
             return
         }
         //TODO: save to stats if session is longer than 1 minute
@@ -126,22 +135,25 @@ class TimerManager(
             _timerData.value = _timerData.value.reset()
         }
         //TODO: compute if we need a long break
+        log.v { "Next: ${timerData.value}" }
         start(if (sessionType == TimerType.WORK) TimerType.BREAK else TimerType.WORK)
     }
 
     fun finish() {
         if (_timerData.value.state == TimerState.RESET || _timerData.value.state == TimerState.FINISHED) {
-            //TODO: log error
+            log.e { "Trying to finish the timer when it is reset or finished" }
             return
         }
         //TODO: save to stats if session is longer than 1 minute
         _timerData.value = _timerData.value.copy(
             state = TimerState.FINISHED
         )
+        log.v { "Finish: ${timerData.value}" }
         listeners.forEach { it.onEvent(Event.Finished) }
     }
 
     fun reset() {
+        log.v { "Reset: ${timerData.value}" }
         //TODO: save to stats if session is longer than 1 minute
         listeners.forEach { it.onEvent(Event.Reset) }
         _timerData.value = _timerData.value.reset()

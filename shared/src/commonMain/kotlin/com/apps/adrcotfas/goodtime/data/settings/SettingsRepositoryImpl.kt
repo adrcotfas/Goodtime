@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -14,7 +15,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : SettingsRepository {
+class SettingsRepositoryImpl(
+    private val dataStore: DataStore<Preferences>,
+    private val log: Logger
+) : SettingsRepository {
 
     private object Keys {
         val productivityReminderSettingsKey =
@@ -35,7 +39,7 @@ class SettingsRepositoryImpl(private val dataStore: DataStore<Preferences>) : Se
     override val settings: Flow<AppSettings> = dataStore.data
         .catch { exception ->
             if (exception is IOException) {
-                //TODO log error
+                log.e("Error reading settings", exception)
                 emit(emptyPreferences())
             } else {
                 throw exception

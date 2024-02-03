@@ -3,6 +3,10 @@ package com.apps.adrcotfas.goodtime.di
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import co.touchlab.kermit.Logger
+import co.touchlab.kermit.Severity
+import co.touchlab.kermit.StaticConfig
+import co.touchlab.kermit.platformLogWriter
 import com.apps.adrcotfas.goodtime.data.local.Database
 import com.apps.adrcotfas.goodtime.data.local.DatabaseDriverFactory
 import com.apps.adrcotfas.goodtime.data.local.DatabaseExt.invoke
@@ -20,9 +24,13 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import okio.Path.Companion.toPath
 import org.koin.core.KoinApplication
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
+import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
+import org.koin.core.scope.Scope
 import org.koin.dsl.module
 
 fun insertKoin(appModule: Module): KoinApplication {
@@ -42,14 +50,31 @@ fun insertKoin(appModule: Module): KoinApplication {
     return koinApplication
 }
 
+expect fun isDebug(): Boolean
+val String.withPrefixIfDebug
+    get() = if (isDebug()) "### $this" else this
+
 expect val platformModule: Module
 
 private val coreModule = module {
+    val baseLogger =
+        Logger(
+            config = StaticConfig(
+                logWriterList = listOf(platformLogWriter()),
+                minSeverity = if (isDebug()) Severity.Verbose else Severity.Info
+            ),
+            tag = "Goodtime".withPrefixIfDebug
+        )
+    factory { (tag: String?) -> if (tag != null) baseLogger.withTag(tag.withPrefixIfDebug) else baseLogger }
+
     single<LocalDataRepository> {
         LocalDataRepositoryImpl(Database(driver = get<DatabaseDriverFactory>().create()))
     }
     single<SettingsRepository> {
-        SettingsRepositoryImpl(get<DataStore<Preferences>>(named(SETTINGS_NAME)))
+        SettingsRepositoryImpl(
+            get<DataStore<Preferences>>(named(SETTINGS_NAME)),
+            getWith(SettingsRepository::class.simpleName)
+        )
     }
     single<TimeProvider> {
         TimeProviderImpl()
@@ -59,7 +84,8 @@ private val coreModule = module {
             get<LocalDataRepository>(),
             get<SettingsRepository>(),
             get<List<EventListener>>(),
-            get<TimeProvider>()
+            get<TimeProvider>(),
+            getWith(TimerManager::class.simpleName)
         )
     }
 }
@@ -70,3 +96,9 @@ internal const val SETTINGS_FILE_NAME = SETTINGS_NAME + "_pb"
 internal fun getDataStore(producePath: () -> String): DataStore<Preferences> {
     return PreferenceDataStoreFactory.createWithPath(produceFile = { producePath().toPath() })
 }
+
+internal inline fun <reified T> Scope.getWith(vararg params: Any?): T {
+    return get(parameters = { parametersOf(*params) })
+}
+
+fun KoinComponent.injectLogger(tag: String): Lazy<Logger> = inject { parametersOf(tag) }

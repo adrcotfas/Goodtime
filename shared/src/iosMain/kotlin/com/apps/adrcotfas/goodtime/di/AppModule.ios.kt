@@ -34,3 +34,4 @@ actual val platformModule: Module = module {
         )
     }
 }
+actual fun isDebug(): Boolean = Platform.isDebugBinary

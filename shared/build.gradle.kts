@@ -13,6 +13,9 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 kotlin {
@@ -44,6 +47,7 @@ kotlin {
             implementation(libs.okio)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.datetime)
+            api(libs.touchlab.kermit)
         }
         commonTest.dependencies {
             implementation(libs.bundles.shared.commonTest)

@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import com.apps.adrcotfas.goodtime.data.local.DatabaseDriverFactory
 import com.apps.adrcotfas.goodtime.domain.EventListener
 import com.apps.adrcotfas.goodtime.domain.TimerServiceHandler
+import com.apps.adrcotfas.goodtime.shared.BuildConfig
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -23,3 +24,5 @@ actual val platformModule: Module = module {
         listOf(get<TimerServiceHandler>())
     }
 }
+
+actual fun isDebug(): Boolean = BuildConfig.DEBUG
