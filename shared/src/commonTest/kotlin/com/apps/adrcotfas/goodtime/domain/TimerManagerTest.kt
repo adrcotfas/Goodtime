@@ -1,5 +1,9 @@
 package com.apps.adrcotfas.goodtime.domain
 
+import co.touchlab.kermit.Logger
+import co.touchlab.kermit.NoTagFormatter
+import co.touchlab.kermit.loggerConfigInit
+import co.touchlab.kermit.platformLogWriter
 import com.apps.adrcotfas.goodtime.data.local.Database
 import com.apps.adrcotfas.goodtime.data.local.DatabaseExt.invoke
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
@@ -35,6 +39,7 @@ class TimerManagerTest {
 
     private val timeProvider = FakeTimeProvider()
     private val fakeEventListener = FakeEventListener()
+    private val logger = Logger(loggerConfigInit(platformLogWriter(NoTagFormatter)))
 
     @BeforeTest
     fun setup() = runTest(testDispatcher) {
@@ -56,6 +61,7 @@ class TimerManagerTest {
             settingsRepo = settingsRepo,
             listeners = listOf(fakeEventListener),
             timeProvider,
+            logger
         )
         testScope.launch { timerManager.init() }
         timerManager.timerData.first { it.label != null }

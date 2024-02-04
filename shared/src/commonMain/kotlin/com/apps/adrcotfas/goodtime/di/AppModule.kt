@@ -51,7 +51,7 @@ fun insertKoin(appModule: Module): KoinApplication {
 }
 
 expect fun isDebug(): Boolean
-val String.withPrefixIfDebug
+private val String.withPrefixIfDebug
     get() = if (isDebug()) "### $this" else this
 
 expect val platformModule: Module
