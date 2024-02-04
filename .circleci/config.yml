@@ -1,0 +1,25 @@
+version: 2.1
+
+orbs:
+  android: circleci/android@2.4.0
+
+jobs:
+  build-android:
+    executor:
+      name: android/android-docker
+      tag: 2024.01.1
+
+    steps:
+      - checkout
+      - android/restore-build-cache
+      - android/restore-gradle-cache
+      - run:
+          name: Check Android
+          command: ./gradlew :shared:check
+      - android/save-gradle-cache
+      - android/save-build-cache
+
+workflows:
+  build-all:
+    jobs:
+      - build-android
