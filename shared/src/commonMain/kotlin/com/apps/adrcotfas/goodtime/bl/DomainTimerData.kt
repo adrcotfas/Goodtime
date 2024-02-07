@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.domain
+package com.apps.adrcotfas.goodtime.bl
 
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.PersistedTimerData

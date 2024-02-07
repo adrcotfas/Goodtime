@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.domain
+package com.apps.adrcotfas.goodtime.bl
 
 import kotlinx.datetime.Clock
 import platform.Darwin.mach_absolute_time

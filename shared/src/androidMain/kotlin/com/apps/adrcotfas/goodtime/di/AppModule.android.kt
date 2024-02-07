@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.apps.adrcotfas.goodtime.data.local.DatabaseDriverFactory
-import com.apps.adrcotfas.goodtime.domain.EventListener
-import com.apps.adrcotfas.goodtime.domain.TimerServiceHandler
+import com.apps.adrcotfas.goodtime.bl.EventListener
+import com.apps.adrcotfas.goodtime.bl.TimerServiceHandler
 import com.apps.adrcotfas.goodtime.shared.BuildConfig
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named

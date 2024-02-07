@@ -1,7 +1,7 @@
 package com.apps.adrcotfas.goodtime.viewmodel
 
-import com.apps.adrcotfas.goodtime.domain.TimerManager
-import com.apps.adrcotfas.goodtime.domain.TimerType
+import com.apps.adrcotfas.goodtime.bl.TimerManager
+import com.apps.adrcotfas.goodtime.bl.TimerType
 
 
 //TODO: I don't need this one; the view can communicate directly to the TimerManager

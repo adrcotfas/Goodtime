@@ -1,7 +1,7 @@
 package com.apps.adrcotfas.goodtime.fakes
 
-import com.apps.adrcotfas.goodtime.domain.Event
-import com.apps.adrcotfas.goodtime.domain.EventListener
+import com.apps.adrcotfas.goodtime.bl.Event
+import com.apps.adrcotfas.goodtime.bl.EventListener
 
 class FakeEventListener : EventListener {
 

@@ -14,10 +14,10 @@ import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepositoryImpl
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepositoryImpl
-import com.apps.adrcotfas.goodtime.domain.EventListener
-import com.apps.adrcotfas.goodtime.domain.TimeProvider
-import com.apps.adrcotfas.goodtime.domain.TimeProviderImpl
-import com.apps.adrcotfas.goodtime.domain.TimerManager
+import com.apps.adrcotfas.goodtime.bl.EventListener
+import com.apps.adrcotfas.goodtime.bl.TimeProvider
+import com.apps.adrcotfas.goodtime.bl.TimeProviderImpl
+import com.apps.adrcotfas.goodtime.bl.TimerManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

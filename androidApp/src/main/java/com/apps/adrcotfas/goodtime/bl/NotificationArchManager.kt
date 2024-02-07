@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.domain
+package com.apps.adrcotfas.goodtime.bl
 
 import android.app.Notification
 import android.app.NotificationChannel

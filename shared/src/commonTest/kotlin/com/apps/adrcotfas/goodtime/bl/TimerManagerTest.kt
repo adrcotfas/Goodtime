@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.domain
+package com.apps.adrcotfas.goodtime.bl
 
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.NoTagFormatter

@@ -1,6 +1,6 @@
 package com.apps.adrcotfas.goodtime.data.model
 
-import com.apps.adrcotfas.goodtime.domain.TimerType
+import com.apps.adrcotfas.goodtime.bl.TimerType
 import kotlin.time.Duration.Companion.minutes
 
 data class TimerProfile(

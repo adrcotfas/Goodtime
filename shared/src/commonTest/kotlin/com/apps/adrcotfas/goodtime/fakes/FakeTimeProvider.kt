@@ -1,6 +1,6 @@
 package com.apps.adrcotfas.goodtime.fakes
 
-import com.apps.adrcotfas.goodtime.domain.TimeProvider
+import com.apps.adrcotfas.goodtime.bl.TimeProvider
 
 class FakeTimeProvider: TimeProvider {
     var now = 0L

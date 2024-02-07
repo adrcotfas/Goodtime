@@ -1,3 +1,3 @@
-package com.apps.adrcotfas.goodtime.domain
+package com.apps.adrcotfas.goodtime.bl
 
 expect class TimeProviderImpl(): TimeProvider
