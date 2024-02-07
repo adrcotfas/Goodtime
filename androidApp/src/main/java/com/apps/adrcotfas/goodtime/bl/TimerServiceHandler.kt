@@ -2,15 +2,13 @@ package com.apps.adrcotfas.goodtime.bl
 
 import android.content.Context
 
-class TimerServiceHandlerImpl(private val context: Context) : TimerServiceHandler {
+class TimerServiceHandler(private val context: Context) : EventListener {
     override fun onEvent(event: Event) {
         when (event) {
-            is Event.Start, Event.Pause, Event.NextSession, Event.AddOneMinute -> context.startService(
-                TimerService.createIntentWithAction(
-                    context,
-                    TimerService.ACTION_START_OR_UPDATE
-                )
-            )
+            is Event.Start -> startService()
+            is Event.Pause -> startService()
+            is Event.NextSession -> startService()
+            is Event.AddOneMinute -> startService()
 
             is Event.Reset -> context.startService(
                 TimerService.createIntentWithAction(
@@ -28,5 +26,14 @@ class TimerServiceHandlerImpl(private val context: Context) : TimerServiceHandle
                 )
             }
         }
+    }
+
+    private fun startService() {
+        context.startService(
+            TimerService.createIntentWithAction(
+                context,
+                TimerService.ACTION_START_OR_UPDATE
+            )
+        )
     }
 }

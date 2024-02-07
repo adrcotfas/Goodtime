@@ -65,9 +65,8 @@ class TimerManager(
             )
         }
         log.v { "Starting timer: ${timerData.value}" }
-        listeners.forEach { it.onEvent(Event.Start) }
+        listeners.forEach { it.onEvent(Event.Start(timerData.value.endTime)) }
         //TODO:
-        // -alarm manager start
         // -toggle fullscreen
         // -toggle dnd mode
     }
@@ -83,9 +82,7 @@ class TimerManager(
             minutesAdded = data.minutesAdded + 1
         )
         log.v { "Added one minute" }
-        listeners.forEach { it.onEvent(Event.AddOneMinute) }
-        //TODO:
-        // - alarm manager cancel, alarm manager reschedule
+        listeners.forEach { it.onEvent(Event.AddOneMinute(timerData.value.endTime)) }
     }
 
     fun pause() {
@@ -100,8 +97,6 @@ class TimerManager(
         )
         log.v { "Paused: ${timerData.value}" }
         listeners.forEach { it.onEvent(Event.Pause) }
-        //TODO:
-        // - alarm manager cancel
     }
 
     fun resume() {
@@ -118,9 +113,7 @@ class TimerManager(
             tmpRemaining = 0
         )
         log.v { "Resumed: ${timerData.value}" }
-        listeners.forEach { it.onEvent(Event.Start) }
-        //TODO:
-        // - alarm manager start
+        listeners.forEach { it.onEvent(Event.Start(timerData.value.endTime)) }
     }
 
     fun next() {
@@ -157,7 +150,6 @@ class TimerManager(
         //TODO: save to stats if session is longer than 1 minute
         listeners.forEach { it.onEvent(Event.Reset) }
         _timerData.value = _timerData.value.reset()
-        //TODO: cancel alarm
         // -toggle fullscreen
         // -toggle dnd mode
     }

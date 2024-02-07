@@ -3,9 +3,10 @@ package com.apps.adrcotfas.goodtime.di
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import com.apps.adrcotfas.goodtime.bl.ALARM_MANAGER_HANDLER
 import com.apps.adrcotfas.goodtime.data.local.DatabaseDriverFactory
 import com.apps.adrcotfas.goodtime.bl.EventListener
-import com.apps.adrcotfas.goodtime.bl.TimerServiceHandler
+import com.apps.adrcotfas.goodtime.bl.TIMER_SERVICE_HANDLER
 import com.apps.adrcotfas.goodtime.shared.BuildConfig
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
@@ -21,7 +22,10 @@ actual val platformModule: Module = module {
         )
     }
     single<List<EventListener>> {
-        listOf(get<TimerServiceHandler>())
+        listOf(
+            get<EventListener>(named(EventListener.TIMER_SERVICE_HANDLER)),
+            get<EventListener>(named(EventListener.ALARM_MANAGER_HANDLER))
+        )
     }
 }
 

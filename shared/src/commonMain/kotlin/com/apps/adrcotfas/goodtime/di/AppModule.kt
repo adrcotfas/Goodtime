@@ -97,7 +97,7 @@ internal fun getDataStore(producePath: () -> String): DataStore<Preferences> {
     return PreferenceDataStoreFactory.createWithPath(produceFile = { producePath().toPath() })
 }
 
-internal inline fun <reified T> Scope.getWith(vararg params: Any?): T {
+inline fun <reified T> Scope.getWith(vararg params: Any?): T {
     return get(parameters = { parametersOf(*params) })
 }
 

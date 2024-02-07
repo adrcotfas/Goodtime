@@ -22,4 +22,8 @@ jobs:
 workflows:
   build-all:
     jobs:
-      - build-android
+      - build-android:
+          filters:
+            branches:
+              only:
+                - develop
