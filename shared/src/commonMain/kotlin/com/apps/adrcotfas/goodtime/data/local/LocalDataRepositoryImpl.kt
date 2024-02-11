@@ -27,7 +27,11 @@ internal class LocalDataRepositoryImpl(
 
     private fun insertDefaultLabel() {
         val localLabel = Label().toLocal()
-        database.localLabelQueries.insert(localLabel)
+        database.localLabelQueries.selectByName(null, ::toExternalLabelMapper).executeAsList().let {
+            if (it.isEmpty()) {
+                database.localLabelQueries.insert(localLabel)
+            }
+        }
     }
 
     override suspend fun insertSession(session: Session) {
