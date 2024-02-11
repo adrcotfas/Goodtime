@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS sessionTmp (
         duration INTEGER NOT NULL,
         labelName TEXT DEFAULT NULL,
         notes TEXT DEFAULT NULL,
+        isWork INTEGER AS Boolean NOT NULL DEFAULT 1,
         isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
         FOREIGN KEY(labelName, isArchived) REFERENCES localLabel(name, isArchived)
         ON UPDATE CASCADE

@@ -59,6 +59,7 @@ class LocalDataRepositoryTest {
                 duration = 1.minutes.toLong(DurationUnit.MINUTES),
                 label = LABEL_NAME,
                 notes = null,
+                isWork = true,
                 isArchived = false
             )
         )
@@ -198,6 +199,7 @@ class LocalDataRepositoryTest {
             duration = 25,
             label = null,
             notes = null,
+            isWork = true,
             isArchived = false
         )
     }

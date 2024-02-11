@@ -18,6 +18,7 @@ class ModelMappingsExtTest {
             duration = 3.minutes.toLong(DurationUnit.MINUTES),
             labelName = "label",
             notes = "notes",
+            isWork = true,
             isArchived = true
         )
         val session = toExternalSessionMapper(
@@ -27,6 +28,7 @@ class ModelMappingsExtTest {
             localSession.duration,
             localSession.labelName,
             localSession.notes,
+            localSession.isWork,
             localSession.isArchived)
         assertEquals(localSession, session.toLocal())
     }
@@ -40,6 +42,7 @@ class ModelMappingsExtTest {
             duration = 3.minutes.toLong(DurationUnit.MINUTES),
             label = "label",
             notes = "notes",
+            isWork = false,
             isArchived = true
         )
         val localSession = session.toLocal()
@@ -50,6 +53,7 @@ class ModelMappingsExtTest {
             localSession.duration,
             localSession.labelName,
             localSession.notes,
+            localSession.isWork,
             localSession.isArchived))
     }
 

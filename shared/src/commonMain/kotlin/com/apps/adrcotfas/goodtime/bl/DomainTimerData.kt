@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.goodtime.bl
 
 import com.apps.adrcotfas.goodtime.data.model.Label
+import com.apps.adrcotfas.goodtime.data.model.duration
 import com.apps.adrcotfas.goodtime.data.settings.PersistedTimerData
 
 /**
@@ -23,11 +24,9 @@ data class DomainTimerData(
     // and a work session prolonged by adding minutes
     val minutesAdded: Int = 0,
 ) {
-    fun reset(): DomainTimerData {
-        val tmpLabel = label
-        val tmpPersistedTimerData = persistedTimerData
-        return DomainTimerData(label = tmpLabel, persistedTimerData = tmpPersistedTimerData)
-    }
+    fun reset() = DomainTimerData(label = label, persistedTimerData = persistedTimerData)
+
+    fun getDuration() = label?.timerProfile?.duration(type) ?: 0
 }
 
 enum class TimerState {

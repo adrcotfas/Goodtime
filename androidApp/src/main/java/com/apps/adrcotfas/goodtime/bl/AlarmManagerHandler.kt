@@ -23,10 +23,6 @@ class AlarmManagerHandler(
                 setAlarm(event.endTime)
             }
 
-            is Event.NextSession -> {
-                setAlarm(event.endTime)
-            }
-
             is Event.AddOneMinute -> {
                 setAlarm(event.endTime)
             }

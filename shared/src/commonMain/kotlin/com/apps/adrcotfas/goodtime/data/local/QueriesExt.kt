@@ -41,6 +41,7 @@ fun LocalSessionQueries.insert(session: LocalSession) {
         duration = session.duration,
         labelName = session.labelName,
         notes = session.notes,
+        isWork = session.isWork,
         isArchived = session.isArchived
     )
 }

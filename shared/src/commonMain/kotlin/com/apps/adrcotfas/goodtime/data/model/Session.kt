@@ -7,5 +7,20 @@ data class Session(
     val duration: Long, // minutes
     val label: String?,
     val notes: String?,
-    val isArchived: Boolean,
-)
+    val isWork: Boolean,
+    val isArchived: Boolean
+) {
+    companion object {
+        fun create(start: Long, end: Long, duration: Long, label: String?, isWork: Boolean) =
+            Session(
+                id = 0,
+                startTimestamp = start,
+                endTimestamp = end,
+                duration = duration,
+                label = label,
+                notes = null,
+                isWork = isWork,
+                isArchived = false
+            )
+    }
+}

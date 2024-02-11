@@ -57,6 +57,7 @@ fun Session.toLocal() = LocalSession(
     duration = duration,
     labelName = label,
     notes = notes,
+    isWork = isWork,
     isArchived = isArchived
 )
 
@@ -67,6 +68,7 @@ fun toExternalSessionMapper(
     duration: Long,
     label: String?,
     notes: String?,
+    isWork: Boolean,
     isArchived: Boolean
 ) = Session(
     id = id,
@@ -75,5 +77,6 @@ fun toExternalSessionMapper(
     duration = duration,
     label = label,
     notes = notes,
+    isWork = isWork,
     isArchived = isArchived
 )

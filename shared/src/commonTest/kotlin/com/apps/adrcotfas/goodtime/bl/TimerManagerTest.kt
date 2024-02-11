@@ -41,6 +41,8 @@ class TimerManagerTest {
     private val fakeEventListener = FakeEventListener()
     private val logger = Logger(loggerConfigInit(platformLogWriter(NoTagFormatter)))
 
+    private lateinit var finishedSessionsHandler : FinishedSessionsHandler
+
     @BeforeTest
     fun setup() = runTest(testDispatcher) {
         timeProvider.elapsedRealtime = 0L
@@ -56,11 +58,17 @@ class TimerManagerTest {
 
         settingsRepo = FakeSettingsRepository()
 
+        finishedSessionsHandler = FinishedSessionsHandler(
+            coroutineScope = testScope,
+            repo = localDataRepo,
+            log = logger
+        )
         timerManager = TimerManager(
             localDataRepo = localDataRepo,
             settingsRepo = settingsRepo,
             listeners = listOf(fakeEventListener),
             timeProvider,
+            finishedSessionsHandler,
             logger
         )
         testScope.launch { timerManager.init() }
@@ -206,13 +214,17 @@ class TimerManagerTest {
     @Test
     fun `Timer reset`() = runTest {
         timerManager.start(TimerType.WORK)
+        val endTime = timerManager.timerData.value.endTime
         timerManager.reset()
         assertEquals(
             timerManager.timerData.value,
             DomainTimerData(label = defaultLabel),
             "the timer should have been reset"
         )
-        assertEquals(fakeEventListener.events, listOf(Event.Start, Event.Reset))
+        assertEquals(
+            fakeEventListener.events,
+            listOf(Event.Start(endTime), Event.Reset)
+        )
     }
 
     @Test

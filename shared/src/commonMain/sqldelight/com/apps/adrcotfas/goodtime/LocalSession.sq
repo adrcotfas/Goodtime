@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS localSession (
     duration INTEGER NOT NULL,
     labelName TEXT DEFAULT NULL,
     notes TEXT DEFAULT NULL,
+    isWork INTEGER AS Boolean NOT NULL DEFAULT 1,
     isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,
     FOREIGN KEY(labelName, isArchived) REFERENCES localLabel(name, isArchived)
     ON UPDATE CASCADE
@@ -17,8 +18,8 @@ CREATE INDEX idx_archived ON localSession(isArchived);
 CREATE INDEX idx_profile ON localSession(labelName);
 
 insert:
-INSERT OR REPLACE INTO localSession(id, startTimestamp, endTimestamp, duration, labelName, notes, isArchived)
-VALUES(NULL, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO localSession(id, startTimestamp, endTimestamp, duration, labelName, notes, isWork, isArchived)
+VALUES(NULL, ?, ?, ?, ?, ?, ?, ?);
 
 update:
 UPDATE localSession
@@ -28,6 +29,10 @@ WHERE id = :id;
 selectAll:
 SELECT *
 FROM localSession  ORDER BY endTimestamp DESC;
+
+selectById:
+SELECT *
+FROM localSession WHERE id = ?;
 
 selectByIsArchived:
 SELECT *

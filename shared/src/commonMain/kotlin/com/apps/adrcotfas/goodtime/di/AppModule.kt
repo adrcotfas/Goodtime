@@ -15,6 +15,7 @@ import com.apps.adrcotfas.goodtime.data.local.LocalDataRepositoryImpl
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepositoryImpl
 import com.apps.adrcotfas.goodtime.bl.EventListener
+import com.apps.adrcotfas.goodtime.bl.FinishedSessionsHandler
 import com.apps.adrcotfas.goodtime.bl.TimeProvider
 import com.apps.adrcotfas.goodtime.bl.TimeProviderImpl
 import com.apps.adrcotfas.goodtime.bl.TimerManager
@@ -33,17 +34,24 @@ import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 import org.koin.dsl.module
 
+
+private val coroutineScopeModule = module {
+    single<CoroutineScope> { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
+}
+
 fun insertKoin(appModule: Module): KoinApplication {
     val koinApplication = startKoin {
         modules(
             appModule,
+            coroutineScopeModule,
             platformModule,
             coreModule
         )
     }
 
     val timerManager: TimerManager = koinApplication.koin.get()
-    CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+    val applicationCoroutineScope: CoroutineScope = koinApplication.koin.get()
+    applicationCoroutineScope.launch {
         timerManager.init()
     }
 
@@ -79,12 +87,22 @@ private val coreModule = module {
     single<TimeProvider> {
         TimeProviderImpl()
     }
+
+    single<FinishedSessionsHandler> {
+        FinishedSessionsHandler(
+            get(),
+            get(),
+            getWith(FinishedSessionsHandler::class.simpleName)
+        )
+    }
+
     single<TimerManager> {
         TimerManager(
             get<LocalDataRepository>(),
             get<SettingsRepository>(),
             get<List<EventListener>>(),
             get<TimeProvider>(),
+            get<FinishedSessionsHandler>(),
             getWith(TimerManager::class.simpleName)
         )
     }

@@ -7,7 +7,6 @@ class TimerServiceHandler(private val context: Context) : EventListener {
         when (event) {
             is Event.Start -> startService()
             is Event.Pause -> startService()
-            is Event.NextSession -> startService()
             is Event.AddOneMinute -> startService()
 
             is Event.Reset -> context.startService(

@@ -33,10 +33,14 @@ data class TimerProfile(
  */
 fun TimerProfile.endTime(timerType: TimerType, elapsedRealTime: Long): Long {
     return if (isCountdown) {
-        elapsedRealTime + when (timerType) {
-            TimerType.WORK -> workDuration
-            TimerType.BREAK -> breakDuration
-            TimerType.LONG_BREAK -> longBreakDuration
-        }.minutes.inWholeMilliseconds
+        elapsedRealTime + this.duration(timerType).minutes.inWholeMilliseconds
     } else 0
+}
+
+fun TimerProfile.duration(timerType: TimerType): Int {
+    return when (timerType) {
+        TimerType.WORK -> workDuration
+        TimerType.BREAK -> breakDuration
+        TimerType.LONG_BREAK -> longBreakDuration
+    }
 }
