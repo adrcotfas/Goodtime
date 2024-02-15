@@ -1,9 +1,8 @@
 package com.apps.adrcotfas.goodtime.bl
 
+import app.cash.turbine.test
 import co.touchlab.kermit.Logger
-import co.touchlab.kermit.NoTagFormatter
-import co.touchlab.kermit.loggerConfigInit
-import co.touchlab.kermit.platformLogWriter
+import co.touchlab.kermit.StaticConfig
 import com.apps.adrcotfas.goodtime.data.local.Database
 import com.apps.adrcotfas.goodtime.data.local.DatabaseExt.invoke
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
@@ -25,7 +24,9 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 class TimerManagerTest {
 
@@ -39,9 +40,9 @@ class TimerManagerTest {
 
     private val timeProvider = FakeTimeProvider()
     private val fakeEventListener = FakeEventListener()
-    private val logger = Logger(loggerConfigInit(platformLogWriter(NoTagFormatter)))
+    private val logger = Logger(StaticConfig())
 
-    private lateinit var finishedSessionsHandler : FinishedSessionsHandler
+    private lateinit var finishedSessionsHandler: FinishedSessionsHandler
 
     @BeforeTest
     fun setup() = runTest(testDispatcher) {
@@ -117,7 +118,6 @@ class TimerManagerTest {
                 endTime = startTime + duration,
                 type = TimerType.WORK,
                 state = TimerState.RUNNING,
-                minutesAdded = 0
             )
         )
         val elapsedTime = 1.minutes.inWholeMilliseconds
@@ -130,15 +130,15 @@ class TimerManagerTest {
                 startTime = startTime,
                 lastStartTime = startTime,
                 endTime = startTime + duration,
-                tmpRemaining = duration - elapsedTime,
+                remainingTimeAtPause = duration - elapsedTime,
                 type = TimerType.WORK,
                 state = TimerState.PAUSED,
-                minutesAdded = 0
             ),
             "remaining time should be one minute less"
         )
         timeProvider.elapsedRealtime += elapsedTime
-        val endTime = timerManager.timerData.value.tmpRemaining + timeProvider.elapsedRealtime
+        val endTime =
+            timerManager.timerData.value.remainingTimeAtPause + timeProvider.elapsedRealtime
         timerManager.resume()
         assertEquals(
             timerManager.timerData.value,
@@ -147,10 +147,10 @@ class TimerManagerTest {
                 startTime = startTime,
                 lastStartTime = timeProvider.elapsedRealtime,
                 endTime = endTime,
-                tmpRemaining = 0,
+                remainingTimeAtPause = 0,
                 type = TimerType.WORK,
                 state = TimerState.RUNNING,
-                minutesAdded = 0
+                pausedTime = 1.minutes.inWholeMilliseconds
             ),
             "the timer should end after 2 more minutes"
         )
@@ -170,7 +170,6 @@ class TimerManagerTest {
                 endTime = startTime + duration,
                 type = TimerType.WORK,
                 state = TimerState.RUNNING,
-                minutesAdded = 0
             ),
             "the timer should have started"
         )
@@ -184,18 +183,16 @@ class TimerManagerTest {
                 endTime = startTime + duration + 1.minutes.inWholeMilliseconds,
                 type = TimerType.WORK,
                 state = TimerState.RUNNING,
-                minutesAdded = 1
             ),
             "the timer should have been prolonged by one minute"
         )
     }
 
     @Test
-    fun `Timer finish`() = runTest {
+    fun `Skip session after one minute`() = runTest {
         timerManager.start(TimerType.WORK)
         val startTime = timeProvider.elapsedRealtime()
         val duration = 25.minutes.inWholeMilliseconds
-        timerManager.finish()
         assertEquals(
             timerManager.timerData.value,
             DomainTimerData(
@@ -204,17 +201,91 @@ class TimerManagerTest {
                 lastStartTime = startTime,
                 endTime = startTime + duration,
                 type = TimerType.WORK,
-                state = TimerState.FINISHED,
-                minutesAdded = 0
+                state = TimerState.RUNNING,
             ),
-            "the timer should have finished"
+            "the timer should have started"
         )
+        val elapsedTime = 1.minutes.inWholeMilliseconds
+        timeProvider.elapsedRealtime += elapsedTime
+        timeProvider.now += elapsedTime
+        timerManager.next()
+        assertEquals(timerManager.timerData.value.state, TimerState.RUNNING)
+        assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
+        localDataRepo.selectSessionById(localDataRepo.selectLastInsertSessionId()!!).test {
+            val session = awaitItem()
+            assertEquals(session.duration.minutes.inWholeMilliseconds, elapsedTime)
+            assertEquals(session.startTimestamp, 0)
+            assertEquals(session.endTimestamp, elapsedTime)
+            assertEquals(session.isWork, true)
+        }
+        timeProvider.elapsedRealtime += elapsedTime
+        timeProvider.now += elapsedTime
+        timerManager.next()
+        assertEquals(timerManager.timerData.value.state, TimerState.RUNNING)
+        assertEquals(timerManager.timerData.value.type, TimerType.WORK)
+        localDataRepo.selectSessionById(localDataRepo.selectLastInsertSessionId()!!).test {
+            val session = awaitItem()
+            assertEquals(session.duration.minutes.inWholeMilliseconds, elapsedTime)
+            assertEquals(session.startTimestamp, elapsedTime)
+            assertEquals(session.endTimestamp, elapsedTime + elapsedTime)
+            assertEquals(session.isWork, false)
+        }
     }
 
     @Test
-    fun `Timer reset`() = runTest {
+    fun `Skip timer before one minute`() = runTest {
         timerManager.start(TimerType.WORK)
         val endTime = timerManager.timerData.value.endTime
+        val duration = 59.seconds.inWholeMilliseconds
+        timeProvider.elapsedRealtime = duration
+        timeProvider.now = duration
+        timerManager.next()
+        assertEquals(
+            fakeEventListener.events,
+            listOf(
+                Event.Start(endTime),
+                Event.Start(timeProvider.elapsedRealtime + TimerProfile.DEFAULT_BREAK_DURATION.minutes.inWholeMilliseconds)
+            )
+        )
+        localDataRepo.selectAllSessions().test {
+            assertTrue(awaitItem().isEmpty())
+        }
+    }
+
+    @Test
+    fun `Timer finish`() = runTest {
+        timerManager.start(TimerType.WORK)
+        val duration = TimerProfile.DEFAULT_WORK_DURATION.minutes.inWholeMilliseconds
+        timeProvider.elapsedRealtime = duration
+        timeProvider.now = duration
+        timerManager.finish()
+        assertEquals(
+            timerManager.timerData.value,
+            DomainTimerData(
+                label = defaultLabel,
+                startTime = 0,
+                lastStartTime = 0,
+                endTime = duration,
+                type = TimerType.WORK,
+                state = TimerState.FINISHED,
+            ),
+            "the timer should have finished"
+        )
+        localDataRepo.selectSessionById(localDataRepo.selectLastInsertSessionId()!!).test {
+            val session = awaitItem()
+            assertEquals(session.duration.minutes.inWholeMilliseconds, duration)
+            assertEquals(session.startTimestamp, 0)
+            assertEquals(session.endTimestamp, duration)
+        }
+    }
+
+    @Test
+    fun `Timer reset after one minute`() = runTest {
+        timerManager.start(TimerType.WORK)
+        val endTime = timerManager.timerData.value.endTime
+        val oneMinute = 1.minutes.inWholeMilliseconds
+        timeProvider.elapsedRealtime = oneMinute
+        timeProvider.now = oneMinute
         timerManager.reset()
         assertEquals(
             timerManager.timerData.value,
@@ -225,6 +296,34 @@ class TimerManagerTest {
             fakeEventListener.events,
             listOf(Event.Start(endTime), Event.Reset)
         )
+        localDataRepo.selectSessionById(localDataRepo.selectLastInsertSessionId()!!).test {
+            val session = awaitItem()
+            assertEquals(session.duration.minutes.inWholeMilliseconds, oneMinute)
+            assertEquals(session.startTimestamp, 0)
+            assertEquals(session.endTimestamp, oneMinute)
+        }
+    }
+
+    @Test
+    fun `Timer reset before one minute`() = runTest {
+        timerManager.start(TimerType.WORK)
+        val endTime = timerManager.timerData.value.endTime
+        val duration = 59.seconds.inWholeMilliseconds
+        timeProvider.elapsedRealtime = duration
+        timeProvider.now = duration
+        timerManager.reset()
+        assertEquals(
+            timerManager.timerData.value,
+            DomainTimerData(label = defaultLabel),
+            "the timer should have been reset"
+        )
+        assertEquals(
+            fakeEventListener.events,
+            listOf(Event.Start(endTime), Event.Reset)
+        )
+        localDataRepo.selectAllSessions().test {
+            assertTrue(awaitItem().isEmpty())
+        }
     }
 
     @Test

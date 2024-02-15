@@ -39,7 +39,7 @@ class NotificationArchManager(private val context: Context, private val activity
         } else {
             "Break in progress"
         }
-        val stateText = if (data.label?.name != null) "$labelName: $mainStateText" else mainStateText
+        val stateText = if (labelName != null) "$labelName: $mainStateText" else mainStateText
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID).apply {
             setSmallIcon(SharedR.drawable.ic_status_goodtime)
@@ -117,7 +117,7 @@ class NotificationArchManager(private val context: Context, private val activity
         } else {
             "Break finished"
         }
-        val stateText = if (data.label?.name != null) "$labelName: $mainStateText" else mainStateText
+        val stateText = if (labelName != null) "$labelName: $mainStateText" else mainStateText
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID).apply {
             setSmallIcon(SharedR.drawable.ic_status_goodtime)

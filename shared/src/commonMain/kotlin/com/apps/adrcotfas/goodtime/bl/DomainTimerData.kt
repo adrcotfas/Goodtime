@@ -12,17 +12,12 @@ data class DomainTimerData(
     val label: Label? = null,
     var persistedTimerData: PersistedTimerData = PersistedTimerData(),
     val startTime: Long = 0,
-    // there can be another start time if the timer was paused and resumed
-    // retain this so we can compute the amount of time the timer was paused
     val lastStartTime: Long = 0,
     val endTime: Long = 0,
-    // this is used to update the [endTime] when the timer is paused and resumed
-    val tmpRemaining: Long = 0,
+    val remainingTimeAtPause: Long = 0,
     val state: TimerState = TimerState.RESET,
     val type: TimerType = TimerType.WORK,
-    // used to differentiate between a work session prolonged by pausing the timer
-    // and a work session prolonged by adding minutes
-    val minutesAdded: Int = 0,
+    val pausedTime: Long = 0
 ) {
     fun reset() = DomainTimerData(label = label, persistedTimerData = persistedTimerData)
 

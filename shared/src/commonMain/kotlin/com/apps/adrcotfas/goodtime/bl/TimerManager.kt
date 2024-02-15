@@ -54,7 +54,7 @@ class TimerManager(
         if (_timerData.value.state == TimerState.PAUSED) {
             _timerData.value = _timerData.value.copy(
                 lastStartTime = elapsedRealTime,
-                endTime = elapsedRealTime + _timerData.value.tmpRemaining,
+                endTime = elapsedRealTime + _timerData.value.remainingTimeAtPause,
                 state = TimerState.RUNNING
             )
         } else {
@@ -64,7 +64,7 @@ class TimerManager(
                 endTime = _timerData.value.label!!.timerProfile.endTime(timerType, elapsedRealTime),
                 type = timerType,
                 state = TimerState.RUNNING,
-                minutesAdded = 0
+                pausedTime = 0
             )
         }
         log.v { "Starting timer: ${timerData.value}" }
@@ -82,7 +82,6 @@ class TimerManager(
         val data = _timerData.value
         _timerData.value = data.copy(
             endTime = data.endTime + 1.minutes.inWholeMilliseconds,
-            minutesAdded = data.minutesAdded + 1
         )
         log.v { "Added one minute" }
         listeners.forEach { it.onEvent(Event.AddOneMinute(timerData.value.endTime)) }
@@ -95,7 +94,7 @@ class TimerManager(
         }
         val data = _timerData.value
         _timerData.value = data.copy(
-            tmpRemaining = data.endTime - timeProvider.elapsedRealtime(),
+            remainingTimeAtPause = data.endTime - timeProvider.elapsedRealtime(),
             state = TimerState.PAUSED
         )
         log.v { "Paused: ${timerData.value}" }
@@ -109,11 +108,15 @@ class TimerManager(
         }
         val data = _timerData.value
         val elapsedRealTime = timeProvider.elapsedRealtime()
+        val durationToFinish = data.getDuration().minutes.inWholeMilliseconds
+        val timePaused =
+            data.pausedTime + elapsedRealTime - (durationToFinish - data.remainingTimeAtPause)
         _timerData.value = data.copy(
             lastStartTime = elapsedRealTime,
-            endTime = data.tmpRemaining + elapsedRealTime,
+            endTime = data.remainingTimeAtPause + elapsedRealTime,
             state = TimerState.RUNNING,
-            tmpRemaining = 0
+            remainingTimeAtPause = 0,
+            pausedTime = timePaused
         )
         log.v { "Resumed: ${timerData.value}" }
         listeners.forEach { it.onEvent(Event.Start(timerData.value.endTime)) }
@@ -141,7 +144,7 @@ class TimerManager(
             updatedSession?.let {
                 finishedSessionsHandler.updateWorkTime(it)
             }
-        // Skipping a running session
+            // Skipping a running session
         } else {
             skippedSession?.let {
                 finishedSessionsHandler.saveSession(it)
@@ -217,16 +220,15 @@ class TimerManager(
         val totalDuration = timeProvider.elapsedRealtime() - data.startTime
 
         val durationToSave = if (isWork) {
-            val timeAddedManually = data.minutesAdded.minutes.inWholeMilliseconds
-            val timeSpentPaused = totalDuration - data.getDuration() - timeAddedManually
-            val justWorkTime = (totalDuration - timeSpentPaused + 100).milliseconds.inWholeMinutes
+            val justWorkTime =
+                (totalDuration - data.pausedTime + WIGGLE_ROOM_MILLIS).milliseconds.inWholeMinutes
             justWorkTime
         } else {
             totalDuration.milliseconds.inWholeMinutes
         }
 
         if (durationToSave < 1) {
-            log.i { "The session was shorter than 1 minute" }
+            log.i { "The session was shorter than 1 minute: $durationToSave millis" }
             return null
         }
 
@@ -240,5 +242,9 @@ class TimerManager(
             data.label!!.name,
             isWork
         )
+    }
+
+    companion object {
+        const val WIGGLE_ROOM_MILLIS = 100
     }
 }
