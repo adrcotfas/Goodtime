@@ -53,6 +53,7 @@ SET labelName = CASE WHEN LENGTH(labelName) = 0 THEN NULL ELSE labelName END;
 
 CREATE INDEX idx_archived ON localSession(isArchived);
 CREATE INDEX idx_profile ON localSession(labelName);
+CREATE INDEX idx_is_work ON localSession(isWork);
 
 PRAGMA foreign_keys=on;
 

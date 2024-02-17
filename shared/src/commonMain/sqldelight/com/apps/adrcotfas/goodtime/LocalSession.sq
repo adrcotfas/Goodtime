@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS localSession (
 
 CREATE INDEX idx_archived ON localSession(isArchived);
 CREATE INDEX idx_profile ON localSession(labelName);
+CREATE INDEX idx_is_work ON localSession(isWork);
 
 insert:
 INSERT OR REPLACE INTO localSession(id, startTimestamp, endTimestamp, duration, labelName, notes, isWork, isArchived)
