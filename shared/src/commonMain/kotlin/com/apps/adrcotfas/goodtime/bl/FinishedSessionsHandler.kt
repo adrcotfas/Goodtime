@@ -12,7 +12,7 @@ class FinishedSessionsHandler(
     private val repo: LocalDataRepository,
     private val log: Logger
 ) {
-    fun updateWorkTime(newSession: Session) {
+    fun updateSession(newSession: Session) {
         log.v { "Updating a finished session" }
         coroutineScope.launch {
             try {
