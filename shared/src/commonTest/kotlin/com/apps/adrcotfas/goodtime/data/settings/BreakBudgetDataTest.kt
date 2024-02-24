@@ -8,10 +8,10 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 
-class PersistedTimerDataTest {
+class BreakBudgetDataTest {
     @Test
     fun `Compute remaining time budget`() = runTest {
-        val persistedTimerData = PersistedTimerData(
+        val persistedTimerData = BreakBudgetData(
             breakBudgetStart = 0,
             breakBudget = 10
         )
@@ -30,7 +30,7 @@ class PersistedTimerDataTest {
         for ((budget, elapsedTime) in expected) {
             assertEquals(
                 budget,
-                persistedTimerData.computeRemainingBreakBudget(elapsedTime)
+                persistedTimerData.getRemainingBreakBudget(elapsedTime)
             )
         }
     }

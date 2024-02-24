@@ -2,7 +2,9 @@ package com.apps.adrcotfas.goodtime.bl
 
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.duration
-import com.apps.adrcotfas.goodtime.data.settings.PersistedTimerData
+import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
+import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
+import kotlin.time.Duration.Companion.minutes
 
 /**
  * Data class that captures the current timer state.
@@ -10,18 +12,31 @@ import com.apps.adrcotfas.goodtime.data.settings.PersistedTimerData
  */
 data class DomainTimerData(
     val label: Label? = null,
-    var persistedTimerData: PersistedTimerData = PersistedTimerData(),
-    val startTime: Long = 0,
-    val lastStartTime: Long = 0,
-    val endTime: Long = 0,
-    val remainingTimeAtPause: Long = 0,
+    val startTime: Long = 0, // millis since boot
+    val lastStartTime: Long = 0, // millis since boot
+    val endTime: Long = 0, // millis since boot
+    val remainingTimeAtPause: Long = 0, // millis
     val state: TimerState = TimerState.RESET,
     val type: TimerType = TimerType.WORK,
-    val pausedTime: Long = 0
-) {
-    fun reset() = DomainTimerData(label = label, persistedTimerData = persistedTimerData)
+    val pausedTime: Long = 0, // millis
 
-    fun getDuration() = label?.timerProfile?.duration(type) ?: 0
+    /**
+     * This is persisted in the settings too for cases where the app is killed.
+     * I don't like updating the data in two places(see [TimerManager.incrementStreak]
+     * and [TimerManager.resetStreakIfNeeded]) but I don't want to risk invalid data
+     *  when updating the repository and possibly waiting for the flow to emit the new data
+     *  while executing the next command.
+     */
+    val longBreakData: LongBreakData = LongBreakData(),
+    val breakBudgetData: BreakBudgetData = BreakBudgetData(),
+) {
+    fun reset() = DomainTimerData(
+        label = label,
+        longBreakData = longBreakData,
+        breakBudgetData = breakBudgetData
+    )
+
+    fun getDuration() = (label?.timerProfile?.duration(type) ?: 0).minutes.inWholeMilliseconds
 }
 
 enum class TimerState {

@@ -1,8 +1,9 @@
 package com.apps.adrcotfas.goodtime.fakes
 
 import com.apps.adrcotfas.goodtime.data.settings.AppSettings
-import com.apps.adrcotfas.goodtime.data.settings.PersistedTimerData
+import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.FlashType
+import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
 import com.apps.adrcotfas.goodtime.data.settings.ProductivityReminderSettings
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.UiSettings
@@ -60,7 +61,21 @@ class FakeSettingsRepository(settings: AppSettings = AppSettings()) : SettingsRe
         _settings.value.copy(dndDuringWork = enabled)
     )
 
-    override suspend fun savePersistedTimerData(timerData: PersistedTimerData) = _settings.emit(
-        _settings.value.copy(persistedTimerData = timerData)
-    )
+    override suspend fun saveLabelName(labelName: String?) {
+        _settings.emit(
+            _settings.value.copy(labelName = labelName)
+        )
+    }
+
+    override suspend fun saveLongBreakData(longBreakData: LongBreakData) {
+        _settings.emit(
+            _settings.value.copy(longBreakData = longBreakData)
+        )
+    }
+
+    override suspend fun saveBreakBudgetData(breakBudgetData: BreakBudgetData) {
+        _settings.emit(
+            _settings.value.copy(breakBudgetData = breakBudgetData)
+        )
+    }
 }

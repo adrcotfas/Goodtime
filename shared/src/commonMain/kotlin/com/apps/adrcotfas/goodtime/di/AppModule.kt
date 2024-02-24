@@ -16,6 +16,7 @@ import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepositoryImpl
 import com.apps.adrcotfas.goodtime.bl.EventListener
 import com.apps.adrcotfas.goodtime.bl.FinishedSessionsHandler
+import com.apps.adrcotfas.goodtime.bl.StreakAndLongBreakHandler
 import com.apps.adrcotfas.goodtime.bl.TimeProvider
 import com.apps.adrcotfas.goodtime.bl.TimeProviderImpl
 import com.apps.adrcotfas.goodtime.bl.TimerManager
@@ -90,10 +91,14 @@ private val coreModule = module {
 
     single<FinishedSessionsHandler> {
         FinishedSessionsHandler(
-            get(),
-            get(),
+            get<CoroutineScope>(),
+            get<LocalDataRepository>(),
             getWith(FinishedSessionsHandler::class.simpleName)
         )
+    }
+
+    single<StreakAndLongBreakHandler> {
+        StreakAndLongBreakHandler(get<CoroutineScope>(), get<SettingsRepository>())
     }
 
     single<TimerManager> {
@@ -103,6 +108,7 @@ private val coreModule = module {
             get<List<EventListener>>(),
             get<TimeProvider>(),
             get<FinishedSessionsHandler>(),
+            get<StreakAndLongBreakHandler>(),
             getWith(TimerManager::class.simpleName)
         )
     }

@@ -33,7 +33,9 @@ class SettingsRepositoryImpl(
         val autoStartWorkKey = booleanPreferencesKey("autoStartWorkKey")
         val autoStartBreakKey = booleanPreferencesKey("autoStartBreakKey")
         val dndDuringWorkKey = booleanPreferencesKey("dndDuringWorkKey")
-        val currentTimerDataKey = stringPreferencesKey("currentTimerKey")
+        val labelNameKey = stringPreferencesKey("labelNameKey")
+        val longBreakDataKey = stringPreferencesKey("longBreakDataKey")
+        val breakBudgetDataKey = stringPreferencesKey("breakBudgetDataKey")
     }
 
     override val settings: Flow<AppSettings> = dataStore.data
@@ -65,9 +67,13 @@ class SettingsRepositoryImpl(
                 autoStartWork = it[Keys.autoStartWorkKey] ?: false,
                 autoStartBreak = it[Keys.autoStartBreakKey] ?: false,
                 dndDuringWork = it[Keys.dndDuringWorkKey] ?: false,
-                persistedTimerData = it[Keys.currentTimerDataKey]?.let { c ->
-                    Json.decodeFromString<PersistedTimerData>(c)
-                } ?: PersistedTimerData()
+                labelName = it[Keys.labelNameKey],
+                longBreakData = it[Keys.longBreakDataKey]?.let { l ->
+                    Json.decodeFromString<LongBreakData>(l)
+                } ?: LongBreakData(),
+                breakBudgetData = it[Keys.breakBudgetDataKey]?.let { b ->
+                    Json.decodeFromString<BreakBudgetData>(b)
+                } ?: BreakBudgetData()
             )
         }.distinctUntilChanged()
 
@@ -119,7 +125,15 @@ class SettingsRepositoryImpl(
         dataStore.edit { it[Keys.dndDuringWorkKey] = enabled }
     }
 
-    override suspend fun savePersistedTimerData(timerData: PersistedTimerData) {
-        dataStore.edit { it[Keys.currentTimerDataKey] = Json.encodeToString(timerData) }
+    override suspend fun saveLabelName(labelName: String?) {
+        dataStore.edit { it[Keys.labelNameKey] = labelName ?: "" }
+    }
+
+    override suspend fun saveLongBreakData(longBreakData: LongBreakData) {
+        dataStore.edit { it[Keys.longBreakDataKey] = Json.encodeToString(longBreakData) }
+    }
+
+    override suspend fun saveBreakBudgetData(breakBudgetData: BreakBudgetData) {
+        dataStore.edit { it[Keys.breakBudgetDataKey] = Json.encodeToString(breakBudgetData) }
     }
 }

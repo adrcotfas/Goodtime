@@ -21,7 +21,10 @@ data class AppSettings(
     /** only valid with insistentNotification off and for countdown timers **/
     val autoStartBreak: Boolean = false,
     val dndDuringWork: Boolean = false,
-    val persistedTimerData: PersistedTimerData = PersistedTimerData()
+
+    val labelName: String? = null,
+    val longBreakData: LongBreakData = LongBreakData(),
+    val breakBudgetData: BreakBudgetData = BreakBudgetData()
 )
 
 @Serializable

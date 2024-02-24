@@ -10,6 +10,8 @@ import com.apps.adrcotfas.goodtime.data.local.LocalDataRepositoryImpl
 import com.apps.adrcotfas.goodtime.data.local.testDbConnection
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.TimerProfile
+import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
+import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.fakes.FakeEventListener
 import com.apps.adrcotfas.goodtime.fakes.FakeSettingsRepository
@@ -24,7 +26,9 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -43,6 +47,7 @@ class TimerManagerTest {
     private val logger = Logger(StaticConfig())
 
     private lateinit var finishedSessionsHandler: FinishedSessionsHandler
+    private lateinit var streakAndLongBreakHandler: StreakAndLongBreakHandler
 
     @BeforeTest
     fun setup() = runTest(testDispatcher) {
@@ -64,12 +69,19 @@ class TimerManagerTest {
             repo = localDataRepo,
             log = logger
         )
+
+        streakAndLongBreakHandler = StreakAndLongBreakHandler(
+            coroutineScope = testScope,
+            settingsRepo = settingsRepo,
+        )
+
         timerManager = TimerManager(
             localDataRepo = localDataRepo,
             settingsRepo = settingsRepo,
             listeners = listOf(fakeEventListener),
             timeProvider,
             finishedSessionsHandler,
+            streakAndLongBreakHandler,
             logger
         )
         testScope.launch { timerManager.init() }
@@ -79,20 +91,19 @@ class TimerManagerTest {
     @Test
     fun `Verify first run for default label and subsequently label changes`() = runTest {
         assertEquals(timerManager.timerData.value.label, defaultLabel)
-        val currentLabel = settingsRepo.settings.stateIn(testScope).value.persistedTimerData
 
-        settingsRepo.savePersistedTimerData(currentLabel.copy(labelName = CUSTOM_LABEL_NAME))
+        settingsRepo.saveLabelName(CUSTOM_LABEL_NAME)
         assertEquals(timerManager.timerData.value.label, dummyLabel)
         assertEquals(
-            timerManager.timerData.value.persistedTimerData,
-            currentLabel.copy(labelName = CUSTOM_LABEL_NAME)
+            timerManager.timerData.value.label!!.name,
+            CUSTOM_LABEL_NAME
         )
 
-        settingsRepo.savePersistedTimerData(currentLabel.copy(labelName = null))
+        settingsRepo.saveLabelName(null)
         assertEquals(timerManager.timerData.value.label, defaultLabel)
         assertEquals(
-            timerManager.timerData.value.persistedTimerData,
-            currentLabel.copy(labelName = null)
+            timerManager.timerData.value.label!!.name,
+            null
         )
 
         val newTimerProfile = TimerProfile().copy(isCountdown = false, workBreakRatio = 42)
@@ -102,6 +113,17 @@ class TimerManagerTest {
             newTimerProfile,
             "Modifying the label did not trigger an update"
         )
+    }
+
+    @Test
+    fun `Init persistent data only once`() = runTest {
+        val customLongBreakData = LongBreakData(10, 42)
+        settingsRepo.saveLongBreakData(customLongBreakData)
+        val customBreakBudgetData = BreakBudgetData(10, 42)
+        settingsRepo.saveBreakBudgetData(customBreakBudgetData)
+
+        assertNotEquals(timerManager.timerData.value.longBreakData, customLongBreakData)
+        assertNotEquals(timerManager.timerData.value.breakBudgetData, customBreakBudgetData)
     }
 
     @Test
@@ -263,6 +285,10 @@ class TimerManagerTest {
             timerManager.timerData.value,
             DomainTimerData(
                 label = defaultLabel,
+                longBreakData = LongBreakData(
+                    streak = 1,
+                    lastWorkEndTime = timeProvider.now
+                ),
                 startTime = 0,
                 lastStartTime = 0,
                 endTime = duration,
@@ -289,7 +315,13 @@ class TimerManagerTest {
         timerManager.reset()
         assertEquals(
             timerManager.timerData.value,
-            DomainTimerData(label = defaultLabel),
+            DomainTimerData(
+                label = defaultLabel,
+                longBreakData = LongBreakData(
+                    streak = 1,
+                    lastWorkEndTime = timeProvider.now
+                )
+            ),
             "the timer should have been reset"
         )
         assertEquals(
@@ -314,7 +346,13 @@ class TimerManagerTest {
         timerManager.reset()
         assertEquals(
             timerManager.timerData.value,
-            DomainTimerData(label = defaultLabel),
+            DomainTimerData(
+                label = defaultLabel,
+                longBreakData = LongBreakData(
+                    streak = 1,
+                    lastWorkEndTime = timeProvider.now
+                )
+            ),
             "the timer should have been reset"
         )
         assertEquals(
@@ -327,11 +365,133 @@ class TimerManagerTest {
     }
 
     @Test
-    fun `Change label from countdown to count-up while timer is running`() = runTest {
+    fun `Streak increments when interrupting a work session`() = runTest {
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 0)
         timerManager.start(TimerType.WORK)
-        val timerData = settingsRepo.settings.stateIn(testScope).value.persistedTimerData
-        settingsRepo.savePersistedTimerData(timerData.copy(labelName = CUSTOM_LABEL_NAME))
-        assertEquals(timerManager.timerData.value.label, dummyLabel)
+        timeProvider.elapsedRealtime += 1
+        timerManager.next()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
+        timeProvider.elapsedRealtime += 1
+        timerManager.reset()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
+        timerManager.start(TimerType.WORK)
+        timeProvider.elapsedRealtime += 1
+        timerManager.reset()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 2)
+        timerManager.start(TimerType.WORK)
+        timeProvider.elapsedRealtime += 1
+        timerManager.finish()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 3)
+    }
+
+    @Test
+    fun `Pausing for a long time is not considered idle time for streak`() = runTest {
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 0)
+        timerManager.start(TimerType.WORK)
+        timeProvider.elapsedRealtime += 1
+        timerManager.reset()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
+        timerManager.start(TimerType.WORK)
+        timerManager.pause()
+        val twoHours = 2.hours.inWholeMilliseconds
+        timeProvider.elapsedRealtime += twoHours
+        timerManager.resume()
+        timerManager.finish()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 2)
+    }
+
+
+    @Test
+    fun `Long break after 4 work sessions with finish and next`() = runTest {
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 0)
+        timerManager.start(TimerType.WORK)
+        val twoMinutes = 2.minutes.inWholeMilliseconds
+        timeProvider.elapsedRealtime += twoMinutes
+        timerManager.finish()
+        timerManager.next()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
+        assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
+        timerManager.next()
+        timeProvider.elapsedRealtime += twoMinutes
+        timerManager.finish()
+        timerManager.next()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 2)
+        assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
+        timerManager.next()
+        timeProvider.elapsedRealtime += twoMinutes
+        timerManager.finish()
+        timerManager.next()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 3)
+        assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
+        timerManager.next()
+        timeProvider.elapsedRealtime += twoMinutes
+        timerManager.finish()
+        timerManager.next()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 4)
+        assertEquals(timerManager.timerData.value.type, TimerType.LONG_BREAK)
+    }
+
+    @Test
+    fun `Long break after 4 work sessions with reset and next for the last`() = runTest {
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 0)
+        timerManager.start(TimerType.WORK)
+        val twoMinutes = 2.minutes.inWholeMilliseconds
+        timeProvider.elapsedRealtime += twoMinutes
+        timerManager.reset()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
+        timerManager.start(TimerType.WORK)
+        timeProvider.elapsedRealtime += twoMinutes
+        timerManager.reset()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 2)
+        timerManager.start(TimerType.WORK)
+        timeProvider.elapsedRealtime += twoMinutes
+        timerManager.reset()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 3)
+        timerManager.start(TimerType.WORK)
+        timeProvider.elapsedRealtime += twoMinutes
+        timerManager.next()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 4)
+        assertEquals(timerManager.timerData.value.type, TimerType.LONG_BREAK)
+    }
+
+    @Test
+    fun `No long break if idled`() = runTest {
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 0)
+        timerManager.start(TimerType.WORK)
+        val twoMinutes = 2.minutes.inWholeMilliseconds
+        timeProvider.elapsedRealtime += twoMinutes
+        timerManager.reset()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
+        timerManager.start(TimerType.WORK)
+        timeProvider.elapsedRealtime += twoMinutes
+        timerManager.reset()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 2)
+        timerManager.start(TimerType.WORK)
+        timeProvider.elapsedRealtime += twoMinutes
+        timeProvider.now += twoMinutes
+        timerManager.reset()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 3)
+        val oneHour = 1.hours.inWholeMilliseconds
+        timeProvider.elapsedRealtime += oneHour
+        timerManager.start(TimerType.WORK)
+        timeProvider.elapsedRealtime += twoMinutes
+        timerManager.next()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
+        assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
+    }
+
+    @Test
+    fun `Reset streak after idle`() = runTest {
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 0)
+        timerManager.start(TimerType.WORK)
+        val twoMinutes = 2.minutes.inWholeMilliseconds
+        timeProvider.elapsedRealtime += twoMinutes
+        timerManager.reset()
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
+        val oneHour = 1.hours.inWholeMilliseconds
+        timeProvider.elapsedRealtime += oneHour
+        timerManager.start(TimerType.WORK)
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 0)
     }
 
     companion object {

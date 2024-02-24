@@ -8,8 +8,10 @@ import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlin.math.max
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 
@@ -22,6 +24,7 @@ class TimerManager(
     private val listeners: List<EventListener>,
     private val timeProvider: TimeProvider,
     private val finishedSessionsHandler: FinishedSessionsHandler,
+    private val streakAndLongBreakHandler: StreakAndLongBreakHandler,
     private val log: Logger
 ) {
 
@@ -29,14 +32,27 @@ class TimerManager(
     val timerData: StateFlow<DomainTimerData> = _timerData
 
     suspend fun init() {
-        log.v { "Initializing TimerManager..." }
+        initPersistentData()
+        initAndObserveLabelChange()
+    }
+
+    private suspend fun initPersistentData() {
         settingsRepo.settings.map {
-            it.persistedTimerData
+            Pair(it.longBreakData, it.breakBudgetData)
+        }.first().let {
+            log.v { "new persistentData: $it" }
+            _timerData.value =
+                timerData.value.copy(longBreakData = it.first, breakBudgetData = it.second)
+        }
+    }
+
+    private suspend fun initAndObserveLabelChange() {
+        settingsRepo.settings.map {
+            it.labelName
         }.flatMapLatest {
-            _timerData.value.persistedTimerData = it
-            log.v { "new persistedTimerData: $it" }
-            it.labelName?.let { labelName ->
-                localDataRepo.selectLabelByName(labelName)
+            log.v { "new label from settingsRepo: $it" }
+            it?.let {
+                localDataRepo.selectLabelByName(it)
             } ?: localDataRepo.selectDefaultLabel()
         }.distinctUntilChanged().collect {
             _timerData.value = _timerData.value.copy(label = it)
@@ -61,12 +77,22 @@ class TimerManager(
             _timerData.value = _timerData.value.copy(
                 startTime = elapsedRealTime,
                 lastStartTime = elapsedRealTime,
-                endTime = _timerData.value.label!!.timerProfile.endTime(timerType, elapsedRealTime),
+                endTime = _timerData.value.label!!.timerProfile.endTime(
+                    timerType,
+                    elapsedRealTime
+                ),
                 type = timerType,
                 state = TimerState.RUNNING,
                 pausedTime = 0
             )
         }
+
+        // filter out the case when some time passes since the last work session
+        // preemptively reset the streak if the current work session cannot end in time
+        if (timerData.value.type == TimerType.WORK) {
+            resetStreakIfNeeded(timerData.value.endTime)
+        }
+
         log.v { "Starting timer: ${timerData.value}" }
         listeners.forEach { it.onEvent(Event.Start(timerData.value.endTime)) }
         //TODO:
@@ -108,15 +134,15 @@ class TimerManager(
         }
         val data = _timerData.value
         val elapsedRealTime = timeProvider.elapsedRealtime()
-        val durationToFinish = data.getDuration().minutes.inWholeMilliseconds
-        val timePaused =
+        val durationToFinish = data.getDuration()
+        val pausedTime =
             data.pausedTime + elapsedRealTime - (durationToFinish - data.remainingTimeAtPause)
         _timerData.value = data.copy(
             lastStartTime = elapsedRealTime,
             endTime = data.remainingTimeAtPause + elapsedRealTime,
             state = TimerState.RUNNING,
             remainingTimeAtPause = 0,
-            pausedTime = timePaused
+            pausedTime = pausedTime
         )
         log.v { "Resumed: ${timerData.value}" }
         listeners.forEach { it.onEvent(Event.Start(timerData.value.endTime)) }
@@ -125,12 +151,12 @@ class TimerManager(
     fun next(updateWorkTime: Boolean = false) {
         val data = timerData.value
         val state = data.state
-        val type = data.type
         if (state == TimerState.RESET) {
             log.e { "Trying to start the next session but the timer is reset" }
             return
         }
 
+        val isWork = data.type == TimerType.WORK
         val isFinished = state == TimerState.FINISHED
         val skippedSession = if (isFinished) {
             null
@@ -151,11 +177,22 @@ class TimerManager(
             }
         }
 
-        _timerData.value = _timerData.value.reset()
-        //TODO: compute if we need a long break
-        val nextType = if (type == TimerType.WORK) TimerType.BREAK else TimerType.WORK
-        log.v { "Next: $nextType" }
+        if (isWork && !isFinished) {
+            incrementStreak()
+        }
 
+        _timerData.value = _timerData.value.reset()
+
+        val nextType = if (isWork) {
+            if (shouldConsiderStreak(timeProvider.elapsedRealtime())) {
+                TimerType.LONG_BREAK
+            } else {
+                TimerType.BREAK
+            }
+        } else {
+            TimerType.WORK
+        }
+        log.v { "Next: $nextType" }
         start(nextType)
     }
 
@@ -178,7 +215,11 @@ class TimerManager(
         session?.let {
             finishedSessionsHandler.saveSession(it)
         } ?: log.e { "Should not happen: finished session was shorter than 1 minute" }
-        //TODO: update streak
+
+        if (data.type == TimerType.WORK) {
+            incrementStreak()
+        }
+
         listeners.forEach { it.onEvent(Event.Finished) }
         //TODO -toggle fullscreen
         // -toggle dnd mode
@@ -197,10 +238,13 @@ class TimerManager(
             log.w { "Trying to reset the timer when it is already reset" }
             return
         }
-
         log.v { "Reset: $data" }
+
+        val isFinished = data.state == TimerState.FINISHED
+        val isWork = data.type == TimerType.WORK
+
         val session =
-            if (data.state == TimerState.FINISHED && !updateWorkTime) null else createFinishedSession()
+            if (isFinished && !updateWorkTime) null else createFinishedSession()
         session?.let {
             if (updateWorkTime) {
                 finishedSessionsHandler.updateWorkTime(it)
@@ -208,7 +252,9 @@ class TimerManager(
                 finishedSessionsHandler.saveSession(it)
             }
         }
-        //TODO: update streak
+        if (isWork && !isFinished) {
+            incrementStreak()
+        }
         listeners.forEach { it.onEvent(Event.Reset) }
         _timerData.value = _timerData.value.reset()
     }
@@ -242,6 +288,55 @@ class TimerManager(
             data.label!!.name,
             isWork
         )
+    }
+
+    private fun incrementStreak() {
+        val data = timerData.value.longBreakData
+        val lastWorkEndTime = timeProvider.elapsedRealtime()
+        val newData = data.copy(
+            streak = data.streak + 1,
+            lastWorkEndTime = lastWorkEndTime
+        )
+        _timerData.value = timerData.value.copy(longBreakData = newData)
+        streakAndLongBreakHandler.incrementStreak(lastWorkEndTime)
+    }
+
+    //TODO: call this from the view when visible to make sure we have the latest data
+    fun resetStreakIfNeeded(millis: Long = timeProvider.elapsedRealtime()) {
+        if (!didLastWorkSessionFinishRecently(millis)) {
+            val newLongBreakData = timerData.value.longBreakData.copy(
+                streak = 0,
+                lastWorkEndTime = 0L
+            )
+            _timerData.value = _timerData.value.copy(longBreakData = newLongBreakData)
+            streakAndLongBreakHandler.resetStreak()
+        }
+    }
+
+    private fun shouldConsiderStreak(nextWorkEndTime: Long): Boolean {
+        val data = timerData.value
+        val label = data.label
+        if (label?.timerProfile?.isCountdown != true) return false
+
+        val streakForLongBreakIsReached =
+            (data.longBreakData.streak % label.timerProfile.sessionsBeforeLongBreak == 0)
+        return streakForLongBreakIsReached && didLastWorkSessionFinishRecently(
+            nextWorkEndTime
+        )
+    }
+
+    private fun didLastWorkSessionFinishRecently(workEndTime: Long): Boolean {
+        val data = timerData.value
+        val label = data.label
+        if (label?.timerProfile?.isCountdown != true) return false
+
+        val maxIdleTime = label.timerProfile.workDuration.minutes.inWholeMilliseconds +
+                label.timerProfile.breakDuration.minutes.inWholeMilliseconds +
+                30.minutes.inWholeMilliseconds
+        return data.longBreakData.lastWorkEndTime != 0L && max(
+            0,
+            workEndTime - data.longBreakData.lastWorkEndTime
+        ) < maxIdleTime
     }
 
     companion object {

@@ -7,6 +7,7 @@ import com.apps.adrcotfas.goodtime.bl.AlarmManagerHandler
 import com.apps.adrcotfas.goodtime.bl.EventListener
 import com.apps.adrcotfas.goodtime.bl.NotificationArchManager
 import com.apps.adrcotfas.goodtime.bl.TIMER_SERVICE_HANDLER
+import com.apps.adrcotfas.goodtime.bl.TimeProvider
 import com.apps.adrcotfas.goodtime.bl.TimerServiceHandler
 import com.apps.adrcotfas.goodtime.di.getWith
 import com.apps.adrcotfas.goodtime.di.insertKoin
@@ -24,7 +25,7 @@ class GoodtimeApplication : Application() {
                 viewModel { MainViewModel(get()) }
                 single<NotificationArchManager> {
                     NotificationArchManager(
-                        get(),
+                        get<Context>(),
                         MainActivity::class.java
                     )
                 }
@@ -33,8 +34,8 @@ class GoodtimeApplication : Application() {
                 }
                 single<EventListener>(named(EventListener.ALARM_MANAGER_HANDLER)) {
                     AlarmManagerHandler(
-                        get(),
-                        get(),
+                        get<Context>(),
+                        get<TimeProvider>(),
                         getWith(AlarmManagerHandler::class.simpleName)
                     )
                 }

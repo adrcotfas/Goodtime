@@ -6,17 +6,23 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 
 @Serializable
-data class PersistedTimerData(
-    val labelName: String? = null,
-    val streak: Int = 0,
-    val breakBudgetStart: Long = 0,
-    val breakBudget: Int = 0,
+data class BreakBudgetData(
+    val breakBudget: Int = 0, // minutes
+    val breakBudgetStart: Long = 0, // millis since boot
 ) {
-    fun computeRemainingBreakBudget(now: Long): Int {
+    fun getRemainingBreakBudget(now: Long): Int {
         val timeSinceBreakBudgetStart = now - breakBudgetStart
+        val breakBudgetMs = breakBudget.minutes.inWholeMilliseconds
         return max(
             0,
-            (breakBudget.minutes.inWholeMilliseconds - timeSinceBreakBudgetStart).milliseconds.inWholeMinutes.toInt()
+            (breakBudgetMs - timeSinceBreakBudgetStart).milliseconds.inWholeMinutes.toInt()
         )
-    }
+    } 
 }
+
+
+@Serializable
+data class LongBreakData(
+    val streak: Int = 0,
+    val lastWorkEndTime: Long = 0, // millis since boot
+)
