@@ -27,12 +27,13 @@ data class TimerProfile(
 
 /**
  * Returns the end time of the timer in milliseconds since Unix Epoch.
- * If the timer is not a countdown timer, returns 0.
+ * If the timer is not a work countdown timer, returns 0.
  * @param timerType the type of the timer
  * @param elapsedRealTime the elapsed real time in milliseconds since boot, including time spent in sleep
  */
 fun TimerProfile.endTime(timerType: TimerType, elapsedRealTime: Long): Long {
-    return if (isCountdown) {
+
+    return if (isCountdown || timerType == TimerType.BREAK) {
         elapsedRealTime + this.duration(timerType).minutes.inWholeMilliseconds
     } else 0
 }
