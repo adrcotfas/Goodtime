@@ -148,6 +148,7 @@ class SelectLabelDialog : DialogFragment() {
                     notifyLabelSelected(
                         Label(
                             mLabel,
+                            0, // TODO: Check if this 0 placeholder is placed correctly, or should I somehow get value of the "Chip"
                             ThemeHelper.getIndexOfColor(requireContext(), color)
                         )
                     )

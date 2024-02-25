@@ -67,6 +67,7 @@
     <string name="label_name">Label name</string>
     <string name="label_already_exists">Label already exists</string>
     <string name="label_select_color">Select color</string>
+    <string name="label_time">Pick daily time goal</string>
     <string name="label_delete_title">Delete label?</string>
     <string name="label_delete_message">Deleting this label will remove it from all finished sessions. The sessions will not be removed.</string>
     <string name="label_dialog_select">Select label</string>
@@ -102,6 +103,7 @@
     <string name="intro_get_started_description">"Stay focused, get rid of procrastination and improve your productivity."</string>
 
     <string name="dialog_close">Close</string>
+    <string name="dialog_time">Goal Time</string>
     <string name="dialog_delete">Delete</string>
     <string name="edit">Edit</string>
     <string name="upgrade">Upgrade</string>

@@ -13,6 +13,7 @@
 package com.apps.adrcotfas.goodtime.labels
 
 import android.annotation.SuppressLint
+import android.app.TimePickerDialog
 import android.content.Context
 import com.apps.adrcotfas.goodtime.labels.AddEditLabelActivity.Companion.labelIsGoodToAdd
 import com.apps.adrcotfas.goodtime.main.ItemTouchHelperAdapter
@@ -40,6 +41,7 @@ class AddEditLabelsAdapter(
 
     interface OnEditLabelListener {
         fun onEditColor(label: String, newColor: Int)
+        fun onEditTimeGoal(label: String, newTimeGoal: Int)
         fun onEditLabel(label: String, newLabel: String)
         fun onDeleteLabel(label: Label, position: Int)
         fun onLabelRearranged()
@@ -102,11 +104,13 @@ class AddEditLabelsAdapter(
         val labelIcon: ImageView = itemView.findViewById(R.id.label_icon)
         val imageLeft: ImageView = itemView.findViewById(R.id.image_left)
         private val imageRight: ImageView = itemView.findViewById(R.id.image_right)
+        val labelTimeSet: ImageView = itemView.findViewById(R.id.label_time_set)
         private val row: RelativeLayout = itemView.findViewById(R.id.dialog_edit_label_row)
         val scrollIconContainer: FrameLayout = itemView.findViewById(R.id.scroll_icon_container)
         private val imageLeftContainer: FrameLayout = itemView.findViewById(R.id.image_left_container)
         private val labelIconContainer: FrameLayout = itemView.findViewById(R.id.label_icon_container)
         private val imageRightContainer: FrameLayout = itemView.findViewById(R.id.image_right_container)
+        private val labelTimeSetContainer: FrameLayout = itemView.findViewById(R.id.label_time_set_container)
         private val imageDeleteContainer: FrameLayout = itemView.findViewById(R.id.image_delete_container)
 
         override fun onItemSelected() {
@@ -125,18 +129,13 @@ class AddEditLabelsAdapter(
             text.onFocusChangeListener = OnFocusChangeListener { _: View?, hasFocus: Boolean ->
 
                 // shrink the textView when we're in edit mode and the delete button appears
-                val params = text.layoutParams as RelativeLayout.LayoutParams
-                params.addRule(
-                    RelativeLayout.START_OF,
-                    if (hasFocus) R.id.image_delete_container else R.id.image_right_container
-                )
-                text.layoutParams = params
                 val position = bindingAdapterPosition
                 val crtLabel = labels[position]
                 labelIcon.setColorFilter(ThemeHelper.getColor(context.get()!!, crtLabel.colorId))
                 imageLeftContainer.visibility = if (hasFocus) View.VISIBLE else View.INVISIBLE
                 labelIconContainer.visibility = if (hasFocus) View.INVISIBLE else View.VISIBLE
                 imageDeleteContainer.visibility = if (hasFocus) View.VISIBLE else View.INVISIBLE
+                labelTimeSetContainer.visibility = if (hasFocus) View.INVISIBLE else View.VISIBLE
                 imageRight.setImageDrawable(
                     ContextCompat.getDrawable(
                         context.get()!!, if (hasFocus) R.drawable.ic_done else R.drawable.ic_edit
@@ -221,6 +220,15 @@ class AddEditLabelsAdapter(
                     crtLabel.colorId = ThemeHelper.getIndexOfColor(context.get()!!, c)
                 }, p)
                 dialog.setTitle(R.string.label_select_color)
+                dialog.show()
+            }
+
+            // changing the time goal of a label
+            labelTimeSetContainer.setOnClickListener {
+                val crtLabel = labels[bindingAdapterPosition]
+                val dialog = TimePickerDialog(context.get()!!, { _, hour, minute ->
+                    callback.onEditTimeGoal(crtLabel.title, hour * 60 + minute)
+                }, crtLabel.timeDailyGoal / 60, crtLabel.timeDailyGoal % 60, true)
                 dialog.show()
             }
 

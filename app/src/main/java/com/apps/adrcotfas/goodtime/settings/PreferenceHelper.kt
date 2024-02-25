@@ -67,6 +67,7 @@ class PreferenceHelper(val context: Context) {
         private const val WORK_STREAK = "pref_WORK_STREAK"
         private const val LAST_WORK_FINISHED_AT = "pref_last_work_finished_at"
         private const val CURRENT_SESSION_LABEL = "pref_current_session_label"
+        private const val CURRENT_SESSION_GOAL = "pref_current_session_goal"
         private const val CURRENT_SESSION_COLOR = "pref_current_session_color"
         private const val INTRO_SNACKBAR_STEP = "pref_intro_snackbar_step"
         private const val INTRO_ARCHIVE_LABEL = "pref_intro_archive_label"
@@ -193,12 +194,17 @@ class PreferenceHelper(val context: Context) {
                     CURRENT_SESSION_LABEL, ""
                 )!!,
             preferences.getInt(
+                CURRENT_SESSION_GOAL, 0
+            ),
+            preferences.getInt(
                 CURRENT_SESSION_COLOR, 0
             )
         )
         set(label) {
             preferences.edit()
                 .putString(CURRENT_SESSION_LABEL, label.title).apply()
+            preferences.edit()
+                .putInt(CURRENT_SESSION_GOAL, label.timeDailyGoal).apply()
             preferences.edit()
                 .putInt(CURRENT_SESSION_COLOR, label.colorId).apply()
         }

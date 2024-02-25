@@ -21,13 +21,16 @@ object Utils {
     fun getInstanceTotalLabel(context: Context): Label {
         return Label(
             context.getString(R.string.label_all),
+            0, // TODO: Check if this 0 is a correct default value, or should I get something here
             ThemeHelper.COLOR_INDEX_ALL_LABELS
         )
     }
 
     fun getInstanceUnlabeledLabel(context: Context): Label {
         return Label(
-            "unlabeled", ThemeHelper.getColor(
+            "unlabeled",
+            0,
+            ThemeHelper.getColor(
                 context,
                 ThemeHelper.COLOR_INDEX_UNLABELED
             )
@@ -38,6 +41,7 @@ object Utils {
         val randomColor = ThemeHelper.getPalette(context).indices.random()
         return Label(
             "",
+            0,
             randomColor
         )
     }

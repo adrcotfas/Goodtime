@@ -21,6 +21,9 @@ class Label(
     var title: String,
 
     @ColumnInfo(defaultValue = "0")
+    var timeDailyGoal: Int,
+
+    @ColumnInfo(defaultValue = "0")
     var colorId: Int) {
 
     @ColumnInfo(defaultValue = "0")

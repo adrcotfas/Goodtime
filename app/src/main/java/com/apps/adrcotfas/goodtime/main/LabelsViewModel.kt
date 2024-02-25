@@ -72,6 +72,12 @@ class LabelsViewModel @Inject constructor(
         }
     }
 
+    fun editLabelGoal(label: String, timeDailyGoal: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.editLabelGoal(label, timeDailyGoal)
+        }
+    }
+
     fun editLabelOrder(label: String, newOrder: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             dao.editLabelOrder(label, newOrder)
