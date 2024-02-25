@@ -12,7 +12,7 @@ class MainViewModel(
     val timerData = timerManager.timerData
 
     fun startTimer(type: TimerType) {
-        timerManager.start(TimerType.BREAK)
+        timerManager.start(type)
     }
 
     fun pauseTimer() {

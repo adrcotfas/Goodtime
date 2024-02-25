@@ -20,6 +20,9 @@ class AlarmManagerHandler(
         cancelAlarm()
         when (event) {
             is Event.Start -> {
+                if (event.endTime == 0L) {
+                    return
+                }
                 setAlarm(event.endTime)
             }
 
