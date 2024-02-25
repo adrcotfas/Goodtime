@@ -10,8 +10,11 @@ data class BreakBudgetData(
     val breakBudget: Int = 0, // minutes
     val breakBudgetStart: Long = 0, // millis since boot
 ) {
-    fun getRemainingBreakBudget(now: Long): Int {
-        val timeSinceBreakBudgetStart = now - breakBudgetStart
+    /**
+     * Returns the remaining break budget in minutes.
+     */
+    fun getRemainingBreakBudget(millis: Long): Int {
+        val timeSinceBreakBudgetStart = millis - breakBudgetStart
         val breakBudgetMs = breakBudget.minutes.inWholeMilliseconds
         return max(
             0,
@@ -19,7 +22,6 @@ data class BreakBudgetData(
         )
     } 
 }
-
 
 @Serializable
 data class LongBreakData(

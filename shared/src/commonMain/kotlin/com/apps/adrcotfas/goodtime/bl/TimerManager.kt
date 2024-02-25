@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
 import com.apps.adrcotfas.goodtime.data.model.Session
 import com.apps.adrcotfas.goodtime.data.model.endTime
+import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +26,7 @@ class TimerManager(
     private val timeProvider: TimeProvider,
     private val finishedSessionsHandler: FinishedSessionsHandler,
     private val streakAndLongBreakHandler: StreakAndLongBreakHandler,
+    private val breakBudgetHandler: BreakBudgetHandler,
     private val log: Logger
 ) {
 
@@ -40,7 +42,7 @@ class TimerManager(
         settingsRepo.settings.map {
             Pair(it.longBreakData, it.breakBudgetData)
         }.first().let {
-            log.v { "new persistentData: $it" }
+            log.i { "new persistentData: $it" }
             _timerData.value =
                 timerData.value.copy(longBreakData = it.first, breakBudgetData = it.second)
         }
@@ -49,14 +51,14 @@ class TimerManager(
     private suspend fun initAndObserveLabelChange() {
         settingsRepo.settings.map {
             it.labelName
-        }.flatMapLatest {
-            log.v { "new label from settingsRepo: $it" }
+        }.distinctUntilChanged().flatMapLatest {
+            log.i { "new label from settingsRepo: $it" }
             it?.let {
                 localDataRepo.selectLabelByName(it)
             } ?: localDataRepo.selectDefaultLabel()
         }.distinctUntilChanged().collect {
             _timerData.value = _timerData.value.copy(label = it)
-            log.v { "new label: ${it.name}" }
+            log.i { "new label: ${it.name}" }
         }
     }
 
@@ -88,17 +90,10 @@ class TimerManager(
             )
         }
 
-        // filter out the case when some time passes since the last work session
-        // preemptively reset the streak if the current work session cannot end in time
-        if (data.type == TimerType.WORK) {
-            resetStreakIfNeeded(timerData.value.endTime)
-        }
+        handlePersistentDataAtStart()
 
-        log.v { "Starting timer: ${timerData.value}" }
+        log.i { "Starting ${data.type} timer: $data" }
         listeners.forEach { it.onEvent(Event.Start(timerData.value.endTime)) }
-        //TODO:
-        // -toggle fullscreen
-        // -toggle dnd mode
     }
 
     fun addOneMinute() {
@@ -115,7 +110,7 @@ class TimerManager(
         _timerData.value = data.copy(
             endTime = data.endTime + 1.minutes.inWholeMilliseconds,
         )
-        log.v { "Added one minute" }
+        log.i { "Added one minute" }
         listeners.forEach { it.onEvent(Event.AddOneMinute(timerData.value.endTime)) }
     }
 
@@ -130,7 +125,7 @@ class TimerManager(
             remainingTimeAtPause = data.endTime - timeProvider.elapsedRealtime(),
             state = TimerState.PAUSED
         )
-        log.v { "Paused: ${timerData.value}" }
+        log.i { "Paused: ${timerData.value}" }
         listeners.forEach { it.onEvent(Event.Pause) }
     }
 
@@ -151,7 +146,7 @@ class TimerManager(
             remainingTimeAtPause = 0,
             pausedTime = pausedTime
         )
-        log.v { "Resumed: ${timerData.value}" }
+        log.i { "Resumed: ${timerData.value}" }
         listeners.forEach { it.onEvent(Event.Start(timerData.value.endTime)) }
     }
 
@@ -176,7 +171,7 @@ class TimerManager(
             shouldConsiderStreak(timeProvider.elapsedRealtime()) -> TimerType.LONG_BREAK
             else -> TimerType.BREAK
         }
-        log.v { "Next: $nextType" }
+        log.i { "Next: $nextType" }
         start(nextType)
     }
 
@@ -193,13 +188,11 @@ class TimerManager(
         _timerData.value = data.copy(
             state = TimerState.FINISHED
         )
-        log.v { "Finish: $data" }
+        log.i { "Finish: $data" }
 
         handleFinishedSession(isManualAction = false)
 
         listeners.forEach { it.onEvent(Event.Finished) }
-        //TODO -toggle fullscreen
-        // -toggle dnd mode
     }
 
     /**
@@ -215,12 +208,31 @@ class TimerManager(
             log.w { "Trying to reset the timer when it is already reset" }
             return
         }
-        log.v { "Reset: $data" }
+        log.i { "Reset: $data" }
 
         handleFinishedSession(updateWorkTime, isManualAction = true)
 
         listeners.forEach { it.onEvent(Event.Reset) }
         _timerData.value = _timerData.value.reset()
+    }
+
+    private fun handlePersistentDataAtStart() {
+        if (timerData.value.type == TimerType.WORK) {
+            // filter out the case when some time passes since the last work session
+            // preemptively reset the streak if the current work session cannot end in time
+            resetStreakIfNeeded(timerData.value.endTime)
+
+            // update the break budget if the timer is count-up
+            if (!timerData.value.label!!.timerProfile.isCountdown) {
+                val existingBudget =
+                    timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime())
+                val breakBudgetData = BreakBudgetData(existingBudget, 0)
+                _timerData.value = timerData.value.copy(
+                    breakBudgetData = breakBudgetData
+                )
+                breakBudgetHandler.updateBreakBudget(breakBudgetData)
+            }
+        }
     }
 
     private fun handleFinishedSession(updateWorkTime: Boolean = false, isManualAction: Boolean) {
@@ -232,11 +244,27 @@ class TimerManager(
 
         val session = createFinishedSession()
         session?.let {
-            run {
-                if (isFinished && updateWorkTime) {
-                    finishedSessionsHandler.updateSession(it)
-                } else if (!isFinished || (isFinished && !isManualAction)) {
-                    finishedSessionsHandler.saveSession(it)
+            if (isFinished && updateWorkTime) {
+                finishedSessionsHandler.updateSession(it)
+            } else if (!isFinished || (isFinished && !isManualAction)) {
+                finishedSessionsHandler.saveSession(it)
+            }
+
+            if (isWork && !isCountDown) {
+                val millis = timeProvider.elapsedRealtime()
+                if (data.breakBudgetData.breakBudgetStart == 0L) {
+                    val existingBudget = data.breakBudgetData.breakBudget
+                    val breakBudgetData = BreakBudgetData(
+                        data.getBreakBudget(session.duration.toInt()) + existingBudget,
+                        millis
+                    )
+                    log.i { "Updating breakBudget: $breakBudgetData" }
+                    _timerData.value = data.copy(
+                        breakBudgetData = breakBudgetData
+                    )
+                    breakBudgetHandler.updateBreakBudget(breakBudgetData)
+                } else {
+                    log.e { "The breakBudgetStart should be 0 at this point" }
                 }
             }
         }

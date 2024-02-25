@@ -36,7 +36,7 @@ class FinishedSessionsHandler(
     }
 
     fun saveSession(session: Session) {
-        log.v { "Saving session to stats: $session" }
+        log.i { "Saving session to stats: $session" }
         coroutineScope.launch {
             repo.insertSession(session)
         }

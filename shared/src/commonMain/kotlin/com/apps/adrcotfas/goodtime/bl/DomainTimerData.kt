@@ -37,6 +37,14 @@ data class DomainTimerData(
     )
 
     fun getDuration() = (label?.timerProfile?.duration(type) ?: 0).minutes.inWholeMilliseconds
+
+    fun getBreakBudget(workDuration: Int): Int {
+        return if (label == null || label.timerProfile.isCountdown) {
+            0
+        } else {
+            workDuration / label.timerProfile.workBreakRatio
+        }
+    }
 }
 
 enum class TimerState {

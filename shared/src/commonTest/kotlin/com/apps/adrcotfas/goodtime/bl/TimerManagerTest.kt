@@ -18,7 +18,6 @@ import com.apps.adrcotfas.goodtime.fakes.FakeSettingsRepository
 import com.apps.adrcotfas.goodtime.fakes.FakeTimeProvider
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -29,6 +28,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -48,6 +48,7 @@ class TimerManagerTest {
 
     private lateinit var finishedSessionsHandler: FinishedSessionsHandler
     private lateinit var streakAndLongBreakHandler: StreakAndLongBreakHandler
+    private lateinit var breakBudgetHandler: BreakBudgetHandler
 
     @BeforeTest
     fun setup() = runTest(testDispatcher) {
@@ -75,6 +76,11 @@ class TimerManagerTest {
             settingsRepo = settingsRepo,
         )
 
+        breakBudgetHandler = BreakBudgetHandler(
+            coroutineScope = testScope,
+            settingsRepo = settingsRepo
+        )
+
         timerManager = TimerManager(
             localDataRepo = localDataRepo,
             settingsRepo = settingsRepo,
@@ -82,6 +88,7 @@ class TimerManagerTest {
             timeProvider,
             finishedSessionsHandler,
             streakAndLongBreakHandler,
+            breakBudgetHandler,
             logger
         )
         testScope.launch { timerManager.init() }
@@ -494,6 +501,82 @@ class TimerManagerTest {
         assertEquals(timerManager.timerData.value.longBreakData.streak, 0)
     }
 
+    @Test
+    fun `Count-up work then count-down the break budget`() = runTest {
+        localDataRepo.insertLabel(countUpLabel)
+        settingsRepo.saveLabelName(countUpLabel.name)
+
+        timerManager.start(TimerType.WORK)
+        val halfHour = 30.minutes.inWholeMilliseconds
+        val expectedBreakBudget =
+            halfHour.milliseconds.inWholeMinutes.toInt() / countUpLabel.timerProfile.workBreakRatio
+        timeProvider.elapsedRealtime += halfHour
+        timeProvider.now += halfHour
+
+        timerManager.next()
+        assertEquals(
+            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(
+                timeProvider.elapsedRealtime
+            ), expectedBreakBudget
+        )
+        assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
+        timeProvider.elapsedRealtime += expectedBreakBudget.minutes.inWholeMilliseconds
+        timeProvider.now += expectedBreakBudget.minutes.inWholeMilliseconds
+        timerManager.next()
+        assertEquals(
+            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(
+                timeProvider.elapsedRealtime
+            ), 0
+        )
+        assertEquals(timerManager.timerData.value.type, TimerType.WORK)
+    }
+
+    @Test
+    fun `Count-up then reset then wait for a while to start another count-up`() =
+        runTest {
+            localDataRepo.insertLabel(countUpLabel)
+            settingsRepo.saveLabelName(countUpLabel.name)
+
+            timerManager.start()
+            val workTime = 12.minutes.inWholeMilliseconds
+            timeProvider.elapsedRealtime += workTime
+            timeProvider.now += workTime
+            var expectedBreakBudget =
+                workTime.milliseconds.inWholeMinutes.toInt() / countUpLabel.timerProfile.workBreakRatio
+
+            timerManager.reset()
+            assertEquals(
+                timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(
+                    timeProvider.elapsedRealtime
+                ), expectedBreakBudget
+            )
+
+            val idleTime = 3.minutes.inWholeMilliseconds
+            timeProvider.elapsedRealtime += idleTime
+            timeProvider.now += idleTime
+            expectedBreakBudget -= idleTime.milliseconds.inWholeMinutes.toInt()
+            assertEquals(
+                timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(
+                    timeProvider.elapsedRealtime
+                ), expectedBreakBudget, "The break budget should have decreased while idling"
+            )
+
+            timerManager.start(TimerType.WORK)
+            timeProvider.elapsedRealtime += workTime
+            timeProvider.now += workTime
+            timerManager.reset()
+            val extraBreakBudget =
+                workTime.milliseconds.inWholeMinutes.toInt() / countUpLabel.timerProfile.workBreakRatio
+
+            assertEquals(
+                timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(
+                    timeProvider.elapsedRealtime
+                ),
+                expectedBreakBudget + extraBreakBudget,
+                "The previous unused break budget should have been added to the total"
+            )
+        }
+
     companion object {
         private const val CUSTOM_LABEL_NAME = "dummy"
         private val dummyTimerProfile = TimerProfile().copy(isCountdown = false, workBreakRatio = 5)
@@ -501,5 +584,10 @@ class TimerManagerTest {
         private var defaultLabel = Label()
         private var dummyLabel =
             Label().copy(name = CUSTOM_LABEL_NAME, timerProfile = dummyTimerProfile)
+
+        private val countUpLabel = Label(
+            name = "flow",
+            timerProfile = TimerProfile(isCountdown = false, workBreakRatio = 3)
+        )
     }
 }
