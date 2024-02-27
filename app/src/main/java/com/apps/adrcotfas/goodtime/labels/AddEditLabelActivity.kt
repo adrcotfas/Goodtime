@@ -170,7 +170,7 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
         viewModel.editLabelName(label, newLabel)
         val crtLabel = preferenceHelper.currentSessionLabel
         if (crtLabel.title == label) {
-            preferenceHelper.currentSessionLabel = Label(newLabel, crtLabel.colorId)
+            preferenceHelper.currentSessionLabel = Label(newLabel, crtLabel.colorId, crtLabel.timeDailyGoal)
         }
     }
 
@@ -178,7 +178,15 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
         viewModel.editLabelColor(label, newColor)
         val crtLabel = preferenceHelper.currentSessionLabel
         if (crtLabel.title != "" && crtLabel.title == label) {
-            preferenceHelper.currentSessionLabel = Label(label, newColor)
+            preferenceHelper.currentSessionLabel = Label(label, newColor, crtLabel.timeDailyGoal)
+        }
+    }
+
+    override fun onEditTimeGoal(label: String, newTimeGoal: Int) {
+        viewModel.editLabelGoal(label, newTimeGoal)
+        val crtLabel = preferenceHelper.currentSessionLabel
+        if (crtLabel.title != "" && crtLabel.title == label) {
+            preferenceHelper.currentSessionLabel = Label(label, crtLabel.colorId, newTimeGoal)
         }
     }
 
@@ -188,7 +196,9 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
         if (label.archived && crtLabel.title != "" && crtLabel.title == label.title) {
             currentSessionManager.currentSession.setLabel("")
             preferenceHelper.currentSessionLabel = Label(
-                "", ThemeHelper.getColor(
+                "",
+                0,
+                ThemeHelper.getColor(
                     this,
                     ThemeHelper.COLOR_INDEX_UNLABELED
                 )
@@ -245,7 +255,9 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
         // the label attached to the current session was deleted
         if (label.title == preferenceHelper.currentSessionLabel.title) {
             preferenceHelper.currentSessionLabel = Label(
-                "", ThemeHelper.getColor(
+                "",
+                0,
+                ThemeHelper.getColor(
                     this,
                     ThemeHelper.COLOR_INDEX_UNLABELED
                 )
@@ -276,14 +288,16 @@ class AddEditLabelActivity : AppCompatActivity(), OnEditLabelListener {
 
     private fun addLabel() {
         labelToAdd =
-            Label(addLabelView.text.toString().trim { it <= ' ' }, labelToAdd.colorId)
+            Label(addLabelView.text.toString().trim { it <= ' ' }, labelToAdd.timeDailyGoal, labelToAdd.colorId)
         if (labelIsGoodToAdd(this, labels, labelToAdd.title, "")) {
             labels.add(labelToAdd)
             adapter.notifyItemInserted(labels.size)
             recyclerView.scrollToPosition(labels.size - 1)
             viewModel.addLabel(labelToAdd)
             labelToAdd = Label(
-                "", ThemeHelper.getColor(
+                "",
+                0,
+                ThemeHelper.getColor(
                     this,
                     ThemeHelper.COLOR_INDEX_UNLABELED
                 )
