@@ -8,7 +8,7 @@ import com.apps.adrcotfas.goodtime.bl.EventListener
 import com.apps.adrcotfas.goodtime.bl.NotificationArchManager
 import com.apps.adrcotfas.goodtime.bl.TIMER_SERVICE_HANDLER
 import com.apps.adrcotfas.goodtime.bl.TimeProvider
-import com.apps.adrcotfas.goodtime.bl.TimerServiceHandler
+import com.apps.adrcotfas.goodtime.bl.TimerServiceStarter
 import com.apps.adrcotfas.goodtime.di.getWith
 import com.apps.adrcotfas.goodtime.di.insertKoin
 import com.apps.adrcotfas.goodtime.viewmodel.MainViewModel
@@ -30,7 +30,7 @@ class GoodtimeApplication : Application() {
                     )
                 }
                 single<EventListener>(named(EventListener.TIMER_SERVICE_HANDLER)) {
-                    TimerServiceHandler(get())
+                    TimerServiceStarter(get())
                 }
                 single<EventListener>(named(EventListener.ALARM_MANAGER_HANDLER)) {
                     AlarmManagerHandler(

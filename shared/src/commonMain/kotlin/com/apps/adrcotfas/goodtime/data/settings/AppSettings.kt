@@ -25,6 +25,11 @@ data class AppSettings(
     val labelName: String? = null,
     val longBreakData: LongBreakData = LongBreakData(),
     val breakBudgetData: BreakBudgetData = BreakBudgetData()
+    //TODO: consider the following
+    // - workday start
+    // - first day of the week
+    // - language
+    // - timer font and size
 )
 
 @Serializable
