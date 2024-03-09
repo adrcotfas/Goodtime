@@ -65,35 +65,35 @@ class NotificationArchManager(private val context: Context, private val activity
                 if (running) {
                     val pauseAction = createNotificationAction(
                         title = "Pause",
-                        action = TimerService.BUTTON_ACTION_PAUSE
+                        action = TimerService.Companion.Action.Pause
                     )
                     builder.addAction(pauseAction)
                     val addOneMinuteAction = createNotificationAction(
                         title = "+1 min",
-                        action = TimerService.BUTTON_ACTION_ADD_ONE_MIN
+                        action = TimerService.Companion.Action.AddOneMinute
                     )
                     builder.addAction(addOneMinuteAction)
                 } else {
                     val resumeAction = createNotificationAction(
                         title = "Resume",
-                        action = TimerService.BUTTON_ACTION_RESUME
+                        action = TimerService.Companion.Action.Resume
                     )
                     builder.addAction(resumeAction)
                     val stopAction = createNotificationAction(
                         title = "Stop",
-                        action = TimerService.BUTTON_ACTION_RESET
+                        action = TimerService.Companion.Action.Reset
                     )
                     builder.addAction(stopAction)
                 }
             } else {
                 val stopAction = createNotificationAction(
                     title = "Stop",
-                    action = TimerService.BUTTON_ACTION_RESET
+                    action = TimerService.Companion.Action.Reset
                 )
                 builder.addAction(stopAction)
                 val addOneMinuteAction = createNotificationAction(
                     title = "+1 min",
-                    action = TimerService.BUTTON_ACTION_ADD_ONE_MIN
+                    action = TimerService.Companion.Action.AddOneMinute
                 )
                 builder.addAction(addOneMinuteAction)
             }
@@ -104,7 +104,7 @@ class NotificationArchManager(private val context: Context, private val activity
             }
             val nextAction = createNotificationAction(
                 title = nextActionTitle,
-                action = TimerService.BUTTON_ACTION_NEXT
+                action = TimerService.Companion.Action.Next
             )
             builder.addAction(nextAction)
         }
@@ -141,7 +141,7 @@ class NotificationArchManager(private val context: Context, private val activity
         }
         val nextAction = createNotificationAction(
             title = nextActionTitle,
-            action = TimerService.BUTTON_ACTION_NEXT
+            action = TimerService.Companion.Action.Next
         )
         val extender = NotificationCompat.WearableExtender()
         extender.addAction(nextAction)
@@ -196,7 +196,7 @@ class NotificationArchManager(private val context: Context, private val activity
     private fun createNotificationAction(
         icon: IconCompat? = null,
         title: String,
-        action: String
+        action: TimerService.Companion.Action
     ): NotificationCompat.Action {
         return NotificationCompat.Action.Builder(
             icon,
