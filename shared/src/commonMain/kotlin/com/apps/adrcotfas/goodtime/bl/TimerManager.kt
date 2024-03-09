@@ -33,9 +33,13 @@ class TimerManager(
     private val _timerData: MutableStateFlow<DomainTimerData> = MutableStateFlow(DomainTimerData())
     val timerData: StateFlow<DomainTimerData> = _timerData
 
+    private var autoStartWork = false
+    private var autoStartBreak = false
+
     suspend fun init() {
         initPersistentData()
         initAndObserveLabelChange()
+        observeSettings()
     }
 
     private suspend fun initPersistentData() {
@@ -60,6 +64,14 @@ class TimerManager(
             _timerData.value = _timerData.value.copy(label = it)
             log.i { "new label: ${it.name}" }
         }
+    }
+
+    private suspend fun observeSettings() {
+        settingsRepo.settings.map { Pair(it.autoStartWork, it.autoStartBreak) }
+            .distinctUntilChanged().collect {
+                autoStartWork = it.first
+                autoStartBreak = it.second
+            }
     }
 
     fun start(timerType: TimerType = timerData.value.type) {
@@ -192,7 +204,13 @@ class TimerManager(
 
         handleFinishedSession(isManualAction = false)
 
-        listeners.forEach { it.onEvent(Event.Finished) }
+        val autoStart =
+            autoStartWork && data.type == TimerType.WORK || autoStartBreak && data.type != TimerType.WORK
+
+        listeners.forEach { it.onEvent(Event.Finished(autoStart)) }
+        if (autoStart) {
+            next()
+        }
     }
 
     /**

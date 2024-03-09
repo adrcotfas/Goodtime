@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.goodtime.bl
 
 import android.content.Context
+import com.apps.adrcotfas.goodtime.bl.TimerService.Companion.Action
 
 class TimerServiceStarter(private val context: Context) : EventListener {
     override fun onEvent(event: Event) {
@@ -8,12 +9,12 @@ class TimerServiceStarter(private val context: Context) : EventListener {
             is Event.Start -> startService()
             is Event.Pause -> startService()
             is Event.AddOneMinute -> startService()
-            is Event.Reset -> startService(TimerService.ACTION_RESET)
-            is Event.Finished -> startService(TimerService.ACTION_FINISHED)
+            is Event.Reset -> startService(Action.Reset)
+            is Event.Finished -> startServiceWithFinished(event.autostartNextSession)
         }
     }
 
-    private fun startService(action: String = TimerService.ACTION_START_OR_UPDATE) {
+    private fun startService(action: Action = Action.StartOrUpdate) {
         context.startService(
             TimerService.createIntentWithAction(
                 context,
@@ -22,4 +23,12 @@ class TimerServiceStarter(private val context: Context) : EventListener {
         )
     }
 
+    private fun startServiceWithFinished(autoStart: Boolean) {
+        context.startService(
+            TimerService.createFinishEvent(
+                context,
+                autoStart
+            )
+        )
+    }
 }
