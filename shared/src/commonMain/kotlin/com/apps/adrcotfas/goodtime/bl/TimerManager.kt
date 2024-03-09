@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
 import com.apps.adrcotfas.goodtime.data.model.Session
 import com.apps.adrcotfas.goodtime.data.model.endTime
+import com.apps.adrcotfas.goodtime.data.settings.AppSettings
 import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,15 +32,13 @@ class TimerManager(
 ) {
 
     private val _timerData: MutableStateFlow<DomainTimerData> = MutableStateFlow(DomainTimerData())
-    val timerData: StateFlow<DomainTimerData> = _timerData
+    private lateinit var settings: AppSettings
 
-    private var autoStartWork = false
-    private var autoStartBreak = false
+    val timerData: StateFlow<DomainTimerData> = _timerData
 
     suspend fun init() {
         initPersistentData()
         initAndObserveLabelChange()
-        observeSettings()
     }
 
     private suspend fun initPersistentData() {
@@ -54,6 +53,7 @@ class TimerManager(
 
     private suspend fun initAndObserveLabelChange() {
         settingsRepo.settings.map {
+            settings = it
             it.labelName
         }.distinctUntilChanged().flatMapLatest {
             log.i { "new label from settingsRepo: $it" }
@@ -64,14 +64,6 @@ class TimerManager(
             _timerData.value = _timerData.value.copy(label = it)
             log.i { "new label: ${it.name}" }
         }
-    }
-
-    private suspend fun observeSettings() {
-        settingsRepo.settings.map { Pair(it.autoStartWork, it.autoStartBreak) }
-            .distinctUntilChanged().collect {
-                autoStartWork = it.first
-                autoStartBreak = it.second
-            }
     }
 
     fun start(timerType: TimerType = timerData.value.type) {
@@ -204,9 +196,9 @@ class TimerManager(
 
         handleFinishedSession(isManualAction = false)
 
-        val autoStart =
-            autoStartWork && data.type == TimerType.WORK || autoStartBreak && data.type != TimerType.WORK
-
+        val autoStart = settings.autoStartWork && data.type != TimerType.WORK
+                || settings.autoStartBreak && data.type == TimerType.WORK
+        log.i { "AutoStart: $autoStart" }
         listeners.forEach { it.onEvent(Event.Finished(autoStart)) }
         if (autoStart) {
             next()

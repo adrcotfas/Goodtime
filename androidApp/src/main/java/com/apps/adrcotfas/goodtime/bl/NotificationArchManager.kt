@@ -81,14 +81,14 @@ class NotificationArchManager(private val context: Context, private val activity
                     builder.addAction(resumeAction)
                     val stopAction = createNotificationAction(
                         title = "Stop",
-                        action = TimerService.Companion.Action.Reset
+                        action = TimerService.Companion.Action.DoReset
                     )
                     builder.addAction(stopAction)
                 }
             } else {
                 val stopAction = createNotificationAction(
                     title = "Stop",
-                    action = TimerService.Companion.Action.Reset
+                    action = TimerService.Companion.Action.DoReset
                 )
                 builder.addAction(stopAction)
                 val addOneMinuteAction = createNotificationAction(
@@ -111,7 +111,7 @@ class NotificationArchManager(private val context: Context, private val activity
         return builder.build()
     }
 
-    fun notifyFinished(data: DomainTimerData) {
+    fun notifyFinished(data: DomainTimerData, withActions: Boolean) {
         val timerType = data.type
         val labelName = data.label?.name
 
@@ -132,22 +132,28 @@ class NotificationArchManager(private val context: Context, private val activity
             setAutoCancel(true)
             setStyle(NotificationCompat.DecoratedCustomViewStyle())
             setContentTitle(stateText)
-            setContentText("Continue?")
         }
-        val nextActionTitle = if (timerType == TimerType.WORK) {
-            "Start break"
-        } else {
-            "Start work"
-        }
-        val nextAction = createNotificationAction(
-            title = nextActionTitle,
-            action = TimerService.Companion.Action.Next
-        )
         val extender = NotificationCompat.WearableExtender()
-        extender.addAction(nextAction)
-        builder.addAction(nextAction)
+        if (withActions) {
+            builder.setContentText("Continue?")
+            val nextActionTitle = if (timerType == TimerType.WORK) {
+                "Start break"
+            } else {
+                "Start work"
+            }
+            val nextAction = createNotificationAction(
+                title = nextActionTitle,
+                action = TimerService.Companion.Action.Next
+            )
+            extender.addAction(nextAction)
+            builder.addAction(nextAction)
+        }
         builder.extend(extender)
-        notificationManager.notify(NOTIFICATION_ID, builder.build())
+        notificationManager.notify(FINISHED_NOTIFICATION_ID, builder.build())
+    }
+    
+    fun clearFinishedNotification() {
+        notificationManager.cancel(FINISHED_NOTIFICATION_ID)
     }
 
     private fun createNotificationChannel() {
@@ -212,6 +218,7 @@ class NotificationArchManager(private val context: Context, private val activity
 
     companion object {
         const val CHANNEL_ID = "goodtime.notification"
-        const val NOTIFICATION_ID = 42
+        const val IN_PROGRESS_NOTIFICATION_ID = 42
+        const val FINISHED_NOTIFICATION_ID = 43
     }
 }

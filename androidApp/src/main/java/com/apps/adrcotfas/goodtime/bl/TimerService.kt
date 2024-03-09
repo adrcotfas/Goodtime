@@ -3,44 +3,55 @@ package com.apps.adrcotfas.goodtime.bl
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import org.koin.java.KoinJavaComponent.inject
+import co.touchlab.kermit.Logger
+import com.apps.adrcotfas.goodtime.di.injectLogger
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class TimerService : Service() {
+class TimerService : Service(), KoinComponent {
 
-    private val notificationManager: NotificationArchManager by inject(NotificationArchManager::class.java)
-    private val timerManager: TimerManager by inject(TimerManager::class.java)
+    private val notificationManager: NotificationArchManager by inject()
+    private val timerManager: TimerManager by inject()
+    private val log: Logger by injectLogger("TimerService")
 
     override fun onBind(intent: Intent?) = null
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val data = timerManager.timerData.value
+        log.i { "onStartCommand: ${intent.action}" }
         when (intent.action) {
             Action.StartOrUpdate.name -> {
+                notificationManager.clearFinishedNotification()
                 startForeground(
-                    NotificationArchManager.NOTIFICATION_ID,
+                    NotificationArchManager.IN_PROGRESS_NOTIFICATION_ID,
                     notificationManager.buildInProgressNotification(data)
                 )
             }
+
             Action.Reset.name -> {
                 //TODO: test on minimum SDK version too
+                notificationManager.clearFinishedNotification()
                 stopForeground(STOP_FOREGROUND_REMOVE)
                 stopSelf()
-                timerManager.reset()
                 return START_NOT_STICKY
             }
+
             Action.Finished.name -> {
-                stopForeground(STOP_FOREGROUND_REMOVE)
-                stopSelf()
                 val autoStart = intent.getBooleanExtra(EXTRA_FINISHED_AUTOSTART, false)
                 if (!autoStart) {
-                    notificationManager.notifyFinished(data)
+                    stopForeground(STOP_FOREGROUND_REMOVE)
+                    stopSelf()
                 }
+                notificationManager.notifyFinished(data, withActions = !autoStart)
                 return START_NOT_STICKY
             }
+
+            // actions triggered from the notification itself
             Action.Pause.name -> timerManager.pause()
             Action.Resume.name -> timerManager.start()
             Action.AddOneMinute.name -> timerManager.addOneMinute()
             Action.Next.name -> timerManager.next()
+            Action.DoReset.name -> timerManager.reset()
         }
 
         return START_STICKY
@@ -51,10 +62,13 @@ class TimerService : Service() {
             StartOrUpdate,
             Reset,
             Finished,
+
+            // actions triggered from the notification itself
             Pause,
             Resume,
             AddOneMinute,
-            Next
+            Next,
+            DoReset
         }
 
         private const val EXTRA_FINISHED_AUTOSTART = "EXTRA_FINISHED_AUTOSTART"

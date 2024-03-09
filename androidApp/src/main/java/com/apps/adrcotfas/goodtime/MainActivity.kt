@@ -18,16 +18,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.lifecycleScope
 import co.touchlab.kermit.Logger
-import com.apps.adrcotfas.goodtime.di.injectLogger
 import com.apps.adrcotfas.goodtime.bl.TimerType
+import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
+import com.apps.adrcotfas.goodtime.di.injectLogger
 import com.apps.adrcotfas.goodtime.viewmodel.MainViewModel
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class MainActivity : ComponentActivity(), KoinComponent {
 
-    private val log : Logger by injectLogger("MainActivity")
+    private val log: Logger by injectLogger("MainActivity")
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -35,8 +39,15 @@ class MainActivity : ComponentActivity(), KoinComponent {
 
     private val viewModel: MainViewModel by viewModel()
 
+    private val settingsRepository: SettingsRepository by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        lifecycleScope.launch {
+            settingsRepository.saveAutoStartBreak(false)
+            settingsRepository.saveAutoStartWork(true)
+        }
 
         setContent {
             LaunchedEffect(savedInstanceState) {
