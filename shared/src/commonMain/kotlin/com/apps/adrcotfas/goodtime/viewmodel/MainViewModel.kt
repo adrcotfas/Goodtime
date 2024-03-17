@@ -4,8 +4,6 @@ import com.apps.adrcotfas.goodtime.bl.TimerManager
 import com.apps.adrcotfas.goodtime.bl.TimerType
 
 
-//TODO: I don't need this one; the view can communicate directly to the TimerManager
-//TODO: but I do need a viewmodel for stats and labels screens
 class MainViewModel(
     private val timerManager: TimerManager,
 ) : ViewModel() {

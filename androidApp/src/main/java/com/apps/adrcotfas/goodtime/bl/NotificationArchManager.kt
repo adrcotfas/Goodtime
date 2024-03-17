@@ -151,15 +151,14 @@ class NotificationArchManager(private val context: Context, private val activity
         builder.extend(extender)
         notificationManager.notify(FINISHED_NOTIFICATION_ID, builder.build())
     }
-    
+
     fun clearFinishedNotification() {
         notificationManager.cancel(FINISHED_NOTIFICATION_ID)
     }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name =
-                "Goodtime Notifications"
+            val name = "Goodtime Notifications"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC

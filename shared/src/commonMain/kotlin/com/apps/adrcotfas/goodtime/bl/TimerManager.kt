@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlin.math.max
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
@@ -46,8 +47,9 @@ class TimerManager(
             Pair(it.longBreakData, it.breakBudgetData)
         }.first().let {
             log.i { "new persistentData: $it" }
-            _timerData.value =
-                timerData.value.copy(longBreakData = it.first, breakBudgetData = it.second)
+            _timerData.update { data ->
+                data.copy(longBreakData = it.first, breakBudgetData = it.second)
+            }
         }
     }
 
@@ -61,42 +63,45 @@ class TimerManager(
                 localDataRepo.selectLabelByName(it)
             } ?: localDataRepo.selectDefaultLabel()
         }.distinctUntilChanged().collect {
-            _timerData.value = _timerData.value.copy(label = it)
+            _timerData.update { data -> data.copy(label = it) }
             log.i { "new label: ${it.name}" }
         }
     }
 
     fun start(timerType: TimerType = timerData.value.type) {
-        val data = timerData.value
-        if (data.label == null) {
+        if (timerData.value.label == null) {
             log.e { "Trying to start the timer without a label" }
             return
         }
 
         val elapsedRealTime = timeProvider.elapsedRealtime()
-        if (data.state == TimerState.PAUSED) {
-            _timerData.value = data.copy(
-                lastStartTime = elapsedRealTime,
-                endTime = elapsedRealTime + _timerData.value.remainingTimeAtPause,
-                state = TimerState.RUNNING
-            )
+        if (timerData.value.state == TimerState.PAUSED) {
+            _timerData.update {
+                it.copy(
+                    lastStartTime = elapsedRealTime,
+                    endTime = elapsedRealTime + it.remainingTimeAtPause,
+                    state = TimerState.RUNNING
+                )
+            }
         } else {
-            _timerData.value = data.copy(
-                startTime = elapsedRealTime,
-                lastStartTime = elapsedRealTime,
-                endTime = data.label.timerProfile.endTime(
-                    timerType,
-                    elapsedRealTime
-                ),
-                type = timerType,
-                state = TimerState.RUNNING,
-                pausedTime = 0
-            )
+            _timerData.update {
+                it.copy(
+                    startTime = elapsedRealTime,
+                    lastStartTime = elapsedRealTime,
+                    endTime = it.label!!.timerProfile.endTime(
+                        timerType,
+                        elapsedRealTime
+                    ),
+                    type = timerType,
+                    state = TimerState.RUNNING,
+                    pausedTime = 0
+                )
+            }
         }
 
         handlePersistentDataAtStart()
 
-        log.i { "Starting ${data.type} timer: $data" }
+        log.i { "Starting $timerType timer: ${timerData.value}" }
         listeners.forEach { it.onEvent(Event.Start(timerData.value.endTime)) }
     }
 
@@ -111,45 +116,50 @@ class TimerManager(
             return
         }
 
-        _timerData.value = data.copy(
-            endTime = data.endTime + 1.minutes.inWholeMilliseconds,
-        )
+        _timerData.update {
+            it.copy(
+                endTime = it.endTime + 1.minutes.inWholeMilliseconds,
+            )
+        }
         log.i { "Added one minute" }
         listeners.forEach { it.onEvent(Event.AddOneMinute(timerData.value.endTime)) }
     }
 
     fun pause() {
-        val data = _timerData.value
-        if (data.state != TimerState.RUNNING) {
+        if (timerData.value.state != TimerState.RUNNING) {
             log.e { "Trying to pause the timer when it is not running" }
             return
         }
 
-        _timerData.value = data.copy(
-            remainingTimeAtPause = data.endTime - timeProvider.elapsedRealtime(),
-            state = TimerState.PAUSED
-        )
+        _timerData.update {
+            it.copy(
+                remainingTimeAtPause = it.endTime - timeProvider.elapsedRealtime(),
+                state = TimerState.PAUSED
+            )
+        }
         log.i { "Paused: ${timerData.value}" }
         listeners.forEach { it.onEvent(Event.Pause) }
     }
 
     fun resume() {
-        if (_timerData.value.state != TimerState.PAUSED) {
+        if (timerData.value.state != TimerState.PAUSED) {
             log.e { "Trying to resume the timer when it is not paused" }
             return
         }
-        val data = _timerData.value
+        val data = timerData.value
         val elapsedRealTime = timeProvider.elapsedRealtime()
         val durationToFinish = data.getDuration()
         val pausedTime =
             data.pausedTime + elapsedRealTime - (durationToFinish - data.remainingTimeAtPause)
-        _timerData.value = data.copy(
-            lastStartTime = elapsedRealTime,
-            endTime = data.remainingTimeAtPause + elapsedRealTime,
-            state = TimerState.RUNNING,
-            remainingTimeAtPause = 0,
-            pausedTime = pausedTime
-        )
+        _timerData.update {
+            it.copy(
+                lastStartTime = elapsedRealTime,
+                endTime = it.remainingTimeAtPause + elapsedRealTime,
+                state = TimerState.RUNNING,
+                remainingTimeAtPause = 0,
+                pausedTime = pausedTime
+            )
+        }
         log.i { "Resumed: ${timerData.value}" }
         listeners.forEach { it.onEvent(Event.Start(timerData.value.endTime)) }
     }
@@ -167,7 +177,7 @@ class TimerManager(
 
         handleFinishedSession(updateWorkTime, isManualAction = true)
 
-        _timerData.value = timerData.value.reset()
+        _timerData.update { it.reset() }
 
         val nextType = when {
             !isWork -> TimerType.WORK
@@ -189,9 +199,7 @@ class TimerManager(
             log.e { "Trying to finish the timer when it is reset or finished" }
             return
         }
-        _timerData.value = data.copy(
-            state = TimerState.FINISHED
-        )
+        _timerData.update { it.copy(state = TimerState.FINISHED) }
         log.i { "Finish: $data" }
 
         handleFinishedSession(isManualAction = false)
@@ -223,7 +231,7 @@ class TimerManager(
         handleFinishedSession(updateWorkTime, isManualAction = true)
 
         listeners.forEach { it.onEvent(Event.Reset) }
-        _timerData.value = _timerData.value.reset()
+        _timerData.update { it.reset() }
     }
 
     private fun handlePersistentDataAtStart() {
@@ -237,9 +245,7 @@ class TimerManager(
                 val existingBudget =
                     timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime())
                 val breakBudgetData = BreakBudgetData(existingBudget, 0)
-                _timerData.value = timerData.value.copy(
-                    breakBudgetData = breakBudgetData
-                )
+                _timerData.update { it.copy(breakBudgetData = breakBudgetData) }
                 breakBudgetHandler.updateBreakBudget(breakBudgetData)
             }
         }
@@ -269,9 +275,7 @@ class TimerManager(
                         millis
                     )
                     log.i { "Updating breakBudget: $breakBudgetData" }
-                    _timerData.value = data.copy(
-                        breakBudgetData = breakBudgetData
-                    )
+                    _timerData.update { data -> data.copy(breakBudgetData = breakBudgetData) }
                     breakBudgetHandler.updateBreakBudget(breakBudgetData)
                 } else {
                     log.e { "The breakBudgetStart should be 0 at this point" }
@@ -316,24 +320,29 @@ class TimerManager(
     }
 
     private fun incrementStreak() {
-        val data = timerData.value.longBreakData
         val lastWorkEndTime = timeProvider.elapsedRealtime()
-        val newData = data.copy(
-            streak = data.streak + 1,
-            lastWorkEndTime = lastWorkEndTime
-        )
-        _timerData.value = timerData.value.copy(longBreakData = newData)
+        _timerData.update {
+            it.copy(
+                longBreakData = it.longBreakData.copy(
+                    streak = it.longBreakData.streak + 1,
+                    lastWorkEndTime = lastWorkEndTime
+                )
+            )
+        }
         streakAndLongBreakHandler.incrementStreak(lastWorkEndTime)
     }
 
     //TODO: call this from the view when visible to make sure we have the latest data
     fun resetStreakIfNeeded(millis: Long = timeProvider.elapsedRealtime()) {
         if (!didLastWorkSessionFinishRecently(millis)) {
-            val newLongBreakData = timerData.value.longBreakData.copy(
-                streak = 0,
-                lastWorkEndTime = 0L
-            )
-            _timerData.value = _timerData.value.copy(longBreakData = newLongBreakData)
+            _timerData.update {
+                it.copy(
+                    longBreakData = it.longBreakData.copy(
+                        streak = 0,
+                        lastWorkEndTime = 0L
+                    )
+                )
+            }
             streakAndLongBreakHandler.resetStreak()
         }
     }
