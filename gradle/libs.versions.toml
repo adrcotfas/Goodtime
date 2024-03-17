@@ -9,13 +9,13 @@ android-targetSdk = "34"
 coreKtx = "2.2.0"
 espressoCore = "3.5.1"
 kotlin = "1.9.22"
-compose = "1.6.0"
-compose-compiler = "1.5.8"
-compose-material3 = "1.1.2"
+compose = "1.6.3"
+compose-compiler = "1.5.10"
+compose-material3 = "1.2.1"
 androidx-activityCompose = "1.8.2"
 sqldelight = "2.0.1"
 
-androidx-datastore = "1.1.0-beta01"
+androidx-datastore = "1.1.0-beta02"
 
 coroutines = "1.7.3"
 kotlinx-serialization = "1.6.2"
@@ -30,7 +30,7 @@ turbine = "1.0.0"
 okio = "3.7.0"
 core = "1.12.0"
 
-kermit = "2.0.2"
+kermit = "2.0.3"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
