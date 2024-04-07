@@ -6,6 +6,7 @@ object TimeUtils {
         val totalSeconds = this / 1000
         val minutes = totalSeconds / 60
         val seconds = totalSeconds % 60
-        return "$minutes min $seconds sec"
+        val secondsString = if (seconds < 10) "0$seconds" else seconds.toString()
+        return "$minutes:$secondsString"
     }
 }

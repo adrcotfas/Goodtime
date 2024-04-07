@@ -8,21 +8,26 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import co.touchlab.kermit.Logger
-import com.apps.adrcotfas.goodtime.bl.TimerType
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.di.injectLogger
+import com.apps.adrcotfas.goodtime.ui.BottomNavigationBar
+import com.apps.adrcotfas.goodtime.ui.Destination
+import com.apps.adrcotfas.goodtime.ui.labels.LabelsScreen
+import com.apps.adrcotfas.goodtime.ui.main.MainScreen
+import com.apps.adrcotfas.goodtime.ui.settings.SettingsScreen
+import com.apps.adrcotfas.goodtime.ui.stats.StatsScreen
 import com.apps.adrcotfas.goodtime.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -58,28 +63,17 @@ class MainActivity : ComponentActivity(), KoinComponent {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column {
-                        Button(
-                            onClick = {
-                                log.v { "start timer" }
-                                viewModel.startTimer(TimerType.WORK)
-                            }
+                    val navController = rememberNavController()
+                    Scaffold(bottomBar = { BottomNavigationBar(navController = navController) }) {
+                        NavHost(
+                            modifier = Modifier.padding(it),
+                            navController = navController,
+                            startDestination = Destination.Main.route
                         ) {
-                            Text("start timer")
-                        }
-                        Button(
-                            onClick = {
-                                viewModel.finish()
-                            }
-                        ) {
-                            Text("finish")
-                        }
-                        Button(
-                            onClick = {
-                                viewModel.resetTimer()
-                            }
-                        ) {
-                            Text("stop")
+                            composable(Destination.Main.label) { MainScreen() }
+                            composable(Destination.Labels.label) { LabelsScreen() }
+                            composable(Destination.Stats.label) { StatsScreen() }
+                            composable(Destination.Settings.label) { SettingsScreen() }
                         }
                     }
                 }
@@ -99,18 +93,5 @@ class MainActivity : ComponentActivity(), KoinComponent {
                 .putExtra(Settings.EXTRA_APP_PACKAGE, applicationContext.packageName)
             startActivity(settingsIntent)
         }
-    }
-}
-
-@Composable
-fun GreetingView(text: String) {
-    Text(text = text)
-}
-
-@Preview
-@Composable
-fun DefaultPreview() {
-    ApplicationTheme {
-        GreetingView("Hello, Android!")
     }
 }

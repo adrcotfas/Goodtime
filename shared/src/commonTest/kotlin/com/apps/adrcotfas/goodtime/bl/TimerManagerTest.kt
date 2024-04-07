@@ -151,7 +151,7 @@ class TimerManagerTest {
         )
         val elapsedTime = 1.minutes.inWholeMilliseconds
         timeProvider.elapsedRealtime += elapsedTime
-        timerManager.pause()
+        timerManager.toggle()
         assertEquals(
             timerManager.timerData.value,
             DomainTimerData(
@@ -168,7 +168,7 @@ class TimerManagerTest {
         timeProvider.elapsedRealtime += elapsedTime
         val endTime =
             timerManager.timerData.value.remainingTimeAtPause + timeProvider.elapsedRealtime
-        timerManager.resume()
+        timerManager.toggle()
         assertEquals(
             timerManager.timerData.value,
             DomainTimerData(
@@ -399,10 +399,10 @@ class TimerManagerTest {
         timerManager.reset()
         assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
         timerManager.start(TimerType.WORK)
-        timerManager.pause()
+        timerManager.toggle()
         val twoHours = 2.hours.inWholeMilliseconds
         timeProvider.elapsedRealtime += twoHours
-        timerManager.resume()
+        timerManager.toggle()
         timerManager.finish()
         assertEquals(timerManager.timerData.value.longBreakData.streak, 2)
     }

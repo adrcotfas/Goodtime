@@ -54,3 +54,23 @@ enum class TimerState {
 enum class TimerType {
     WORK, BREAK, LONG_BREAK
 }
+
+fun DomainTimerData.getBaseTime(timerProvider: TimeProvider): Long {
+    if (label == null) {
+        return 0
+    }
+    val countdown = label.timerProfile.isCountdown
+
+    if (state == TimerState.RESET) {
+        return if (countdown) {
+            label.timerProfile.duration(type).minutes.inWholeMilliseconds
+        } else {
+            0
+        }
+    } else if(state == TimerState.PAUSED) {
+        return remainingTimeAtPause
+    }
+
+    return if (countdown) endTime - timerProvider.elapsedRealtime()
+            else timerProvider.elapsedRealtime() - startTime
+}

@@ -125,12 +125,15 @@ class TimerManager(
         listeners.forEach { it.onEvent(Event.AddOneMinute(timerData.value.endTime)) }
     }
 
-    fun pause() {
-        if (timerData.value.state != TimerState.RUNNING) {
-            log.e { "Trying to pause the timer when it is not running" }
-            return
+    fun toggle() {
+        when (timerData.value.state) {
+            TimerState.RUNNING -> pause()
+            TimerState.PAUSED -> resume()
+            else -> log.e { "Trying to toggle the timer when it is not running or paused" }
         }
+    }
 
+    private fun pause() {
         _timerData.update {
             it.copy(
                 remainingTimeAtPause = it.endTime - timeProvider.elapsedRealtime(),
@@ -141,11 +144,7 @@ class TimerManager(
         listeners.forEach { it.onEvent(Event.Pause) }
     }
 
-    fun resume() {
-        if (timerData.value.state != TimerState.PAUSED) {
-            log.e { "Trying to resume the timer when it is not paused" }
-            return
-        }
+    private fun resume() {
         val data = timerData.value
         val elapsedRealTime = timeProvider.elapsedRealtime()
         val durationToFinish = data.getDuration()

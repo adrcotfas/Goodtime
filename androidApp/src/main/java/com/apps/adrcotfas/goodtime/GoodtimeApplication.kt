@@ -22,7 +22,7 @@ class GoodtimeApplication : Application() {
         insertKoin(
             module {
                 single<Context> { this@GoodtimeApplication }
-                viewModel { MainViewModel(get()) }
+                viewModel { MainViewModel(get(), get()) }
                 single<NotificationArchManager> {
                     NotificationArchManager(
                         get<Context>(),

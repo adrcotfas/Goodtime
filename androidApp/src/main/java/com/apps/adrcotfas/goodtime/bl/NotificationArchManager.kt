@@ -25,7 +25,7 @@ class NotificationArchManager(private val context: Context, private val activity
 
     fun buildInProgressNotification(data: DomainTimerData): Notification {
         val isCountDown = data.label!!.timerProfile.isCountdown
-        val endTime = if (isCountDown) data.endTime else SystemClock.elapsedRealtime()
+        val baseTime = if (isCountDown) data.endTime else SystemClock.elapsedRealtime()
         val running = data.state != TimerState.PAUSED
         val timerType = data.type
         val labelName = data.label?.name
@@ -53,7 +53,7 @@ class NotificationArchManager(private val context: Context, private val activity
             setStyle(NotificationCompat.DecoratedCustomViewStyle())
             setCustomContentView(
                 buildChronometer(
-                    base = endTime,
+                    base = baseTime,
                     running = running,
                     stateText = stateText,
                     isCountDown = isCountDown
@@ -65,7 +65,7 @@ class NotificationArchManager(private val context: Context, private val activity
                 if (running) {
                     val pauseAction = createNotificationAction(
                         title = "Pause",
-                        action = TimerService.Companion.Action.Pause
+                        action = TimerService.Companion.Action.Toggle
                     )
                     builder.addAction(pauseAction)
                     val addOneMinuteAction = createNotificationAction(
@@ -76,7 +76,7 @@ class NotificationArchManager(private val context: Context, private val activity
                 } else {
                     val resumeAction = createNotificationAction(
                         title = "Resume",
-                        action = TimerService.Companion.Action.Resume
+                        action = TimerService.Companion.Action.Toggle
                     )
                     builder.addAction(resumeAction)
                     val stopAction = createNotificationAction(
