@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.ui.settings
+package com.apps.adrcotfas.goodtime.settings
 
 import androidx.compose.runtime.Composable
 

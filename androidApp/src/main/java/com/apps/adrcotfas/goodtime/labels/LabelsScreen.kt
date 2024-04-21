@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.ui.labels
+package com.apps.adrcotfas.goodtime.labels
 
 import androidx.compose.runtime.Composable
 

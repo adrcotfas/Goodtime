@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.viewmodel
+package com.apps.adrcotfas.goodtime.main
 
 import com.apps.adrcotfas.goodtime.bl.DomainTimerData
 import com.apps.adrcotfas.goodtime.bl.TimeProvider
@@ -8,6 +8,7 @@ import com.apps.adrcotfas.goodtime.bl.TimerType
 import com.apps.adrcotfas.goodtime.bl.getBaseTime
 import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
+import com.apps.adrcotfas.goodtime.viewmodel.ViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
@@ -33,7 +34,6 @@ class MainViewModel(
             TimerState.RUNNING -> flow {
                 while (it.state == TimerState.RUNNING) {
                     emitUiState(it)
-                    //TODO: find a way to synchronize this and the notification chronometer
                     delay(1000)
                 }
             }

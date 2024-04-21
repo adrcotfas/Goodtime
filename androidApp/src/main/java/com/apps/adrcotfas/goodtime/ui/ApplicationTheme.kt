@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime
+package com.apps.adrcotfas.goodtime.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape

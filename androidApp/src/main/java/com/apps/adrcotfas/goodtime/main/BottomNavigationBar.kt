@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.ui
+package com.apps.adrcotfas.goodtime.main
 
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon

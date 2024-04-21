@@ -373,6 +373,6 @@ class TimerManager(
     }
 
     companion object {
-        const val WIGGLE_ROOM_MILLIS = 100
+        const val WIGGLE_ROOM_MILLIS = 1000
     }
 }

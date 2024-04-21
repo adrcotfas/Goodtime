@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.ui
+package com.apps.adrcotfas.goodtime.main
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home

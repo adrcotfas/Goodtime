@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.ui.main
+package com.apps.adrcotfas.goodtime.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,8 +19,6 @@ import androidx.compose.ui.unit.sp
 import com.apps.adrcotfas.goodtime.bl.TimeUtils.formatMilliseconds
 import com.apps.adrcotfas.goodtime.bl.TimerState
 import com.apps.adrcotfas.goodtime.bl.TimerType
-import com.apps.adrcotfas.goodtime.viewmodel.MainUiState
-import com.apps.adrcotfas.goodtime.viewmodel.MainViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
