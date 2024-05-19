@@ -110,6 +110,10 @@ dependencies {
     def billing_version = "6.1.0"
     googleImplementation "com.android.billingclient:billing-ktx:$billing_version"
 
+    // In-app updates
+    googleImplementation "com.google.android.play:app-update:2.1.0"
+    googleImplementation "com.google.android.play:app-update-ktx:2.1.0"
+
     implementation 'xyz.aprildown:UltimateRingtonePicker:3.2.0'
 
     implementation 'com.google.code.gson:gson:2.10'
