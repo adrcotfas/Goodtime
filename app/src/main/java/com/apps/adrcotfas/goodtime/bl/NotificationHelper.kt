@@ -37,7 +37,8 @@ import javax.inject.Inject
  * The notifications are customized according to [PreferenceHelper].
  */
 class NotificationHelper @Inject constructor(context: Context) : ContextWrapper(context) {
-    private val manager: NotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    private val manager: NotificationManager =
+        getSystemService(NOTIFICATION_SERVICE) as NotificationManager
     private val builder: NotificationCompat.Builder
 
     fun notifyFinished(sessionType: SessionType) {
@@ -73,8 +74,9 @@ class NotificationHelper @Inject constructor(context: Context) : ContextWrapper(
     private fun initChannels() {
         val channelInProgress = NotificationChannel(
             GOODTIME_NOTIFICATION, getString(R.string.notification_channel_name),
-            NotificationManager.IMPORTANCE_LOW
+            NotificationManager.IMPORTANCE_DEFAULT
         )
+        channelInProgress.lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
         channelInProgress.setBypassDnd(true)
         channelInProgress.setShowBadge(true)
         channelInProgress.setSound(null, null)
