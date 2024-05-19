@@ -29,8 +29,10 @@ import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.ProductDetails
 import com.apps.adrcotfas.goodtime.settings.PreferenceHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,7 +49,11 @@ class BillingViewModel @Keep @Inject constructor(
 
     // Start the billing connection when the viewModel is initialized.
     init {
-        billingClient.startBillingConnection(billingConnectionState = _billingConnectionState)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                billingClient.startBillingConnection(billingConnectionState = _billingConnectionState)
+            }
+        }
     }
 
     init {
