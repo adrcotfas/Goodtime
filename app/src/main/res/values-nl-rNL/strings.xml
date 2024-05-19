@@ -32,8 +32,8 @@
     <string name="pref_auto_start_break_summary">Start de pauze na een werksessie zonder interactie van de gebruiker</string>
     <string name="pref_auto_start_work_summary">Start de werksessie na een pauze zonder tussenkomst van de gebruiker</string>
     <string name="pref_disable_battery_optimization">Nauwkeurige meldingen</string>
-    <string name="pref_flashing_notification">Flash the screen</string>
-    <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
+    <string name="pref_flashing_notification">Scherm laten flitsen</string>
+    <string name="pref_flashing_notification_summary">Een visuele melding voor stille omgevingen</string>
     <string name="pref_disable_battery_optimization_summary">Optimalisatie van de batterij voor deze app uitschakelen</string>
     <string name="pref_screen_saver">Screensaver-modus</string>
     <string name="pref_screen_saver_summary">Hiermee verplaatst u de timer terwijl het scherm ingeschakeld is</string>
@@ -136,9 +136,9 @@
     <string name="update_pro_9">Themas</string>
     <string name="update_pro_10">Afzonderlijk notificatie geluid voor werk en pauze</string>
     <string name="update_pro_11">Aanhoudende meldingen</string>
-    <string name="update_pro_12">One time payment</string>
+    <string name="update_pro_12">Eenmalige betaling</string>
     <string name="update_pro_13">Alle toekomstige functies gratis</string>
-    <string name="update_pro_message">Upgrade to support open-source and ad-free software and enjoy some awesome features!</string>
+    <string name="update_pro_message">Upgrade om open-source en advertentievrije software te ondersteunen en geniet van enkele geweldige functies!</string>
     <string name="Profile">Profiel</string>
     <string name="pref_profile_name">Profielnaam</string>
     <string name="profile_already_exists">Het profiel bestaat al</string>
@@ -160,9 +160,9 @@
     <string name="pref_show_label">Bekijk huidig label</string>
     <string name="pref_show_label_summary">Toont het huidige label op het hoofdscherm</string>
     <string name="pref_one_minute_left_notification">Pre-notification</string>
-    <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
-    <string name="donate_message">Donate to support open-source and ad-free software!</string>
-    <string name="donate">Donate</string>
+    <string name="pref_one_minute_left_notification_summary">Waarschuw een minuut voordat een werksessie eindigt</string>
+    <string name="donate_message">Doneer om open-source en advertentievrije software te ondersteunen!</string>
+    <string name="donate">Doneer</string>
     <string name="enable_notifications">Schakel meldingen in</string>
     <string name="grant_permission_for_notifications">Toestemming verlenen voor meldingen</string>
 </resources>

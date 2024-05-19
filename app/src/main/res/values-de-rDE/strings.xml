@@ -33,7 +33,7 @@
     <string name="pref_auto_start_work_summary">Arbeitssitzung nach einer Pause ohne Benutzerinteraktion starten</string>
     <string name="pref_disable_battery_optimization">Genaue Benachrichtigungen</string>
     <string name="pref_flashing_notification">Den Bildschirm kurz aufleuchten lassen</string>
-    <string name="pref_flashing_notification_summary">Eine visuelle Benachrichtigung für Stille Umgebungen</string>
+    <string name="pref_flashing_notification_summary">Eine visuelle Benachrichtigung für stille Umgebungen</string>
     <string name="pref_disable_battery_optimization_summary">Deaktiviere die Batterieoptimierung für diese App</string>
     <string name="pref_screen_saver">Bildschirmschoner-Modus</string>
     <string name="pref_screen_saver_summary">Bewegt den Timer während der Bildschirm eingeschaltet ist</string>

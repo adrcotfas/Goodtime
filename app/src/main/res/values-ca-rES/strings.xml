@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="ca" tools:ignore="MissingTranslation">
     <string name="pref_break_duration">"Durada del descans"</string>
     <string name="pref_disable_sound_and_vibration">"Desactivar el so i la vibració"</string>
-    <string name="pref_dnd">"Do not disturb mode"</string>
+    <string name="pref_dnd">"Mode no molesteu"</string>
     <string name="pref_fullscreen">"Mode pantalla completa"</string>
     <string name="pref_header_notifications">"General"</string>
     <string name="pref_header_general">"Sessions"</string>
@@ -14,9 +14,9 @@
     <string name="pref_sessions_before_long_break">"Nombre de sessions abans del descans llarg"</string>
     <string name="pref_enable_long_break">"Permetre llargues estades"</string>
     <string name="pref_vibrate">"Vibració"</string>
-    <string name="pref_vibration_type_none">None</string>
-    <string name="pref_vibration_type_soft">Soft</string>
-    <string name="pref_vibration_type_strong">Strong</string>
+    <string name="pref_vibration_type_none">Cap</string>
+    <string name="pref_vibration_type_soft">Suau</string>
+    <string name="pref_vibration_type_strong">Forta</string>
     <string name="pref_vibration_type_sos">SOS</string>
     <string name="pref_vibration_type_heartbeat">Heartbeat</string>
     <string name="pref_amoled">"Tema fosc"</string>
@@ -33,7 +33,7 @@
     <string name="pref_auto_start_work_summary">Inici de la sessió de treball després del descans sense interacció d\'usuari</string>
     <string name="pref_disable_battery_optimization">Notificacions precises</string>
     <string name="pref_flashing_notification">Flash the screen</string>
-    <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
+    <string name="pref_flashing_notification_summary">Una notificació visual per a entorns silenciosos</string>
     <string name="pref_disable_battery_optimization_summary">Desactivar l\'optimització de la bateria per a aquesta aplicació</string>
     <string name="pref_screen_saver">Mode d\'estalvi de pantalla</string>
     <string name="pref_screen_saver_summary">Mou el temporitzador mentre la pantalla està en</string>
@@ -74,7 +74,7 @@
     <string name="action_skip_break">Saltar pausa</string>
     <string name="action_progress_work">Sessió de treball en curs</string>
     <string name="action_paused_title">Sessió de treball està en pausa</string>
-    <string name="action_progress_break">Trencar en curs</string>
+    <string name="action_progress_break">Descans en curs</string>
     <string name="action_continue">Voleu continuar?</string>
     <string name="action_finished_break">Descans finalitzat</string>
     <string name="action_finished_session">Sessió finalitzada</string>
@@ -106,8 +106,8 @@
     <string name="empty_state_no_items">Sense articles</string>
     <string name="notification_channel_name">Goodtime notificacions</string>
     <string name="reminder_notification_channel_name">"Goodtime Reminder Notifications"</string>
-    <string name="reminder_title">"Daily reminder"</string>
-    <string name="reminder_text">"It's time to be productive!"</string>
+    <string name="reminder_title">"Recordatori diari"</string>
+    <string name="reminder_text">"És hora de ser productiu!"</string>
     <string name="settings">Configuració</string>
     <string name="state">Estat</string>
     <string name="feedback">Opinió</string>
@@ -121,7 +121,7 @@
     <string name="statistics_this_month">Aquest mes</string>
     <string name="statistics_total">Total</string>
     <string name="statistics_productive_time">Temps productiu</string>
-    <string name="statistics_pie_chart">Work distribution</string>
+    <string name="statistics_pie_chart">Distribució de la feina</string>
     <string name="spinner_stats_duration">Temps</string>
     <string name="spinner_stats_nr_of_sessions">Sessions</string>
     <string name="spinner_range_hours">Hores</string>
@@ -134,9 +134,9 @@
     <string name="update_pro_6">Exportació i importació de còpia de seguretat</string>
     <string name="update_pro_7">Exporta les estadístiques a CSV</string>
     <string name="update_pro_9">Temes</string>
-    <string name="update_pro_10">Separa el so de notificació per a treball i trencar</string>
+    <string name="update_pro_10">Separa el so de notificació per a treball i descansar</string>
     <string name="update_pro_11">Notificació insistent</string>
-    <string name="update_pro_12">One time payment</string>
+    <string name="update_pro_12">Pagament únic</string>
     <string name="update_pro_13">Tot futur ofereix de franc</string>
     <string name="update_pro_message">Upgrade to support open-source and ad-free software and enjoy some awesome features!</string>
     <string name="Profile">Perfil</string>
@@ -144,7 +144,7 @@
     <string name="profile_already_exists">El perfil ja existeix</string>
     <string name="pref_save_custom_profile">Desa el perfil personalitzat</string>
     <string name="pref_timer_duration">Durada del temporitzador</string>
-    <string name="timer_durations">Set the duration for work and break sessions</string>
+    <string name="timer_durations">Estableix la durada per a les sessions de feina i de descans</string>
     <string name="pref_timer_style">Estil de temporitzador</string>
     <string name="pref_timer_style_default">Per defecte</string>
     <string name="pref_timer_style_classic">Clàssic</string>
@@ -155,13 +155,13 @@
     <string name="action_reset_counter">"This will reset today's finished sessions."</string>
     <string name="action_reset_counter_title">Reset?</string>
     <string name="tutorial_title">Tutorial</string>
-    <string name="other_apps">Other apps</string>
-    <string name="unlabeled">unlabeled</string>
+    <string name="other_apps">Altres aplicacions</string>
+    <string name="unlabeled">sense etiquetar</string>
     <string name="pref_show_label">View current label</string>
     <string name="pref_show_label_summary">Shows the current label on the main screen</string>
     <string name="pref_one_minute_left_notification">Pre-notification</string>
-    <string name="pref_one_minute_left_notification_summary">Notify one minute before a work session ends</string>
-    <string name="donate_message">Donate to support open-source and ad-free software!</string>
+    <string name="pref_one_minute_left_notification_summary">Notifica un minut abans que acabi la sessió de feina</string>
+    <string name="donate_message">Feu una donació per donar suport al programari de codi obert i sense anuncis!</string>
     <string name="donate">Donate</string>
     <string name="enable_notifications">Habilita les notificacions</string>
     <string name="grant_permission_for_notifications">Concediu permisos per a les notificacions</string>

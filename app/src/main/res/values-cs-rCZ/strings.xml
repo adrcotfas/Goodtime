@@ -88,7 +88,7 @@
     <string name="intro_avoid_distractions_description">"Plňte svou práci pomocí časovaných sesí, které vám poskytuje aplikace."</string>
     <string name="intro_clear_mind">"Vyčistěte svou mysl"</string>
     <string name="intro_clear_mind_description">"Odměňte se krátkými přestávkami a vzpružte se tak."</string>
-    <string name="intro_get_started">"Začít"</string>
+    <string name="intro_get_started">"Pojďme na to"</string>
     <string name="intro_get_started_description">"Zůstaňte soustředěni, zbavte se prokrastinace a zlepšete svou produktivitu."</string>
     <string name="dialog_close">Zavřít</string>
     <string name="dialog_delete">Odstranit</string>
@@ -159,7 +159,7 @@
     <string name="unlabeled">neoznačené</string>
     <string name="pref_show_label">Zobrazit aktuální štítek</string>
     <string name="pref_show_label_summary">Zobrazit aktuální štítek na hlavní obrazovce</string>
-    <string name="pref_one_minute_left_notification">Předběžné upozornění</string>
+    <string name="pref_one_minute_left_notification">Předběžná upozornění</string>
     <string name="pref_one_minute_left_notification_summary">Upozornit minutu před koncem pracovní sese</string>
     <string name="donate_message">Přispět na podporu open-source softwaru bez reklam!</string>
     <string name="donate">Přispět</string>

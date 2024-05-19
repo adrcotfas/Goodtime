@@ -33,7 +33,7 @@
     <string name="pref_auto_start_work_summary">Inizia la sessione di lavoro dopo una pausa senza interazione dell\'utente</string>
     <string name="pref_disable_battery_optimization">Notifiche accurate</string>
     <string name="pref_flashing_notification">Fai lampeggiare lo schermo</string>
-    <string name="pref_flashing_notification_summary">A visual notification for silent environments</string>
+    <string name="pref_flashing_notification_summary">Una notifica visiva per ambienti silenziosi</string>
     <string name="pref_disable_battery_optimization_summary">Disattivare l\'ottimizzazione della batteria per questa applicazione</string>
     <string name="pref_screen_saver">Modalità salvaschermo</string>
     <string name="pref_screen_saver_summary">Sposta il timer mentre lo schermo è acceso</string>
