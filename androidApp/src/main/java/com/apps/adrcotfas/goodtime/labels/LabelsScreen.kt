@@ -1,6 +1,5 @@
 package com.apps.adrcotfas.goodtime.labels
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -22,37 +22,46 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
-import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.material3.TopAppBarDefaults.pinnedScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.apps.adrcotfas.goodtime.data.model.Label
 import org.koin.androidx.compose.koinViewModel
 import kotlin.random.Random
 
 //TODO: consider sub-labels?
-@SuppressLint("UnrememberedMutableState")
+// not here but it can be part of the stats screen; the only precondition can be the name of the labels,
+// for example group together according to a prefix, e.g. "Work/Label1", "Work/Label2", "Work/Label3" etc.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
 fun LabelsScreen(viewModel: LabelsViewModel = koinViewModel()) {
 
-    val labels by viewModel.labels.collectAsState()
+    val labels by viewModel.labels.collectAsState(initial = emptyList())
     val activeLabelName by viewModel.activeLabel.collectAsState()
+    val activeLabelIndex = labels.indexOfFirst { it.name == activeLabelName }
 
     val listState = rememberLazyListState()
-    val topAppBarScrollBehavior = enterAlwaysScrollBehavior(rememberTopAppBarState(),
-        canScroll = { listState.canScrollBackward || listState.canScrollForward
-    })
+    val topAppBarScrollBehavior = pinnedScrollBehavior()
+
+    var firstCompositionFinished by remember { mutableStateOf(false) }
+
+    val showFab = listState.isScrollingUp().xor(firstCompositionFinished)
+    if (labels.isNotEmpty() && activeLabelName != null) {
+        LaunchedEffect(Unit) {
+            listState.scrollToItem(activeLabelIndex)
+            firstCompositionFinished = true
+        }
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
@@ -66,7 +75,7 @@ fun LabelsScreen(viewModel: LabelsViewModel = koinViewModel()) {
             AnimatedVisibility(
                 enter = slideInVertically(initialOffsetY = { it * 2 }) + fadeIn(),
                 exit = slideOutVertically(targetOffsetY = { it * 2 }) + fadeOut(),
-                visible = listState.isScrollingUp()
+                visible = showFab
             ) {
                 ExtendedFloatingActionButton(
                     onClick = {
@@ -79,17 +88,17 @@ fun LabelsScreen(viewModel: LabelsViewModel = koinViewModel()) {
             }
         },
         floatingActionButtonPosition = FabPosition.Center
-    ) {
+    ) { paddingValues ->
         LazyColumn(
             state = listState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it)
+                .padding(paddingValues)
         ) {
-            items(labels.size) { index ->
+            items(labels) {
                 LabelListItem(
-                    label = labels[index],
-                    isActive = labels[index].name == activeLabelName,
+                    label = it,
+                    isActive = it.name == activeLabelName,
                     onClick = { labelName -> viewModel.setActiveLabel(labelName) },
                     onLongClick = { labelName ->
                         viewModel.deleteLabel(labelName)
