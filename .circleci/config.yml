@@ -26,4 +26,4 @@ workflows:
           filters:
             branches:
               only:
-                - develop
+                - v3
