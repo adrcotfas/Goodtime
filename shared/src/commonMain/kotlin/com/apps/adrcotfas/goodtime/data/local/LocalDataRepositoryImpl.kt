@@ -27,7 +27,7 @@ internal class LocalDataRepositoryImpl(
 
     private fun insertDefaultLabel() {
         val localLabel = Label().toLocal()
-        database.localLabelQueries.selectByName(null, ::toExternalLabelMapper).executeAsList().let {
+        database.localLabelQueries.selectByName("", ::toExternalLabelMapper).executeAsList().let {
             if (it.isEmpty()) {
                 database.localLabelQueries.insert(localLabel)
             }
@@ -96,7 +96,7 @@ internal class LocalDataRepositoryImpl(
     }
 
     override suspend fun insertLabel(label: Label) {
-        if (label.name == null) return
+        if (label.name.isEmpty()) return
         withContext(defaultDispatcher) {
             val localLabel = label.toLocal()
             database.localLabelQueries.insert(localLabel)
@@ -135,7 +135,7 @@ internal class LocalDataRepositoryImpl(
 
     override suspend fun updateDefaultLabelTimerProfile(newTimerProfile: TimerProfile) {
         withContext(defaultDispatcher) {
-            database.localLabelQueries.updateTimerProfile(null, newTimerProfile)
+            database.localLabelQueries.updateTimerProfile("", newTimerProfile)
         }
     }
 
@@ -147,7 +147,7 @@ internal class LocalDataRepositoryImpl(
 
     override fun selectDefaultLabel(): Flow<Label> {
         return database.localLabelQueries
-            .selectByName(null, mapper = ::toExternalLabelMapper)
+            .selectByName("", mapper = ::toExternalLabelMapper)
             .asFlow()
             .mapToList(defaultDispatcher)
             .filterNot { it.isEmpty() }
@@ -188,6 +188,7 @@ internal class LocalDataRepositoryImpl(
     }
 
     override suspend fun deleteLabel(name: String) {
+        if (name.isEmpty()) return
         withContext(defaultDispatcher) {
             database.localLabelQueries.delete(name)
         }

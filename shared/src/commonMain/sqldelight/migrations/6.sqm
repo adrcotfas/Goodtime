@@ -5,7 +5,7 @@ PRAGMA foreign_keys=off;
 
 CREATE TABLE IF NOT EXISTS labelTmp (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT UNIQUE DEFAULT NULL,
+    name TEXT UNIQUE NOT NULL DEFAULT "",
     colorIndex INTEGER NOT NULL,
     orderIndex INTEGER NOT NULL,
     useDefaultTimeProfile INTEGER AS Boolean NOT NULL DEFAULT 1,
@@ -24,7 +24,9 @@ CREATE TABLE IF NOT EXISTS labelTmp (
     UNIQUE (name, isArchived)
 );
 
-INSERT INTO labelTmp(name, colorIndex, orderIndex, isArchived) SELECT title, colorId, 'order', archived FROM Label;
+INSERT INTO labelTmp(name, colorIndex, orderIndex, isArchived)
+SELECT COALESCE(title, ""), colorId, 'order', archived FROM Label;
+
 DROP TABLE Label;
 ALTER TABLE labelTmp RENAME TO localLabel;
 
@@ -46,10 +48,6 @@ INSERT INTO sessionTmp(id, startTimestamp, endTimestamp, duration, labelName, is
 SELECT `id`, (`timestamp` - (`duration` * 60 * 1000)), timestamp, `duration`, `label`, `archived` FROM Session;
 DROP TABLE Session;
 ALTER TABLE sessionTmp RENAME TO localSession;
-
--- set unlabeled sessions' label column(if empty) to NULL
-UPDATE localSession
-SET labelName = CASE WHEN LENGTH(labelName) = 0 THEN NULL ELSE labelName END;
 
 CREATE INDEX idx_archived ON localSession(isArchived);
 CREATE INDEX idx_profile ON localSession(labelName);

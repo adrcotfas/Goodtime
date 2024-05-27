@@ -99,18 +99,18 @@ class TimerManagerTest {
     fun `Verify first run for default label and subsequently label changes`() = runTest {
         assertEquals(timerManager.timerData.value.label, defaultLabel)
 
-        settingsRepo.saveLabelName(CUSTOM_LABEL_NAME)
+        settingsRepo.activateLabelWithName(CUSTOM_LABEL_NAME)
         assertEquals(timerManager.timerData.value.label, dummyLabel)
         assertEquals(
             timerManager.timerData.value.label!!.name,
             CUSTOM_LABEL_NAME
         )
 
-        settingsRepo.saveLabelName(null)
+        settingsRepo.activateDefaultLabel()
         assertEquals(timerManager.timerData.value.label, defaultLabel)
         assertEquals(
             timerManager.timerData.value.label!!.name,
-            null
+            ""
         )
 
         val newTimerProfile = TimerProfile().copy(isCountdown = false, workBreakRatio = 42)
@@ -504,7 +504,7 @@ class TimerManagerTest {
     @Test
     fun `Count-up work then count-down the break budget`() = runTest {
         localDataRepo.insertLabel(countUpLabel)
-        settingsRepo.saveLabelName(countUpLabel.name)
+        settingsRepo.activateLabelWithName(countUpLabel.name)
 
         timerManager.start(TimerType.WORK)
         val halfHour = 30.minutes.inWholeMilliseconds
@@ -535,7 +535,7 @@ class TimerManagerTest {
     fun `Count-up then reset then wait for a while to start another count-up`() =
         runTest {
             localDataRepo.insertLabel(countUpLabel)
-            settingsRepo.saveLabelName(countUpLabel.name)
+            settingsRepo.activateLabelWithName(countUpLabel.name)
 
             timerManager.start()
             val workTime = 12.minutes.inWholeMilliseconds

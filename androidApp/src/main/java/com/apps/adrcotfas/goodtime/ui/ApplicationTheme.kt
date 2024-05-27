@@ -40,16 +40,9 @@ fun ApplicationTheme(
             fontSize = 16.sp
         )
     )
-    val shapes = Shapes(
-        small = RoundedCornerShape(4.dp),
-        medium = RoundedCornerShape(4.dp),
-        large = RoundedCornerShape(0.dp)
-    )
-
     MaterialTheme(
         colorScheme = colors,
         typography = typography,
-        shapes = shapes,
         content = content
     )
 }

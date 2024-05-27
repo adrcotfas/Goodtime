@@ -11,8 +11,6 @@ import com.apps.adrcotfas.goodtime.bl.TimeProvider
 import com.apps.adrcotfas.goodtime.bl.TimerServiceStarter
 import com.apps.adrcotfas.goodtime.di.getWith
 import com.apps.adrcotfas.goodtime.di.insertKoin
-import com.apps.adrcotfas.goodtime.main.MainViewModel
-import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -22,7 +20,6 @@ class GoodtimeApplication : Application() {
         insertKoin(
             module {
                 single<Context> { this@GoodtimeApplication }
-                viewModel { MainViewModel(get(), get()) }
                 single<NotificationArchManager> {
                     NotificationArchManager(
                         get<Context>(),

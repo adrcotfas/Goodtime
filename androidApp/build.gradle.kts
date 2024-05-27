@@ -45,12 +45,15 @@ android {
 
 dependencies {
     implementation(projects.shared)
-    implementation(libs.koin.android)
-    implementation(libs.compose.ui)
-    implementation(libs.compose.ui.tooling.preview)
-    implementation(libs.compose.material3)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.icons.extended)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
-    debugImplementation(libs.compose.ui.tooling)
 }

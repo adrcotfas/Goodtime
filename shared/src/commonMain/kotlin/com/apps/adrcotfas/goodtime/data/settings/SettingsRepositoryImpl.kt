@@ -125,10 +125,6 @@ class SettingsRepositoryImpl(
         dataStore.edit { it[Keys.dndDuringWorkKey] = enabled }
     }
 
-    override suspend fun saveLabelName(labelName: String?) {
-        dataStore.edit { it[Keys.labelNameKey] = labelName ?: "" }
-    }
-
     override suspend fun saveLongBreakData(longBreakData: LongBreakData) {
         dataStore.edit { it[Keys.longBreakDataKey] = Json.encodeToString(longBreakData) }
     }
@@ -136,4 +132,10 @@ class SettingsRepositoryImpl(
     override suspend fun saveBreakBudgetData(breakBudgetData: BreakBudgetData) {
         dataStore.edit { it[Keys.breakBudgetDataKey] = Json.encodeToString(breakBudgetData) }
     }
+
+    override suspend fun activateLabelWithName(labelName: String) {
+        dataStore.edit { it[Keys.labelNameKey] = labelName}
+    }
+
+    override suspend fun activateDefaultLabel() = activateLabelWithName("")
 }

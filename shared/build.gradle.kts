@@ -40,6 +40,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(libs.koin.core)
+            implementation(libs.coroutines.core)
             implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines)
             implementation(libs.sqldelight.primitive.adapters)
@@ -47,6 +48,7 @@ kotlin {
             implementation(libs.okio)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.androidx.lifecycle.viewmodel)
             api(libs.touchlab.kermit)
         }
         commonTest.dependencies {
@@ -54,8 +56,8 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.sqldelight.driver.android)
-            implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.core.ktx)
+            implementation(libs.koin.android)
         }
         getByName("androidUnitTest") {
             dependencies {

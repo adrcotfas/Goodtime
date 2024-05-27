@@ -47,7 +47,8 @@ fun insertKoin(appModule: Module): KoinApplication {
             appModule,
             coroutineScopeModule,
             platformModule,
-            coreModule
+            coreModule,
+            viewModelModule
         )
     }
 

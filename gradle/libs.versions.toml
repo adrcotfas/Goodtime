@@ -1,24 +1,24 @@
 [versions]
 
-androidx-lifecycle = "2.7.0"
+androidxLifecycle = "2.8.0"
 
 agp = "8.2.2"
 android-minSdk = "24"
 android-compileSdk = "34"
 android-targetSdk = "34"
-coreKtx = "2.2.0"
 espressoCore = "3.5.1"
 kotlin = "1.9.22"
-compose = "1.6.3"
+
 compose-compiler = "1.5.10"
-compose-material3 = "1.2.1"
-androidx-activityCompose = "1.8.2"
+activityCompose = "1.9.0"
+composeBom = "2024.05.00"
 navigationCompose = "2.7.7"
+
 sqldelight = "2.0.1"
 
-androidx-datastore = "1.1.0-beta02"
+androidx-datastore = "1.1.1"
 
-coroutines = "1.7.3"
+coroutines = "1.8.1"
 kotlinx-serialization = "1.6.2"
 kotlinx-datetime = "0.5.0"
 
@@ -29,21 +29,24 @@ robolectric = "4.11.1"
 turbine = "1.0.0"
 
 okio = "3.7.0"
-core = "1.12.0"
+coreKtx = "1.13.1"
 
 kermit = "2.0.3"
 
 [libraries]
-androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
-androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
-androidx-lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
+androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidxLifecycle" }
 
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
@@ -73,7 +76,6 @@ androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-t
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
 
 touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 

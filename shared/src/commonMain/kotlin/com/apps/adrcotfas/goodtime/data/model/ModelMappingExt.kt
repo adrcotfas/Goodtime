@@ -22,7 +22,7 @@ fun Label.toLocal(): LocalLabel {
 
 fun toExternalLabelMapper(
     id: Long,
-    name: String?,
+    name: String,
     colorIndex: Long,
     orderIndex: Long,
     useDefaultTimeProfile: Boolean,

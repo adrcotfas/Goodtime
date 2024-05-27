@@ -3,7 +3,7 @@ import kotlin.Int;
 
 CREATE TABLE IF NOT EXISTS localLabel (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT UNIQUE DEFAULT NULL,
+    name TEXT UNIQUE NOT NULL DEFAULT "",
     colorIndex INTEGER NOT NULL,
     orderIndex INTEGER NOT NULL,
     useDefaultTimeProfile INTEGER AS Boolean NOT NULL DEFAULT 1,
@@ -87,4 +87,4 @@ delete:
 DELETE FROM localLabel WHERE name = ?;
 
 deleteAll:
-DELETE FROM localLabel;
+DELETE FROM localLabel WHERE name != "";

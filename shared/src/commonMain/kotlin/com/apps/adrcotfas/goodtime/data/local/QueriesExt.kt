@@ -22,7 +22,7 @@ fun LocalLabelQueries.insert(label: LocalLabel) {
     )
 }
 
-fun LocalLabelQueries.updateTimerProfile(name: String?, newTimerProfile: TimerProfile) {
+fun LocalLabelQueries.updateTimerProfile(name: String, newTimerProfile: TimerProfile) {
     updateTimerProfile(
         name = name,
         newIsCountdown = newTimerProfile.isCountdown,

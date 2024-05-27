@@ -61,9 +61,15 @@ class FakeSettingsRepository(settings: AppSettings = AppSettings()) : SettingsRe
         _settings.value.copy(dndDuringWork = enabled)
     )
 
-    override suspend fun saveLabelName(labelName: String?) {
+    override suspend fun activateLabelWithName(labelName: String) {
         _settings.emit(
             _settings.value.copy(labelName = labelName)
+        )
+    }
+
+    override suspend fun activateDefaultLabel() {
+        _settings.emit(
+            _settings.value.copy(labelName = "")
         )
     }
 
