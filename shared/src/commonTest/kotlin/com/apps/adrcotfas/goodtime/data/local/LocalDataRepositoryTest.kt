@@ -147,7 +147,9 @@ class LocalDataRepositoryTest {
         dataSource.updateLabelOrderIndex(LABEL_NAME, expectedOrderIndex)
         dataSource.updateShouldFollowDefaultTimeProfile(LABEL_NAME, true)
 
-        val label = dataSource.selectAllLabels().first().first()
+        val labels = dataSource.selectAllLabels().first()
+        val label = labels.firstOrNull { it.name == LABEL_NAME }
+        assertNotNull(label, "label not found")
         assertEquals(expectedColorIndex, label.colorIndex, "updateLabelColorIndex failed")
         assertEquals(expectedOrderIndex, label.orderIndex, "updateLabelOrderIndex failed")
         assertEquals(
@@ -172,13 +174,13 @@ class LocalDataRepositoryTest {
 
         dataSource.deleteAllLabels()
         val labels = dataSource.selectAllLabels().first()
-        assertTrue(labels.isEmpty(), "selectAllLabels failed")
+        assertNotNull(labels.firstOrNull { it.name == "" }, "default label should always be present")
 
         val labelToDeleteName = "ceva"
         dataSource.insertLabel(label.copy(name = labelToDeleteName))
-        assertEquals(1, dataSource.selectAllLabels().first().size, "insertLabel failed")
+        assertEquals(2, dataSource.selectAllLabels().first().size, "insertLabel failed")
         dataSource.deleteLabel(labelToDeleteName)
-        assertEquals(0, dataSource.selectAllLabels().first().size, "deleteLabel failed")
+        assertEquals(1, dataSource.selectAllLabels().first().size, "deleteLabel failed")
     }
 
     companion object {
