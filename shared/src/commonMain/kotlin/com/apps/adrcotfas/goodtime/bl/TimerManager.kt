@@ -2,6 +2,7 @@ package com.apps.adrcotfas.goodtime.bl
 
 import co.touchlab.kermit.Logger
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
+import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.Session
 import com.apps.adrcotfas.goodtime.data.model.endTime
 import com.apps.adrcotfas.goodtime.data.settings.AppSettings
@@ -59,9 +60,11 @@ class TimerManager(
             it.labelName
         }.distinctUntilChanged().flatMapLatest {
             log.i { "new label from settingsRepo: $it" }
-            it?.let {
+            if (it == Label.DEFAULT_LABEL_NAME) {
+                localDataRepo.selectDefaultLabel()
+            } else {
                 localDataRepo.selectLabelByName(it)
-            } ?: localDataRepo.selectDefaultLabel()
+            }
         }.distinctUntilChanged().collect {
             _timerData.update { data -> data.copy(label = it) }
             log.i { "new label: ${it.name}" }

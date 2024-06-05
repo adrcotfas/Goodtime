@@ -7,6 +7,7 @@ android-minSdk = "24"
 android-compileSdk = "34"
 android-targetSdk = "34"
 espressoCore = "3.5.1"
+foundation = "1.7.0-beta02"
 kotlin = "1.9.22"
 
 compose-compiler = "1.5.10"
@@ -35,6 +36,7 @@ kermit = "2.0.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundation" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidxLifecycle" }
 

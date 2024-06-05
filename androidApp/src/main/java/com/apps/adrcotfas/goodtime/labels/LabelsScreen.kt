@@ -5,13 +5,12 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -29,15 +28,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.apps.adrcotfas.goodtime.data.model.Label
+import com.apps.adrcotfas.goodtime.data.model.isDefault
+import com.apps.adrcotfas.goodtime.ui.DraggableItem
+import com.apps.adrcotfas.goodtime.ui.dragContainer
+import com.apps.adrcotfas.goodtime.ui.rememberDragDropState
 import org.koin.androidx.compose.koinViewModel
-import kotlin.random.Random
 
 //TODO: consider sub-labels?
 // not here but it can be part of the stats screen; the only precondition can be the name of the labels,
@@ -45,23 +46,29 @@ import kotlin.random.Random
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LabelsScreen(viewModel: LabelsViewModel = koinViewModel()) {
-
-    val labels by viewModel.labels.collectAsState(initial = emptyList())
-    val activeLabelName by viewModel.activeLabel.collectAsState()
-    val activeLabelIndex = labels.indexOfFirst { it.name == activeLabelName }
+    val uiState by viewModel.uiState.collectAsState()
+    val labels = uiState.labels
+    val activeLabelName = uiState.activeLabelName
 
     val listState = rememberLazyListState()
-    val topAppBarScrollBehavior = pinnedScrollBehavior()
+    val dragDropState =
+        rememberDragDropState(listState) { fromIndex, toIndex ->
+            viewModel.rearrangeLabel(fromIndex, toIndex)
+        }
 
-    var firstCompositionFinished by remember { mutableStateOf(false) }
-
-    val showFab = listState.isScrollingUp().xor(firstCompositionFinished)
-    if (labels.isNotEmpty() && activeLabelName != null) {
+    val activeLabelIndex = labels.indexOfFirst { it.name == activeLabelName }
+    if (labels.isNotEmpty()) {
         LaunchedEffect(Unit) {
-            listState.scrollToItem(activeLabelIndex)
-            firstCompositionFinished = true
+            listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index?.let {
+                if (activeLabelIndex > it) {
+                    listState.scrollToItem(activeLabelIndex)
+                }
+            }
         }
     }
+
+    val showFab = listState.isScrollingUp()
+    val topAppBarScrollBehavior = pinnedScrollBehavior()
 
     Scaffold(
         modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
@@ -77,10 +84,12 @@ fun LabelsScreen(viewModel: LabelsViewModel = koinViewModel()) {
                 exit = slideOutVertically(targetOffsetY = { it * 2 }) + fadeOut(),
                 visible = showFab
             ) {
+                val lastIndex =
+                    labels.filter { !it.isDefault() }.maxOfOrNull { it.name.toInt() } ?: 0
                 ExtendedFloatingActionButton(
                     onClick = {
                         //TODO: navigate to AddEditLabelScreen
-                        viewModel.addLabel(Label(name = "New Label ${Random.nextInt(100)}"))
+                        viewModel.addLabel(Label(name = "${lastIndex + 1}"))
                     },
                     icon = { Icon(Icons.Filled.Add, "Localized description") },
                     text = { Text(text = "Create label") },
@@ -93,19 +102,21 @@ fun LabelsScreen(viewModel: LabelsViewModel = koinViewModel()) {
             state = listState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(paddingValues),
+            contentPadding = PaddingValues(bottom = 64.dp)
         ) {
-            items(labels) {
-                LabelListItem(
-                    label = it,
-                    isActive = it.name == activeLabelName,
-                    onClick = { labelName -> viewModel.setActiveLabel(labelName) },
-                    onLongClick = { labelName ->
-                        viewModel.deleteLabel(labelName)
-                    }
-                )
+            itemsIndexed(labels, key = { _, item -> item.name }) { index, item ->
+                DraggableItem(dragDropState, index) { isDragging ->
+                    //TODO: use isDragging to modify the UI of the dragged item
+                    LabelListItem(
+                        label = item,
+                        isActive = item.name == activeLabelName,
+                        onClick = { labelName -> viewModel.setActiveLabel(labelName) },
+                        onDelete = { labelName -> viewModel.deleteLabel(labelName) },
+                        dragModifier = Modifier.dragContainer(dragDropState, item.name)
+                    )
+                }
             }
-            item { Spacer(Modifier.height(64.dp)) }
         }
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.automirrored.outlined.Label
+import androidx.compose.material.icons.filled.DragIndicator
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
@@ -24,13 +25,15 @@ import androidx.compose.ui.unit.dp
 import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.TimerProfile
+import com.apps.adrcotfas.goodtime.data.model.isDefault
 
 @Composable
 fun LabelListItem(
     label: Label,
     isActive: Boolean,
     onClick: (String) -> Unit,
-    onLongClick: (String) -> Unit, //TODO: replace this with a handle for rearranging labels
+    dragModifier: Modifier,
+    onDelete: (String) -> Unit = {},
 ) {
     //TODO: integrate label info in row
     Crossfade(targetState = isActive, label = "") { active ->
@@ -43,9 +46,15 @@ fun LabelListItem(
                 .let { if (active) it.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)) else it }
                 .padding(4.dp)
         ) {
-
             Icon(
-                modifier = Modifier.padding(8.dp),
+                modifier = dragModifier,
+                imageVector = Icons.Filled.DragIndicator,
+                tint = MaterialTheme.colorScheme.onSurface,
+                contentDescription = "Drag indicator",
+            )
+            Icon(
+                modifier = Modifier
+                    .padding(8.dp),
                 imageVector = if (active) {
                     Icons.AutoMirrored.Filled.Label
                 } else Icons.AutoMirrored.Outlined.Label, contentDescription = null,
@@ -54,14 +63,20 @@ fun LabelListItem(
             )
 
             Text(
-                label.name.let { it.ifEmpty { stringResource(id = R.string.label_default) } },
+                if (label.isDefault()) {
+                    stringResource(id = R.string.label_default)
+                } else {
+                    label.name
+                },
                 style = MaterialTheme.typography.bodyLarge
             )
             Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = {
+                onDelete(label.name)
+            }) {
                 Icon(Icons.Filled.Edit, contentDescription = null)
             }
-            IconButton(onClick = { /*TODO*/ onLongClick(label.name) }) {
+            IconButton(onClick = { /*TODO*/ }) {
                 Icon(Icons.Filled.MoreVert, contentDescription = null)
             }
         }
@@ -80,6 +95,6 @@ fun LabelCardPreview() {
         ),
         isActive = true,
         onClick = {},
-        onLongClick = {},
+        dragModifier = Modifier
     )
 }

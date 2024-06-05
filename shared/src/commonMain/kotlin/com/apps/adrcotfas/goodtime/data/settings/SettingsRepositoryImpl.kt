@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import co.touchlab.kermit.Logger
+import com.apps.adrcotfas.goodtime.data.model.Label
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -67,7 +68,7 @@ class SettingsRepositoryImpl(
                 autoStartWork = it[Keys.autoStartWorkKey] ?: false,
                 autoStartBreak = it[Keys.autoStartBreakKey] ?: false,
                 dndDuringWork = it[Keys.dndDuringWorkKey] ?: false,
-                labelName = it[Keys.labelNameKey],
+                labelName = it[Keys.labelNameKey] ?: Label.DEFAULT_LABEL_NAME,
                 longBreakData = it[Keys.longBreakDataKey]?.let { l ->
                     Json.decodeFromString<LongBreakData>(l)
                 } ?: LongBreakData(),
@@ -134,8 +135,8 @@ class SettingsRepositoryImpl(
     }
 
     override suspend fun activateLabelWithName(labelName: String) {
-        dataStore.edit { it[Keys.labelNameKey] = labelName}
+        dataStore.edit { it[Keys.labelNameKey] = labelName }
     }
 
-    override suspend fun activateDefaultLabel() = activateLabelWithName("")
+    override suspend fun activateDefaultLabel() = activateLabelWithName(Label.DEFAULT_LABEL_NAME)
 }

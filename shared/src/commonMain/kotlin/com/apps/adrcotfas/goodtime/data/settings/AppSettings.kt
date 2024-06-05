@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.data.settings
 
+import com.apps.adrcotfas.goodtime.data.model.Label
 import kotlinx.datetime.LocalTime
 import kotlinx.serialization.Serializable
 
@@ -22,7 +23,7 @@ data class AppSettings(
     val autoStartBreak: Boolean = false,
     val dndDuringWork: Boolean = false,
 
-    val labelName: String? = null,
+    val labelName: String = Label.DEFAULT_LABEL_NAME,
     val longBreakData: LongBreakData = LongBreakData(),
     val breakBudgetData: BreakBudgetData = BreakBudgetData()
     //TODO: consider the following

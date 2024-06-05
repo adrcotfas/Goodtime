@@ -26,8 +26,8 @@ internal class LocalDataRepositoryImpl(
     }
 
     private fun insertDefaultLabel() {
-        val localLabel = Label().toLocal()
-        database.localLabelQueries.selectByName("", ::toExternalLabelMapper).executeAsList().let {
+        val localLabel = Label(name = Label.DEFAULT_LABEL_NAME, orderIndex = 0).toLocal()
+        database.localLabelQueries.selectByName(Label.DEFAULT_LABEL_NAME, ::toExternalLabelMapper).executeAsList().let {
             if (it.isEmpty()) {
                 database.localLabelQueries.insert(localLabel)
             }
@@ -175,9 +175,9 @@ internal class LocalDataRepositoryImpl(
             .asFlow().mapToList(defaultDispatcher)
     }
 
-    override fun selectLabelsByArchived(isArchived: Boolean): Flow<List<Label>> {
+    override fun selectAllLabelsArchived(): Flow<List<Label>> {
         return database.localLabelQueries
-            .selectByIsArchived(isArchived, mapper = ::toExternalLabelMapper)
+            .selectAllArchived(mapper = ::toExternalLabelMapper)
             .asFlow()
             .mapToList(defaultDispatcher)
     }
