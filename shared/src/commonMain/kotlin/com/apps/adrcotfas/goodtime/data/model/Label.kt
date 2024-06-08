@@ -2,7 +2,7 @@ package com.apps.adrcotfas.goodtime.data.model
 
 data class Label(
     val id: Long = 0,
-    val name: String,
+    val name: String = DEFAULT_LABEL_NAME,
     val colorIndex: Long = 0,
     val orderIndex: Long = Long.MAX_VALUE,
     val useDefaultTimeProfile: Boolean = true,

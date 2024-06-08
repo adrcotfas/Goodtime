@@ -121,7 +121,7 @@ class LocalDataRepositoryTest {
         dataSource.insertLabel(label.copy(name = "ceva", isArchived = true))
         dataSource.insertLabel(label.copy(name = "fin", isArchived = true))
 
-        val labels = dataSource.selectLabelsByArchived(true).first()
+        val labels = dataSource.selectAllLabelsArchived().first()
         assertEquals(2, labels.size, "selectLabelsByArchived failed")
     }
 
