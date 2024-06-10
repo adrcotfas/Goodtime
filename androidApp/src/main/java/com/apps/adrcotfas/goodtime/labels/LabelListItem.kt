@@ -3,6 +3,7 @@ package com.apps.adrcotfas.goodtime.labels
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,6 +42,7 @@ import com.apps.adrcotfas.goodtime.data.model.isDefault
 fun LabelListItem(
     label: Label,
     isActive: Boolean,
+    isDragging: Boolean,
     dragModifier: Modifier,
     onActivate: () -> Unit,
     onEdit: () -> Unit,
@@ -48,19 +50,28 @@ fun LabelListItem(
     onArchive: () -> Unit,
     onDelete: () -> Unit
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+
     //TODO: integrate label info in row
     Crossfade(targetState = isActive, label = "") { active ->
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .clickable {
-                    onActivate()
-                }
+                .background(MaterialTheme.colorScheme.background)
+                .clickable { onActivate() }
                 .let { if (active) it.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)) else it }
+                .let {
+                    if (isDragging) it.background(
+                        MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.1f)
+                    ) else it
+                }
                 .padding(4.dp)
         ) {
             Icon(
-                modifier = dragModifier,
+                modifier = dragModifier.clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClick = {}),
                 imageVector = Icons.Filled.DragIndicator,
                 tint = MaterialTheme.colorScheme.onSurface,
                 contentDescription = "Drag indicator",
@@ -157,6 +168,7 @@ fun LabelCardPreview() {
             timerProfile = TimerProfile(sessionsBeforeLongBreak = 4)
         ),
         isActive = true,
+        isDragging = false,
         dragModifier = Modifier,
         onActivate = {},
         onEdit = {},

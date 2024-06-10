@@ -35,7 +35,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.apps.adrcotfas.goodtime.R
-import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.isDefault
 import com.apps.adrcotfas.goodtime.ui.DraggableItem
 import com.apps.adrcotfas.goodtime.ui.dragContainer
@@ -87,13 +86,9 @@ fun LabelsScreen(viewModel: LabelsViewModel = koinViewModel()) {
                 exit = slideOutVertically(targetOffsetY = { it * 2 }) + fadeOut(),
                 visible = showFab
             ) {
-                val lastIndex =
-                    labels.filter { !it.isDefault() && !it.name.contains(defaultLabelName) }
-                        .maxOfOrNull { it.name.toInt() } ?: 0
                 ExtendedFloatingActionButton(
                     onClick = {
                         //TODO: navigate to AddEditLabelScreen
-                        viewModel.addLabel(Label(name = "${lastIndex + 1}"))
                     },
                     icon = { Icon(Icons.Filled.Add, "Localized description") },
                     text = { Text(text = "Create label") },
@@ -115,6 +110,7 @@ fun LabelsScreen(viewModel: LabelsViewModel = koinViewModel()) {
                     LabelListItem(
                         label = item,
                         isActive = item.name == activeLabelName,
+                        isDragging,
                         dragModifier = Modifier.dragContainer(dragDropState, item.name),
                         onActivate = { viewModel.setActiveLabel(item.name) },
                         //TODO: navigate to AddEditLabelScreen
