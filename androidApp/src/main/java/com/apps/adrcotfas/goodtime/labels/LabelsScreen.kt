@@ -32,7 +32,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.isDefault
 import com.apps.adrcotfas.goodtime.ui.DraggableItem
@@ -47,8 +49,9 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun LabelsScreen(viewModel: LabelsViewModel = koinViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
-    val labels = uiState.labels
+    val labels = uiState.unarchivedLabels
     val activeLabelName = uiState.activeLabelName
+    val defaultLabelName = stringResource(id = R.string.label_default)
 
     val listState = rememberLazyListState()
     val dragDropState =
@@ -85,7 +88,8 @@ fun LabelsScreen(viewModel: LabelsViewModel = koinViewModel()) {
                 visible = showFab
             ) {
                 val lastIndex =
-                    labels.filter { !it.isDefault() }.maxOfOrNull { it.name.toInt() } ?: 0
+                    labels.filter { !it.isDefault() && !it.name.contains(defaultLabelName) }
+                        .maxOfOrNull { it.name.toInt() } ?: 0
                 ExtendedFloatingActionButton(
                     onClick = {
                         //TODO: navigate to AddEditLabelScreen
@@ -111,9 +115,18 @@ fun LabelsScreen(viewModel: LabelsViewModel = koinViewModel()) {
                     LabelListItem(
                         label = item,
                         isActive = item.name == activeLabelName,
-                        onClick = { labelName -> viewModel.setActiveLabel(labelName) },
-                        onDelete = { labelName -> viewModel.deleteLabel(labelName) },
-                        dragModifier = Modifier.dragContainer(dragDropState, item.name)
+                        dragModifier = Modifier.dragContainer(dragDropState, item.name),
+                        onActivate = { viewModel.setActiveLabel(item.name) },
+                        //TODO: navigate to AddEditLabelScreen
+                        onEdit = {},
+                        onDuplicate = {
+                            viewModel.duplicateLabel(
+                                if (item.isDefault()) defaultLabelName else item.name,
+                                item.isDefault()
+                            )
+                        },
+                        onArchive = { viewModel.setArchived(item.name, true) },
+                        onDelete = { viewModel.deleteLabel(item.name) }
                     )
                 }
             }

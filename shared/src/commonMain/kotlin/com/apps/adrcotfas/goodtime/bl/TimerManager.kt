@@ -67,7 +67,7 @@ class TimerManager(
             }
         }.distinctUntilChanged().collect {
             _timerData.update { data -> data.copy(label = it) }
-            log.i { "new label: ${it.name}" }
+            log.i { "new label: $it" }
         }
     }
 
