@@ -18,4 +18,13 @@ class TimePickerDialogBuilder(context: Context) {
                 .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
                 .build()
     }
+
+    fun buildDialog(hours: Int, minutes: Int): MaterialTimePicker {
+        return MaterialTimePicker.Builder()
+            .setHour(hours)
+            .setMinute(minutes)
+            .setTimeFormat(TimeFormat.CLOCK_24H)
+            .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+            .build()
+    }
 }

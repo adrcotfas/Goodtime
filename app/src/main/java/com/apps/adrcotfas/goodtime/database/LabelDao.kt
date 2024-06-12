@@ -38,6 +38,9 @@ interface LabelDao {
     @Query("update Label SET colorId = :colorId WHERE title = :title")
     suspend fun editLabelColor(title: String, colorId: Int)
 
+    @Query("update Label SET timeDailyGoal = :timeDailyGoal WHERE title = :title")
+    suspend fun editLabelGoal(title: String, timeDailyGoal: Int)
+
     @Query("update Label SET `order` = :order WHERE title = :title")
     suspend fun editLabelOrder(title: String, order: Int)
 
