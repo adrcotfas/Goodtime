@@ -7,11 +7,13 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.ui.graphics.vector.ImageVector
 
-sealed class Destination(val route: String, val label: String, val icon: ImageVector) {
+sealed class Destination(val route: String, val label: String, val icon: ImageVector?) {
     data object Main : Destination("main", "Main", Icons.Default.Home)
     data object Labels : Destination("labels", "Labels", Icons.Default.Place)
     data object Stats : Destination("stats", "Stats", Icons.Default.ThumbUp)
     data object Settings : Destination("settings", "Settings", Icons.Default.Settings)
+
+    data object ArchivedLabels : Destination("archivedLabels", "Archived Labels", null)
 }
 
 val bottomNavigationItems = listOf(

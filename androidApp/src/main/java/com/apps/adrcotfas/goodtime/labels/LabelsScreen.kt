@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.data.model.isDefault
 import com.apps.adrcotfas.goodtime.ui.DraggableItem
@@ -46,8 +47,11 @@ import org.koin.androidx.compose.koinViewModel
 // for example group together according to a prefix, e.g. "Work/Label1", "Work/Label2", "Work/Label3" etc.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LabelsScreen(viewModel: LabelsViewModel = koinViewModel()) {
-    val uiState by viewModel.uiState.collectAsState()
+fun LabelsScreen(
+    onNavigateToArchivedLabels: () -> Unit,
+    viewModel: LabelsViewModel = koinViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val labels = uiState.unarchivedLabels
     val activeLabelName = uiState.activeLabelName
     val defaultLabelName = stringResource(id = R.string.label_default)
@@ -89,6 +93,7 @@ fun LabelsScreen(viewModel: LabelsViewModel = koinViewModel()) {
                 ExtendedFloatingActionButton(
                     onClick = {
                         //TODO: navigate to AddEditLabelScreen
+                        onNavigateToArchivedLabels()
                     },
                     icon = { Icon(Icons.Filled.Add, "Localized description") },
                     text = { Text(text = "Create label") },

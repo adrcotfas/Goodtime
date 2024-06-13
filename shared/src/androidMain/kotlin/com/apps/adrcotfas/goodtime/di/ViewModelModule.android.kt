@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.di
 
+import com.apps.adrcotfas.goodtime.labels.ArchivedLabelsViewModel
 import com.apps.adrcotfas.goodtime.labels.LabelsViewModel
 import com.apps.adrcotfas.goodtime.main.MainViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -13,4 +14,5 @@ actual val viewModelModule: Module = module {
     single { CoroutineScope(SupervisorJob() + Dispatchers.IO) }
     viewModelOf(::MainViewModel)
     viewModelOf(::LabelsViewModel)
+    viewModelOf(::ArchivedLabelsViewModel)
 }

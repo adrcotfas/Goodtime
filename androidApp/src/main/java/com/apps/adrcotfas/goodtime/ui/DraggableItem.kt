@@ -184,9 +184,9 @@ fun LazyItemScope.DraggableItem(
             }
     } else {
         Modifier.animateItem(
-            placementSpec = spring(stiffness = Spring.StiffnessHigh),
-            fadeInSpec = spring(stiffness = Spring.StiffnessHigh),
-            fadeOutSpec = spring(stiffness = Spring.StiffnessHigh)
+            placementSpec = spring(stiffness = Spring.StiffnessMediumLow),
+            fadeInSpec = spring(stiffness = Spring.StiffnessMediumLow),
+            fadeOutSpec = spring(stiffness = Spring.StiffnessMediumLow)
         )
     }
     Column(modifier = modifier.then(draggingModifier)) {

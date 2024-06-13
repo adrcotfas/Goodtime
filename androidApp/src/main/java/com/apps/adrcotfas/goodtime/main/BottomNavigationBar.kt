@@ -23,7 +23,7 @@ fun BottomNavigationBar(navController: NavController) {
                         launchSingleTop = true
                     }
                 },
-                icon = { Icon(item.icon, contentDescription = null) },
+                icon = { Icon(item.icon!!, contentDescription = null) },
                 label = { Text(item.label) }
             )
         }

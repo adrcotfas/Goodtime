@@ -6,7 +6,6 @@ import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.utils.generateUniqueNameForDuplicate
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -27,17 +26,17 @@ val LabelsUiState.unarchivedLabels: List<Label>
 
 class LabelsViewModel(
     private val localDataRepository: LocalDataRepository,
-    private val settingsRepository: SettingsRepository,
-    private val coroutineScope: CoroutineScope
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     val uiState = MutableStateFlow(LabelsUiState())
 
     init {
-        coroutineScope.launch {
+        println("### init viewmodel init")
+        viewModelScope.launch {
             uiState.update { it.copy(labels = localDataRepository.selectAllLabels().first()) }
         }
-        coroutineScope.launch {
+        viewModelScope.launch {
             uiState.update {
                 it.copy(activeLabelName = settingsRepository.settings.map { settings -> settings.labelName }
                     .first())
@@ -127,7 +126,7 @@ class LabelsViewModel(
                 add(toIndex, removeAt(fromIndex))
             })
         }
-        coroutineScope.launch {
+        viewModelScope.launch {
             uiState.value.unarchivedLabels.map { it.name }
                 .forEachIndexed { index, labelName ->
                     localDataRepository.updateLabelOrderIndex(labelName, index.toLong())

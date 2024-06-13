@@ -51,9 +51,11 @@ fun LabelListItem(
     onDelete: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
+    val labelName =
+        if (label.isDefault()) stringResource(id = R.string.label_default) else label.name
 
     //TODO: integrate label info in row
-    Crossfade(targetState = isActive, label = "") { active ->
+    Crossfade(targetState = isActive, label = "Active label crossfade") { active ->
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -74,23 +76,22 @@ fun LabelListItem(
                     onClick = {}),
                 imageVector = Icons.Filled.DragIndicator,
                 tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = "Drag indicator",
+                contentDescription = "Drag indicator for $labelName",
             )
             Icon(
                 modifier = Modifier
                     .padding(8.dp),
                 imageVector = if (active) {
                     Icons.AutoMirrored.Filled.Label
-                } else Icons.AutoMirrored.Outlined.Label, contentDescription = null,
+                } else Icons.AutoMirrored.Outlined.Label,
+                contentDescription = (if (active) {
+                    "Active label"
+                } else "Inactive label") + ": $labelName",
                 //TODO: take color from label.colorId
                 tint = MaterialTheme.colorScheme.primary
             )
             Text(
-                if (label.isDefault()) {
-                    stringResource(id = R.string.label_default)
-                } else {
-                    label.name
-                },
+                labelName,
                 style = MaterialTheme.typography.bodyLarge
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -99,16 +100,19 @@ fun LabelListItem(
                 IconButton(onClick = {
                     onEdit()
                 }) {
-                    Icon(Icons.Filled.Edit, contentDescription = null)
+                    Icon(Icons.Filled.Edit, contentDescription = "Edit $labelName")
                 }
                 IconButton(onClick = { onDuplicate() }) {
-                    Icon(Icons.Filled.ContentCopy, contentDescription = null)
+                    Icon(
+                        Icons.Filled.ContentCopy,
+                        contentDescription = "Duplicate $labelName"
+                    )
                 }
             } else {
                 var dropDownMenuExpanded by remember { mutableStateOf(false) }
                 Box {
                     IconButton(onClick = { dropDownMenuExpanded = true }) {
-                        Icon(Icons.Filled.MoreVert, contentDescription = null)
+                        Icon(Icons.Filled.MoreVert, contentDescription = "More about $labelName")
                     }
                     DropdownMenu(
                         expanded = dropDownMenuExpanded,
@@ -120,7 +124,7 @@ fun LabelListItem(
                                 dropDownMenuExpanded = false
                             },
                             leadingIcon = {
-                                Icon(Icons.Filled.Edit, contentDescription = null)
+                                Icon(Icons.Filled.Edit, contentDescription = "Edit $labelName")
                             })
                         DropdownMenuItem(
                             text = { Text("Duplicate") },
@@ -129,7 +133,10 @@ fun LabelListItem(
                                 dropDownMenuExpanded = false
                             },
                             leadingIcon = {
-                                Icon(Icons.Filled.ContentCopy, contentDescription = null)
+                                Icon(
+                                    Icons.Filled.ContentCopy,
+                                    contentDescription = "Duplicate $labelName"
+                                )
                             }
                         )
                         DropdownMenuItem(
@@ -139,7 +146,10 @@ fun LabelListItem(
                                 dropDownMenuExpanded = false
                             },
                             leadingIcon = {
-                                Icon(Icons.Outlined.Archive, contentDescription = null)
+                                Icon(
+                                    Icons.Outlined.Archive,
+                                    contentDescription = "Archive $labelName"
+                                )
                             })
                         DropdownMenuItem(
                             text = { Text("Delete") },
@@ -148,7 +158,10 @@ fun LabelListItem(
                                 dropDownMenuExpanded = false
                             },
                             leadingIcon = {
-                                Icon(Icons.Filled.DeleteOutline, contentDescription = null)
+                                Icon(
+                                    Icons.Filled.DeleteOutline,
+                                    contentDescription = "Delete $labelName"
+                                )
                             })
                     }
                 }
