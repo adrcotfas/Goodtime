@@ -103,6 +103,21 @@ internal class LocalDataRepositoryImpl(
         }
     }
 
+    override suspend fun insertLabelAndBulkRearrange(
+        label: Label,
+        labelsToUpdate: List<Pair<String, Long>>
+    ) {
+        withContext(defaultDispatcher) {
+            database.transaction {
+                val localLabel = label.toLocal()
+                database.localLabelQueries.insert(localLabel)
+                labelsToUpdate.forEach { (name, newOrderIndex) ->
+                    database.localLabelQueries.updateOrderIndex(newOrderIndex, name)
+                }
+            }
+        }
+    }
+
     override suspend fun updateLabelName(name: String, newName: String) {
         withContext(defaultDispatcher) {
             database.localLabelQueries.updateName(newName = newName, name = name)
@@ -118,6 +133,16 @@ internal class LocalDataRepositoryImpl(
     override suspend fun updateLabelOrderIndex(name: String, newOrderIndex: Long) {
         withContext(defaultDispatcher) {
             database.localLabelQueries.updateOrderIndex(newOrderIndex = newOrderIndex, name = name)
+        }
+    }
+
+    override suspend fun bulkUpdateLabelOrderIndex(labelsToUpdate: List<Pair<String, Long>>) {
+        withContext(defaultDispatcher) {
+            database.transaction {
+                labelsToUpdate.forEach { (name, newOrderIndex) ->
+                    database.localLabelQueries.updateOrderIndex(newOrderIndex, name)
+                }
+            }
         }
     }
 

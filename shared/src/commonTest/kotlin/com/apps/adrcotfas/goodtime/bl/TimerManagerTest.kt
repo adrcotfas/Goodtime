@@ -581,7 +581,7 @@ class TimerManagerTest {
         private const val CUSTOM_LABEL_NAME = "dummy"
         private val dummyTimerProfile = TimerProfile().copy(isCountdown = false, workBreakRatio = 5)
 
-        private var defaultLabel = Label()
+        private var defaultLabel = Label(orderIndex = 0)
         private var dummyLabel =
             Label().copy(name = CUSTOM_LABEL_NAME, timerProfile = dummyTimerProfile)
 

@@ -21,9 +21,11 @@ interface LocalDataRepository {
     suspend fun deleteAllSessions()
 
     suspend fun insertLabel(label: Label)
+    suspend fun insertLabelAndBulkRearrange(label: Label, labelsToUpdate: List<Pair<String, Long>>)
     suspend fun updateLabelName(name: String, newName: String)
     suspend fun updateLabelColorIndex(name: String, newColorIndex: Long)
     suspend fun updateLabelOrderIndex(name: String, newOrderIndex: Long)
+    suspend fun bulkUpdateLabelOrderIndex(labelsToUpdate: List<Pair<String, Long>>)
     suspend fun updateLabelIsArchived(name: String, newIsArchived: Boolean)
     suspend fun updateShouldFollowDefaultTimeProfile(
         name: String,

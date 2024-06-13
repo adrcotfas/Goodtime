@@ -148,7 +148,11 @@ class DragDropState internal constructor(
         get() = this.offset + this.size
 }
 
-fun Modifier.dragContainer(dragDropState: DragDropState, key: Any): Modifier {
+fun Modifier.dragContainer(
+    dragDropState: DragDropState,
+    key: Any,
+    onDragFinished: () -> Unit
+): Modifier {
     return pointerInput(dragDropState) {
         detectDragGestures(
             onDrag = { change, offset ->
@@ -156,8 +160,14 @@ fun Modifier.dragContainer(dragDropState: DragDropState, key: Any): Modifier {
                 dragDropState.onDrag(offset = offset)
             },
             onDragStart = { _ -> dragDropState.onDragStartWithKey(key) },
-            onDragEnd = { dragDropState.onDragInterrupted() },
-            onDragCancel = { dragDropState.onDragInterrupted() }
+            onDragEnd = {
+                dragDropState.onDragInterrupted()
+                onDragFinished()
+            },
+            onDragCancel = {
+                dragDropState.onDragInterrupted()
+                onDragFinished()
+            }
         )
     }
 }
