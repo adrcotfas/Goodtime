@@ -27,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -54,6 +55,9 @@ fun LabelsScreen(
     val labels = uiState.unarchivedLabels
     val activeLabelName = uiState.activeLabelName
     val defaultLabelName = stringResource(id = R.string.label_default)
+
+    var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
+    var labelToDelete by remember { mutableStateOf("") }
 
     val listState = rememberLazyListState()
     val dragDropState =
@@ -108,32 +112,44 @@ fun LabelsScreen(
                 .padding(paddingValues),
             contentPadding = PaddingValues(bottom = 64.dp)
         ) {
-            itemsIndexed(labels, key = { _, item -> item.name }) { index, item ->
+            itemsIndexed(labels, key = { _, item -> item.name }) { index, label ->
                 DraggableItem(dragDropState, index) { isDragging ->
-                    //TODO: use isDragging to modify the UI of the dragged item
+                    //TODO: use isDragging to modify the UI of the dragged label
                     LabelListItem(
-                        label = item,
-                        isActive = item.name == activeLabelName,
+                        label = label,
+                        isActive = label.name == activeLabelName,
                         isDragging,
                         dragModifier = Modifier.dragContainer(
                             dragDropState = dragDropState,
-                            key = item.name,
+                            key = label.name,
                             onDragFinished = { viewModel.rearrangeLabelsToDisk() }
                         ),
-                        onActivate = { viewModel.setActiveLabel(item.name) },
+                        onActivate = { viewModel.setActiveLabel(label.name) },
                         //TODO: navigate to AddEditLabelScreen
                         onEdit = {},
                         onDuplicate = {
                             viewModel.duplicateLabel(
-                                if (item.isDefault()) defaultLabelName else item.name,
-                                item.isDefault()
+                                if (label.isDefault()) defaultLabelName else label.name,
+                                label.isDefault()
                             )
                         },
-                        onArchive = { viewModel.setArchived(item.name, true) },
-                        onDelete = { viewModel.deleteLabel(item.name) }
+                        onArchive = { viewModel.setArchived(label.name, true) },
+                        onDelete = {
+                            labelToDelete = label.name
+                            showDeleteConfirmationDialog = true
+                        }
                     )
                 }
             }
+        }
+        if (showDeleteConfirmationDialog) {
+            DeleteConfirmationDialog(
+                labelToDeleteName = labelToDelete,
+                onConfirm = {
+                    viewModel.deleteLabel(labelToDelete)
+                    showDeleteConfirmationDialog = false
+                },
+                onDismiss = { showDeleteConfirmationDialog = false })
         }
     }
 }

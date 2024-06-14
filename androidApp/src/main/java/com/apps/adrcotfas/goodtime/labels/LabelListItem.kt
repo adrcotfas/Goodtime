@@ -38,6 +38,7 @@ import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.TimerProfile
 import com.apps.adrcotfas.goodtime.data.model.isDefault
 
+//TODO: add menu item to go to the stats screen for the selected label
 @Composable
 fun LabelListItem(
     label: Label,

@@ -47,6 +47,9 @@ fun ArchivedLabelsScreen(
     val labels by viewModel.archivedLabels.collectAsStateWithLifecycle(emptyList())
     val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
+    var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
+    var labelToDelete by remember { mutableStateOf("") }
+
     Scaffold(
         modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
@@ -70,8 +73,20 @@ fun ArchivedLabelsScreen(
                         Modifier.animateItem(),
                         label = label,
                         onUnarchive = { viewModel.unarchiveLabel(label.name) },
-                        onDelete = { viewModel.deleteLabel(label.name) })
+                        onDelete = {
+                            labelToDelete = label.name
+                            showDeleteConfirmationDialog = true
+                        })
                 }
+            }
+            if (showDeleteConfirmationDialog) {
+                DeleteConfirmationDialog(
+                    labelToDeleteName = labelToDelete,
+                    onConfirm = {
+                        viewModel.deleteLabel(labelToDelete)
+                        showDeleteConfirmationDialog = false
+                    },
+                    onDismiss = { showDeleteConfirmationDialog = false })
             }
         }
     )
