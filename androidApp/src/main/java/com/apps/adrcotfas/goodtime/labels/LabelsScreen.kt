@@ -14,14 +14,19 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Archive
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults.pinnedScrollBehavior
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -77,13 +82,17 @@ fun LabelsScreen(
     }
 
     val showFab = listState.isScrollingUp()
-    val topAppBarScrollBehavior = pinnedScrollBehavior()
+    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
 
     Scaffold(
         modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("Labels") },
+                actions = {
+                    ArchivedLabelsButton(uiState.archivedLabelCount, onNavigateToArchivedLabels)
+                },
                 scrollBehavior = topAppBarScrollBehavior
             )
         },
@@ -150,6 +159,35 @@ fun LabelsScreen(
                     showDeleteConfirmationDialog = false
                 },
                 onDismiss = { showDeleteConfirmationDialog = false })
+        }
+    }
+}
+
+@Composable
+fun ArchivedLabelsButton(count: Int, onClick: () -> Unit) {
+    AnimatedVisibility(visible = count > 0, enter = fadeIn(), exit = fadeOut()) {
+        BadgedBox(
+            modifier = Modifier.padding(end = 8.dp),
+            badge = {
+                Badge(
+                    modifier = Modifier.padding(end = 8.dp),
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                ) {
+                    Text(count.let {
+                        if (it > 9) "9+"
+                        else it.toString()
+                    })
+                }
+            }
+        ) {
+            IconButton(onClick = onClick) {
+                Icon(
+                    imageVector = Icons.Outlined.Archive,
+                    contentDescription = "Navigate to archived labels",
+                )
+            }
+
         }
     }
 }

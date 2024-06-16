@@ -13,7 +13,8 @@ import kotlinx.coroutines.launch
 
 data class LabelsUiState(
     val labels: List<Label> = emptyList(),
-    val activeLabelName: String = Label.DEFAULT_LABEL_NAME
+    val activeLabelName: String = Label.DEFAULT_LABEL_NAME,
+    val archivedLabelCount: Int = 0
 )
 
 val LabelsUiState.unarchivedLabels: List<Label>
@@ -29,7 +30,12 @@ class LabelsViewModel(
     init {
         viewModelScope.launch {
             localDataRepository.selectAllLabels().collect { labels ->
-                uiState.update { it.copy(labels = labels) }
+                uiState.update {
+                    it.copy(
+                        labels = labels,
+                        archivedLabelCount = labels.filter { label -> label.isArchived }.size
+                    )
+                }
             }
         }
         viewModelScope.launch {
@@ -104,6 +110,7 @@ class LabelsViewModel(
     }
 
     fun rearrangeLabelsToDisk() {
+        println("### rearrangeLabelsToDisk")
         viewModelScope.launch {
             val labelsToUpdate = uiState.value.unarchivedLabels.mapIndexed { index, label ->
                 Pair(label.name, index.toLong())
