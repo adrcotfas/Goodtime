@@ -19,6 +19,9 @@ data class LabelsUiState(
 val LabelsUiState.unarchivedLabels: List<Label>
     get() = labels.filter { !it.isArchived }
 
+val LabelsUiState.archivedLabelCount: Int
+    get() = labels.filter { it.isArchived }.size
+
 class LabelsViewModel(
     private val localDataRepository: LocalDataRepository,
     private val settingsRepository: SettingsRepository
