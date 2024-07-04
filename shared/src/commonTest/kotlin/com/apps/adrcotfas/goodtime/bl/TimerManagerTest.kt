@@ -110,11 +110,11 @@ class TimerManagerTest {
         assertEquals(timerManager.timerData.value.label, defaultLabel)
         assertEquals(
             timerManager.timerData.value.label!!.name,
-            ""
+            Label.DEFAULT_LABEL_NAME
         )
 
         val newTimerProfile = TimerProfile().copy(isCountdown = false, workBreakRatio = 42)
-        localDataRepo.updateDefaultLabelTimerProfile(newTimerProfile)
+        localDataRepo.updateDefaultLabel(defaultLabel.copy(timerProfile = newTimerProfile))
         assertEquals(
             timerManager.timerData.value.label!!.timerProfile,
             newTimerProfile,
@@ -581,7 +581,7 @@ class TimerManagerTest {
         private const val CUSTOM_LABEL_NAME = "dummy"
         private val dummyTimerProfile = TimerProfile().copy(isCountdown = false, workBreakRatio = 5)
 
-        private var defaultLabel = Label(orderIndex = 0)
+        private var defaultLabel = Label.defaultLabel()
         private var dummyLabel =
             Label().copy(name = CUSTOM_LABEL_NAME, timerProfile = dummyTimerProfile)
 

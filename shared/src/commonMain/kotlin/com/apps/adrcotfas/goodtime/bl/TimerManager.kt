@@ -22,6 +22,7 @@ import kotlin.time.Duration.Companion.minutes
 /**
  * Manages the timer state and provides methods to start, pause, resume and finish the timer.
  */
+//TODO: fix bug where custom label that follows default label is not considered
 class TimerManager(
     private val localDataRepo: LocalDataRepository,
     private val settingsRepo: SettingsRepository,

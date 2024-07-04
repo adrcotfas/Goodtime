@@ -70,7 +70,7 @@ class LocalDataRepositoryTest {
         )
 
         val newLabelName = "new"
-        dataSource.updateLabelName(LABEL_NAME, newLabelName)
+        dataSource.updateLabel(LABEL_NAME, label.copy(name = newLabelName))
         assertEquals(
             newLabelName,
             dataSource.selectAllSessions().first().first().label,
@@ -143,9 +143,16 @@ class LocalDataRepositoryTest {
     fun `Update label properties`() = runTest {
         val expectedColorIndex = 9L
         val expectedOrderIndex = 10L
-        dataSource.updateLabelColorIndex(LABEL_NAME, expectedColorIndex)
+        val expectedFollowDefaultTimeProfile = false
+        dataSource.updateLabel(
+            LABEL_NAME,
+            label.copy(
+                colorIndex = expectedColorIndex,
+                orderIndex = expectedOrderIndex,
+                useDefaultTimeProfile = expectedFollowDefaultTimeProfile
+            )
+        )
         dataSource.updateLabelOrderIndex(LABEL_NAME, expectedOrderIndex)
-        dataSource.updateShouldFollowDefaultTimeProfile(LABEL_NAME, true)
 
         val labels = dataSource.selectAllLabels().first()
         val label = labels.firstOrNull { it.name == LABEL_NAME }
@@ -153,7 +160,7 @@ class LocalDataRepositoryTest {
         assertEquals(expectedColorIndex, label.colorIndex, "updateLabelColorIndex failed")
         assertEquals(expectedOrderIndex, label.orderIndex, "updateLabelOrderIndex failed")
         assertEquals(
-            true,
+            expectedFollowDefaultTimeProfile,
             label.useDefaultTimeProfile,
             "updateShouldFollowDefaultTimeProfile failed"
         )
@@ -174,7 +181,10 @@ class LocalDataRepositoryTest {
 
         dataSource.deleteAllLabels()
         val labels = dataSource.selectAllLabels().first()
-        assertNotNull(labels.firstOrNull { it.name == "" }, "default label should always be present")
+        assertNotNull(
+            labels.firstOrNull { it.name == Label.DEFAULT_LABEL_NAME },
+            "default label should always be present"
+        )
 
         val labelToDeleteName = "ceva"
         dataSource.insertLabel(label.copy(name = labelToDeleteName))

@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.labels
+package com.apps.adrcotfas.goodtime.labels.main
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -24,9 +24,11 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -40,8 +42,12 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.data.model.isDefault
+import com.apps.adrcotfas.goodtime.labels.DeleteConfirmationDialog
+import com.apps.adrcotfas.goodtime.labels.add_edit.AddEditLabelScreen
+import com.apps.adrcotfas.goodtime.main.Destination
 import com.apps.adrcotfas.goodtime.ui.DraggableItem
 import com.apps.adrcotfas.goodtime.ui.dragContainer
 import com.apps.adrcotfas.goodtime.ui.rememberDragDropState
@@ -53,7 +59,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LabelsScreen(
-    onNavigateToArchivedLabels: () -> Unit,
+    navController: NavController,
     viewModel: LabelsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -69,6 +75,8 @@ fun LabelsScreen(
         rememberDragDropState(listState) { fromIndex, toIndex ->
             viewModel.rearrangeLabel(fromIndex, toIndex)
         }
+
+    val showAddEditDialog = uiState.showAddEditDialog
 
     val activeLabelIndex = labels.indexOfFirst { it.name == activeLabelName }
     if (labels.isNotEmpty()) {
@@ -91,7 +99,11 @@ fun LabelsScreen(
             CenterAlignedTopAppBar(
                 title = { Text("Labels") },
                 actions = {
-                    ArchivedLabelsButton(uiState.archivedLabelCount, onNavigateToArchivedLabels)
+                    ArchivedLabelsButton(uiState.archivedLabelCount) {
+                        navController.navigate(
+                            Destination.ArchivedLabels.route
+                        )
+                    }
                 },
                 scrollBehavior = topAppBarScrollBehavior
             )
@@ -104,8 +116,7 @@ fun LabelsScreen(
             ) {
                 ExtendedFloatingActionButton(
                     onClick = {
-                        //TODO: navigate to AddEditLabelScreen
-                        onNavigateToArchivedLabels()
+                        viewModel.setShowAddEditDialog(true)
                     },
                     icon = { Icon(Icons.Filled.Add, "Localized description") },
                     text = { Text(text = "Create label") },
@@ -123,19 +134,19 @@ fun LabelsScreen(
         ) {
             itemsIndexed(labels, key = { _, item -> item.name }) { index, label ->
                 DraggableItem(dragDropState, index) { isDragging ->
-                    //TODO: use isDragging to modify the UI of the dragged label
                     LabelListItem(
                         label = label,
                         isActive = label.name == activeLabelName,
-                        isDragging,
+                        isDragging = isDragging,
                         dragModifier = Modifier.dragContainer(
                             dragDropState = dragDropState,
                             key = label.name,
                             onDragFinished = { viewModel.rearrangeLabelsToDisk() }
                         ),
                         onActivate = { viewModel.setActiveLabel(label.name) },
-                        //TODO: navigate to AddEditLabelScreen
-                        onEdit = {},
+                        onEdit = {
+                            viewModel.setShowAddEditDialog(true, label)
+                        },
                         onDuplicate = {
                             viewModel.duplicateLabel(
                                 if (label.isDefault()) defaultLabelName else label.name,
@@ -159,6 +170,36 @@ fun LabelsScreen(
                     showDeleteConfirmationDialog = false
                 },
                 onDismiss = { showDeleteConfirmationDialog = false })
+        }
+        if (showAddEditDialog) {
+            ModalBottomSheet(
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                onDismissRequest = {
+                    viewModel.setShowAddEditDialog(false)
+                    viewModel.resetLabelToEdit()
+                }) {
+                AddEditLabelScreen(
+                    isEditMode = uiState.labelToEditInitialName.isNotEmpty(),
+                    labelToEditInitialName = uiState.labelToEditInitialName,
+                    labelToEdit = uiState.labelToEdit,
+                    labelNames = uiState.labelNames,
+                    onEditLabelToEdit = { label ->
+                        viewModel.updateLabelToEdit(label)
+                    },
+                    onSave = { label ->
+                        viewModel.addLabel(label)
+                        viewModel.resetLabelToEdit()
+                    },
+                    onUpdate = { name, label ->
+                        viewModel.updateLabel(name, label)
+                        viewModel.resetLabelToEdit()
+                    },
+                    onNavigateBack = {
+                        viewModel.setShowAddEditDialog(false)
+                        viewModel.resetLabelToEdit()
+                    }
+                )
+            }
         }
     }
 }

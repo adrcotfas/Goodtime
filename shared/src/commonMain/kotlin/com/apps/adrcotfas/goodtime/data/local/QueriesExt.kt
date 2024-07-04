@@ -22,18 +22,6 @@ fun LocalLabelQueries.insert(label: LocalLabel) {
     )
 }
 
-fun LocalLabelQueries.updateTimerProfile(name: String, newTimerProfile: TimerProfile) {
-    updateTimerProfile(
-        name = name,
-        newIsCountdown = newTimerProfile.isCountdown,
-        newWorkDuration = newTimerProfile.workDuration,
-        newBreakDuration = newTimerProfile.breakDuration,
-        newLongBreakDuration = newTimerProfile.longBreakDuration,
-        newSessionsBeforeLongBreak = newTimerProfile.sessionsBeforeLongBreak,
-        newWorkBreakRatio = newTimerProfile.workBreakRatio
-    )
-}
-
 fun LocalSessionQueries.insert(session: LocalSession) {
     insert(
         startTimestamp = session.startTimestamp,

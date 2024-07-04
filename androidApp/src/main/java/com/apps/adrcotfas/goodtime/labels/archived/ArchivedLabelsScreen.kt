@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.labels
+package com.apps.adrcotfas.goodtime.labels.archived
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -35,6 +35,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.data.model.Label
+import com.apps.adrcotfas.goodtime.labels.DeleteConfirmationDialog
+import com.apps.adrcotfas.goodtime.ui.localColorsPalette
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -101,6 +103,7 @@ fun ArchivedLabelListItem(
 ) {
     val labelName = label.name
 
+    //TODO: add empty state illustration
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -112,8 +115,7 @@ fun ArchivedLabelListItem(
                 .padding(8.dp),
             imageVector = Icons.AutoMirrored.Outlined.Label,
             contentDescription = null,
-            //TODO: take color from label.colorId
-            tint = MaterialTheme.colorScheme.primary
+            tint = MaterialTheme.localColorsPalette.colors[label.colorIndex.toInt()]
         )
         Text(
             text = label.name,

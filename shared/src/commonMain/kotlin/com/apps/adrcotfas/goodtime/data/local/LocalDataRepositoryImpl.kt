@@ -4,7 +4,6 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.Session
-import com.apps.adrcotfas.goodtime.data.model.TimerProfile
 import com.apps.adrcotfas.goodtime.data.model.toExternalLabelMapper
 import com.apps.adrcotfas.goodtime.data.model.toExternalSessionMapper
 import com.apps.adrcotfas.goodtime.data.model.toLocal
@@ -26,8 +25,9 @@ internal class LocalDataRepositoryImpl(
     }
 
     private fun insertDefaultLabel() {
-        val localLabel = Label(name = Label.DEFAULT_LABEL_NAME, orderIndex = 0).toLocal()
-        database.localLabelQueries.selectByName(Label.DEFAULT_LABEL_NAME, ::toExternalLabelMapper).executeAsList().let {
+        val localLabel = Label.defaultLabel().toLocal()
+        database.localLabelQueries.selectByName(Label.DEFAULT_LABEL_NAME, ::toExternalLabelMapper)
+            .executeAsList().let {
             if (it.isEmpty()) {
                 database.localLabelQueries.insert(localLabel)
             }
@@ -118,18 +118,6 @@ internal class LocalDataRepositoryImpl(
         }
     }
 
-    override suspend fun updateLabelName(name: String, newName: String) {
-        withContext(defaultDispatcher) {
-            database.localLabelQueries.updateName(newName = newName, name = name)
-        }
-    }
-
-    override suspend fun updateLabelColorIndex(name: String, newColorIndex: Long) {
-        withContext(defaultDispatcher) {
-            database.localLabelQueries.updateColorIndex(newColorIndex = newColorIndex, name = name)
-        }
-    }
-
     override suspend fun updateLabelOrderIndex(name: String, newOrderIndex: Long) {
         withContext(defaultDispatcher) {
             database.localLabelQueries.updateOrderIndex(newOrderIndex = newOrderIndex, name = name)
@@ -146,38 +134,31 @@ internal class LocalDataRepositoryImpl(
         }
     }
 
-    override suspend fun updateShouldFollowDefaultTimeProfile(
+    override suspend fun updateLabel(
         name: String,
-        newShouldFollowDefaultTimeProfile: Boolean
+        newLabel: Label
     ) {
         withContext(defaultDispatcher) {
-            database.localLabelQueries.updateShouldFollowDefaultTimeProfile(
-                newShouldFollowDefaultTimeProfile = newShouldFollowDefaultTimeProfile,
+            database.localLabelQueries.updateLabel(
+                newName = newLabel.name,
+                newColorIndex = newLabel.colorIndex,
+                newUseDefaultTimeProfile = newLabel.useDefaultTimeProfile,
+                newIsCountdown = newLabel.timerProfile.isCountdown,
+                newWorkDuration = newLabel.timerProfile.workDuration,
+                newBreakDuration = newLabel.timerProfile.breakDuration,
+                newLongBreakDuration = newLabel.timerProfile.longBreakDuration,
+                newSessionsBeforeLongBreak = newLabel.timerProfile.sessionsBeforeLongBreak,
+                newWorkBreakRatio = newLabel.timerProfile.workBreakRatio,
                 name = name
             )
         }
     }
 
-    override suspend fun updateDefaultLabelTimerProfile(newTimerProfile: TimerProfile) {
-        withContext(defaultDispatcher) {
-            database.localLabelQueries.updateTimerProfile("", newTimerProfile)
-        }
+    override suspend fun updateDefaultLabel(newDefaultLabel: Label) {
+        updateLabel(Label.DEFAULT_LABEL_NAME, newDefaultLabel)
     }
 
-    override suspend fun updateLabelTimerProfile(name: String, newTimerProfile: TimerProfile) {
-        withContext(defaultDispatcher) {
-            database.localLabelQueries.updateTimerProfile(name, newTimerProfile)
-        }
-    }
-
-    override fun selectDefaultLabel(): Flow<Label> {
-        return database.localLabelQueries
-            .selectByName("", mapper = ::toExternalLabelMapper)
-            .asFlow()
-            .mapToList(defaultDispatcher)
-            .filterNot { it.isEmpty() }
-            .map { it.first() }
-    }
+    override fun selectDefaultLabel() = selectLabelByName(Label.DEFAULT_LABEL_NAME)
 
     override suspend fun updateLabelIsArchived(name: String, newIsArchived: Boolean) {
         withContext(defaultDispatcher) {

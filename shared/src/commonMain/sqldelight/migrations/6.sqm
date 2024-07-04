@@ -5,7 +5,7 @@ PRAGMA foreign_keys=off;
 
 CREATE TABLE IF NOT EXISTS labelTmp (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT UNIQUE NOT NULL DEFAULT "",
+    name TEXT UNIQUE NOT NULL DEFAULT "PRODUCTIVITY_DEFAULT_LABEL",
     colorIndex INTEGER NOT NULL,
     orderIndex INTEGER NOT NULL,
     useDefaultTimeProfile INTEGER AS Boolean NOT NULL DEFAULT 1,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS labelTmp (
 );
 
 INSERT INTO labelTmp(name, colorIndex, orderIndex, isArchived)
-SELECT COALESCE(title, ""), colorId, 'order', archived FROM Label;
+SELECT COALESCE(title, "PRODUCTIVITY_DEFAULT_LABEL"), colorId, 'order', archived FROM Label;
 
 DROP TABLE Label;
 ALTER TABLE labelTmp RENAME TO localLabel;

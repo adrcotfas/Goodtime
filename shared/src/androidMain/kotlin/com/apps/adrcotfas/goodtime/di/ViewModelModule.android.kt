@@ -1,7 +1,7 @@
 package com.apps.adrcotfas.goodtime.di
 
-import com.apps.adrcotfas.goodtime.labels.ArchivedLabelsViewModel
-import com.apps.adrcotfas.goodtime.labels.LabelsViewModel
+import com.apps.adrcotfas.goodtime.labels.archived.ArchivedLabelsViewModel
+import com.apps.adrcotfas.goodtime.labels.main.LabelsViewModel
 import com.apps.adrcotfas.goodtime.main.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

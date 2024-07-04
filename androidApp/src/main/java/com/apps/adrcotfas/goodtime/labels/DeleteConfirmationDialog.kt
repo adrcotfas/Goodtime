@@ -1,9 +1,6 @@
 package com.apps.adrcotfas.goodtime.labels
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -17,7 +14,6 @@ fun DeleteConfirmationDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        icon = { Icon(Icons.Filled.DeleteOutline, contentDescription = null) },
         title = { Text("Delete $labelToDeleteName?") },
         text = { Text("Deleting this label will remove it from associated completed sessions.") },
         confirmButton = {

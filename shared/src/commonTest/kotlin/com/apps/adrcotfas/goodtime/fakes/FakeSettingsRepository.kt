@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.fakes
 
+import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.AppSettings
 import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.FlashType
@@ -69,7 +70,7 @@ class FakeSettingsRepository(settings: AppSettings = AppSettings()) : SettingsRe
 
     override suspend fun activateDefaultLabel() {
         _settings.emit(
-            _settings.value.copy(labelName = "")
+            _settings.value.copy(labelName = Label.DEFAULT_LABEL_NAME)
         )
     }
 

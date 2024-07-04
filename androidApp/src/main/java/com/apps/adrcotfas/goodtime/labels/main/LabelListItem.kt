@@ -1,5 +1,6 @@
-package com.apps.adrcotfas.goodtime.labels
+package com.apps.adrcotfas.goodtime.labels.main
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,6 +38,7 @@ import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.TimerProfile
 import com.apps.adrcotfas.goodtime.data.model.isDefault
+import com.apps.adrcotfas.goodtime.ui.localColorsPalette
 
 //TODO: add menu item to go to the stats screen for the selected label
 @Composable
@@ -44,6 +46,7 @@ fun LabelListItem(
     label: Label,
     isActive: Boolean,
     isDragging: Boolean,
+    @SuppressLint("ModifierParameter")
     dragModifier: Modifier,
     onActivate: () -> Unit,
     onEdit: () -> Unit,
@@ -76,7 +79,7 @@ fun LabelListItem(
                     indication = null,
                     onClick = {}),
                 imageVector = Icons.Filled.DragIndicator,
-                tint = MaterialTheme.colorScheme.onSurface,
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                 contentDescription = "Drag indicator for $labelName",
             )
             Icon(
@@ -88,8 +91,7 @@ fun LabelListItem(
                 contentDescription = (if (active) {
                     "Active label"
                 } else "Inactive label") + ": $labelName",
-                //TODO: take color from label.colorId
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.localColorsPalette.colors[label.colorIndex.toInt()]
             )
             Text(
                 labelName,
@@ -103,12 +105,6 @@ fun LabelListItem(
                 }) {
                     Icon(Icons.Filled.Edit, contentDescription = "Edit $labelName")
                 }
-                IconButton(onClick = { onDuplicate() }) {
-                    Icon(
-                        Icons.Filled.ContentCopy,
-                        contentDescription = "Duplicate $labelName"
-                    )
-                }
             } else {
                 var dropDownMenuExpanded by remember { mutableStateOf(false) }
                 Box {
@@ -121,7 +117,7 @@ fun LabelListItem(
                         DropdownMenuItem(
                             text = { Text("Edit") },
                             onClick = {
-                                //
+                                onEdit()
                                 dropDownMenuExpanded = false
                             },
                             leadingIcon = {

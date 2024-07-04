@@ -22,17 +22,11 @@ interface LocalDataRepository {
 
     suspend fun insertLabel(label: Label)
     suspend fun insertLabelAndBulkRearrange(label: Label, labelsToUpdate: List<Pair<String, Long>>)
-    suspend fun updateLabelName(name: String, newName: String)
-    suspend fun updateLabelColorIndex(name: String, newColorIndex: Long)
     suspend fun updateLabelOrderIndex(name: String, newOrderIndex: Long)
     suspend fun bulkUpdateLabelOrderIndex(labelsToUpdate: List<Pair<String, Long>>)
     suspend fun updateLabelIsArchived(name: String, newIsArchived: Boolean)
-    suspend fun updateShouldFollowDefaultTimeProfile(
-        name: String,
-        newShouldFollowDefaultTimeProfile: Boolean
-    )
-    suspend fun updateDefaultLabelTimerProfile(newTimerProfile: TimerProfile)
-    suspend fun updateLabelTimerProfile(name: String, newTimerProfile: TimerProfile)
+    suspend fun updateLabel(name: String, newLabel: Label)
+    suspend fun updateDefaultLabel(newDefaultLabel: Label)
     fun selectDefaultLabel(): Flow<Label>
     fun selectLabelByName(name: String): Flow<Label>
     fun selectAllLabels(): Flow<List<Label>>

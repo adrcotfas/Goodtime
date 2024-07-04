@@ -25,8 +25,8 @@ import androidx.navigation.compose.rememberNavController
 import co.touchlab.kermit.Logger
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.di.injectLogger
-import com.apps.adrcotfas.goodtime.labels.ArchivedLabelsScreen
-import com.apps.adrcotfas.goodtime.labels.LabelsScreen
+import com.apps.adrcotfas.goodtime.labels.archived.ArchivedLabelsScreen
+import com.apps.adrcotfas.goodtime.labels.main.LabelsScreen
 import com.apps.adrcotfas.goodtime.main.BottomNavigationBar
 import com.apps.adrcotfas.goodtime.main.Destination
 import com.apps.adrcotfas.goodtime.main.MainScreen
@@ -84,11 +84,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
                         ) {
                             composable(Destination.Main.route) { MainScreen() }
                             composable(Destination.Labels.route) {
-                                LabelsScreen({
-                                    navController.navigate(
-                                        Destination.ArchivedLabels.route
-                                    )
-                                })
+                                LabelsScreen(navController)
                             }
                             composable(Destination.Stats.route) { StatsScreen() }
                             composable(Destination.Settings.route) { SettingsScreen() }
@@ -99,8 +95,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
                                         popUpTo(navController.graph.startDestinationId)
                                         launchSingleTop = true
                                     }
-                                }
-                                )
+                                })
                             }
                         }
                     }

@@ -3,7 +3,7 @@ import kotlin.Int;
 
 CREATE TABLE IF NOT EXISTS localLabel (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT UNIQUE NOT NULL DEFAULT "",
+    name TEXT UNIQUE NOT NULL DEFAULT "PRODUCTIVITY_DEFAULT_LABEL",
     colorIndex INTEGER NOT NULL,
     orderIndex INTEGER NOT NULL,
     useDefaultTimeProfile INTEGER AS Boolean NOT NULL DEFAULT 1,
@@ -38,25 +38,17 @@ INSERT OR IGNORE INTO localLabel(
     isArchived)
 VALUES(NULL,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
-updateName:
-UPDATE localLabel
-SET name = :newName WHERE name = :name;
-
-updateColorIndex:
-UPDATE localLabel
-SET colorIndex = :newColorIndex WHERE name = :name;
-
 updateOrderIndex:
 UPDATE localLabel
 SET orderIndex = :newOrderIndex WHERE name = :name;
 
-updateShouldFollowDefaultTimeProfile:
+updateLabel:
 UPDATE localLabel
-SET useDefaultTimeProfile = :newShouldFollowDefaultTimeProfile WHERE name = :name;
-
-updateTimerProfile:
-UPDATE localLabel
-SET isCountdown = :newIsCountdown,
+SET
+    name = :newName,
+    colorIndex = :newColorIndex,
+    useDefaultTimeProfile = :newUseDefaultTimeProfile,
+    isCountdown = :newIsCountdown,
     workDuration = :newWorkDuration,
     breakDuration = :newBreakDuration,
     longBreakDuration = :newLongBreakDuration,
@@ -87,4 +79,4 @@ delete:
 DELETE FROM localLabel WHERE name = ?;
 
 deleteAll:
-DELETE FROM localLabel WHERE name != "";
+DELETE FROM localLabel WHERE name != "PRODUCTIVITY_DEFAULT_LABEL";

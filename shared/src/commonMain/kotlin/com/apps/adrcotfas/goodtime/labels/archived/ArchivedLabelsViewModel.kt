@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.labels
+package com.apps.adrcotfas.goodtime.labels.archived
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
