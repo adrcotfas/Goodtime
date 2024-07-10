@@ -40,7 +40,7 @@ INSERT OR IGNORE INTO localLabel(
     sessionsBeforeLongBreak,
     workBreakRatio,
     isArchived)
-VALUES(NULL,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES(NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 updateOrderIndex:
 UPDATE localLabel

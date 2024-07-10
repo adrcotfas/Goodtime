@@ -47,7 +47,14 @@ CREATE TABLE IF NOT EXISTS sessionTmp (
 );
 
 INSERT INTO sessionTmp(id, startTimestamp, endTimestamp, duration, labelName, isArchived)
-SELECT `id`, (`timestamp` - (`duration` * 60 * 1000)), timestamp, `duration`, `label`, `archived` FROM Session;
+SELECT `id`,
+       (`timestamp` - (`duration` * 60 * 1000)),
+       timestamp,
+       `duration`,
+       COALESCE(`label`, "PRODUCTIVITY_DEFAULT_LABEL"),
+       `archived`
+FROM Session;
+
 DROP TABLE Session;
 ALTER TABLE sessionTmp RENAME TO localSession;
 
