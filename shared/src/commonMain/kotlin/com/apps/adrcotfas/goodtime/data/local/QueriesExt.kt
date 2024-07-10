@@ -4,7 +4,6 @@ import com.apps.adrcotfas.goodtime.LocalLabel
 import com.apps.adrcotfas.goodtime.LocalLabelQueries
 import com.apps.adrcotfas.goodtime.LocalSession
 import com.apps.adrcotfas.goodtime.LocalSessionQueries
-import com.apps.adrcotfas.goodtime.data.model.TimerProfile
 
 fun LocalLabelQueries.insert(label: LocalLabel) {
     insert(
@@ -14,7 +13,9 @@ fun LocalLabelQueries.insert(label: LocalLabel) {
         useDefaultTimeProfile = label.useDefaultTimeProfile,
         isCountdown = label.isCountdown,
         workDuration = label.workDuration,
+        isBreakEnabled = label.isBreakEnabled,
         breakDuration = label.breakDuration,
+        isLongBreakEnabled = label.isLongBreakEnabled,
         longBreakDuration = label.longBreakDuration,
         sessionsBeforeLongBreak = label.sessionsBeforeLongBreak,
         workBreakRatio = label.workBreakRatio,

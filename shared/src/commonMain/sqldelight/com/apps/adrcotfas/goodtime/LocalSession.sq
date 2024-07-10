@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS localSession (
     startTimestamp INTEGER NOT NULL,
     endTimestamp INTEGER NOT NULL,
     duration INTEGER NOT NULL,
-    labelName TEXT DEFAULT NULL,
+    labelName TEXT NOT NULL DEFAULT "PRODUCTIVITY_DEFAULT_LABEL",
     notes TEXT DEFAULT NULL,
     isWork INTEGER AS Boolean NOT NULL DEFAULT 1,
     isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,

@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.goodtime.bl
 
 import com.apps.adrcotfas.goodtime.data.model.Label
+import com.apps.adrcotfas.goodtime.data.model.TimerProfile
 import com.apps.adrcotfas.goodtime.data.model.duration
 import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
@@ -11,7 +12,8 @@ import kotlin.time.Duration.Companion.minutes
  * There can only be one running timer at a time.
  */
 data class DomainTimerData(
-    val label: Label? = null,
+    val labelName: String? = null,
+    val timerProfile: TimerProfile? = null,
     val startTime: Long = 0, // millis since boot
     val lastStartTime: Long = 0, // millis since boot
     val endTime: Long = 0, // millis since boot
@@ -31,20 +33,31 @@ data class DomainTimerData(
     val breakBudgetData: BreakBudgetData = BreakBudgetData(),
 ) {
     fun reset() = DomainTimerData(
-        label = label,
+        labelName = labelName,
+        timerProfile = timerProfile,
         longBreakData = longBreakData,
         breakBudgetData = breakBudgetData
     )
 
-    fun getDuration() = (label?.timerProfile?.duration(type) ?: 0).minutes.inWholeMilliseconds
+    fun getDuration() = (timerProfile?.duration(type) ?: 0).minutes.inWholeMilliseconds
 
     fun getBreakBudget(workDuration: Int): Int {
-        return if (label == null || label.timerProfile.isCountdown) {
+        return if (timerProfile == null || timerProfile.isCountdown) {
             0
         } else {
-            workDuration / label.timerProfile.workBreakRatio
+            workDuration / timerProfile.workBreakRatio
         }
     }
+
+    fun requireTimerProfile(): TimerProfile {
+        return timerProfile ?: throw IllegalStateException("TimerProfile is null")
+    }
+
+    fun requireLabelName(): String {
+        return labelName ?: throw IllegalStateException("Label is null")
+    }
+
+    fun isDefaultLabel() = labelName == Label.DEFAULT_LABEL_NAME
 }
 
 enum class TimerState {
@@ -56,21 +69,21 @@ enum class TimerType {
 }
 
 fun DomainTimerData.getBaseTime(timerProvider: TimeProvider): Long {
-    if (label == null) {
+    if (timerProfile == null) {
         return 0
     }
-    val countdown = label.timerProfile.isCountdown
+    val countdown = timerProfile.isCountdown
 
     if (state == TimerState.RESET) {
         return if (countdown) {
-            label.timerProfile.duration(type).minutes.inWholeMilliseconds
+            timerProfile.duration(type).minutes.inWholeMilliseconds
         } else {
             0
         }
-    } else if(state == TimerState.PAUSED) {
+    } else if (state == TimerState.PAUSED) {
         return remainingTimeAtPause
     }
 
     return if (countdown) endTime - timerProvider.elapsedRealtime()
-            else timerProvider.elapsedRealtime() - startTime
+    else timerProvider.elapsedRealtime() - startTime
 }

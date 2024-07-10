@@ -11,7 +11,9 @@ CREATE TABLE IF NOT EXISTS localLabel (
     -- countdown columns
     isCountdown INTEGER AS Boolean NOT NULL DEFAULT 1,
     workDuration INTEGER AS Int NOT NULL DEFAULT 25,
+    isBreakEnabled INTEGER AS Boolean NOT NULL DEFAULT 1,
     breakDuration INTEGER AS Int NOT NULL DEFAULT 5,
+    isLongBreakEnabled INTEGER AS Boolean NOT NULL DEFAULT 1,
     longBreakDuration INTEGER AS Int NOT NULL DEFAULT 15,
     sessionsBeforeLongBreak INTEGER AS Int NOT NULL DEFAULT 4,
 
@@ -31,12 +33,14 @@ INSERT OR IGNORE INTO localLabel(
     useDefaultTimeProfile,
     isCountdown,
     workDuration,
+    isBreakEnabled,
     breakDuration,
+    isLongBreakEnabled,
     longBreakDuration,
     sessionsBeforeLongBreak,
     workBreakRatio,
     isArchived)
-VALUES(NULL,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES(NULL,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 updateOrderIndex:
 UPDATE localLabel
@@ -50,7 +54,9 @@ SET
     useDefaultTimeProfile = :newUseDefaultTimeProfile,
     isCountdown = :newIsCountdown,
     workDuration = :newWorkDuration,
+    isBreakEnabled = :newIsBreakEnabled,
     breakDuration = :newBreakDuration,
+    isLongBreakEnabled = :newIsLongBreakEnabled,
     longBreakDuration = :newLongBreakDuration,
     sessionsBeforeLongBreak = :newSessionsBeforeLongBreak,
     workBreakRatio = :newWorkBreakRatio

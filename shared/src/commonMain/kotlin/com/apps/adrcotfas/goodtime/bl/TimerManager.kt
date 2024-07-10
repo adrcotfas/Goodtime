@@ -2,7 +2,6 @@ package com.apps.adrcotfas.goodtime.bl
 
 import co.touchlab.kermit.Logger
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
-import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.Session
 import com.apps.adrcotfas.goodtime.data.model.endTime
 import com.apps.adrcotfas.goodtime.data.settings.AppSettings
@@ -10,6 +9,7 @@ import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -60,20 +60,24 @@ class TimerManager(
             settings = it
             it.labelName
         }.distinctUntilChanged().flatMapLatest {
-            log.i { "new label from settingsRepo: $it" }
-            if (it == Label.DEFAULT_LABEL_NAME) {
-                localDataRepo.selectDefaultLabel()
-            } else {
-                localDataRepo.selectLabelByName(it)
+            log.d { "new active label: $it" }
+            _timerData.update { data -> data.copy(labelName = it)}
+            localDataRepo.selectLabelByName(it)
+                .combine(localDataRepo.selectDefaultLabel()) { label, defaultLabel ->
+                    Pair(
+                        label,
+                        defaultLabel
+                    )
+                }
+        }.distinctUntilChanged()
+            .collect {
+                val newTimerProfile = if (it.first.useDefaultTimeProfile) it.second.timerProfile else it.first.timerProfile
+                _timerData.update { data -> data.copy(timerProfile = newTimerProfile) }
             }
-        }.distinctUntilChanged().collect {
-            _timerData.update { data -> data.copy(label = it) }
-            log.i { "new label: $it" }
-        }
     }
 
     fun start(timerType: TimerType = timerData.value.type) {
-        if (timerData.value.label == null) {
+        if (timerData.value.timerProfile == null) {
             log.e { "Trying to start the timer without a label" }
             return
         }
@@ -92,7 +96,7 @@ class TimerManager(
                 it.copy(
                     startTime = elapsedRealTime,
                     lastStartTime = elapsedRealTime,
-                    endTime = it.label!!.timerProfile.endTime(
+                    endTime = it.requireTimerProfile().endTime(
                         timerType,
                         elapsedRealTime
                     ),
@@ -115,7 +119,7 @@ class TimerManager(
             log.e { "Trying to add one minute when the timer is not running" }
             return
         }
-        if (!data.label!!.timerProfile.isCountdown) {
+        if (!data.requireTimerProfile().isCountdown) {
             log.e { "Trying to add a minute to a timer that is not a countdown" }
             return
         }
@@ -176,7 +180,7 @@ class TimerManager(
         }
 
         val isWork = data.type == TimerType.WORK
-        val isCountDown = data.label!!.timerProfile.isCountdown
+        val isCountDown = data.requireTimerProfile().isCountdown
 
         handleFinishedSession(updateWorkTime, isManualAction = true)
 
@@ -244,7 +248,7 @@ class TimerManager(
             resetStreakIfNeeded(timerData.value.endTime)
 
             // update the break budget if the timer is count-up
-            if (!timerData.value.label!!.timerProfile.isCountdown) {
+            if (!timerData.value.requireTimerProfile().isCountdown) {
                 val existingBudget =
                     timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime())
                 val breakBudgetData = BreakBudgetData(existingBudget, 0)
@@ -259,7 +263,7 @@ class TimerManager(
         val state = data.state
         val isWork = data.type == TimerType.WORK
         val isFinished = state == TimerState.FINISHED
-        val isCountDown = data.label!!.timerProfile.isCountdown
+        val isCountDown = data.requireTimerProfile().isCountdown
 
         val session = createFinishedSession()
         session?.let {
@@ -317,7 +321,7 @@ class TimerManager(
             startTimeMillis,
             endTimeInMillis,
             durationToSave,
-            data.label!!.name,
+            data.requireLabelName(),
             isWork
         )
     }
@@ -352,11 +356,11 @@ class TimerManager(
 
     private fun shouldConsiderStreak(nextWorkEndTime: Long): Boolean {
         val data = timerData.value
-        val label = data.label
-        if (label?.timerProfile?.isCountdown != true) return false
+        val timerProfile = data.timerProfile
+        if (timerProfile?.isCountdown != true) return false
 
         val streakForLongBreakIsReached =
-            (data.longBreakData.streak % label.timerProfile.sessionsBeforeLongBreak == 0)
+            (data.longBreakData.streak % timerProfile.sessionsBeforeLongBreak == 0)
         return streakForLongBreakIsReached && didLastWorkSessionFinishRecently(
             nextWorkEndTime
         )
@@ -364,11 +368,11 @@ class TimerManager(
 
     private fun didLastWorkSessionFinishRecently(workEndTime: Long): Boolean {
         val data = timerData.value
-        val label = data.label
-        if (label?.timerProfile?.isCountdown != true) return false
+        val timerProfile = data.timerProfile
+        if (timerProfile?.isCountdown != true) return false
 
-        val maxIdleTime = label.timerProfile.workDuration.minutes.inWholeMilliseconds +
-                label.timerProfile.breakDuration.minutes.inWholeMilliseconds +
+        val maxIdleTime = timerProfile.workDuration.minutes.inWholeMilliseconds +
+                timerProfile.breakDuration.minutes.inWholeMilliseconds +
                 30.minutes.inWholeMilliseconds
         return data.longBreakData.lastWorkEndTime != 0L && max(
             0,

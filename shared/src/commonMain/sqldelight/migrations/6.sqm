@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS labelTmp (
     -- countdown columns
     isCountdown INTEGER AS Boolean NOT NULL DEFAULT 1,
     workDuration INTEGER AS Int NOT NULL DEFAULT 25,
+    isBreakEnabled INTEGER AS Boolean NOT NULL DEFAULT 1,
     breakDuration INTEGER AS Int NOT NULL DEFAULT 5,
+    isLongBreakEnabled INTEGER AS Boolean NOT NULL DEFAULT 1,
     longBreakDuration INTEGER AS Int NOT NULL DEFAULT 15,
     sessionsBeforeLongBreak INTEGER AS Int NOT NULL DEFAULT 4,
 
@@ -35,7 +37,7 @@ CREATE TABLE IF NOT EXISTS sessionTmp (
         startTimestamp INTEGER NOT NULL,
         endTimestamp INTEGER NOT NULL,
         duration INTEGER NOT NULL,
-        labelName TEXT DEFAULT NULL,
+        labelName TEXT NOT NULL DEFAULT "PRODUCTIVITY_DEFAULT_LABEL",
         notes TEXT DEFAULT NULL,
         isWork INTEGER AS Boolean NOT NULL DEFAULT 1,
         isArchived INTEGER AS Boolean NOT NULL DEFAULT 0,

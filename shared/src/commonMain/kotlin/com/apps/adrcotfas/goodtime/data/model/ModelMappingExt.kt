@@ -12,7 +12,9 @@ fun Label.toLocal(): LocalLabel {
         useDefaultTimeProfile = useDefaultTimeProfile,
         isCountdown = timerProfile.isCountdown,
         workDuration = timerProfile.workDuration,
+        isBreakEnabled = timerProfile.isBreakEnabled,
         breakDuration = timerProfile.breakDuration,
+        isLongBreakEnabled = timerProfile.isLongBreakEnabled,
         longBreakDuration = timerProfile.longBreakDuration,
         sessionsBeforeLongBreak = timerProfile.sessionsBeforeLongBreak,
         workBreakRatio = timerProfile.workBreakRatio,
@@ -28,7 +30,9 @@ fun toExternalLabelMapper(
     useDefaultTimeProfile: Boolean,
     isCountdown: Boolean,
     workDuration: Int,
+    isBreakEnabled: Boolean,
     breakDuration: Int,
+    isLongBreakEnabled: Boolean,
     longBreakDuration: Int,
     sessionsBeforeLongBreak: Int,
     workBreakRatio: Int,
@@ -42,7 +46,9 @@ fun toExternalLabelMapper(
     timerProfile = TimerProfile(
         isCountdown = isCountdown,
         workDuration = workDuration,
+        isBreakEnabled = isBreakEnabled,
         breakDuration = breakDuration,
+        isLongBreakEnabled = isLongBreakEnabled,
         longBreakDuration = longBreakDuration,
         sessionsBeforeLongBreak = sessionsBeforeLongBreak,
         workBreakRatio = workBreakRatio
@@ -66,7 +72,7 @@ fun toExternalSessionMapper(
     startTimestamp: Long,
     endTimestamp: Long,
     duration: Long,
-    label: String?,
+    label: String,
     notes: String?,
     isWork: Boolean,
     isArchived: Boolean

@@ -24,11 +24,11 @@ class NotificationArchManager(private val context: Context, private val activity
     }
 
     fun buildInProgressNotification(data: DomainTimerData): Notification {
-        val isCountDown = data.label!!.timerProfile.isCountdown
+        val isCountDown = data.requireTimerProfile().isCountdown
         val baseTime = if (isCountDown) data.endTime else SystemClock.elapsedRealtime()
         val running = data.state != TimerState.PAUSED
         val timerType = data.type
-        val labelName = data.label?.name
+        val labelName = data.requireLabelName()
 
         val mainStateText = if (timerType == TimerType.WORK) {
             if (running) {
@@ -40,7 +40,8 @@ class NotificationArchManager(private val context: Context, private val activity
         } else {
             "Break in progress"
         }
-        val stateText = if (labelName != null) "$labelName: $mainStateText" else mainStateText
+        val labelText = if (data.isDefaultLabel()) "" else "$labelName: "
+        val stateText = "$labelText$mainStateText"
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID).apply {
             setSmallIcon(SharedR.drawable.ic_status_goodtime)
@@ -113,14 +114,15 @@ class NotificationArchManager(private val context: Context, private val activity
 
     fun notifyFinished(data: DomainTimerData, withActions: Boolean) {
         val timerType = data.type
-        val labelName = data.label?.name
+        val labelName = data.requireLabelName()
 
         val mainStateText = if (timerType == TimerType.WORK) {
             "Work session finished"
         } else {
             "Break finished"
         }
-        val stateText = if (labelName != null) "$labelName: $mainStateText" else mainStateText
+        val labelText = if (data.isDefaultLabel()) "" else "$labelName: "
+        val stateText = "$labelText$mainStateText"
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID).apply {
             setSmallIcon(SharedR.drawable.ic_status_goodtime)

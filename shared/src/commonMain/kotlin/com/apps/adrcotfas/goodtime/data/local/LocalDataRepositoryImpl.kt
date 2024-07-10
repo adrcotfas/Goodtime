@@ -71,7 +71,7 @@ internal class LocalDataRepositoryImpl(
             .mapToList(defaultDispatcher)
     }
 
-    override fun selectSessionsByLabel(label: String?): Flow<List<Session>> {
+    override fun selectSessionsByLabel(label: String): Flow<List<Session>> {
         return database.localSessionQueries
             .selectByLabel(label, mapper = ::toExternalSessionMapper)
             .asFlow()
@@ -145,7 +145,9 @@ internal class LocalDataRepositoryImpl(
                 newUseDefaultTimeProfile = newLabel.useDefaultTimeProfile,
                 newIsCountdown = newLabel.timerProfile.isCountdown,
                 newWorkDuration = newLabel.timerProfile.workDuration,
+                newIsBreakEnabled = newLabel.timerProfile.isBreakEnabled,
                 newBreakDuration = newLabel.timerProfile.breakDuration,
+                newIsLongBreakEnabled = newLabel.timerProfile.isLongBreakEnabled,
                 newLongBreakDuration = newLabel.timerProfile.longBreakDuration,
                 newSessionsBeforeLongBreak = newLabel.timerProfile.sessionsBeforeLongBreak,
                 newWorkBreakRatio = newLabel.timerProfile.workBreakRatio,

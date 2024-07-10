@@ -59,6 +59,7 @@ import com.apps.adrcotfas.goodtime.data.model.isDefault
 import com.apps.adrcotfas.goodtime.ui.common.RowWithCheckbox
 import com.apps.adrcotfas.goodtime.ui.localColorsPalette
 
+//TODO: consider safe content padding and check bottom row accessibility
 @Composable
 fun AddEditLabelScreen(
     isEditMode: Boolean,

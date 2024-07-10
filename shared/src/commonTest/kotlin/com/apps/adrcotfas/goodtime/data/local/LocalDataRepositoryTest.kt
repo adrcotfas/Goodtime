@@ -23,6 +23,7 @@ class LocalDataRepositoryTest {
         dataSource.deleteAllSessions()
         dataSource.deleteAllLabels()
         dataSource.insertLabel(label)
+        dataSource.insertLabel(Label.defaultLabel())
         label = label.copy(id = dataSource.selectLastInsertLabelId()!!)
         dataSource.insertSession(session)
         session = session.copy(id = dataSource.selectLastInsertSessionId()!!)
@@ -86,7 +87,7 @@ class LocalDataRepositoryTest {
         dataSource.deleteAllLabels()
         assertTrue(
             dataSource.selectAllSessions().first().first().run {
-                this.label == null && !this.isArchived
+                this.label == Label.DEFAULT_LABEL_NAME && !this.isArchived
             }, "Cascade update of Session's label failed after deleteAllLabels"
         )
     }
@@ -112,8 +113,9 @@ class LocalDataRepositoryTest {
     fun `Select entities by IsArchived`() = runTest {
         val expectedArchivedSessions = 3
         repeat(expectedArchivedSessions) {
-            dataSource.insertSession(session.copy(isArchived = true))
+            dataSource.insertSession(session.copy(label = LABEL_NAME))
         }
+        dataSource.updateLabelIsArchived(LABEL_NAME, true)
 
         val sessions = dataSource.selectByIsArchived(true).first()
         assertEquals(expectedArchivedSessions, sessions.size, "selectSessionsByIsArchived failed")
@@ -122,7 +124,7 @@ class LocalDataRepositoryTest {
         dataSource.insertLabel(label.copy(name = "fin", isArchived = true))
 
         val labels = dataSource.selectAllLabelsArchived().first()
-        assertEquals(2, labels.size, "selectLabelsByArchived failed")
+        assertEquals(3, labels.size, "selectLabelsByArchived failed")
     }
 
     @Test
@@ -209,7 +211,7 @@ class LocalDataRepositoryTest {
             startTimestamp = 0,
             endTimestamp = 25.minutes.inWholeMilliseconds,
             duration = 25,
-            label = null,
+            label = Label.DEFAULT_LABEL_NAME,
             notes = null,
             isWork = true,
             isArchived = false
