@@ -58,7 +58,7 @@ class TimerManagerTest {
             defaultDispatcher = testDispatcher
         )
 
-        localDataRepo.insertLabel(Label())
+        localDataRepo.insertLabel(Label.defaultLabel())
         defaultLabel = defaultLabel.copy(id = localDataRepo.selectLastInsertLabelId()!!)
         localDataRepo.insertLabel(customLabel)
         customLabel = customLabel.copy(id = localDataRepo.selectLastInsertLabelId()!!)
@@ -588,7 +588,7 @@ class TimerManagerTest {
 
         private var defaultLabel = Label.defaultLabel()
         private var customLabel =
-            Label().copy(name = CUSTOM_LABEL_NAME, timerProfile = dummyTimerProfile, useDefaultTimeProfile = false)
+            Label.defaultLabel().copy(name = CUSTOM_LABEL_NAME, timerProfile = dummyTimerProfile, useDefaultTimeProfile = false)
 
         private val countUpLabel = Label(
             name = "flow",

@@ -4,7 +4,7 @@ import kotlin.random.Random
 
 data class Label(
     val id: Long = 0,
-    val name: String = DEFAULT_LABEL_NAME,
+    val name: String,
     val colorIndex: Long = 17,
     val orderIndex: Long = Long.MAX_VALUE,
     val useDefaultTimeProfile: Boolean = true,
@@ -16,7 +16,7 @@ data class Label(
         private const val DEFAULT_LABEL_COLOR_INDEX = 17L
         const val LABEL_NAME_MAX_LENGTH = 32
         fun defaultLabel() = Label(name = DEFAULT_LABEL_NAME, colorIndex = DEFAULT_LABEL_COLOR_INDEX, orderIndex = 0)
-        fun newLabelWithRandomColorIndex(lastIndex: Int) = Label(colorIndex = Random.nextInt(lastIndex).toLong())
+        fun newLabelWithRandomColorIndex(lastIndex: Int) = Label(name = "", colorIndex = Random.nextInt(lastIndex).toLong())
     }
 
     fun isSameAs(label: Label) : Boolean {
