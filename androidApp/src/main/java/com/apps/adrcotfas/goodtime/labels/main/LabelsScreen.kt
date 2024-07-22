@@ -6,8 +6,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -94,7 +97,11 @@ fun LabelsScreen(
 
 
     Scaffold(
-        modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+        modifier = Modifier
+            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+            .windowInsetsPadding(
+                WindowInsets.statusBars
+            ),
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("Labels") },

@@ -7,10 +7,14 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -51,6 +55,8 @@ class MainActivity : ComponentActivity(), KoinComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableEdgeToEdge()
+
         lifecycleScope.launch {
             settingsRepository.saveAutoStartBreak(false)
             settingsRepository.saveAutoStartWork(true)
@@ -72,13 +78,14 @@ class MainActivity : ComponentActivity(), KoinComponent {
                     val isMainDestination =
                         bottomNavigationItems.find { it.route == currentRoute } != null
                     Scaffold(
+                        modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
                         bottomBar = {
                             AnimatedVisibility(visible = isMainDestination) {
                                 BottomNavigationBar(navController = navController)
                             }
-                        }) {
+                        }) { innerPadding ->
                         NavHost(
-                            modifier = Modifier.padding(it),
+                            modifier = Modifier.padding(innerPadding),
                             navController = navController,
                             startDestination = Destination.Main.route
                         ) {
