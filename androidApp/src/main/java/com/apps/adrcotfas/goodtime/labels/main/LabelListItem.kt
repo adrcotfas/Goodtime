@@ -65,10 +65,16 @@ fun LabelListItem(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.background)
                 .clickable { onActivate() }
-                .let { if (active) it.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)) else it }
+                .let {
+                    if (active) it.background(
+                        MaterialTheme.colorScheme.secondaryContainer.copy(
+                            alpha = 0.1f
+                        )
+                    ) else it
+                }
                 .let {
                     if (isDragging) it.background(
-                        MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.1f)
+                        MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.05f)
                     ) else it
                 }
                 .padding(4.dp)
