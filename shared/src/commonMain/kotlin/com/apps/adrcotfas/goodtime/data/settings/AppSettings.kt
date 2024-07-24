@@ -44,12 +44,19 @@ data class ProductivityReminderSettings(
 
 @Serializable
 data class UiSettings(
-    val followSystemTheme: Boolean = false,
-    val darkTheme: Boolean = true,
+    val useDynamicColor: Boolean = false,
+    val darkThemePreference: DarkThemePreference = DarkThemePreference.DARK,
     val fullscreenMode: Boolean = false,
     val keepScreenOn: Boolean = true,
     val screensaverMode: Boolean = false
 )
+
+@Serializable
+enum class DarkThemePreference {
+    SYSTEM,
+    LIGHT,
+    DARK
+}
 
 @Serializable
 enum class VibrationStrength {
