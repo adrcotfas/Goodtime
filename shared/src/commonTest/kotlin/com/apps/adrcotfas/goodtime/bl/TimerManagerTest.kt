@@ -517,13 +517,19 @@ class TimerManagerTest {
     }
 
     @Test
-    fun `Auto-start work after work when breaks are disabled`() = runTest {
+    fun `Work is next after work when break is disabled`() = runTest {
         settingsRepo.saveAutoStartWork(true)
-        defaultLabel = defaultLabel.copy(timerProfile = TimerProfile().copy(isBreakEnabled = false))
+        localDataRepo.updateDefaultLabel(
+            defaultLabel.copy(
+                timerProfile = TimerProfile().copy(
+                    isBreakEnabled = false
+                )
+            )
+        )
         timerManager.start(TimerType.WORK)
         val workDuration = TimerProfile.DEFAULT_WORK_DURATION.minutes.inWholeMilliseconds
         timeProvider.elapsedRealtime += workDuration
-        timerManager.finish()
+        timerManager.next()
         assertEquals(timerManager.timerData.value.type, TimerType.WORK)
     }
 
@@ -609,7 +615,11 @@ class TimerManagerTest {
 
         private var defaultLabel = Label.defaultLabel()
         private var customLabel =
-            Label.defaultLabel().copy(name = CUSTOM_LABEL_NAME, timerProfile = dummyTimerProfile, useDefaultTimeProfile = false)
+            Label.defaultLabel().copy(
+                name = CUSTOM_LABEL_NAME,
+                timerProfile = dummyTimerProfile,
+                useDefaultTimeProfile = false
+            )
 
         private val countUpLabel = Label(
             name = "flow",

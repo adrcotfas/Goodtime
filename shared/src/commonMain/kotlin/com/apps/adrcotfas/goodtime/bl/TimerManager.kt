@@ -191,7 +191,7 @@ class TimerManager(
         _timerData.update { it.reset() }
 
         val nextType = when {
-            !isWork || !data.timerProfile.isBreakEnabled -> TimerType.WORK
+            !isWork || (isWork && !data.timerProfile.isBreakEnabled) -> TimerType.WORK
             !isCountDown -> TimerType.BREAK
             shouldConsiderStreak(timeProvider.elapsedRealtime()) -> TimerType.LONG_BREAK
             else -> TimerType.BREAK
