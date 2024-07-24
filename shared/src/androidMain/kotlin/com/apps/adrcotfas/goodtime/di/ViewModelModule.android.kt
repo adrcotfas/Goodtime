@@ -3,6 +3,7 @@ package com.apps.adrcotfas.goodtime.di
 import com.apps.adrcotfas.goodtime.labels.archived.ArchivedLabelsViewModel
 import com.apps.adrcotfas.goodtime.labels.main.LabelsViewModel
 import com.apps.adrcotfas.goodtime.main.MainViewModel
+import com.apps.adrcotfas.goodtime.settings.SettingsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -15,4 +16,5 @@ actual val viewModelModule: Module = module {
     viewModelOf(::MainViewModel)
     viewModelOf(::LabelsViewModel)
     viewModelOf(::ArchivedLabelsViewModel)
+    viewModelOf(::SettingsViewModel)
 }
