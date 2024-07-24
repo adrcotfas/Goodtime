@@ -22,7 +22,6 @@ import kotlin.time.Duration.Companion.minutes
 /**
  * Manages the timer state and provides methods to start, pause, resume and finish the timer.
  */
-//TODO: fix bug where custom label that follows default label is not considered
 class TimerManager(
     private val localDataRepo: LocalDataRepository,
     private val settingsRepo: SettingsRepository,
@@ -61,7 +60,7 @@ class TimerManager(
             it.labelName
         }.distinctUntilChanged().flatMapLatest {
             log.d { "new active label: $it" }
-            _timerData.update { data -> data.copy(labelName = it)}
+            _timerData.update { data -> data.copy(labelName = it) }
             localDataRepo.selectLabelByName(it)
                 .combine(localDataRepo.selectDefaultLabel()) { label, defaultLabel ->
                     Pair(
@@ -71,7 +70,8 @@ class TimerManager(
                 }
         }.distinctUntilChanged()
             .collect {
-                val newTimerProfile = if (it.first.useDefaultTimeProfile) it.second.timerProfile else it.first.timerProfile
+                val newTimerProfile =
+                    if (it.first.useDefaultTimeProfile) it.second.timerProfile else it.first.timerProfile
                 _timerData.update { data -> data.copy(timerProfile = newTimerProfile) }
             }
     }
@@ -178,6 +178,10 @@ class TimerManager(
             log.e { "Trying to start the next session but the timer is reset" }
             return
         }
+        if (data.timerProfile == null) {
+            log.e { "Trying to start the next session without a profile" }
+            return
+        }
 
         val isWork = data.type == TimerType.WORK
         val isCountDown = data.requireTimerProfile().isCountdown
@@ -187,7 +191,7 @@ class TimerManager(
         _timerData.update { it.reset() }
 
         val nextType = when {
-            !isWork -> TimerType.WORK
+            !isWork || !data.timerProfile.isBreakEnabled -> TimerType.WORK
             !isCountDown -> TimerType.BREAK
             shouldConsiderStreak(timeProvider.elapsedRealtime()) -> TimerType.LONG_BREAK
             else -> TimerType.BREAK
@@ -206,13 +210,19 @@ class TimerManager(
             log.e { "Trying to finish the timer when it is reset or finished" }
             return
         }
+        if (data.timerProfile == null) {
+            log.e { "Trying to finish the timer without a profile" }
+            return
+        }
+
         _timerData.update { it.copy(state = TimerState.FINISHED) }
         log.i { "Finish: $data" }
 
         handleFinishedSession(isManualAction = false)
 
-        val autoStart = settings.autoStartWork && data.type != TimerType.WORK
-                || settings.autoStartBreak && data.type == TimerType.WORK
+        val autoStart =
+            settings.autoStartWork && (data.type != TimerType.WORK || !data.timerProfile.isBreakEnabled)
+                    || settings.autoStartBreak && data.type == TimerType.WORK && data.timerProfile.isBreakEnabled
         log.i { "AutoStart: $autoStart" }
         listeners.forEach { it.onEvent(Event.Finished(autoStart)) }
         if (autoStart) {

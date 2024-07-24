@@ -107,7 +107,9 @@ class NotificationArchManager(private val context: Context, private val activity
                 title = nextActionTitle,
                 action = TimerService.Companion.Action.Next
             )
-            builder.addAction(nextAction)
+            if (data.timerProfile?.isBreakEnabled == true) {
+                builder.addAction(nextAction)
+            }
         }
         return builder.build()
     }
@@ -138,11 +140,12 @@ class NotificationArchManager(private val context: Context, private val activity
         val extender = NotificationCompat.WearableExtender()
         if (withActions) {
             builder.setContentText("Continue?")
-            val nextActionTitle = if (timerType == TimerType.WORK) {
-                "Start break"
-            } else {
-                "Start work"
-            }
+            val nextActionTitle =
+                if (timerType == TimerType.WORK && data.timerProfile?.isBreakEnabled == true) {
+                    "Start break"
+                } else {
+                    "Start work"
+                }
             val nextAction = createNotificationAction(
                 title = nextActionTitle,
                 action = TimerService.Companion.Action.Next

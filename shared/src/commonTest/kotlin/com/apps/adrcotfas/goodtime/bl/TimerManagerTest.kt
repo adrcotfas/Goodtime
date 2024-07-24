@@ -507,6 +507,27 @@ class TimerManagerTest {
     }
 
     @Test
+    fun `Auto-start break`() = runTest {
+        settingsRepo.saveAutoStartBreak(true)
+        timerManager.start(TimerType.WORK)
+        val workDuration = TimerProfile.DEFAULT_WORK_DURATION.minutes.inWholeMilliseconds
+        timeProvider.elapsedRealtime += workDuration
+        timerManager.finish()
+        assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
+    }
+
+    @Test
+    fun `Auto-start work after work when breaks are disabled`() = runTest {
+        settingsRepo.saveAutoStartWork(true)
+        defaultLabel = defaultLabel.copy(timerProfile = TimerProfile().copy(isBreakEnabled = false))
+        timerManager.start(TimerType.WORK)
+        val workDuration = TimerProfile.DEFAULT_WORK_DURATION.minutes.inWholeMilliseconds
+        timeProvider.elapsedRealtime += workDuration
+        timerManager.finish()
+        assertEquals(timerManager.timerData.value.type, TimerType.WORK)
+    }
+
+    @Test
     fun `Count-up work then count-down the break budget`() = runTest {
         localDataRepo.insertLabel(countUpLabel)
         settingsRepo.activateLabelWithName(countUpLabel.name)

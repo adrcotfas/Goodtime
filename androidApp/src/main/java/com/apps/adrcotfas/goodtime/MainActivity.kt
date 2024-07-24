@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
 
         lifecycleScope.launch {
             settingsRepository.saveAutoStartBreak(false)
-            settingsRepository.saveAutoStartWork(true)
+            settingsRepository.saveAutoStartWork(false)
         }
 
         setContent {
