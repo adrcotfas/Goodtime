@@ -57,6 +57,7 @@ import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.Label.Companion.LABEL_NAME_MAX_LENGTH
 import com.apps.adrcotfas.goodtime.data.model.isDefault
 import com.apps.adrcotfas.goodtime.ui.common.RowWithCheckbox
+import com.apps.adrcotfas.goodtime.ui.common.SectionTitle
 import com.apps.adrcotfas.goodtime.ui.localColorsPalette
 
 //TODO: consider safe content padding and check bottom row accessibility
@@ -100,7 +101,7 @@ fun AddEditLabelScreen(
                 onSave = onSave
             )
 
-            SmallDescriptionRow("Name")
+            SectionTitle("Name")
             LabelNameRow(
                 isDefaultLabel = isDefaultLabel,
                 isAddingNewLabel = !isEditMode,
@@ -117,7 +118,7 @@ fun AddEditLabelScreen(
             )
 
             Spacer(modifier = Modifier.height(8.dp))
-            SmallDescriptionRow("Color")
+            SectionTitle("Color")
             ColorSelectRow(selectedIndex = labelToEdit.colorIndex.toInt()) {
                 onEditLabelToEdit(labelToEdit.copy(colorIndex = it.toLong()))
             }
@@ -132,7 +133,7 @@ fun AddEditLabelScreen(
             }
             AnimatedVisibility(visible = isDefaultLabel || !followDefault) {
                 Column {
-                    SmallDescriptionRow("Timer type")
+                    SectionTitle("Timer type")
                     TimerTypeRow(isCountDown = isCountDown) {
                         onEditLabelToEdit(
                             labelToEdit.copy(
@@ -595,15 +596,6 @@ private fun ResetToDefaultButton(onEditLabelToEdit: (Label) -> Unit) {
         )
         HorizontalDivider()
     }
-}
-
-@Composable
-fun SmallDescriptionRow(text: String) {
-    Text(
-        text,
-        style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.primary),
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
-    )
 }
 
 enum class DialogType {

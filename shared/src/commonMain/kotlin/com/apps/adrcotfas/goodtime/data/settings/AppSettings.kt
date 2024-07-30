@@ -1,7 +1,9 @@
 package com.apps.adrcotfas.goodtime.data.settings
 
 import com.apps.adrcotfas.goodtime.data.model.Label
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.isoDayNumber
 import kotlinx.serialization.Serializable
 
 data class AppSettings(
@@ -35,11 +37,12 @@ data class AppSettings(
 
 @Serializable
 data class ProductivityReminderSettings(
+    val firstDayOfWeek: Int = DayOfWeek.MONDAY.isoDayNumber,
     val productivityReminderEnabled: Boolean = false,
-    /** A list representing the days when the reminder was enabled, Monday through Sunday. */
-    val productivityReminderDays: List<Boolean> = List(7) { false },
+    /** A list representing the days when the reminder was enabled, Monday is 1 and Sunday is 7. */
+    val days: List<Int> = emptyList(),
     /** The time of the reminder represented in seconds of the day */
-    val productivityReminderSecondOfDay: Int = LocalTime(9, 0).toSecondOfDay(),
+    val secondOfDay: Int = LocalTime(9, 0).toSecondOfDay(),
 )
 
 @Serializable

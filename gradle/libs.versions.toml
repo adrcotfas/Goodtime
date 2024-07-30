@@ -6,6 +6,7 @@ agp = "8.5.0"
 android-minSdk = "24"
 android-compileSdk = "34"
 android-targetSdk = "34"
+desugar_jdk_libs = "2.0.4"
 espressoCore = "3.5.1"
 foundation = "1.7.0-beta02"
 kotlin = "1.9.22"
@@ -21,7 +22,7 @@ androidx-datastore = "1.1.1"
 
 coroutines = "1.8.1"
 kotlinx-serialization = "1.6.2"
-kotlinx-datetime = "0.5.0"
+kotlinx-datetime = "0.6.0"
 
 koin = "3.5.3"
 
@@ -53,6 +54,7 @@ androidx-icons-extended = { group = "androidx.compose.material", name = "materia
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
