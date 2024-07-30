@@ -9,6 +9,8 @@ interface SettingsRepository {
     val settings: Flow<AppSettings>
     suspend fun saveReminderSettings(settings: ProductivityReminderSettings)
     suspend fun saveUiSettings(settings: UiSettings)
+    suspend fun saveWorkDayStart(secondOfDay: Int)
+    suspend fun saveFirstDayOfWeek(dayOfWeek: Int)
     suspend fun saveNotificationSoundEnabled(enabled: Boolean)
     suspend fun saveWorkFinishedSound(sound: String?)
     suspend fun saveBreakFinishedSound(sound: String?)

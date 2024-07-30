@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import co.touchlab.kermit.Logger
 import com.apps.adrcotfas.goodtime.data.model.Label
@@ -13,6 +14,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.isoDayNumber
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -25,6 +29,8 @@ class SettingsRepositoryImpl(
         val productivityReminderSettingsKey =
             stringPreferencesKey("productivityReminderSettingsKey")
         val uiSettingsKey = stringPreferencesKey("uiSettingsKey")
+        val workdayStartKey = intPreferencesKey("workdayStartKey")
+        val firstDayOfWeekKey = intPreferencesKey("firstDayOfWeekKey")
         val notificationSoundEnabledKey = booleanPreferencesKey("notificationSoundEnabledKey")
         val workFinishedSoundKey = stringPreferencesKey("workFinishedSoundKey")
         val breakFinishedSoundKey = stringPreferencesKey("breakFinishedSoundKey")
@@ -55,6 +61,9 @@ class SettingsRepositoryImpl(
                 uiSettings = it[Keys.uiSettingsKey]?.let { u ->
                     Json.decodeFromString<UiSettings>(u)
                 } ?: UiSettings(),
+                workdayStart = it[Keys.workdayStartKey] ?: LocalTime(0, 0).toSecondOfDay(),
+                //TODO: move defaults into constants
+                firstDayOfWeek = it[Keys.firstDayOfWeekKey] ?: DayOfWeek.MONDAY.isoDayNumber,
                 notificationSoundEnabled = it[Keys.notificationSoundEnabledKey] ?: true,
                 workFinishedSound = it[Keys.workFinishedSoundKey] ?: "",
                 breakFinishedSound = it[Keys.breakFinishedSoundKey] ?: "",
@@ -88,6 +97,14 @@ class SettingsRepositoryImpl(
 
     override suspend fun saveUiSettings(settings: UiSettings) {
         dataStore.edit { it[Keys.uiSettingsKey] = Json.encodeToString(settings) }
+    }
+
+    override suspend fun saveWorkDayStart(secondOfDay: Int) {
+        dataStore.edit { it[Keys.workdayStartKey] = secondOfDay }
+    }
+
+    override suspend fun saveFirstDayOfWeek(dayOfWeek: Int) {
+        dataStore.edit { it[Keys.firstDayOfWeekKey] = dayOfWeek }
     }
 
     override suspend fun saveNotificationSoundEnabled(enabled: Boolean) {

@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.goodtime.settings
 
 import android.text.format.DateFormat
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.apps.adrcotfas.goodtime.ui.ApplicationTheme
+import com.apps.adrcotfas.goodtime.ui.common.RowWithText
 import com.apps.adrcotfas.goodtime.utils.secondsOfDayToTimerFormat
 import kotlinx.datetime.DayOfWeek
 import java.time.format.TextStyle
@@ -80,34 +80,19 @@ fun ProductivityReminderSection(
         }
         Spacer(modifier = Modifier.height(12.dp))
 
-        val timeModifier =
-            if (selectedDays.isEmpty()) Modifier else Modifier
-                .clickable {
-                    onReminderTimeClick()
-                }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = timeModifier
-                .padding(16.dp)
-        ) {
-            val textColor =
-                if (selectedDays.isEmpty()) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-                else MaterialTheme.colorScheme.onSurface
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "Reminder time",
-                style = MaterialTheme.typography.bodyLarge,
-                color = textColor
-            )
-            Text(
-                text = secondsOfDayToTimerFormat(
-                    reminderSecondOfDay,
-                    DateFormat.is24HourFormat(context)
-                ),
-                style = MaterialTheme.typography.bodyLarge,
-                color = textColor
-            )
-        }
+        val textColor =
+            if (selectedDays.isEmpty()) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+            else MaterialTheme.colorScheme.onSurface
+        RowWithText(
+            title = "Reminder time",
+            value = secondsOfDayToTimerFormat(
+                reminderSecondOfDay,
+                DateFormat.is24HourFormat(context)
+            ),
+            textColor = textColor,
+            clickable = selectedDays.isNotEmpty(),
+            onClick = { onReminderTimeClick() }
+        )
     }
 }
 

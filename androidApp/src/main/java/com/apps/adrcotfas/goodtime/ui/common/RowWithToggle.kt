@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun RowWithSwitch(title: String, subtitle: String = "", checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+fun RowWithSwitch(title: String, subtitle: String? = null, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.clickable {
@@ -27,10 +27,10 @@ fun RowWithSwitch(title: String, subtitle: String = "", checked: Boolean, onChec
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
             )
-            if (subtitle.isNotEmpty()) {
+            subtitle?.let {
                 Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall,
                 )
             }
         }
@@ -42,7 +42,7 @@ fun RowWithSwitch(title: String, subtitle: String = "", checked: Boolean, onChec
 }
 
 @Composable
-fun RowWithCheckbox(title: String, subtitle: String = "", checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+fun RowWithCheckbox(title: String, subtitle: String? = null, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.clickable {
@@ -54,10 +54,10 @@ fun RowWithCheckbox(title: String, subtitle: String = "", checked: Boolean, onCh
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
             )
-            if (subtitle.isNotEmpty()) {
+            subtitle?.let {
                 Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall,
                 )
             }
         }

@@ -11,6 +11,9 @@ data class AppSettings(
     val productivityReminderSettings: ProductivityReminderSettings = ProductivityReminderSettings(),
     val uiSettings: UiSettings = UiSettings(),
 
+    val workdayStart: Int = LocalTime(0, 0).toSecondOfDay(),
+    val firstDayOfWeek: Int = DayOfWeek.MONDAY.isoDayNumber,
+
     val notificationSoundEnabled: Boolean = true,
     /** The name/URI of the sound file or empty for default*/
     val workFinishedSound: String = "",
@@ -28,16 +31,10 @@ data class AppSettings(
     val labelName: String = Label.DEFAULT_LABEL_NAME,
     val longBreakData: LongBreakData = LongBreakData(),
     val breakBudgetData: BreakBudgetData = BreakBudgetData()
-    //TODO: consider the following
-    // - workday start
-    // - first day of the week
-    // - language
-    // - timer font and size
 )
 
 @Serializable
 data class ProductivityReminderSettings(
-    val firstDayOfWeek: Int = DayOfWeek.MONDAY.isoDayNumber,
     val productivityReminderEnabled: Boolean = false,
     /** A list representing the days when the reminder was enabled, Monday is 1 and Sunday is 7. */
     val days: List<Int> = emptyList(),
@@ -48,17 +45,32 @@ data class ProductivityReminderSettings(
 @Serializable
 data class UiSettings(
     val useDynamicColor: Boolean = false,
-    val darkThemePreference: DarkThemePreference = DarkThemePreference.DARK,
+    val darkModePreference: DarkModePreference = DarkModePreference.DARK,
     val fullscreenMode: Boolean = false,
     val keepScreenOn: Boolean = true,
-    val screensaverMode: Boolean = false
+    val screensaverMode: Boolean = false,
+    //TODO: consider the following
+    // - language
+    // - timer font and size
 )
 
 @Serializable
-enum class DarkThemePreference {
+enum class DarkModePreference {
     SYSTEM,
     LIGHT,
     DARK
+}
+
+val DarkModePreference.prettyName: String
+    get() = DarkModePreferenceExtension.prettyNames()[this.ordinal]
+
+object DarkModePreferenceExtension {
+    fun prettyNames(): List<String> {
+        return DarkModePreference.entries.map {
+            it.name.lowercase()
+                .replaceFirstChar { firstChar -> firstChar.uppercase() }
+        }
+    }
 }
 
 @Serializable

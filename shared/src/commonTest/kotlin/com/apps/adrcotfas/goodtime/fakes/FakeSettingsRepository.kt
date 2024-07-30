@@ -26,6 +26,18 @@ class FakeSettingsRepository(settings: AppSettings = AppSettings()) : SettingsRe
         _settings.value.copy(uiSettings = settings)
     )
 
+    override suspend fun saveWorkDayStart(secondOfDay: Int) {
+        _settings.emit(
+            _settings.value.copy(workdayStart = secondOfDay)
+        )
+    }
+
+    override suspend fun saveFirstDayOfWeek(dayOfWeek: Int) {
+        _settings.emit(
+            _settings.value.copy(firstDayOfWeek = dayOfWeek)
+        )
+    }
+
     override suspend fun saveNotificationSoundEnabled(enabled: Boolean) = _settings.emit(
         _settings.value.copy(notificationSoundEnabled = enabled)
     )

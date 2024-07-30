@@ -79,7 +79,7 @@ fun TimePicker(
 
 @Composable
 fun TimePickerDialog(
-    title: String = "Select Time",
+    title: String = "Reminder time",
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
     toggle: @Composable () -> Unit = {},
@@ -110,7 +110,7 @@ fun TimePickerDialog(
                         .fillMaxWidth()
                         .padding(start = 16.dp, bottom = 20.dp),
                     text = title,
-                    style = MaterialTheme.typography.labelMedium
+                    style = MaterialTheme.typography.titleMedium
                 )
                 content()
                 Row(
