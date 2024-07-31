@@ -8,11 +8,12 @@
     alt="Get it on F-Droid"
     height="80">](https://f-droid.org/packages/com.apps.adrcotfas.goodtime)
 
-A minimalist but powerful productivity timer designed to keep you focused and free of distractions.  
-Alternate between focused work sessions and short breaks, all handled by the app.  
-Get rid of procrastination and improve your time management!  
+A minimalist but powerful productivity timer designed to keep you focused and free of distractions.
+Alternate between focused work sessions and short breaks, all handled by the app.
+Get rid of procrastination and improve your time management!
+Inspired by the [Pomodoro Technique](https://en.wikipedia.org/wiki/Pomodoro_Technique).
 
-⏳ split your work into focused sessions and then reward yourself with a break  
+⏳ split your work into focused sessions and then reward yourself with a break
 ☕ after multiple work sessions, take a longer break
 
 ## Features
@@ -22,6 +23,7 @@ Get rid of procrastination and improve your time management!
 - Lightweight: ~2 MB download size
 - Battery friendly
 - Configurable timer
+- [Pomodoro Technique](https://en.wikipedia.org/wiki/Pomodoro_Technique)
 - Pause, skip or add 60 seconds
 - Long breaks after a number of completed work sessions
 - Detailed statistics
