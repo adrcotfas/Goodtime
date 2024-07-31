@@ -42,6 +42,11 @@ android {
     kotlinOptions {
         jvmTarget = "19"
     }
+
+    androidResources {
+        @Suppress("UnstableApiUsage")
+        generateLocaleConfig = true
+    }
 }
 
 dependencies {

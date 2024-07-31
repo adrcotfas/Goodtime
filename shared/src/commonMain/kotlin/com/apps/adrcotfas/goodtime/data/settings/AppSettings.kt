@@ -50,7 +50,6 @@ data class UiSettings(
     val keepScreenOn: Boolean = true,
     val screensaverMode: Boolean = false,
     //TODO: consider the following
-    // - language
     // - timer font and size
 )
 

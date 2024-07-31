@@ -1,5 +1,9 @@
 package com.apps.adrcotfas.goodtime.settings
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,15 +28,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.apps.adrcotfas.goodtime.common.findActivity
+import com.apps.adrcotfas.goodtime.common.getAppLanguage
 import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
 import com.apps.adrcotfas.goodtime.data.settings.DarkModePreferenceExtension
 import com.apps.adrcotfas.goodtime.data.settings.prettyName
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel.Companion.firstDayOfWeekOptions
 import com.apps.adrcotfas.goodtime.ui.common.RadioGroupDialog
-import com.apps.adrcotfas.goodtime.ui.common.TimePicker
 import com.apps.adrcotfas.goodtime.ui.common.RowWithCheckbox
 import com.apps.adrcotfas.goodtime.ui.common.RowWithText
 import com.apps.adrcotfas.goodtime.ui.common.SectionTitle
+import com.apps.adrcotfas.goodtime.ui.common.TimePicker
 import com.apps.adrcotfas.goodtime.utils.secondsOfDayToTimerFormat
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
@@ -106,6 +112,15 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                     viewModel.setShowFirstDayOfWeekPicker(true)
                 }
             )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val activity = context.findActivity()
+                RowWithText(title = "Language", value = context.getAppLanguage()) {
+                    val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS)
+                    intent.data = Uri.fromParts("package", activity?.packageName, null)
+                    activity?.startActivity(intent)
+                }
+            }
+
             SectionTitle(
                 text = "User Interface",
                 paddingValues = PaddingValues(
