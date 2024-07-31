@@ -37,7 +37,9 @@ fun RowWithText(
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
-                    color = textColor
+                    color =
+                    if (clickable) textColor.copy(alpha = 0.75f)
+                    else textColor
                 )
             }
         }

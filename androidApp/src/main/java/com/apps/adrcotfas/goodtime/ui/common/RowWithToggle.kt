@@ -31,6 +31,7 @@ fun RowWithSwitch(title: String, subtitle: String? = null, checked: Boolean, onC
                 Text(
                     text = it,
                     style = MaterialTheme.typography.bodySmall,
+                    color =  MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
                 )
             }
         }
@@ -58,6 +59,7 @@ fun RowWithCheckbox(title: String, subtitle: String? = null, checked: Boolean, o
                 Text(
                     text = it,
                     style = MaterialTheme.typography.bodySmall,
+                    color =  MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
                 )
             }
         }
