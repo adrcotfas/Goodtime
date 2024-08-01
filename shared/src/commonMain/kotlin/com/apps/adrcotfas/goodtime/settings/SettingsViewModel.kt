@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apps.adrcotfas.goodtime.data.settings.AppSettings
 import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
+import com.apps.adrcotfas.goodtime.data.settings.FlashType
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
+import com.apps.adrcotfas.goodtime.data.settings.VibrationStrength
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +19,9 @@ data class SettingsUiState(
     val showTimePicker: Boolean = false,
     val showThemePicker: Boolean = false,
     val showFirstDayOfWeekPicker: Boolean = false,
-    val showWorkdayStartPicker: Boolean = false
+    val showWorkdayStartPicker: Boolean = false,
+    val showFlashTypePicker: Boolean = false,
+    val showVibrationStrengthPicker: Boolean = false,
 )
 
 class SettingsViewModel(private val settingsRepository: SettingsRepository) : ViewModel() {
@@ -81,6 +85,9 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
     fun setKeepScreenOn(enable: Boolean) {
         viewModelScope.launch {
             settingsRepository.saveUiSettings(settings.value.uiSettings.copy(keepScreenOn = enable))
+            if (!enable && settings.value.uiSettings.screensaverMode) {
+                settingsRepository.saveUiSettings(settings.value.uiSettings.copy(screensaverMode = false))
+            }
         }
     }
 
@@ -108,6 +115,74 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
 
     fun setShowWorkdayStartPicker(show: Boolean) {
         _uiState.value = _uiState.value.copy(showWorkdayStartPicker = show)
+    }
+
+    fun setNotificationSoundEnabled(enable: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.saveNotificationSoundEnabled(enable)
+        }
+    }
+
+    fun setVibrationStrength(vibrationStrength: VibrationStrength) {
+        viewModelScope.launch {
+            settingsRepository.saveVibrationStrength(vibrationStrength)
+        }
+    }
+
+    fun setFlashType(flashType: FlashType) {
+        viewModelScope.launch {
+            settingsRepository.saveFlashType(flashType)
+        }
+    }
+
+    fun setShowFlashTypePicker(show: Boolean) {
+        _uiState.value = _uiState.value.copy(showFlashTypePicker = show)
+    }
+
+    fun setShowVibrationStrengthPicker(show: Boolean) {
+        _uiState.value = _uiState.value.copy(showVibrationStrengthPicker = show)
+    }
+
+    fun setInsistentNotification(enable: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.saveInsistentNotification(enable)
+            if (enable) {
+                if (settings.value.autoStartWork) {
+                    setAutoStartWork(false)
+                }
+                if (settings.value.autoStartBreak) {
+                    setAutoStartBreak(false)
+                }
+            }
+        }
+    }
+
+    fun setAutoStartWork(enable: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.saveAutoStartWork(enable)
+            if (enable) {
+                if (settings.value.insistentNotification) {
+                    setInsistentNotification(false)
+                }
+            }
+        }
+    }
+
+    fun setAutoStartBreak(enable: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.saveAutoStartBreak(enable)
+            if (enable) {
+                if (settings.value.insistentNotification) {
+                    setInsistentNotification(false)
+                }
+            }
+        }
+    }
+
+    fun setDndDuringWork(enable: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.saveDndDuringWork(enable)
+        }
     }
 
     companion object {

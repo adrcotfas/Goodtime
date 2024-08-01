@@ -21,7 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.apps.adrcotfas.goodtime.ui.ApplicationTheme
-import com.apps.adrcotfas.goodtime.ui.common.RowWithText
+import com.apps.adrcotfas.goodtime.ui.common.TextPreference
 import com.apps.adrcotfas.goodtime.utils.secondsOfDayToTimerFormat
 import kotlinx.datetime.DayOfWeek
 import java.time.format.TextStyle
@@ -80,16 +80,12 @@ fun ProductivityReminderSection(
         }
         Spacer(modifier = Modifier.height(12.dp))
 
-        val textColor =
-            if (selectedDays.isEmpty()) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-            else MaterialTheme.colorScheme.onSurface
-        RowWithText(
+        TextPreference(
             title = "Reminder time",
             value = secondsOfDayToTimerFormat(
                 reminderSecondOfDay,
                 DateFormat.is24HourFormat(context)
             ),
-            textColor = textColor,
             clickable = selectedDays.isNotEmpty(),
             onClick = { onReminderTimeClick() }
         )

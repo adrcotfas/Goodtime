@@ -30,13 +30,22 @@ fun SliderRow(
     value: Int,
     min: Int = 1,
     max: Int,
-    steps: Int = max - min,
+    steps: Int = max - min - 1,
+    showSteps: Boolean = false,
     onValueChange: (Int) -> Unit,
-    onClick: () -> Unit = {}
+    onClick: (() -> Unit)? = null,
+    valueNames: List<String>? = null
 ) {
+    val (sliderWeight, textWeight) = if (valueNames != null) {
+        0.8f to 0.2f
+    } else {
+        0.9f to 0.1f
+    }
+    val valueText = if (valueNames != null) valueNames[value] else value.toString()
+
     Column(modifier = Modifier
         .fillMaxWidth()
-        .clickable { onClick() }
+        .clickable { onClick?.invoke() }
         .padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
         Text(
             text = title,
@@ -46,12 +55,15 @@ fun SliderRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            val colors = if (showSteps) SliderDefaults.colors()
+            else SliderDefaults.colors().copy(
+                inactiveTickColor = MaterialTheme.colorScheme.surfaceVariant,
+                activeTickColor = MaterialTheme.colorScheme.primary
+            )
+
             Slider(
-                modifier = Modifier.weight(0.9f),
-                colors = SliderDefaults.colors().copy(
-                    inactiveTickColor = MaterialTheme.colorScheme.surfaceVariant,
-                    activeTickColor = MaterialTheme.colorScheme.primary
-                ),
+                modifier = Modifier.weight(sliderWeight),
+                colors = colors,
                 value = value.toFloat(),
                 onValueChange = {
                     onValueChange(it.roundToInt())
@@ -61,8 +73,8 @@ fun SliderRow(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                modifier = Modifier.weight(0.1f),
-                text = value.toString(),
+                modifier = Modifier.weight(textWeight),
+                text = valueText,
                 maxLines = 1,
                 style = MaterialTheme.typography.bodyLarge.copy(
                     textAlign = TextAlign.Center,

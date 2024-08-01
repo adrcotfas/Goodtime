@@ -60,18 +60,6 @@ enum class DarkModePreference {
     DARK
 }
 
-val DarkModePreference.prettyName: String
-    get() = DarkModePreferenceExtension.prettyNames()[this.ordinal]
-
-object DarkModePreferenceExtension {
-    fun prettyNames(): List<String> {
-        return DarkModePreference.entries.map {
-            it.name.lowercase()
-                .replaceFirstChar { firstChar -> firstChar.uppercase() }
-        }
-    }
-}
-
 @Serializable
 enum class VibrationStrength {
     OFF,

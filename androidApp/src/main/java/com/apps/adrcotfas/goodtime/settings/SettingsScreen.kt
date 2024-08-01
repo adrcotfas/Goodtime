@@ -5,8 +5,8 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.text.format.DateFormat
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -27,17 +27,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import com.apps.adrcotfas.goodtime.common.findActivity
 import com.apps.adrcotfas.goodtime.common.getAppLanguage
+import com.apps.adrcotfas.goodtime.common.prettyName
+import com.apps.adrcotfas.goodtime.common.prettyNames
 import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
-import com.apps.adrcotfas.goodtime.data.settings.DarkModePreferenceExtension
-import com.apps.adrcotfas.goodtime.data.settings.prettyName
+import com.apps.adrcotfas.goodtime.data.settings.FlashType
+import com.apps.adrcotfas.goodtime.data.settings.VibrationStrength
+import com.apps.adrcotfas.goodtime.labels.add_edit.SliderRow
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel.Companion.firstDayOfWeekOptions
+import com.apps.adrcotfas.goodtime.ui.common.CompactPreferenceGroupTitle
 import com.apps.adrcotfas.goodtime.ui.common.RadioGroupDialog
-import com.apps.adrcotfas.goodtime.ui.common.RowWithCheckbox
-import com.apps.adrcotfas.goodtime.ui.common.RowWithText
-import com.apps.adrcotfas.goodtime.ui.common.SectionTitle
+import com.apps.adrcotfas.goodtime.ui.common.CheckboxPreference
+import com.apps.adrcotfas.goodtime.ui.common.SwitchPreference
+import com.apps.adrcotfas.goodtime.ui.common.TextPreference
+import com.apps.adrcotfas.goodtime.ui.common.PreferenceGroupTitle
+import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 import com.apps.adrcotfas.goodtime.ui.common.TimePicker
 import com.apps.adrcotfas.goodtime.utils.secondsOfDayToTimerFormat
 import kotlinx.datetime.DayOfWeek
@@ -74,10 +79,10 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(top = paddingValues.calculateTopPadding())
                 .verticalScroll(rememberScrollState())
         ) {
-            SectionTitle("Productivity Reminder")
+            PreferenceGroupTitle("Productivity Reminder")
             val reminderSettings = settings.productivityReminderSettings
             ProductivityReminderSection(
                 firstDayOfWeek = DayOfWeek(settings.firstDayOfWeek),
@@ -86,16 +91,18 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 onSelectDay = viewModel::onToggleProductivityReminderDay,
                 onReminderTimeClick = { viewModel.setShowTimePicker(true) }
             )
-            SectionTitle(
-                text = "General",
-                paddingValues = PaddingValues(
-                    top = 16.dp,
-                    bottom = 4.dp,
-                    start = 16.dp,
-                    end = 16.dp
-                )
-            )
-            RowWithText(
+
+            SubtleHorizontalDivider()
+            CompactPreferenceGroupTitle(text = "General")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val activity = context.findActivity()
+                TextPreference(title = "Language", value = context.getAppLanguage()) {
+                    val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS)
+                    intent.data = Uri.fromParts("package", activity?.packageName, null)
+                    activity?.startActivity(intent)
+                }
+            }
+            TextPreference(
                 title = "Workday start",
                 subtitle = "Used for displaying the stats accordingly",
                 value = secondsOfDayToTimerFormat(
@@ -104,7 +111,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 ), onClick = {
                     viewModel.setShowWorkdayStartPicker(true)
                 })
-            RowWithText(
+            TextPreference(
                 title = "Start of the week",
                 value = DayOfWeek.of(settings.firstDayOfWeek)
                     .getDisplayName(TextStyle.FULL, locale),
@@ -112,55 +119,121 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                     viewModel.setShowFirstDayOfWeekPicker(true)
                 }
             )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                val activity = context.findActivity()
-                RowWithText(title = "Language", value = context.getAppLanguage()) {
-                    val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS)
-                    intent.data = Uri.fromParts("package", activity?.packageName, null)
-                    activity?.startActivity(intent)
-                }
-            }
 
-            SectionTitle(
-                text = "User Interface",
-                paddingValues = PaddingValues(
-                    top = 24.dp,
-                    bottom = 4.dp,
-                    start = 16.dp,
-                    end = 16.dp
-                )
-            )
-            RowWithCheckbox(
+            SubtleHorizontalDivider()
+            CompactPreferenceGroupTitle(text = "User Interface")
+            CheckboxPreference(
                 title = "Use Dynamic Color",
                 checked = settings.uiSettings.useDynamicColor
             ) {
                 viewModel.setUseDynamicColor(it)
             }
-            RowWithText(
+            TextPreference(
                 title = "Dark mode preference",
-                value = settings.uiSettings.darkModePreference.prettyName,
+                value = settings.uiSettings.darkModePreference.prettyName(),
                 onClick = {
                     viewModel.setShowThemePicker(true)
                 }
             )
-            RowWithCheckbox(
+
+            CheckboxPreference(
                 title = "Fullscreen mode",
                 checked = settings.uiSettings.fullscreenMode
             ) {
                 viewModel.setFullscreenMode(it)
             }
-            RowWithCheckbox(
+            CheckboxPreference(
                 title = "Keep the screen on",
                 checked = settings.uiSettings.keepScreenOn
             ) {
                 viewModel.setKeepScreenOn(it)
             }
-            RowWithCheckbox(
+            CheckboxPreference(
                 title = "Screensaver mode",
-                checked = settings.uiSettings.screensaverMode
+                subtitle = "Moves the timer while ethe screen is on",
+                checked = settings.uiSettings.screensaverMode,
+                clickable = settings.uiSettings.keepScreenOn
             ) {
                 viewModel.setScreensaverMode(it)
             }
+
+            SubtleHorizontalDivider()
+            CompactPreferenceGroupTitle(text = "Notifications")
+            SwitchPreference(
+                title = "Notification sound",
+                checked = settings.notificationSoundEnabled
+            ) {
+                viewModel.setNotificationSoundEnabled(it)
+            }
+
+            AnimatedVisibility(settings.notificationSoundEnabled) {
+                Column {
+                    TextPreference(
+                        title = "Work finished sound",
+                        subtitle = "Default", //TODO: get the name of the sound
+                        value = ""
+                    ) {
+                        //TODO: open sound picker
+                    }
+                    TextPreference(
+                        title = "Break finished sound",
+                        subtitle = "Default", //TODO: get the name of the sound
+                        value = ""
+                    ) {
+                        //TODO: open sound picker
+                    }
+                }
+            }
+            SliderRow(
+                title = "Vibration strength",
+                value = settings.vibrationStrength.ordinal,
+                min = 0,
+                max = VibrationStrength.entries.lastIndex,
+                showSteps = true,
+                onValueChange = { viewModel.setVibrationStrength(VibrationStrength.entries[it]) },
+                onClick = { viewModel.setShowVibrationStrengthPicker(true) },
+                valueNames = prettyNames<VibrationStrength>()
+            )
+            TextPreference(
+                title = "Flash type",
+                subtitle = "A visual notification for silent environments",
+                value = settings.flashType.prettyName()
+            ) {
+                viewModel.setShowFlashTypePicker(true)
+            }
+            //TODO: when one of the auto options is enabled, disable this one
+            CheckboxPreference(
+                title = "Insistent notification",
+                subtitle = "Repeat the notification until it's cancelled",
+                checked = settings.insistentNotification
+            ) {
+                viewModel.setInsistentNotification(it)
+            }
+            CheckboxPreference(
+                title = "Auto start work",
+                subtitle = "Start the work session after a break without user interaction",
+                checked = settings.autoStartWork
+            ) {
+                viewModel.setAutoStartWork(it)
+            }
+            CheckboxPreference(
+                title = "Auto start break",
+                subtitle = "Start the break session after a work session without user interaction",
+                checked = settings.autoStartBreak
+            ) {
+                viewModel.setAutoStartBreak(it)
+            }
+            SubtleHorizontalDivider()
+            CompactPreferenceGroupTitle(text = "During work sessions")
+            CheckboxPreference(
+                title = "Do not disturb mode",
+                checked = settings.dndDuringWork
+            ) {
+                viewModel.setDndDuringWork(it)
+            }
+
+            //TODO: add back-up section
+            //TODO: add about section
         }
         if (uiState.showTimePicker) {
             val reminderTime =
@@ -182,7 +255,8 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
         if (uiState.showThemePicker) {
             RadioGroupDialog(title = "Dark mode preference",
                 initialIndex = settings.uiSettings.darkModePreference.ordinal,
-                radioOptions = DarkModePreferenceExtension.prettyNames(),
+                //TODO: use localized strings instead
+                radioOptions = prettyNames<DarkModePreference>(),
                 onItemSelected = { viewModel.setThemeOption(DarkModePreference.entries[it]) },
                 onDismiss = { viewModel.setShowThemePicker(false) }
             )
@@ -215,6 +289,25 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 },
                 timePickerState = timePickerState
             )
+        }
+
+        if (uiState.showFlashTypePicker) {
+            RadioGroupDialog(
+                title = "Flash type",
+                initialIndex = settings.flashType.ordinal,
+                //TODO: use a localized name instead
+                radioOptions = prettyNames<FlashType>(),
+                onItemSelected = { viewModel.setFlashType(FlashType.entries[it]) },
+                onDismiss = { viewModel.setShowFlashTypePicker(false) })
+        }
+        if (uiState.showVibrationStrengthPicker) {
+            RadioGroupDialog(
+                title = "Vibration strength",
+                initialIndex = settings.vibrationStrength.ordinal,
+                //TODO: use a localized name instead
+                radioOptions = prettyNames<VibrationStrength>(),
+                onItemSelected = { viewModel.setVibrationStrength(VibrationStrength.entries[it]) },
+                onDismiss = { viewModel.setShowVibrationStrengthPicker(false) })
         }
     }
 }

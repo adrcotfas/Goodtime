@@ -56,8 +56,9 @@ import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.Label.Companion.LABEL_NAME_MAX_LENGTH
 import com.apps.adrcotfas.goodtime.data.model.isDefault
-import com.apps.adrcotfas.goodtime.ui.common.RowWithCheckbox
-import com.apps.adrcotfas.goodtime.ui.common.SectionTitle
+import com.apps.adrcotfas.goodtime.ui.common.CheckboxPreference
+import com.apps.adrcotfas.goodtime.ui.common.PreferenceGroupTitle
+import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 import com.apps.adrcotfas.goodtime.ui.localColorsPalette
 
 //TODO: consider safe content padding and check bottom row accessibility
@@ -101,7 +102,7 @@ fun AddEditLabelScreen(
                 onSave = onSave
             )
 
-            SectionTitle("Name")
+            PreferenceGroupTitle("Name")
             LabelNameRow(
                 isDefaultLabel = isDefaultLabel,
                 isAddingNewLabel = !isEditMode,
@@ -118,22 +119,22 @@ fun AddEditLabelScreen(
             )
 
             Spacer(modifier = Modifier.height(8.dp))
-            SectionTitle("Color")
+            PreferenceGroupTitle("Color")
             ColorSelectRow(selectedIndex = labelToEdit.colorIndex.toInt()) {
                 onEditLabelToEdit(labelToEdit.copy(colorIndex = it.toLong()))
             }
 
             Spacer(modifier = Modifier.height(16.dp))
             if (!isDefaultLabel) {
-                HorizontalDivider()
-                RowWithCheckbox(title = "Follow Default time profile", checked = followDefault) {
+                SubtleHorizontalDivider()
+                CheckboxPreference(title = "Follow Default time profile", checked = followDefault) {
                     onEditLabelToEdit(labelToEdit.copy(useDefaultTimeProfile = it))
                 }
-                HorizontalDivider()
+                SubtleHorizontalDivider()
             }
             AnimatedVisibility(visible = isDefaultLabel || !followDefault) {
                 Column {
-                    SectionTitle("Timer type")
+                    PreferenceGroupTitle("Timer type")
                     TimerTypeRow(isCountDown = isCountDown) {
                         onEditLabelToEdit(
                             labelToEdit.copy(
@@ -146,7 +147,7 @@ fun AddEditLabelScreen(
                             WorkDurationSliderRow(labelToEdit, onEditLabelToEdit) {
                                 dialogData = it
                             }
-                            RowWithCheckbox(title = "Enable breaks", checked = isBreakEnabled) {
+                            CheckboxPreference(title = "Enable breaks", checked = isBreakEnabled) {
                                 onEditLabelToEdit(
                                     labelToEdit.copy(
                                         timerProfile = labelToEdit.timerProfile.copy(isBreakEnabled = it)
@@ -158,7 +159,7 @@ fun AddEditLabelScreen(
                                     BreakDurationSliderRow(labelToEdit, onEditLabelToEdit) {
                                         dialogData = it
                                     }
-                                    RowWithCheckbox(
+                                    CheckboxPreference(
                                         title = "Enable long breaks",
                                         checked = isLongBreakEnabled
                                     ) {
@@ -578,7 +579,7 @@ private fun WorkBreakRationSliderRow(
 @Composable
 private fun ResetToDefaultButton(onEditLabelToEdit: (Label) -> Unit) {
     Column {
-        HorizontalDivider()
+        SubtleHorizontalDivider()
         val interactionSource = remember { MutableInteractionSource() }
         Text(
             modifier = Modifier
@@ -594,7 +595,7 @@ private fun ResetToDefaultButton(onEditLabelToEdit: (Label) -> Unit) {
             text = "Reset to default",
             style = MaterialTheme.typography.bodyLarge,
         )
-        HorizontalDivider()
+        SubtleHorizontalDivider()
     }
 }
 
