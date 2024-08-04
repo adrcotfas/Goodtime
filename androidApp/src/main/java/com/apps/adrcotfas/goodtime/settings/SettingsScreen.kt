@@ -201,7 +201,6 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
             ) {
                 viewModel.setShowFlashTypePicker(true)
             }
-            //TODO: when one of the auto options is enabled, disable this one
             CheckboxPreference(
                 title = "Insistent notification",
                 subtitle = "Repeat the notification until it's cancelled",

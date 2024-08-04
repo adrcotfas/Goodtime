@@ -11,10 +11,16 @@ import com.apps.adrcotfas.goodtime.bl.TimeProvider
 import com.apps.adrcotfas.goodtime.bl.TimerServiceStarter
 import com.apps.adrcotfas.goodtime.di.getWith
 import com.apps.adrcotfas.goodtime.di.insertKoin
+import com.apps.adrcotfas.goodtime.settings.reminders.ReminderHelper
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 class GoodtimeApplication : Application() {
+    private val applicationScope = MainScope()
+
     override fun onCreate() {
         super.onCreate()
         insertKoin(
@@ -36,7 +42,18 @@ class GoodtimeApplication : Application() {
                         getWith(AlarmManagerHandler::class.simpleName)
                     )
                 }
+                single<ReminderHelper> {
+                    ReminderHelper(
+                        get(),
+                        get(),
+                        getWith(ReminderHelper::class.simpleName)
+                    )
+                }
             }
         )
+        val reminderHelper = get<ReminderHelper>()
+        applicationScope.launch {
+            reminderHelper.init()
+        }
     }
 }

@@ -20,7 +20,8 @@ class NotificationArchManager(private val context: Context, private val activity
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     init {
-        createNotificationChannel()
+        createMainNotificationChannel()
+        createReminderChannel()
     }
 
     fun buildInProgressNotification(data: DomainTimerData): Notification {
@@ -43,7 +44,7 @@ class NotificationArchManager(private val context: Context, private val activity
         val labelText = if (data.isDefaultLabel()) "" else "$labelName: "
         val stateText = "$labelText$mainStateText"
 
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID).apply {
+        val builder = NotificationCompat.Builder(context, MAIN_CHANNEL_ID).apply {
             setSmallIcon(SharedR.drawable.ic_status_goodtime)
             setCategory(NotificationCompat.CATEGORY_PROGRESS)
             setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -126,7 +127,7 @@ class NotificationArchManager(private val context: Context, private val activity
         val labelText = if (data.isDefaultLabel()) "" else "$labelName: "
         val stateText = "$labelText$mainStateText"
 
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID).apply {
+        val builder = NotificationCompat.Builder(context, MAIN_CHANNEL_ID).apply {
             setSmallIcon(SharedR.drawable.ic_status_goodtime)
             setCategory(NotificationCompat.CATEGORY_PROGRESS)
             setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -161,15 +162,41 @@ class NotificationArchManager(private val context: Context, private val activity
         notificationManager.cancel(FINISHED_NOTIFICATION_ID)
     }
 
-    private fun createNotificationChannel() {
+    fun notifyReminder() {
+        val pendingIntent = createOpenActivityIntent(activityClass)
+        val builder = NotificationCompat.Builder(context, REMINDER_CHANNEL_ID)
+            .setSmallIcon(SharedR.drawable.ic_status_goodtime)
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setContentIntent(pendingIntent)
+            .setShowWhen(false)
+            .setAutoCancel(true)
+            .setOnlyAlertOnce(true)
+            .setContentTitle("Productivity reminder")
+            .setContentText("It's time to be productive!")
+        notificationManager.notify(REMINDER_NOTIFICATION_ID, builder.build())
+    }
+
+    private fun createMainNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Goodtime Notifications"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+            val channel = NotificationChannel(MAIN_CHANNEL_ID, name, importance).apply {
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
                 setSound(null, null)
                 enableVibration(false)
                 setBypassDnd(true)
+                setShowBadge(true)
+            }
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createReminderChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Goodtime Reminder Notifications"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(REMINDER_CHANNEL_ID, name, importance).apply {
                 setShowBadge(true)
             }
             notificationManager.createNotificationChannel(channel)
@@ -221,8 +248,10 @@ class NotificationArchManager(private val context: Context, private val activity
     }
 
     companion object {
-        const val CHANNEL_ID = "goodtime.notification"
+        const val MAIN_CHANNEL_ID = "goodtime.notification"
         const val IN_PROGRESS_NOTIFICATION_ID = 42
         const val FINISHED_NOTIFICATION_ID = 43
+        const val REMINDER_CHANNEL_ID = "goodtime_reminder_notification"
+        const val REMINDER_NOTIFICATION_ID = 99
     }
 }

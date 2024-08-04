@@ -35,7 +35,6 @@ data class AppSettings(
 
 @Serializable
 data class ProductivityReminderSettings(
-    val productivityReminderEnabled: Boolean = false,
     /** A list representing the days when the reminder was enabled, Monday is 1 and Sunday is 7. */
     val days: List<Int> = emptyList(),
     /** The time of the reminder represented in seconds of the day */
