@@ -62,7 +62,7 @@ fun ProductivityReminderSection(
                 FilledIconButton(
                     colors =
                     if (selectedDays.contains(day)) iconButtonColors.copy(
-                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
                         contentColor = MaterialTheme.colorScheme.primary
                     )
                     else iconButtonColors.copy(

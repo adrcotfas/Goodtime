@@ -138,6 +138,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
 
             CheckboxPreference(
                 title = "Fullscreen mode",
+                subtitle = "Immersive mode while working",
                 checked = settings.uiSettings.fullscreenMode
             ) {
                 viewModel.setFullscreenMode(it)
