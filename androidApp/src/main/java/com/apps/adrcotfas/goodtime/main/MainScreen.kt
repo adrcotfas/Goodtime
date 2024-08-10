@@ -29,7 +29,7 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
         verticalArrangement = Arrangement.Center
     ) {
 
-        val uiState = viewModel.uiState.collectAsState(MainUiState())
+        val uiState = viewModel.timerState.collectAsState(TimerUiState())
         TimerTextView(uiState.value.baseTime)
         Spacer(modifier = Modifier.height(32.dp))
 

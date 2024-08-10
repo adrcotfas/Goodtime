@@ -8,6 +8,7 @@ import android.content.Intent
 import co.touchlab.kermit.Logger
 import com.apps.adrcotfas.goodtime.data.settings.ProductivityReminderSettings
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.DayOfWeek
 import java.time.LocalDateTime
@@ -28,10 +29,11 @@ class ReminderHelper(
     private var reminderSettings = ProductivityReminderSettings()
 
     suspend fun init() {
-        settingsRepository.settings.map { it.productivityReminderSettings }.collect { settings ->
-            reminderSettings = settings
-            scheduleNotifications()
-        }
+        settingsRepository.settings.map { it.productivityReminderSettings }.distinctUntilChanged()
+            .collect { settings ->
+                reminderSettings = settings
+                scheduleNotifications()
+            }
     }
 
     fun scheduleNotifications() {
