@@ -2,6 +2,7 @@ package com.apps.adrcotfas.goodtime.ui.common
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
@@ -20,6 +21,7 @@ fun Preference(
     subtitle: String? = null,
     clickable: Boolean = true,
     onClick: () -> Unit = {},
+    paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
     content: @Composable () -> Unit
 ) {
     val clickableModifier = if (clickable) Modifier.clickable(onClick = onClick) else Modifier
@@ -30,7 +32,7 @@ fun Preference(
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = clickableModifier.padding(16.dp)
+        modifier = clickableModifier.padding(paddingValues)
     ) {
         Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.Start) {
             Text(
@@ -96,12 +98,14 @@ fun TextPreference(
     subtitle: String? = null,
     value: String,
     clickable: Boolean = true,
+    paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
     onClick: () -> Unit
 ) {
     Preference(
         title = title,
         subtitle = subtitle,
         clickable = clickable,
+        paddingValues = paddingValues,
         onClick = onClick
     ) {
         Text(
@@ -131,5 +135,16 @@ fun TextPreferencePreview() {
         subtitle = "Subtitle",
         value = "Value",
         onClick = {}
+    )
+}
+
+@Preview
+@Composable
+fun CheckboxPreferencePreview() {
+    CheckboxPreference(
+        title = "Title",
+        subtitle = "Subtitle",
+        checked = true,
+        onCheckedChange = {}
     )
 }

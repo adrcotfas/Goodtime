@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.text.format.DateFormat
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -22,11 +23,19 @@ import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.apps.adrcotfas.goodtime.bl.NotificationArchManager
 import com.apps.adrcotfas.goodtime.common.findActivity
 import com.apps.adrcotfas.goodtime.common.getAppLanguage
 import com.apps.adrcotfas.goodtime.common.prettyName
@@ -36,25 +45,27 @@ import com.apps.adrcotfas.goodtime.data.settings.FlashType
 import com.apps.adrcotfas.goodtime.data.settings.VibrationStrength
 import com.apps.adrcotfas.goodtime.labels.add_edit.SliderRow
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel.Companion.firstDayOfWeekOptions
-import com.apps.adrcotfas.goodtime.ui.common.CompactPreferenceGroupTitle
-import com.apps.adrcotfas.goodtime.ui.common.RadioGroupDialog
 import com.apps.adrcotfas.goodtime.ui.common.CheckboxPreference
+import com.apps.adrcotfas.goodtime.ui.common.CompactPreferenceGroupTitle
+import com.apps.adrcotfas.goodtime.ui.common.PreferenceGroupTitle
+import com.apps.adrcotfas.goodtime.ui.common.RadioGroupDialog
+import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 import com.apps.adrcotfas.goodtime.ui.common.SwitchPreference
 import com.apps.adrcotfas.goodtime.ui.common.TextPreference
-import com.apps.adrcotfas.goodtime.ui.common.PreferenceGroupTitle
-import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 import com.apps.adrcotfas.goodtime.ui.common.TimePicker
 import com.apps.adrcotfas.goodtime.utils.secondsOfDayToTimerFormat
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.isoDayNumber
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import java.time.format.TextStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
 
+    val notificationManager = koinInject<NotificationArchManager>()
     val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val settings by viewModel.settings.collectAsStateWithLifecycle()
@@ -62,6 +73,28 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
 
     val context = LocalContext.current
     val locale = context.resources.configuration.locales[0]
+
+    var isNotificationPolicyAccessGranted by remember { mutableStateOf(false) }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
+
+    LaunchedEffect(lifecycleState) {
+        when (lifecycleState) {
+
+            Lifecycle.State.RESUMED -> {
+                isNotificationPolicyAccessGranted =
+                    notificationManager.isNotificationPolicyAccessGranted()
+                if (isNotificationPolicyAccessGranted) {
+                    viewModel.setDndDuringWork(true)
+                }
+            }
+
+            else -> {
+                // do nothing
+            }
+        }
+    }
 
     Scaffold(
         modifier = Modifier
@@ -136,19 +169,20 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
 
             SubtleHorizontalDivider()
             CompactPreferenceGroupTitle(text = "During work sessions")
+            //TODO: implement this
             CheckboxPreference(
                 title = "Fullscreen mode",
                 checked = settings.uiSettings.fullscreenMode
             ) {
                 viewModel.setFullscreenMode(it)
             }
-            //TODO: consider having the 2 following options on the same row
             CheckboxPreference(
                 title = "Keep the screen on",
                 checked = settings.uiSettings.keepScreenOn
             ) {
                 viewModel.setKeepScreenOn(it)
             }
+            //TODO: implement this
             CheckboxPreference(
                 title = "Screensaver mode",
                 checked = settings.uiSettings.screensaverMode,
@@ -158,9 +192,14 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
             }
             CheckboxPreference(
                 title = "Do not disturb mode",
-                checked = settings.dndDuringWork
+                subtitle = if (isNotificationPolicyAccessGranted) null else "Click to grant permission",
+                checked = settings.uiSettings.dndDuringWork
             ) {
-                viewModel.setDndDuringWork(it)
+                if (isNotificationPolicyAccessGranted) {
+                    viewModel.setDndDuringWork(it)
+                } else {
+                    requestDndPolicyAccess(context.findActivity()!!)
+                }
             }
 
             SubtleHorizontalDivider()
@@ -312,4 +351,9 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
 @OptIn(ExperimentalMaterial3Api::class)
 private fun TimePickerState.toSecondOfDay(): Int {
     return LocalTime(hour = hour, minute = minute).toSecondOfDay()
+}
+
+internal fun requestDndPolicyAccess(activity: ComponentActivity) {
+    val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+    activity.startActivity(intent)
 }

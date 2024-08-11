@@ -70,10 +70,6 @@ class FakeSettingsRepository(settings: AppSettings = AppSettings()) : SettingsRe
         _settings.value.copy(autoStartBreak = enabled)
     )
 
-    override suspend fun saveDndDuringWork(enabled: Boolean) = _settings.emit(
-        _settings.value.copy(dndDuringWork = enabled)
-    )
-
     override suspend fun activateLabelWithName(labelName: String) {
         _settings.emit(
             _settings.value.copy(labelName = labelName)

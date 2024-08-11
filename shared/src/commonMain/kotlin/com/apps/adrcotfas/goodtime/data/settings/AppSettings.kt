@@ -26,7 +26,6 @@ data class AppSettings(
     val autoStartWork: Boolean = false,
     /** only valid with insistentNotification off and for countdown timers **/
     val autoStartBreak: Boolean = false,
-    val dndDuringWork: Boolean = false,
 
     val labelName: String = Label.DEFAULT_LABEL_NAME,
     val longBreakData: LongBreakData = LongBreakData(),
@@ -48,6 +47,7 @@ data class UiSettings(
     val fullscreenMode: Boolean = false,
     val keepScreenOn: Boolean = true,
     val screensaverMode: Boolean = false,
+    val dndDuringWork: Boolean = false,
     //TODO: consider the following
     // - timer font and size
 )

@@ -39,7 +39,6 @@ class SettingsRepositoryImpl(
         val insistentNotificationKey = booleanPreferencesKey("insistentNotificationKey")
         val autoStartWorkKey = booleanPreferencesKey("autoStartWorkKey")
         val autoStartBreakKey = booleanPreferencesKey("autoStartBreakKey")
-        val dndDuringWorkKey = booleanPreferencesKey("dndDuringWorkKey")
         val labelNameKey = stringPreferencesKey("labelNameKey")
         val longBreakDataKey = stringPreferencesKey("longBreakDataKey")
         val breakBudgetDataKey = stringPreferencesKey("breakBudgetDataKey")
@@ -76,7 +75,6 @@ class SettingsRepositoryImpl(
                 insistentNotification = it[Keys.insistentNotificationKey] ?: false,
                 autoStartWork = it[Keys.autoStartWorkKey] ?: false,
                 autoStartBreak = it[Keys.autoStartBreakKey] ?: false,
-                dndDuringWork = it[Keys.dndDuringWorkKey] ?: false,
                 labelName = it[Keys.labelNameKey] ?: Label.DEFAULT_LABEL_NAME,
                 longBreakData = it[Keys.longBreakDataKey]?.let { l ->
                     Json.decodeFromString<LongBreakData>(l)
@@ -137,10 +135,6 @@ class SettingsRepositoryImpl(
 
     override suspend fun saveAutoStartBreak(enabled: Boolean) {
         dataStore.edit { it[Keys.autoStartBreakKey] = enabled }
-    }
-
-    override suspend fun saveDndDuringWork(enabled: Boolean) {
-        dataStore.edit { it[Keys.dndDuringWorkKey] = enabled }
     }
 
     override suspend fun saveLongBreakData(longBreakData: LongBreakData) {

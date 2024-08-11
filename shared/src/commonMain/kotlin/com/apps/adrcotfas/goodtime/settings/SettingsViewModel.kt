@@ -181,7 +181,7 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
 
     fun setDndDuringWork(enable: Boolean) {
         viewModelScope.launch {
-            settingsRepository.saveDndDuringWork(enable)
+            settingsRepository.saveUiSettings(settings.value.uiSettings.copy(dndDuringWork = enable))
         }
     }
 

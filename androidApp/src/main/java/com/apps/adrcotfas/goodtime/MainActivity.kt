@@ -31,6 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import co.touchlab.kermit.Logger
+import com.apps.adrcotfas.goodtime.bl.NotificationArchManager
 import com.apps.adrcotfas.goodtime.di.injectLogger
 import com.apps.adrcotfas.goodtime.labels.archived.ArchivedLabelsScreen
 import com.apps.adrcotfas.goodtime.labels.main.LabelsScreen
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
     private val log: Logger by injectLogger("MainActivity")
 
     private val viewModel by inject<MainViewModel>()
+    private val notificationManager: NotificationArchManager by inject()
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -69,6 +71,13 @@ class MainActivity : ComponentActivity(), KoinComponent {
             val darkTheme = uiState.isDarkTheme(isSystemInDarkTheme())
 
             toggleKeepScreenOn(workSessionIsInProgress)
+            if (notificationManager.isNotificationPolicyAccessGranted()) {
+                if (uiState.dndDuringWork) {
+                    notificationManager.toggleDndMode(workSessionIsInProgress)
+                } else {
+                    notificationManager.toggleDndMode(false)
+                }
+            }
 
             DisposableEffect(uiState.darkThemePreference) {
                 enableEdgeToEdge(

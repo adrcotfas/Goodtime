@@ -19,7 +19,6 @@ interface SettingsRepository {
     suspend fun saveInsistentNotification(enabled: Boolean)
     suspend fun saveAutoStartWork(enabled: Boolean)
     suspend fun saveAutoStartBreak(enabled: Boolean)
-    suspend fun saveDndDuringWork(enabled: Boolean)
     suspend fun saveLongBreakData(longBreakData: LongBreakData)
     suspend fun saveBreakBudgetData(breakBudgetData: BreakBudgetData)
     suspend fun activateLabelWithName(labelName: String)

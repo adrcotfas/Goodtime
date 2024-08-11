@@ -247,6 +247,18 @@ class NotificationArchManager(private val context: Context, private val activity
         ).build()
     }
 
+    fun toggleDndMode(enabled: Boolean) {
+        if (enabled) {
+            notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY)
+        } else {
+            notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
+        }
+    }
+
+    fun isNotificationPolicyAccessGranted(): Boolean {
+        return notificationManager.isNotificationPolicyAccessGranted
+    }
+
     companion object {
         const val MAIN_CHANNEL_ID = "goodtime.notification"
         const val IN_PROGRESS_NOTIFICATION_ID = 42

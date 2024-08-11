@@ -40,6 +40,7 @@ data class MainUiState(
     val dynamicColor: Boolean = false,
     val darkThemePreference: DarkModePreference = DarkModePreference.SYSTEM,
     val fullscreenMode: Boolean = false,
+    val dndDuringWork: Boolean = false,
 ) {
     fun isDarkTheme(isSystemInDarkTheme: Boolean): Boolean {
         return darkThemePreference == DarkModePreference.DARK ||
@@ -78,7 +79,8 @@ class MainViewModel(
                     it.copy(
                         dynamicColor = uiSettings.useDynamicColor,
                         darkThemePreference = uiSettings.darkModePreference,
-                        fullscreenMode = uiSettings.fullscreenMode
+                        fullscreenMode = uiSettings.fullscreenMode,
+                        dndDuringWork = uiSettings.dndDuringWork
                     )
                 }
             }
