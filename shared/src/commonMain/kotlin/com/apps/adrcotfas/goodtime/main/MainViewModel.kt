@@ -30,13 +30,22 @@ data class TimerUiState(
     val timerType: TimerType = TimerType.WORK,
     val longBreakData: LongBreakData = LongBreakData(),
     val breakBudgetData: BreakBudgetData = BreakBudgetData(),
-)
+) {
+    fun workSessionIsInProgress(): Boolean {
+        return timerState == TimerState.RUNNING && timerType == TimerType.WORK
+    }
+}
 
 data class MainUiState(
     val dynamicColor: Boolean = false,
     val darkThemePreference: DarkModePreference = DarkModePreference.SYSTEM,
     val fullscreenMode: Boolean = false,
-)
+) {
+    fun isDarkTheme(isSystemInDarkTheme: Boolean): Boolean {
+        return darkThemePreference == DarkModePreference.DARK ||
+                (darkThemePreference == DarkModePreference.SYSTEM && isSystemInDarkTheme)
+    }
+}
 
 class MainViewModel(
     private val timerManager: TimerManager,

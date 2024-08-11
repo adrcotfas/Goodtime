@@ -22,11 +22,11 @@ import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.common.findActivity
 import com.apps.adrcotfas.goodtime.common.getAppLanguage
 import com.apps.adrcotfas.goodtime.common.prettyName
@@ -57,8 +57,8 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
 
     val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    val settings by viewModel.settings.collectAsState()
-    val uiState by viewModel.uiState.collectAsState()
+    val settings by viewModel.settings.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     val locale = context.resources.configuration.locales[0]
@@ -120,8 +120,6 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 }
             )
 
-            SubtleHorizontalDivider()
-            CompactPreferenceGroupTitle(text = "User Interface")
             CheckboxPreference(
                 title = "Use Dynamic Color",
                 checked = settings.uiSettings.useDynamicColor
@@ -136,13 +134,15 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 }
             )
 
+            SubtleHorizontalDivider()
+            CompactPreferenceGroupTitle(text = "During work sessions")
             CheckboxPreference(
                 title = "Fullscreen mode",
-                subtitle = "Immersive mode while working",
                 checked = settings.uiSettings.fullscreenMode
             ) {
                 viewModel.setFullscreenMode(it)
             }
+            //TODO: consider having the 2 following options on the same row
             CheckboxPreference(
                 title = "Keep the screen on",
                 checked = settings.uiSettings.keepScreenOn
@@ -151,11 +151,16 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
             }
             CheckboxPreference(
                 title = "Screensaver mode",
-                subtitle = "Moves the timer while ethe screen is on",
                 checked = settings.uiSettings.screensaverMode,
                 clickable = settings.uiSettings.keepScreenOn
             ) {
                 viewModel.setScreensaverMode(it)
+            }
+            CheckboxPreference(
+                title = "Do not disturb mode",
+                checked = settings.dndDuringWork
+            ) {
+                viewModel.setDndDuringWork(it)
             }
 
             SubtleHorizontalDivider()
@@ -224,14 +229,6 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 viewModel.setAutoStartBreak(it)
             }
             SubtleHorizontalDivider()
-            CompactPreferenceGroupTitle(text = "During work sessions")
-            CheckboxPreference(
-                title = "Do not disturb mode",
-                checked = settings.dndDuringWork
-            ) {
-                viewModel.setDndDuringWork(it)
-            }
-
             //TODO: add back-up section
             //TODO: add about section
         }
