@@ -1,19 +1,17 @@
 [versions]
 
-androidxLifecycle = "2.8.0"
-
-agp = "8.5.0"
+agp = "8.5.2"
 android-minSdk = "24"
 android-compileSdk = "34"
 android-targetSdk = "34"
 desugar_jdk_libs = "2.0.4"
-espressoCore = "3.5.1"
-foundation = "1.7.0-beta02"
-kotlin = "1.9.22"
+espressoCore = "3.6.1"
+foundation = "1.7.0-beta07"
+kotlin = "2.0.0"
 
-compose-compiler = "1.5.10"
-activityCompose = "1.9.0"
-composeBom = "2024.05.00"
+androidxLifecycle = "2.8.4"
+activityCompose = "1.9.1"
+composeBom = "2024.06.00"
 navigationCompose = "2.7.7"
 
 sqldelight = "2.0.1"
@@ -21,16 +19,16 @@ sqldelight = "2.0.1"
 androidx-datastore = "1.1.1"
 
 coroutines = "1.8.1"
-kotlinx-serialization = "1.6.2"
+kotlinx-serialization = "1.6.3"
 kotlinx-datetime = "0.6.0"
 
 koin = "3.5.3"
 
-androidx-test-junit = "1.1.5"
-robolectric = "4.11.1"
-turbine = "1.0.0"
+androidx-test-junit = "1.2.1"
+robolectric = "4.12.2"
+turbine = "1.1.0"
 
-okio = "3.7.0"
+okio = "3.8.0"
 coreKtx = "1.13.1"
 
 kermit = "2.0.3"
@@ -82,15 +80,16 @@ turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
 
 touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+touchlab-kermit-simple = { module = "co.touchlab:kermit-simple", version.ref = "kermit" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 
 [bundles]

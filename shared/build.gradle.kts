@@ -1,6 +1,8 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.kotlinx.serialization)
@@ -21,14 +23,24 @@ android {
 kotlin {
     androidTarget {
         compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
+            compileTaskProvider.configure {
+                compilerOptions {
+                    jvmTarget.set(JvmTarget.JVM_1_8)
+                }
             }
         }
     }
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            isStatic = false
+            linkerOpts("-lsqlite3")
+            export(libs.touchlab.kermit.simple)
+        }
+    }
 
     sourceSets {
         all {
@@ -68,28 +80,11 @@ kotlin {
             implementation(libs.sqldelight.driver.native)
         }
     }
-
-    //TODO: remove this when expect/actual become stable; See https://youtrack.jetbrains.com/issue/KT-61573
-    targets.all {
-        compilations.all {
-            compilerOptions.configure {
-                freeCompilerArgs.add("-Xexpect-actual-classes")
-            }
-        }
-    }
-
-    cocoapods {
-        summary = "Productivity app for focus and time management"
-        homepage = "https://github.com/adrcotfas/goodtime"
-        version = "1.0"
-        ios.deploymentTarget = "16.0"
-        podfile = project.file("../iosApp/Podfile")
-        framework {
-            baseName = "shared"
-            isStatic = false // SwiftUI preview requires dynamic framework
-            linkerOpts("-lsqlite3")
-        }
-        extraSpecAttributes["swift_version"] = "\"5.0\"" // <- SKIE Needs this!
+    // https://kotlinlang.org/docs/multiplatform-expect-actual.html#expected-and-actual-classes
+    // To suppress this warning about usage of expected and actual classes
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 }
 
