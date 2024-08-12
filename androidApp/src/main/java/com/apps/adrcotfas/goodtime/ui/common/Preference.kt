@@ -1,9 +1,13 @@
 package com.apps.adrcotfas.goodtime.ui.common
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
@@ -96,7 +100,7 @@ fun CheckboxPreference(
 fun TextPreference(
     title: String,
     subtitle: String? = null,
-    value: String,
+    value: String? = null,
     clickable: Boolean = true,
     paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
     onClick: () -> Unit
@@ -108,13 +112,64 @@ fun TextPreference(
         paddingValues = paddingValues,
         onClick = onClick
     ) {
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyLarge,
-            color = if (clickable) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-        )
+        if (value != null) {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (clickable) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(
+                    alpha = 0.38f
+                )
+            )
+        }
     }
 }
+
+@Composable
+fun TextPreferenceWithSeparateSwitch(
+    title: String,
+    subtitle: String? = null,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    onClick: () -> Unit
+) {
+    val clickableModifier = if (checked) Modifier.clickable(onClick = onClick) else Modifier
+    val textColor =
+        if (checked) MaterialTheme.colorScheme.onSurface
+        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+    val subtitleColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
+
+    Row(
+        modifier = clickableModifier
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .height(IntrinsicSize.Min)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(0.75f), horizontalAlignment = Alignment.Start) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = textColor
+            )
+            subtitle?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (checked) subtitleColor else textColor
+                )
+            }
+        }
+        SubtleVerticalDivider()
+        Column(modifier = Modifier.weight(0.25f), horizontalAlignment = Alignment.End) {
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange
+            )
+        }
+    }
+}
+
 
 @Composable
 @Preview
@@ -146,5 +201,17 @@ fun CheckboxPreferencePreview() {
         subtitle = "Subtitle",
         checked = true,
         onCheckedChange = {}
+    )
+}
+
+@Preview
+@Composable
+fun TextPreferenceWithSeparateSwitchPreview() {
+    TextPreferenceWithSeparateSwitch(
+        title = "Title",
+        subtitle = "Subtitle",
+        checked = false,
+        onCheckedChange = {},
+        onClick = {}
     )
 }
