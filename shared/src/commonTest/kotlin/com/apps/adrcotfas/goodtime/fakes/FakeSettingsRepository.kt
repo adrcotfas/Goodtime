@@ -5,6 +5,7 @@ import com.apps.adrcotfas.goodtime.data.settings.AppSettings
 import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.FlashType
 import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
+import com.apps.adrcotfas.goodtime.data.settings.SoundData
 import com.apps.adrcotfas.goodtime.data.settings.ProductivityReminderSettings
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.UiSettings
@@ -38,10 +39,6 @@ class FakeSettingsRepository(settings: AppSettings = AppSettings()) : SettingsRe
         )
     }
 
-    override suspend fun saveNotificationSoundEnabled(enabled: Boolean) = _settings.emit(
-        _settings.value.copy(notificationSoundEnabled = enabled)
-    )
-
     override suspend fun saveWorkFinishedSound(sound: String?) = _settings.emit(
         _settings.value.copy(workFinishedSound = sound ?: "")
     )
@@ -49,6 +46,22 @@ class FakeSettingsRepository(settings: AppSettings = AppSettings()) : SettingsRe
     override suspend fun saveBreakFinishedSound(sound: String?) = _settings.emit(
         _settings.value.copy(breakFinishedSound = sound ?: "")
     )
+
+    override suspend fun addUserSound(sound: SoundData) {
+        val existingSounds = _settings.value.userSounds.toMutableSet()
+        existingSounds.add(sound)
+        _settings.emit(
+            _settings.value.copy(userSounds = existingSounds)
+        )
+    }
+
+    override suspend fun removeUserSound(sound: SoundData) {
+        val existingSounds = _settings.value.userSounds.toMutableSet()
+        existingSounds.remove(sound)
+        _settings.emit(
+            _settings.value.copy(userSounds = existingSounds)
+        )
+    }
 
     override suspend fun saveVibrationStrength(strength: VibrationStrength) = _settings.emit(
         _settings.value.copy(vibrationStrength = strength)

@@ -6,7 +6,6 @@ import android.os.Build
 import android.provider.Settings
 import android.text.format.DateFormat
 import androidx.activity.ComponentActivity
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -36,27 +36,33 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.bl.NotificationArchManager
+import com.apps.adrcotfas.goodtime.bl.SoundPlayer
 import com.apps.adrcotfas.goodtime.common.findActivity
 import com.apps.adrcotfas.goodtime.common.getAppLanguage
 import com.apps.adrcotfas.goodtime.common.prettyName
 import com.apps.adrcotfas.goodtime.common.prettyNames
 import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
 import com.apps.adrcotfas.goodtime.data.settings.FlashType
+import com.apps.adrcotfas.goodtime.data.settings.SoundData
 import com.apps.adrcotfas.goodtime.data.settings.VibrationStrength
 import com.apps.adrcotfas.goodtime.labels.add_edit.SliderRow
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel.Companion.firstDayOfWeekOptions
+import com.apps.adrcotfas.goodtime.settings.notification_sounds.NotificationSoundPickerDialog
+import com.apps.adrcotfas.goodtime.settings.notification_sounds.toSoundData
 import com.apps.adrcotfas.goodtime.ui.common.CheckboxPreference
 import com.apps.adrcotfas.goodtime.ui.common.CompactPreferenceGroupTitle
 import com.apps.adrcotfas.goodtime.ui.common.PreferenceGroupTitle
 import com.apps.adrcotfas.goodtime.ui.common.RadioGroupDialog
 import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
-import com.apps.adrcotfas.goodtime.ui.common.SwitchPreference
 import com.apps.adrcotfas.goodtime.ui.common.TextPreference
 import com.apps.adrcotfas.goodtime.ui.common.TimePicker
 import com.apps.adrcotfas.goodtime.utils.secondsOfDayToTimerFormat
+import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.isoDayNumber
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.time.format.TextStyle
@@ -78,6 +84,8 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+    val soundPlayer = koinInject<SoundPlayer>()
 
     LaunchedEffect(lifecycleState) {
         when (lifecycleState) {
@@ -95,6 +103,10 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
             }
         }
     }
+
+    val workRingTone = toSoundData(settings.workFinishedSound)
+    val breakRingTone = toSoundData(settings.breakFinishedSound)
+    val candidateRingTone = uiState.notificationSoundCandidate?.let { toSoundData(it) }
 
     Scaffold(
         modifier = Modifier
@@ -115,7 +127,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 .padding(top = paddingValues.calculateTopPadding())
                 .verticalScroll(rememberScrollState())
         ) {
-            PreferenceGroupTitle("Productivity Reminder")
+            PreferenceGroupTitle(text = "Productivity Reminder")
             val reminderSettings = settings.productivityReminderSettings
             ProductivityReminderSection(
                 firstDayOfWeek = DayOfWeek(settings.firstDayOfWeek),
@@ -195,40 +207,31 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 subtitle = if (isNotificationPolicyAccessGranted) null else "Click to grant permission",
                 checked = settings.uiSettings.dndDuringWork
             ) {
-                if (isNotificationPolicyAccessGranted) {
-                    viewModel.setDndDuringWork(it)
-                } else {
-                    requestDndPolicyAccess(context.findActivity()!!)
+                coroutineScope.launch {
+                    soundPlayer.play(context, workRingTone)
                 }
+//                if (isNotificationPolicyAccessGranted) {
+//                    viewModel.setDndDuringWork(it)
+//                } else {
+//                    requestDndPolicyAccess(context.findActivity()!!)
+//                }
             }
 
             SubtleHorizontalDivider()
             CompactPreferenceGroupTitle(text = "Notifications")
-            SwitchPreference(
-                title = "Notification sound",
-                checked = settings.notificationSoundEnabled
-            ) {
-                viewModel.setNotificationSoundEnabled(it)
-            }
 
-            AnimatedVisibility(settings.notificationSoundEnabled) {
-                Column {
-                    TextPreference(
-                        title = "Work finished sound",
-                        subtitle = "Default", //TODO: get the name of the sound
-                        value = ""
-                    ) {
-                        //TODO: open sound picker
-                    }
-                    TextPreference(
-                        title = "Break finished sound",
-                        subtitle = "Default", //TODO: get the name of the sound
-                        value = ""
-                    ) {
-                        //TODO: open sound picker
-                    }
-                }
-            }
+            TextPreference(
+                title = "Work finished sound",
+                subtitle = notificationSoundName(workRingTone),
+                onClick = { viewModel.setShowSelectWorkSoundPicker(true) }
+            )
+
+            TextPreference(
+                title = "Break finished sound",
+                subtitle = notificationSoundName(breakRingTone),
+                onClick = { viewModel.setShowSelectBreakSoundPicker(true) }
+            )
+
             SliderRow(
                 title = "Vibration strength",
                 value = settings.vibrationStrength.ordinal,
@@ -345,8 +348,36 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 onItemSelected = { viewModel.setVibrationStrength(VibrationStrength.entries[it]) },
                 onDismiss = { viewModel.setShowVibrationStrengthPicker(false) })
         }
+        if (uiState.showSelectWorkSoundPicker) {
+            NotificationSoundPickerDialog(
+                title = "Work finished sound",
+                selectedItem = candidateRingTone ?: workRingTone,
+                onSelected = {
+                    viewModel.setNotificationSoundCandidate(Json.encodeToString(it))
+                },
+                onSave = { viewModel.setWorkFinishedSound(Json.encodeToString(it)) },
+                onDismiss = { viewModel.setShowSelectWorkSoundPicker(false) }
+            )
+        }
+        if (uiState.showSelectBreakSoundPicker) {
+            NotificationSoundPickerDialog(
+                title = "Break finished sound",
+                selectedItem = candidateRingTone ?: breakRingTone,
+                onSelected = {
+                    viewModel.setNotificationSoundCandidate(Json.encodeToString(it))
+                },
+                onSave = { viewModel.setBreakFinishedSound(Json.encodeToString(it)) },
+                onDismiss = { viewModel.setShowSelectBreakSoundPicker(false) }
+            )
+        }
     }
 }
+
+@Composable
+private fun notificationSoundName(it: SoundData) =
+    if (it.isSilent) "Silent"
+    else if (it.name.isEmpty()) "Default notification sound"
+    else it.name
 
 @OptIn(ExperimentalMaterial3Api::class)
 private fun TimePickerState.toSecondOfDay(): Int {

@@ -237,6 +237,7 @@ class TimerManager(
      *                       This is useful when the user missed the notification and continued working.
      * @see [finish]
      */
+    //TODO: implement logic for updateWorkTime
     fun reset(updateWorkTime: Boolean = false) {
         val data = timerData.value
         if (data.state == TimerState.RESET) {

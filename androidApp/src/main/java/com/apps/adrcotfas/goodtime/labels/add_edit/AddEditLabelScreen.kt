@@ -29,7 +29,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -102,7 +101,7 @@ fun AddEditLabelScreen(
                 onSave = onSave
             )
 
-            PreferenceGroupTitle("Name")
+            PreferenceGroupTitle(text = "Name")
             LabelNameRow(
                 isDefaultLabel = isDefaultLabel,
                 isAddingNewLabel = !isEditMode,
@@ -119,7 +118,7 @@ fun AddEditLabelScreen(
             )
 
             Spacer(modifier = Modifier.height(8.dp))
-            PreferenceGroupTitle("Color")
+            PreferenceGroupTitle(text = "Color")
             ColorSelectRow(selectedIndex = labelToEdit.colorIndex.toInt()) {
                 onEditLabelToEdit(labelToEdit.copy(colorIndex = it.toLong()))
             }
@@ -134,7 +133,7 @@ fun AddEditLabelScreen(
             }
             AnimatedVisibility(visible = isDefaultLabel || !followDefault) {
                 Column {
-                    PreferenceGroupTitle("Timer type")
+                    PreferenceGroupTitle(text = "Timer type")
                     TimerTypeRow(isCountDown = isCountDown) {
                         onEditLabelToEdit(
                             labelToEdit.copy(

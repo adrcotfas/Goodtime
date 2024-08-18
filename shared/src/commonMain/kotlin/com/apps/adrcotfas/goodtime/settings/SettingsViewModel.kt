@@ -22,6 +22,9 @@ data class SettingsUiState(
     val showWorkdayStartPicker: Boolean = false,
     val showFlashTypePicker: Boolean = false,
     val showVibrationStrengthPicker: Boolean = false,
+    val showSelectWorkSoundPicker: Boolean = false,
+    val showSelectBreakSoundPicker: Boolean = false,
+    val notificationSoundCandidate: String? = null
 )
 
 class SettingsViewModel(private val settingsRepository: SettingsRepository) : ViewModel() {
@@ -117,12 +120,6 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
         _uiState.value = _uiState.value.copy(showWorkdayStartPicker = show)
     }
 
-    fun setNotificationSoundEnabled(enable: Boolean) {
-        viewModelScope.launch {
-            settingsRepository.saveNotificationSoundEnabled(enable)
-        }
-    }
-
     fun setVibrationStrength(vibrationStrength: VibrationStrength) {
         viewModelScope.launch {
             settingsRepository.saveVibrationStrength(vibrationStrength)
@@ -183,6 +180,30 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
         viewModelScope.launch {
             settingsRepository.saveUiSettings(settings.value.uiSettings.copy(dndDuringWork = enable))
         }
+    }
+
+    fun setWorkFinishedSound(ringtone: String) {
+        viewModelScope.launch {
+            settingsRepository.saveWorkFinishedSound(ringtone)
+        }
+    }
+
+    fun setBreakFinishedSound(ringtone: String) {
+        viewModelScope.launch {
+            settingsRepository.saveBreakFinishedSound(ringtone)
+        }
+    }
+
+    fun setShowSelectWorkSoundPicker(show: Boolean) {
+        _uiState.value = _uiState.value.copy(showSelectWorkSoundPicker = show, notificationSoundCandidate = null)
+    }
+
+    fun setShowSelectBreakSoundPicker(show: Boolean) {
+        _uiState.value = _uiState.value.copy(showSelectBreakSoundPicker = show)
+    }
+
+    fun setNotificationSoundCandidate(uri: String) {
+        _uiState.value = _uiState.value.copy(notificationSoundCandidate = uri)
     }
 
     companion object {

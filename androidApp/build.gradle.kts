@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
@@ -48,6 +49,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.documentfile)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(projects.shared)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -60,6 +62,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.icons.extended)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.media)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
     debugImplementation(libs.androidx.ui.tooling)

@@ -31,9 +31,9 @@ class SettingsRepositoryImpl(
         val uiSettingsKey = stringPreferencesKey("uiSettingsKey")
         val workdayStartKey = intPreferencesKey("workdayStartKey")
         val firstDayOfWeekKey = intPreferencesKey("firstDayOfWeekKey")
-        val notificationSoundEnabledKey = booleanPreferencesKey("notificationSoundEnabledKey")
         val workFinishedSoundKey = stringPreferencesKey("workFinishedSoundKey")
         val breakFinishedSoundKey = stringPreferencesKey("breakFinishedSoundKey")
+        val userSoundsKey = stringPreferencesKey("userSoundsKey")
         val vibrationStrengthKey = stringPreferencesKey("vibrationStrengthKey")
         val flashTypeKey = stringPreferencesKey("flashTypeKey")
         val insistentNotificationKey = booleanPreferencesKey("insistentNotificationKey")
@@ -63,9 +63,11 @@ class SettingsRepositoryImpl(
                 workdayStart = it[Keys.workdayStartKey] ?: LocalTime(0, 0).toSecondOfDay(),
                 //TODO: move defaults into constants
                 firstDayOfWeek = it[Keys.firstDayOfWeekKey] ?: DayOfWeek.MONDAY.isoDayNumber,
-                notificationSoundEnabled = it[Keys.notificationSoundEnabledKey] ?: true,
                 workFinishedSound = it[Keys.workFinishedSoundKey] ?: "",
                 breakFinishedSound = it[Keys.breakFinishedSoundKey] ?: "",
+                userSounds = it[Keys.userSoundsKey]?.let { u ->
+                    Json.decodeFromString<Set<SoundData>>(u)
+                } ?: emptySet(),
                 vibrationStrength = it[Keys.vibrationStrengthKey]?.let { v ->
                     Json.decodeFromString<VibrationStrength>(v)
                 } ?: VibrationStrength.MEDIUM,
@@ -105,16 +107,20 @@ class SettingsRepositoryImpl(
         dataStore.edit { it[Keys.firstDayOfWeekKey] = dayOfWeek }
     }
 
-    override suspend fun saveNotificationSoundEnabled(enabled: Boolean) {
-        dataStore.edit { it[Keys.notificationSoundEnabledKey] = enabled }
-    }
-
     override suspend fun saveWorkFinishedSound(sound: String?) {
         dataStore.edit { it[Keys.workFinishedSoundKey] = sound ?: "" }
     }
 
     override suspend fun saveBreakFinishedSound(sound: String?) {
         dataStore.edit { it[Keys.breakFinishedSoundKey] = sound ?: "" }
+    }
+
+    override suspend fun addUserSound(sound: SoundData) {
+        dataStore.add(Keys.userSoundsKey, sound)
+    }
+
+    override suspend fun removeUserSound(sound: SoundData) {
+        dataStore.remove(Keys.userSoundsKey, sound)
     }
 
     override suspend fun saveVibrationStrength(strength: VibrationStrength) {

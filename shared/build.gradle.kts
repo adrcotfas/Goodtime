@@ -58,7 +58,7 @@ kotlin {
             implementation(libs.sqldelight.primitive.adapters)
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.okio)
-            implementation(libs.kotlinx.serialization)
+            api(libs.kotlinx.serialization)
             implementation(libs.kotlinx.datetime)
             implementation(libs.androidx.lifecycle.viewmodel)
             api(libs.touchlab.kermit)

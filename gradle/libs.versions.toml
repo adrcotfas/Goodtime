@@ -1,7 +1,7 @@
 [versions]
 
 agp = "8.5.2"
-android-minSdk = "24"
+android-minSdk = "24" #TODO: increase to 26 or 29
 android-compileSdk = "34"
 android-targetSdk = "34"
 desugar_jdk_libs = "2.0.4"
@@ -17,6 +17,8 @@ navigationCompose = "2.7.7"
 sqldelight = "2.0.1"
 
 androidx-datastore = "1.1.1"
+androidx-media = "1.7.0"
+androidx-documentfile = "1.0.1"
 
 coroutines = "1.8.1"
 kotlinx-serialization = "1.6.3"
@@ -48,6 +50,8 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+androidx-media = { group = "androidx.media", name = "media", version.ref = "androidx-media" }
+androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "androidx-documentfile" }
 
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }

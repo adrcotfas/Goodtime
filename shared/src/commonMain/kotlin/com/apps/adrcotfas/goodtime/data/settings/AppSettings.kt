@@ -14,11 +14,11 @@ data class AppSettings(
     val workdayStart: Int = LocalTime(0, 0).toSecondOfDay(),
     val firstDayOfWeek: Int = DayOfWeek.MONDAY.isoDayNumber,
 
-    val notificationSoundEnabled: Boolean = true,
     /** The name/URI of the sound file or empty for default*/
     val workFinishedSound: String = "",
     /** The name/URI of the sound file or empty for default*/
     val breakFinishedSound: String = "",
+    val userSounds: Set<SoundData> = emptySet(),
     val vibrationStrength: VibrationStrength = VibrationStrength.MEDIUM,
     val flashType: FlashType = FlashType.OFF,
     val insistentNotification: Boolean = false,
@@ -73,3 +73,10 @@ enum class FlashType {
     SCREEN,
     CAMERA
 }
+
+@Serializable
+data class SoundData(
+    val name: String = "",
+    val uriString: String = "",
+    val isSilent: Boolean = false
+)
