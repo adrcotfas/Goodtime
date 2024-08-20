@@ -33,8 +33,10 @@ fun SliderRow(
     steps: Int = max - min - 1,
     showSteps: Boolean = false,
     onValueChange: (Int) -> Unit,
+    onValueChangeFinished: () -> Unit = { },
     onClick: (() -> Unit)? = null,
-    valueNames: List<String>? = null
+    valueNames: List<String>? = null,
+    showValue: Boolean = true
 ) {
     val (sliderWeight, textWeight) = if (valueNames != null) {
         0.8f to 0.2f
@@ -45,7 +47,7 @@ fun SliderRow(
 
     Column(modifier = Modifier
         .fillMaxWidth()
-        .clickable { onClick?.invoke() }
+        .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
         .padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
         Text(
             text = title,
@@ -68,18 +70,21 @@ fun SliderRow(
                 onValueChange = {
                     onValueChange(it.roundToInt())
                 },
+                onValueChangeFinished = onValueChangeFinished,
                 steps = steps,
                 valueRange = min.toFloat()..max.toFloat()
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                modifier = Modifier.weight(textWeight),
-                text = valueText,
-                maxLines = 1,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    textAlign = TextAlign.Center,
+            if (showValue) {
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    modifier = Modifier.weight(textWeight),
+                    text = valueText,
+                    maxLines = 1,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        textAlign = TextAlign.Center,
+                    )
                 )
-            )
+            }
         }
     }
 }
@@ -88,5 +93,11 @@ fun SliderRow(
 @Composable
 fun SliderColumnPreview() {
     var value by remember { mutableIntStateOf(225) }
-    SliderRow(title = "Title", value = value, max = 55, onValueChange = { value = it })
+    SliderRow(
+        title = "Title",
+        value = value,
+        max = 55,
+        onValueChange = { value = it },
+        showValue = false
+    )
 }

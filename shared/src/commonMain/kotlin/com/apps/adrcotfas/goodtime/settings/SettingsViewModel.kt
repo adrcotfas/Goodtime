@@ -6,7 +6,6 @@ import com.apps.adrcotfas.goodtime.data.settings.AppSettings
 import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
 import com.apps.adrcotfas.goodtime.data.settings.FlashType
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
-import com.apps.adrcotfas.goodtime.data.settings.VibrationStrength
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +20,6 @@ data class SettingsUiState(
     val showFirstDayOfWeekPicker: Boolean = false,
     val showWorkdayStartPicker: Boolean = false,
     val showFlashTypePicker: Boolean = false,
-    val showVibrationStrengthPicker: Boolean = false,
     val showSelectWorkSoundPicker: Boolean = false,
     val showSelectBreakSoundPicker: Boolean = false,
     val notificationSoundCandidate: String? = null
@@ -120,7 +118,7 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
         _uiState.value = _uiState.value.copy(showWorkdayStartPicker = show)
     }
 
-    fun setVibrationStrength(vibrationStrength: VibrationStrength) {
+    fun setVibrationStrength(vibrationStrength: Int) {
         viewModelScope.launch {
             settingsRepository.saveVibrationStrength(vibrationStrength)
         }
@@ -134,10 +132,6 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
 
     fun setShowFlashTypePicker(show: Boolean) {
         _uiState.value = _uiState.value.copy(showFlashTypePicker = show)
-    }
-
-    fun setShowVibrationStrengthPicker(show: Boolean) {
-        _uiState.value = _uiState.value.copy(showVibrationStrengthPicker = show)
     }
 
     fun setInsistentNotification(enable: Boolean) {

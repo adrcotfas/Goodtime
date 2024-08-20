@@ -274,8 +274,8 @@ class TimerManagerTest {
         assertEquals(
             fakeEventListener.events,
             listOf(
-                Event.Start(endTime),
-                Event.Start(timeProvider.elapsedRealtime + TimerProfile.DEFAULT_BREAK_DURATION.minutes.inWholeMilliseconds)
+                Event.Start(endTime = endTime),
+                Event.Start(endTime = timeProvider.elapsedRealtime + TimerProfile.DEFAULT_BREAK_DURATION.minutes.inWholeMilliseconds)
             )
         )
         localDataRepo.selectAllSessions().test {
@@ -337,7 +337,7 @@ class TimerManagerTest {
         )
         assertEquals(
             fakeEventListener.events,
-            listOf(Event.Start(endTime), Event.Reset)
+            listOf(Event.Start(endTime = endTime), Event.Reset)
         )
         localDataRepo.selectSessionById(localDataRepo.selectLastInsertSessionId()!!).test {
             val session = awaitItem()
@@ -369,7 +369,7 @@ class TimerManagerTest {
         )
         assertEquals(
             fakeEventListener.events,
-            listOf(Event.Start(endTime), Event.Reset)
+            listOf(Event.Start(endTime = endTime), Event.Reset)
         )
         localDataRepo.selectAllSessions().test {
             assertTrue(awaitItem().isEmpty())

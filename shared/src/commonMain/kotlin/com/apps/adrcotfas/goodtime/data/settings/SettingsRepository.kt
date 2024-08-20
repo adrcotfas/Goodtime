@@ -15,7 +15,7 @@ interface SettingsRepository {
     suspend fun saveBreakFinishedSound(sound: String?)
     suspend fun addUserSound(sound: SoundData)
     suspend fun removeUserSound(sound: SoundData)
-    suspend fun saveVibrationStrength(strength: VibrationStrength)
+    suspend fun saveVibrationStrength(strength: Int)
     suspend fun saveFlashType(type: FlashType)
     suspend fun saveInsistentNotification(enabled: Boolean)
     suspend fun saveAutoStartWork(enabled: Boolean)

@@ -11,6 +11,8 @@
     <!--    Dnd mode -->
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:name=".GoodtimeApplication"
         android:allowBackup="false"

@@ -120,7 +120,7 @@ fun NotificationSoundPickerDialog(
         onSelected = {
             onSelected(it)
             coroutineScope.launch {
-                soundPlayer.play(context, it)
+                soundPlayer.play(it)
             }
         },
         onSave = onSave,

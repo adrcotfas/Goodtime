@@ -6,10 +6,13 @@ import com.apps.adrcotfas.goodtime.bl.ALARM_MANAGER_HANDLER
 import com.apps.adrcotfas.goodtime.bl.AlarmManagerHandler
 import com.apps.adrcotfas.goodtime.bl.EventListener
 import com.apps.adrcotfas.goodtime.bl.NotificationArchManager
+import com.apps.adrcotfas.goodtime.bl.SOUND_AND_VIBRATION_PLAYER
+import com.apps.adrcotfas.goodtime.bl.SoundAndVibrationPlayer
 import com.apps.adrcotfas.goodtime.bl.SoundPlayer
 import com.apps.adrcotfas.goodtime.bl.TIMER_SERVICE_HANDLER
 import com.apps.adrcotfas.goodtime.bl.TimeProvider
 import com.apps.adrcotfas.goodtime.bl.TimerServiceStarter
+import com.apps.adrcotfas.goodtime.bl.VibrationPlayer
 import com.apps.adrcotfas.goodtime.di.getWith
 import com.apps.adrcotfas.goodtime.di.insertKoin
 import com.apps.adrcotfas.goodtime.settings.SoundsViewModel
@@ -60,8 +63,21 @@ class GoodtimeApplication : Application() {
                 }
                 single {
                     SoundPlayer(
+                        context = get(),
                         settingsRepo = get(),
                         logger = getWith(SoundPlayer::class.simpleName)
+                    )
+                }
+                single {
+                    VibrationPlayer(
+                        context = get(),
+                        settingsRepo = get()
+                    )
+                }
+                single<EventListener>(named(EventListener.SOUND_AND_VIBRATION_PLAYER)) {
+                    SoundAndVibrationPlayer(
+                        soundPlayer = get(),
+                        vibrationPlayer = get()
                     )
                 }
             }

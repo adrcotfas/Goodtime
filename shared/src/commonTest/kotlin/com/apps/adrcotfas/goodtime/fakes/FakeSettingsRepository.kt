@@ -9,7 +9,6 @@ import com.apps.adrcotfas.goodtime.data.settings.SoundData
 import com.apps.adrcotfas.goodtime.data.settings.ProductivityReminderSettings
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.UiSettings
-import com.apps.adrcotfas.goodtime.data.settings.VibrationStrength
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -63,7 +62,7 @@ class FakeSettingsRepository(settings: AppSettings = AppSettings()) : SettingsRe
         )
     }
 
-    override suspend fun saveVibrationStrength(strength: VibrationStrength) = _settings.emit(
+    override suspend fun saveVibrationStrength(strength: Int) = _settings.emit(
         _settings.value.copy(vibrationStrength = strength)
     )
 

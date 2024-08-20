@@ -34,7 +34,7 @@ class SettingsRepositoryImpl(
         val workFinishedSoundKey = stringPreferencesKey("workFinishedSoundKey")
         val breakFinishedSoundKey = stringPreferencesKey("breakFinishedSoundKey")
         val userSoundsKey = stringPreferencesKey("userSoundsKey")
-        val vibrationStrengthKey = stringPreferencesKey("vibrationStrengthKey")
+        val vibrationStrengthKey = intPreferencesKey("vibrationStrengthKey")
         val flashTypeKey = stringPreferencesKey("flashTypeKey")
         val insistentNotificationKey = booleanPreferencesKey("insistentNotificationKey")
         val autoStartWorkKey = booleanPreferencesKey("autoStartWorkKey")
@@ -68,9 +68,7 @@ class SettingsRepositoryImpl(
                 userSounds = it[Keys.userSoundsKey]?.let { u ->
                     Json.decodeFromString<Set<SoundData>>(u)
                 } ?: emptySet(),
-                vibrationStrength = it[Keys.vibrationStrengthKey]?.let { v ->
-                    Json.decodeFromString<VibrationStrength>(v)
-                } ?: VibrationStrength.MEDIUM,
+                vibrationStrength = it[Keys.vibrationStrengthKey] ?: 3,
                 flashType = it[Keys.flashTypeKey]?.let { f ->
                     Json.decodeFromString<FlashType>(f)
                 } ?: FlashType.OFF,
@@ -85,6 +83,9 @@ class SettingsRepositoryImpl(
                     Json.decodeFromString<BreakBudgetData>(b)
                 } ?: BreakBudgetData()
             )
+        }.catch {
+            log.e("Error parsing settings", it)
+            emit(AppSettings())
         }.distinctUntilChanged()
 
     override suspend fun saveReminderSettings(
@@ -123,8 +124,8 @@ class SettingsRepositoryImpl(
         dataStore.remove(Keys.userSoundsKey, sound)
     }
 
-    override suspend fun saveVibrationStrength(strength: VibrationStrength) {
-        dataStore.edit { it[Keys.vibrationStrengthKey] = Json.encodeToString(strength) }
+    override suspend fun saveVibrationStrength(strength: Int) {
+        dataStore.edit { it[Keys.vibrationStrengthKey] = strength }
     }
 
     override suspend fun saveFlashType(type: FlashType) {

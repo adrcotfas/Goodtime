@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.bl.NotificationArchManager
 import com.apps.adrcotfas.goodtime.bl.SoundPlayer
+import com.apps.adrcotfas.goodtime.bl.VibrationPlayer
 import com.apps.adrcotfas.goodtime.common.findActivity
 import com.apps.adrcotfas.goodtime.common.getAppLanguage
 import com.apps.adrcotfas.goodtime.common.prettyName
@@ -44,7 +45,6 @@ import com.apps.adrcotfas.goodtime.common.prettyNames
 import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
 import com.apps.adrcotfas.goodtime.data.settings.FlashType
 import com.apps.adrcotfas.goodtime.data.settings.SoundData
-import com.apps.adrcotfas.goodtime.data.settings.VibrationStrength
 import com.apps.adrcotfas.goodtime.labels.add_edit.SliderRow
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel.Companion.firstDayOfWeekOptions
 import com.apps.adrcotfas.goodtime.settings.notification_sounds.NotificationSoundPickerDialog
@@ -84,8 +84,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
-    val coroutineScope = rememberCoroutineScope()
-    val soundPlayer = koinInject<SoundPlayer>()
+    val vibrationPlayer = koinInject<VibrationPlayer>()
 
     LaunchedEffect(lifecycleState) {
         when (lifecycleState) {
@@ -207,14 +206,11 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 subtitle = if (isNotificationPolicyAccessGranted) null else "Click to grant permission",
                 checked = settings.uiSettings.dndDuringWork
             ) {
-                coroutineScope.launch {
-                    soundPlayer.play(context, workRingTone)
+                if (isNotificationPolicyAccessGranted) {
+                    viewModel.setDndDuringWork(it)
+                } else {
+                    requestDndPolicyAccess(context.findActivity()!!)
                 }
-//                if (isNotificationPolicyAccessGranted) {
-//                    viewModel.setDndDuringWork(it)
-//                } else {
-//                    requestDndPolicyAccess(context.findActivity()!!)
-//                }
             }
 
             SubtleHorizontalDivider()
@@ -232,15 +228,19 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 onClick = { viewModel.setShowSelectBreakSoundPicker(true) }
             )
 
+            var selectedStrength = settings.vibrationStrength
             SliderRow(
                 title = "Vibration strength",
-                value = settings.vibrationStrength.ordinal,
+                value = settings.vibrationStrength,
                 min = 0,
-                max = VibrationStrength.entries.lastIndex,
+                max = 5,
                 showSteps = true,
-                onValueChange = { viewModel.setVibrationStrength(VibrationStrength.entries[it]) },
-                onClick = { viewModel.setShowVibrationStrengthPicker(true) },
-                valueNames = prettyNames<VibrationStrength>()
+                onValueChange = {
+                    selectedStrength = it
+                    viewModel.setVibrationStrength(it)
+                },
+                onValueChangeFinished = { vibrationPlayer.start(selectedStrength) },
+                showValue = false
             )
             TextPreference(
                 title = "Flash type",
@@ -338,15 +338,6 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 radioOptions = prettyNames<FlashType>(),
                 onItemSelected = { viewModel.setFlashType(FlashType.entries[it]) },
                 onDismiss = { viewModel.setShowFlashTypePicker(false) })
-        }
-        if (uiState.showVibrationStrengthPicker) {
-            RadioGroupDialog(
-                title = "Vibration strength",
-                initialIndex = settings.vibrationStrength.ordinal,
-                //TODO: use a localized name instead
-                radioOptions = prettyNames<VibrationStrength>(),
-                onItemSelected = { viewModel.setVibrationStrength(VibrationStrength.entries[it]) },
-                onDismiss = { viewModel.setShowVibrationStrengthPicker(false) })
         }
         if (uiState.showSelectWorkSoundPicker) {
             NotificationSoundPickerDialog(

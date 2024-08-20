@@ -19,7 +19,7 @@ data class AppSettings(
     /** The name/URI of the sound file or empty for default*/
     val breakFinishedSound: String = "",
     val userSounds: Set<SoundData> = emptySet(),
-    val vibrationStrength: VibrationStrength = VibrationStrength.MEDIUM,
+    val vibrationStrength: Int = 3,
     val flashType: FlashType = FlashType.OFF,
     val insistentNotification: Boolean = false,
     /** only valid with insistentNotification off **/
@@ -57,14 +57,6 @@ enum class DarkModePreference {
     SYSTEM,
     LIGHT,
     DARK
-}
-
-@Serializable
-enum class VibrationStrength {
-    OFF,
-    LOW,
-    MEDIUM,
-    HIGH
 }
 
 @Serializable

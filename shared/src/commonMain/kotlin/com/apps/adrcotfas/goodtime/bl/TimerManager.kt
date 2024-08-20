@@ -110,7 +110,18 @@ class TimerManager(
         handlePersistentDataAtStart()
 
         log.i { "Starting $timerType timer: ${timerData.value}" }
-        listeners.forEach { it.onEvent(Event.Start(timerData.value.endTime)) }
+        val autoStarted =
+            timerData.value.type == TimerType.WORK && settings.autoStartWork
+                    || timerData.value.type != TimerType.WORK && settings.autoStartBreak
+
+        listeners.forEach {
+            it.onEvent(
+                Event.Start(
+                    autoStarted = autoStarted,
+                    endTime = timerData.value.endTime
+                )
+            )
+        }
     }
 
     fun addOneMinute() {
@@ -168,7 +179,7 @@ class TimerManager(
             )
         }
         log.i { "Resumed: ${timerData.value}" }
-        listeners.forEach { it.onEvent(Event.Start(timerData.value.endTime)) }
+        listeners.forEach { it.onEvent(Event.Start(endTime = timerData.value.endTime)) }
     }
 
     fun next(updateWorkTime: Boolean = false) {
@@ -224,7 +235,14 @@ class TimerManager(
             settings.autoStartWork && (data.type != TimerType.WORK || !data.timerProfile.isBreakEnabled)
                     || settings.autoStartBreak && data.type == TimerType.WORK && data.timerProfile.isBreakEnabled
         log.i { "AutoStart: $autoStart" }
-        listeners.forEach { it.onEvent(Event.Finished(autoStart)) }
+        listeners.forEach {
+            it.onEvent(
+                Event.Finished(
+                    type = data.type,
+                    autostartNextSession = autoStart
+                )
+            )
+        }
         if (autoStart) {
             next()
         }
