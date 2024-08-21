@@ -16,10 +16,7 @@ import kotlinx.datetime.isoDayNumber
 
 data class SettingsUiState(
     val showTimePicker: Boolean = false,
-    val showThemePicker: Boolean = false,
-    val showFirstDayOfWeekPicker: Boolean = false,
     val showWorkdayStartPicker: Boolean = false,
-    val showFlashTypePicker: Boolean = false,
     val showSelectWorkSoundPicker: Boolean = false,
     val showSelectBreakSoundPicker: Boolean = false,
     val notificationSoundCandidate: String? = null
@@ -67,10 +64,6 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
         }
     }
 
-    fun setShowThemePicker(show: Boolean) {
-        _uiState.value = _uiState.value.copy(showThemePicker = show)
-    }
-
     fun setThemeOption(themePreference: DarkModePreference) {
         viewModelScope.launch {
             settingsRepository.saveUiSettings(settings.value.uiSettings.copy(darkModePreference = themePreference))
@@ -113,10 +106,6 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
         }
     }
 
-    fun setShowFirstDayOfWeekPicker(show: Boolean) {
-        _uiState.value = _uiState.value.copy(showFirstDayOfWeekPicker = show)
-    }
-
     fun setShowWorkdayStartPicker(show: Boolean) {
         _uiState.value = _uiState.value.copy(showWorkdayStartPicker = show)
     }
@@ -134,10 +123,6 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
                 setKeepScreenOn(true)
             }
         }
-    }
-
-    fun setShowFlashTypePicker(show: Boolean) {
-        _uiState.value = _uiState.value.copy(showFlashTypePicker = show)
     }
 
     fun setInsistentNotification(enable: Boolean) {

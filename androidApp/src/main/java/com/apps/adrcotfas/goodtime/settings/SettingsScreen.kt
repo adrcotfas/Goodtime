@@ -6,6 +6,7 @@ import android.os.Build
 import android.provider.Settings
 import android.text.format.DateFormat
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -35,6 +37,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.bl.notifications.NotificationArchManager
+import com.apps.adrcotfas.goodtime.bl.notifications.TorchManager
 import com.apps.adrcotfas.goodtime.bl.notifications.VibrationPlayer
 import com.apps.adrcotfas.goodtime.common.findActivity
 import com.apps.adrcotfas.goodtime.common.getAppLanguage
@@ -50,9 +53,9 @@ import com.apps.adrcotfas.goodtime.settings.notification_sounds.toSoundData
 import com.apps.adrcotfas.goodtime.ui.common.CheckboxPreference
 import com.apps.adrcotfas.goodtime.ui.common.CompactPreferenceGroupTitle
 import com.apps.adrcotfas.goodtime.ui.common.PreferenceGroupTitle
-import com.apps.adrcotfas.goodtime.ui.common.RadioGroupDialog
 import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 import com.apps.adrcotfas.goodtime.ui.common.TextPreference
+import com.apps.adrcotfas.goodtime.ui.common.TextPreferenceWithDropdownMenu
 import com.apps.adrcotfas.goodtime.ui.common.TimePicker
 import com.apps.adrcotfas.goodtime.utils.secondsOfDayToTimerFormat
 import kotlinx.datetime.DayOfWeek
@@ -82,6 +85,8 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
     val vibrationPlayer = koinInject<VibrationPlayer>()
+    val torchManager = koinInject<TorchManager>()
+    val isTorchAvailable = torchManager.isTorchAvailable()
 
     LaunchedEffect(lifecycleState) {
         when (lifecycleState) {
@@ -152,14 +157,23 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 ), onClick = {
                     viewModel.setShowWorkdayStartPicker(true)
                 })
-            TextPreference(
-                title = "Start of the week",
-                value = DayOfWeek.of(settings.firstDayOfWeek)
-                    .getDisplayName(TextStyle.FULL, locale),
-                onClick = {
-                    viewModel.setShowFirstDayOfWeekPicker(true)
-                }
-            )
+
+            Box(contentAlignment = Alignment.CenterEnd) {
+                TextPreferenceWithDropdownMenu(
+                    title = "Start of the week",
+                    value = DayOfWeek.of(settings.firstDayOfWeek)
+                        .getDisplayName(TextStyle.FULL, locale),
+                    dropdownMenuOptions = firstDayOfWeekOptions.map {
+                        it.getDisplayName(
+                            TextStyle.FULL,
+                            locale
+                        )
+                    },
+                    onDropdownMenuItemSelected = {
+                        viewModel.setFirstDayOfWeek(firstDayOfWeekOptions[it].isoDayNumber)
+                    }
+                )
+            }
 
             CheckboxPreference(
                 title = "Use Dynamic Color",
@@ -167,11 +181,13 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
             ) {
                 viewModel.setUseDynamicColor(it)
             }
-            TextPreference(
+            TextPreferenceWithDropdownMenu(
                 title = "Dark mode preference",
+                //TODO: use localized strings instead
                 value = settings.uiSettings.darkModePreference.prettyName(),
-                onClick = {
-                    viewModel.setShowThemePicker(true)
+                dropdownMenuOptions = prettyNames<DarkModePreference>(),
+                onDropdownMenuItemSelected = {
+                    viewModel.setThemeOption(DarkModePreference.entries[it])
                 }
             )
 
@@ -239,13 +255,22 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 onValueChangeFinished = { vibrationPlayer.start(selectedStrength) },
                 showValue = false
             )
-            TextPreference(
+            //TODO: use a fullscreen intent to handle the "screen" flash?
+            TextPreferenceWithDropdownMenu(
                 title = "Flash type",
                 subtitle = "A visual notification for silent environments",
-                value = settings.flashType.prettyName()
-            ) {
-                viewModel.setShowFlashTypePicker(true)
-            }
+                value = settings.flashType.prettyName(),
+                //TODO: use localized names instead and be careful when removing the TORCH option
+                dropdownMenuOptions = prettyNames<FlashType>().toMutableList().apply {
+                    if (!isTorchAvailable) {
+                        val index = FlashType.entries.indexOf(FlashType.TORCH)
+                        remove(prettyNames<FlashType>()[index])
+                    }
+                },
+                onDropdownMenuItemSelected = {
+                    viewModel.setFlashType(FlashType.entries[it])
+                }
+            )
             CheckboxPreference(
                 title = "Insistent notification",
                 subtitle = "Repeat the notification until it's cancelled",
@@ -288,28 +313,6 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 timePickerState = timePickerState
             )
         }
-        if (uiState.showThemePicker) {
-            RadioGroupDialog(title = "Dark mode preference",
-                initialIndex = settings.uiSettings.darkModePreference.ordinal,
-                //TODO: use localized strings instead
-                radioOptions = prettyNames<DarkModePreference>(),
-                onItemSelected = { viewModel.setThemeOption(DarkModePreference.entries[it]) },
-                onDismiss = { viewModel.setShowThemePicker(false) }
-            )
-        }
-        if (uiState.showFirstDayOfWeekPicker) {
-            RadioGroupDialog(title = "First day of the week",
-                initialIndex = firstDayOfWeekOptions.indexOf(DayOfWeek.of(settings.firstDayOfWeek)),
-                radioOptions = firstDayOfWeekOptions.map {
-                    it.getDisplayName(
-                        TextStyle.FULL,
-                        locale
-                    )
-                },
-                onItemSelected = { viewModel.setFirstDayOfWeek(firstDayOfWeekOptions[it].isoDayNumber) },
-                onDismiss = { viewModel.setShowFirstDayOfWeekPicker(false) }
-            )
-        }
         if (uiState.showWorkdayStartPicker) {
             val workdayStart = LocalTime.fromSecondOfDay(settings.workdayStart)
             val timePickerState = rememberTimePickerState(
@@ -327,15 +330,6 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
             )
         }
 
-        if (uiState.showFlashTypePicker) {
-            RadioGroupDialog(
-                title = "Flash type",
-                initialIndex = settings.flashType.ordinal,
-                //TODO: use a localized name instead
-                radioOptions = prettyNames<FlashType>(),
-                onItemSelected = { viewModel.setFlashType(FlashType.entries[it]) },
-                onDismiss = { viewModel.setShowFlashTypePicker(false) })
-        }
         if (uiState.showSelectWorkSoundPicker) {
             NotificationSoundPickerDialog(
                 title = "Work finished sound",

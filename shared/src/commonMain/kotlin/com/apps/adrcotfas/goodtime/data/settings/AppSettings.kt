@@ -63,7 +63,7 @@ enum class DarkModePreference {
 enum class FlashType {
     OFF,
     SCREEN,
-    CAMERA
+    TORCH
 }
 
 @Serializable

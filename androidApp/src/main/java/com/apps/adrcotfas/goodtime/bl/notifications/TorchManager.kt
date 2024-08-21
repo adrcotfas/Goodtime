@@ -48,7 +48,7 @@ class TorchManager(
         readFromSettingsScope.launch {
             settingsRepo.settings.map {
                 TorchManagerData(
-                    enabled = it.flashType == FlashType.CAMERA,
+                    enabled = it.flashType == FlashType.TORCH,
                     loop = it.insistentNotification
                 )
             }.collect {
@@ -57,7 +57,7 @@ class TorchManager(
         }
     }
 
-    fun isFlashAvailable() = cameraId != null
+    fun isTorchAvailable() = cameraId != null
 
     fun start() {
         if (!data.enabled) return
