@@ -89,6 +89,9 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
             if (!enable && settings.value.uiSettings.screensaverMode) {
                 settingsRepository.saveUiSettings(settings.value.uiSettings.copy(screensaverMode = false))
             }
+            if (!enable && settings.value.flashType == FlashType.SCREEN) {
+                setFlashType(FlashType.OFF)
+            }
         }
     }
 
@@ -127,6 +130,9 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
     fun setFlashType(flashType: FlashType) {
         viewModelScope.launch {
             settingsRepository.saveFlashType(flashType)
+            if (flashType == FlashType.SCREEN && !settings.value.uiSettings.keepScreenOn) {
+                setKeepScreenOn(true)
+            }
         }
     }
 
@@ -189,7 +195,8 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
     }
 
     fun setShowSelectWorkSoundPicker(show: Boolean) {
-        _uiState.value = _uiState.value.copy(showSelectWorkSoundPicker = show, notificationSoundCandidate = null)
+        _uiState.value =
+            _uiState.value.copy(showSelectWorkSoundPicker = show, notificationSoundCandidate = null)
     }
 
     fun setShowSelectBreakSoundPicker(show: Boolean) {
