@@ -6,7 +6,7 @@ import com.apps.adrcotfas.goodtime.bl.EventListener
 class SoundVibrationAndTorchPlayer(
     private val soundPlayer: SoundPlayer,
     private val vibrationPlayer: VibrationPlayer,
-    private val torchStarter: TorchStarter
+    private val torchManager: TorchManager
 ) : EventListener {
     override fun onEvent(event: Event) {
         when (event) {
@@ -14,20 +14,20 @@ class SoundVibrationAndTorchPlayer(
                 if (!event.autoStarted) {
                     soundPlayer.stop()
                     vibrationPlayer.stop()
-                    torchStarter.stop()
+                    torchManager.stop()
                 }
             }
 
             is Event.Finished -> {
                 soundPlayer.play(event.type)
                 vibrationPlayer.start()
-                torchStarter.start()
+                torchManager.start()
             }
 
             Event.Reset -> {
                 soundPlayer.stop()
                 vibrationPlayer.stop()
-                torchStarter.stop()
+                torchManager.stop()
             }
 
             is Event.AddOneMinute -> {}

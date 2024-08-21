@@ -62,7 +62,7 @@ class VibrationPlayer(
     private fun start(data: VibrationData) {
         vibrator.cancel()
         val (strength, loop) = data
-        val repeat = if (loop) 2 else -1
+        val repeat = if (loop) 1 else -1
         if (strength == 0 || !vibrator.hasVibrator()) {
             return
         }
@@ -71,16 +71,16 @@ class VibrationPlayer(
                 longArrayOf(0, 100, 2000)
             }
             2 -> {
-                longArrayOf(0, 100, 50, 100, 2000)
+                longArrayOf(0, 100, 50, 100, 1000)
             }
             3 -> {
-                longArrayOf(0, 200, 50, 200, 2000)
+                longArrayOf(0, 200, 50, 200, 1000)
             }
             4 -> {
-                longArrayOf(0, 400, 100, 400, 2000)
+                longArrayOf(0, 400, 100, 400, 1000)
             }
             5 -> {
-                longArrayOf(0, 400, 100, 400, 100, 400, 2000)
+                longArrayOf(0, 400, 100, 400, 100, 400, 1000)
             }
             else -> longArrayOf()
         }

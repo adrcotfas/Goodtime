@@ -12,9 +12,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-data class TorchPlayerData(
+data class TorchManagerData(
     val enabled: Boolean = false,
     val loop: Boolean = false
 )
@@ -22,7 +23,7 @@ data class TorchPlayerData(
 /**
  * Uses the camera flash, if available, to notify the user.
  */
-class TorchStarter(
+class TorchManager(
     context: Context,
     readFromSettingsScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
     private val playerScope: CoroutineScope = CoroutineScope(Dispatchers.Default),
@@ -31,7 +32,7 @@ class TorchStarter(
 ) {
     private val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private var cameraId: String? = null
-    private var data: TorchPlayerData = TorchPlayerData()
+    private var data: TorchManagerData = TorchManagerData()
 
     private var job: Job? = null
 
@@ -46,7 +47,7 @@ class TorchStarter(
         }
         readFromSettingsScope.launch {
             settingsRepo.settings.map {
-                TorchPlayerData(
+                TorchManagerData(
                     enabled = it.flashType == FlashType.CAMERA,
                     loop = it.insistentNotification
                 )
@@ -60,12 +61,18 @@ class TorchStarter(
 
     fun start() {
         if (!data.enabled) return
-
-
         job = playerScope.launch {
             cameraId?.let {
                 try {
-                    cameraManager.lightUp(listOf(100, 50, 100), it)
+                    val pattern = listOf(100L, 50L, 100L)
+                    if (data.loop) {
+                        while(isActive) {
+                            cameraManager.lightUp(pattern, it)
+                            delay(1000)
+                        }
+                    } else {
+                        cameraManager.lightUp(pattern, it)
+                    }
                 } catch (e: CameraAccessException) {
                     logger.e(e) { "Failed to access the camera" }
                 }

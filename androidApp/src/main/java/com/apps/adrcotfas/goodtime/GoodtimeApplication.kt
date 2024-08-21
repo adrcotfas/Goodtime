@@ -12,7 +12,7 @@ import com.apps.adrcotfas.goodtime.bl.notifications.SoundPlayer
 import com.apps.adrcotfas.goodtime.bl.TIMER_SERVICE_HANDLER
 import com.apps.adrcotfas.goodtime.bl.TimeProvider
 import com.apps.adrcotfas.goodtime.bl.TimerServiceStarter
-import com.apps.adrcotfas.goodtime.bl.notifications.TorchStarter
+import com.apps.adrcotfas.goodtime.bl.notifications.TorchManager
 import com.apps.adrcotfas.goodtime.bl.notifications.VibrationPlayer
 import com.apps.adrcotfas.goodtime.di.getWith
 import com.apps.adrcotfas.goodtime.di.insertKoin
@@ -76,17 +76,17 @@ class GoodtimeApplication : Application() {
                     )
                 }
                 single {
-                    TorchStarter(
+                    TorchManager(
                         context = get(),
                         settingsRepo = get(),
-                        logger = getWith(TorchStarter::class.simpleName)
+                        logger = getWith(TorchManager::class.simpleName)
                     )
                 }
                 single<EventListener>(named(EventListener.SOUND_AND_VIBRATION_PLAYER)) {
                     SoundVibrationAndTorchPlayer(
                         soundPlayer = get(),
                         vibrationPlayer = get(),
-                        torchStarter = get()
+                        torchManager = get()
                     )
                 }
             }
