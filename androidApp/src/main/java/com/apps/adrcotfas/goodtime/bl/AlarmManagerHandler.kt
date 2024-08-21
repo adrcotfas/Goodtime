@@ -30,6 +30,8 @@ class AlarmManagerHandler(
                 setAlarm(event.endTime)
             }
 
+            //TODO: consider the case with keeping the screen on
+            // and triggering a finish event when the timer is done: the alarm should be canceled
             else -> {
                 // do nothing
             }

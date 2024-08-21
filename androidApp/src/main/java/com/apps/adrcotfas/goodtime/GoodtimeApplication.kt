@@ -5,14 +5,15 @@ import android.content.Context
 import com.apps.adrcotfas.goodtime.bl.ALARM_MANAGER_HANDLER
 import com.apps.adrcotfas.goodtime.bl.AlarmManagerHandler
 import com.apps.adrcotfas.goodtime.bl.EventListener
-import com.apps.adrcotfas.goodtime.bl.NotificationArchManager
+import com.apps.adrcotfas.goodtime.bl.notifications.NotificationArchManager
 import com.apps.adrcotfas.goodtime.bl.SOUND_AND_VIBRATION_PLAYER
-import com.apps.adrcotfas.goodtime.bl.SoundAndVibrationPlayer
-import com.apps.adrcotfas.goodtime.bl.SoundPlayer
+import com.apps.adrcotfas.goodtime.bl.notifications.SoundVibrationAndTorchPlayer
+import com.apps.adrcotfas.goodtime.bl.notifications.SoundPlayer
 import com.apps.adrcotfas.goodtime.bl.TIMER_SERVICE_HANDLER
 import com.apps.adrcotfas.goodtime.bl.TimeProvider
 import com.apps.adrcotfas.goodtime.bl.TimerServiceStarter
-import com.apps.adrcotfas.goodtime.bl.VibrationPlayer
+import com.apps.adrcotfas.goodtime.bl.notifications.TorchStarter
+import com.apps.adrcotfas.goodtime.bl.notifications.VibrationPlayer
 import com.apps.adrcotfas.goodtime.di.getWith
 import com.apps.adrcotfas.goodtime.di.insertKoin
 import com.apps.adrcotfas.goodtime.settings.SoundsViewModel
@@ -74,10 +75,18 @@ class GoodtimeApplication : Application() {
                         settingsRepo = get()
                     )
                 }
+                single {
+                    TorchStarter(
+                        context = get(),
+                        settingsRepo = get(),
+                        logger = getWith(TorchStarter::class.simpleName)
+                    )
+                }
                 single<EventListener>(named(EventListener.SOUND_AND_VIBRATION_PLAYER)) {
-                    SoundAndVibrationPlayer(
+                    SoundVibrationAndTorchPlayer(
                         soundPlayer = get(),
-                        vibrationPlayer = get()
+                        vibrationPlayer = get(),
+                        torchStarter = get()
                     )
                 }
             }

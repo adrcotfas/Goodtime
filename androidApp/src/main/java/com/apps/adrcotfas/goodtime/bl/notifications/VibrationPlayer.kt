@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.bl
+package com.apps.adrcotfas.goodtime.bl.notifications
 
 import android.content.Context
 import android.content.Context.VIBRATOR_SERVICE

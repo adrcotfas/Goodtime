@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.bl
+package com.apps.adrcotfas.goodtime.bl.notifications
 
 import android.content.Context
 import android.media.AudioAttributes
@@ -7,6 +7,7 @@ import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 import co.touchlab.kermit.Logger
+import com.apps.adrcotfas.goodtime.bl.TimerType
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.SoundData
 import com.apps.adrcotfas.goodtime.settings.notification_sounds.toSoundData

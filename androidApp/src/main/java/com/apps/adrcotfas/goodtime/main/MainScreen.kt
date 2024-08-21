@@ -49,6 +49,14 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
                 ) {
                     Text(if (uiState.value.timerState == TimerState.RUNNING) "pause" else "resume")
                 }
+                //TODO: testing purposes / remove this
+                Button(
+                    onClick = {
+                        viewModel.finishTimer()
+                    }
+                ) {
+                    Text("finish")
+                }
             }
             Button(
                 onClick = {

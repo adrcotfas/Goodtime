@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.bl
+package com.apps.adrcotfas.goodtime.bl.notifications
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -13,6 +13,10 @@ import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.IconCompat
 import com.apps.adrcotfas.goodtime.shared.R as SharedR
 import com.apps.adrcotfas.goodtime.R
+import com.apps.adrcotfas.goodtime.bl.DomainTimerData
+import com.apps.adrcotfas.goodtime.bl.TimerService
+import com.apps.adrcotfas.goodtime.bl.TimerState
+import com.apps.adrcotfas.goodtime.bl.TimerType
 
 class NotificationArchManager(private val context: Context, private val activityClass: Class<*>) {
 

@@ -112,4 +112,9 @@ class MainViewModel(
             )
         )
     }
+
+    //TODO: testing purposes / remove this
+    fun finishTimer() {
+        timerManager.finish()
+    }
 }

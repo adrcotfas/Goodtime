@@ -3,7 +3,7 @@ package com.apps.adrcotfas.goodtime.settings.reminders
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.apps.adrcotfas.goodtime.bl.NotificationArchManager
+import com.apps.adrcotfas.goodtime.bl.notifications.NotificationArchManager
 import com.apps.adrcotfas.goodtime.di.injectLogger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
