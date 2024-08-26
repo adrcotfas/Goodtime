@@ -93,7 +93,7 @@ fun LabelsScreen(
     }
 
     val showFab = listState.isScrollingUp()
-    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
 
     Scaffold(
@@ -135,9 +135,8 @@ fun LabelsScreen(
         LazyColumn(
             state = listState,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(bottom = 64.dp)
+                .fillMaxSize(),
+            contentPadding = paddingValues
         ) {
             itemsIndexed(labels, key = { _, item -> item.name }) { index, label ->
                 DraggableItem(dragDropState, index) { isDragging ->

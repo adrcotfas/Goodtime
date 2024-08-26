@@ -47,7 +47,7 @@ fun ArchivedLabelsScreen(
     viewModel: ArchivedLabelsViewModel = koinViewModel()
 ) {
     val labels by viewModel.archivedLabels.collectAsStateWithLifecycle(emptyList())
-    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
     var labelToDelete by remember { mutableStateOf("") }

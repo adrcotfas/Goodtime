@@ -18,7 +18,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatsScreen() {
-    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
         modifier = Modifier
             .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)

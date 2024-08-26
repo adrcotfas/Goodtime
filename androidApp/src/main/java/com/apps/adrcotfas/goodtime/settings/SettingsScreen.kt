@@ -72,7 +72,7 @@ import java.time.format.TextStyle
 fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
 
     val notificationManager = koinInject<NotificationArchManager>()
-    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
