@@ -103,7 +103,7 @@ class SoundPlayer(
 
         ringtone = RingtoneManager.getRingtone(context, uri).apply {
             audioAttributes = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .setUsage(AudioAttributes.USAGE_ALARM)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build()
         }
