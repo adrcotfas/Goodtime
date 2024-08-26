@@ -195,7 +195,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
             CompactPreferenceGroupTitle(text = "During work sessions")
             //TODO: implement this
             CheckboxPreference(
-                title = "Fullscreen mode",
+                title = "Fullscreen mode (TODO)",
                 checked = settings.uiSettings.fullscreenMode
             ) {
                 viewModel.setFullscreenMode(it)
@@ -208,7 +208,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
             }
             //TODO: implement this
             CheckboxPreference(
-                title = "Screensaver mode",
+                title = "Screensaver mode (TODO)",
                 checked = settings.uiSettings.screensaverMode,
                 clickable = settings.uiSettings.keepScreenOn
             ) {
@@ -257,7 +257,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
             )
             //TODO: use a fullscreen intent to handle the "screen" flash?
             TextPreferenceWithDropdownMenu(
-                title = "Flash type",
+                title = "Flash type (TODO screen)",
                 subtitle = "A visual notification for silent environments",
                 value = settings.flashType.prettyName(),
                 //TODO: use localized names instead and be careful when removing the TORCH option
