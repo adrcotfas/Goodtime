@@ -175,12 +175,15 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 )
             }
 
-            CheckboxPreference(
-                title = "Use Dynamic Color",
-                checked = settings.uiSettings.useDynamicColor
-            ) {
-                viewModel.setUseDynamicColor(it)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                CheckboxPreference(
+                    title = "Use Dynamic Color",
+                    checked = settings.uiSettings.useDynamicColor
+                ) {
+                    viewModel.setUseDynamicColor(it)
+                }
             }
+
             TextPreferenceWithDropdownMenu(
                 title = "Dark mode preference",
                 //TODO: use localized strings instead
@@ -193,9 +196,8 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
 
             SubtleHorizontalDivider()
             CompactPreferenceGroupTitle(text = "During work sessions")
-            //TODO: implement this
             CheckboxPreference(
-                title = "Fullscreen mode (TODO)",
+                title = "Fullscreen mode",
                 checked = settings.uiSettings.fullscreenMode
             ) {
                 viewModel.setFullscreenMode(it)

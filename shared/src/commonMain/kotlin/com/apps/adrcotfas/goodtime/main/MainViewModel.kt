@@ -34,6 +34,10 @@ data class TimerUiState(
     fun workSessionIsInProgress(): Boolean {
         return timerState == TimerState.RUNNING && timerType == TimerType.WORK
     }
+
+    fun isActive(): Boolean {
+        return timerState != TimerState.RESET
+    }
 }
 
 data class MainUiState(
@@ -41,6 +45,7 @@ data class MainUiState(
     val darkThemePreference: DarkModePreference = DarkModePreference.SYSTEM,
     val fullscreenMode: Boolean = false,
     val dndDuringWork: Boolean = false,
+    val isMainScreen: Boolean = true,
 ) {
     fun isDarkTheme(isSystemInDarkTheme: Boolean): Boolean {
         return darkThemePreference == DarkModePreference.DARK ||
@@ -97,6 +102,12 @@ class MainViewModel(
 
     fun resetTimer() {
         timerManager.reset()
+    }
+
+    fun setIsMainScreen(isMainScreen: Boolean) {
+        _uiState.update {
+            it.copy(isMainScreen = isMainScreen)
+        }
     }
 
     private suspend fun FlowCollector<TimerUiState>.emitUiState(
