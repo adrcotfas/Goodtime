@@ -54,6 +54,8 @@ import com.apps.adrcotfas.goodtime.main.MainScreen
 import com.apps.adrcotfas.goodtime.main.MainViewModel
 import com.apps.adrcotfas.goodtime.main.bottomNavigationItems
 import com.apps.adrcotfas.goodtime.settings.SettingsScreen
+import com.apps.adrcotfas.goodtime.settings.about.AboutScreen
+import com.apps.adrcotfas.goodtime.settings.about.LicensesScreen
 import com.apps.adrcotfas.goodtime.stats.StatsScreen
 import com.apps.adrcotfas.goodtime.ui.ApplicationTheme
 import kotlinx.coroutines.Job
@@ -169,7 +171,8 @@ class MainActivity : ComponentActivity(), KoinComponent {
                                 enter = slideIn(tween()) {
                                     IntOffset(0, it.height)
                                 },
-                                exit = slideOut(tween()
+                                exit = slideOut(
+                                    tween()
                                 ) {
                                     IntOffset(0, it.height)
                                 },
@@ -188,7 +191,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
                                 LabelsScreen(navController)
                             }
                             composable(Destination.Stats.route) { StatsScreen() }
-                            composable(Destination.Settings.route) { SettingsScreen() }
+                            composable(Destination.Settings.route) { SettingsScreen(navController = navController) }
 
                             composable(Destination.ArchivedLabels.route) {
                                 ArchivedLabelsScreen({
@@ -197,6 +200,24 @@ class MainActivity : ComponentActivity(), KoinComponent {
                                         launchSingleTop = true
                                     }
                                 })
+                            }
+                            composable(Destination.About.route) {
+                                AboutScreen(onNavigateBack = {
+                                    navController.navigate(Destination.Settings.route) {
+                                        popUpTo(navController.graph.startDestinationId)
+                                        launchSingleTop = true
+                                    }
+                                }, onNavigateToLicenses = {
+                                    navController.navigate(Destination.Licenses.route)
+                                })
+                            }
+                            composable(Destination.Licenses.route) {
+                                LicensesScreen {
+                                    navController.navigate(Destination.About.route) {
+                                        popUpTo(navController.graph.startDestinationId)
+                                        launchSingleTop = true
+                                    }
+                                }
                             }
                         }
                     }

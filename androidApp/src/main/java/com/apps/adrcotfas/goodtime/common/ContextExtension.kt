@@ -10,6 +10,7 @@ import android.os.LocaleList
 import android.provider.OpenableColumns
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
+import androidx.core.content.pm.PackageInfoCompat
 import java.io.File
 
 tailrec fun Context.findActivity(): ComponentActivity? = when (this) {
@@ -42,3 +43,14 @@ private fun Context.getContentFileName(uri: Uri): String? = runCatching {
         return@use cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME).let(cursor::getString)
     }
 }.getOrNull()
+
+fun Context.getVersionName(): String {
+    val packageInfo = packageManager.getPackageInfo(packageName, 0)
+    return packageInfo.versionName
+}
+
+fun Context.getVersionCode(): Long {
+    val packageInfo = packageManager.getPackageInfo(packageName, 0)
+    val verCode = PackageInfoCompat.getLongVersionCode(packageInfo)
+    return verCode
+}

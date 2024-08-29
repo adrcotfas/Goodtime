@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePickerState
@@ -36,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.apps.adrcotfas.goodtime.bl.notifications.NotificationArchManager
 import com.apps.adrcotfas.goodtime.bl.notifications.TorchManager
 import com.apps.adrcotfas.goodtime.bl.notifications.VibrationPlayer
@@ -47,17 +49,21 @@ import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
 import com.apps.adrcotfas.goodtime.data.settings.FlashType
 import com.apps.adrcotfas.goodtime.data.settings.SoundData
 import com.apps.adrcotfas.goodtime.labels.add_edit.SliderRow
+import com.apps.adrcotfas.goodtime.main.Destination
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel.Companion.firstDayOfWeekOptions
 import com.apps.adrcotfas.goodtime.settings.notification_sounds.NotificationSoundPickerDialog
 import com.apps.adrcotfas.goodtime.settings.notification_sounds.toSoundData
 import com.apps.adrcotfas.goodtime.ui.common.CheckboxPreference
 import com.apps.adrcotfas.goodtime.ui.common.CompactPreferenceGroupTitle
+import com.apps.adrcotfas.goodtime.ui.common.DropdownMenuPreference
 import com.apps.adrcotfas.goodtime.ui.common.PreferenceGroupTitle
+import com.apps.adrcotfas.goodtime.ui.common.PreferenceWithIcon
 import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 import com.apps.adrcotfas.goodtime.ui.common.TextPreference
-import com.apps.adrcotfas.goodtime.ui.common.TextPreferenceWithDropdownMenu
 import com.apps.adrcotfas.goodtime.ui.common.TimePicker
 import com.apps.adrcotfas.goodtime.utils.secondsOfDayToTimerFormat
+import compose.icons.FeatherIcons
+import compose.icons.feathericons.Info
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.isoDayNumber
@@ -69,7 +75,7 @@ import java.time.format.TextStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
+fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel(), navController: NavController) {
 
     val notificationManager = koinInject<NotificationArchManager>()
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -159,7 +165,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 })
 
             Box(contentAlignment = Alignment.CenterEnd) {
-                TextPreferenceWithDropdownMenu(
+                DropdownMenuPreference(
                     title = "Start of the week",
                     value = DayOfWeek.of(settings.firstDayOfWeek)
                         .getDisplayName(TextStyle.FULL, locale),
@@ -184,7 +190,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 }
             }
 
-            TextPreferenceWithDropdownMenu(
+            DropdownMenuPreference(
                 title = "Dark mode preference",
                 //TODO: use localized strings instead
                 value = settings.uiSettings.darkModePreference.prettyName(),
@@ -258,7 +264,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 showValue = false
             )
             //TODO: use a fullscreen intent to handle the "screen" flash?
-            TextPreferenceWithDropdownMenu(
+            DropdownMenuPreference(
                 title = "Flash type (TODO screen)",
                 subtitle = "A visual notification for silent environments",
                 value = settings.flashType.prettyName(),
@@ -295,8 +301,13 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 viewModel.setAutoStartBreak(it)
             }
             SubtleHorizontalDivider()
+            PreferenceWithIcon(title = "About and feedback", icon = {
+                Icon(FeatherIcons.Info, contentDescription = "About and feedback")
+            }) {
+                navController.navigate(Destination.About.route)
+            }
+            SubtleHorizontalDivider()
             //TODO: add back-up section
-            //TODO: add about section
         }
         if (uiState.showTimePicker) {
             val reminderTime =

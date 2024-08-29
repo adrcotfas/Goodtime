@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Archive
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -30,10 +33,11 @@ import androidx.compose.ui.unit.dp
 fun Preference(
     title: String,
     subtitle: String? = null,
+    icon: @Composable (() -> Unit?)? = null,
     clickable: Boolean = true,
     onClick: () -> Unit = {},
     paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-    content: @Composable () -> Unit
+    content: @Composable (() -> Unit)? = null
 ) {
     val clickableModifier = if (clickable) Modifier.clickable(onClick = onClick) else Modifier
     val textColor =
@@ -45,6 +49,11 @@ fun Preference(
         verticalAlignment = Alignment.CenterVertically,
         modifier = clickableModifier.padding(paddingValues)
     ) {
+        icon?.let {
+            Box(modifier = Modifier.padding(end = 16.dp, top = 8.dp, bottom = 8.dp)) {
+                it()
+            }
+        }
         Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.Start) {
             Text(
                 text = title,
@@ -59,7 +68,7 @@ fun Preference(
                 )
             }
         }
-        content()
+        content?.let { it() }
     }
 }
 
@@ -115,7 +124,6 @@ fun TextPreference(
     Preference(
         title = title,
         subtitle = subtitle,
-        clickable = clickable,
         paddingValues = paddingValues,
         onClick = onClick
     ) {
@@ -132,7 +140,7 @@ fun TextPreference(
 }
 
 @Composable
-fun TextPreferenceWithSeparateSwitch(
+fun PreferenceWithSeparateSwitch(
     title: String,
     subtitle: String? = null,
     checked: Boolean,
@@ -178,7 +186,7 @@ fun TextPreferenceWithSeparateSwitch(
 }
 
 @Composable
-fun TextPreferenceWithDropdownMenu(
+fun DropdownMenuPreference(
     title: String,
     subtitle: String? = null,
     value: String,
@@ -225,6 +233,23 @@ fun TextPreferenceWithDropdownMenu(
 }
 
 @Composable
+fun PreferenceWithIcon(
+    title: String,
+    subtitle: String? = null,
+    icon: @Composable (() -> Unit),
+    clickable: Boolean = true,
+    onClick: (() -> Unit) = {}
+) {
+    Preference(
+        title = title,
+        subtitle = subtitle,
+        icon = icon,
+        clickable = clickable,
+        onClick = onClick
+    )
+}
+
+@Composable
 @Preview
 private fun SwitchPreferencePreview() {
     SwitchPreference(
@@ -248,6 +273,37 @@ fun TextPreferencePreview() {
 
 @Preview
 @Composable
+fun PreferenceWithIconPreview() {
+    PreferenceWithIcon(
+        title = "Title",
+        subtitle = "Subtitle",
+        icon = {
+            Icon(
+                imageVector = Icons.Outlined.Archive,
+                contentDescription = "Navigate to archived labels",
+            )
+        },
+        onClick = {}
+    )
+}
+
+@Preview
+@Composable
+fun PreferenceWithIconSimplePreview() {
+    PreferenceWithIcon(
+        title = "Title",
+        icon = {
+            Icon(
+                imageVector = Icons.Outlined.Archive,
+                contentDescription = "Navigate to archived labels",
+            )
+        },
+        onClick = {}
+    )
+}
+
+@Preview
+@Composable
 fun CheckboxPreferencePreview() {
     CheckboxPreference(
         title = "Title",
@@ -259,8 +315,8 @@ fun CheckboxPreferencePreview() {
 
 @Preview
 @Composable
-fun TextPreferenceWithSeparateSwitchPreview() {
-    TextPreferenceWithSeparateSwitch(
+fun PreferenceWithSeparateSwitchPreview() {
+    PreferenceWithSeparateSwitch(
         title = "Title",
         subtitle = "Subtitle",
         checked = false,

@@ -3,7 +3,6 @@ package com.apps.adrcotfas.goodtime.main
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
@@ -24,7 +23,6 @@ fun BottomNavigationBar(navController: NavController) {
                     }
                 },
                 icon = { Icon(item.icon!!, contentDescription = null) },
-                label = { Text(item.label) }
             )
         }
     }

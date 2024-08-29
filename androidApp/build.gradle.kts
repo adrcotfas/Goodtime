@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.mikepenz.aboutlibraries)
 }
 
 android {
@@ -65,6 +66,10 @@ dependencies {
     implementation(libs.androidx.media)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+    implementation(libs.mikepenz.aboutlibraries.core)
+    implementation(libs.mikepenz.aboutlibraries.compose)
+
+    implementation(libs.devsrsouza.compose.icons.feather)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.tooling.preview)
 }

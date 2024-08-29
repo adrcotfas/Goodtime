@@ -6,6 +6,7 @@ android-compileSdk = "34"
 android-targetSdk = "34"
 desugar_jdk_libs = "2.0.4"
 espressoCore = "3.6.1"
+feather = "1.1.0"
 foundation = "1.7.0-beta07"
 kotlin = "2.0.0"
 
@@ -35,6 +36,8 @@ coreKtx = "1.13.1"
 
 kermit = "2.0.3"
 
+mikepenz-aboutlibraries = "11.2.3"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundation" }
@@ -57,6 +60,7 @@ coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", ve
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
+devsrsouza-compose-icons-feather = { module = "br.com.devsrsouza.compose.icons:feather", version.ref = "feather" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
@@ -86,6 +90,9 @@ okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", versio
 touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 touchlab-kermit-simple = { module = "co.touchlab:kermit-simple", version.ref = "kermit" }
 
+mikepenz-aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "mikepenz-aboutlibraries" }
+mikepenz-aboutlibraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "mikepenz-aboutlibraries" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
@@ -94,7 +101,7 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
+mikepenz-aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "mikepenz-aboutlibraries" }
 
 [bundles]
 shared-commonTest = [

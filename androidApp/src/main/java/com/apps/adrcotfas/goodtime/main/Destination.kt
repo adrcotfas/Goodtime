@@ -1,19 +1,21 @@
 package com.apps.adrcotfas.goodtime.main
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.ui.graphics.vector.ImageVector
+import compose.icons.FeatherIcons
+import compose.icons.feathericons.BarChart2
+import compose.icons.feathericons.Home
+import compose.icons.feathericons.Settings
+import compose.icons.feathericons.Tag
 
 sealed class Destination(val route: String, val label: String, val icon: ImageVector?) {
-    data object Main : Destination("main", "Main", Icons.Default.Home)
-    data object Labels : Destination("labels", "Labels", Icons.Default.Place)
-    data object Stats : Destination("stats", "Stats", Icons.Default.ThumbUp)
-    data object Settings : Destination("settings", "Settings", Icons.Default.Settings)
+    data object Main : Destination("main", "Main", FeatherIcons.Home)
+    data object Labels : Destination("labels", "Labels", FeatherIcons.Tag)
+    data object ArchivedLabels : Destination("archivedLabels", "Archived labels", null)
+    data object Stats : Destination("stats", "Stats", FeatherIcons.BarChart2)
+    data object Settings : Destination("settings", "Settings", FeatherIcons.Settings)
 
-    data object ArchivedLabels : Destination("archivedLabels", "Archived Labels", null)
+    data object About : Destination("about", "About", null)
+    data object Licenses : Destination("licenses", "Open Source Licenses", null)
 }
 
 val bottomNavigationItems = listOf(
