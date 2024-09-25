@@ -75,6 +75,7 @@ fun AddEditLabelScreen(
     val isDefaultLabel = labelToEdit.isDefault()
     val defaultLabelName = stringResource(R.string.label_default)
     val labelName = labelToEdit.name
+    //TODO: don't display the name for default label
     val labelNameToDisplay = if (isDefaultLabel) defaultLabelName else labelName
 
     var hasValidName by remember { mutableStateOf(labelName.isNotEmpty()) }

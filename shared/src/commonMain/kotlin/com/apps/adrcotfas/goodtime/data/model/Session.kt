@@ -9,7 +9,7 @@ data class Session(
     val duration: Long, // minutes
     val label: String = DEFAULT_LABEL_NAME,
     val notes: String?,
-    val isWork: Boolean,
+    val isWork: Boolean, //TODO: update repository to consider this in stats
     val isArchived: Boolean
 ) {
     companion object {

@@ -1,7 +1,7 @@
 [versions]
 
 agp = "8.5.2"
-android-minSdk = "24" #TODO: increase to 26 or 29
+android-minSdk = "26"
 android-compileSdk = "34"
 android-targetSdk = "34"
 desugar_jdk_libs = "2.0.4"
@@ -23,7 +23,7 @@ androidx-documentfile = "1.0.1"
 
 coroutines = "1.8.1"
 kotlinx-serialization = "1.6.3"
-kotlinx-datetime = "0.6.0"
+kotlinx-datetime = "0.6.1"
 
 koin = "3.5.3"
 
@@ -31,7 +31,7 @@ androidx-test-junit = "1.2.1"
 robolectric = "4.12.2"
 turbine = "1.1.0"
 
-okio = "3.8.0"
+okio = "3.9.0"
 coreKtx = "1.13.1"
 
 kermit = "2.0.3"

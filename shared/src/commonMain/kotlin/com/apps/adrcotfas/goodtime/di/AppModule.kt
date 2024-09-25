@@ -3,28 +3,28 @@ package com.apps.adrcotfas.goodtime.di
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
 import com.apps.adrcotfas.goodtime.bl.BreakBudgetHandler
-import com.apps.adrcotfas.goodtime.data.local.Database
-import com.apps.adrcotfas.goodtime.data.local.DatabaseDriverFactory
-import com.apps.adrcotfas.goodtime.data.local.DatabaseExt.invoke
-import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
-import com.apps.adrcotfas.goodtime.data.local.LocalDataRepositoryImpl
-import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
-import com.apps.adrcotfas.goodtime.data.settings.SettingsRepositoryImpl
-import com.apps.adrcotfas.goodtime.bl.EventListener
 import com.apps.adrcotfas.goodtime.bl.FinishedSessionsHandler
 import com.apps.adrcotfas.goodtime.bl.StreakAndLongBreakHandler
 import com.apps.adrcotfas.goodtime.bl.TimeProvider
 import com.apps.adrcotfas.goodtime.bl.TimeProviderImpl
-import com.apps.adrcotfas.goodtime.bl.TimerManager
+import com.apps.adrcotfas.goodtime.data.local.Database
+import com.apps.adrcotfas.goodtime.data.local.DatabaseExt.invoke
+import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
+import com.apps.adrcotfas.goodtime.data.local.LocalDataRepositoryImpl
+import com.apps.adrcotfas.goodtime.data.local.backup.BackupManager
+import com.apps.adrcotfas.goodtime.data.local.backup.BackupPrompter
+import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
+import com.apps.adrcotfas.goodtime.data.settings.SettingsRepositoryImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import okio.FileSystem
 import okio.Path.Companion.toPath
 import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
@@ -36,29 +36,22 @@ import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 import org.koin.dsl.module
 
-
 private val coroutineScopeModule = module {
     single<CoroutineScope> { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
 }
 
 fun insertKoin(appModule: Module): KoinApplication {
-    val koinApplication = startKoin {
+    return startKoin {
         modules(
             appModule,
             coroutineScopeModule,
             platformModule,
             coreModule,
+            localDataModule,
+            timerManagerModule,
             viewModelModule
         )
     }
-
-    val timerManager: TimerManager = koinApplication.koin.get()
-    val applicationCoroutineScope: CoroutineScope = koinApplication.koin.get()
-    applicationCoroutineScope.launch {
-        timerManager.init()
-    }
-
-    return koinApplication
 }
 
 expect fun isDebug(): Boolean
@@ -79,7 +72,7 @@ private val coreModule = module {
     factory { (tag: String?) -> if (tag != null) baseLogger.withTag(tag.withPrefixIfDebug) else baseLogger }
 
     single<LocalDataRepository> {
-        LocalDataRepositoryImpl(Database(driver = get<DatabaseDriverFactory>().create()))
+        LocalDataRepositoryImpl(Database(driver = get<SqlDriver>()))
     }
     single<SettingsRepository> {
         SettingsRepositoryImpl(
@@ -107,22 +100,24 @@ private val coreModule = module {
         BreakBudgetHandler(get<CoroutineScope>(), get<SettingsRepository>())
     }
 
-    single<TimerManager> {
-        TimerManager(
-            get<LocalDataRepository>(),
-            get<SettingsRepository>(),
-            get<List<EventListener>>(),
+    single<BackupManager> {
+        BackupManager(
+            get<FileSystem>(),
+            get<String>(named(DB_PATH_KEY)),
+            get<String>(named(FILES_DIR_PATH_KEY)),
+            get<SqlDriver>(),
             get<TimeProvider>(),
-            get<FinishedSessionsHandler>(),
-            get<StreakAndLongBreakHandler>(),
-            get<BreakBudgetHandler>(),
-            getWith(TimerManager::class.simpleName)
+            get<BackupPrompter>(),
+            get<LocalDataRepository>(),
+            getWith(BackupManager::class.simpleName)
         )
     }
 }
 
 internal const val SETTINGS_NAME = "productivity_settings.preferences"
 internal const val SETTINGS_FILE_NAME = SETTINGS_NAME + "_pb"
+internal const val DB_PATH_KEY = "db_path"
+internal const val FILES_DIR_PATH_KEY = "tmp_path"
 
 internal fun getDataStore(producePath: () -> String): DataStore<Preferences> {
     return PreferenceDataStoreFactory.createWithPath(produceFile = { producePath().toPath() })

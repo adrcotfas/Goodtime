@@ -7,6 +7,10 @@ import com.apps.adrcotfas.goodtime.data.model.endTime
 import com.apps.adrcotfas.goodtime.data.settings.AppSettings
 import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -15,6 +19,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
@@ -30,17 +35,30 @@ class TimerManager(
     private val finishedSessionsHandler: FinishedSessionsHandler,
     private val streakAndLongBreakHandler: StreakAndLongBreakHandler,
     private val breakBudgetHandler: BreakBudgetHandler,
-    private val log: Logger
+    private val log: Logger,
+    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) {
 
+    private var job: Job? = null
     private val _timerData: MutableStateFlow<DomainTimerData> = MutableStateFlow(DomainTimerData())
     private lateinit var settings: AppSettings
 
     val timerData: StateFlow<DomainTimerData> = _timerData
 
-    suspend fun init() {
-        initPersistentData()
-        initAndObserveLabelChange()
+    init {
+        setup()
+    }
+
+    fun setup() {
+        job = coroutineScope.launch {
+            initAndObserveLabelChange()
+            initPersistentData()
+        }
+    }
+
+    fun restart() {
+        job?.cancel()
+        setup()
     }
 
     private suspend fun initPersistentData() {
@@ -58,21 +76,22 @@ class TimerManager(
         settingsRepo.settings.map {
             settings = it
             it.labelName
-        }.distinctUntilChanged().flatMapLatest {
-            log.d { "new active label: $it" }
-            _timerData.update { data -> data.copy(labelName = it) }
-            localDataRepo.selectLabelByName(it)
+        }.distinctUntilChanged().flatMapLatest { labelName ->
+            log.i { "new active label: $labelName" }
+            _timerData.update { data -> data.copy(labelName = labelName) }
+            localDataRepo.selectLabelByName(labelName)
                 .combine(localDataRepo.selectDefaultLabel()) { label, defaultLabel ->
-                    Pair(
-                        label,
-                        defaultLabel
-                    )
+                    if (label == null) {
+                        settingsRepo.activateDefaultLabel()
+                        defaultLabel!!.timerProfile
+                    } else {
+                        if (label.useDefaultTimeProfile) defaultLabel!!.timerProfile else label.timerProfile
+                    }
                 }
         }.distinctUntilChanged()
             .collect {
-                val newTimerProfile =
-                    if (it.first.useDefaultTimeProfile) it.second.timerProfile else it.first.timerProfile
-                _timerData.update { data -> data.copy(timerProfile = newTimerProfile) }
+                log.i { "new timerProfile: $it" }
+                _timerData.update { data -> data.copy(timerProfile = it) }
             }
     }
 

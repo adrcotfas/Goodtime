@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Archive
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -29,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+//TODO: consider replacing with ListItem
 @Composable
 fun Preference(
     title: String,
@@ -36,7 +40,7 @@ fun Preference(
     icon: @Composable (() -> Unit?)? = null,
     clickable: Boolean = true,
     onClick: () -> Unit = {},
-    paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+    paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
     content: @Composable (() -> Unit)? = null
 ) {
     val clickableModifier = if (clickable) Modifier.clickable(onClick = onClick) else Modifier
@@ -135,6 +139,29 @@ fun TextPreference(
                     alpha = 0.38f
                 )
             )
+        }
+    }
+}
+
+@Composable
+fun CircularProgressPreference(
+    title: String,
+    subtitle: String? = null,
+    showProgress: Boolean = false,
+    onClick: () -> Unit
+) {
+    Preference(
+        title = title,
+        subtitle = subtitle,
+        paddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+        onClick = onClick
+    ) {
+        Box(modifier = Modifier.padding(horizontal = 16.dp).size(32.dp)) {
+            if (showProgress) {
+                CircularProgressIndicator(
+                    modifier = Modifier.fillMaxSize().align(Alignment.Center)
+                )
+            }
         }
     }
 }
@@ -310,6 +337,17 @@ fun CheckboxPreferencePreview() {
         subtitle = "Subtitle",
         checked = true,
         onCheckedChange = {}
+    )
+}
+
+@Preview
+@Composable
+fun CircularProgressPreferencePreview() {
+    CircularProgressPreference(
+        title = "Title",
+        subtitle = "Subtitle",
+        showProgress = true,
+        onClick = {}
     )
 }
 

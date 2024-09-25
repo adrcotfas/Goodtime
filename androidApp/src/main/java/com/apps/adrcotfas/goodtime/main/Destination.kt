@@ -14,6 +14,7 @@ sealed class Destination(val route: String, val label: String, val icon: ImageVe
     data object Stats : Destination("stats", "Stats", FeatherIcons.BarChart2)
     data object Settings : Destination("settings", "Settings", FeatherIcons.Settings)
 
+    data object Backup : Destination("backup", "Backup", null)
     data object About : Destination("about", "About", null)
     data object Licenses : Destination("licenses", "Open Source Licenses", null)
 }

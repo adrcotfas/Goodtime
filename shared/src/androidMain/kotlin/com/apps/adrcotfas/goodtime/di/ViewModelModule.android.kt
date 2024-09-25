@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.di
 
+import com.apps.adrcotfas.goodtime.data.local.backup.BackupViewModel
 import com.apps.adrcotfas.goodtime.labels.archived.ArchivedLabelsViewModel
 import com.apps.adrcotfas.goodtime.labels.main.LabelsViewModel
 import com.apps.adrcotfas.goodtime.main.MainViewModel
@@ -17,4 +18,5 @@ actual val viewModelModule: Module = module {
     viewModelOf(::LabelsViewModel)
     viewModelOf(::ArchivedLabelsViewModel)
     viewModelOf(::SettingsViewModel)
+    viewModelOf(::BackupViewModel)
 }

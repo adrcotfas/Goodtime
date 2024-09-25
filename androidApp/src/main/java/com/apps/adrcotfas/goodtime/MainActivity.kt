@@ -11,16 +11,11 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideIn
-import androidx.compose.animation.slideOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
@@ -34,29 +29,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.IntOffset
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import co.touchlab.kermit.Logger
 import com.apps.adrcotfas.goodtime.bl.notifications.NotificationArchManager
 import com.apps.adrcotfas.goodtime.di.injectLogger
-import com.apps.adrcotfas.goodtime.labels.archived.ArchivedLabelsScreen
-import com.apps.adrcotfas.goodtime.labels.main.LabelsScreen
 import com.apps.adrcotfas.goodtime.main.BottomNavigationBar
 import com.apps.adrcotfas.goodtime.main.Destination
-import com.apps.adrcotfas.goodtime.main.MainScreen
 import com.apps.adrcotfas.goodtime.main.MainViewModel
 import com.apps.adrcotfas.goodtime.main.bottomNavigationItems
-import com.apps.adrcotfas.goodtime.settings.SettingsScreen
-import com.apps.adrcotfas.goodtime.settings.about.AboutScreen
-import com.apps.adrcotfas.goodtime.settings.about.LicensesScreen
-import com.apps.adrcotfas.goodtime.stats.StatsScreen
 import com.apps.adrcotfas.goodtime.ui.ApplicationTheme
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
@@ -163,63 +148,15 @@ class MainActivity : ComponentActivity(), KoinComponent {
                     viewModel.setIsMainScreen(currentRoute == Destination.Main.route)
                     val showBottomBar = isMainDestination.xor(hideBottomBarWhenActive)
 
+                    //TODO: consider replacing the scaffold with a box so that fullscreen mode works properly when hiding the bottom bar
                     Scaffold(
                         modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
                         bottomBar = {
-                            AnimatedVisibility(
-                                visible = showBottomBar,
-                                enter = slideIn(tween()) {
-                                    IntOffset(0, it.height)
-                                },
-                                exit = slideOut(
-                                    tween()
-                                ) {
-                                    IntOffset(0, it.height)
-                                },
-                            ) {
+                            if(showBottomBar) {
                                 BottomNavigationBar(navController = navController)
                             }
                         }) { innerPadding ->
-                        NavHost(
-                            modifier = Modifier
-                                .padding(innerPadding),
-                            navController = navController,
-                            startDestination = Destination.Main.route
-                        ) {
-                            composable(Destination.Main.route) { MainScreen() }
-                            composable(Destination.Labels.route) {
-                                LabelsScreen(navController)
-                            }
-                            composable(Destination.Stats.route) { StatsScreen() }
-                            composable(Destination.Settings.route) { SettingsScreen(navController = navController) }
-
-                            composable(Destination.ArchivedLabels.route) {
-                                ArchivedLabelsScreen({
-                                    navController.navigate(Destination.Labels.route) {
-                                        popUpTo(navController.graph.startDestinationId)
-                                        launchSingleTop = true
-                                    }
-                                })
-                            }
-                            composable(Destination.About.route) {
-                                AboutScreen(onNavigateBack = {
-                                    navController.navigate(Destination.Settings.route) {
-                                        popUpTo(navController.graph.startDestinationId)
-                                        launchSingleTop = true
-                                    }
-                                }, onNavigateToLicenses = {
-                                    navController.navigate(Destination.Licenses.route)
-                                })
-                            }
-                            composable(Destination.Licenses.route) {
-                                LicensesScreen {
-                                    navController.navigate(Destination.About.route) {
-                                        popUpTo(navController.graph.startDestinationId)
-                                        launchSingleTop = true
-                                    }
-                                }
-                            }
-                        }
+                        GoodtimeNavHost(innerPadding, navController)
                     }
                 }
             }

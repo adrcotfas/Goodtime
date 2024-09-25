@@ -32,7 +32,7 @@ class LocalDataRepositoryTest {
     @Test
     fun `Select by name`() = runTest {
         val label = dataSource.selectLabelByName(LABEL_NAME).first()
-        assertEquals(LABEL_NAME, label.name, "selectLabelByName failed")
+        assertEquals(LABEL_NAME, label!!.name, "selectLabelByName failed")
     }
 
     @Test

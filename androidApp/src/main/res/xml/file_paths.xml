@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!--    The location where the database file is copied before exporting it-->
+    <files-path name="tmp" path="tmp/" />
+</paths>

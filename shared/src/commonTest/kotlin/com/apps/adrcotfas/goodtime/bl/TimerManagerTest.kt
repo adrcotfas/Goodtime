@@ -17,8 +17,6 @@ import com.apps.adrcotfas.goodtime.fakes.FakeEventListener
 import com.apps.adrcotfas.goodtime.fakes.FakeSettingsRepository
 import com.apps.adrcotfas.goodtime.fakes.FakeTimeProvider
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -89,10 +87,10 @@ class TimerManagerTest {
             finishedSessionsHandler,
             streakAndLongBreakHandler,
             breakBudgetHandler,
-            logger
+            logger,
+            coroutineScope = testScope
         )
-        testScope.launch { timerManager.init() }
-        timerManager.timerData.first { it.labelName != null }
+        timerManager.setup()
     }
 
     @Test

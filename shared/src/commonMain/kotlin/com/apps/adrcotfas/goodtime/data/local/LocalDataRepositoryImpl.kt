@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 internal class LocalDataRepositoryImpl(
-    private val database: Database,
+    private var database: Database,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : LocalDataRepository {
 
@@ -24,14 +24,19 @@ internal class LocalDataRepositoryImpl(
         insertDefaultLabel()
     }
 
+    override fun reinitDatabase(database: Database) {
+        this.database = database
+        insertDefaultLabel()
+    }
+
     private fun insertDefaultLabel() {
-        val localLabel = Label.defaultLabel().toLocal()
         database.localLabelQueries.selectByName(Label.DEFAULT_LABEL_NAME, ::toExternalLabelMapper)
             .executeAsList().let {
-            if (it.isEmpty()) {
-                database.localLabelQueries.insert(localLabel)
+                if (it.isEmpty()) {
+                    val localLabel = Label.defaultLabel().toLocal()
+                    database.localLabelQueries.insert(localLabel)
+                }
             }
-        }
     }
 
     override suspend fun insertSession(session: Session) {
@@ -168,13 +173,13 @@ internal class LocalDataRepositoryImpl(
         }
     }
 
-    override fun selectLabelByName(name: String): Flow<Label> {
+    override fun selectLabelByName(name: String): Flow<Label?> {
         return database.localLabelQueries
             .selectByName(name, mapper = ::toExternalLabelMapper)
             .asFlow()
-            .mapToList(defaultDispatcher)
-            .filterNot { it.isEmpty() }
-            .map { it.first() }
+            .mapToList(defaultDispatcher).map {
+                if (it.isEmpty()) null else it.first()
+            }
     }
 
     override fun selectAllLabels(): Flow<List<Label>> {

@@ -28,6 +28,7 @@ class NotificationArchManager(private val context: Context, private val activity
         createReminderChannel()
     }
 
+    //TODO: handle use case of changing a label while the timer is running; currently the notification will not update
     fun buildInProgressNotification(data: DomainTimerData): Notification {
         val isCountDown = data.requireTimerProfile().isCountdown
         val baseTime = if (isCountDown) data.endTime else SystemClock.elapsedRealtime()
