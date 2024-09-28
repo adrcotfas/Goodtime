@@ -5,7 +5,6 @@ import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE
 import android.hardware.camera2.CameraManager
 import co.touchlab.kermit.Logger
-import com.apps.adrcotfas.goodtime.data.settings.FlashType
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +47,7 @@ class TorchManager(
         readFromSettingsScope.launch {
             settingsRepo.settings.map {
                 TorchManagerData(
-                    enabled = it.flashType == FlashType.TORCH,
+                    enabled = it.enableTorch,
                     loop = it.insistentNotification
                 )
             }.collect {

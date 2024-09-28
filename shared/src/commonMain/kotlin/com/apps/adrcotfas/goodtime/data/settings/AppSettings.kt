@@ -20,7 +20,7 @@ data class AppSettings(
     val breakFinishedSound: String = "",
     val userSounds: Set<SoundData> = emptySet(),
     val vibrationStrength: Int = 3,
-    val flashType: FlashType = FlashType.OFF,
+    val enableTorch: Boolean = false,
     val insistentNotification: Boolean = false,
     /** only valid with insistentNotification off **/
     val autoStartWork: Boolean = false,
@@ -57,13 +57,6 @@ enum class DarkModePreference {
     SYSTEM,
     LIGHT,
     DARK
-}
-
-@Serializable
-enum class FlashType {
-    OFF,
-    SCREEN,
-    TORCH
 }
 
 @Serializable

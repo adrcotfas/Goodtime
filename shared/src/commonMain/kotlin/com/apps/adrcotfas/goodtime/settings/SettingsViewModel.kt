@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apps.adrcotfas.goodtime.data.settings.AppSettings
 import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
-import com.apps.adrcotfas.goodtime.data.settings.FlashType
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -113,9 +112,9 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
         }
     }
 
-    fun setFlashType(flashType: FlashType) {
+    fun setEnableTorch(enable: Boolean) {
         viewModelScope.launch {
-            settingsRepository.saveFlashType(flashType)
+            settingsRepository.saveEnableTorch(enable)
         }
     }
 

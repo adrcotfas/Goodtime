@@ -35,7 +35,7 @@ class SettingsRepositoryImpl(
         val breakFinishedSoundKey = stringPreferencesKey("breakFinishedSoundKey")
         val userSoundsKey = stringPreferencesKey("userSoundsKey")
         val vibrationStrengthKey = intPreferencesKey("vibrationStrengthKey")
-        val flashTypeKey = stringPreferencesKey("flashTypeKey")
+        val enableTorchKey = booleanPreferencesKey("enableTorchKey")
         val insistentNotificationKey = booleanPreferencesKey("insistentNotificationKey")
         val autoStartWorkKey = booleanPreferencesKey("autoStartWorkKey")
         val autoStartBreakKey = booleanPreferencesKey("autoStartBreakKey")
@@ -69,9 +69,7 @@ class SettingsRepositoryImpl(
                     Json.decodeFromString<Set<SoundData>>(u)
                 } ?: emptySet(),
                 vibrationStrength = it[Keys.vibrationStrengthKey] ?: 3,
-                flashType = it[Keys.flashTypeKey]?.let { f ->
-                    Json.decodeFromString<FlashType>(f)
-                } ?: FlashType.OFF,
+                enableTorch = it[Keys.enableTorchKey] ?: false,
                 insistentNotification = it[Keys.insistentNotificationKey] ?: false,
                 autoStartWork = it[Keys.autoStartWorkKey] ?: false,
                 autoStartBreak = it[Keys.autoStartBreakKey] ?: false,
@@ -128,8 +126,8 @@ class SettingsRepositoryImpl(
         dataStore.edit { it[Keys.vibrationStrengthKey] = strength }
     }
 
-    override suspend fun saveFlashType(type: FlashType) {
-        dataStore.edit { it[Keys.flashTypeKey] = Json.encodeToString(type) }
+    override suspend fun saveEnableTorch(enabled: Boolean) {
+        dataStore.edit { it[Keys.enableTorchKey] = enabled }
     }
 
     override suspend fun saveInsistentNotification(enabled: Boolean) {

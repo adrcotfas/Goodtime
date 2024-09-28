@@ -45,7 +45,6 @@ import com.apps.adrcotfas.goodtime.common.getAppLanguage
 import com.apps.adrcotfas.goodtime.common.prettyName
 import com.apps.adrcotfas.goodtime.common.prettyNames
 import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
-import com.apps.adrcotfas.goodtime.data.settings.FlashType
 import com.apps.adrcotfas.goodtime.data.settings.SoundData
 import com.apps.adrcotfas.goodtime.labels.add_edit.SliderRow
 import com.apps.adrcotfas.goodtime.main.Destination
@@ -260,22 +259,14 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel(), navController
                 onValueChangeFinished = { vibrationPlayer.start(selectedStrength) },
                 showValue = false
             )
-            //TODO: use a fullscreen intent to handle the "screen" flash?
-            DropdownMenuPreference(
-                title = "Flash type (TODO screen)",
+            CheckboxPreference(
+                title = "Torch",
                 subtitle = "A visual notification for silent environments",
-                value = settings.flashType.prettyName(),
-                //TODO: use localized names instead and be careful when removing the TORCH option
-                dropdownMenuOptions = prettyNames<FlashType>().toMutableList().apply {
-                    if (!isTorchAvailable) {
-                        val index = FlashType.entries.indexOf(FlashType.TORCH)
-                        remove(prettyNames<FlashType>()[index])
-                    }
-                },
-                onDropdownMenuItemSelected = {
-                    viewModel.setFlashType(FlashType.entries[it])
-                }
-            )
+                checked = settings.enableTorch
+            ) {
+                viewModel.setEnableTorch(it)
+            }
+
             CheckboxPreference(
                 title = "Insistent notification",
                 subtitle = "Repeat the notification until it's cancelled",

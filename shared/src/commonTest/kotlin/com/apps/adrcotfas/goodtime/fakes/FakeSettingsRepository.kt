@@ -3,7 +3,6 @@ package com.apps.adrcotfas.goodtime.fakes
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.AppSettings
 import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
-import com.apps.adrcotfas.goodtime.data.settings.FlashType
 import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
 import com.apps.adrcotfas.goodtime.data.settings.SoundData
 import com.apps.adrcotfas.goodtime.data.settings.ProductivityReminderSettings
@@ -66,8 +65,8 @@ class FakeSettingsRepository(settings: AppSettings = AppSettings()) : SettingsRe
         _settings.value.copy(vibrationStrength = strength)
     )
 
-    override suspend fun saveFlashType(type: FlashType) = _settings.emit(
-        _settings.value.copy(flashType = type)
+    override suspend fun saveEnableTorch(enabled: Boolean) = _settings.emit(
+        _settings.value.copy(enableTorch = enabled)
     )
 
     override suspend fun saveInsistentNotification(enabled: Boolean) = _settings.emit(
