@@ -32,7 +32,8 @@ data class TimerUiState(
     val breakBudgetData: BreakBudgetData = BreakBudgetData(),
 ) {
     fun workSessionIsInProgress(): Boolean {
-        return timerState == TimerState.RUNNING && timerType == TimerType.WORK
+        return (timerState == TimerState.RUNNING || timerState == TimerState.PAUSED)
+                && timerType == TimerType.WORK
     }
 
     fun isActive(): Boolean {
@@ -79,16 +80,17 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
-            settingsRepo.settings.map { it.uiSettings }.distinctUntilChanged().collect { uiSettings ->
-                _uiState.update {
-                    it.copy(
-                        dynamicColor = uiSettings.useDynamicColor,
-                        darkThemePreference = uiSettings.darkModePreference,
-                        fullscreenMode = uiSettings.fullscreenMode,
-                        dndDuringWork = uiSettings.dndDuringWork
-                    )
+            settingsRepo.settings.map { it.uiSettings }.distinctUntilChanged()
+                .collect { uiSettings ->
+                    _uiState.update {
+                        it.copy(
+                            dynamicColor = uiSettings.useDynamicColor,
+                            darkThemePreference = uiSettings.darkModePreference,
+                            fullscreenMode = uiSettings.fullscreenMode,
+                            dndDuringWork = uiSettings.dndDuringWork
+                        )
+                    }
                 }
-            }
         }
     }
 
