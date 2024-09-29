@@ -172,6 +172,12 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
         }
     }
 
+    fun setOverrideSoundProfile(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.saveOverrideSoundProfile(enabled)
+        }
+    }
+
     fun setShowSelectWorkSoundPicker(show: Boolean) {
         _uiState.value =
             _uiState.value.copy(showSelectWorkSoundPicker = show, notificationSoundCandidate = null)

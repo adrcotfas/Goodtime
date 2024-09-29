@@ -17,6 +17,7 @@ interface SettingsRepository {
     suspend fun removeUserSound(sound: SoundData)
     suspend fun saveVibrationStrength(strength: Int)
     suspend fun saveEnableTorch(enabled: Boolean)
+    suspend fun saveOverrideSoundProfile(enabled: Boolean)
     suspend fun saveInsistentNotification(enabled: Boolean)
     suspend fun saveAutoStartWork(enabled: Boolean)
     suspend fun saveAutoStartBreak(enabled: Boolean)

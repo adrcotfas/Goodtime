@@ -69,6 +69,10 @@ class FakeSettingsRepository(settings: AppSettings = AppSettings()) : SettingsRe
         _settings.value.copy(enableTorch = enabled)
     )
 
+    override suspend fun saveOverrideSoundProfile(enabled: Boolean) = _settings.emit(
+        _settings.value.copy(overrideSoundProfile = enabled)
+    )
+
     override suspend fun saveInsistentNotification(enabled: Boolean) = _settings.emit(
         _settings.value.copy(insistentNotification = enabled)
     )

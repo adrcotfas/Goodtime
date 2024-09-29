@@ -36,6 +36,7 @@ class SettingsRepositoryImpl(
         val userSoundsKey = stringPreferencesKey("userSoundsKey")
         val vibrationStrengthKey = intPreferencesKey("vibrationStrengthKey")
         val enableTorchKey = booleanPreferencesKey("enableTorchKey")
+        val overrideSoundProfile = booleanPreferencesKey("overrideSoundProfileKey")
         val insistentNotificationKey = booleanPreferencesKey("insistentNotificationKey")
         val autoStartWorkKey = booleanPreferencesKey("autoStartWorkKey")
         val autoStartBreakKey = booleanPreferencesKey("autoStartBreakKey")
@@ -70,6 +71,7 @@ class SettingsRepositoryImpl(
                 } ?: emptySet(),
                 vibrationStrength = it[Keys.vibrationStrengthKey] ?: 3,
                 enableTorch = it[Keys.enableTorchKey] ?: false,
+                overrideSoundProfile = it[Keys.overrideSoundProfile] ?: false,
                 insistentNotification = it[Keys.insistentNotificationKey] ?: false,
                 autoStartWork = it[Keys.autoStartWorkKey] ?: false,
                 autoStartBreak = it[Keys.autoStartBreakKey] ?: false,
@@ -128,6 +130,10 @@ class SettingsRepositoryImpl(
 
     override suspend fun saveEnableTorch(enabled: Boolean) {
         dataStore.edit { it[Keys.enableTorchKey] = enabled }
+    }
+
+    override suspend fun saveOverrideSoundProfile(enabled: Boolean) {
+        dataStore.edit { it[Keys.overrideSoundProfile] = enabled }
     }
 
     override suspend fun saveInsistentNotification(enabled: Boolean) {

@@ -2,10 +2,12 @@ package com.apps.adrcotfas.goodtime.bl.notifications
 
 import android.content.Context
 import android.media.AudioAttributes
+import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
 import co.touchlab.kermit.Logger
 import com.apps.adrcotfas.goodtime.bl.TimerType
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
@@ -22,7 +24,8 @@ import java.lang.reflect.Method
 data class SoundPlayerData(
     val workSoundUri: String,
     val breakSoundUri: String,
-    val loop: Boolean
+    val loop: Boolean,
+    val overrideSoundProfile: Boolean
 )
 
 class SoundPlayer(
@@ -41,6 +44,7 @@ class SoundPlayer(
     private var workRingTone = SoundData()
     private var breakRingTone = SoundData()
     private var loop = false
+    private var overrideSoundProfile = false
 
     init {
         try {
@@ -55,14 +59,16 @@ class SoundPlayer(
         readFromSettingsScope.launch {
             settingsRepo.settings.map { settings ->
                 SoundPlayerData(
-                    settings.workFinishedSound,
-                    settings.breakFinishedSound,
-                    settings.insistentNotification
+                    workSoundUri = settings.workFinishedSound,
+                    breakSoundUri = settings.breakFinishedSound,
+                    overrideSoundProfile = settings.overrideSoundProfile,
+                    loop = settings.insistentNotification
                 )
             }
                 .collect {
                     workRingTone = toSoundData(it.workSoundUri)
                     breakRingTone = toSoundData(it.breakSoundUri)
+                    overrideSoundProfile = it.overrideSoundProfile
                     loop = it.loop
                 }
         }
@@ -78,20 +84,22 @@ class SoundPlayer(
 
     fun play(
         soundData: SoundData,
-        loop: Boolean = false
+        loop: Boolean = false,
+        forceSound: Boolean = false
     ) {
         playerScope.launch {
             job?.cancelAndJoin()
             job = playerScope.launch {
                 stopInternal()
-                playInternal(soundData, loop)
+                playInternal(soundData, loop, forceSound)
             }
         }
     }
 
     private fun playInternal(
         soundData: SoundData,
-        loop: Boolean
+        loop: Boolean,
+        forceSound: Boolean
     ) {
         if (soundData.isSilent) return
         val uri = soundData.uriString.let {
@@ -99,11 +107,16 @@ class SoundPlayer(
             else Uri.parse(it)
         }
 
-        audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager = (context.getSystemService(Context.AUDIO_SERVICE) as AudioManager)
+
+        val usage =
+            if (areHeadphonesPluggedIn(audioManager!!)) AudioAttributes.USAGE_MEDIA
+            else if (overrideSoundProfile || forceSound) AudioAttributes.USAGE_ALARM
+            else AudioAttributes.USAGE_NOTIFICATION
 
         ringtone = RingtoneManager.getRingtone(context, uri).apply {
             audioAttributes = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_ALARM)
+                .setUsage(usage)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build()
         }
@@ -137,5 +150,22 @@ class SoundPlayer(
             }
         }
         ringtone = null
+    }
+
+    private fun areHeadphonesPluggedIn(audioManager: AudioManager): Boolean {
+        val audioDevices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+        val list = mutableListOf(
+            AudioDeviceInfo.TYPE_WIRED_HEADPHONES,
+            AudioDeviceInfo.TYPE_WIRED_HEADSET,
+            AudioDeviceInfo.TYPE_USB_DEVICE,
+            AudioDeviceInfo.TYPE_USB_HEADSET,
+            AudioDeviceInfo.TYPE_BLUETOOTH_SCO
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            list.add(AudioDeviceInfo.TYPE_BLE_SPEAKER)
+        }
+        return audioDevices.any { deviceInfo ->
+            list.contains(deviceInfo.type)
+        }
     }
 }

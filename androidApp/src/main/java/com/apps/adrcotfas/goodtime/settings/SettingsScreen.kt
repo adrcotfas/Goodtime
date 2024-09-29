@@ -245,6 +245,14 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel(), navController
                 onClick = { viewModel.setShowSelectBreakSoundPicker(true) }
             )
 
+            CheckboxPreference(
+                "Override sound profile",
+                "The notification sound behaves like an alarm",
+                settings.overrideSoundProfile
+            ) {
+                viewModel.setOverrideSoundProfile(it)
+            }
+
             var selectedStrength = settings.vibrationStrength
             SliderRow(
                 title = "Vibration strength",
@@ -259,12 +267,14 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel(), navController
                 onValueChangeFinished = { vibrationPlayer.start(selectedStrength) },
                 showValue = false
             )
-            CheckboxPreference(
-                title = "Torch",
-                subtitle = "A visual notification for silent environments",
-                checked = settings.enableTorch
-            ) {
-                viewModel.setEnableTorch(it)
+            if (isTorchAvailable) {
+                CheckboxPreference(
+                    title = "Torch",
+                    subtitle = "A visual notification for silent environments",
+                    checked = settings.enableTorch
+                ) {
+                    viewModel.setEnableTorch(it)
+                }
             }
 
             CheckboxPreference(
