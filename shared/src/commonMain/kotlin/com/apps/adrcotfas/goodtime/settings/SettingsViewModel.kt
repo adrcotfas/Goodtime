@@ -213,9 +213,10 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
 
     companion object {
         val firstDayOfWeekOptions = listOf(
+            DayOfWeek.MONDAY,
+            DayOfWeek.FRIDAY,
             DayOfWeek.SATURDAY,
-            DayOfWeek.SUNDAY,
-            DayOfWeek.MONDAY
+            DayOfWeek.SUNDAY
         )
     }
 }
