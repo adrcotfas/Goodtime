@@ -91,7 +91,7 @@ fun SettingsScreen(
             AnimatedVisibility(permissionsState.shouldAskForNotificationPermission || permissionsState.shouldAskForBatteryOptimizationRemoval) {
                 Column {
                     PreferenceGroupTitle(
-                        text = "Actions",
+                        text = "Action required",
                         paddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
                     )
                     AnimatedVisibility(permissionsState.shouldAskForBatteryOptimizationRemoval) {

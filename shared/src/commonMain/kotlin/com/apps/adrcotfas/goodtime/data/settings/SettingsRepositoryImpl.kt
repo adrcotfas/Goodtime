@@ -14,9 +14,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.isoDayNumber
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -62,21 +59,20 @@ class SettingsRepositoryImpl(
                 uiSettings = it[Keys.uiSettingsKey]?.let { u ->
                     Json.decodeFromString<UiSettings>(u)
                 } ?: UiSettings(),
-                workdayStart = it[Keys.workdayStartKey] ?: LocalTime(0, 0).toSecondOfDay(),
-                //TODO: move defaults into constants
-                firstDayOfWeek = it[Keys.firstDayOfWeekKey] ?: DayOfWeek.MONDAY.isoDayNumber,
-                workFinishedSound = it[Keys.workFinishedSoundKey] ?: "",
-                breakFinishedSound = it[Keys.breakFinishedSoundKey] ?: "",
+                workdayStart = it[Keys.workdayStartKey] ?: AppSettings().workdayStart,
+                firstDayOfWeek = it[Keys.firstDayOfWeekKey] ?: AppSettings().firstDayOfWeek,
+                workFinishedSound = it[Keys.workFinishedSoundKey] ?: AppSettings().workFinishedSound,
+                breakFinishedSound = it[Keys.breakFinishedSoundKey] ?: AppSettings().breakFinishedSound,
                 userSounds = it[Keys.userSoundsKey]?.let { u ->
                     Json.decodeFromString<Set<SoundData>>(u)
                 } ?: emptySet(),
-                vibrationStrength = it[Keys.vibrationStrengthKey] ?: 3,
-                enableTorch = it[Keys.enableTorchKey] ?: false,
-                overrideSoundProfile = it[Keys.overrideSoundProfile] ?: false,
-                insistentNotification = it[Keys.insistentNotificationKey] ?: false,
-                autoStartWork = it[Keys.autoStartWorkKey] ?: false,
-                autoStartBreak = it[Keys.autoStartBreakKey] ?: false,
-                labelName = it[Keys.labelNameKey] ?: Label.DEFAULT_LABEL_NAME,
+                vibrationStrength = it[Keys.vibrationStrengthKey] ?: AppSettings().vibrationStrength,
+                enableTorch = it[Keys.enableTorchKey] ?: AppSettings().enableTorch,
+                overrideSoundProfile = it[Keys.overrideSoundProfile] ?: AppSettings().overrideSoundProfile,
+                insistentNotification = it[Keys.insistentNotificationKey] ?: AppSettings().insistentNotification,
+                autoStartWork = it[Keys.autoStartWorkKey] ?: AppSettings().autoStartWork,
+                autoStartBreak = it[Keys.autoStartBreakKey] ?: AppSettings().autoStartBreak,
+                labelName = it[Keys.labelNameKey] ?: AppSettings().labelName,
                 longBreakData = it[Keys.longBreakDataKey]?.let { l ->
                     Json.decodeFromString<LongBreakData>(l)
                 } ?: LongBreakData(),
@@ -85,7 +81,7 @@ class SettingsRepositoryImpl(
                 } ?: BreakBudgetData(),
                 notificationPermissionState = it[Keys.notificationPermissionStateKey]?.let { key ->
                     NotificationPermissionState.entries[key]
-                } ?: NotificationPermissionState.NOT_ASKED
+                } ?: AppSettings().notificationPermissionState
 
             )
         }.catch {

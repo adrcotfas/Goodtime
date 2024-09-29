@@ -11,7 +11,7 @@ data class AppSettings(
     val productivityReminderSettings: ProductivityReminderSettings = ProductivityReminderSettings(),
     val uiSettings: UiSettings = UiSettings(),
 
-    val workdayStart: Int = LocalTime(0, 0).toSecondOfDay(),
+    val workdayStart: Int = LocalTime(5, 0).toSecondOfDay(),
     val firstDayOfWeek: Int = DayOfWeek.MONDAY.isoDayNumber,
 
     /** The name/URI of the sound file or empty for default*/
