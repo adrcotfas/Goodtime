@@ -129,7 +129,8 @@ fun TextPreference(
         title = title,
         subtitle = subtitle,
         paddingValues = paddingValues,
-        onClick = onClick
+        onClick = onClick,
+        clickable = clickable
     ) {
         if (value != null) {
             Text(

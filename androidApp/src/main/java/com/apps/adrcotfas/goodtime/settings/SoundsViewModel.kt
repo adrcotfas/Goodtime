@@ -4,7 +4,6 @@ import android.app.Activity
 import android.media.RingtoneManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
 import com.apps.adrcotfas.goodtime.data.settings.SoundData
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -18,12 +17,11 @@ import kotlinx.coroutines.withContext
 
 class SoundsViewModel(
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val settingsRepository: SettingsRepository,
-    private val logger: Logger
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
-    private val _SoundData = MutableStateFlow<Set<SoundData>>(emptySet())
-    val notificationSoundData = _SoundData.asStateFlow()
+    private val _soundData = MutableStateFlow<Set<SoundData>>(emptySet())
+    val soundData = _soundData.asStateFlow()
 
     private val _userSoundData = MutableStateFlow<Set<SoundData>>(emptySet())
     val userSoundData = _userSoundData.asStateFlow()
@@ -49,7 +47,7 @@ class SoundsViewModel(
                 val title = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX)
                 list.add(SoundData(name = title, uriString = "$uri/$id"))
             }
-            _SoundData.update { list }
+            _soundData.update { list }
         }
     }
 

@@ -100,7 +100,7 @@ fun NotificationSoundPickerDialog(
         }
     }
 
-    val items by viewModel.notificationSoundData.collectAsStateWithLifecycle()
+    val items by viewModel.soundData.collectAsStateWithLifecycle()
     val userItems by viewModel.userSoundData.collectAsStateWithLifecycle()
 
     NotificationSoundPickerDialogContent(
