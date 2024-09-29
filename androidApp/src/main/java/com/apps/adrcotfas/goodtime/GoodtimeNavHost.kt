@@ -15,6 +15,8 @@ import com.apps.adrcotfas.goodtime.settings.SettingsScreen
 import com.apps.adrcotfas.goodtime.settings.about.AboutScreen
 import com.apps.adrcotfas.goodtime.settings.about.LicensesScreen
 import com.apps.adrcotfas.goodtime.settings.backup.BackupScreen
+import com.apps.adrcotfas.goodtime.settings.notifications.NotificationsScreen
+import com.apps.adrcotfas.goodtime.settings.user_interface.UserInterfaceScreen
 import com.apps.adrcotfas.goodtime.stats.StatsScreen
 
 @Composable
@@ -22,6 +24,14 @@ fun GoodtimeNavHost(
     innerPadding: PaddingValues,
     navController: NavHostController
 ) {
+
+    val backToMainSettings = {
+        navController.navigate(Destination.Settings.route) {
+            popUpTo(navController.graph.startDestinationId)
+            launchSingleTop = true
+        }
+    }
+
     NavHost(
         modifier = Modifier
             .padding(innerPadding),
@@ -32,9 +42,6 @@ fun GoodtimeNavHost(
         composable(Destination.Labels.route) {
             LabelsScreen(navController)
         }
-        composable(Destination.Stats.route) { StatsScreen() }
-        composable(Destination.Settings.route) { SettingsScreen(navController = navController) }
-
         composable(Destination.ArchivedLabels.route) {
             ArchivedLabelsScreen({
                 navController.navigate(Destination.Labels.route) {
@@ -43,13 +50,20 @@ fun GoodtimeNavHost(
                 }
             })
         }
+
+        composable(Destination.Stats.route) { StatsScreen() }
+        composable(Destination.Settings.route) { SettingsScreen(navController = navController) }
+        composable(Destination.UserInterfaceSettings.route) {
+            UserInterfaceScreen(onNavigateBack = backToMainSettings)
+        }
+        composable(Destination.NotificationSettings.route) {
+            NotificationsScreen(onNavigateBack = backToMainSettings)
+        }
+        composable(Destination.Backup.route) {
+            BackupScreen(onNavigateBack = backToMainSettings)
+        }
         composable(Destination.About.route) {
-            AboutScreen(onNavigateBack = {
-                navController.navigate(Destination.Settings.route) {
-                    popUpTo(navController.graph.startDestinationId)
-                    launchSingleTop = true
-                }
-            }, onNavigateToLicenses = {
+            AboutScreen(onNavigateBack = backToMainSettings, onNavigateToLicenses = {
                 navController.navigate(Destination.Licenses.route)
             })
         }
@@ -60,14 +74,6 @@ fun GoodtimeNavHost(
                     launchSingleTop = true
                 }
             }
-        }
-        composable(Destination.Backup.route) {
-            BackupScreen(onNavigateBack = {
-                navController.navigate(Destination.Settings.route) {
-                    popUpTo(navController.graph.startDestinationId)
-                    launchSingleTop = true
-                }
-            })
         }
     }
 }

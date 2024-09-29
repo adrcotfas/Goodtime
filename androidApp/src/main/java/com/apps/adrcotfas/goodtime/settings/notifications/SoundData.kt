@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.settings.notification_sounds
+package com.apps.adrcotfas.goodtime.settings.notifications
 
 import com.apps.adrcotfas.goodtime.data.settings.SoundData
 import kotlinx.serialization.json.Json

@@ -1,4 +1,4 @@
-package com.apps.adrcotfas.goodtime.settings.notification_sounds
+package com.apps.adrcotfas.goodtime.settings.notifications
 
 import android.content.Context
 import android.content.Intent

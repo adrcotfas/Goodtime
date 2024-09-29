@@ -12,7 +12,7 @@ import co.touchlab.kermit.Logger
 import com.apps.adrcotfas.goodtime.bl.TimerType
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.SoundData
-import com.apps.adrcotfas.goodtime.settings.notification_sounds.toSoundData
+import com.apps.adrcotfas.goodtime.settings.notifications.toSoundData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

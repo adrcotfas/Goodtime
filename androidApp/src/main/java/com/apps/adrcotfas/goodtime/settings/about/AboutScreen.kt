@@ -1,11 +1,8 @@
 package com.apps.adrcotfas.goodtime.settings.about
 
-import android.graphics.drawable.Drawable
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -18,12 +15,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.core.graphics.drawable.toBitmap
-import com.apps.adrcotfas.goodtime.common.getVersionName
 import com.apps.adrcotfas.goodtime.ui.common.PreferenceWithIcon
 import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 import compose.icons.FeatherIcons
@@ -59,20 +52,6 @@ fun AboutScreen(onNavigateBack: () -> Unit, onNavigateToLicenses: () -> Unit) {
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-
-                val appIcon: Drawable =
-                    context.packageManager.getApplicationIcon(context.applicationInfo)
-                PreferenceWithIcon(
-                    title = "Goodtime Productivity",
-                    subtitle = context.getVersionName(),
-                    icon = {
-                        Image(
-                            bitmap = appIcon.toBitmap().asImageBitmap(),
-                            contentDescription = "App icon",
-                            modifier = Modifier.size(24.dp)
-                        )
-                    },
-                )
                 PreferenceWithIcon(
                     title = "Source code",
                     icon = { Icon(FeatherIcons.Github, contentDescription = "GitHub") },

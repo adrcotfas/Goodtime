@@ -53,7 +53,7 @@ fun AskForPermissionCard(cta: String, description: String, onClick: () -> Unit) 
 fun AskForPermissionCardPreview() {
     AskForPermissionCard(
         cta = "Allow",
-        description = "For accurate functionality, allow this app to run in the background",
+        description = "Allow this app to run in the background",
         onClick = {}
     )
 }

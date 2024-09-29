@@ -34,7 +34,7 @@ fun BottomNavigationBar(navController: NavController) {
                 },
                 icon = {
                     val count = listOf(
-                        permissionsState.shouldAskForBatteryOptimizationRemoval,
+                        permissionsState.shouldAskForNotificationPermission,
                         permissionsState.shouldAskForBatteryOptimizationRemoval
                     ).count { it }
                     if (item.label == Destination.Settings.label && count > 0) {

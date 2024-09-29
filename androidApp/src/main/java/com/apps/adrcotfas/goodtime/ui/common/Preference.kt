@@ -58,7 +58,7 @@ fun Preference(
                 it()
             }
         }
-        Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.Start) {
+        Column(modifier = Modifier.weight(1f).padding(vertical = 8.dp), horizontalAlignment = Alignment.Start) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
