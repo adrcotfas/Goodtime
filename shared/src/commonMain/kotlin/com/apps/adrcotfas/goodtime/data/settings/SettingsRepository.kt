@@ -23,6 +23,7 @@ interface SettingsRepository {
     suspend fun saveAutoStartBreak(enabled: Boolean)
     suspend fun saveLongBreakData(longBreakData: LongBreakData)
     suspend fun saveBreakBudgetData(breakBudgetData: BreakBudgetData)
+    suspend fun saveNotificationPermissionState(state: NotificationPermissionState)
     suspend fun activateLabelWithName(labelName: String)
     suspend fun activateDefaultLabel()
 }

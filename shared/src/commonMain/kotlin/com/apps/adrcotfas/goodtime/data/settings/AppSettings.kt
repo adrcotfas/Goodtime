@@ -30,8 +30,15 @@ data class AppSettings(
 
     val labelName: String = Label.DEFAULT_LABEL_NAME,
     val longBreakData: LongBreakData = LongBreakData(),
-    val breakBudgetData: BreakBudgetData = BreakBudgetData()
+    val breakBudgetData: BreakBudgetData = BreakBudgetData(),
+    val notificationPermissionState: NotificationPermissionState = NotificationPermissionState.NOT_ASKED,
 )
+
+enum class NotificationPermissionState {
+    NOT_ASKED,
+    GRANTED,
+    DENIED
+}
 
 @Serializable
 data class ProductivityReminderSettings(

@@ -1,10 +1,6 @@
 package com.apps.adrcotfas.goodtime
 
-import android.Manifest
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -58,10 +54,6 @@ class MainActivity : ComponentActivity(), KoinComponent {
     private val viewModel by inject<MainViewModel>()
     private val notificationManager: NotificationArchManager by inject()
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { }
-
     private var fullScreenJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,10 +82,6 @@ class MainActivity : ComponentActivity(), KoinComponent {
                 } else {
                     notificationManager.toggleDndMode(false)
                 }
-            }
-
-            LaunchedEffect(savedInstanceState) {
-                askForNotificationPermission()
             }
 
             LaunchedEffect(fullscreenMode) {
@@ -160,20 +148,6 @@ class MainActivity : ComponentActivity(), KoinComponent {
                     }
                 }
             }
-        }
-    }
-
-    //TODO: clean-up
-    private fun askForNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-            && !shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)
-        ) {
-            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        } else {
-            val settingsIntent: Intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .putExtra(Settings.EXTRA_APP_PACKAGE, applicationContext.packageName)
-            startActivity(settingsIntent)
         }
     }
 

@@ -6,17 +6,16 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.SystemClock
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.IconCompat
-import com.apps.adrcotfas.goodtime.shared.R as SharedR
 import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.bl.DomainTimerData
 import com.apps.adrcotfas.goodtime.bl.TimerService
 import com.apps.adrcotfas.goodtime.bl.TimerState
 import com.apps.adrcotfas.goodtime.bl.TimerType
+import com.apps.adrcotfas.goodtime.shared.R as SharedR
 
 class NotificationArchManager(private val context: Context, private val activityClass: Class<*>) {
 
@@ -183,29 +182,25 @@ class NotificationArchManager(private val context: Context, private val activity
     }
 
     private fun createMainNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Goodtime Notifications"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(MAIN_CHANNEL_ID, name, importance).apply {
-                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-                setSound(null, null)
-                enableVibration(false)
-                setBypassDnd(true)
-                setShowBadge(true)
-            }
-            notificationManager.createNotificationChannel(channel)
+        val name = "Goodtime Notifications"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(MAIN_CHANNEL_ID, name, importance).apply {
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            setSound(null, null)
+            enableVibration(false)
+            setBypassDnd(true)
+            setShowBadge(true)
         }
+        notificationManager.createNotificationChannel(channel)
     }
 
     private fun createReminderChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Goodtime Reminder Notifications"
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(REMINDER_CHANNEL_ID, name, importance).apply {
-                setShowBadge(true)
-            }
-            notificationManager.createNotificationChannel(channel)
+        val name = "Goodtime Reminder Notifications"
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val channel = NotificationChannel(REMINDER_CHANNEL_ID, name, importance).apply {
+            setShowBadge(true)
         }
+        notificationManager.createNotificationChannel(channel)
     }
 
     private fun buildChronometer(

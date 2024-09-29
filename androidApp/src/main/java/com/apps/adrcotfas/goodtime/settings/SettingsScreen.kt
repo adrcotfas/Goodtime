@@ -1,11 +1,16 @@
 package com.apps.adrcotfas.goodtime.settings
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.text.format.DateFormat
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -33,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -40,17 +46,21 @@ import androidx.navigation.NavController
 import com.apps.adrcotfas.goodtime.bl.notifications.NotificationArchManager
 import com.apps.adrcotfas.goodtime.bl.notifications.TorchManager
 import com.apps.adrcotfas.goodtime.bl.notifications.VibrationPlayer
+import com.apps.adrcotfas.goodtime.common.askForDisableBatteryOptimization
 import com.apps.adrcotfas.goodtime.common.findActivity
 import com.apps.adrcotfas.goodtime.common.getAppLanguage
 import com.apps.adrcotfas.goodtime.common.prettyName
 import com.apps.adrcotfas.goodtime.common.prettyNames
 import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
+import com.apps.adrcotfas.goodtime.data.settings.NotificationPermissionState
 import com.apps.adrcotfas.goodtime.data.settings.SoundData
 import com.apps.adrcotfas.goodtime.labels.add_edit.SliderRow
 import com.apps.adrcotfas.goodtime.main.Destination
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel.Companion.firstDayOfWeekOptions
 import com.apps.adrcotfas.goodtime.settings.notification_sounds.NotificationSoundPickerDialog
 import com.apps.adrcotfas.goodtime.settings.notification_sounds.toSoundData
+import com.apps.adrcotfas.goodtime.settings.permissions.AskForPermissionCard
+import com.apps.adrcotfas.goodtime.settings.permissions.getPermissionsState
 import com.apps.adrcotfas.goodtime.ui.common.CheckboxPreference
 import com.apps.adrcotfas.goodtime.ui.common.CompactPreferenceGroupTitle
 import com.apps.adrcotfas.goodtime.ui.common.DropdownMenuPreference
@@ -60,6 +70,7 @@ import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 import com.apps.adrcotfas.goodtime.ui.common.TextPreference
 import com.apps.adrcotfas.goodtime.ui.common.TimePicker
 import com.apps.adrcotfas.goodtime.utils.secondsOfDayToTimerFormat
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.isoDayNumber
@@ -82,6 +93,12 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel(), navController
     val context = LocalContext.current
     val locale = context.resources.configuration.locales[0]
 
+    val notificationPermissionLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { granted ->
+            viewModel.setNotificationPermissionGranted(granted)
+        }
+    val notificationPermissionState by viewModel.uiState.map { it.notificationPermissionState }
+        .collectAsStateWithLifecycle(initialValue = NotificationPermissionState.NOT_ASKED)
     var isNotificationPolicyAccessGranted by remember { mutableStateOf(false) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -92,7 +109,6 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel(), navController
 
     LaunchedEffect(lifecycleState) {
         when (lifecycleState) {
-
             Lifecycle.State.RESUMED -> {
                 isNotificationPolicyAccessGranted =
                     notificationManager.isNotificationPolicyAccessGranted()
@@ -106,6 +122,8 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel(), navController
             }
         }
     }
+
+    val permissionsState = getPermissionsState()
 
     val workRingTone = toSoundData(settings.workFinishedSound)
     val breakRingTone = toSoundData(settings.breakFinishedSound)
@@ -130,6 +148,35 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel(), navController
                 .padding(top = paddingValues.calculateTopPadding())
                 .verticalScroll(rememberScrollState())
         ) {
+
+            AnimatedVisibility(permissionsState.shouldAskForBatteryOptimizationRemoval) {
+                AskForPermissionCard(
+                    cta = "Allow",
+                    description = "For accurate functionality, allow this app to run in the background",
+                    onClick = { context.askForDisableBatteryOptimization() }
+                )
+            }
+
+            AnimatedVisibility(permissionsState.shouldAskForNotificationPermission) {
+                AskForPermissionCard(
+                    cta = "Allow",
+                    description = "Allow notifications",
+                    onClick = {
+                        if (notificationPermissionState == NotificationPermissionState.DENIED && !shouldShowRequestPermissionRationale(
+                                context.findActivity()!!,
+                                Manifest.permission.POST_NOTIFICATIONS
+                            )
+                        ) {
+                            navigateToNotificationSettings(context)
+                        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        } else {
+                            navigateToNotificationSettings(context)
+                        }
+                    }
+                )
+            }
+
             PreferenceGroupTitle(text = "Productivity Reminder")
             val reminderSettings = settings.productivityReminderSettings
             ProductivityReminderSection(
@@ -368,6 +415,15 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel(), navController
             )
         }
     }
+}
+
+private fun navigateToNotificationSettings(context: Context) {
+    val intent = Intent().apply {
+        action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+    }
+    context.startActivity(intent)
 }
 
 @Composable

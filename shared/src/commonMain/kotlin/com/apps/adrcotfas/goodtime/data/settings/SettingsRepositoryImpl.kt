@@ -43,6 +43,7 @@ class SettingsRepositoryImpl(
         val labelNameKey = stringPreferencesKey("labelNameKey")
         val longBreakDataKey = stringPreferencesKey("longBreakDataKey")
         val breakBudgetDataKey = stringPreferencesKey("breakBudgetDataKey")
+        val notificationPermissionStateKey = intPreferencesKey("notificationPermissionStateKey")
     }
 
     override val settings: Flow<AppSettings> = dataStore.data
@@ -81,7 +82,11 @@ class SettingsRepositoryImpl(
                 } ?: LongBreakData(),
                 breakBudgetData = it[Keys.breakBudgetDataKey]?.let { b ->
                     Json.decodeFromString<BreakBudgetData>(b)
-                } ?: BreakBudgetData()
+                } ?: BreakBudgetData(),
+                notificationPermissionState = it[Keys.notificationPermissionStateKey]?.let { key ->
+                    NotificationPermissionState.entries[key]
+                } ?: NotificationPermissionState.NOT_ASKED
+
             )
         }.catch {
             log.e("Error parsing settings", it)
@@ -154,6 +159,10 @@ class SettingsRepositoryImpl(
 
     override suspend fun saveBreakBudgetData(breakBudgetData: BreakBudgetData) {
         dataStore.edit { it[Keys.breakBudgetDataKey] = Json.encodeToString(breakBudgetData) }
+    }
+
+    override suspend fun saveNotificationPermissionState(state: NotificationPermissionState) {
+        dataStore.edit { it[Keys.notificationPermissionStateKey] = state.ordinal }
     }
 
     override suspend fun activateLabelWithName(labelName: String) {

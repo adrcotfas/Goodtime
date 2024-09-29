@@ -69,8 +69,7 @@ class GoodtimeApplication : Application() {
                 }
                 viewModel<SoundsViewModel> {
                     SoundsViewModel(
-                        settingsRepository = get(),
-                        logger = getWith(SoundsViewModel::class.simpleName)
+                        settingsRepository = get()
                     )
                 }
                 single {

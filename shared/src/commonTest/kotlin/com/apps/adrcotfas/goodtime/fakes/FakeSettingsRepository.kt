@@ -4,6 +4,7 @@ import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.AppSettings
 import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
+import com.apps.adrcotfas.goodtime.data.settings.NotificationPermissionState
 import com.apps.adrcotfas.goodtime.data.settings.SoundData
 import com.apps.adrcotfas.goodtime.data.settings.ProductivityReminderSettings
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
@@ -106,6 +107,12 @@ class FakeSettingsRepository(settings: AppSettings = AppSettings()) : SettingsRe
     override suspend fun saveBreakBudgetData(breakBudgetData: BreakBudgetData) {
         _settings.emit(
             _settings.value.copy(breakBudgetData = breakBudgetData)
+        )
+    }
+
+    override suspend fun saveNotificationPermissionState(state: NotificationPermissionState) {
+        _settings.emit(
+            _settings.value.copy(notificationPermissionState = state)
         )
     }
 }

@@ -1,15 +1,20 @@
 package com.apps.adrcotfas.goodtime.common
 
+import android.annotation.SuppressLint
 import android.app.LocaleManager
 import android.content.ContentResolver
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.LocaleList
+import android.os.PowerManager
 import android.provider.OpenableColumns
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.pm.PackageInfoCompat
 import java.io.File
 
@@ -53,4 +58,21 @@ fun Context.getVersionCode(): Long {
     val packageInfo = packageManager.getPackageInfo(packageName, 0)
     val verCode = PackageInfoCompat.getLongVersionCode(packageInfo)
     return verCode
+}
+
+@SuppressLint("BatteryLife")
+fun Context.askForDisableBatteryOptimization() {
+    val intent = Intent()
+    intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+    intent.data = Uri.parse("package:" + this.packageName)
+    this.startActivity(intent)
+}
+
+fun Context.isIgnoringBatteryOptimizations(): Boolean {
+    val powerManager = this.getSystemService(Context.POWER_SERVICE) as PowerManager
+    return powerManager.isIgnoringBatteryOptimizations(this.packageName)
+}
+
+fun Context.areNotificationsEnabled(): Boolean {
+    return NotificationManagerCompat.from(this).areNotificationsEnabled()
 }

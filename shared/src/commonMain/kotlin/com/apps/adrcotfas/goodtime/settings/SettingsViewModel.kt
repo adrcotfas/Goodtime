@@ -4,11 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apps.adrcotfas.goodtime.data.settings.AppSettings
 import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
+import com.apps.adrcotfas.goodtime.data.settings.NotificationPermissionState
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.isoDayNumber
@@ -18,13 +21,23 @@ data class SettingsUiState(
     val showWorkdayStartPicker: Boolean = false,
     val showSelectWorkSoundPicker: Boolean = false,
     val showSelectBreakSoundPicker: Boolean = false,
-    val notificationSoundCandidate: String? = null
+    val notificationSoundCandidate: String? = null,
+    val notificationPermissionState: NotificationPermissionState = NotificationPermissionState.NOT_ASKED
 )
 
 class SettingsViewModel(private val settingsRepository: SettingsRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState = _uiState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            settingsRepository.settings.map { it.notificationPermissionState }
+                .collect { permissionState ->
+                    _uiState.update { it.copy(notificationPermissionState = permissionState)}
+                }
+        }
+    }
 
     val settings =
         settingsRepository.settings.stateIn(
@@ -189,6 +202,13 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
 
     fun setNotificationSoundCandidate(uri: String) {
         _uiState.value = _uiState.value.copy(notificationSoundCandidate = uri)
+    }
+
+    fun setNotificationPermissionGranted(granted: Boolean) {
+        viewModelScope.launch {
+            val state = if (granted) NotificationPermissionState.GRANTED else NotificationPermissionState.DENIED
+            settingsRepository.saveNotificationPermissionState(state)
+        }
     }
 
     companion object {
