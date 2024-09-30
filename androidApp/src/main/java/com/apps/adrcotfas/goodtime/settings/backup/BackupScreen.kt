@@ -53,13 +53,10 @@ fun BackupScreen(
 
     LaunchedEffect(lifecycleState) {
         when (lifecycleState) {
-
             Lifecycle.State.STARTED -> {
                 activityResultLauncherManager.setImportActivityResultLauncher(restoreBackupLauncher)
             }
-
-            Lifecycle.State.RESUMED -> {
-                // handle case when the user navigates back to the screen without completing the action
+            Lifecycle.State.RESUMED, Lifecycle.State.CREATED -> {
                 viewModel.clearProgress()
             }
 

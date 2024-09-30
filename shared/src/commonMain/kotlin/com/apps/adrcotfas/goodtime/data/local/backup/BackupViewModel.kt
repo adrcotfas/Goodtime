@@ -33,7 +33,6 @@ class BackupViewModel(
                 _uiState.update {
                     val backupResult = if (!success) false else null
                     it.copy(
-                        isBackupInProgress = false,
                         backupResult = backupResult
                     )
                 }
@@ -48,7 +47,6 @@ class BackupViewModel(
                 _uiState.update {
                     val backupResult = if (!success) false else null
                     it.copy(
-                        isCsvBackupInProgress = false,
                         backupResult = backupResult
                     )
                 }
@@ -63,7 +61,6 @@ class BackupViewModel(
                 _uiState.update {
                     val backupResult = if (!success) false else null
                     it.copy(
-                        isJsonBackupInProgress = false,
                         backupResult = backupResult
                     )
                 }
