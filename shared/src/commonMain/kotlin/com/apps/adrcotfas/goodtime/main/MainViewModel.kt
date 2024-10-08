@@ -12,17 +12,20 @@ import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
 import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
+import com.apps.adrcotfas.goodtime.data.settings.TimerStyleData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.math.floor
 
 data class TimerUiState(
     val baseTime: Long = 0,
@@ -42,6 +45,7 @@ data class TimerUiState(
 }
 
 data class MainUiState(
+    val timerStyle: TimerStyleData = TimerStyleData(minSize = TimerStyleData.INVALID_MIN_SIZE),
     val dynamicColor: Boolean = false,
     val darkThemePreference: DarkModePreference = DarkModePreference.SYSTEM,
     val fullscreenMode: Boolean = false,
@@ -84,6 +88,7 @@ class MainViewModel(
                 .collect { uiSettings ->
                     _uiState.update {
                         it.copy(
+                            timerStyle = uiSettings.timerStyle,
                             dynamicColor = uiSettings.useDynamicColor,
                             darkThemePreference = uiSettings.darkModePreference,
                             fullscreenMode = uiSettings.fullscreenMode,
@@ -130,4 +135,74 @@ class MainViewModel(
     fun finishTimer() {
         timerManager.finish()
     }
+
+    fun initTimerStyle(maxSize: Float, screenWidth: Int) {
+        viewModelScope.launch {
+            val uiSettings = getUiSettings()
+            settingsRepo.saveUiSettings(
+                uiSettings.copy(
+                    timerStyle = uiSettings.timerStyle.copy(
+                        minSize = floor(maxSize / 1.5f),
+                        maxSize = maxSize,
+                        fontSize = floor(maxSize * 0.75f),
+                        currentScreenWidth = screenWidth
+                    )
+                )
+            )
+        }
+    }
+
+    fun setTimerWeight(weight: Int) {
+        viewModelScope.launch {
+            val uiSettings = getUiSettings()
+            settingsRepo.saveUiSettings(
+                uiSettings.copy(
+                    timerStyle = uiSettings.timerStyle.copy(
+                        fontWeight = weight
+                    )
+                )
+            )
+        }
+    }
+
+    fun setTimerSize(size: Float) {
+        viewModelScope.launch {
+            val uiSettings = getUiSettings()
+            settingsRepo.saveUiSettings(
+                uiSettings.copy(
+                    timerStyle = uiSettings.timerStyle.copy(
+                        fontSize = size
+                    )
+                )
+            )
+        }
+    }
+
+    fun setTimerMinutesOnly(enabled: Boolean) {
+        viewModelScope.launch {
+            val uiSettings = getUiSettings()
+            settingsRepo.saveUiSettings(
+                uiSettings.copy(
+                    timerStyle = uiSettings.timerStyle.copy(
+                        minutesOnly = enabled
+                    )
+                )
+            )
+        }
+    }
+
+    fun setTimerFont(fontIndex: Int) {
+        viewModelScope.launch {
+            val uiSettings = getUiSettings()
+            settingsRepo.saveUiSettings(
+                uiSettings.copy(
+                    timerStyle = uiSettings.timerStyle.copy(
+                        fontIndex = fontIndex
+                    )
+                )
+            )
+        }
+    }
+
+    private suspend fun getUiSettings() = settingsRepo.settings.first().uiSettings
 }

@@ -1,4 +1,12 @@
 package com.apps.adrcotfas.goodtime.ui
+import android.graphics.Color.parseColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF4DB6AC)
@@ -48,7 +56,7 @@ val secondaryContainerDark = Color(0xFFCBCBCB)
 val onSecondaryContainerDark = Color(0xFF000000)
 val tertiaryDark = Color(0xFF80CBC4)
 val onTertiaryDark = Color(0xFF000000)
-val tertiaryContainerDark = Color(0xFFCBCBCB)
+val tertiaryContainerDark = Color(0xFFDEDEDE)
 val onTertiaryContainerDark = Color(0xFF000000)
 val errorDark = Color(0xFFFFF9F9)
 val onErrorDark = Color(0xFF000000)
@@ -57,7 +65,7 @@ val onErrorContainerDark = Color(0xFF000000)
 val backgroundDark = Color(0xFF000000)
 val onBackgroundDark = Color(0xFFE2E2E2)
 val surfaceDark = Color(0xFF000000)
-val onSurfaceDark = Color(0xFFFFFFFF)
+val onSurfaceDark = Color(0xFFCBCBCB)
 val surfaceVariantDark = Color(0xFF4C4546)
 val onSurfaceVariantDark = Color(0xFFFFF9F9)
 val outlineDark = Color(0xFFD3C8C9)
@@ -74,3 +82,99 @@ val surfaceContainerDark = Color(0xFF1F1F1F)
 val surfaceContainerHighDark = Color(0xFF2A2A2A)
 val surfaceContainerHighestDark = Color(0xFF353535)
 val surfaceTintDark = Color(0x00FFFFFF)
+
+
+val MaterialTheme.localColorsPalette: CustomColorsPalette
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalColorsPalette.current
+
+val lightColorScheme = lightColorScheme(
+    primary = primaryLight,
+    onPrimary = onPrimaryLight,
+    primaryContainer = primaryContainerLight,
+    onPrimaryContainer = onPrimaryContainerLight,
+    secondary = secondaryLight,
+    onSecondary = onSecondaryLight,
+    secondaryContainer = secondaryContainerLight,
+    onSecondaryContainer = onSecondaryContainerLight,
+    tertiary = tertiaryLight,
+    onTertiary = onTertiaryLight,
+    tertiaryContainer = tertiaryContainerLight,
+    onTertiaryContainer = onTertiaryContainerLight,
+    error = errorLight,
+    onError = onErrorLight,
+    errorContainer = errorContainerLight,
+    onErrorContainer = onErrorContainerLight,
+    background = backgroundLight,
+    onBackground = onBackgroundLight,
+    surface = surfaceLight,
+    onSurface = onSurfaceLight,
+    surfaceVariant = surfaceVariantLight,
+    onSurfaceVariant = onSurfaceVariantLight,
+    outline = outlineLight,
+    outlineVariant = outlineVariantLight,
+    scrim = scrimLight,
+    inverseSurface = inverseSurfaceLight,
+    inverseOnSurface = inverseOnSurfaceLight,
+    inversePrimary = inversePrimaryLight,
+    surfaceDim = surfaceDimLight,
+    surfaceBright = surfaceBrightLight,
+    surfaceContainerLowest = surfaceContainerLowestLight,
+    surfaceContainerLow = surfaceContainerLowLight,
+    surfaceContainer = surfaceContainerLight,
+    surfaceContainerHigh = surfaceContainerHighLight,
+    surfaceContainerHighest = surfaceContainerHighestLight,
+    surfaceTint = surfaceTintLight,
+)
+
+val darkColorScheme = darkColorScheme(
+    primary = primaryDark,
+    onPrimary = onPrimaryDark,
+    primaryContainer = primaryContainerDark,
+    onPrimaryContainer = onPrimaryContainerDark,
+    secondary = secondaryDark,
+    onSecondary = onSecondaryDark,
+    secondaryContainer = secondaryContainerDark,
+    onSecondaryContainer = onSecondaryContainerDark,
+    tertiary = tertiaryDark,
+    onTertiary = onTertiaryDark,
+    tertiaryContainer = tertiaryContainerDark,
+    onTertiaryContainer = onTertiaryContainerDark,
+    error = errorDark,
+    onError = onErrorDark,
+    errorContainer = errorContainerDark,
+    onErrorContainer = onErrorContainerDark,
+    background = backgroundDark,
+    onBackground = onBackgroundDark,
+    surface = surfaceDark,
+    onSurface = onSurfaceDark,
+    surfaceVariant = surfaceVariantDark,
+    onSurfaceVariant = onSurfaceVariantDark,
+    outline = outlineDark,
+    outlineVariant = outlineVariantDark,
+    scrim = scrimDark,
+    inverseSurface = inverseSurfaceDark,
+    inverseOnSurface = inverseOnSurfaceDark,
+    inversePrimary = inversePrimaryDark,
+    surfaceDim = surfaceDimDark,
+    surfaceBright = surfaceBrightDark,
+    surfaceContainerLowest = surfaceContainerLowestDark,
+    surfaceContainerLow = surfaceContainerLowDark,
+    surfaceContainer = surfaceContainerDark,
+    surfaceContainerHigh = surfaceContainerHighDark,
+    surfaceContainerHighest = surfaceContainerHighestDark,
+    surfaceTint = surfaceTintDark,
+)
+
+@Immutable
+data class CustomColorsPalette(
+    val colors: List<Color> = listOf(Color.Unspecified)
+)
+
+val LocalColorsPalette = staticCompositionLocalOf { CustomColorsPalette() }
+
+val LightColorsPalette =
+    CustomColorsPalette(lightPalette.map { Color(parseColor(it)) })
+val DarkColorsPalette =
+    CustomColorsPalette(darkPalette.map { Color(parseColor(it)) })

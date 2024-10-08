@@ -15,6 +15,7 @@ sealed class Destination(val route: String, val label: String, val icon: ImageVe
     data object Settings : Destination("settings", "Settings", FeatherIcons.Settings)
 
     data object UserInterfaceSettings: Destination("userInterface", "User Interface", null)
+    data object TimerStyle: Destination("timerStyle", "Timer Style", null)
     data object NotificationSettings : Destination("notificationSettings", "Notifications", null)
     data object Backup : Destination("backup", "Backup", null)
     data object About : Destination("about", "About", null)

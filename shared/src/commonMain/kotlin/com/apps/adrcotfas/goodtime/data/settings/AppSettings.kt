@@ -50,14 +50,13 @@ data class ProductivityReminderSettings(
 
 @Serializable
 data class UiSettings(
+    val timerStyle: TimerStyleData = TimerStyleData(),
     val useDynamicColor: Boolean = false,
     val darkModePreference: DarkModePreference = DarkModePreference.DARK,
     val fullscreenMode: Boolean = false,
     val keepScreenOn: Boolean = true,
     val screensaverMode: Boolean = false,
     val dndDuringWork: Boolean = false,
-    //TODO: consider the following
-    // - timer font and size
 )
 
 @Serializable
@@ -66,6 +65,23 @@ enum class DarkModePreference {
     LIGHT,
     DARK
 }
+
+@Serializable
+data class TimerStyleData(
+    val fontIndex: Int = 0,
+    val minSize: Float = 0f,         // in em
+    val maxSize: Float = 0f,         // in em
+    val fontSize: Float = 0f,        // in em
+    val fontWeight: Int = 100,
+    val currentScreenWidth: Int = 0, // in dp
+    val minutesOnly: Boolean = false
+) {
+
+    companion object {
+        const val INVALID_MIN_SIZE = -1f
+    }
+}
+
 
 @Serializable
 data class SoundData(

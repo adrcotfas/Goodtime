@@ -104,9 +104,9 @@ fun NotificationsScreen(
                 )
 
                 CheckboxPreference(
-                    "Override sound profile",
-                    "The notification sound behaves like an alarm",
-                    settings.overrideSoundProfile
+                    title = "Override sound profile",
+                    subtitle = "The notification sound behaves like an alarm",
+                    checked = settings.overrideSoundProfile
                 ) {
                     viewModel.setOverrideSoundProfile(it)
                 }

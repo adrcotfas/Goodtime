@@ -24,9 +24,9 @@ import com.apps.adrcotfas.goodtime.settings.reminders.ReminderHelper
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
-import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import org.koin.core.module.dsl.viewModel
 
 class GoodtimeApplication : Application() {
     private val applicationScope = MainScope()

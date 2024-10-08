@@ -34,12 +34,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.apps.adrcotfas.goodtime.bl.notifications.NotificationArchManager
 import com.apps.adrcotfas.goodtime.common.findActivity
 import com.apps.adrcotfas.goodtime.common.getAppLanguage
 import com.apps.adrcotfas.goodtime.common.prettyName
 import com.apps.adrcotfas.goodtime.common.prettyNames
 import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
+import com.apps.adrcotfas.goodtime.main.Destination
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel.Companion.firstDayOfWeekOptions
 import com.apps.adrcotfas.goodtime.settings.requestDndPolicyAccess
@@ -63,6 +65,7 @@ import java.time.format.TextStyle
 @Composable
 fun UserInterfaceScreen(
     viewModel: SettingsViewModel = koinViewModel(viewModelStoreOwner = LocalContext.current as ComponentActivity),
+    navController: NavController,
     onNavigateBack: () -> Unit
 ) {
     val context = LocalContext.current
@@ -112,6 +115,12 @@ fun UserInterfaceScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 CompactPreferenceGroupTitle(text = "General")
+                TextPreference(
+                    title = "Timer style",
+                    onClick = {
+                        navController.navigate(Destination.TimerStyle.route)
+                    }
+                )
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     val activity = context.findActivity()
                     TextPreference(title = "Language", value = context.getAppLanguage()) {

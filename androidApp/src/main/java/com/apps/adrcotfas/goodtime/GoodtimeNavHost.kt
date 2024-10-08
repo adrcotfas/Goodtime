@@ -16,8 +16,17 @@ import com.apps.adrcotfas.goodtime.settings.about.AboutScreen
 import com.apps.adrcotfas.goodtime.settings.about.LicensesScreen
 import com.apps.adrcotfas.goodtime.settings.backup.BackupScreen
 import com.apps.adrcotfas.goodtime.settings.notifications.NotificationsScreen
+import com.apps.adrcotfas.goodtime.settings.user_interface.TimerStyleScreen
 import com.apps.adrcotfas.goodtime.settings.user_interface.UserInterfaceScreen
 import com.apps.adrcotfas.goodtime.stats.StatsScreen
+
+
+private fun NavHostController.backTo(route: String): () -> Unit = {
+    navigate(route) {
+        popUpTo(graph.startDestinationId)
+        launchSingleTop = true
+    }
+}
 
 @Composable
 fun GoodtimeNavHost(
@@ -25,12 +34,10 @@ fun GoodtimeNavHost(
     navController: NavHostController
 ) {
 
-    val backToMainSettings = {
-        navController.navigate(Destination.Settings.route) {
-            popUpTo(navController.graph.startDestinationId)
-            launchSingleTop = true
-        }
-    }
+    val backToSettings = navController.backTo(Destination.Settings.route)
+    val backToAbout = navController.backTo(Destination.About.route)
+    val backToUserInterfaceSettings = navController.backTo(Destination.UserInterfaceSettings.route)
+    val backToLabels = navController.backTo(Destination.Labels.route)
 
     NavHost(
         modifier = Modifier
@@ -39,41 +46,21 @@ fun GoodtimeNavHost(
         startDestination = Destination.Main.route
     ) {
         composable(Destination.Main.route) { MainScreen() }
-        composable(Destination.Labels.route) {
-            LabelsScreen(navController)
-        }
-        composable(Destination.ArchivedLabels.route) {
-            ArchivedLabelsScreen({
-                navController.navigate(Destination.Labels.route) {
-                    popUpTo(navController.graph.startDestinationId)
-                    launchSingleTop = true
-                }
-            })
-        }
-
+        composable(Destination.Labels.route) { LabelsScreen(navController) }
+        composable(Destination.ArchivedLabels.route) { ArchivedLabelsScreen({ backToLabels() }) }
         composable(Destination.Stats.route) { StatsScreen() }
         composable(Destination.Settings.route) { SettingsScreen(navController = navController) }
         composable(Destination.UserInterfaceSettings.route) {
-            UserInterfaceScreen(onNavigateBack = backToMainSettings)
+            UserInterfaceScreen(navController = navController, onNavigateBack = backToSettings)
         }
-        composable(Destination.NotificationSettings.route) {
-            NotificationsScreen(onNavigateBack = backToMainSettings)
-        }
-        composable(Destination.Backup.route) {
-            BackupScreen(onNavigateBack = backToMainSettings)
-        }
+        composable(Destination.TimerStyle.route) { TimerStyleScreen(onNavigateBack = backToUserInterfaceSettings) }
+        composable(Destination.NotificationSettings.route) { NotificationsScreen(onNavigateBack = backToSettings) }
+        composable(Destination.Backup.route) { BackupScreen(onNavigateBack = backToSettings) }
         composable(Destination.About.route) {
-            AboutScreen(onNavigateBack = backToMainSettings, onNavigateToLicenses = {
+            AboutScreen(onNavigateBack = backToSettings, onNavigateToLicenses = {
                 navController.navigate(Destination.Licenses.route)
             })
         }
-        composable(Destination.Licenses.route) {
-            LicensesScreen {
-                navController.navigate(Destination.About.route) {
-                    popUpTo(navController.graph.startDestinationId)
-                    launchSingleTop = true
-                }
-            }
-        }
+        composable(Destination.Licenses.route) { LicensesScreen { backToAbout() } }
     }
 }

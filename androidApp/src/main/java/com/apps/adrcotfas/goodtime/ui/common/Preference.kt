@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 //TODO: consider replacing with ListItem
 @Composable
 fun Preference(
+    modifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,
     icon: @Composable (() -> Unit?)? = null,
@@ -51,7 +52,7 @@ fun Preference(
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = clickableModifier.padding(paddingValues)
+        modifier = modifier.then(clickableModifier).padding(paddingValues)
     ) {
         icon?.let {
             Box(modifier = Modifier.padding(end = 16.dp, top = 8.dp, bottom = 8.dp)) {
@@ -78,12 +79,14 @@ fun Preference(
 
 @Composable
 fun SwitchPreference(
+    modifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
     Preference(
+        modifier = modifier,
         title = title,
         subtitle = subtitle,
         onClick = { onCheckedChange(!checked) }
@@ -97,6 +100,7 @@ fun SwitchPreference(
 
 @Composable
 fun CheckboxPreference(
+    modifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,
     checked: Boolean,
@@ -104,6 +108,7 @@ fun CheckboxPreference(
     onCheckedChange: (Boolean) -> Unit
 ) {
     Preference(
+        modifier = modifier,
         title = title,
         subtitle = subtitle,
         clickable = clickable,
@@ -118,6 +123,7 @@ fun CheckboxPreference(
 
 @Composable
 fun TextPreference(
+    modifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,
     value: String? = null,
@@ -126,6 +132,7 @@ fun TextPreference(
     onClick: () -> Unit
 ) {
     Preference(
+        modifier = modifier,
         title = title,
         subtitle = subtitle,
         paddingValues = paddingValues,
@@ -146,12 +153,14 @@ fun TextPreference(
 
 @Composable
 fun CircularProgressPreference(
+    modifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,
     showProgress: Boolean = false,
     onClick: () -> Unit
 ) {
     Preference(
+        modifier = modifier,
         title = title,
         subtitle = subtitle,
         paddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
@@ -169,6 +178,7 @@ fun CircularProgressPreference(
 
 @Composable
 fun PreferenceWithSeparateSwitch(
+    modifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,
     checked: Boolean,
@@ -182,7 +192,7 @@ fun PreferenceWithSeparateSwitch(
     val subtitleColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
 
     Row(
-        modifier = clickableModifier
+        modifier = modifier.then(clickableModifier)
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .height(IntrinsicSize.Min)
             .fillMaxWidth(),
@@ -215,6 +225,7 @@ fun PreferenceWithSeparateSwitch(
 
 @Composable
 fun DropdownMenuPreference(
+    modifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,
     value: String,
@@ -225,6 +236,7 @@ fun DropdownMenuPreference(
 ) {
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
     Preference(
+        modifier = modifier,
         title = title,
         subtitle = subtitle,
         clickable = clickable,
@@ -262,6 +274,7 @@ fun DropdownMenuPreference(
 
 @Composable
 fun PreferenceWithIcon(
+    modifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,
     icon: @Composable (() -> Unit),
@@ -269,6 +282,7 @@ fun PreferenceWithIcon(
     onClick: (() -> Unit) = {}
 ) {
     Preference(
+        modifier = modifier,
         title = title,
         subtitle = subtitle,
         icon = icon,
@@ -277,8 +291,8 @@ fun PreferenceWithIcon(
     )
 }
 
-@Composable
 @Preview
+@Composable
 private fun SwitchPreferencePreview() {
     SwitchPreference(
         title = "Title",
@@ -292,6 +306,7 @@ private fun SwitchPreferencePreview() {
 @Composable
 fun TextPreferencePreview() {
     TextPreference(
+        modifier = Modifier,
         title = "Title",
         subtitle = "Subtitle",
         value = "Value",
@@ -334,6 +349,7 @@ fun PreferenceWithIconSimplePreview() {
 @Composable
 fun CheckboxPreferencePreview() {
     CheckboxPreference(
+        modifier = Modifier,
         title = "Title",
         subtitle = "Subtitle",
         checked = true,

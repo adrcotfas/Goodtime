@@ -2,12 +2,16 @@ package com.apps.adrcotfas.goodtime.labels.add_edit
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.TextFormat
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -26,7 +30,8 @@ import kotlin.math.roundToInt
 
 @Composable
 fun SliderRow(
-    title: String,
+    title: String? = null,
+    icon: @Composable (() -> Unit)? = null,
     value: Int,
     min: Int = 1,
     max: Int,
@@ -49,10 +54,12 @@ fun SliderRow(
         .fillMaxWidth()
         .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
         .padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.bodyLarge
-        )
+        title?.let {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -63,6 +70,11 @@ fun SliderRow(
                 activeTickColor = MaterialTheme.colorScheme.primary
             )
 
+            icon?.let {
+                Box(modifier = Modifier.padding(end = 16.dp, top = 8.dp, bottom = 8.dp)) {
+                    it()
+                }
+            }
             Slider(
                 modifier = Modifier.weight(sliderWeight),
                 colors = colors,
@@ -74,8 +86,8 @@ fun SliderRow(
                 steps = steps,
                 valueRange = min.toFloat()..max.toFloat()
             )
+            Spacer(modifier = Modifier.width(16.dp))
             if (showValue) {
-                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     modifier = Modifier.weight(textWeight),
                     text = valueText,
@@ -95,6 +107,9 @@ fun SliderColumnPreview() {
     var value by remember { mutableIntStateOf(225) }
     SliderRow(
         title = "Title",
+        icon = {
+            Icon(Icons.Default.TextFormat, contentDescription = null)
+        },
         value = value,
         max = 55,
         onValueChange = { value = it },

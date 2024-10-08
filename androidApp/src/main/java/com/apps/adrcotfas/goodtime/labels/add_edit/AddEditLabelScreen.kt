@@ -390,6 +390,7 @@ private fun TimerTypeRow(isCountDown: Boolean, onCountDownEnabled: (Boolean) -> 
     }
 }
 
+//TODO: change to 90 for all durations and replace sliders with cards
 @Composable
 private fun WorkDurationSliderRow(
     labelToEdit: Label,
