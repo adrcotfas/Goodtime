@@ -1,11 +1,12 @@
 package com.apps.adrcotfas.goodtime.settings.user_interface
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,12 +21,15 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -37,20 +41,27 @@ import androidx.compose.ui.unit.em
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.common.prettyName
 import com.apps.adrcotfas.goodtime.common.prettyNames
+import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.TimerStyleData
 import com.apps.adrcotfas.goodtime.labels.add_edit.SliderRow
+import com.apps.adrcotfas.goodtime.main.CurrentStatusAndLabelSection
 import com.apps.adrcotfas.goodtime.main.MainViewModel
+import com.apps.adrcotfas.goodtime.main.TimerTextView
 import com.apps.adrcotfas.goodtime.ui.TimerFont
 import com.apps.adrcotfas.goodtime.ui.common.CheckboxPreference
 import com.apps.adrcotfas.goodtime.ui.common.DropdownMenuPreference
 import com.apps.adrcotfas.goodtime.ui.common.SubtleVerticalDivider
+import com.apps.adrcotfas.goodtime.ui.lightPalette
+import com.apps.adrcotfas.goodtime.ui.localColorsPalette
 import com.apps.adrcotfas.goodtime.ui.timerFontWeights
 import com.apps.adrcotfas.goodtime.ui.timerTextAzeretStyle
-import com.apps.adrcotfas.goodtime.ui.timerTextStyles
 import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.abs
 import kotlin.math.floor
+import kotlin.random.Random
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun measureTextWidth(text: String, style: TextStyle): Dp {
@@ -124,11 +135,38 @@ fun TimerStyleScreen(viewModel: MainViewModel = koinViewModel(), onNavigateBack:
                     .fillMaxSize()
                     .padding(paddingValues)
                     .verticalScroll(rememberScrollState()),
-                horizontalAlignment = CenterHorizontally,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
+                val randomLabelIndex =
+                    remember { mutableIntStateOf(-1) }
+
                 if (timerStyle.minSize != TimerStyleData.INVALID_MIN_SIZE) {
                     Column {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(IntrinsicSize.Min),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            DropdownMenuPreference(
+                                modifier = Modifier.weight(0.5f),
+                                title = "Font",
+                                value = TimerFont.entries[timerStyle.fontIndex].prettyName(),
+                                dropdownMenuOptions = prettyNames<TimerFont>()
+                            ) {
+                                viewModel.setTimerFont(it)
+                            }
+                            SubtleVerticalDivider()
+                            CheckboxPreference(
+                                modifier = Modifier.weight(0.5f),
+                                title = "Minutes only",
+                                checked = timerStyle.minutesOnly,
+                                onCheckedChange = {
+                                    viewModel.setTimerMinutesOnly(it)
+                                })
+                        }
                         SliderRow(
                             icon = { Icon(Icons.Default.FormatSize, contentDescription = null) },
                             min = timerStyle.minSize.toInt(),
@@ -151,38 +189,106 @@ fun TimerStyleScreen(viewModel: MainViewModel = koinViewModel(), onNavigateBack:
                             showValue = false
                         )
                         Row(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .height(IntrinsicSize.Min),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            DropdownMenuPreference(
-                                modifier = Modifier.weight(0.5f),
-                                title = "Font",
-                                value = TimerFont.entries[timerStyle.fontIndex].prettyName(),
-                                dropdownMenuOptions = prettyNames<TimerFont>()
-                            ) {
-                                viewModel.setTimerFont(it)
-                            }
+                            CheckboxPreference(
+                                modifier = Modifier.weight(0.33f),
+                                title = "Status",
+                                checked = timerStyle.showStatus,
+                                onCheckedChange = {
+                                    viewModel.setShowStatus(it)
+                                })
+                            SubtleVerticalDivider()
+                            //TODO: add info button to explain what a streak is in this context
+                            CheckboxPreference(
+                                modifier = Modifier.weight(0.33f),
+                                title = "Streak",
+                                checked = timerStyle.showStreak,
+                                onCheckedChange = {
+                                    viewModel.setShowStreak(it)
+                                })
                             SubtleVerticalDivider()
                             CheckboxPreference(
-                                modifier = Modifier.weight(0.5f),
-                                title = "Minutes only",
-                                checked = timerStyle.minutesOnly,
+                                modifier = Modifier.weight(0.33f),
+                                title = "Label",
+                                checked = timerStyle.showLabel,
+                                clickable = randomLabelIndex.intValue != -1,
                                 onCheckedChange = {
-                                    viewModel.setTimerMinutesOnly(it)
+                                    viewModel.setShowLabel(it)
                                 })
                         }
+                        TextButton(modifier = Modifier.fillMaxWidth(), onClick = {
+                            val oldValue = randomLabelIndex.intValue
+                            var newValue = Random.nextInt(lightPalette.lastIndex)
+                            while (newValue == oldValue) {
+                                newValue = Random.nextInt(lightPalette.lastIndex)
+                            }
+                            randomLabelIndex.intValue = newValue
+                        }) {
+                            Text("Generate demo label")
+                        }
                     }
-                    Box(modifier = Modifier.weight(1f)) {
-                        Text(
-                            modifier = Modifier.align(Alignment.Center),
-                            text = if (timerStyle.minutesOnly) "25" else "12:34",
-                            style = TextStyle(
-                                fontFamily = timerTextStyles[timerStyle.fontIndex]!![timerStyle.fontWeight],
-                                fontSize = timerStyle.fontSize.em.run { if (timerStyle.minutesOnly) this * 1.5 else this * 1 }
-                            )
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        val index =
+                            if (randomLabelIndex.intValue == -1) Label.DEFAULT_LABEL_COLOR_INDEX.toInt() else randomLabelIndex.intValue
+                        val labelColor = MaterialTheme.localColorsPalette.colors[index]
+
+                        val demoLabelNames = listOf(
+                            "algebra",
+                            "geometry",
+                            "calculus",
+                            "epigenetics",
+                            "astrophysics",
+                            "kinetics",
+                            "computer vision",
+                            "neurobiology",
+                            "nutrition",
+                            "philosophy",
+                            "calligraphy",
+                            "surrealism",
+                            "meditation",
+                            "guitar",
+                            "drums",
+                            "piano",
+                            "thermodynamics",
+                            "dermatology",
+                            "ecology",
+                            "nanophotonics"
                         )
+                        assert(lightPalette.lastIndex == demoLabelNames.lastIndex)
+                        AnimatedVisibility(timerStyle.showLabel || timerStyle.showStatus || timerStyle.showStreak) {
+                            CurrentStatusAndLabelSection(
+                                color = labelColor,
+                                labelName = randomLabelIndex.intValue.let {
+                                    if (it == -1) Label.DEFAULT_LABEL_NAME else demoLabelNames[it]
+                                },
+                                isBreak = false,
+                                isActive = true,
+                                isPaused = false,
+                                streak = 0,
+                                sessionsBeforeLongBreak = 4,
+                                showStatus = timerStyle.showStatus,
+                                showStreak = timerStyle.showStreak,
+                                showLabel = timerStyle.showLabel
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        TimerTextView(
+                            isPaused = false,
+                            timerStyle = timerStyle,
+                            millis = if (timerStyle.minutesOnly) 25.minutes.inWholeMilliseconds else 25.minutes.plus(
+                                34.seconds
+                            ).inWholeMilliseconds,
+                            color = labelColor,
+                            onPress = { })
                     }
                 }
             }

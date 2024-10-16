@@ -57,6 +57,14 @@ data class DomainTimerData(
         return labelName ?: throw IllegalStateException("Label is null")
     }
 
+    fun inUseSessionsBeforeLongBreak(): Int {
+        return timerProfile?.let {
+            if (it.isCountdown && it.isBreakEnabled && it.isLongBreakEnabled) {
+                it.sessionsBeforeLongBreak
+            } else 0
+        } ?: 0
+    }
+
     fun isDefaultLabel() = labelName == Label.DEFAULT_LABEL_NAME
 }
 

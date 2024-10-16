@@ -74,11 +74,22 @@ data class TimerStyleData(
     val fontSize: Float = 0f,        // in em
     val fontWeight: Int = 100,
     val currentScreenWidth: Int = 0, // in dp
-    val minutesOnly: Boolean = false
+    val minutesOnly: Boolean = false,
+    val showStatus: Boolean = true,
+    val showStreak: Boolean = true,
+    val showLabel: Boolean = true,
 ) {
 
+    fun inUseFontSize(): Float {
+        return if (minutesOnly) {
+            fontSize * MINUTES_ONLY_FONT_SIZE_FACTOR
+        } else {
+            fontSize
+        }
+    }
     companion object {
         const val INVALID_MIN_SIZE = -1f
+        const val MINUTES_ONLY_FONT_SIZE_FACTOR = 1.5f
     }
 }
 

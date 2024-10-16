@@ -8,13 +8,17 @@ import kotlinx.datetime.toLocalDateTime
 
 //TODO: find a better name and place for this
 object TimeUtils {
-    fun Long.formatMilliseconds(): String {
-        val totalSeconds = this / 1000
+    fun Long.formatMilliseconds(minutesOnly: Boolean = false): String {
+        val totalSeconds = (this / 1000).run { if (minutesOnly) this + 59 else this }
         val minutes = totalSeconds / 60
         val seconds = totalSeconds % 60
         val secondsString = if (seconds < 10) "0$seconds" else seconds.toString()
         val minutesString = if (minutes < 10) "0$minutes" else minutes.toString()
-        return "$minutesString:$secondsString"
+        return if (minutesOnly) {
+            minutesString
+        } else {
+            "$minutesString:$secondsString"
+        }
     }
 
     fun Long.formatForBackupFileName(): String {

@@ -116,6 +116,7 @@ fun CheckboxPreference(
     ) {
         Checkbox(
             checked = checked,
+            enabled = clickable,
             onCheckedChange = onCheckedChange
         )
     }

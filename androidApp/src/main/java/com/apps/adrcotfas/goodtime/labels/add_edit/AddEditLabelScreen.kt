@@ -61,6 +61,7 @@ import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 import com.apps.adrcotfas.goodtime.ui.localColorsPalette
 
 //TODO: consider safe content padding and check bottom row accessibility
+//TODO: check bug when renaming label to the same name
 @Composable
 fun AddEditLabelScreen(
     isEditMode: Boolean,
@@ -511,7 +512,7 @@ private fun SessionsBeforeLongBreakSliderRow(
     val sessionsBeforeLongBreak =
         labelToEdit.timerProfile.sessionsBeforeLongBreak
     val sessionsBeforeLongBreakMinValue = 2
-    val sessionsBeforeLongBreakMaxValue = 10
+    val sessionsBeforeLongBreakMaxValue = 8
     val onSaveSessionsBeforeLongBreak: (Int) -> Unit = {
         onEditLabelToEdit(
             labelToEdit.copy(

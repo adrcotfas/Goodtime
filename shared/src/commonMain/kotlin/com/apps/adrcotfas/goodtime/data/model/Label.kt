@@ -13,7 +13,7 @@ data class Label(
 ) {
     companion object {
         const val DEFAULT_LABEL_NAME = "PRODUCTIVITY_DEFAULT_LABEL"
-        private const val DEFAULT_LABEL_COLOR_INDEX = 17L
+        const val DEFAULT_LABEL_COLOR_INDEX = 17L
         const val LABEL_NAME_MAX_LENGTH = 32
         fun defaultLabel() = Label(name = DEFAULT_LABEL_NAME, colorIndex = DEFAULT_LABEL_COLOR_INDEX, orderIndex = 0)
         fun newLabelWithRandomColorIndex(lastIndex: Int) = Label(name = "", colorIndex = Random.nextInt(lastIndex).toLong())

@@ -53,6 +53,8 @@ import com.apps.adrcotfas.goodtime.ui.dragContainer
 import com.apps.adrcotfas.goodtime.ui.rememberDragDropState
 import org.koin.androidx.compose.koinViewModel
 
+//TODO(fix bug): renaming a label should not change the active label
+//TODO: what happens when switching to a different timerType label? Should we warn the user to stop the active timer first?
 //TODO: consider sub-labels?
 // not here but it can be part of the stats screen; the only precondition can be the name of the labels,
 // for example group together according to a prefix, e.g. "Work/Label1", "Work/Label2", "Work/Label3" etc.

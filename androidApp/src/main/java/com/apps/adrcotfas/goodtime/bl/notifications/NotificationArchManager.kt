@@ -17,6 +17,7 @@ import com.apps.adrcotfas.goodtime.bl.TimerState
 import com.apps.adrcotfas.goodtime.bl.TimerType
 import com.apps.adrcotfas.goodtime.shared.R as SharedR
 
+//TODO: count-up should have a stop button action
 class NotificationArchManager(private val context: Context, private val activityClass: Class<*>) {
 
     private val notificationManager: NotificationManager =
@@ -115,6 +116,12 @@ class NotificationArchManager(private val context: Context, private val activity
             if (data.timerProfile?.isBreakEnabled == true) {
                 builder.addAction(nextAction)
             }
+        } else {
+            val stopAction = createNotificationAction(
+                title = "Stop",
+                action = TimerService.Companion.Action.DoReset
+            )
+            builder.addAction(stopAction)
         }
         return builder.build()
     }

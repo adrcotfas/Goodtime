@@ -402,7 +402,7 @@ class TimerManager(
         }
     }
 
-    private fun shouldConsiderStreak(nextWorkEndTime: Long): Boolean {
+    private fun shouldConsiderStreak(workEndTime: Long): Boolean {
         val data = timerData.value
         val timerProfile = data.timerProfile
         if (timerProfile?.isCountdown != true) return false
@@ -410,7 +410,7 @@ class TimerManager(
         val streakForLongBreakIsReached =
             (data.longBreakData.streak % timerProfile.sessionsBeforeLongBreak == 0)
         return streakForLongBreakIsReached && didLastWorkSessionFinishRecently(
-            nextWorkEndTime
+            workEndTime
         )
     }
 

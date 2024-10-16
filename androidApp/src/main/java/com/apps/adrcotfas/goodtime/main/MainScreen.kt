@@ -7,21 +7,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.apps.adrcotfas.goodtime.bl.TimeUtils.formatMilliseconds
 import com.apps.adrcotfas.goodtime.bl.TimerState
 import com.apps.adrcotfas.goodtime.bl.TimerType
+import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.TimerStyleData
 import com.apps.adrcotfas.goodtime.settings.user_interface.InitTimerStyle
-import com.apps.adrcotfas.goodtime.ui.timerTextStyles
+import com.apps.adrcotfas.goodtime.ui.localColorsPalette
 import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.koinViewModel
 
@@ -30,65 +29,86 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
 
     InitTimerStyle(viewModel)
 
-    val timerState = viewModel.timerState.collectAsStateWithLifecycle(TimerUiState())
+    val timerState by viewModel.timerState.collectAsStateWithLifecycle(TimerUiState())
 
     val timerStyle by viewModel.uiState.map { it.timerStyle }
         .collectAsStateWithLifecycle(TimerStyleData(minSize = TimerStyleData.INVALID_MIN_SIZE))
+
+    val label by viewModel.uiState.map { it.label }
+        .collectAsStateWithLifecycle(Label.defaultLabel())
+    val labelColorIndex = label?.colorIndex ?: Label.DEFAULT_LABEL_COLOR_INDEX
+    val labelColor = MaterialTheme.localColorsPalette.colors[labelColorIndex.toInt()]
+
+    val isCountdown = timerState.isCountdown
+    val isBreak = timerState.timerType != TimerType.WORK
 
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
         if (timerStyle.minSize != TimerStyleData.INVALID_MIN_SIZE) {
-            TimerTextView(timerStyle, seconds = timerState.value.baseTime)
+            label?.let {
+                CurrentStatusAndLabelSection(
+                    color = labelColor,
+                    labelName = it.name,
+                    isBreak = isBreak,
+                    isActive = timerState.isActive(),
+                    isPaused = timerState.isPaused(),
+                    streak = timerState.longBreakData.streak,
+                    sessionsBeforeLongBreak = timerState.sessionsBeforeLongBreak,
+                    showStatus = timerStyle.showStatus,
+                    showStreak = timerStyle.showStreak,
+                    showLabel = timerStyle.showLabel
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            TimerTextView(
+                isPaused = timerState.isPaused(),
+                timerStyle = timerStyle,
+                millis = timerState.baseTime,
+                color = labelColor,
+                onPress = { if (!timerState.isActive()) viewModel.startTimer(TimerType.WORK) else viewModel.toggleTimer() })
         }
-        Spacer(modifier = Modifier.height(32.dp))
+        if (isCountdown) {
 
-        Row(horizontalArrangement = Arrangement.SpaceBetween) {
-            Button(
-                onClick = {
-                    viewModel.startTimer(TimerType.WORK)
-                }
-            ) {
-                Text("start timer")
-            }
-            if (timerState.value.timerState != TimerState.RESET) {
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+        if (false) {
+
+            Row(horizontalArrangement = Arrangement.SpaceBetween) {
                 Button(
                     onClick = {
-                        viewModel.toggleTimer()
+                        viewModel.startTimer(TimerType.WORK)
                     }
                 ) {
-                    Text(if (timerState.value.timerState == TimerState.RUNNING) "pause" else "resume")
+                    Text("start timer")
                 }
-                //TODO: testing purposes / remove this
+                if (timerState.timerState != TimerState.RESET) {
+                    Button(
+                        onClick = {
+                            viewModel.next()
+                        }
+                    ) {
+                        Text("next")
+                    }
+                    Button(
+                        onClick = {
+                            viewModel.finishTimer()
+                        }
+                    ) {
+                        Text("finish")
+                    }
+                }
                 Button(
                     onClick = {
-                        viewModel.finishTimer()
+                        viewModel.resetTimer()
                     }
                 ) {
-                    Text("finish")
+                    Text("stop")
                 }
-            }
-            Button(
-                onClick = {
-                    viewModel.resetTimer()
-                }
-            ) {
-                Text("stop")
             }
         }
     }
-}
-
-@Composable
-fun TimerTextView(timerStyle: TimerStyleData, seconds: Long) {
-    Text(
-        text = seconds.formatMilliseconds(),
-        style = TextStyle(
-            fontSize = timerStyle.fontSize.em,
-            fontFamily = timerTextStyles[timerStyle.fontIndex]!![timerStyle.fontWeight]
-        ),
-    )
 }

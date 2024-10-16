@@ -8,6 +8,8 @@ import com.apps.adrcotfas.goodtime.bl.TimerManager
 import com.apps.adrcotfas.goodtime.bl.TimerState
 import com.apps.adrcotfas.goodtime.bl.TimerType
 import com.apps.adrcotfas.goodtime.bl.getBaseTime
+import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
+import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
 import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -31,17 +34,20 @@ data class TimerUiState(
     val baseTime: Long = 0,
     val timerState: TimerState = TimerState.RESET,
     val timerType: TimerType = TimerType.WORK,
+    val sessionsBeforeLongBreak: Int = 0,
     val longBreakData: LongBreakData = LongBreakData(),
     val breakBudgetData: BreakBudgetData = BreakBudgetData(),
+    val isCountdown: Boolean = false
 ) {
     fun workSessionIsInProgress(): Boolean {
         return (timerState == TimerState.RUNNING || timerState == TimerState.PAUSED)
                 && timerType == TimerType.WORK
     }
 
-    fun isActive(): Boolean {
-        return timerState != TimerState.RESET
-    }
+    fun isActive() = timerState != TimerState.RESET
+    fun isRunning() = timerState == TimerState.RUNNING
+    fun isPaused() = timerState == TimerState.PAUSED
+    fun isBreak() = timerType != TimerType.WORK
 }
 
 data class MainUiState(
@@ -51,6 +57,7 @@ data class MainUiState(
     val fullscreenMode: Boolean = false,
     val dndDuringWork: Boolean = false,
     val isMainScreen: Boolean = true,
+    val label: Label? = null
 ) {
     fun isDarkTheme(isSystemInDarkTheme: Boolean): Boolean {
         return darkThemePreference == DarkModePreference.DARK ||
@@ -61,7 +68,8 @@ data class MainUiState(
 class MainViewModel(
     private val timerManager: TimerManager,
     private val timeProvider: TimeProvider,
-    private val settingsRepo: SettingsRepository
+    private val settingsRepo: SettingsRepository,
+    private val localDataRepository: LocalDataRepository
 ) : ViewModel() {
 
     val timerState: Flow<TimerUiState> = timerManager.timerData.flatMapLatest {
@@ -97,6 +105,18 @@ class MainViewModel(
                     }
                 }
         }
+
+        viewModelScope.launch {
+            timerManager.timerData.map { it.labelName }.filterNotNull()
+                .flatMapLatest { localDataRepository.selectLabelByName(it) }
+                .distinctUntilChanged()
+                .collect { label ->
+                    _uiState.update {
+                        it.copy(label = label)
+                    }
+                }
+        }
+
     }
 
     fun startTimer(type: TimerType) {
@@ -122,11 +142,13 @@ class MainViewModel(
     ) {
         emit(
             TimerUiState(
-                it.getBaseTime(timeProvider),
-                it.state,
-                it.type,
-                it.longBreakData,
-                it.breakBudgetData
+                baseTime = it.getBaseTime(timeProvider),
+                timerState = it.state,
+                timerType = it.type,
+                sessionsBeforeLongBreak = it.inUseSessionsBeforeLongBreak(),
+                longBreakData = it.longBreakData,
+                breakBudgetData = it.breakBudgetData,
+                isCountdown = it.requireTimerProfile().isCountdown
             )
         )
     }
@@ -134,6 +156,10 @@ class MainViewModel(
     //TODO: testing purposes / remove this
     fun finishTimer() {
         timerManager.finish()
+    }
+
+    fun next() {
+        timerManager.next()
     }
 
     fun initTimerStyle(maxSize: Float, screenWidth: Int) {
@@ -198,6 +224,45 @@ class MainViewModel(
                 uiSettings.copy(
                     timerStyle = uiSettings.timerStyle.copy(
                         fontIndex = fontIndex
+                    )
+                )
+            )
+        }
+    }
+
+    fun setShowStatus(showStatus: Boolean) {
+        viewModelScope.launch {
+            val uiSettings = getUiSettings()
+            settingsRepo.saveUiSettings(
+                uiSettings.copy(
+                    timerStyle = uiSettings.timerStyle.copy(
+                        showStatus = showStatus
+                    )
+                )
+            )
+        }
+    }
+
+    fun setShowStreak(showStreak: Boolean) {
+        viewModelScope.launch {
+            val uiSettings = getUiSettings()
+            settingsRepo.saveUiSettings(
+                uiSettings.copy(
+                    timerStyle = uiSettings.timerStyle.copy(
+                        showStreak = showStreak
+                    )
+                )
+            )
+        }
+    }
+
+    fun setShowLabel(showLabel: Boolean) {
+        viewModelScope.launch {
+            val uiSettings = getUiSettings()
+            settingsRepo.saveUiSettings(
+                uiSettings.copy(
+                    timerStyle = uiSettings.timerStyle.copy(
+                        showLabel = showLabel
                     )
                 )
             )

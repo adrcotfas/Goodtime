@@ -53,7 +53,7 @@ fun SliderRow(
     Column(modifier = Modifier
         .fillMaxWidth()
         .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
-        .padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
+        .padding(start = 16.dp, end = 16.dp)) {
         title?.let {
             Text(
                 text = title,
