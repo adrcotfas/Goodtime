@@ -20,6 +20,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -38,8 +39,12 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.apps.adrcotfas.goodtime.bl.TimeUtils.formatMilliseconds
@@ -114,8 +119,8 @@ fun CurrentStatusAndLabelSection(
     showStreak: Boolean,
     showLabel: Boolean,
 ) {
-    val statusColor = color.copy(alpha = 0.65f)
-    val statusBackgroundColor = color.copy(alpha = 0.15f)
+    val statusColor = color.copy(alpha = 0.75f)
+    val statusBackgroundColor = color.copy(alpha = 0.2f)
     val backgroundColor = color.copy(alpha = 0.3f)
 
     Row(
@@ -149,10 +154,10 @@ fun CurrentStatusAndLabelSection(
             Text(
                 modifier = Modifier
                     .padding(horizontal = 4.dp)
-                    .height(30.dp)
+                    .height(32.dp)
                     .clip(MaterialTheme.shapes.small)
                     .background(backgroundColor)
-                    .padding(horizontal = 12.dp, vertical = 2.dp)
+                    .padding(horizontal = 12.dp)
                     .wrapContentHeight(),
                 text = labelName,
                 style = MaterialTheme.typography.labelLarge.copy(color = color)
@@ -194,10 +199,10 @@ fun StatusIndicator(
             modifier = Modifier
                 .graphicsLayer { this.alpha = alpha.value }
                 .padding(horizontal = 4.dp)
-                .height(30.dp)
+                .height(32.dp)
                 .clip(MaterialTheme.shapes.small)
                 .background(backgroundColor)
-                .padding(6.dp)
+                .padding(5.dp)
         ) {
             Crossfade(isBreak, label = "label icon") {
                 if (it) {
@@ -237,10 +242,10 @@ fun StreakIndicator(
             Box(
                 modifier = Modifier
                     .padding(horizontal = 4.dp)
-                    .height(30.dp)
+                    .defaultMinSize(minHeight = 32.dp, minWidth = 32.dp)
                     .clip(MaterialTheme.shapes.small)
                     .background(backgroundColor)
-                    .padding(6.dp)
+                    .padding(start = 4.dp, end = 4.dp, bottom = 2.dp)
             ) {
                 val numerator = (streak % sessionsBeforeLongBreak).run {
                     plus(if (!isBreak) 1 else if (this == 0 && streak != 0) sessionsBeforeLongBreak else 0)
@@ -268,15 +273,25 @@ fun FractionText(
 
     val baseStyle =
         MaterialTheme.typography.labelLarge.copy(
-            fontWeight = FontWeight.Black, color = color
-        )
+            fontWeight = FontWeight.Bold, color = color, fontSize = 1.2.em,
+            letterSpacing = TextUnit(0.0f, TextUnitType.Em)
+        ).toSpanStyle()
+
+    val annotatedString = buildAnnotatedString {
+        withStyle(baseStyle.copy(letterSpacing = TextUnit(-0.1f, TextUnitType.Em))) {
+            append(superscripts[numerator])
+        }
+        withStyle(baseStyle) {
+            append("⁄")
+        }
+        withStyle(baseStyle.copy(letterSpacing = TextUnit(-0.3f, TextUnitType.Em))) {
+            append(subscripts[denominator])
+        }
+    }
+
     Text(
-        modifier = modifier,
-        text = "${superscripts[numerator]}⁄${subscripts[denominator]}",
-        style = baseStyle.copy(
-            lineHeight = 0.01.em,
-            letterSpacing = 0.em
-        )
+        modifier = modifier.then(Modifier.padding(end = 1.dp)),
+        text = annotatedString
     )
 }
 
@@ -287,11 +302,11 @@ fun CurrentStatusAndLabelSectionPreview() {
         CurrentStatusAndLabelSection(
             color = MaterialTheme.localColorsPalette.colors[13],
             labelName = "Work",
-            isBreak = true,
+            isBreak = false,
             isActive = true,
             isPaused = false,
-            streak = 0,
-            sessionsBeforeLongBreak = 4,
+            streak = 2,
+            sessionsBeforeLongBreak = 3,
             showStatus = true,
             showStreak = true,
             showLabel = true

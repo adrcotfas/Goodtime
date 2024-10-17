@@ -18,6 +18,7 @@ import com.apps.adrcotfas.goodtime.bl.TimerType
 import com.apps.adrcotfas.goodtime.shared.R as SharedR
 
 //TODO: count-up should have a stop button action
+//TODO: add break icon to break notifications
 class NotificationArchManager(private val context: Context, private val activityClass: Class<*>) {
 
     private val notificationManager: NotificationManager =
