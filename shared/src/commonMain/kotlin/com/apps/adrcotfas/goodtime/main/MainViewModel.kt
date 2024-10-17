@@ -170,7 +170,7 @@ class MainViewModel(
                     timerStyle = uiSettings.timerStyle.copy(
                         minSize = floor(maxSize / 1.5f),
                         maxSize = maxSize,
-                        fontSize = floor(maxSize * 0.75f),
+                        fontSize = floor(maxSize * 0.9f),
                         currentScreenWidth = screenWidth
                     )
                 )
