@@ -1,12 +1,10 @@
 package com.apps.adrcotfas.goodtime.settings.user_interface
 
 import android.content.res.Configuration
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,14 +37,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.apps.adrcotfas.goodtime.bl.TimerState
 import com.apps.adrcotfas.goodtime.common.prettyName
 import com.apps.adrcotfas.goodtime.common.prettyNames
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.TimerStyleData
 import com.apps.adrcotfas.goodtime.labels.add_edit.SliderRow
-import com.apps.adrcotfas.goodtime.main.CurrentStatusAndLabelSection
+import com.apps.adrcotfas.goodtime.main.MainTimerView
 import com.apps.adrcotfas.goodtime.main.MainViewModel
-import com.apps.adrcotfas.goodtime.main.TimerTextView
+import com.apps.adrcotfas.goodtime.main.TimerUiState
 import com.apps.adrcotfas.goodtime.ui.TimerFont
 import com.apps.adrcotfas.goodtime.ui.common.CheckboxPreference
 import com.apps.adrcotfas.goodtime.ui.common.DropdownMenuPreference
@@ -216,7 +215,6 @@ fun TimerStyleScreen(viewModel: MainViewModel = koinViewModel(), onNavigateBack:
                                 modifier = Modifier.weight(0.33f),
                                 title = "Label",
                                 checked = timerStyle.showLabel,
-                                clickable = randomLabelIndex.intValue != -1,
                                 onCheckedChange = {
                                     viewModel.setShowLabel(it)
                                 })
@@ -239,7 +237,6 @@ fun TimerStyleScreen(viewModel: MainViewModel = koinViewModel(), onNavigateBack:
                     ) {
                         val index =
                             if (randomLabelIndex.intValue == -1) Label.DEFAULT_LABEL_COLOR_INDEX.toInt() else randomLabelIndex.intValue
-                        val labelColor = MaterialTheme.localColorsPalette.colors[index]
 
                         val demoLabelNames = listOf(
                             "algebra",
@@ -263,32 +260,23 @@ fun TimerStyleScreen(viewModel: MainViewModel = koinViewModel(), onNavigateBack:
                             "ecology",
                             "nanophotonics"
                         )
-                        assert(lightPalette.lastIndex == demoLabelNames.lastIndex)
-                        AnimatedVisibility(timerStyle.showLabel || timerStyle.showStatus || timerStyle.showStreak) {
-                            CurrentStatusAndLabelSection(
-                                color = labelColor,
-                                labelName = randomLabelIndex.intValue.let {
-                                    if (it == -1) Label.DEFAULT_LABEL_NAME else demoLabelNames[it]
-                                },
-                                isBreak = false,
-                                isActive = true,
-                                isPaused = false,
-                                streak = 0,
-                                sessionsBeforeLongBreak = 4,
-                                showStatus = timerStyle.showStatus,
-                                showStreak = timerStyle.showStreak,
-                                showLabel = timerStyle.showLabel
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        TimerTextView(
-                            isPaused = false,
-                            timerStyle = timerStyle,
-                            millis = if (timerStyle.minutesOnly) 25.minutes.inWholeMilliseconds else 25.minutes.plus(
+                        val timerUiState = TimerUiState(
+                            baseTime = if (timerStyle.minutesOnly) 25.minutes.inWholeMilliseconds else 25.minutes.plus(
                                 34.seconds
                             ).inWholeMilliseconds,
-                            color = labelColor,
-                            onPress = { })
+                            timerState = TimerState.RUNNING,
+                            sessionsBeforeLongBreak = 4
+                        )
+                        assert(lightPalette.lastIndex == demoLabelNames.lastIndex)
+
+                        MainTimerView(
+                            timerUiState,
+                            timerStyle,
+                            Label(name = randomLabelIndex.intValue.let {
+                                if (it == -1) Label.DEFAULT_LABEL_NAME else demoLabelNames[it]
+                            }, colorIndex = index.toLong()),
+                            {},
+                            {})
                     }
                 }
             }

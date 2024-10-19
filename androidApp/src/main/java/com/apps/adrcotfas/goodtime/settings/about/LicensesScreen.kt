@@ -39,7 +39,7 @@ fun LicensesScreen(onNavigateBack: () -> Unit) {
                     .padding(it)
                     .fillMaxSize()
             ) {
-                LibrariesContainer(showLicenseBadges = false, showAuthor = false)
+                LibrariesContainer(showLicenseBadges = false, showAuthor = true)
             }
         }
     )

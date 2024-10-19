@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -62,9 +61,9 @@ class MainActivity : ComponentActivity(), KoinComponent {
             val coroutineScope = rememberCoroutineScope()
 
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-            val workSessionIsInProgress by viewModel.timerState.map { it.workSessionIsInProgress() }
+            val workSessionIsInProgress by viewModel.timerUiState.map { it.workSessionIsInProgress() }
                 .collectAsStateWithLifecycle(false)
-            val isActive by viewModel.timerState.map { it.isActive() }
+            val isActive by viewModel.timerUiState.map { it.isActive() }
                 .collectAsStateWithLifecycle(false)
 
             val fullscreenMode = uiState.isMainScreen && uiState.fullscreenMode && isActive

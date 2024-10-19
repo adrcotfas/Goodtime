@@ -19,6 +19,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,68 +49,67 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.apps.adrcotfas.goodtime.bl.TimeUtils.formatMilliseconds
+import com.apps.adrcotfas.goodtime.bl.TimerType
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.TimerStyleData
 import com.apps.adrcotfas.goodtime.shared.R
 import com.apps.adrcotfas.goodtime.ui.ApplicationTheme
+import com.apps.adrcotfas.goodtime.ui.common.hideUnless
 import com.apps.adrcotfas.goodtime.ui.localColorsPalette
 import com.apps.adrcotfas.goodtime.ui.timerTextStyles
 import kotlinx.coroutines.delay
 
+//TODO add another status indicator for the break budget. imagine a bag with a number [ (bag) 3' ]
 @Composable
-fun TimerTextView(
-    millis: Long,
-    color: Color,
+fun MainTimerView(
+    timerUiState: TimerUiState,
     timerStyle: TimerStyleData,
-    isPaused: Boolean,
-    onPress: () -> Unit
+    label: Label,
+    onStart: () -> Unit,
+    onToggle: () -> Unit
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val pressed by interactionSource.collectIsPressedAsState()
-    val scale by animateFloatAsState(
-        targetValue = if (pressed) 0.96f else 1f,
-        animationSpec = tween(durationMillis = 100),
-        label = "timer scale"
-    )
 
-    val alpha = remember { Animatable(1f) }
-    LaunchedEffect(isPaused) {
-        if (isPaused) {
-            delay(200)
-            alpha.animateTo(
-                targetValue = 0.3f, animationSpec = infiniteRepeatable(
-                    animation = tween(1000, easing = EaseInOut),
-                    repeatMode = RepeatMode.Reverse
-                )
+    val labelColorIndex = label.colorIndex
+    val labelColor = MaterialTheme.localColorsPalette.colors[labelColorIndex.toInt()]
+    val isBreak = timerUiState.timerType != TimerType.WORK
+
+    if (timerStyle.minSize != TimerStyleData.INVALID_MIN_SIZE) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            CurrentStatusSection(
+                Modifier.hideUnless(timerUiState.isActive()),
+                color = labelColor,
+                isBreak = isBreak,
+                isActive = timerUiState.isActive(),
+                isPaused = timerUiState.isPaused(),
+                streak = timerUiState.longBreakData.streak,
+                sessionsBeforeLongBreak = timerUiState.sessionsBeforeLongBreak,
+                showStatus = timerStyle.showStatus,
+                showStreak = timerStyle.showStreak
             )
-        } else {
-            alpha.animateTo(targetValue = 1f, animationSpec = tween(200))
+
+            TimerTextView(
+                isPaused = timerUiState.isPaused(),
+                timerStyle = timerStyle,
+                millis = timerUiState.baseTime,
+                color = labelColor,
+                onPress = { if (!timerUiState.isActive()) onStart() else onToggle() })
+            LabelSection(
+                showLabel = timerStyle.showLabel,
+                labelName = label.name,
+                color = labelColor
+            )
         }
     }
-
-    Text(
-        modifier = Modifier
-            .graphicsLayer(scaleX = scale, scaleY = scale, alpha = alpha.value)
-            .clickable(
-                indication = null,
-                interactionSource = interactionSource,
-                onClick = {
-                    onPress()
-                }
-            ),
-        text = millis.formatMilliseconds(timerStyle.minutesOnly),
-        style = TextStyle(
-            fontSize = timerStyle.inUseFontSize().em,
-            fontFamily = timerTextStyles[timerStyle.fontIndex]!![timerStyle.fontWeight],
-            color = color
-        ),
-    )
 }
 
 @Composable
-fun CurrentStatusAndLabelSection(
+fun CurrentStatusSection(
+    modifier: Modifier = Modifier,
     color: Color,
-    labelName: String,
     isBreak: Boolean,
     isActive: Boolean,
     isPaused: Boolean,
@@ -117,52 +117,33 @@ fun CurrentStatusAndLabelSection(
     sessionsBeforeLongBreak: Int,
     showStatus: Boolean,
     showStreak: Boolean,
-    showLabel: Boolean,
 ) {
     val statusColor = color.copy(alpha = 0.75f)
-    val statusBackgroundColor = color.copy(alpha = 0.2f)
-    val backgroundColor = color.copy(alpha = 0.3f)
+    val statusBackgroundColor = color.copy(alpha = 0.15f)
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier
+            .height(32.dp)
+            .fillMaxWidth()
+            .hideUnless(isActive),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
-
         StatusIndicator(
             showStatus = showStatus,
             isPaused = isPaused,
             isBreak = isBreak,
-            isActive = isActive,
             color = statusColor,
             backgroundColor = statusBackgroundColor
         )
-
         StreakIndicator(
             showStreak = showStreak,
-            isActive = isActive,
             isBreak = isBreak,
             streak = streak,
             sessionsBeforeLongBreak = sessionsBeforeLongBreak,
             color = statusColor,
             backgroundColor = statusBackgroundColor
         )
-
-        AnimatedVisibility(
-            labelName != Label.DEFAULT_LABEL_NAME && showLabel
-        ) {
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = 4.dp)
-                    .height(32.dp)
-                    .clip(MaterialTheme.shapes.small)
-                    .background(backgroundColor)
-                    .padding(horizontal = 12.dp)
-                    .wrapContentHeight(),
-                text = labelName,
-                style = MaterialTheme.typography.labelLarge.copy(color = color)
-            )
-        }
     }
 }
 
@@ -171,7 +152,6 @@ fun StatusIndicator(
     showStatus: Boolean,
     isPaused: Boolean,
     isBreak: Boolean,
-    isActive: Boolean,
     color: Color,
     backgroundColor: Color
 ) {
@@ -191,9 +171,9 @@ fun StatusIndicator(
     }
 
     AnimatedVisibility(
-        showStatus && isActive,
+        showStatus,
         enter = fadeIn() + expandHorizontally(),
-        exit = fadeOut() + shrinkHorizontally(),
+        exit = fadeOut() + shrinkHorizontally()
     ) {
         Box(
             modifier = Modifier
@@ -226,7 +206,6 @@ fun StatusIndicator(
 @Composable
 fun StreakIndicator(
     showStreak: Boolean,
-    isActive: Boolean,
     isBreak: Boolean,
     streak: Int,
     sessionsBeforeLongBreak: Int,
@@ -235,9 +214,9 @@ fun StreakIndicator(
 ) {
     if (sessionsBeforeLongBreak >= 2) {
         AnimatedVisibility(
-            showStreak && isActive,
+            showStreak,
             enter = fadeIn() + expandHorizontally(),
-            exit = fadeOut() + shrinkHorizontally(),
+            exit = fadeOut() + shrinkHorizontally()
         ) {
             Box(
                 modifier = Modifier
@@ -295,21 +274,87 @@ fun FractionText(
     )
 }
 
+@Composable
+fun TimerTextView(
+    millis: Long,
+    color: Color,
+    timerStyle: TimerStyleData,
+    isPaused: Boolean,
+    onPress: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (pressed) 0.96f else 1f,
+        animationSpec = tween(durationMillis = 100),
+        label = "timer scale"
+    )
+
+    val alpha = remember { Animatable(1f) }
+    LaunchedEffect(isPaused) {
+        if (isPaused) {
+            delay(200)
+            alpha.animateTo(
+                targetValue = 0.3f, animationSpec = infiniteRepeatable(
+                    animation = tween(1000, easing = EaseInOut),
+                    repeatMode = RepeatMode.Reverse
+                )
+            )
+        } else {
+            alpha.animateTo(targetValue = 1f, animationSpec = tween(200))
+        }
+    }
+
+    Text(
+        modifier = Modifier
+            .padding(vertical = 8.dp)
+            .graphicsLayer(scaleX = scale, scaleY = scale, alpha = alpha.value)
+            .clickable(
+                indication = null,
+                interactionSource = interactionSource,
+                onClick = {
+                    onPress()
+                }
+            ),
+        text = millis.formatMilliseconds(timerStyle.minutesOnly),
+        style = TextStyle(
+            fontSize = timerStyle.inUseFontSize().em,
+            fontFamily = timerTextStyles[timerStyle.fontIndex]!![timerStyle.fontWeight],
+            color = color
+        ),
+    )
+}
+
+@Composable
+fun LabelSection(showLabel: Boolean, labelName: String, color: Color) {
+    val backgroundColor = color.copy(alpha = 0.3f)
+    Text(
+        modifier = Modifier
+            .hideUnless(labelName != Label.DEFAULT_LABEL_NAME && showLabel)
+            .padding(horizontal = 4.dp)
+            .height(32.dp)
+            .clip(MaterialTheme.shapes.small)
+            .background(backgroundColor)
+            .padding(horizontal = 12.dp)
+            .wrapContentHeight(),
+        text = labelName,
+        style = MaterialTheme.typography.labelLarge.copy(color = color)
+    )
+}
+
 @Preview
 @Composable
-fun CurrentStatusAndLabelSectionPreview() {
+fun CurrentStatusSectionPreview() {
     ApplicationTheme {
-        CurrentStatusAndLabelSection(
+        CurrentStatusSection(
             color = MaterialTheme.localColorsPalette.colors[13],
-            labelName = "Work",
             isBreak = false,
             isActive = true,
             isPaused = false,
             streak = 2,
             sessionsBeforeLongBreak = 3,
             showStatus = true,
-            showStreak = true,
-            showLabel = true
+            showStreak = true
         )
     }
 }

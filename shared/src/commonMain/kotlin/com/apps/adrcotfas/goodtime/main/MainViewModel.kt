@@ -72,7 +72,7 @@ class MainViewModel(
     private val localDataRepository: LocalDataRepository
 ) : ViewModel() {
 
-    val timerState: Flow<TimerUiState> = timerManager.timerData.flatMapLatest {
+    val timerUiState: Flow<TimerUiState> = timerManager.timerData.flatMapLatest {
         when (it.state) {
             TimerState.RUNNING -> flow {
                 while (it.state == TimerState.RUNNING) {
@@ -119,7 +119,7 @@ class MainViewModel(
 
     }
 
-    fun startTimer(type: TimerType) {
+    fun startTimer(type: TimerType = TimerType.WORK) {
         timerManager.start(type)
     }
 

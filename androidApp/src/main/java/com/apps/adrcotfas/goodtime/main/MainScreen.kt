@@ -1,13 +1,13 @@
 package com.apps.adrcotfas.goodtime.main
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,7 +20,7 @@ import com.apps.adrcotfas.goodtime.bl.TimerType
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.TimerStyleData
 import com.apps.adrcotfas.goodtime.settings.user_interface.InitTimerStyle
-import com.apps.adrcotfas.goodtime.ui.localColorsPalette
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.koinViewModel
 
@@ -29,86 +29,68 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
 
     InitTimerStyle(viewModel)
 
-    val timerState by viewModel.timerState.collectAsStateWithLifecycle(TimerUiState())
-
+    val timerUiState by viewModel.timerUiState.collectAsStateWithLifecycle(TimerUiState())
     val timerStyle by viewModel.uiState.map { it.timerStyle }
         .collectAsStateWithLifecycle(TimerStyleData(minSize = TimerStyleData.INVALID_MIN_SIZE))
-
-    val label by viewModel.uiState.map { it.label }
+    val label by viewModel.uiState.map { it.label }.filterNotNull()
         .collectAsStateWithLifecycle(Label.defaultLabel())
-    val labelColorIndex = label?.colorIndex ?: Label.DEFAULT_LABEL_COLOR_INDEX
-    val labelColor = MaterialTheme.localColorsPalette.colors[labelColorIndex.toInt()]
 
-    val isCountdown = timerState.isCountdown
-    val isBreak = timerState.timerType != TimerType.WORK
+    //TODO:
+    // dialcontrol should be accessible only by dragging from the timer, not anywhere on the screen
+    //TODO: add tooltips to the selected dial like in the original app
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        if (timerStyle.minSize != TimerStyleData.INVALID_MIN_SIZE) {
-            label?.let {
-                CurrentStatusAndLabelSection(
-                    color = labelColor,
-                    labelName = it.name,
-                    isBreak = isBreak,
-                    isActive = timerState.isActive(),
-                    isPaused = timerState.isPaused(),
-                    streak = timerState.longBreakData.streak,
-                    sessionsBeforeLongBreak = timerState.sessionsBeforeLongBreak,
-                    showStatus = timerStyle.showStatus,
-                    showStreak = timerStyle.showStreak,
-                    showLabel = timerStyle.showLabel
-                )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            TimerTextView(
-                isPaused = timerState.isPaused(),
+    //TODO: haptic feedback to the timer pause/resume and other actions
+
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            MainTimerView(
+                timerUiState = timerUiState,
                 timerStyle = timerStyle,
-                millis = timerState.baseTime,
-                color = labelColor,
-                onPress = { if (!timerState.isActive()) viewModel.startTimer(TimerType.WORK) else viewModel.toggleTimer() })
-        }
-        if (isCountdown) {
+                label = label,
+                onStart = viewModel::startTimer,
+                onToggle = viewModel::toggleTimer
+            )
 
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-        if (false) {
-
-            Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                Button(
-                    onClick = {
-                        viewModel.startTimer(TimerType.WORK)
-                    }
+            Spacer(modifier = Modifier.height(64.dp))
+            if (true) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("start timer")
-                }
-                if (timerState.timerState != TimerState.RESET) {
                     Button(
                         onClick = {
-                            viewModel.next()
+                            viewModel.startTimer(TimerType.WORK)
                         }
                     ) {
-                        Text("next")
+                        Text("start timer")
+                    }
+                    if (timerUiState.timerState != TimerState.RESET) {
+                        Button(
+                            onClick = {
+                                viewModel.next()
+                            }
+                        ) {
+                            Text("next")
+                        }
+                        Button(
+                            onClick = {
+                                viewModel.finishTimer()
+                            }
+                        ) {
+                            Text("finish")
+                        }
                     }
                     Button(
                         onClick = {
-                            viewModel.finishTimer()
+                            viewModel.resetTimer()
                         }
                     ) {
-                        Text("finish")
+                        Text("stop")
                     }
-                }
-                Button(
-                    onClick = {
-                        viewModel.resetTimer()
-                    }
-                ) {
-                    Text("stop")
                 }
             }
         }
+
     }
+
 }
