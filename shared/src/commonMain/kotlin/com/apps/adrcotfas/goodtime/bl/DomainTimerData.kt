@@ -16,11 +16,12 @@ data class DomainTimerData(
     val timerProfile: TimerProfile? = null,
     val startTime: Long = 0, // millis since boot
     val lastStartTime: Long = 0, // millis since boot
+    val lastPauseTime: Long = 0, // millis since boot
     val endTime: Long = 0, // millis since boot
     val remainingTimeAtPause: Long = 0, // millis
     val state: TimerState = TimerState.RESET,
     val type: TimerType = TimerType.WORK,
-    val pausedTime: Long = 0, // millis
+    val pausedTime: Long = 0, // millis spent in pause
 
     /**
      * This is persisted in the settings too for cases where the app is killed.
@@ -72,9 +73,22 @@ enum class TimerState {
     RESET, RUNNING, PAUSED, FINISHED
 }
 
+val TimerState.isRunning: Boolean
+    get() = this == TimerState.RUNNING
+
+val TimerState.isPaused : Boolean
+    get() = this == TimerState.PAUSED
+
+val TimerState.isActive : Boolean
+    get() = isRunning || isPaused
+
+
 enum class TimerType {
     WORK, BREAK, LONG_BREAK
 }
+
+val TimerType.isBreak: Boolean
+    get() = this != TimerType.WORK
 
 fun DomainTimerData.getBaseTime(timerProvider: TimeProvider): Long {
     if (timerProfile == null) {

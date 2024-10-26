@@ -4,6 +4,7 @@ import com.apps.adrcotfas.goodtime.data.local.DatabaseExt.invoke
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.Session
 import com.apps.adrcotfas.goodtime.data.model.TimerProfile
+import com.apps.adrcotfas.goodtime.data.model.TimerProfile.Companion.DEFAULT_WORK_DURATION
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlin.test.BeforeTest
@@ -206,10 +207,13 @@ class LocalDataRepositoryTest {
             timerProfile = TimerProfile(),
             isArchived = false
         )
+
+        private val DEFAULT_DURATION = DEFAULT_WORK_DURATION.minutes.inWholeMilliseconds
+
         private var session = Session(
             id = 0,
             startTimestamp = 0,
-            endTimestamp = 25.minutes.inWholeMilliseconds,
+            endTimestamp = DEFAULT_DURATION,
             duration = 25,
             label = Label.DEFAULT_LABEL_NAME,
             notes = null,

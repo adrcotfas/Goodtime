@@ -22,7 +22,7 @@ class TimerService : Service(), KoinComponent {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val data = timerManager.timerData.value
-        log.i { "onStartCommand: ${intent.action}" }
+        log.v { "onStartCommand: ${intent.action}" }
         when (intent.action) {
             Action.StartOrUpdate.name -> {
                 notificationManager.clearFinishedNotification()

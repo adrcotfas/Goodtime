@@ -41,7 +41,7 @@ class AlarmManagerHandler(
     // USE_EXACT_ALARM permission is used instead which is granted at install and cannot be revoked
     @SuppressLint("MissingPermission")
     private fun setAlarm(triggerAtMillis: Long) {
-        log.i { "Set alarm in ${(triggerAtMillis - timeProvider.elapsedRealtime()).formatMilliseconds()} from now" }
+        log.v { "Set alarm in ${(triggerAtMillis - timeProvider.elapsedRealtime()).formatMilliseconds()} from now" }
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.ELAPSED_REALTIME_WAKEUP,
             triggerAtMillis,
@@ -50,7 +50,7 @@ class AlarmManagerHandler(
     }
 
     private fun cancelAlarm() {
-        log.i { "Cancel the alarm" }
+        log.v { "Cancel the alarm" }
         alarmManager.cancel(getAlarmPendingIntent())
     }
 

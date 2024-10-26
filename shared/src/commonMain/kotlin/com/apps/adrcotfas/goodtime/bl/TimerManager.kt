@@ -145,7 +145,7 @@ class TimerManager(
 
     fun addOneMinute() {
         val data = timerData.value
-        if (data.state != TimerState.RUNNING) {
+        if (!data.state.isActive) {
             log.e { "Trying to add one minute when the timer is not running" }
             return
         }
@@ -157,6 +157,9 @@ class TimerManager(
         _timerData.update {
             it.copy(
                 endTime = it.endTime + 1.minutes.inWholeMilliseconds,
+                remainingTimeAtPause = if (data.state.isPaused) {
+                    it.remainingTimeAtPause + 1.minutes.inWholeMilliseconds
+                } else 0
             )
         }
         log.i { "Added one minute" }
@@ -172,9 +175,11 @@ class TimerManager(
     }
 
     private fun pause() {
+        val elapsedRealtime = timeProvider.elapsedRealtime()
         _timerData.update {
             it.copy(
-                remainingTimeAtPause = it.endTime - timeProvider.elapsedRealtime(),
+                remainingTimeAtPause = it.endTime - elapsedRealtime,
+                lastPauseTime = elapsedRealtime,
                 state = TimerState.PAUSED
             )
         }
@@ -183,22 +188,30 @@ class TimerManager(
     }
 
     private fun resume() {
-        val data = timerData.value
         val elapsedRealTime = timeProvider.elapsedRealtime()
-        val durationToFinish = data.getDuration()
-        val pausedTime =
-            data.pausedTime + elapsedRealTime - (durationToFinish - data.remainingTimeAtPause)
+        updatePausedTime()
         _timerData.update {
             it.copy(
                 lastStartTime = elapsedRealTime,
                 endTime = it.remainingTimeAtPause + elapsedRealTime,
                 state = TimerState.RUNNING,
-                remainingTimeAtPause = 0,
-                pausedTime = pausedTime
+                remainingTimeAtPause = 0
             )
         }
         log.i { "Resumed: ${timerData.value}" }
         listeners.forEach { it.onEvent(Event.Start(endTime = timerData.value.endTime)) }
+    }
+
+    private fun updatePausedTime() {
+        val data = timerData.value
+        if (data.lastPauseTime != 0L) {
+            val elapsedRealTime = timeProvider.elapsedRealtime()
+            val pausedTime =  data.pausedTime + elapsedRealTime - data.lastPauseTime
+            log.i { "Paused time: ${pausedTime.milliseconds}" }
+            _timerData.update {
+                it.copy(pausedTime = pausedTime, lastPauseTime = 0)
+            }
+        }
     }
 
     fun next(updateWorkTime: Boolean = false) {
@@ -306,7 +319,10 @@ class TimerManager(
         }
     }
 
-    private fun handleFinishedSession(updateWorkTime: Boolean = false, isManualAction: Boolean) {
+    private fun handleFinishedSession(
+        updateWorkTime: Boolean = false,
+        isManualAction: Boolean
+    ) {
         val data = timerData.value
         val state = data.state
         val isWork = data.type == TimerType.WORK
@@ -344,6 +360,7 @@ class TimerManager(
     }
 
     private fun createFinishedSession(): Session? {
+        updatePausedTime()
         val data = timerData.value
         val isWork = data.type == TimerType.WORK
 
@@ -351,24 +368,25 @@ class TimerManager(
 
         val durationToSave = if (isWork) {
             val justWorkTime =
-                (totalDuration - data.pausedTime + WIGGLE_ROOM_MILLIS).milliseconds.inWholeMinutes
+                (totalDuration - data.pausedTime + WIGGLE_ROOM_MILLIS).milliseconds
             justWorkTime
         } else {
-            totalDuration.milliseconds.inWholeMinutes
+            totalDuration.milliseconds
         }
 
-        if (durationToSave < 1) {
-            log.i { "The session was shorter than 1 minute: $durationToSave millis" }
+        val durationToSaveMinutes = durationToSave.inWholeMinutes
+        if (durationToSaveMinutes < 1) {
+            log.i { "The session was shorter than 1 minute: $durationToSave" }
             return null
         }
 
-        val startTimeMillis = timeProvider.now() - totalDuration
-        val endTimeInMillis = timeProvider.now()
+        val startTimeMillis = data.startTime
+        val endTimeInMillis = timeProvider.elapsedRealtime()
 
         return Session.create(
             startTimeMillis,
             endTimeInMillis,
-            durationToSave,
+            durationToSaveMinutes,
             data.requireLabelName(),
             isWork
         )

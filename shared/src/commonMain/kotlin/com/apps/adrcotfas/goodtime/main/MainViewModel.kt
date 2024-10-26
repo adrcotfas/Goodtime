@@ -8,6 +8,9 @@ import com.apps.adrcotfas.goodtime.bl.TimerManager
 import com.apps.adrcotfas.goodtime.bl.TimerState
 import com.apps.adrcotfas.goodtime.bl.TimerType
 import com.apps.adrcotfas.goodtime.bl.getBaseTime
+import com.apps.adrcotfas.goodtime.bl.isActive
+import com.apps.adrcotfas.goodtime.bl.isBreak
+import com.apps.adrcotfas.goodtime.bl.isPaused
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
@@ -40,14 +43,12 @@ data class TimerUiState(
     val isCountdown: Boolean = false
 ) {
     fun workSessionIsInProgress(): Boolean {
-        return (timerState == TimerState.RUNNING || timerState == TimerState.PAUSED)
-                && timerType == TimerType.WORK
+        return timerState.isActive && timerType == TimerType.WORK
     }
 
-    private val isRunning = timerState == TimerState.RUNNING
-    val isPaused = timerState == TimerState.PAUSED
-    val isActive = isRunning || isPaused
-    val isBreak = timerType != TimerType.WORK
+    val isPaused = timerState.isPaused
+    val isActive = timerState.isActive
+    val isBreak = timerType.isBreak
 }
 
 data class MainUiState(
