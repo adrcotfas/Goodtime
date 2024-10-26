@@ -53,7 +53,8 @@ class TimerService : Service(), KoinComponent {
             // actions triggered from the notification itself
             Action.Toggle.name -> timerManager.toggle()
             Action.AddOneMinute.name -> timerManager.addOneMinute()
-            Action.Next.name -> timerManager.next()
+            Action.Skip.name -> timerManager.next(finishActionType = FinishActionType.MANUAL_SKIP)
+            Action.Next.name -> timerManager.next(finishActionType = FinishActionType.MANUAL_NEXT)
             Action.DoReset.name -> timerManager.reset()
         }
 
@@ -69,6 +70,7 @@ class TimerService : Service(), KoinComponent {
             // actions triggered from the notification itself
             Toggle,
             AddOneMinute,
+            Skip,
             Next,
             DoReset
         }

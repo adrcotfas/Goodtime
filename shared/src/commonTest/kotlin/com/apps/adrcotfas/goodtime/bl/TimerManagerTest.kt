@@ -359,8 +359,8 @@ class TimerManagerTest {
                 labelName = defaultLabel.name,
                 timerProfile = defaultLabel.timerProfile,
                 longBreakData = LongBreakData(
-                    streak = 1,
-                    lastWorkEndTime = timeProvider.now
+                    streak = 0,
+                    lastWorkEndTime = 0
                 )
             ),
             "the timer should have been reset"
@@ -391,8 +391,8 @@ class TimerManagerTest {
                 labelName = defaultLabel.name,
                 timerProfile = defaultLabel.timerProfile,
                 longBreakData = LongBreakData(
-                    streak = 1,
-                    lastWorkEndTime = timeProvider.now
+                    streak = 0,
+                    lastWorkEndTime = 0
                 )
             ),
             "the timer should have been reset"
@@ -411,13 +411,16 @@ class TimerManagerTest {
         assertEquals(timerManager.timerData.value.longBreakData.streak, 0)
         timerManager.start(TimerType.WORK)
         timeProvider.elapsedRealtime += 1
-        timerManager.next()
+        timerManager.skip()
+        timerManager.reset()
         assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
         timeProvider.elapsedRealtime += 1
+        timerManager.skip()
         timerManager.reset()
         assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
         timerManager.start(TimerType.WORK)
         timeProvider.elapsedRealtime += 1
+        timerManager.skip()
         timerManager.reset()
         assertEquals(timerManager.timerData.value.longBreakData.streak, 2)
         timerManager.start(TimerType.WORK)
@@ -431,15 +434,12 @@ class TimerManagerTest {
         assertEquals(timerManager.timerData.value.longBreakData.streak, 0)
         timerManager.start(TimerType.WORK)
         timeProvider.elapsedRealtime += 1
-        timerManager.reset()
-        assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
-        timerManager.start(TimerType.WORK)
         timerManager.toggle()
         val twoHours = 2.hours.inWholeMilliseconds
         timeProvider.elapsedRealtime += twoHours
         timerManager.toggle()
         timerManager.finish()
-        assertEquals(timerManager.timerData.value.longBreakData.streak, 2)
+        assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
     }
 
 
@@ -479,18 +479,22 @@ class TimerManagerTest {
         timerManager.start(TimerType.WORK)
         val twoMinutes = 2.minutes.inWholeMilliseconds
         timeProvider.elapsedRealtime += twoMinutes
+        timerManager.finish()
         timerManager.reset()
         assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
         timerManager.start(TimerType.WORK)
         timeProvider.elapsedRealtime += twoMinutes
+        timerManager.finish()
         timerManager.reset()
         assertEquals(timerManager.timerData.value.longBreakData.streak, 2)
         timerManager.start(TimerType.WORK)
         timeProvider.elapsedRealtime += twoMinutes
+        timerManager.finish()
         timerManager.reset()
         assertEquals(timerManager.timerData.value.longBreakData.streak, 3)
         timerManager.start(TimerType.WORK)
         timeProvider.elapsedRealtime += twoMinutes
+        timerManager.finish()
         timerManager.next()
         assertEquals(timerManager.timerData.value.longBreakData.streak, 4)
         assertEquals(timerManager.timerData.value.type, TimerType.LONG_BREAK)
@@ -502,22 +506,25 @@ class TimerManagerTest {
         timerManager.start(TimerType.WORK)
         val twoMinutes = 2.minutes.inWholeMilliseconds
         timeProvider.elapsedRealtime += twoMinutes
-        timerManager.reset()
+        timerManager.skip()
+        timerManager.skip()
         assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
         timerManager.start(TimerType.WORK)
         timeProvider.elapsedRealtime += twoMinutes
-        timerManager.reset()
+        timerManager.skip()
+        timerManager.skip()
         assertEquals(timerManager.timerData.value.longBreakData.streak, 2)
         timerManager.start(TimerType.WORK)
         timeProvider.elapsedRealtime += twoMinutes
         timeProvider.now += twoMinutes
-        timerManager.reset()
+        timerManager.skip()
+        timerManager.skip()
         assertEquals(timerManager.timerData.value.longBreakData.streak, 3)
         val oneHour = 1.hours.inWholeMilliseconds
         timeProvider.elapsedRealtime += oneHour
         timerManager.start(TimerType.WORK)
         timeProvider.elapsedRealtime += twoMinutes
-        timerManager.next()
+        timerManager.skip()
         assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
         assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
     }
@@ -528,7 +535,7 @@ class TimerManagerTest {
         timerManager.start(TimerType.WORK)
         val twoMinutes = 2.minutes.inWholeMilliseconds
         timeProvider.elapsedRealtime += twoMinutes
-        timerManager.reset()
+        timerManager.skip()
         assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
         val oneHour = 1.hours.inWholeMilliseconds
         timeProvider.elapsedRealtime += oneHour
@@ -540,7 +547,7 @@ class TimerManagerTest {
     fun `Auto-start break`() = runTest {
         settingsRepo.saveAutoStartBreak(true)
         timerManager.start(TimerType.WORK)
-        val workDuration = TimerProfile.DEFAULT_WORK_DURATION.minutes.inWholeMilliseconds
+        val workDuration = DEFAULT_DURATION
         timeProvider.elapsedRealtime += workDuration
         timerManager.finish()
         assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
@@ -557,7 +564,7 @@ class TimerManagerTest {
             )
         )
         timerManager.start(TimerType.WORK)
-        val workDuration = TimerProfile.DEFAULT_WORK_DURATION.minutes.inWholeMilliseconds
+        val workDuration = DEFAULT_WORK_DURATION.minutes.inWholeMilliseconds
         timeProvider.elapsedRealtime += workDuration
         timerManager.next()
         assertEquals(timerManager.timerData.value.type, TimerType.WORK)

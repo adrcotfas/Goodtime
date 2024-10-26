@@ -82,6 +82,11 @@ val TimerState.isPaused : Boolean
 val TimerState.isActive : Boolean
     get() = isRunning || isPaused
 
+val TimerState.isFinished : Boolean
+    get() = this == TimerState.FINISHED
+
+val TimerState.isReset : Boolean
+    get() = this == TimerState.RESET
 
 enum class TimerType {
     WORK, BREAK, LONG_BREAK
@@ -89,6 +94,9 @@ enum class TimerType {
 
 val TimerType.isBreak: Boolean
     get() = this != TimerType.WORK
+
+val TimerType.isWork: Boolean
+    get() = this == TimerType.WORK
 
 fun DomainTimerData.getBaseTime(timerProvider: TimeProvider): Long {
     if (timerProfile == null) {

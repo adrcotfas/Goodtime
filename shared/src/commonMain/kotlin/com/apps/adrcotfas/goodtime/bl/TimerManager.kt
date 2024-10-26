@@ -96,48 +96,56 @@ class TimerManager(
     }
 
     fun start(timerType: TimerType = timerData.value.type) {
-        if (timerData.value.timerProfile == null) {
+        val data = timerData.value
+        if (data.timerProfile == null) {
             log.e { "Trying to start the timer without a label" }
             return
         }
 
+        val isPaused = data.state.isPaused
         val elapsedRealTime = timeProvider.elapsedRealtime()
-        if (timerData.value.state == TimerState.PAUSED) {
-            _timerData.update {
-                it.copy(
-                    lastStartTime = elapsedRealTime,
-                    endTime = elapsedRealTime + it.remainingTimeAtPause,
-                    state = TimerState.RUNNING
+
+        val newTimerData = timerData.value.copy(
+            startTime = if (isPaused) {
+                data.startTime
+            } else {
+                elapsedRealTime
+            },
+            lastStartTime = elapsedRealTime,
+            endTime = if (isPaused) {
+                elapsedRealTime + data.remainingTimeAtPause
+            } else {
+                data.requireTimerProfile().endTime(
+                    timerType,
+                    elapsedRealTime
                 )
-            }
-        } else {
-            _timerData.update {
-                it.copy(
-                    startTime = elapsedRealTime,
-                    lastStartTime = elapsedRealTime,
-                    endTime = it.requireTimerProfile().endTime(
-                        timerType,
-                        elapsedRealTime
-                    ),
-                    type = timerType,
-                    state = TimerState.RUNNING,
-                    pausedTime = 0
-                )
-            }
-        }
+            },
+            state = TimerState.RUNNING,
+            type = if (isPaused) {
+                data.type
+            } else {
+                timerType
+            },
+            pausedTime = if (isPaused) {
+                data.pausedTime
+            } else {
+                0
+            },
+        )
+
+        _timerData.update { newTimerData }
 
         handlePersistentDataAtStart()
 
-        log.i { "Starting $timerType timer: ${timerData.value}" }
-        val autoStarted =
-            timerData.value.type == TimerType.WORK && settings.autoStartWork
-                    || timerData.value.type != TimerType.WORK && settings.autoStartBreak
+        log.i { "Starting $timerType timer: $data" }
+        val autoStarted = (timerType.isWork && settings.autoStartWork)
+                || (timerType.isBreak && settings.autoStartBreak)
 
         listeners.forEach {
             it.onEvent(
                 Event.Start(
                     autoStarted = autoStarted,
-                    endTime = timerData.value.endTime
+                    endTime = newTimerData.endTime
                 )
             )
         }
@@ -153,17 +161,19 @@ class TimerManager(
             log.e { "Trying to add a minute to a timer that is not a countdown" }
             return
         }
+        val newEndTime = data.endTime + 1.minutes.inWholeMilliseconds
+        val newRemainingTimeAtPause = if (data.state.isPaused) {
+            data.remainingTimeAtPause + 1.minutes.inWholeMilliseconds
+        } else 0
 
         _timerData.update {
             it.copy(
-                endTime = it.endTime + 1.minutes.inWholeMilliseconds,
-                remainingTimeAtPause = if (data.state.isPaused) {
-                    it.remainingTimeAtPause + 1.minutes.inWholeMilliseconds
-                } else 0
+                endTime = newEndTime,
+                remainingTimeAtPause = newRemainingTimeAtPause
             )
         }
         log.i { "Added one minute" }
-        listeners.forEach { it.onEvent(Event.AddOneMinute(timerData.value.endTime)) }
+        listeners.forEach { it.onEvent(Event.AddOneMinute(newEndTime)) }
     }
 
     fun toggle() {
@@ -206,7 +216,7 @@ class TimerManager(
         val data = timerData.value
         if (data.lastPauseTime != 0L) {
             val elapsedRealTime = timeProvider.elapsedRealtime()
-            val pausedTime =  data.pausedTime + elapsedRealTime - data.lastPauseTime
+            val pausedTime = data.pausedTime + elapsedRealTime - data.lastPauseTime
             log.i { "Paused time: ${pausedTime.milliseconds}" }
             _timerData.update {
                 it.copy(pausedTime = pausedTime, lastPauseTime = 0)
@@ -214,27 +224,47 @@ class TimerManager(
         }
     }
 
-    fun next(updateWorkTime: Boolean = false) {
+    /**
+     * Skips the current session and starts the next one.
+     * This is called manually by the user before a session is finished, interrupting the current session.
+     */
+    fun skip() {
+        nextInternal(updateWorkTime = false, finishActionType = FinishActionType.MANUAL_SKIP)
+    }
+
+    fun next(
+        updateWorkTime: Boolean = false,
+        finishActionType: FinishActionType = FinishActionType.MANUAL_NEXT
+    ) {
+        nextInternal(updateWorkTime, finishActionType)
+    }
+
+    /**
+     * Called automatically when autoStart is enabled and the time is up or manually at the end of a session.
+     */
+    private fun nextInternal(updateWorkTime: Boolean = false, finishActionType: FinishActionType) {
         val data = timerData.value
         val state = data.state
+        val timerProfile = data.timerProfile
+
         if (state == TimerState.RESET) {
             log.e { "Trying to start the next session but the timer is reset" }
             return
         }
-        if (data.timerProfile == null) {
+        if (timerProfile == null) {
             log.e { "Trying to start the next session without a profile" }
             return
         }
 
-        val isWork = data.type == TimerType.WORK
+        val isWork = data.type.isWork
         val isCountDown = data.requireTimerProfile().isCountdown
 
-        handleFinishedSession(updateWorkTime, isManualAction = true)
+        handleFinishedSession(updateWorkTime, finishActionType = finishActionType)
 
         _timerData.update { it.reset() }
 
         val nextType = when {
-            !isWork || (isWork && !data.timerProfile.isBreakEnabled) -> TimerType.WORK
+            !isWork || (isWork && !timerProfile.isBreakEnabled) -> TimerType.WORK
             !isCountDown -> TimerType.BREAK
             shouldConsiderStreak(timeProvider.elapsedRealtime()) -> TimerType.LONG_BREAK
             else -> TimerType.BREAK
@@ -249,11 +279,15 @@ class TimerManager(
      */
     fun finish() {
         val data = timerData.value
-        if (data.state == TimerState.RESET || data.state == TimerState.FINISHED) {
+        val state = data.state
+        val timerProfile = data.timerProfile
+        val type = data.type
+
+        if (state.isReset || state.isFinished) {
             log.e { "Trying to finish the timer when it is reset or finished" }
             return
         }
-        if (data.timerProfile == null) {
+        if (timerProfile == null) {
             log.e { "Trying to finish the timer without a profile" }
             return
         }
@@ -261,22 +295,22 @@ class TimerManager(
         _timerData.update { it.copy(state = TimerState.FINISHED) }
         log.i { "Finish: $data" }
 
-        handleFinishedSession(isManualAction = false)
+        handleFinishedSession(finishActionType = FinishActionType.AUTO)
 
         val autoStart =
-            settings.autoStartWork && (data.type != TimerType.WORK || !data.timerProfile.isBreakEnabled)
-                    || settings.autoStartBreak && data.type == TimerType.WORK && data.timerProfile.isBreakEnabled
+            settings.autoStartWork && (type.isBreak || !timerProfile.isBreakEnabled)
+                    || settings.autoStartBreak && type.isWork && timerProfile.isBreakEnabled
         log.i { "AutoStart: $autoStart" }
         listeners.forEach {
             it.onEvent(
                 Event.Finished(
-                    type = data.type,
+                    type = type,
                     autostartNextSession = autoStart
                 )
             )
         }
         if (autoStart) {
-            next()
+            next(finishActionType = FinishActionType.AUTO)
         }
     }
 
@@ -287,7 +321,7 @@ class TimerManager(
      *                       This is useful when the user missed the notification and continued working.
      * @see [finish]
      */
-    //TODO: implement logic for updateWorkTime
+//TODO: implement logic for updateWorkTime
     fun reset(updateWorkTime: Boolean = false) {
         val data = timerData.value
         if (data.state == TimerState.RESET) {
@@ -296,7 +330,7 @@ class TimerManager(
         }
         log.i { "Reset: $data" }
 
-        handleFinishedSession(updateWorkTime, isManualAction = true)
+        handleFinishedSession(updateWorkTime, finishActionType = FinishActionType.MANUAL_RESET)
 
         listeners.forEach { it.onEvent(Event.Reset) }
         _timerData.update { it.reset() }
@@ -321,19 +355,21 @@ class TimerManager(
 
     private fun handleFinishedSession(
         updateWorkTime: Boolean = false,
-        isManualAction: Boolean
+        finishActionType: FinishActionType
     ) {
         val data = timerData.value
-        val state = data.state
-        val isWork = data.type == TimerType.WORK
-        val isFinished = state == TimerState.FINISHED
+        val isWork = data.type.isWork
+        val isFinished = data.state.isFinished
         val isCountDown = data.requireTimerProfile().isCountdown
 
         val session = createFinishedSession()
         session?.let {
             if (isFinished && updateWorkTime) {
                 finishedSessionsHandler.updateSession(it)
-            } else if (!isFinished || (isFinished && !isManualAction)) {
+                return
+            } else if (!isFinished || (isFinished
+                        && (finishActionType != FinishActionType.MANUAL_NEXT))
+            ) {
                 finishedSessionsHandler.saveSession(it)
             }
 
@@ -354,7 +390,10 @@ class TimerManager(
             }
         }
 
-        if (isWork && ((isFinished && !isManualAction) || (!isFinished && isCountDown))) {
+        if (isWork && isCountDown
+            && (finishActionType == FinishActionType.AUTO
+                    || finishActionType == FinishActionType.MANUAL_SKIP)
+        ) {
             incrementStreak()
         }
     }
@@ -449,4 +488,11 @@ class TimerManager(
     companion object {
         const val WIGGLE_ROOM_MILLIS = 100
     }
+}
+
+enum class FinishActionType {
+    MANUAL_RESET,
+    MANUAL_SKIP,
+    MANUAL_NEXT,
+    AUTO
 }

@@ -112,7 +112,7 @@ class NotificationArchManager(private val context: Context, private val activity
             }
             val nextAction = createNotificationAction(
                 title = nextActionTitle,
-                action = TimerService.Companion.Action.Next
+                action = TimerService.Companion.Action.Skip
             )
             if (data.timerProfile?.isBreakEnabled == true) {
                 builder.addAction(nextAction)
