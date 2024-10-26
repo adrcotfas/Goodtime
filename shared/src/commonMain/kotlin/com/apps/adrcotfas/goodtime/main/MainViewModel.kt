@@ -14,7 +14,7 @@ import com.apps.adrcotfas.goodtime.bl.isPaused
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
-import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
+import com.apps.adrcotfas.goodtime.data.settings.ThemePreference
 import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.TimerStyleData
@@ -53,16 +53,15 @@ data class TimerUiState(
 
 data class MainUiState(
     val timerStyle: TimerStyleData = TimerStyleData(minSize = TimerStyleData.INVALID_MIN_SIZE),
-    val dynamicColor: Boolean = false,
-    val darkThemePreference: DarkModePreference = DarkModePreference.SYSTEM,
+    val darkThemePreference: ThemePreference = ThemePreference.SYSTEM,
     val fullscreenMode: Boolean = false,
     val dndDuringWork: Boolean = false,
     val isMainScreen: Boolean = true,
     val label: Label? = null
 ) {
     fun isDarkTheme(isSystemInDarkTheme: Boolean): Boolean {
-        return darkThemePreference == DarkModePreference.DARK ||
-                (darkThemePreference == DarkModePreference.SYSTEM && isSystemInDarkTheme)
+        return darkThemePreference == ThemePreference.DARK ||
+                (darkThemePreference == ThemePreference.SYSTEM && isSystemInDarkTheme)
     }
 }
 
@@ -98,8 +97,7 @@ class MainViewModel(
                     _uiState.update {
                         it.copy(
                             timerStyle = uiSettings.timerStyle,
-                            dynamicColor = uiSettings.useDynamicColor,
-                            darkThemePreference = uiSettings.darkModePreference,
+                            darkThemePreference = uiSettings.themePreference,
                             fullscreenMode = uiSettings.fullscreenMode,
                             dndDuringWork = uiSettings.dndDuringWork
                         )

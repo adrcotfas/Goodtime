@@ -40,7 +40,7 @@ import com.apps.adrcotfas.goodtime.common.findActivity
 import com.apps.adrcotfas.goodtime.common.getAppLanguage
 import com.apps.adrcotfas.goodtime.common.prettyName
 import com.apps.adrcotfas.goodtime.common.prettyNames
-import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
+import com.apps.adrcotfas.goodtime.data.settings.ThemePreference
 import com.apps.adrcotfas.goodtime.main.Destination
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel.Companion.firstDayOfWeekOptions
@@ -156,22 +156,13 @@ fun UserInterfaceScreen(
                     )
                 }
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    CheckboxPreference(
-                        title = "Use Dynamic Color",
-                        checked = settings.uiSettings.useDynamicColor
-                    ) {
-                        viewModel.setUseDynamicColor(it)
-                    }
-                }
-
                 DropdownMenuPreference(
-                    title = "Dark mode preference",
+                    title = "Theme",
                     //TODO: use localized strings instead
-                    value = settings.uiSettings.darkModePreference.prettyName(),
-                    dropdownMenuOptions = prettyNames<DarkModePreference>(),
+                    value = settings.uiSettings.themePreference.prettyName(),
+                    dropdownMenuOptions = prettyNames<ThemePreference>(),
                     onDropdownMenuItemSelected = {
-                        viewModel.setThemeOption(DarkModePreference.entries[it])
+                        viewModel.setThemeOption(ThemePreference.entries[it])
                     }
                 )
 

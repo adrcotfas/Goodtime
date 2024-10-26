@@ -3,7 +3,7 @@ package com.apps.adrcotfas.goodtime.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apps.adrcotfas.goodtime.data.settings.AppSettings
-import com.apps.adrcotfas.goodtime.data.settings.DarkModePreference
+import com.apps.adrcotfas.goodtime.data.settings.ThemePreference
 import com.apps.adrcotfas.goodtime.data.settings.NotificationPermissionState
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,11 +46,6 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
             AppSettings()
         )
 
-    fun setUseDynamicColor(enable: Boolean) {
-        viewModelScope.launch {
-            settingsRepository.saveUiSettings(settings.value.uiSettings.copy(useDynamicColor = enable))
-        }
-    }
 
     fun onToggleProductivityReminderDay(dayOfWeek: DayOfWeek) {
         viewModelScope.launch {
@@ -76,9 +71,9 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
         }
     }
 
-    fun setThemeOption(themePreference: DarkModePreference) {
+    fun setThemeOption(themePreference: ThemePreference) {
         viewModelScope.launch {
-            settingsRepository.saveUiSettings(settings.value.uiSettings.copy(darkModePreference = themePreference))
+            settingsRepository.saveUiSettings(settings.value.uiSettings.copy(themePreference = themePreference))
         }
     }
 

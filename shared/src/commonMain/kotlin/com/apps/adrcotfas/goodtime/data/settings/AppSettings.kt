@@ -51,8 +51,7 @@ data class ProductivityReminderSettings(
 @Serializable
 data class UiSettings(
     val timerStyle: TimerStyleData = TimerStyleData(),
-    val useDynamicColor: Boolean = false,
-    val darkModePreference: DarkModePreference = DarkModePreference.DARK,
+    val themePreference: ThemePreference = ThemePreference.DARK,
     val fullscreenMode: Boolean = false,
     val keepScreenOn: Boolean = true,
     val screensaverMode: Boolean = false,
@@ -60,7 +59,7 @@ data class UiSettings(
 )
 
 @Serializable
-enum class DarkModePreference {
+enum class ThemePreference {
     SYSTEM,
     LIGHT,
     DARK

@@ -71,7 +71,6 @@ class MainActivity : ComponentActivity(), KoinComponent {
                 mutableStateOf(fullscreenMode)
             }
 
-            val dynamicColor = uiState.dynamicColor
             val darkTheme = uiState.isDarkTheme(isSystemInDarkTheme())
 
             toggleKeepScreenOn(workSessionIsInProgress)
@@ -104,7 +103,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
                 onDispose {}
             }
 
-            ApplicationTheme(darkTheme = darkTheme, dynamicColor = dynamicColor) {
+            ApplicationTheme(darkTheme = darkTheme) {
                 val interactionSource = remember { MutableInteractionSource() }
                 Surface(
                     modifier = Modifier
