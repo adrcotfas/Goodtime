@@ -44,10 +44,10 @@ data class TimerUiState(
                 && timerType == TimerType.WORK
     }
 
-    fun isActive() = timerState != TimerState.RESET
-    fun isRunning() = timerState == TimerState.RUNNING
-    fun isPaused() = timerState == TimerState.PAUSED
-    fun isBreak() = timerType != TimerType.WORK
+    private val isRunning = timerState == TimerState.RUNNING
+    val isPaused = timerState == TimerState.PAUSED
+    val isActive = isRunning || isPaused
+    val isBreak = timerType != TimerType.WORK
 }
 
 data class MainUiState(
@@ -131,6 +131,10 @@ class MainViewModel(
         timerManager.reset()
     }
 
+    fun addOneMinute() {
+        timerManager.addOneMinute()
+    }
+
     fun setIsMainScreen(isMainScreen: Boolean) {
         _uiState.update {
             it.copy(isMainScreen = isMainScreen)
@@ -162,7 +166,7 @@ class MainViewModel(
         timerManager.next()
     }
 
-    fun initTimerStyle(maxSize: Float, screenWidth: Int) {
+    fun initTimerStyle(maxSize: Float, screenWidth: Float) {
         viewModelScope.launch {
             val uiSettings = getUiSettings()
             settingsRepo.saveUiSettings(

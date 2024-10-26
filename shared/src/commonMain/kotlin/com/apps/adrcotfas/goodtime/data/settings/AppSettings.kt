@@ -73,7 +73,7 @@ data class TimerStyleData(
     val maxSize: Float = 0f,         // in em
     val fontSize: Float = 0f,        // in em
     val fontWeight: Int = 100,
-    val currentScreenWidth: Int = 0, // in dp
+    val currentScreenWidth: Float = 0f, // in dp
     val minutesOnly: Boolean = false,
     val showStatus: Boolean = true,
     val showStreak: Boolean = true,

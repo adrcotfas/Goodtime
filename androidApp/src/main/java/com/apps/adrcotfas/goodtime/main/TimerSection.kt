@@ -15,17 +15,14 @@ import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -48,10 +46,13 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import com.apps.adrcotfas.goodtime.bl.TimeUtils.formatMilliseconds
 import com.apps.adrcotfas.goodtime.bl.TimerType
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.TimerStyleData
+import com.apps.adrcotfas.goodtime.main.dial_control.DialControlState
+import com.apps.adrcotfas.goodtime.main.dial_control.DialRegion
 import com.apps.adrcotfas.goodtime.shared.R
 import com.apps.adrcotfas.goodtime.ui.ApplicationTheme
 import com.apps.adrcotfas.goodtime.ui.common.hideUnless
@@ -62,6 +63,9 @@ import kotlinx.coroutines.delay
 //TODO add another status indicator for the break budget. imagine a bag with a number [ (bag) 3' ]
 @Composable
 fun MainTimerView(
+    modifier: Modifier,
+    gestureModifier: Modifier,
+    state: DialControlState<DialRegion>? = null,
     timerUiState: TimerUiState,
     timerStyle: TimerStyleData,
     label: Label,
@@ -75,16 +79,16 @@ fun MainTimerView(
 
     if (timerStyle.minSize != TimerStyleData.INVALID_MIN_SIZE) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             CurrentStatusSection(
-                Modifier.hideUnless(timerUiState.isActive()),
+                Modifier.hideUnless(timerUiState.isActive),
                 color = labelColor,
                 isBreak = isBreak,
-                isActive = timerUiState.isActive(),
-                isPaused = timerUiState.isPaused(),
+                isActive = timerUiState.isActive,
+                isPaused = timerUiState.isPaused,
                 streak = timerUiState.longBreakData.streak,
                 sessionsBeforeLongBreak = timerUiState.sessionsBeforeLongBreak,
                 showStatus = timerStyle.showStatus,
@@ -92,11 +96,14 @@ fun MainTimerView(
             )
 
             TimerTextView(
-                isPaused = timerUiState.isPaused(),
+                modifier = gestureModifier,
+                state = state,
+                isPaused = timerUiState.isPaused,
                 timerStyle = timerStyle,
                 millis = timerUiState.baseTime,
                 color = labelColor,
-                onPress = { if (!timerUiState.isActive()) onStart() else onToggle() })
+                onPress = { if (!timerUiState.isActive) onStart() else onToggle() })
+
             LabelSection(
                 showLabel = timerStyle.showLabel,
                 labelName = label.name,
@@ -116,14 +123,13 @@ fun CurrentStatusSection(
     streak: Int,
     sessionsBeforeLongBreak: Int,
     showStatus: Boolean,
-    showStreak: Boolean,
+    showStreak: Boolean
 ) {
     val statusColor = color.copy(alpha = 0.75f)
     val statusBackgroundColor = color.copy(alpha = 0.15f)
 
     Row(
         modifier = modifier
-            .height(32.dp)
             .fillMaxWidth()
             .hideUnless(isActive),
         verticalAlignment = Alignment.CenterVertically,
@@ -175,12 +181,15 @@ fun StatusIndicator(
         enter = fadeIn() + expandHorizontally(),
         exit = fadeOut() + shrinkHorizontally()
     ) {
+        val imageSize = with(LocalDensity.current) {
+            MaterialTheme.typography.labelLarge.fontSize.value.sp.toDp() * 2f
+        }
         Box(
             modifier = Modifier
                 .graphicsLayer { this.alpha = alpha.value }
-                .padding(horizontal = 4.dp)
-                .height(32.dp)
-                .clip(MaterialTheme.shapes.small)
+                .padding(4.dp)
+                .size(imageSize)
+                .clip(MaterialTheme.shapes.extraSmall)
                 .background(backgroundColor)
                 .padding(5.dp)
         ) {
@@ -218,13 +227,16 @@ fun StreakIndicator(
             enter = fadeIn() + expandHorizontally(),
             exit = fadeOut() + shrinkHorizontally()
         ) {
+            val imageSize = with(LocalDensity.current) {
+                MaterialTheme.typography.labelLarge.fontSize.value.sp.toDp() * 2f
+            }
             Box(
                 modifier = Modifier
-                    .padding(horizontal = 4.dp)
-                    .defaultMinSize(minHeight = 32.dp, minWidth = 32.dp)
-                    .clip(MaterialTheme.shapes.small)
+                    .padding(4.dp)
+                    .size(imageSize)
+                    .clip(MaterialTheme.shapes.extraSmall)
                     .background(backgroundColor)
-                    .padding(start = 4.dp, end = 4.dp, bottom = 2.dp)
+
             ) {
                 val numerator = (streak % sessionsBeforeLongBreak).run {
                     plus(if (!isBreak) 1 else if (this == 0 && streak != 0) sessionsBeforeLongBreak else 0)
@@ -252,8 +264,8 @@ fun FractionText(
 
     val baseStyle =
         MaterialTheme.typography.labelLarge.copy(
-            fontWeight = FontWeight.Bold, color = color, fontSize = 1.2.em,
-            letterSpacing = TextUnit(0.0f, TextUnitType.Em)
+            fontWeight = FontWeight.Bold, color = color,
+            letterSpacing = TextUnit(0.0f, TextUnitType.Sp)
         ).toSpanStyle()
 
     val annotatedString = buildAnnotatedString {
@@ -276,16 +288,16 @@ fun FractionText(
 
 @Composable
 fun TimerTextView(
+    modifier: Modifier,
+    state: DialControlState<DialRegion>? = null,
     millis: Long,
     color: Color,
     timerStyle: TimerStyleData,
     isPaused: Boolean,
     onPress: () -> Unit
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val pressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
-        targetValue = if (pressed) 0.96f else 1f,
+        targetValue = if (state?.isPressed == true) 0.96f else 1f,
         animationSpec = tween(durationMillis = 100),
         label = "timer scale"
     )
@@ -307,11 +319,12 @@ fun TimerTextView(
 
     Text(
         modifier = Modifier
+            .then(modifier)
             .padding(vertical = 8.dp)
             .graphicsLayer(scaleX = scale, scaleY = scale, alpha = alpha.value)
             .clickable(
                 indication = null,
-                interactionSource = interactionSource,
+                interactionSource = null,
                 onClick = {
                     onPress()
                 }
@@ -327,19 +340,25 @@ fun TimerTextView(
 
 @Composable
 fun LabelSection(showLabel: Boolean, labelName: String, color: Color) {
-    val backgroundColor = color.copy(alpha = 0.3f)
-    Text(
+    val backgroundColor = color.copy(alpha = 0.15f)
+    Box(
         modifier = Modifier
             .hideUnless(labelName != Label.DEFAULT_LABEL_NAME && showLabel)
             .padding(horizontal = 4.dp)
-            .height(32.dp)
-            .clip(MaterialTheme.shapes.small)
+            .wrapContentSize()
+            .clip(MaterialTheme.shapes.extraSmall)
             .background(backgroundColor)
-            .padding(horizontal = 12.dp)
-            .wrapContentHeight(),
-        text = labelName,
-        style = MaterialTheme.typography.labelLarge.copy(color = color)
-    )
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        Text(
+            modifier = Modifier.align(Alignment.Center),
+            text = labelName,
+            style = MaterialTheme.typography.labelLarge.copy(
+                color = color,
+                fontWeight = FontWeight.Normal
+            )
+        )
+    }
 }
 
 @Preview
@@ -355,6 +374,18 @@ fun CurrentStatusSectionPreview() {
             sessionsBeforeLongBreak = 3,
             showStatus = true,
             showStreak = true
+        )
+    }
+}
+
+@Preview
+@Composable
+fun LabelSectionPreview() {
+    ApplicationTheme {
+        LabelSection(
+            showLabel = true,
+            labelName = "Work",
+            color = MaterialTheme.localColorsPalette.colors[13]
         )
     }
 }

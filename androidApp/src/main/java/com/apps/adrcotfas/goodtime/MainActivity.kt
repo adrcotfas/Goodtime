@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val workSessionIsInProgress by viewModel.timerUiState.map { it.workSessionIsInProgress() }
                 .collectAsStateWithLifecycle(false)
-            val isActive by viewModel.timerUiState.map { it.isActive() }
+            val isActive by viewModel.timerUiState.map { it.isActive }
                 .collectAsStateWithLifecycle(false)
 
             val fullscreenMode = uiState.isMainScreen && uiState.fullscreenMode && isActive

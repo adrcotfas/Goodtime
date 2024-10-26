@@ -47,6 +47,10 @@ android {
         @Suppress("UnstableApiUsage")
         generateLocaleConfig = true
     }
+
+    aboutLibraries {
+        configPath = "androidApp/config"
+    }
 }
 
 dependencies {

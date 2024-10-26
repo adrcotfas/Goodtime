@@ -1,6 +1,5 @@
 package com.apps.adrcotfas.goodtime.settings.user_interface
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -19,7 +18,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,18 +38,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.bl.TimerState
 import com.apps.adrcotfas.goodtime.common.prettyName
 import com.apps.adrcotfas.goodtime.common.prettyNames
+import com.apps.adrcotfas.goodtime.common.screenWidth
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.TimerStyleData
 import com.apps.adrcotfas.goodtime.labels.add_edit.SliderRow
 import com.apps.adrcotfas.goodtime.main.MainTimerView
 import com.apps.adrcotfas.goodtime.main.MainViewModel
 import com.apps.adrcotfas.goodtime.main.TimerUiState
+import com.apps.adrcotfas.goodtime.main.dial_control.DialControlState
 import com.apps.adrcotfas.goodtime.ui.TimerFont
 import com.apps.adrcotfas.goodtime.ui.common.CheckboxPreference
 import com.apps.adrcotfas.goodtime.ui.common.DropdownMenuPreference
 import com.apps.adrcotfas.goodtime.ui.common.SubtleVerticalDivider
 import com.apps.adrcotfas.goodtime.ui.lightPalette
-import com.apps.adrcotfas.goodtime.ui.localColorsPalette
 import com.apps.adrcotfas.goodtime.ui.timerFontWeights
 import com.apps.adrcotfas.goodtime.ui.timerTextAzeretStyle
 import kotlinx.coroutines.flow.map
@@ -88,19 +87,18 @@ fun InitTimerStyle(viewModel: MainViewModel) {
         .collectAsStateWithLifecycle(TimerStyleData(minSize = TimerStyleData.INVALID_MIN_SIZE))
     val configuration = LocalConfiguration.current
 
-    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
-    val screenWidth = if (isPortrait) configuration.screenWidthDp else configuration.screenHeightDp
+    val screenWidth = configuration.screenWidth
 
     if (timerStyle.minSize != TimerStyleData.INVALID_MIN_SIZE) {
         if (timerStyle.minSize == 0f
             // needs a margin because of possible differences in screenWidth between orientations
-            || abs(screenWidth - timerStyle.currentScreenWidth) > 64
+            || abs(screenWidth.value - timerStyle.currentScreenWidth) > 64
         ) {
-            val maxContainerWidth = screenWidth.dp - 64.dp * 2
+            val maxContainerWidth = screenWidth - 64.dp * 2
             val timerTextSize = findMaxFontSize("90:00", timerTextAzeretStyle, maxContainerWidth)
             viewModel.initTimerStyle(
                 maxSize = timerTextSize.em.value,
-                screenWidth = screenWidth
+                screenWidth = screenWidth.value
             )
         }
     }
@@ -270,13 +268,16 @@ fun TimerStyleScreen(viewModel: MainViewModel = koinViewModel(), onNavigateBack:
                         assert(lightPalette.lastIndex == demoLabelNames.lastIndex)
 
                         MainTimerView(
-                            timerUiState,
-                            timerStyle,
-                            Label(name = randomLabelIndex.intValue.let {
+                            modifier = Modifier,
+                            gestureModifier = Modifier,
+                            timerUiState = timerUiState,
+                            timerStyle = timerStyle,
+                            label = Label(name = randomLabelIndex.intValue.let {
                                 if (it == -1) Label.DEFAULT_LABEL_NAME else demoLabelNames[it]
                             }, colorIndex = index.toLong()),
-                            {},
-                            {})
+                            onStart = {},
+                            onToggle = {},
+                        )
                     }
                 }
             }
