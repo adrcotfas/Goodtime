@@ -49,7 +49,7 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
                 }
 
                 DialRegion.RIGHT -> {
-                    viewModel.next()
+                    viewModel.skip()
                 }
 
                 DialRegion.BOTTOM -> {

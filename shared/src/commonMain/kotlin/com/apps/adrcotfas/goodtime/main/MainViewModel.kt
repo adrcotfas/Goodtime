@@ -151,7 +151,9 @@ class MainViewModel(
                 sessionsBeforeLongBreak = it.inUseSessionsBeforeLongBreak(),
                 longBreakData = it.longBreakData,
                 breakBudgetData = it.breakBudgetData,
-                isCountdown = it.requireTimerProfile().isCountdown
+                //TODO: add another field in DomainTimerData to check when it's ready/loaded
+                // so I can use requireTimerProfile here and have a nice transition
+                isCountdown = it.timerProfile?.isCountdown ?: false
             )
         )
     }
@@ -159,6 +161,10 @@ class MainViewModel(
     //TODO: testing purposes / remove this
     fun finishTimer() {
         timerManager.finish()
+    }
+
+    fun skip() {
+        timerManager.skip()
     }
 
     fun next() {
