@@ -9,12 +9,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -33,7 +29,6 @@ import androidx.navigation.compose.rememberNavController
 import co.touchlab.kermit.Logger
 import com.apps.adrcotfas.goodtime.bl.notifications.NotificationArchManager
 import com.apps.adrcotfas.goodtime.di.injectLogger
-import com.apps.adrcotfas.goodtime.main.BottomNavigationBar
 import com.apps.adrcotfas.goodtime.main.Destination
 import com.apps.adrcotfas.goodtime.main.MainViewModel
 import com.apps.adrcotfas.goodtime.main.bottomNavigationItems
@@ -132,17 +127,13 @@ class MainActivity : ComponentActivity(), KoinComponent {
                     val isMainDestination =
                         bottomNavigationItems.find { it.route == currentRoute } != null
                     viewModel.setIsMainScreen(currentRoute == Destination.Main.route)
-                    val showBottomBar = isMainDestination.xor(hideBottomBarWhenActive)
+                    val showNavigation = isMainDestination.xor(hideBottomBarWhenActive)
 
-                    //TODO: consider replacing the scaffold with a box so that fullscreen mode works properly when hiding the bottom bar
-                    Scaffold(
-                        modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
-                        bottomBar = {
-                            if(showBottomBar) {
-                                BottomNavigationBar(navController = navController)
-                            }
-                        }) { innerPadding ->
-                        GoodtimeNavHost(innerPadding, navController)
+                    NavigationScaffold(
+                        showNavigation = showNavigation,
+                        onNavigate = navController::navigate
+                    ) {
+                        NavigationHost(navController)
                     }
                 }
             }

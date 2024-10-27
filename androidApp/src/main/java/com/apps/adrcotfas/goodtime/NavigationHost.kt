@@ -1,9 +1,6 @@
 package com.apps.adrcotfas.goodtime
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,19 +26,15 @@ private fun NavHostController.backTo(route: String): () -> Unit = {
 }
 
 @Composable
-fun GoodtimeNavHost(
-    innerPadding: PaddingValues,
+fun NavigationHost(
     navController: NavHostController
 ) {
-
     val backToSettings = navController.backTo(Destination.Settings.route)
     val backToAbout = navController.backTo(Destination.About.route)
     val backToUserInterfaceSettings = navController.backTo(Destination.UserInterfaceSettings.route)
     val backToLabels = navController.backTo(Destination.Labels.route)
 
     NavHost(
-        modifier = Modifier
-            .padding(innerPadding),
         navController = navController,
         startDestination = Destination.Main.route
     ) {

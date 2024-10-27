@@ -120,7 +120,7 @@ fun TimerStyleScreen(viewModel: MainViewModel = koinViewModel(), onNavigateBack:
                     .padding(paddingValues)
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.spacedBy(64.dp)
             ) {
                 val randomLabelIndex =
                     remember { mutableIntStateOf(-1) }
@@ -216,7 +216,6 @@ fun TimerStyleScreen(viewModel: MainViewModel = koinViewModel(), onNavigateBack:
                         }
                     }
                     Column(
-                        modifier = Modifier.weight(1f),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {

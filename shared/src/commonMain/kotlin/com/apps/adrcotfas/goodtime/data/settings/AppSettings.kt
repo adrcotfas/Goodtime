@@ -88,7 +88,7 @@ data class TimerStyleData(
     }
     companion object {
         const val INVALID_MIN_SIZE = -1f
-        const val MINUTES_ONLY_FONT_SIZE_FACTOR = 1.5f
+        const val MINUTES_ONLY_FONT_SIZE_FACTOR = 1.75f
     }
 }
 
