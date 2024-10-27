@@ -22,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.data.backup.RestoreActivityResultLauncherManager
 import com.apps.adrcotfas.goodtime.data.local.backup.BackupViewModel
 import com.apps.adrcotfas.goodtime.ui.common.CircularProgressPreference
+import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import org.koin.compose.koinInject
 
@@ -102,24 +103,23 @@ fun BackupScreen(
                     viewModel.backup()
                 }
                 CircularProgressPreference(
-                    title = "Export CSV backup",
-                    subtitle = "The file cannot be imported back",
+                    title = "Restore backup",
+                    showProgress = uiState.isRestoreInProgress
+                ) {
+                    viewModel.restore()
+                }
+                SubtleHorizontalDivider()
+                CircularProgressPreference(
+                    title = "Export CSV",
                     showProgress = uiState.isCsvBackupInProgress
                 ) {
                     viewModel.backupToCsv()
                 }
                 CircularProgressPreference(
-                    title = "Export JSON backup",
-                    subtitle = "The file cannot be imported back",
+                    title = "Export JSON",
                     showProgress = uiState.isJsonBackupInProgress
                 ) {
                     viewModel.backupToJson()
-                }
-                CircularProgressPreference(
-                    title = "Restore backup",
-                    showProgress = uiState.isRestoreInProgress
-                ) {
-                    viewModel.restore()
                 }
             }
         }
