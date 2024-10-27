@@ -20,9 +20,9 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -122,7 +122,7 @@ fun LabelsScreen(
                 exit = slideOutVertically(targetOffsetY = { it * 2 }) + fadeOut(),
                 visible = showFab
             ) {
-                FloatingActionButton(
+                LargeFloatingActionButton(
                     shape = CircleShape,
                     onClick = {
                         viewModel.setShowAddEditDialog(true)
@@ -236,7 +236,6 @@ fun ArchivedLabelsButton(count: Int, onClick: () -> Unit) {
                     contentDescription = "Navigate to archived labels",
                 )
             }
-
         }
     }
 }
