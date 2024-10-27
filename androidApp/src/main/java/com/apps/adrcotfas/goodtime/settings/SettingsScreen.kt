@@ -48,8 +48,12 @@ import com.apps.adrcotfas.goodtime.settings.permissions.getPermissionsState
 import com.apps.adrcotfas.goodtime.ui.common.PreferenceGroupTitle
 import com.apps.adrcotfas.goodtime.ui.common.PreferenceWithIcon
 import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
-import compose.icons.FeatherIcons
-import compose.icons.feathericons.Bell
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Outline
+import compose.icons.evaicons.outline.Bell
+import compose.icons.evaicons.outline.ColorPalette
+import compose.icons.evaicons.outline.Info
+import compose.icons.evaicons.outline.Save
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalTime
 import org.koin.androidx.compose.koinViewModel
@@ -127,19 +131,19 @@ fun SettingsScreen(
             }
             PreferenceWithIcon(
                 title = "User interface",
-                icon = { Icon(Icons.Outlined.Palette, contentDescription = "Feedback") },
+                icon = { Icon(EvaIcons.Outline.ColorPalette, contentDescription = "Feedback") },
                 onClick = {
                     navController.navigate(Destination.UserInterfaceSettings.route)
                 })
             PreferenceWithIcon(
                 title = "Notifications",
-                icon = { Icon(FeatherIcons.Bell, contentDescription = "Feedback") },
+                icon = { Icon(EvaIcons.Outline.Bell, contentDescription = "Feedback") },
                 onClick = {
                     navController.navigate(Destination.NotificationSettings.route)
                 })
             PreferenceWithIcon(
                 title = "Backup and restore",
-                icon = { Icon(Icons.Outlined.Save, contentDescription = "Feedback") },
+                icon = { Icon(EvaIcons.Outline.Save, contentDescription = "Feedback") },
                 onClick = {
                     navController.navigate(Destination.Backup.route)
                 })
@@ -147,7 +151,7 @@ fun SettingsScreen(
             PreferenceWithIcon(
                 title = "About and feedback",
                 subtitle = "Goodtime Productivity ${context.getVersionName()}",
-                icon = { Icon(Icons.Outlined.Info, contentDescription = "Feedback") },
+                icon = { Icon(EvaIcons.Outline.Info, contentDescription = "Feedback") },
                 onClick = {
                     navController.navigate(Destination.About.route)
                 })

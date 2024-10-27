@@ -6,7 +6,7 @@ android-compileSdk = "34"
 android-targetSdk = "34"
 desugar_jdk_libs = "2.1.2"
 espressoCore = "3.6.1"
-feather = "1.1.0"
+eva-icons = "1.1.1"
 foundation = "1.7.3"
 kotlin = "2.0.20"
 
@@ -60,7 +60,7 @@ coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", ve
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
-devsrsouza-compose-icons-feather = { module = "br.com.devsrsouza.compose.icons:feather", version.ref = "feather" }
+devsrsouza-compose-icons-eva = { module = "br.com.devsrsouza.compose.icons:eva-icons", version.ref = "eva-icons" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 

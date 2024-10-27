@@ -6,6 +6,7 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,12 +19,20 @@ fun BottomNavigationBar(navController: NavController) {
 
     val permissionsState = getPermissionsState()
 
-    BottomAppBar {
+    BottomAppBar(
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+    ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         bottomNavigationItems.forEach { item ->
+            val isSelected = currentRoute == item.route
+            val icon = if (isSelected) item.selectedIcon else item.icon
             NavigationBarItem(
-                selected = currentRoute == item.route,
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    selectedIconColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                ),
+                selected = isSelected,
                 onClick = {
                     navController.navigate(item.route) {
                         popUpTo(navController.graph.startDestinationId)
@@ -45,9 +54,9 @@ fun BottomNavigationBar(navController: NavController) {
                                     Text(text = count.toString())
                                 }
                             }
-                        ) { Icon(item.icon!!, contentDescription = null) }
+                        ) { Icon(icon!!, contentDescription = null) }
                     } else {
-                        Icon(item.icon!!, contentDescription = null)
+                        Icon(icon!!, contentDescription = null)
                     }
                 },
             )

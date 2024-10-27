@@ -5,25 +5,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.apps.adrcotfas.goodtime.ui.common.PreferenceWithIcon
 import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
-import compose.icons.FeatherIcons
-import compose.icons.feathericons.Book
-import compose.icons.feathericons.Github
-import compose.icons.feathericons.Mail
-import compose.icons.feathericons.Star
+import com.apps.adrcotfas.goodtime.ui.common.TopBar
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Outline
+import compose.icons.evaicons.outline.BookOpen
+import compose.icons.evaicons.outline.Email
+import compose.icons.evaicons.outline.Github
+import compose.icons.evaicons.outline.Star
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,17 +30,7 @@ fun AboutScreen(onNavigateBack: () -> Unit, onNavigateToLicenses: () -> Unit) {
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = "About and feedback") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Navigate back"
-                        )
-                    }
-                }
-            )
+            TopBar(text = "About and feedback", onNavigateBack = onNavigateBack)
         },
         content = {
             Column(
@@ -54,26 +41,26 @@ fun AboutScreen(onNavigateBack: () -> Unit, onNavigateToLicenses: () -> Unit) {
             ) {
                 PreferenceWithIcon(
                     title = "Source code",
-                    icon = { Icon(FeatherIcons.Github, contentDescription = "GitHub") },
+                    icon = { Icon(EvaIcons.Outline.Github, contentDescription = "GitHub") },
                     onClick = {
                         openUrl(context, REPO_URL)
                     }
                 )
                 PreferenceWithIcon(
                     title = "Open Source Licenses",
-                    icon = { Icon(FeatherIcons.Book, contentDescription = "Open Source Licenses") },
+                    icon = { Icon(EvaIcons.Outline.BookOpen, contentDescription = "Open Source Licenses") },
                     onClick = {
                         onNavigateToLicenses()
                     })
                 SubtleHorizontalDivider()
                 PreferenceWithIcon(
                     title = "Feedback",
-                    icon = { Icon(FeatherIcons.Mail, contentDescription = "Feedback") },
+                    icon = { Icon(EvaIcons.Outline.Email, contentDescription = "Feedback") },
                     onClick = { sendFeedback(context) }
                 )
                 PreferenceWithIcon(
                     title = "Rate this app",
-                    icon = { Icon(FeatherIcons.Star, contentDescription = "Rate this app") },
+                    icon = { Icon(EvaIcons.Outline.Star, contentDescription = "Rate this app") },
                     onClick = {
                         openUrl(context, GOOGLE_PLAY_URL)
                     }

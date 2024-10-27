@@ -14,15 +14,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.Archive
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -49,8 +47,13 @@ import com.apps.adrcotfas.goodtime.labels.DeleteConfirmationDialog
 import com.apps.adrcotfas.goodtime.labels.add_edit.AddEditLabelScreen
 import com.apps.adrcotfas.goodtime.main.Destination
 import com.apps.adrcotfas.goodtime.ui.DraggableItem
+import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import com.apps.adrcotfas.goodtime.ui.dragContainer
 import com.apps.adrcotfas.goodtime.ui.rememberDragDropState
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Outline
+import compose.icons.evaicons.outline.Archive
+import compose.icons.evaicons.outline.Plus
 import org.koin.androidx.compose.koinViewModel
 
 //TODO(fix bug): renaming a label should not change the active label
@@ -99,6 +102,9 @@ fun LabelsScreen(
                 WindowInsets.statusBars
             ),
         topBar = {
+            TopBar(text = "Labels", onNavigateBack = {
+                navController.navigate(Destination.Settings.route)
+            })
             CenterAlignedTopAppBar(
                 title = { Text("Labels") },
                 actions = {
@@ -116,13 +122,14 @@ fun LabelsScreen(
                 exit = slideOutVertically(targetOffsetY = { it * 2 }) + fadeOut(),
                 visible = showFab
             ) {
-                ExtendedFloatingActionButton(
+                FloatingActionButton(
+                    shape = CircleShape,
                     onClick = {
                         viewModel.setShowAddEditDialog(true)
-                    },
-                    icon = { Icon(Icons.Filled.Add, "Localized description") },
-                    text = { Text(text = "Create label") },
-                )
+                    }
+                ) {
+                    Icon(EvaIcons.Outline.Plus, "Localized description")
+                }
             }
         },
         floatingActionButtonPosition = FabPosition.Center
@@ -225,7 +232,7 @@ fun ArchivedLabelsButton(count: Int, onClick: () -> Unit) {
         ) {
             IconButton(onClick = onClick) {
                 Icon(
-                    imageVector = Icons.Outlined.Archive,
+                    imageVector = EvaIcons.Outline.Archive,
                     contentDescription = "Navigate to archived labels",
                 )
             }

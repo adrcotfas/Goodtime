@@ -1,18 +1,25 @@
 package com.apps.adrcotfas.goodtime.main
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Label
+import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.ui.graphics.vector.ImageVector
-import compose.icons.FeatherIcons
-import compose.icons.feathericons.BarChart2
-import compose.icons.feathericons.Home
-import compose.icons.feathericons.Settings
-import compose.icons.feathericons.Tag
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Fill
+import compose.icons.evaicons.Outline
+import compose.icons.evaicons.fill.Home
+import compose.icons.evaicons.fill.PieChart
+import compose.icons.evaicons.fill.Settings
+import compose.icons.evaicons.outline.Home
+import compose.icons.evaicons.outline.PieChart
+import compose.icons.evaicons.outline.Settings
 
-sealed class Destination(val route: String, val label: String, val icon: ImageVector?) {
-    data object Main : Destination("main", "Main", FeatherIcons.Home)
-    data object Labels : Destination("labels", "Labels", FeatherIcons.Tag)
+sealed class Destination(val route: String, val label: String, val icon: ImageVector?, val selectedIcon: ImageVector? = null) {
+    data object Main : Destination("main", "Main", icon = EvaIcons.Outline.Home, selectedIcon = EvaIcons.Fill.Home)
+    data object Labels : Destination("labels", "Labels", icon = Icons.AutoMirrored.Outlined.Label, selectedIcon = Icons.AutoMirrored.Filled.Label)
     data object ArchivedLabels : Destination("archivedLabels", "Archived labels", null)
-    data object Stats : Destination("stats", "Stats", FeatherIcons.BarChart2)
-    data object Settings : Destination("settings", "Settings", FeatherIcons.Settings)
+    data object Stats : Destination("stats", "Stats", icon = EvaIcons.Outline.PieChart, selectedIcon = EvaIcons.Fill.PieChart)
+    data object Settings : Destination("settings", "Settings", icon = EvaIcons.Outline.Settings, selectedIcon = EvaIcons.Fill.Settings)
 
     data object UserInterfaceSettings: Destination("userInterface", "User Interface", null)
     data object TimerStyle: Destination("timerStyle", "Timer Style", null)

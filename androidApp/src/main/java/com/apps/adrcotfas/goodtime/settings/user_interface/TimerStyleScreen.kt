@@ -11,13 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.FormatBold
 import androidx.compose.material.icons.filled.FormatSize
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -45,11 +42,11 @@ import com.apps.adrcotfas.goodtime.labels.add_edit.SliderRow
 import com.apps.adrcotfas.goodtime.main.MainTimerView
 import com.apps.adrcotfas.goodtime.main.MainViewModel
 import com.apps.adrcotfas.goodtime.main.TimerUiState
-import com.apps.adrcotfas.goodtime.main.dial_control.DialControlState
 import com.apps.adrcotfas.goodtime.ui.TimerFont
 import com.apps.adrcotfas.goodtime.ui.common.CheckboxPreference
 import com.apps.adrcotfas.goodtime.ui.common.DropdownMenuPreference
 import com.apps.adrcotfas.goodtime.ui.common.SubtleVerticalDivider
+import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import com.apps.adrcotfas.goodtime.ui.lightPalette
 import com.apps.adrcotfas.goodtime.ui.timerFontWeights
 import com.apps.adrcotfas.goodtime.ui.timerTextAzeretStyle
@@ -114,17 +111,7 @@ fun TimerStyleScreen(viewModel: MainViewModel = koinViewModel(), onNavigateBack:
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = "Timer Style") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Navigate back"
-                        )
-                    }
-                }
-            )
+            TopBar(text = "Timer Style", onNavigateBack = onNavigateBack)
         },
         content = { paddingValues ->
             Column(

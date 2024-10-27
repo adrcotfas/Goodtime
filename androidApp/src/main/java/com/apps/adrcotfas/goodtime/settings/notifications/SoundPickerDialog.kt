@@ -18,12 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.NotificationsActive
-import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -52,6 +46,14 @@ import com.apps.adrcotfas.goodtime.common.getFileName
 import com.apps.adrcotfas.goodtime.data.settings.SoundData
 import com.apps.adrcotfas.goodtime.settings.SoundsViewModel
 import com.apps.adrcotfas.goodtime.ui.common.PreferenceGroupTitle
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Fill
+import compose.icons.evaicons.Outline
+import compose.icons.evaicons.fill.Music
+import compose.icons.evaicons.outline.Bell
+import compose.icons.evaicons.outline.BellOff
+import compose.icons.evaicons.outline.CheckmarkCircle2
+import compose.icons.evaicons.outline.Plus
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -266,9 +268,9 @@ fun NotificationSoundItem(
 
         Icon(
             imageVector =
-            if (isCustomSound) Icons.Filled.MusicNote
-            else if (isSilent) Icons.Filled.NotificationsOff
-            else Icons.Filled.NotificationsActive,
+            if (isCustomSound) EvaIcons.Fill.Music
+            else if (isSilent) EvaIcons.Outline.BellOff
+            else EvaIcons.Outline.Bell,
             contentDescription = null,
             modifier = Modifier.padding(end = 16.dp),
             tint = MaterialTheme.colorScheme.primary
@@ -282,7 +284,7 @@ fun NotificationSoundItem(
         if (isSelected) {
             Icon(
                 imageVector =
-                Icons.Filled.CheckCircle,
+                EvaIcons.Outline.CheckmarkCircle2,
                 tint = MaterialTheme.colorScheme.primary,
                 contentDescription = null
             )
@@ -300,7 +302,7 @@ fun AddCustomSoundButton(modifier: Modifier = Modifier, onAddUserSound: () -> Un
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = Icons.Filled.Add,
+            imageVector = EvaIcons.Outline.Plus,
             contentDescription = null,
             modifier = Modifier.padding(end = 16.dp),
             tint = MaterialTheme.colorScheme.primary

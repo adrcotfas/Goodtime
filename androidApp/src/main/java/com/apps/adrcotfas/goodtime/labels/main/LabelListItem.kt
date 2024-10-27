@@ -12,12 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.automirrored.outlined.Label
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.DragIndicator
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.Archive
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -39,8 +34,14 @@ import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.TimerProfile
 import com.apps.adrcotfas.goodtime.data.model.isDefault
 import com.apps.adrcotfas.goodtime.ui.localColorsPalette
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Outline
+import compose.icons.evaicons.outline.Archive
+import compose.icons.evaicons.outline.Copy
+import compose.icons.evaicons.outline.Edit
+import compose.icons.evaicons.outline.MoreVertical
+import compose.icons.evaicons.outline.Trash
 
-//TODO: add menu item to go to the stats screen for the selected label
 @Composable
 fun LabelListItem(
     label: Label,
@@ -58,7 +59,6 @@ fun LabelListItem(
     val labelName =
         if (label.isDefault()) stringResource(id = R.string.label_default) else label.name
 
-    //TODO: integrate label info in row
     Crossfade(targetState = isActive, label = "Active label crossfade") { active ->
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -109,13 +109,13 @@ fun LabelListItem(
                 IconButton(onClick = {
                     onEdit()
                 }) {
-                    Icon(Icons.Filled.Edit, contentDescription = "Edit $labelName")
+                    Icon(EvaIcons.Outline.Edit, contentDescription = "Edit $labelName")
                 }
             } else {
                 var dropDownMenuExpanded by remember { mutableStateOf(false) }
                 Box {
                     IconButton(onClick = { dropDownMenuExpanded = true }) {
-                        Icon(Icons.Filled.MoreVert, contentDescription = "More about $labelName")
+                        Icon(EvaIcons.Outline.MoreVertical, contentDescription = "More about $labelName")
                     }
                     DropdownMenu(
                         expanded = dropDownMenuExpanded,
@@ -127,7 +127,7 @@ fun LabelListItem(
                                 dropDownMenuExpanded = false
                             },
                             leadingIcon = {
-                                Icon(Icons.Filled.Edit, contentDescription = "Edit $labelName")
+                                Icon(EvaIcons.Outline.Edit, contentDescription = "Edit $labelName")
                             })
                         DropdownMenuItem(
                             text = { Text("Duplicate") },
@@ -137,7 +137,7 @@ fun LabelListItem(
                             },
                             leadingIcon = {
                                 Icon(
-                                    Icons.Filled.ContentCopy,
+                                    EvaIcons.Outline.Copy,
                                     contentDescription = "Duplicate $labelName"
                                 )
                             }
@@ -150,7 +150,7 @@ fun LabelListItem(
                             },
                             leadingIcon = {
                                 Icon(
-                                    Icons.Outlined.Archive,
+                                    EvaIcons.Outline.Archive,
                                     contentDescription = "Archive $labelName"
                                 )
                             })
@@ -162,7 +162,7 @@ fun LabelListItem(
                             },
                             leadingIcon = {
                                 Icon(
-                                    Icons.Filled.DeleteOutline,
+                                    EvaIcons.Outline.Trash,
                                     contentDescription = "Delete $labelName"
                                 )
                             })

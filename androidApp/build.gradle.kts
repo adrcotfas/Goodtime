@@ -73,7 +73,7 @@ dependencies {
     implementation(libs.mikepenz.aboutlibraries.core)
     implementation(libs.mikepenz.aboutlibraries.compose)
 
-    implementation(libs.devsrsouza.compose.icons.feather)
+    implementation(libs.devsrsouza.compose.icons.eva)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.tooling.preview)
 }
