@@ -2,25 +2,20 @@ package com.apps.adrcotfas.goodtime.data.settings
 
 import kotlinx.serialization.Serializable
 import kotlin.math.max
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 
 @Serializable
 data class BreakBudgetData(
-    val breakBudget: Int = 0, // minutes
+    val breakBudget: Long = 0, // minutes
     val breakBudgetStart: Long = 0, // millis since boot
 ) {
-    /**
-     * Returns the remaining break budget in minutes.
-     */
-    fun getRemainingBreakBudget(millis: Long): Int {
+    fun getRemainingBreakBudget(millis: Long): Duration {
         val timeSinceBreakBudgetStart = millis - breakBudgetStart
         val breakBudgetMs = breakBudget.minutes.inWholeMilliseconds
-        return max(
-            0,
-            (breakBudgetMs - timeSinceBreakBudgetStart).milliseconds.inWholeMinutes.toInt()
-        )
-    } 
+        return max(0, (breakBudgetMs - timeSinceBreakBudgetStart)).milliseconds.inWholeMinutes.minutes
+    }
 }
 
 @Serializable
@@ -28,3 +23,7 @@ data class LongBreakData(
     val streak: Int = 0,
     val lastWorkEndTime: Long = 0, // millis since boot
 )
+
+fun LongBreakData.streakInUse(sessionsBeforeLongBreak: Int): Int {
+    return streak % sessionsBeforeLongBreak
+}

@@ -1,8 +1,9 @@
 package com.apps.adrcotfas.goodtime.bl
 
+import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class StreakAndLongBreakHandler(
@@ -11,7 +12,7 @@ class StreakAndLongBreakHandler(
 ) {
     fun incrementStreak(lastWorkEndTime: Long) {
         coroutineScope.launch {
-            val data = settingsRepo.settings.last().longBreakData
+            val data = settingsRepo.settings.first().longBreakData
             val newData = data.copy(
                 streak = data.streak + 1,
                 lastWorkEndTime = lastWorkEndTime
@@ -22,12 +23,7 @@ class StreakAndLongBreakHandler(
 
     fun resetStreak() {
         coroutineScope.launch {
-            val data = settingsRepo.settings.last().longBreakData
-            val newData = data.copy(
-                streak = 0,
-                lastWorkEndTime = 0L
-            )
-            settingsRepo.saveLongBreakData(newData)
+            settingsRepo.saveLongBreakData(LongBreakData())
         }
     }
 }

@@ -31,11 +31,11 @@ class NotificationArchManager(private val context: Context, private val activity
 
     //TODO: handle use case of changing a label while the timer is running; currently the notification will not update
     fun buildInProgressNotification(data: DomainTimerData): Notification {
-        val isCountDown = data.requireTimerProfile().isCountdown
+        val isCountDown = data.getTimerProfile().isCountdown
         val baseTime = if (isCountDown) data.endTime else SystemClock.elapsedRealtime()
         val running = data.state != TimerState.PAUSED
         val timerType = data.type
-        val labelName = data.requireLabelName()
+        val labelName = data.getLabelName()
 
         val mainStateText = if (timerType == TimerType.WORK) {
             if (running) {
@@ -114,7 +114,7 @@ class NotificationArchManager(private val context: Context, private val activity
                 title = nextActionTitle,
                 action = TimerService.Companion.Action.Skip
             )
-            if (data.timerProfile?.isBreakEnabled == true) {
+            if (data.label?.profile?.isBreakEnabled == true) {
                 builder.addAction(nextAction)
             }
         } else {
@@ -129,7 +129,7 @@ class NotificationArchManager(private val context: Context, private val activity
 
     fun notifyFinished(data: DomainTimerData, withActions: Boolean) {
         val timerType = data.type
-        val labelName = data.requireLabelName()
+        val labelName = data.getLabelName()
 
         val mainStateText = if (timerType == TimerType.WORK) {
             "Work session finished"
@@ -154,7 +154,7 @@ class NotificationArchManager(private val context: Context, private val activity
         if (withActions) {
             builder.setContentText("Continue?")
             val nextActionTitle =
-                if (timerType == TimerType.WORK && data.timerProfile?.isBreakEnabled == true) {
+                if (timerType == TimerType.WORK && data.label.profile.isBreakEnabled) {
                     "Start break"
                 } else {
                     "Start work"

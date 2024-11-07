@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
 
             val darkTheme = uiState.isDarkTheme(isSystemInDarkTheme())
 
-            toggleKeepScreenOn(workSessionIsInProgress)
+            toggleKeepScreenOn(isActive)
             if (notificationManager.isNotificationPolicyAccessGranted()) {
                 if (uiState.dndDuringWork) {
                     notificationManager.toggleDndMode(workSessionIsInProgress)

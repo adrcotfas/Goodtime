@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.apps.adrcotfas.goodtime.bl.DomainLabel
 import com.apps.adrcotfas.goodtime.bl.TimerState
 import com.apps.adrcotfas.goodtime.common.prettyName
 import com.apps.adrcotfas.goodtime.common.prettyNames
@@ -258,9 +259,9 @@ fun TimerStyleScreen(viewModel: MainViewModel = koinViewModel(), onNavigateBack:
                             gestureModifier = Modifier,
                             timerUiState = timerUiState,
                             timerStyle = timerStyle,
-                            label = Label(name = randomLabelIndex.intValue.let {
+                            domainLabel = DomainLabel(label = Label(name = randomLabelIndex.intValue.let {
                                 if (it == -1) Label.DEFAULT_LABEL_NAME else demoLabelNames[it]
-                            }, colorIndex = index.toLong()),
+                                }, colorIndex = index.toLong())),
                             onStart = {},
                             onToggle = {},
                         )

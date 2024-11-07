@@ -2,6 +2,7 @@ package com.apps.adrcotfas.goodtime.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.apps.adrcotfas.goodtime.bl.DomainLabel
 import com.apps.adrcotfas.goodtime.bl.DomainTimerData
 import com.apps.adrcotfas.goodtime.bl.TimeProvider
 import com.apps.adrcotfas.goodtime.bl.TimerManager
@@ -11,12 +12,10 @@ import com.apps.adrcotfas.goodtime.bl.getBaseTime
 import com.apps.adrcotfas.goodtime.bl.isActive
 import com.apps.adrcotfas.goodtime.bl.isBreak
 import com.apps.adrcotfas.goodtime.bl.isPaused
-import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
-import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
-import com.apps.adrcotfas.goodtime.data.settings.ThemePreference
 import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
+import com.apps.adrcotfas.goodtime.data.settings.ThemePreference
 import com.apps.adrcotfas.goodtime.data.settings.TimerStyleData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +23,6 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -34,13 +32,14 @@ import kotlinx.coroutines.launch
 import kotlin.math.floor
 
 data class TimerUiState(
+    val isReady: Boolean = false,
+    val label: DomainLabel = DomainLabel(),
     val baseTime: Long = 0,
     val timerState: TimerState = TimerState.RESET,
     val timerType: TimerType = TimerType.WORK,
     val sessionsBeforeLongBreak: Int = 0,
     val longBreakData: LongBreakData = LongBreakData(),
     val breakBudgetData: BreakBudgetData = BreakBudgetData(),
-    val isCountdown: Boolean = false
 ) {
     fun workSessionIsInProgress(): Boolean {
         return timerState.isActive && timerType == TimerType.WORK
@@ -57,7 +56,6 @@ data class MainUiState(
     val fullscreenMode: Boolean = false,
     val dndDuringWork: Boolean = false,
     val isMainScreen: Boolean = true,
-    val label: Label? = null
 ) {
     fun isDarkTheme(isSystemInDarkTheme: Boolean): Boolean {
         return darkThemePreference == ThemePreference.DARK ||
@@ -69,7 +67,6 @@ class MainViewModel(
     private val timerManager: TimerManager,
     private val timeProvider: TimeProvider,
     private val settingsRepo: SettingsRepository,
-    private val localDataRepository: LocalDataRepository
 ) : ViewModel() {
 
     val timerUiState: Flow<TimerUiState> = timerManager.timerData.flatMapLatest {
@@ -104,18 +101,6 @@ class MainViewModel(
                     }
                 }
         }
-
-        viewModelScope.launch {
-            timerManager.timerData.map { it.labelName }.filterNotNull()
-                .flatMapLatest { localDataRepository.selectLabelByName(it) }
-                .distinctUntilChanged()
-                .collect { label ->
-                    _uiState.update {
-                        it.copy(label = label)
-                    }
-                }
-        }
-
     }
 
     fun startTimer(type: TimerType = TimerType.WORK) {
@@ -145,22 +130,16 @@ class MainViewModel(
     ) {
         emit(
             TimerUiState(
+                isReady = it.isReady,
+                label = it.label,
                 baseTime = it.getBaseTime(timeProvider),
                 timerState = it.state,
                 timerType = it.type,
                 sessionsBeforeLongBreak = it.inUseSessionsBeforeLongBreak(),
                 longBreakData = it.longBreakData,
                 breakBudgetData = it.breakBudgetData,
-                //TODO: add another field in DomainTimerData to check when it's ready/loaded
-                // so I can use requireTimerProfile here and have a nice transition
-                isCountdown = it.timerProfile?.isCountdown ?: false
             )
         )
-    }
-
-    //TODO: testing purposes / remove this
-    fun finishTimer() {
-        timerManager.finish()
     }
 
     fun skip() {

@@ -77,6 +77,7 @@ data class TimerStyleData(
     val showStatus: Boolean = true,
     val showStreak: Boolean = true,
     val showLabel: Boolean = true,
+    val showBreakBudget: Boolean = true,
 ) {
 
     fun inUseFontSize(): Float {

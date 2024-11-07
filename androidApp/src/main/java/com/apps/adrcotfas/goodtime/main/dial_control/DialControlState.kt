@@ -16,14 +16,13 @@ import kotlin.math.atan2
 @Stable
 class DialControlState<T>(
     initialOptions: List<T>,
-    enabledOptions: List<T> = initialOptions,
     val config: DialConfig,
     private val onSelected: (T) -> Unit,
     private val density: Density,
     private val coroutineScope: CoroutineScope,
 ) {
 
-    private var enabledOptionsState by mutableStateOf(enabledOptions)
+    private var disabledOptions by mutableStateOf(emptyList<T>())
     var options by mutableStateOf(initialOptions)
         private set
 
@@ -51,9 +50,17 @@ class DialControlState<T>(
                 degree >= startAngle && degree < endAngle
             } ?: options.lastIndex
             options[index].let {
-                if (it in enabledOptionsState) it else null
+                if (it in disabledOptions) null else it
             }
         }
+    }
+
+    fun updateEnabledOptions(options: List<T>) {
+        disabledOptions = options
+    }
+
+    fun isDisabled(option: T): Boolean {
+        return disabledOptions.contains(option)
     }
 
     fun onDown() {

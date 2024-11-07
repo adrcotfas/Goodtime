@@ -1,5 +1,8 @@
 package com.apps.adrcotfas.goodtime.main
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.gestures.awaitDragOrCancellation
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -15,32 +18,26 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.apps.adrcotfas.goodtime.data.model.Label
-import com.apps.adrcotfas.goodtime.data.settings.TimerStyleData
 import com.apps.adrcotfas.goodtime.main.dial_control.DialConfig
 import com.apps.adrcotfas.goodtime.main.dial_control.DialControl
 import com.apps.adrcotfas.goodtime.main.dial_control.DialControlButton
 import com.apps.adrcotfas.goodtime.main.dial_control.DialRegion
 import com.apps.adrcotfas.goodtime.main.dial_control.rememberDialControlState
 import com.apps.adrcotfas.goodtime.settings.user_interface.InitTimerStyle
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
-
     InitTimerStyle(viewModel)
 
     val timerUiState by viewModel.timerUiState.collectAsStateWithLifecycle(TimerUiState())
-    val timerStyle by viewModel.uiState.map { it.timerStyle }
-        .collectAsStateWithLifecycle(TimerStyleData(minSize = TimerStyleData.INVALID_MIN_SIZE))
-    val label by viewModel.uiState.map { it.label }.filterNotNull()
-        .collectAsStateWithLifecycle(Label.defaultLabel())
+    val mainUiState by viewModel.uiState.collectAsStateWithLifecycle(MainUiState())
+
+    val timerStyle = mainUiState.timerStyle
+    val label = timerUiState.label
 
     val state = rememberDialControlState(
         options = DialRegion.entries,
-        enabledOptions = DialRegion.entries.minus(DialRegion.LEFT),
         config = DialConfig(size = timerStyle.currentScreenWidth.dp - 64.dp),
         onSelected = {
             when (it) {
@@ -61,6 +58,15 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
             }
         }
     )
+
+    val disabledOptions = listOfNotNull(
+        //TODO: if there is no break budget, disable the right region
+        DialRegion.LEFT, if (!label.profile.isCountdown) {
+            DialRegion.TOP
+        } else null
+    )
+
+    state.updateEnabledOptions(disabledOptions)
 
     val gestureModifier = state.let {
         Modifier
@@ -88,23 +94,29 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
         alpha = if (state.isDragging) 0.38f else 1f
     }
 
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        MainTimerView(
-            modifier = alphaModifier,
-            state = state,
-            gestureModifier = gestureModifier,
-            timerUiState = timerUiState,
-            timerStyle = timerStyle,
-            label = label,
-            onStart = viewModel::startTimer,
-            onToggle = viewModel::toggleTimer
-        )
+    AnimatedVisibility(timerUiState.isReady, enter = fadeIn(), exit = fadeOut()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            MainTimerView(
+                modifier = alphaModifier,
+                state = state,
+                gestureModifier = gestureModifier,
+                timerUiState = timerUiState,
+                timerStyle = timerStyle,
+                domainLabel = label,
+                onStart = viewModel::startTimer,
+                onToggle = viewModel::toggleTimer
+            )
 
-        DialControl(
-            state = state,
-            dialContent = { region ->
-                DialControlButton(selected = region == state.selectedOption, region = region)
-            }
-        )
+            DialControl(
+                state = state,
+                dialContent = { region ->
+                    DialControlButton(
+                        disabled = state.isDisabled(region),
+                        selected = region == state.selectedOption,
+                        region = region
+                    )
+                }
+            )
+        }
     }
 }

@@ -73,7 +73,6 @@ data class DialConfig(
 @Composable
 fun <T> rememberDialControlState(
     options: List<T>,
-    enabledOptions: List<T> = options,
     onSelected: (T) -> Unit,
     density: Density = LocalDensity.current,
     config: DialConfig = DialConfig(),
@@ -82,7 +81,6 @@ fun <T> rememberDialControlState(
     return remember(density, config, coroutineScope, onSelected) {
         DialControlState(
             initialOptions = options,
-            enabledOptions = enabledOptions,
             onSelected = onSelected,
             config = config,
             density = density,

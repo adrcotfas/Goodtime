@@ -15,12 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 
 @Composable
-fun DialControlButton(selected: Boolean, region: DialRegion) {
+fun DialControlButton(disabled: Boolean, selected: Boolean, region: DialRegion) {
     region.icon?.let {
         val animatedSize = animateFloatAsState(
             targetValue = if (selected) 48f else 8f,
@@ -36,7 +37,11 @@ fun DialControlButton(selected: Boolean, region: DialRegion) {
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(
-                        MaterialTheme.colorScheme.secondaryContainer
+                        if (disabled) {
+                            Color.Transparent
+                        } else {
+                            MaterialTheme.colorScheme.secondaryContainer
+                        }
                     )
                     .size(animatedSize.value.dp)
 
