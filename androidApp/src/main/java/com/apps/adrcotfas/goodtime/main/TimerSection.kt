@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.main
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
@@ -38,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -66,7 +68,6 @@ import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ShoppingBag
 import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.milliseconds
 
 //TODO add another status indicator for the break budget. imagine a bag with a number [ (bag) 3' ]
 @Composable
@@ -78,8 +79,9 @@ fun MainTimerView(
     timerStyle: TimerStyleData,
     domainLabel: DomainLabel,
     onStart: () -> Unit,
-    onToggle: () -> Unit
+    onToggle: () -> Boolean
 ) {
+    val context = LocalContext.current
 
     val label = domainLabel.label
     val labelColorIndex = label.colorIndex
@@ -116,7 +118,16 @@ fun MainTimerView(
                 timerStyle = timerStyle,
                 millis = timerUiState.baseTime,
                 color = labelColor,
-                onPress = { if (!timerUiState.isActive) onStart() else onToggle() })
+                onPress = {
+                    if (!timerUiState.isActive) {
+                        onStart()
+                    } else {
+                        if (!onToggle()) {
+                            Toast.makeText(context, "Cannot pause the break", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+                })
 
             LabelSection(
                 showLabel = timerStyle.showLabel,
@@ -137,7 +148,7 @@ fun CurrentStatusSection(
     isCountdown: Boolean,
     streak: Int,
     sessionsBeforeLongBreak: Int,
-    breakBudget: Long,
+    breakBudget: Int,
     showStatus: Boolean,
     showStreak: Boolean,
     showBreakBudget: Boolean,
@@ -278,7 +289,7 @@ fun StreakIndicator(
 @Composable
 fun BreakBudgetIndicator(
     showBreakBudget: Boolean,
-    breakBudget: Long,
+    breakBudget: Int,
     color: Color,
     backgroundColor: Color
 ) {

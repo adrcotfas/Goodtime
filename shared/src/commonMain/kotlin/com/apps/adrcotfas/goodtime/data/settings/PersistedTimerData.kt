@@ -8,13 +8,13 @@ import kotlin.time.Duration.Companion.minutes
 
 @Serializable
 data class BreakBudgetData(
-    val breakBudget: Long = 0, // minutes
+    val breakBudget: Int = 0, // minutes
     val breakBudgetStart: Long = 0, // millis since boot
 ) {
     fun getRemainingBreakBudget(millis: Long): Duration {
         val timeSinceBreakBudgetStart = millis - breakBudgetStart
         val breakBudgetMs = breakBudget.minutes.inWholeMilliseconds
-        return max(0, (breakBudgetMs - timeSinceBreakBudgetStart)).milliseconds.inWholeMinutes.minutes
+        return max(0, (breakBudgetMs - timeSinceBreakBudgetStart)).milliseconds
     }
 }
 

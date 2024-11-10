@@ -107,8 +107,12 @@ class MainViewModel(
         timerManager.start(type)
     }
 
-    fun toggleTimer() {
-        timerManager.toggle()
+    fun toggleTimer() : Boolean {
+        val canToggle = timerManager.canToggle()
+        if (canToggle) {
+            timerManager.toggle()
+            return true
+        } else return false
     }
 
     fun resetTimer() {

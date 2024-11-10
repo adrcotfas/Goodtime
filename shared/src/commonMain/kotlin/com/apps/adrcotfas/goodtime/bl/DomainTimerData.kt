@@ -3,6 +3,7 @@ package com.apps.adrcotfas.goodtime.bl
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.TimerProfile
 import com.apps.adrcotfas.goodtime.data.model.duration
+import com.apps.adrcotfas.goodtime.data.model.endTime
 import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
 import kotlin.time.Duration.Companion.minutes
@@ -51,16 +52,6 @@ data class DomainTimerData(
         breakBudgetData = breakBudgetData
     )
 
-    fun getDuration() = label.profile.duration(type).minutes.inWholeMilliseconds
-
-    fun getBreakBudget(workDuration: Int): Int {
-        return if (label.profile.isCountdown) {
-            0
-        } else {
-            workDuration / label.profile.workBreakRatio
-        }
-    }
-
     fun getTimerProfile(): TimerProfile {
         return label.profile
     }
@@ -74,6 +65,17 @@ data class DomainTimerData(
         return if (profile.isCountdown && profile.isBreakEnabled && profile.isLongBreakEnabled) {
             profile.sessionsBeforeLongBreak
         } else 0
+    }
+
+    fun getEndTime(timerType: TimerType, elapsedRealtime: Long): Long {
+        return if (getTimerProfile().isCountdown) {
+            getTimerProfile().endTime(timerType, elapsedRealtime)
+        } else if (timerType.isBreak) {
+            val breakBudget = breakBudgetData.breakBudget.minutes.inWholeMilliseconds
+            elapsedRealtime + breakBudget
+        } else {
+            0
+        }
     }
 
     fun isDefaultLabel() = label.getLabelName() == Label.DEFAULT_LABEL_NAME
@@ -121,6 +123,6 @@ fun DomainTimerData.getBaseTime(timerProvider: TimeProvider): Long {
         return timeAtPause
     }
 
-    return if (countdown) endTime - timerProvider.elapsedRealtime()
+    return if (countdown || (!countdown && type.isBreak)) endTime - timerProvider.elapsedRealtime()
     else timerProvider.elapsedRealtime() - startTime - pausedTime
 }

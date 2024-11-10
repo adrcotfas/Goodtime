@@ -261,9 +261,9 @@ fun TimerStyleScreen(viewModel: MainViewModel = koinViewModel(), onNavigateBack:
                             timerStyle = timerStyle,
                             domainLabel = DomainLabel(label = Label(name = randomLabelIndex.intValue.let {
                                 if (it == -1) Label.DEFAULT_LABEL_NAME else demoLabelNames[it]
-                                }, colorIndex = index.toLong())),
+                            }, colorIndex = index.toLong())),
                             onStart = {},
-                            onToggle = {},
+                            onToggle = { false },
                         )
                     }
                 }

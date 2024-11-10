@@ -62,6 +62,7 @@ class TimerManagerTest {
         defaultLabel = defaultLabel.copy(id = localDataRepo.selectLastInsertLabelId()!!)
         localDataRepo.insertLabel(customLabel)
         customLabel = customLabel.copy(id = localDataRepo.selectLastInsertLabelId()!!)
+        localDataRepo.insertLabel(countUpLabel)
 
         settingsRepo = FakeSettingsRepository()
 
@@ -499,33 +500,49 @@ class TimerManagerTest {
 
     @Test
     fun `No long break if idled`() = runTest {
-        val sessionsBeforeLongBreak = timerManager.timerData.value.label.profile.sessionsBeforeLongBreak
-        assertEquals(timerManager.timerData.value.longBreakData.streakInUse(sessionsBeforeLongBreak), 0)
+        val sessionsBeforeLongBreak =
+            timerManager.timerData.value.label.profile.sessionsBeforeLongBreak
+        assertEquals(
+            timerManager.timerData.value.longBreakData.streakInUse(sessionsBeforeLongBreak),
+            0
+        )
         timerManager.start(TimerType.WORK)
         val twoMinutes = 2.minutes.inWholeMilliseconds
         timeProvider.elapsedRealtime += twoMinutes
         timerManager.skip()
         assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
-        assertEquals(timerManager.timerData.value.longBreakData.streakInUse(sessionsBeforeLongBreak), 1)
+        assertEquals(
+            timerManager.timerData.value.longBreakData.streakInUse(sessionsBeforeLongBreak),
+            1
+        )
         timerManager.skip()
         assertEquals(timerManager.timerData.value.type, TimerType.WORK)
         timeProvider.elapsedRealtime += twoMinutes
         timerManager.skip()
         assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
-        assertEquals(timerManager.timerData.value.longBreakData.streakInUse(sessionsBeforeLongBreak), 2)
+        assertEquals(
+            timerManager.timerData.value.longBreakData.streakInUse(sessionsBeforeLongBreak),
+            2
+        )
         timerManager.skip()
         assertEquals(timerManager.timerData.value.type, TimerType.WORK)
         timeProvider.elapsedRealtime += twoMinutes
         timerManager.skip()
         assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
-        assertEquals(timerManager.timerData.value.longBreakData.streakInUse(sessionsBeforeLongBreak), 3)
+        assertEquals(
+            timerManager.timerData.value.longBreakData.streakInUse(sessionsBeforeLongBreak),
+            3
+        )
         timerManager.reset()
         val oneHour = 1.hours.inWholeMilliseconds
         timeProvider.elapsedRealtime += oneHour
         timerManager.start(TimerType.WORK)
         timeProvider.elapsedRealtime += twoMinutes
         timerManager.skip()
-        assertEquals(timerManager.timerData.value.longBreakData.streakInUse(sessionsBeforeLongBreak), 1)
+        assertEquals(
+            timerManager.timerData.value.longBreakData.streakInUse(sessionsBeforeLongBreak),
+            1
+        )
         assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
     }
 
@@ -536,7 +553,7 @@ class TimerManagerTest {
         val twoMinutes = 2.minutes.inWholeMilliseconds
         timeProvider.elapsedRealtime += twoMinutes
         timerManager.skip()
-        assertEquals( 1, timerManager.timerData.value.longBreakData.streak)
+        assertEquals(1, timerManager.timerData.value.longBreakData.streak)
         val oneHour = 1.hours.inWholeMilliseconds
         timeProvider.elapsedRealtime += oneHour
         timerManager.start(TimerType.WORK)
@@ -572,7 +589,6 @@ class TimerManagerTest {
 
     @Test
     fun `Count-up work then count-down the break budget`() = runTest {
-        localDataRepo.insertLabel(countUpLabel)
         settingsRepo.activateLabelWithName(countUpLabel.name)
 
         timerManager.start(TimerType.WORK)
@@ -602,7 +618,6 @@ class TimerManagerTest {
     @Test
     fun `Count-up then reset then wait for a while to start another count-up`() =
         runTest {
-            localDataRepo.insertLabel(countUpLabel)
             settingsRepo.activateLabelWithName(countUpLabel.name)
 
             timerManager.start()
@@ -627,7 +642,9 @@ class TimerManagerTest {
             assertEquals(
                 timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(
                     timeProvider.elapsedRealtime
-                ).inWholeMinutes, expectedBreakBudget, "The break budget should have decreased while idling"
+                ).inWholeMinutes,
+                expectedBreakBudget,
+                "The break budget should have decreased while idling"
             )
 
             timerManager.start(TimerType.WORK)
@@ -646,6 +663,84 @@ class TimerManagerTest {
                 "The previous unused break budget should have been added to the total"
             )
         }
+
+    @Test
+    fun `Count-up then start a break with budget already there`() = runTest {
+        breakBudgetHandler.updateBreakBudget(BreakBudgetData(10, 0))
+        settingsRepo.activateLabelWithName(countUpLabel.name)
+
+        timerManager.start()
+        timerManager.next()
+
+        assertEquals(
+            timerManager.timerData.value.endTime,
+            timerManager.timerData.value.breakBudgetData.breakBudget.minutes.inWholeMilliseconds
+        )
+        assertEquals(
+            fakeEventListener.events,
+            listOf(
+                Event.Start(endTime = 0),
+                Event.Start(endTime = 10.minutes.inWholeMilliseconds)
+            )
+        )
+    }
+
+    @Test
+    fun `Count-up then start break then auto-start work`() = runTest {
+        val breakBudget = 3
+        val breakBudgetMillis = breakBudget.minutes.inWholeMilliseconds
+
+        breakBudgetHandler.updateBreakBudget(BreakBudgetData(breakBudget, 0))
+        settingsRepo.activateLabelWithName(countUpLabel.name)
+        settingsRepo.saveAutoStartWork(true)
+
+        timerManager.start()
+        timerManager.next()
+        timeProvider.elapsedRealtime += breakBudgetMillis
+        testScope.advanceTimeBy(breakBudgetMillis)
+        timerManager.finish()
+
+        assertEquals(
+            expected = listOf(
+                Event.Start(endTime = 0),
+                Event.Start(endTime = breakBudgetMillis),
+                Event.Finished(type = TimerType.BREAK, autostartNextSession = true),
+                Event.Start(endTime = 0, autoStarted = true),
+            ), actual = fakeEventListener.events
+        )
+    }
+
+    @Test
+    fun `Count-up then start break then observe remaining budget`() = runTest {
+        val breakBudget = 3
+        val oneMinute = 1.minutes.inWholeMilliseconds
+
+        breakBudgetHandler.updateBreakBudget(BreakBudgetData(breakBudget, 0))
+        settingsRepo.activateLabelWithName(countUpLabel.name)
+        settingsRepo.saveAutoStartWork(true)
+
+        timerManager.start()
+        timerManager.next()
+        timeProvider.elapsedRealtime += oneMinute
+        testScope.advanceTimeBy(oneMinute)
+        assertEquals(
+            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime).inWholeMinutes.toInt(),
+            breakBudget - 1
+        )
+        timeProvider.elapsedRealtime += oneMinute
+        testScope.advanceTimeBy(oneMinute)
+        assertEquals(
+            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime).inWholeMinutes.toInt(),
+            breakBudget - 2
+        )
+        timeProvider.elapsedRealtime += oneMinute
+        testScope.advanceTimeBy(oneMinute)
+        assertEquals(
+            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime).inWholeMinutes.toInt(),
+            breakBudget - 3
+        )
+
+    }
 
     companion object {
         private const val CUSTOM_LABEL_NAME = "dummy"
