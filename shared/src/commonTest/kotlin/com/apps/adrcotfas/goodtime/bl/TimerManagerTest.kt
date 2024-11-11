@@ -742,7 +742,43 @@ class TimerManagerTest {
             timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime).inWholeMinutes.toInt(),
             breakBudget - 3
         )
+    }
 
+    @Test
+    fun `Count-up then work for a while then change the work break ratio`() = runTest {
+        settingsRepo.activateLabelWithName(countUpLabel.name)
+
+        timerManager.start()
+        val workTime = 12.minutes.inWholeMilliseconds
+        timeProvider.elapsedRealtime += workTime
+        testScope.advanceTimeBy(workTime)
+
+        val expectedBreakBudget =
+            workTime.milliseconds.inWholeMinutes / countUpLabel.timerProfile.workBreakRatio
+        assertEquals(
+            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(
+                timeProvider.elapsedRealtime
+            ).inWholeMinutes, expectedBreakBudget
+        )
+        timerManager.reset()
+
+        val newWorkBreakRatio = 1
+        localDataRepo.updateLabel(
+            countUpLabel.name,
+            countUpLabel.copy(timerProfile = countUpLabel.timerProfile.copy(workBreakRatio = newWorkBreakRatio))
+        )
+        timerManager.start()
+        timeProvider.elapsedRealtime += workTime
+        testScope.advanceTimeBy(workTime)
+
+        val extraBreakBudget =
+            workTime.milliseconds.inWholeMinutes / newWorkBreakRatio
+
+        assertEquals(
+            timerManager.timerData.value.breakBudgetData.breakBudget.toLong(),
+            expectedBreakBudget + extraBreakBudget,
+            "The break budget should have been recalculated"
+        )
     }
 
     companion object {
