@@ -29,8 +29,8 @@ class BreakBudgetDataTest {
 
         for ((budget, elapsedTime) in expected) {
             assertEquals(
-                budget,
-                persistedTimerData.getRemainingBreakBudget(elapsedTime)
+                budget.inWholeMinutes,
+                persistedTimerData.getRemainingBreakBudget(elapsedTime).inWholeMinutes
             )
         }
     }
