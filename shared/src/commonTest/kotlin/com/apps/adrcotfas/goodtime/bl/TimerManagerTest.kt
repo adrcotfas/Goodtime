@@ -592,11 +592,14 @@ class TimerManagerTest {
         settingsRepo.activateLabelWithName(countUpLabel.name)
 
         timerManager.start(TimerType.WORK)
-        val halfHour = 30.minutes.inWholeMilliseconds
+        val workDuration = 6.minutes.inWholeMilliseconds
         val expectedBreakBudget =
-            halfHour.milliseconds.inWholeMinutes / countUpLabel.timerProfile.workBreakRatio
-        timeProvider.elapsedRealtime += halfHour
-        testScope.advanceTimeBy(halfHour)
+            workDuration.milliseconds.inWholeMinutes / countUpLabel.timerProfile.workBreakRatio
+        val oneMinute = 1.minutes.inWholeMilliseconds
+        repeat(6) {
+            timeProvider.elapsedRealtime += oneMinute
+            testScope.advanceTimeBy(oneMinute)
+        }
 
         timerManager.next()
         assertEquals(

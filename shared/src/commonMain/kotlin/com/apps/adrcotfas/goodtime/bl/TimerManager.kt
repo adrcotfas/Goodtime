@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
 import com.apps.adrcotfas.goodtime.data.model.Session
 import com.apps.adrcotfas.goodtime.data.settings.AppSettings
+import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.streakInUse
 import kotlinx.coroutines.CoroutineScope
@@ -122,16 +123,11 @@ class TimerManager(
             timerData.map {
                 it.state.isRunning && !it.label.profile.isCountdown && it.type.isWork
             }.distinctUntilChanged().collect { shouldAccumulate ->
-                if (shouldAccumulate) {
-                    breakBudgetJob?.cancel()
-                    breakBudgetJob = launch {
-                        accumulateBreakBudget()
-                    }
+                breakBudgetJob?.cancel()
+                breakBudgetJob = if (shouldAccumulate) {
+                    launch { accumulateBreakBudget() }
                 } else {
-                    breakBudgetJob?.cancel()
-                    breakBudgetJob = launch {
-                        consumeBreakBudget()
-                    }
+                    launch { consumeBreakBudget() }
                 }
             }
         }
@@ -139,21 +135,19 @@ class TimerManager(
 
     private suspend fun accumulateBreakBudget() {
         val startTime = timeProvider.elapsedRealtime()
+        log.i { "accumulating break budget..." }
+        val data = timerData.value
+        val existingBreakBudget = data.breakBudgetData.breakBudget.minutes.inWholeMilliseconds
         while (coroutineContext.isActive) {
-            val data = timerData.value
-            val workBreakRatio = data.label.profile.workBreakRatio
-            log.i { "accumulating break budget..." }
             val delay = computeNextBreakBudgetUpdateDelay()
             log.d { "accumulateBreakBudget: delay = ${delay.milliseconds}" }
             delay(delay)
             val elapsedTime = timeProvider.elapsedRealtime() - startTime
-            val newBreakBudget =
-                data.breakBudgetData.breakBudget.minutes.inWholeMilliseconds + (elapsedTime / workBreakRatio) + WIGGLE_ROOM_MILLIS
-            val newBreakBudgetMillis = newBreakBudget.milliseconds
-            val newBreakBudgetMinutes = newBreakBudgetMillis.inWholeMinutes.toInt()
-            log.i { "new break budget is: $newBreakBudgetMinutes" }
+            val workBreakRatio = timerData.value.label.profile.workBreakRatio
+            val newBreakBudget = existingBreakBudget + (elapsedTime / workBreakRatio) + WIGGLE_ROOM_MILLIS
+            val newBreakBudgetMinutes = newBreakBudget.milliseconds.inWholeMinutes.toInt()
             val updatedBreakBudgetData =
-                data.breakBudgetData.copy(
+                BreakBudgetData(
                     breakBudget = newBreakBudgetMinutes,
                     breakBudgetStart = timeProvider.elapsedRealtime()
                 )
@@ -166,16 +160,18 @@ class TimerManager(
         var remainingBreakBudget =
             data.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime())
 
-        // adding some extra to smooth out the minute change
+        // adding something extra to smooth out the minute change
         if (remainingBreakBudget.inWholeMinutes >= 1) {
+            log.d { "adding something extra to break budget" }
             val extra = timeProvider.elapsedRealtime() + 59.seconds.inWholeMilliseconds
             breakBudgetHandler.updateBreakBudget(data.breakBudgetData.copy(breakBudgetStart = extra))
         } else {
             return
         }
 
+        log.i { "consuming break budget..." }
+
         while (coroutineContext.isActive) {
-            log.i { "consuming break budget..." }
             val delay = computeNextBreakBudgetUpdateDelay()
             log.d { "consumeBreakBudget: delay = ${delay.milliseconds}" }
             delay(delay)
@@ -214,6 +210,7 @@ class TimerManager(
     }
 
     fun start(timerType: TimerType = timerData.value.type, autoStarted: Boolean = false) {
+        log.i { "Starting timer..." }
         val data = timerData.value
         if (!data.isReady) {
             log.e { "timer data not ready" }
@@ -253,7 +250,6 @@ class TimerManager(
 
         handlePersistentDataAtStart()
 
-        log.i { "Starting $timerType timer: $data" }
         listeners.forEach {
             it.onEvent(
                 Event.Start(
@@ -581,7 +577,7 @@ class TimerManager(
     }
 
     companion object {
-        const val WIGGLE_ROOM_MILLIS = 1000
+        const val WIGGLE_ROOM_MILLIS = 900
     }
 }
 
