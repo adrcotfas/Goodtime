@@ -91,8 +91,7 @@ class TimerManagerTest {
             streakAndLongBreakHandler,
             breakBudgetHandler,
             logger,
-            ioCoroutineScope = testScope,
-            workCoroutineScope = testScope
+            coroutineScope = testScope,
         )
         timerManager.setup()
     }
@@ -124,10 +123,12 @@ class TimerManagerTest {
     fun `Init persistent data only once`() = runTest {
         val customLongBreakData = LongBreakData(10, 42)
         settingsRepo.saveLongBreakData(customLongBreakData)
-        val customBreakBudgetData = BreakBudgetData(10, 42)
-        settingsRepo.saveBreakBudgetData(customBreakBudgetData)
-
         assertEquals(timerManager.timerData.value.longBreakData, customLongBreakData)
+
+
+        val customBreakBudgetData = BreakBudgetData(10.minutes, 42)
+        settingsRepo.saveBreakBudgetData(customBreakBudgetData)
+        timerManager.restart()
         assertEquals(timerManager.timerData.value.breakBudgetData, customBreakBudgetData)
     }
 
@@ -595,11 +596,8 @@ class TimerManagerTest {
         val workDuration = 6.minutes.inWholeMilliseconds
         val expectedBreakBudget =
             workDuration.milliseconds.inWholeMinutes / countUpLabel.timerProfile.workBreakRatio
-        val oneMinute = 1.minutes.inWholeMilliseconds
-        repeat(6) {
-            timeProvider.elapsedRealtime += oneMinute
-            testScope.advanceTimeBy(oneMinute)
-        }
+        timeProvider.elapsedRealtime += workDuration
+        testScope.advanceTimeBy(workDuration)
 
         timerManager.next()
         assertEquals(
@@ -669,33 +667,35 @@ class TimerManagerTest {
 
     @Test
     fun `Count-up then start a break with budget already there`() = runTest {
-        breakBudgetHandler.updateBreakBudget(BreakBudgetData(10, 0))
+        breakBudgetHandler.updateBreakBudget(BreakBudgetData(10.minutes, 0))
         settingsRepo.activateLabelWithName(countUpLabel.name)
+        timerManager.restart()
 
         timerManager.start()
         timerManager.next()
 
         assertEquals(
             timerManager.timerData.value.endTime,
-            timerManager.timerData.value.breakBudgetData.breakBudget.minutes.inWholeMilliseconds
+            timerManager.timerData.value.breakBudgetData.breakBudget.inWholeMilliseconds
         )
         assertEquals(
-            fakeEventListener.events,
             listOf(
                 Event.Start(endTime = 0),
                 Event.Start(endTime = 10.minutes.inWholeMilliseconds)
-            )
+            ),
+            fakeEventListener.events
         )
     }
 
     @Test
     fun `Count-up then start break then auto-start work`() = runTest {
-        val breakBudget = 3
-        val breakBudgetMillis = breakBudget.minutes.inWholeMilliseconds
+        val breakBudget = 3.minutes
+        val breakBudgetMillis = breakBudget.inWholeMilliseconds
 
         breakBudgetHandler.updateBreakBudget(BreakBudgetData(breakBudget, 0))
         settingsRepo.activateLabelWithName(countUpLabel.name)
         settingsRepo.saveAutoStartWork(true)
+        timerManager.restart()
 
         timerManager.start()
         timerManager.next()
@@ -715,32 +715,33 @@ class TimerManagerTest {
 
     @Test
     fun `Count-up then start break then observe remaining budget`() = runTest {
-        val breakBudget = 3
+        val breakBudget = 3.minutes
         val oneMinute = 1.minutes.inWholeMilliseconds
 
         breakBudgetHandler.updateBreakBudget(BreakBudgetData(breakBudget, 0))
         settingsRepo.activateLabelWithName(countUpLabel.name)
         settingsRepo.saveAutoStartWork(true)
+        timerManager.restart()
 
         timerManager.start()
         timerManager.next()
         timeProvider.elapsedRealtime += oneMinute
         testScope.advanceTimeBy(oneMinute)
         assertEquals(
-            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime).inWholeMinutes.toInt(),
-            breakBudget - 1
+            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime),
+            breakBudget - 1.minutes
         )
         timeProvider.elapsedRealtime += oneMinute
         testScope.advanceTimeBy(oneMinute)
         assertEquals(
-            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime).inWholeMinutes.toInt(),
-            breakBudget - 2
+            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime),
+            breakBudget - 2.minutes
         )
         timeProvider.elapsedRealtime += oneMinute
         testScope.advanceTimeBy(oneMinute)
         assertEquals(
-            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime).inWholeMinutes.toInt(),
-            breakBudget - 3
+            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime),
+            breakBudget - 3.minutes
         )
     }
 
@@ -754,11 +755,9 @@ class TimerManagerTest {
         testScope.advanceTimeBy(workTime)
 
         val expectedBreakBudget =
-            workTime.milliseconds.inWholeMinutes / countUpLabel.timerProfile.workBreakRatio
+            workTime.milliseconds / countUpLabel.timerProfile.workBreakRatio
         assertEquals(
-            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(
-                timeProvider.elapsedRealtime
-            ).inWholeMinutes, expectedBreakBudget
+            timerManager.timerData.value.getBreakBudget(timeProvider.elapsedRealtime), expectedBreakBudget
         )
         timerManager.reset()
 
@@ -772,10 +771,11 @@ class TimerManagerTest {
         testScope.advanceTimeBy(workTime)
 
         val extraBreakBudget =
-            workTime.milliseconds.inWholeMinutes / newWorkBreakRatio
+            workTime.milliseconds / newWorkBreakRatio
+        timerManager.reset()
 
         assertEquals(
-            timerManager.timerData.value.breakBudgetData.breakBudget.toLong(),
+            timerManager.timerData.value.breakBudgetData.breakBudget,
             expectedBreakBudget + extraBreakBudget,
             "The break budget should have been recalculated"
         )

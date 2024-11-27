@@ -6,6 +6,8 @@ import com.apps.adrcotfas.goodtime.data.model.duration
 import com.apps.adrcotfas.goodtime.data.model.endTime
 import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 
 
@@ -14,6 +16,7 @@ data class DomainLabel(
     val profile: TimerProfile = TimerProfile()
 ) {
     fun getLabelName() = label.name
+    val isCountdown = profile.isCountdown
 }
 
 /**
@@ -43,7 +46,7 @@ data class DomainTimerData(
     val timeAtPause: Long = 0, // millis
     val state: TimerState = TimerState.RESET,
     val type: TimerType = TimerType.WORK,
-    val pausedTime: Long = 0, // millis spent in pause
+    val timeSpentPaused: Long = 0, // millis spent in pause
 ) {
     fun reset() = DomainTimerData(
         isReady = isReady,
@@ -71,7 +74,7 @@ data class DomainTimerData(
         return if (getTimerProfile().isCountdown) {
             getTimerProfile().endTime(timerType, elapsedRealtime)
         } else if (timerType.isBreak) {
-            val breakBudget = breakBudgetData.breakBudget.minutes.inWholeMilliseconds
+            val breakBudget = breakBudgetData.breakBudget.inWholeMilliseconds
             elapsedRealtime + breakBudget
         } else {
             0
@@ -79,6 +82,26 @@ data class DomainTimerData(
     }
 
     fun isDefaultLabel() = label.getLabelName() == Label.DEFAULT_LABEL_NAME
+
+    fun getBreakBudget(elapsedRealtime: Long): Duration {
+        if (label.profile.isCountdown) return 0.minutes
+        return if (type.isWork) {
+            when (state) {
+                TimerState.RESET, TimerState.PAUSED -> breakBudgetData.getRemainingBreakBudget(elapsedRealtime)
+                TimerState.RUNNING -> {
+                    val breakBudgetMillis = breakBudgetData.breakBudget
+                    val workBreakRatio = label.profile.workBreakRatio
+                    (((elapsedRealtime - lastStartTime).milliseconds
+                            / workBreakRatio) + breakBudgetMillis).let {
+                        if (it.isNegative()) 0.minutes else it
+                    }
+                }
+                else -> 0.minutes // cannot be in a Finished state when counting up
+            }
+        } else {
+            breakBudgetData.getRemainingBreakBudget(elapsedRealtime)
+        }
+    }
 }
 
 enum class TimerState {
@@ -124,5 +147,5 @@ fun DomainTimerData.getBaseTime(timerProvider: TimeProvider): Long {
     }
 
     return if (countdown || (!countdown && type.isBreak)) endTime - timerProvider.elapsedRealtime()
-    else timerProvider.elapsedRealtime() - startTime - pausedTime
+    else timerProvider.elapsedRealtime() - startTime - timeSpentPaused
 }

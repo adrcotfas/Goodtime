@@ -18,6 +18,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.apps.adrcotfas.goodtime.bl.isWork
 import com.apps.adrcotfas.goodtime.main.dial_control.DialConfig
 import com.apps.adrcotfas.goodtime.main.dial_control.DialControl
 import com.apps.adrcotfas.goodtime.main.dial_control.DialControlButton
@@ -59,11 +60,16 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
         }
     )
 
+    val thereIsNoBreakBudget =
+        timerUiState.breakBudgetMinutes == 0L
+    val isCountUpWithoutBreaks = !label.profile.isCountdown && !label.profile.isBreakEnabled
+
     val disabledOptions = listOfNotNull(
-        //TODO: if there is no break budget, disable the right region
-        DialRegion.LEFT, if (!label.profile.isCountdown) {
+        DialRegion.LEFT,
+        if (!label.profile.isCountdown) {
             DialRegion.TOP
-        } else null
+        } else null,
+        if (thereIsNoBreakBudget && timerUiState.timerType.isWork || isCountUpWithoutBreaks) DialRegion.RIGHT else null
     )
 
     state.updateEnabledOptions(disabledOptions)

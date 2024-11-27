@@ -105,7 +105,7 @@ fun MainTimerView(
                 isCountdown = isCountdown,
                 streak = timerUiState.longBreakData.streak,
                 sessionsBeforeLongBreak = timerUiState.sessionsBeforeLongBreak,
-                breakBudget = timerUiState.breakBudgetData.breakBudget,
+                breakBudget = timerUiState.breakBudgetMinutes,
                 showStatus = timerStyle.showStatus,
                 showStreak = timerStyle.showStreak,
                 showBreakBudget = timerStyle.showBreakBudget
@@ -148,7 +148,7 @@ fun CurrentStatusSection(
     isCountdown: Boolean,
     streak: Int,
     sessionsBeforeLongBreak: Int,
-    breakBudget: Int,
+    breakBudget: Long,
     showStatus: Boolean,
     showStreak: Boolean,
     showBreakBudget: Boolean,
@@ -289,7 +289,7 @@ fun StreakIndicator(
 @Composable
 fun BreakBudgetIndicator(
     showBreakBudget: Boolean,
-    breakBudget: Int,
+    breakBudget: Long,
     color: Color,
     backgroundColor: Color
 ) {

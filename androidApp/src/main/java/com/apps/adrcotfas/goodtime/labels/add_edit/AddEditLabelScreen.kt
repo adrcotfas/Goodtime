@@ -192,8 +192,17 @@ fun AddEditLabelScreen(
                             }
                         }
                     } else {
-                        WorkBreakRationSliderRow(labelToEdit, onEditLabelToEdit) {
-                            dialogData = it
+                        CheckboxPreference(title = "Enable breaks", checked = isBreakEnabled) {
+                            onEditLabelToEdit(
+                                labelToEdit.copy(
+                                    timerProfile = labelToEdit.timerProfile.copy(isBreakEnabled = it)
+                                )
+                            )
+                        }
+                        AnimatedVisibility(visible = isBreakEnabled) {
+                            WorkBreakRationSliderRow(labelToEdit, onEditLabelToEdit) {
+                                dialogData = it
+                            }
                         }
                     }
                 }

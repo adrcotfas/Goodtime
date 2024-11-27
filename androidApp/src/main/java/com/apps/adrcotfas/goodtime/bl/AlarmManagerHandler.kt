@@ -50,7 +50,7 @@ class AlarmManagerHandler(
     }
 
     private fun cancelAlarm() {
-        log.v { "Cancel the alarm" }
+        log.v { "Cancel the alarm, if any" }
         alarmManager.cancel(getAlarmPendingIntent())
     }
 

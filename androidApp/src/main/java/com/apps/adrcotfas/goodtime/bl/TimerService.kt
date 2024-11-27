@@ -87,5 +87,6 @@ class TimerService : Service(), KoinComponent {
                 putExtra(EXTRA_FINISHED_AUTOSTART, autostart)
             }
         }
+
     }
 }

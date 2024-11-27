@@ -13,7 +13,7 @@ class BreakBudgetDataTest {
     fun `Compute remaining time budget`() = runTest {
         val persistedTimerData = BreakBudgetData(
             breakBudgetStart = 0,
-            breakBudget = 10
+            breakBudget = 10.minutes
         )
 
         val expected = mapOf(

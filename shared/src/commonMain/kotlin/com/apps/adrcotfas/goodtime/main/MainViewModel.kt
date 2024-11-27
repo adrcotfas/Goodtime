@@ -12,7 +12,6 @@ import com.apps.adrcotfas.goodtime.bl.getBaseTime
 import com.apps.adrcotfas.goodtime.bl.isActive
 import com.apps.adrcotfas.goodtime.bl.isBreak
 import com.apps.adrcotfas.goodtime.bl.isPaused
-import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
 import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.ThemePreference
@@ -39,7 +38,7 @@ data class TimerUiState(
     val timerType: TimerType = TimerType.WORK,
     val sessionsBeforeLongBreak: Int = 0,
     val longBreakData: LongBreakData = LongBreakData(),
-    val breakBudgetData: BreakBudgetData = BreakBudgetData(),
+    val breakBudgetMinutes: Long = 0,
 ) {
     fun workSessionIsInProgress(): Boolean {
         return timerState.isActive && timerType == TimerType.WORK
@@ -71,8 +70,8 @@ class MainViewModel(
 
     val timerUiState: Flow<TimerUiState> = timerManager.timerData.flatMapLatest {
         when (it.state) {
-            TimerState.RUNNING -> flow {
-                while (it.state == TimerState.RUNNING) {
+            TimerState.RUNNING, TimerState.PAUSED -> flow {
+                while (it.state.isActive) {
                     emitUiState(it)
                     delay(1000)
                 }
@@ -141,7 +140,7 @@ class MainViewModel(
                 timerType = it.type,
                 sessionsBeforeLongBreak = it.inUseSessionsBeforeLongBreak(),
                 longBreakData = it.longBreakData,
-                breakBudgetData = it.breakBudgetData,
+                breakBudgetMinutes = it.getBreakBudget(timeProvider.elapsedRealtime()).inWholeMinutes
             )
         )
     }
