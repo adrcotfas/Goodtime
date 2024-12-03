@@ -87,7 +87,6 @@ data class DomainTimerData(
         if (label.profile.isCountdown) return 0.minutes
         return if (type.isWork) {
             when (state) {
-                TimerState.RESET, TimerState.PAUSED -> breakBudgetData.getRemainingBreakBudget(elapsedRealtime)
                 TimerState.RUNNING -> {
                     val breakBudgetMillis = breakBudgetData.breakBudget
                     val workBreakRatio = label.profile.workBreakRatio
@@ -96,7 +95,7 @@ data class DomainTimerData(
                         if (it.isNegative()) 0.minutes else it
                     }
                 }
-                else -> 0.minutes // cannot be in a Finished state when counting up
+                else -> breakBudgetData.getRemainingBreakBudget(elapsedRealtime)
             }
         } else {
             breakBudgetData.getRemainingBreakBudget(elapsedRealtime)

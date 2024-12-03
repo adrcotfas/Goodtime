@@ -124,7 +124,7 @@ class TimerManager(
         val elapsedRealTime = timeProvider.elapsedRealtime()
 
         if (data.state.isReset) {
-            persistBreakBudgetIfNeeded()
+            updateBreakBudgetIfNeeded()
         }
 
         val newTimerData = timerData.value.copy(
@@ -167,7 +167,7 @@ class TimerManager(
         }
     }
 
-    private fun persistBreakBudgetIfNeeded(): Duration {
+    private fun updateBreakBudgetIfNeeded(): Duration {
         if (!timerData.value.label.isCountdown) {
             val elapsedRealtime = timeProvider.elapsedRealtime()
             val breakBudget = timerData.value.getBreakBudget(elapsedRealtime)
@@ -229,7 +229,7 @@ class TimerManager(
 
     private fun pause() {
         val elapsedRealtime = timeProvider.elapsedRealtime()
-        persistBreakBudgetIfNeeded()
+        updateBreakBudgetIfNeeded()
         _timerData.update {
             it.copy(
                 timeAtPause =
@@ -248,7 +248,7 @@ class TimerManager(
 
     private fun resume() {
         val elapsedRealTime = timeProvider.elapsedRealtime()
-        persistBreakBudgetIfNeeded()
+        updateBreakBudgetIfNeeded()
         updatePausedTime()
         val isCountdown = timerData.value.label.profile.isCountdown
         _timerData.update {
@@ -314,7 +314,7 @@ class TimerManager(
         val isWork = data.type.isWork
         val isCountDown = data.getTimerProfile().isCountdown
 
-        persistBreakBudgetIfNeeded()
+        updateBreakBudgetIfNeeded()
 
         val breakBudget = data.getBreakBudget(timeProvider.elapsedRealtime())
         if (isWork && !isCountDown && breakBudget < 1.minutes) {
@@ -363,6 +363,7 @@ class TimerManager(
         _timerData.update { it.copy(state = TimerState.FINISHED) }
         log.i { "Finish: $data" }
 
+        updateBreakBudgetIfNeeded()
         handleFinishedSession(finishActionType = FinishActionType.AUTO)
 
         val autoStart =
@@ -397,7 +398,7 @@ class TimerManager(
             return
         }
         log.i { "Reset: $data" }
-        persistBreakBudgetIfNeeded()
+        updateBreakBudgetIfNeeded()
 
         handleFinishedSession(updateWorkTime, finishActionType = FinishActionType.MANUAL_RESET)
 

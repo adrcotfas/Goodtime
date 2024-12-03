@@ -601,7 +601,7 @@ class TimerManagerTest {
 
         timerManager.next()
         assertEquals(
-            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(
+            timerManager.timerData.value.getBreakBudget(
                 timeProvider.elapsedRealtime
             ).inWholeMinutes, expectedBreakBudget
         )
@@ -609,7 +609,7 @@ class TimerManagerTest {
         timeProvider.elapsedRealtime += expectedBreakBudget.minutes.inWholeMilliseconds
         timerManager.next()
         assertEquals(
-            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(
+            timerManager.timerData.value.getBreakBudget(
                 timeProvider.elapsedRealtime
             ).inWholeMinutes, 0
         )
@@ -630,7 +630,7 @@ class TimerManagerTest {
                 workTime.milliseconds.inWholeMinutes / countUpLabel.timerProfile.workBreakRatio
             timerManager.reset()
             assertEquals(
-                timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(
+                timerManager.timerData.value.getBreakBudget(
                     timeProvider.elapsedRealtime
                 ).inWholeMinutes, expectedBreakBudget
             )
@@ -641,7 +641,7 @@ class TimerManagerTest {
 
             expectedBreakBudget -= idleTime.milliseconds.inWholeMinutes.toInt()
             assertEquals(
-                timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(
+                timerManager.timerData.value.getBreakBudget(
                     timeProvider.elapsedRealtime
                 ).inWholeMinutes,
                 expectedBreakBudget,
@@ -656,12 +656,25 @@ class TimerManagerTest {
             val extraBreakBudget =
                 workTime.milliseconds.inWholeMinutes / countUpLabel.timerProfile.workBreakRatio
 
+            val breakBudgetAtTheEnd = expectedBreakBudget + extraBreakBudget
             assertEquals(
-                timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(
+                timerManager.timerData.value.getBreakBudget(
                     timeProvider.elapsedRealtime
                 ).inWholeMinutes,
-                expectedBreakBudget + extraBreakBudget,
+                breakBudgetAtTheEnd,
                 "The previous unused break budget should have been added to the total"
+            )
+            timerManager.start(TimerType.WORK)
+            timeProvider.elapsedRealtime += idleTime
+            testScope.advanceTimeBy(idleTime)
+            timerManager.finish()
+
+            assertEquals(
+                timerManager.timerData.value.getBreakBudget(
+                    timeProvider.elapsedRealtime
+                ).inWholeMinutes,
+                breakBudgetAtTheEnd - idleTime.milliseconds.inWholeMinutes.toInt(),
+                "The break budget should have decreased while idling"
             )
         }
 
@@ -728,19 +741,19 @@ class TimerManagerTest {
         timeProvider.elapsedRealtime += oneMinute
         testScope.advanceTimeBy(oneMinute)
         assertEquals(
-            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime),
+            timerManager.timerData.value.getBreakBudget(timeProvider.elapsedRealtime),
             breakBudget - 1.minutes
         )
         timeProvider.elapsedRealtime += oneMinute
         testScope.advanceTimeBy(oneMinute)
         assertEquals(
-            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime),
+            timerManager.timerData.value.getBreakBudget(timeProvider.elapsedRealtime),
             breakBudget - 2.minutes
         )
         timeProvider.elapsedRealtime += oneMinute
         testScope.advanceTimeBy(oneMinute)
         assertEquals(
-            timerManager.timerData.value.breakBudgetData.getRemainingBreakBudget(timeProvider.elapsedRealtime),
+            timerManager.timerData.value.getBreakBudget(timeProvider.elapsedRealtime),
             breakBudget - 3.minutes
         )
     }
