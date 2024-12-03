@@ -8,9 +8,7 @@ import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
-import com.apps.adrcotfas.goodtime.bl.BreakBudgetHandler
 import com.apps.adrcotfas.goodtime.bl.FinishedSessionsHandler
-import com.apps.adrcotfas.goodtime.bl.StreakAndLongBreakHandler
 import com.apps.adrcotfas.goodtime.bl.TimeProvider
 import com.apps.adrcotfas.goodtime.bl.TimeProviderImpl
 import com.apps.adrcotfas.goodtime.data.local.Database
@@ -90,14 +88,6 @@ private val coreModule = module {
             get<LocalDataRepository>(),
             getWith(FinishedSessionsHandler::class.simpleName)
         )
-    }
-
-    single<StreakAndLongBreakHandler> {
-        StreakAndLongBreakHandler(get<CoroutineScope>(), get<SettingsRepository>())
-    }
-
-    single<BreakBudgetHandler> {
-        BreakBudgetHandler(get<CoroutineScope>(), get<SettingsRepository>())
     }
 
     single<BackupManager> {

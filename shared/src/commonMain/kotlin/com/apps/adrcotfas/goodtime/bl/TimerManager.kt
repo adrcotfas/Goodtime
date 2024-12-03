@@ -5,6 +5,7 @@ import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
 import com.apps.adrcotfas.goodtime.data.model.Session
 import com.apps.adrcotfas.goodtime.data.settings.AppSettings
 import com.apps.adrcotfas.goodtime.data.settings.BreakBudgetData
+import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.streakInUse
 import kotlinx.coroutines.CoroutineScope
@@ -35,8 +36,6 @@ class TimerManager(
     private val listeners: List<EventListener>,
     private val timeProvider: TimeProvider,
     private val finishedSessionsHandler: FinishedSessionsHandler,
-    private val streakAndLongBreakHandler: StreakAndLongBreakHandler,
-    private val breakBudgetHandler: BreakBudgetHandler,
     private val log: Logger,
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 ) {
@@ -56,7 +55,7 @@ class TimerManager(
         mainJob = coroutineScope.launch {
             initAndObserveLabelChange()
         }
-        initAndObservePersistentData()
+        initPersistentData()
     }
 
     fun restart() {
@@ -94,11 +93,10 @@ class TimerManager(
             }
     }
 
-    private fun initAndObservePersistentData() {
+    private fun initPersistentData() {
         coroutineScope.launch {
             settingsRepo.settings.map { it.longBreakData }
-                .distinctUntilChanged()
-                .collect {
+                .first().let {
                     log.i { "new long break data: $it" }
                     _timerData.update { data -> data.copy(longBreakData = it) }
                 }
@@ -180,13 +178,14 @@ class TimerManager(
                     )
                 )
             }
-
-            breakBudgetHandler.updateBreakBudget(
-                BreakBudgetData(
-                    breakBudget = breakBudget,
-                    breakBudgetStart = elapsedRealtime
+            coroutineScope.launch {
+                settingsRepo.saveBreakBudgetData(
+                    BreakBudgetData(
+                        breakBudget = breakBudget,
+                        breakBudgetStart = elapsedRealtime
+                    )
                 )
-            )
+            }
             return breakBudget
         }
         return 0.minutes
@@ -479,13 +478,23 @@ class TimerManager(
 
     private fun incrementStreak() {
         val lastWorkEndTime = timeProvider.elapsedRealtime()
-        streakAndLongBreakHandler.incrementStreak(lastWorkEndTime)
+        val newStreak = timerData.value.longBreakData.streak + 1
+        val newData = LongBreakData(newStreak, lastWorkEndTime)
+        _timerData.update { it.copy(longBreakData = newData) }
+        coroutineScope.launch {
+            settingsRepo.saveLongBreakData(newData)
+        }
+        log.v { "Streak incremented: $newStreak" }
     }
 
     fun resetStreakIfNeeded(millis: Long = timeProvider.elapsedRealtime()) {
         if (!didLastWorkSessionFinishRecently(millis)) {
-            streakAndLongBreakHandler.resetStreak()
+            _timerData.update { it.copy(longBreakData = LongBreakData()) }
+            coroutineScope.launch {
+                settingsRepo.saveLongBreakData(LongBreakData())
+            }
         }
+        log.v { "Streak reset" }
     }
 
     private fun shouldConsiderStreak(workEndTime: Long): Boolean {

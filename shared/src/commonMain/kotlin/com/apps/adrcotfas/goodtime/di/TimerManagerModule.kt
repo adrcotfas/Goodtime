@@ -1,9 +1,7 @@
 package com.apps.adrcotfas.goodtime.di
 
-import com.apps.adrcotfas.goodtime.bl.BreakBudgetHandler
 import com.apps.adrcotfas.goodtime.bl.EventListener
 import com.apps.adrcotfas.goodtime.bl.FinishedSessionsHandler
-import com.apps.adrcotfas.goodtime.bl.StreakAndLongBreakHandler
 import com.apps.adrcotfas.goodtime.bl.TimeProvider
 import com.apps.adrcotfas.goodtime.bl.TimerManager
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
@@ -18,8 +16,6 @@ val timerManagerModule = module {
             get<List<EventListener>>(),
             get<TimeProvider>(),
             get<FinishedSessionsHandler>(),
-            get<StreakAndLongBreakHandler>(),
-            get<BreakBudgetHandler>(),
             getWith(TimerManager::class.simpleName)
         )
     }

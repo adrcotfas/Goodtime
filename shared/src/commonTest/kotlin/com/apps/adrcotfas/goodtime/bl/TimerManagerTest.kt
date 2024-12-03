@@ -47,8 +47,6 @@ class TimerManagerTest {
     private val logger = Logger(StaticConfig())
 
     private lateinit var finishedSessionsHandler: FinishedSessionsHandler
-    private lateinit var streakAndLongBreakHandler: StreakAndLongBreakHandler
-    private lateinit var breakBudgetHandler: BreakBudgetHandler
 
     @BeforeTest
     fun setup() = runTest(testDispatcher) {
@@ -72,24 +70,12 @@ class TimerManagerTest {
             log = logger
         )
 
-        streakAndLongBreakHandler = StreakAndLongBreakHandler(
-            coroutineScope = testScope,
-            settingsRepo = settingsRepo,
-        )
-
-        breakBudgetHandler = BreakBudgetHandler(
-            coroutineScope = testScope,
-            settingsRepo = settingsRepo
-        )
-
         timerManager = TimerManager(
             localDataRepo = localDataRepo,
             settingsRepo = settingsRepo,
             listeners = listOf(fakeEventListener),
             timeProvider,
             finishedSessionsHandler,
-            streakAndLongBreakHandler,
-            breakBudgetHandler,
             logger,
             coroutineScope = testScope,
         )
@@ -123,8 +109,8 @@ class TimerManagerTest {
     fun `Init persistent data only once`() = runTest {
         val customLongBreakData = LongBreakData(10, 42)
         settingsRepo.saveLongBreakData(customLongBreakData)
+        timerManager.restart()
         assertEquals(timerManager.timerData.value.longBreakData, customLongBreakData)
-
 
         val customBreakBudgetData = BreakBudgetData(10.minutes, 42)
         settingsRepo.saveBreakBudgetData(customBreakBudgetData)
@@ -680,7 +666,7 @@ class TimerManagerTest {
 
     @Test
     fun `Count-up then start a break with budget already there`() = runTest {
-        breakBudgetHandler.updateBreakBudget(BreakBudgetData(10.minutes, 0))
+        settingsRepo.saveBreakBudgetData(BreakBudgetData(10.minutes, 0))
         settingsRepo.activateLabelWithName(countUpLabel.name)
         timerManager.restart()
 
@@ -705,7 +691,7 @@ class TimerManagerTest {
         val breakBudget = 3.minutes
         val breakBudgetMillis = breakBudget.inWholeMilliseconds
 
-        breakBudgetHandler.updateBreakBudget(BreakBudgetData(breakBudget, 0))
+        settingsRepo.saveBreakBudgetData(BreakBudgetData(breakBudget, 0))
         settingsRepo.activateLabelWithName(countUpLabel.name)
         settingsRepo.saveAutoStartWork(true)
         timerManager.restart()
@@ -731,7 +717,7 @@ class TimerManagerTest {
         val breakBudget = 3.minutes
         val oneMinute = 1.minutes.inWholeMilliseconds
 
-        breakBudgetHandler.updateBreakBudget(BreakBudgetData(breakBudget, 0))
+        settingsRepo.saveBreakBudgetData(BreakBudgetData(breakBudget, 0))
         settingsRepo.activateLabelWithName(countUpLabel.name)
         settingsRepo.saveAutoStartWork(true)
         timerManager.restart()
