@@ -69,7 +69,11 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
         if (!label.profile.isCountdown) {
             DialRegion.TOP
         } else null,
-        if (thereIsNoBreakBudget && timerUiState.timerType.isWork || isCountUpWithoutBreaks) DialRegion.RIGHT else null
+        if ((!label.profile.isCountdown &&
+                    thereIsNoBreakBudget &&
+                    timerUiState.timerType.isWork)
+            || isCountUpWithoutBreaks
+        ) DialRegion.RIGHT else null
     )
 
     state.updateEnabledOptions(disabledOptions)
