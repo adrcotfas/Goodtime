@@ -168,9 +168,8 @@ fun UserInterfaceScreen(
                 ) {
                     viewModel.setKeepScreenOn(it)
                 }
-                //TODO: implement this
                 CheckboxPreference(
-                    title = "Screensaver mode (TODO)",
+                    title = "Screensaver mode",
                     checked = settings.uiSettings.screensaverMode,
                     clickable = settings.uiSettings.keepScreenOn
                 ) {

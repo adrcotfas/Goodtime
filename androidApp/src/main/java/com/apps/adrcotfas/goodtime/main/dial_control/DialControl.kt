@@ -91,6 +91,7 @@ fun <T> rememberDialControlState(
 
 @Composable
 fun <T> DialControl(
+    modifier: Modifier = Modifier,
     state: DialControlState<T>,
     dialContent: @Composable (T) -> Unit,
     indicator: @Composable (DialControlState<T>) -> Unit = {
@@ -125,6 +126,7 @@ fun <T> DialControl(
                 .align(Alignment.Center)
         ) {
             CircleDial(
+                modifier = modifier,
                 state = state,
                 optionContent = dialContent,
                 indicator = { indicator(state) },
@@ -135,6 +137,7 @@ fun <T> DialControl(
 
 @Composable
 private fun <T> CircleDial(
+    modifier: Modifier,
     state: DialControlState<T>,
     optionContent: @Composable (T) -> Unit,
     indicator: @Composable () -> Unit,
@@ -157,7 +160,7 @@ private fun <T> CircleDial(
         }
     }
 
-    Box(modifier = Modifier, contentAlignment = Alignment.Center) {
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
         val sweep = 360f / state.options.size
         Box(
             modifier = Modifier

@@ -52,6 +52,7 @@ data class TimerUiState(
 data class MainUiState(
     val timerStyle: TimerStyleData = TimerStyleData(minSize = TimerStyleData.INVALID_MIN_SIZE),
     val darkThemePreference: ThemePreference = ThemePreference.SYSTEM,
+    val screensaverMode: Boolean = false,
     val fullscreenMode: Boolean = false,
     val dndDuringWork: Boolean = false,
     val isMainScreen: Boolean = true,
@@ -94,6 +95,7 @@ class MainViewModel(
                         it.copy(
                             timerStyle = uiSettings.timerStyle,
                             darkThemePreference = uiSettings.themePreference,
+                            screensaverMode = uiSettings.screensaverMode,
                             fullscreenMode = uiSettings.fullscreenMode,
                             dndDuringWork = uiSettings.dndDuringWork
                         )

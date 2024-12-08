@@ -1,6 +1,7 @@
 package com.apps.adrcotfas.goodtime.main
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.gestures.awaitDragOrCancellation
@@ -9,16 +10,21 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.bl.isWork
+import com.apps.adrcotfas.goodtime.common.isPortrait
 import com.apps.adrcotfas.goodtime.main.dial_control.DialConfig
 import com.apps.adrcotfas.goodtime.main.dial_control.DialControl
 import com.apps.adrcotfas.goodtime.main.dial_control.DialControlButton
@@ -26,10 +32,13 @@ import com.apps.adrcotfas.goodtime.main.dial_control.DialRegion
 import com.apps.adrcotfas.goodtime.main.dial_control.rememberDialControlState
 import com.apps.adrcotfas.goodtime.settings.user_interface.InitTimerStyle
 import org.koin.androidx.compose.koinViewModel
+import kotlin.math.roundToInt
 
 @Composable
 fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
     InitTimerStyle(viewModel)
+
+    val configuration = LocalConfiguration.current
 
     val timerUiState by viewModel.timerUiState.collectAsStateWithLifecycle(TimerUiState())
     val mainUiState by viewModel.uiState.collectAsStateWithLifecycle(MainUiState())
@@ -37,9 +46,9 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
     val timerStyle = mainUiState.timerStyle
     val label = timerUiState.label
 
-    val state = rememberDialControlState(
+    val dialControlState = rememberDialControlState(
         options = DialRegion.entries,
-        config = DialConfig(size = timerStyle.currentScreenWidth.dp - 64.dp),
+        config = DialConfig(size = timerStyle.currentScreenWidth.dp),
         onSelected = {
             when (it) {
                 DialRegion.TOP -> {
@@ -60,6 +69,14 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
         }
     )
 
+    val yOffset = remember { Animatable(0f) }
+    ScreensaverMode(
+        screensaverMode = mainUiState.screensaverMode,
+        isActive = timerUiState.isActive,
+        screenWidth = timerStyle.currentScreenWidth.dp,
+        yOffset = yOffset
+    )
+
     val thereIsNoBreakBudget =
         timerUiState.breakBudgetMinutes == 0L
     val isCountUpWithoutBreaks = !label.profile.isCountdown && !label.profile.isBreakEnabled
@@ -76,9 +93,9 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
         ) DialRegion.RIGHT else null
     )
 
-    state.updateEnabledOptions(disabledOptions)
+    dialControlState.updateEnabledOptions(disabledOptions)
 
-    val gestureModifier = state.let {
+    val gestureModifier = dialControlState.let {
         Modifier
             .pointerInput(it) {
                 awaitEachGesture {
@@ -91,7 +108,7 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
                     while (change != null && change.pressed) {
                         change = awaitDragOrCancellation(change.id)?.also { inputChange ->
                             if (inputChange.pressed && timerUiState.isActive) {
-                                state.onDrag(dragAmount = inputChange.positionChange())
+                                dialControlState.onDrag(dragAmount = inputChange.positionChange())
                             }
                         }
                     }
@@ -101,14 +118,22 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
     }
 
     val alphaModifier = Modifier.graphicsLayer {
-        alpha = if (state.isDragging) 0.38f else 1f
+        alpha = if (dialControlState.isDragging) 0.38f else 1f
     }
 
     AnimatedVisibility(timerUiState.isReady, enter = fadeIn(), exit = fadeOut()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+
+            val modifier = Modifier.offset {
+            if (configuration.isPortrait) IntOffset(
+                0,
+                yOffset.value.roundToInt()
+            ) else IntOffset(yOffset.value.roundToInt(), 0)
+        }
+
             MainTimerView(
-                modifier = alphaModifier,
-                state = state,
+                modifier = alphaModifier.then(modifier),
+                state = dialControlState,
                 gestureModifier = gestureModifier,
                 timerUiState = timerUiState,
                 timerStyle = timerStyle,
@@ -116,13 +141,13 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
                 onStart = viewModel::startTimer,
                 onToggle = viewModel::toggleTimer
             )
-
             DialControl(
-                state = state,
+                modifier = modifier,
+                state = dialControlState,
                 dialContent = { region ->
                     DialControlButton(
-                        disabled = state.isDisabled(region),
-                        selected = region == state.selectedOption,
+                        disabled = dialControlState.isDisabled(region),
+                        selected = region == dialControlState.selectedOption,
                         region = region
                     )
                 }
