@@ -16,6 +16,9 @@
     <!-- For the option of removing the app from the battery optimization -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
+    <!-- Wake up the screen when a session is finished -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:name=".GoodtimeApplication"
         android:allowBackup="false"

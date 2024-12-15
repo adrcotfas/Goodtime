@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import co.touchlab.kermit.Logger
+import com.apps.adrcotfas.goodtime.MainActivity
 import com.apps.adrcotfas.goodtime.bl.notifications.NotificationArchManager
 import com.apps.adrcotfas.goodtime.di.injectLogger
 import org.koin.core.component.KoinComponent
@@ -47,6 +48,12 @@ class TimerService : Service(), KoinComponent {
                     stopSelf()
                 }
                 notificationManager.notifyFinished(data, withActions = !autoStart)
+
+                // bring activity to front although seems to not work anymore on newer versions of Android
+                val activityIntent = Intent(applicationContext, MainActivity::class.java)
+                activityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                applicationContext.startActivity(activityIntent)
+
                 return START_NOT_STICKY
             }
 
