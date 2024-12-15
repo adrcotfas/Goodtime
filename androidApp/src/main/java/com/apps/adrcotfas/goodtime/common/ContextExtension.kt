@@ -51,7 +51,7 @@ private fun Context.getContentFileName(uri: Uri): String? = runCatching {
 
 fun Context.getVersionName(): String {
     val packageInfo = packageManager.getPackageInfo(packageName, 0)
-    return packageInfo.versionName
+    return packageInfo.versionName!!
 }
 
 fun Context.getVersionCode(): Long {
