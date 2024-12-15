@@ -12,6 +12,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
 
     private val timerManager: TimerManager by inject()
 
+    @Suppress("DEPRECATION")
     override fun onReceive(context: Context, intent: Intent) {
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
         powerManager.newWakeLock(
