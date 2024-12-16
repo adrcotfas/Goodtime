@@ -56,6 +56,8 @@ android {
 dependencies {
     implementation(libs.androidx.documentfile)
     implementation(libs.androidx.navigation.adaptive)
+    implementation(libs.androidx.adaptive.navigation.android)
+    implementation(libs.androidx.adaptive.layout.android)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(projects.shared)
     implementation(libs.androidx.lifecycle.runtime.ktx)

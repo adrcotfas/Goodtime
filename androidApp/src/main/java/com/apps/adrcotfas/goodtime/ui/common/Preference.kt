@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.ui.common
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,6 +42,7 @@ fun Preference(
     icon: @Composable (() -> Unit?)? = null,
     clickable: Boolean = true,
     onClick: () -> Unit = {},
+    isSelected: Boolean = false,
     paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
     content: @Composable (() -> Unit)? = null
 ) {
@@ -50,9 +52,11 @@ fun Preference(
         else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
     val subtitleColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
 
+    val isSelectedModifier = if (isSelected) Modifier.background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)) else Modifier
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.then(clickableModifier).padding(paddingValues)
+        modifier = modifier.then(clickableModifier).then(isSelectedModifier).padding(paddingValues)
     ) {
         icon?.let {
             Box(modifier = Modifier.padding(end = 16.dp, top = 8.dp, bottom = 8.dp)) {
@@ -280,7 +284,8 @@ fun PreferenceWithIcon(
     subtitle: String? = null,
     icon: @Composable (() -> Unit),
     clickable: Boolean = true,
-    onClick: (() -> Unit) = {}
+    onClick: (() -> Unit) = {},
+    isSelected: Boolean = false
 ) {
     Preference(
         modifier = modifier,
@@ -288,7 +293,8 @@ fun PreferenceWithIcon(
         subtitle = subtitle,
         icon = icon,
         clickable = clickable,
-        onClick = onClick
+        onClick = onClick,
+        isSelected = isSelected
     )
 }
 

@@ -2,18 +2,20 @@ package com.apps.adrcotfas.goodtime.settings.notifications
 
 import android.text.format.DateFormat
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.bl.notifications.TorchManager
 import com.apps.adrcotfas.goodtime.bl.notifications.VibrationPlayer
@@ -28,7 +30,6 @@ import com.apps.adrcotfas.goodtime.ui.common.PreferenceGroupTitle
 import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 import com.apps.adrcotfas.goodtime.ui.common.TextPreference
 import com.apps.adrcotfas.goodtime.ui.common.TimePicker
-import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import kotlinx.serialization.encodeToString
@@ -40,7 +41,6 @@ import org.koin.compose.koinInject
 @Composable
 fun NotificationsScreen(
     viewModel: SettingsViewModel = koinViewModel(viewModelStoreOwner = LocalContext.current as ComponentActivity),
-    onNavigateBack: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -54,138 +54,131 @@ fun NotificationsScreen(
     val breakRingTone = toSoundData(settings.breakFinishedSound)
     val candidateRingTone = uiState.notificationSoundCandidate?.let { toSoundData(it) }
 
-    Scaffold(
-        topBar = {
-            TopBar(
-                text = "Notifications",
-                onNavigateBack = onNavigateBack
-            )
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = paddingValues.calculateTopPadding())
-                    .verticalScroll(rememberScrollState())
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 48.dp)
+            .verticalScroll(rememberScrollState())
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        PreferenceGroupTitle(text = "Productivity Reminder")
+        val reminderSettings = settings.productivityReminderSettings
+        ProductivityReminderSection(
+            firstDayOfWeek = DayOfWeek(settings.firstDayOfWeek),
+            selectedDays = reminderSettings.days.map { DayOfWeek(it) }.toSet(),
+            reminderSecondOfDay = reminderSettings.secondOfDay,
+            onSelectDay = viewModel::onToggleProductivityReminderDay,
+            onReminderTimeClick = { viewModel.setShowTimePicker(true) }
+        )
+        SubtleHorizontalDivider()
+        CompactPreferenceGroupTitle(text = "Notifications")
+        TextPreference(
+            title = "Work finished sound",
+            subtitle = notificationSoundName(workRingTone),
+            onClick = { viewModel.setShowSelectWorkSoundPicker(true) }
+        )
+
+        TextPreference(
+            title = "Break finished sound",
+            subtitle = notificationSoundName(breakRingTone),
+            onClick = { viewModel.setShowSelectBreakSoundPicker(true) }
+        )
+
+        CheckboxPreference(
+            title = "Override sound profile",
+            subtitle = "The notification sound behaves like an alarm",
+            checked = settings.overrideSoundProfile
+        ) {
+            viewModel.setOverrideSoundProfile(it)
+        }
+
+        var selectedStrength = settings.vibrationStrength
+        SliderRow(
+            title = "Vibration strength",
+            value = settings.vibrationStrength,
+            min = 0,
+            max = 5,
+            showSteps = true,
+            onValueChange = {
+                selectedStrength = it
+                viewModel.setVibrationStrength(it)
+            },
+            onValueChangeFinished = { vibrationPlayer.start(selectedStrength) },
+            showValue = false
+        )
+        if (isTorchAvailable) {
+            CheckboxPreference(
+                title = "Torch",
+                subtitle = "A visual notification for silent environments",
+                checked = settings.enableTorch
             ) {
-                PreferenceGroupTitle(text = "Productivity Reminder")
-                val reminderSettings = settings.productivityReminderSettings
-                ProductivityReminderSection(
-                    firstDayOfWeek = DayOfWeek(settings.firstDayOfWeek),
-                    selectedDays = reminderSettings.days.map { DayOfWeek(it) }.toSet(),
-                    reminderSecondOfDay = reminderSettings.secondOfDay,
-                    onSelectDay = viewModel::onToggleProductivityReminderDay,
-                    onReminderTimeClick = { viewModel.setShowTimePicker(true) }
-                )
-                SubtleHorizontalDivider()
-                CompactPreferenceGroupTitle(text = "Notifications")
-                TextPreference(
-                    title = "Work finished sound",
-                    subtitle = notificationSoundName(workRingTone),
-                    onClick = { viewModel.setShowSelectWorkSoundPicker(true) }
-                )
-
-                TextPreference(
-                    title = "Break finished sound",
-                    subtitle = notificationSoundName(breakRingTone),
-                    onClick = { viewModel.setShowSelectBreakSoundPicker(true) }
-                )
-
-                CheckboxPreference(
-                    title = "Override sound profile",
-                    subtitle = "The notification sound behaves like an alarm",
-                    checked = settings.overrideSoundProfile
-                ) {
-                    viewModel.setOverrideSoundProfile(it)
-                }
-
-                var selectedStrength = settings.vibrationStrength
-                SliderRow(
-                    title = "Vibration strength",
-                    value = settings.vibrationStrength,
-                    min = 0,
-                    max = 5,
-                    showSteps = true,
-                    onValueChange = {
-                        selectedStrength = it
-                        viewModel.setVibrationStrength(it)
-                    },
-                    onValueChangeFinished = { vibrationPlayer.start(selectedStrength) },
-                    showValue = false
-                )
-                if (isTorchAvailable) {
-                    CheckboxPreference(
-                        title = "Torch",
-                        subtitle = "A visual notification for silent environments",
-                        checked = settings.enableTorch
-                    ) {
-                        viewModel.setEnableTorch(it)
-                    }
-                }
-
-                CheckboxPreference(
-                    title = "Insistent notification",
-                    subtitle = "Repeat the notification until it's cancelled",
-                    checked = settings.insistentNotification
-                ) {
-                    viewModel.setInsistentNotification(it)
-                }
-                CheckboxPreference(
-                    title = "Auto start work",
-                    subtitle = "Start the work session after a break without user interaction",
-                    checked = settings.autoStartWork
-                ) {
-                    viewModel.setAutoStartWork(it)
-                }
-                CheckboxPreference(
-                    title = "Auto start break",
-                    subtitle = "Start the break session after a work session without user interaction",
-                    checked = settings.autoStartBreak
-                ) {
-                    viewModel.setAutoStartBreak(it)
-                }
+                viewModel.setEnableTorch(it)
             }
+        }
 
-            if (uiState.showSelectWorkSoundPicker) {
-                NotificationSoundPickerDialog(
-                    title = "Work finished sound",
-                    selectedItem = candidateRingTone ?: workRingTone,
-                    onSelected = {
-                        viewModel.setNotificationSoundCandidate(Json.encodeToString(it))
-                    },
-                    onSave = { viewModel.setWorkFinishedSound(Json.encodeToString(it)) },
-                    onDismiss = { viewModel.setShowSelectWorkSoundPicker(false) }
-                )
-            }
-            if (uiState.showSelectBreakSoundPicker) {
-                NotificationSoundPickerDialog(
-                    title = "Break finished sound",
-                    selectedItem = candidateRingTone ?: breakRingTone,
-                    onSelected = {
-                        viewModel.setNotificationSoundCandidate(Json.encodeToString(it))
-                    },
-                    onSave = { viewModel.setBreakFinishedSound(Json.encodeToString(it)) },
-                    onDismiss = { viewModel.setShowSelectBreakSoundPicker(false) }
-                )
-            }
-            if (uiState.showTimePicker) {
-                val reminderTime =
-                    LocalTime.fromSecondOfDay(settings.productivityReminderSettings.secondOfDay)
-                val timePickerState = rememberTimePickerState(
-                    initialHour = reminderTime.hour,
-                    initialMinute = reminderTime.minute,
-                    is24Hour = DateFormat.is24HourFormat(context)
-                )
-                TimePicker(
-                    onDismiss = { viewModel.setShowTimePicker(false) },
-                    onConfirm = {
-                        viewModel.setReminderTime(timePickerState.toSecondOfDay())
-                        viewModel.setShowTimePicker(false)
-                    },
-                    timePickerState = timePickerState
-                )
-            }
-        })
+        CheckboxPreference(
+            title = "Insistent notification",
+            subtitle = "Repeat the notification until it's cancelled",
+            checked = settings.insistentNotification
+        ) {
+            viewModel.setInsistentNotification(it)
+        }
+        CheckboxPreference(
+            title = "Auto start work",
+            subtitle = "Start the work session after a break without user interaction",
+            checked = settings.autoStartWork
+        ) {
+            viewModel.setAutoStartWork(it)
+        }
+        CheckboxPreference(
+            title = "Auto start break",
+            subtitle = "Start the break session after a work session without user interaction",
+            checked = settings.autoStartBreak
+        ) {
+            viewModel.setAutoStartBreak(it)
+        }
+    }
+
+    if (uiState.showSelectWorkSoundPicker) {
+        NotificationSoundPickerDialog(
+            title = "Work finished sound",
+            selectedItem = candidateRingTone ?: workRingTone,
+            onSelected = {
+                viewModel.setNotificationSoundCandidate(Json.encodeToString(it))
+            },
+            onSave = { viewModel.setWorkFinishedSound(Json.encodeToString(it)) },
+            onDismiss = { viewModel.setShowSelectWorkSoundPicker(false) }
+        )
+    }
+    if (uiState.showSelectBreakSoundPicker) {
+        NotificationSoundPickerDialog(
+            title = "Break finished sound",
+            selectedItem = candidateRingTone ?: breakRingTone,
+            onSelected = {
+                viewModel.setNotificationSoundCandidate(Json.encodeToString(it))
+            },
+            onSave = { viewModel.setBreakFinishedSound(Json.encodeToString(it)) },
+            onDismiss = { viewModel.setShowSelectBreakSoundPicker(false) }
+        )
+    }
+    if (uiState.showTimePicker) {
+        val reminderTime =
+            LocalTime.fromSecondOfDay(settings.productivityReminderSettings.secondOfDay)
+        val timePickerState = rememberTimePickerState(
+            initialHour = reminderTime.hour,
+            initialMinute = reminderTime.minute,
+            is24Hour = DateFormat.is24HourFormat(context)
+        )
+        TimePicker(
+            onDismiss = { viewModel.setShowTimePicker(false) },
+            onConfirm = {
+                viewModel.setReminderTime(timePickerState.toSecondOfDay())
+                viewModel.setShowTimePicker(false)
+            },
+            timePickerState = timePickerState
+        )
+    }
 }
 
 @Composable

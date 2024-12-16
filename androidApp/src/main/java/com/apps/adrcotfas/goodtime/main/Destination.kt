@@ -21,7 +21,7 @@ sealed class Destination(val route: String, val label: String, val icon: ImageVe
     data object Stats : Destination("stats", "Stats", icon = EvaIcons.Outline.PieChart, selectedIcon = EvaIcons.Fill.PieChart)
     data object Settings : Destination("settings", "Settings", icon = EvaIcons.Outline.Settings, selectedIcon = EvaIcons.Fill.Settings)
 
-    data object UserInterfaceSettings: Destination("userInterface", "User Interface", null)
+    data object GeneralSettings: Destination("generalSettings", "General Settings", null)
     data object TimerStyle: Destination("timerStyle", "Timer Style", null)
     data object NotificationSettings : Destination("notificationSettings", "Notifications", null)
     data object Backup : Destination("backup", "Backup", null)

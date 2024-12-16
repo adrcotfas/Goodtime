@@ -13,9 +13,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FormatBold
 import androidx.compose.material.icons.filled.FormatSize
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -44,7 +42,6 @@ import com.apps.adrcotfas.goodtime.ui.TimerFont
 import com.apps.adrcotfas.goodtime.ui.common.CheckboxPreference
 import com.apps.adrcotfas.goodtime.ui.common.DropdownMenuPreference
 import com.apps.adrcotfas.goodtime.ui.common.SubtleVerticalDivider
-import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import com.apps.adrcotfas.goodtime.ui.lightPalette
 import com.apps.adrcotfas.goodtime.ui.timerFontWeights
 import kotlinx.coroutines.flow.map
@@ -75,171 +72,164 @@ fun findMaxFontSize(
 }
 
 //TODO: Try to find a workaround until this is fixed: https://issuetracker.google.com/issues/372044241
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimerStyleScreen(viewModel: MainViewModel = koinViewModel(), onNavigateBack: () -> Unit) {
+fun TimerStyleScreen(viewModel: MainViewModel = koinViewModel()) {
 
     val timerStyle by viewModel.uiState.map { it.timerStyle }
         .collectAsStateWithLifecycle(TimerStyleData(minSize = TimerStyleData.INVALID_MIN_SIZE))
 
-    Scaffold(
-        topBar = {
-            TopBar(text = "Timer Style", onNavigateBack = onNavigateBack)
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(64.dp)
-            ) {
-                val randomLabelIndex =
-                    remember { mutableIntStateOf(-1) }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(top = 48.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(64.dp)
+    ) {
+        val randomLabelIndex =
+            remember { mutableIntStateOf(-1) }
 
-                if (timerStyle.minSize != TimerStyleData.INVALID_MIN_SIZE) {
-                    Column {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(IntrinsicSize.Min),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            DropdownMenuPreference(
-                                modifier = Modifier.weight(0.5f),
-                                title = "Font",
-                                value = TimerFont.entries[timerStyle.fontIndex].prettyName(),
-                                dropdownMenuOptions = prettyNames<TimerFont>()
-                            ) {
-                                viewModel.setTimerFont(it)
-                            }
-                            SubtleVerticalDivider()
-                            CheckboxPreference(
-                                modifier = Modifier.weight(0.5f),
-                                title = "Minutes only",
-                                checked = timerStyle.minutesOnly,
-                                onCheckedChange = {
-                                    viewModel.setTimerMinutesOnly(it)
-                                })
-                        }
-                        SliderRow(
-                            icon = { Icon(Icons.Default.FormatSize, contentDescription = null) },
-                            min = timerStyle.minSize.toInt(),
-                            max = timerStyle.maxSize.toInt(),
-                            value = timerStyle.fontSize.toInt(),
-                            onValueChange = {
-                                viewModel.setTimerSize(it.toFloat())
-                            },
-                            showValue = false
-                        )
-                        SliderRow(
-                            icon = { Icon(Icons.Default.FormatBold, contentDescription = null) },
-                            min = timerFontWeights.first(),
-                            max = timerFontWeights.last(),
-                            steps = timerFontWeights.size - 2,
-                            value = timerStyle.fontWeight,
-                            onValueChange = {
-                                viewModel.setTimerWeight(it)
-                            },
-                            showValue = false
-                        )
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(IntrinsicSize.Min),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            CheckboxPreference(
-                                modifier = Modifier.weight(0.33f),
-                                title = "Status",
-                                checked = timerStyle.showStatus,
-                                onCheckedChange = {
-                                    viewModel.setShowStatus(it)
-                                })
-                            SubtleVerticalDivider()
-                            //TODO: add info button to explain what a streak is in this context
-                            CheckboxPreference(
-                                modifier = Modifier.weight(0.33f),
-                                title = "Streak",
-                                checked = timerStyle.showStreak,
-                                onCheckedChange = {
-                                    viewModel.setShowStreak(it)
-                                })
-                            SubtleVerticalDivider()
-                            CheckboxPreference(
-                                modifier = Modifier.weight(0.33f),
-                                title = "Label",
-                                checked = timerStyle.showLabel,
-                                onCheckedChange = {
-                                    viewModel.setShowLabel(it)
-                                })
-                        }
-                        TextButton(modifier = Modifier.fillMaxWidth(), onClick = {
-                            val oldValue = randomLabelIndex.intValue
-                            var newValue = Random.nextInt(lightPalette.lastIndex)
-                            while (newValue == oldValue) {
-                                newValue = Random.nextInt(lightPalette.lastIndex)
-                            }
-                            randomLabelIndex.intValue = newValue
-                        }) {
-                            Text("Generate demo label")
-                        }
-                    }
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+        if (timerStyle.minSize != TimerStyleData.INVALID_MIN_SIZE) {
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    DropdownMenuPreference(
+                        modifier = Modifier.weight(0.5f),
+                        title = "Font",
+                        value = TimerFont.entries[timerStyle.fontIndex].prettyName(),
+                        dropdownMenuOptions = prettyNames<TimerFont>()
                     ) {
-                        val index =
-                            if (randomLabelIndex.intValue == -1) Label.DEFAULT_LABEL_COLOR_INDEX.toInt() else randomLabelIndex.intValue
-
-                        val demoLabelNames = listOf(
-                            "algebra",
-                            "geometry",
-                            "calculus",
-                            "epigenetics",
-                            "astrophysics",
-                            "kinetics",
-                            "computer vision",
-                            "neurobiology",
-                            "nutrition",
-                            "philosophy",
-                            "calligraphy",
-                            "surrealism",
-                            "meditation",
-                            "guitar",
-                            "drums",
-                            "piano",
-                            "thermodynamics",
-                            "dermatology",
-                            "ecology",
-                            "nanophotonics"
-                        )
-                        val timerUiState = TimerUiState(
-                            baseTime = if (timerStyle.minutesOnly) 25.minutes.inWholeMilliseconds else 25.minutes.plus(
-                                34.seconds
-                            ).inWholeMilliseconds,
-                            timerState = TimerState.RUNNING,
-                            sessionsBeforeLongBreak = 4
-                        )
-                        assert(lightPalette.lastIndex == demoLabelNames.lastIndex)
-
-                        MainTimerView(
-                            modifier = Modifier,
-                            gestureModifier = Modifier,
-                            timerUiState = timerUiState,
-                            timerStyle = timerStyle,
-                            domainLabel = DomainLabel(label = Label(name = randomLabelIndex.intValue.let {
-                                if (it == -1) Label.DEFAULT_LABEL_NAME else demoLabelNames[it]
-                            }, colorIndex = index.toLong())),
-                            onStart = {},
-                            onToggle = { false },
-                        )
+                        viewModel.setTimerFont(it)
                     }
+                    SubtleVerticalDivider()
+                    CheckboxPreference(
+                        modifier = Modifier.weight(0.5f),
+                        title = "Minutes only",
+                        checked = timerStyle.minutesOnly,
+                        onCheckedChange = {
+                            viewModel.setTimerMinutesOnly(it)
+                        })
+                }
+                SliderRow(
+                    icon = { Icon(Icons.Default.FormatSize, contentDescription = null) },
+                    min = timerStyle.minSize.toInt(),
+                    max = timerStyle.maxSize.toInt(),
+                    value = timerStyle.fontSize.toInt(),
+                    onValueChange = {
+                        viewModel.setTimerSize(it.toFloat())
+                    },
+                    showValue = false
+                )
+                SliderRow(
+                    icon = { Icon(Icons.Default.FormatBold, contentDescription = null) },
+                    min = timerFontWeights.first(),
+                    max = timerFontWeights.last(),
+                    steps = timerFontWeights.size - 2,
+                    value = timerStyle.fontWeight,
+                    onValueChange = {
+                        viewModel.setTimerWeight(it)
+                    },
+                    showValue = false
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    CheckboxPreference(
+                        modifier = Modifier.weight(0.33f),
+                        title = "Status",
+                        checked = timerStyle.showStatus,
+                        onCheckedChange = {
+                            viewModel.setShowStatus(it)
+                        })
+                    SubtleVerticalDivider()
+                    //TODO: add info button to explain what a streak is in this context
+                    CheckboxPreference(
+                        modifier = Modifier.weight(0.33f),
+                        title = "Streak",
+                        checked = timerStyle.showStreak,
+                        onCheckedChange = {
+                            viewModel.setShowStreak(it)
+                        })
+                    SubtleVerticalDivider()
+                    CheckboxPreference(
+                        modifier = Modifier.weight(0.33f),
+                        title = "Label",
+                        checked = timerStyle.showLabel,
+                        onCheckedChange = {
+                            viewModel.setShowLabel(it)
+                        })
+                }
+                TextButton(modifier = Modifier.fillMaxWidth(), onClick = {
+                    val oldValue = randomLabelIndex.intValue
+                    var newValue = Random.nextInt(lightPalette.lastIndex)
+                    while (newValue == oldValue) {
+                        newValue = Random.nextInt(lightPalette.lastIndex)
+                    }
+                    randomLabelIndex.intValue = newValue
+                }) {
+                    Text("Generate demo label")
                 }
             }
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                val index =
+                    if (randomLabelIndex.intValue == -1) Label.DEFAULT_LABEL_COLOR_INDEX.toInt() else randomLabelIndex.intValue
+
+                val demoLabelNames = listOf(
+                    "algebra",
+                    "geometry",
+                    "calculus",
+                    "epigenetics",
+                    "astrophysics",
+                    "kinetics",
+                    "computer vision",
+                    "neurobiology",
+                    "nutrition",
+                    "philosophy",
+                    "calligraphy",
+                    "surrealism",
+                    "meditation",
+                    "guitar",
+                    "drums",
+                    "piano",
+                    "thermodynamics",
+                    "dermatology",
+                    "ecology",
+                    "nanophotonics"
+                )
+                val timerUiState = TimerUiState(
+                    baseTime = if (timerStyle.minutesOnly) 25.minutes.inWholeMilliseconds else 25.minutes.plus(
+                        34.seconds
+                    ).inWholeMilliseconds,
+                    timerState = TimerState.RUNNING,
+                    sessionsBeforeLongBreak = 4
+                )
+                assert(lightPalette.lastIndex == demoLabelNames.lastIndex)
+
+                MainTimerView(
+                    modifier = Modifier,
+                    gestureModifier = Modifier,
+                    timerUiState = timerUiState,
+                    timerStyle = timerStyle,
+                    domainLabel = DomainLabel(label = Label(name = randomLabelIndex.intValue.let {
+                        if (it == -1) Label.DEFAULT_LABEL_NAME else demoLabelNames[it]
+                    }, colorIndex = index.toLong())),
+                    onStart = {},
+                    onToggle = { false },
+                )
+            }
         }
-    )
+    }
+
 }
