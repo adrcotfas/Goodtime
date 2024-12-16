@@ -20,7 +20,7 @@ fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     CenterAlignedTopAppBar(
-        title = { Text(text = text) },
+        title = { Text(text = text, maxLines = 1) },
         navigationIcon = {
             IconButton(onClick = onNavigateBack) {
                 Icon(
