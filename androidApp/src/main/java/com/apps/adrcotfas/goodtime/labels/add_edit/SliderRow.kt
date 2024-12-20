@@ -43,6 +43,7 @@ fun SliderRow(
     valueNames: List<String>? = null,
     showValue: Boolean = true
 ) {
+    //TODO: investigate this:    if (steps <= 0) return
     val (sliderWeight, textWeight) = if (valueNames != null) {
         0.8f to 0.2f
     } else {
