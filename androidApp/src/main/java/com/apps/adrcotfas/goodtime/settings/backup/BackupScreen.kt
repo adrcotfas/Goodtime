@@ -9,14 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,12 +26,16 @@ import com.apps.adrcotfas.goodtime.data.backup.RestoreActivityResultLauncherMana
 import com.apps.adrcotfas.goodtime.data.local.backup.BackupViewModel
 import com.apps.adrcotfas.goodtime.ui.common.CircularProgressPreference
 import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
+import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import org.koin.compose.koinInject
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BackupScreen(
     viewModel: BackupViewModel = koinInject(),
-    activityResultLauncherManager: RestoreActivityResultLauncherManager = koinInject()
+    activityResultLauncherManager: RestoreActivityResultLauncherManager = koinInject(),
+    onNavigateBack: () -> Boolean,
+    showTopBar: Boolean,
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -50,6 +56,7 @@ fun BackupScreen(
             Lifecycle.State.STARTED -> {
                 activityResultLauncherManager.setImportActivityResultLauncher(restoreBackupLauncher)
             }
+
             Lifecycle.State.RESUMED, Lifecycle.State.CREATED -> {
                 viewModel.clearProgress()
             }
@@ -82,38 +89,48 @@ fun BackupScreen(
         }
     }
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .padding(top = 64.dp)
-            .verticalScroll(rememberScrollState())
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        CircularProgressPreference(
-            title = "Export backup",
-            subtitle = "The file can be imported back",
-            showProgress = uiState.isBackupInProgress
-        ) {
-            viewModel.backup()
+    Scaffold(
+        topBar = {
+            TopBar(
+                modifier = Modifier.alpha(if (showTopBar) 1f else 0f),
+                title = "Backup and restore",
+                onNavigateBack = { onNavigateBack() }
+            )
         }
-        CircularProgressPreference(
-            title = "Restore backup",
-            showProgress = uiState.isRestoreInProgress
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = paddingValues.calculateTopPadding())
+                .verticalScroll(rememberScrollState())
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            viewModel.restore()
-        }
-        SubtleHorizontalDivider()
-        CircularProgressPreference(
-            title = "Export CSV",
-            showProgress = uiState.isCsvBackupInProgress
-        ) {
-            viewModel.backupToCsv()
-        }
-        CircularProgressPreference(
-            title = "Export JSON",
-            showProgress = uiState.isJsonBackupInProgress
-        ) {
-            viewModel.backupToJson()
+            CircularProgressPreference(
+                title = "Export backup",
+                subtitle = "The file can be imported back",
+                showProgress = uiState.isBackupInProgress
+            ) {
+                viewModel.backup()
+            }
+            CircularProgressPreference(
+                title = "Restore backup",
+                showProgress = uiState.isRestoreInProgress
+            ) {
+                viewModel.restore()
+            }
+            SubtleHorizontalDivider()
+            CircularProgressPreference(
+                title = "Export CSV",
+                showProgress = uiState.isCsvBackupInProgress
+            ) {
+                viewModel.backupToCsv()
+            }
+            CircularProgressPreference(
+                title = "Export JSON",
+                showProgress = uiState.isJsonBackupInProgress
+            ) {
+                viewModel.backupToJson()
+            }
         }
     }
 }

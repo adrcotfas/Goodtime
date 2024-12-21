@@ -1,25 +1,19 @@
 package com.apps.adrcotfas.goodtime.settings
 
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TimePickerState
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
-import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,7 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -66,20 +59,14 @@ fun SettingsScreen(
     val context = LocalContext.current
     val navigator = rememberListDetailPaneScaffoldNavigator<String>()
 
+    val onNavigateBack = { navigator.navigateBack() }
+    BackHandler(navigator.canNavigateBack()) { onNavigateBack() }
+
     val notificationPermissionState by viewModel.uiState.map { it.settings.notificationPermissionState }
         .collectAsStateWithLifecycle(initialValue = NotificationPermissionState.NOT_ASKED)
 
     val configuration = LocalConfiguration.current
     val isPortrait = configuration.isPortrait
-    val title = when (navigator.currentDestination?.content) {
-        Destination.GeneralSettings.route -> "General settings"
-        Destination.TimerStyle.route -> "Timer style"
-        Destination.NotificationSettings.route -> "Notifications"
-        Destination.Backup.route -> "Backup and restore"
-        Destination.About.route -> "About and feedback"
-        Destination.Licenses.route -> "Open Source licenses"
-        else -> "Settings"
-    }
 
     var isFirstOpen by rememberSaveable { mutableStateOf(false) }
 
@@ -90,40 +77,16 @@ fun SettingsScreen(
         }
     }
 
-    Scaffold(
-        modifier = Modifier
-            .windowInsetsPadding(
-                WindowInsets.statusBars
-            ),
-        topBar = {
-            if (isPortrait && navigator.currentDestination?.pane != ThreePaneScaffoldRole.Secondary) {
-                TopBar(
-                    title = title,
-                    onNavigateBack = {
-                        navigator.navigateBack()
+    ListDetailPaneScaffold(
+        directive = navigator.scaffoldDirective,
+        value = navigator.scaffoldValue,
+        listPane = {
+            AnimatedPane {
+                Scaffold(
+                    topBar = {
+                        TopBar(title = "Settings")
                     }
-                )
-            } else {
-                if (isPortrait) {
-                    TopBar(
-                        title = "Settings",
-                    )
-                } else {
-                    TopAppBar(
-                        title = { Text("Settings") },
-                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                            containerColor = Color.Transparent,
-                        ),
-                    )
-                }
-            }
-        }
-    ) { paddingValues ->
-        ListDetailPaneScaffold(
-            directive = navigator.scaffoldDirective,
-            value = navigator.scaffoldValue,
-            listPane = {
-                AnimatedPane {
+                ) { paddingValues ->
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -204,35 +167,58 @@ fun SettingsScreen(
                             isSelected = navigator.isContent(Destination.About.route)
                         )
                     }
-                }
-            },
-            detailPane = {
-                AnimatedPane {
-                    val content = navigator.currentDestination?.content ?: ""
-                    when (content) {
-                        Destination.GeneralSettings.route -> GeneralSettingsScreen()
-                        Destination.TimerStyle.route -> TimerStyleScreen()
-                        Destination.NotificationSettings.route -> NotificationsScreen()
-                        Destination.Backup.route -> BackupScreen()
-                        Destination.About.route, Destination.Licenses.route -> AboutScreen(
-                            onNavigateToLicenses = {
-                                navigator.navigateToExtra(Destination.Licenses.route)
-                            })
-                    }
-                }
-            },
-            extraPane = {
-                AnimatedPane {
-                    //TODO: highlight "Open source licenses" while open
-                    val content = navigator.currentDestination?.content ?: ""
-                    when (content) {
-                        Destination.TimerStyle.route -> TimerStyleScreen()
-                        Destination.Licenses.route -> LicensesScreen()
-                    }
+
                 }
             }
-        )
-    }
+        },
+        detailPane = {
+            AnimatedPane {
+                val content = navigator.currentDestination?.content ?: ""
+                when (content) {
+                    Destination.GeneralSettings.route -> GeneralSettingsScreen(
+                        showTopBar = isPortrait,
+                        onNavigateBack = onNavigateBack
+                    )
+
+                    Destination.TimerStyle.route -> TimerStyleScreen(
+                        showTopBar = isPortrait,
+                        onNavigateBack = onNavigateBack
+                    )
+
+                    Destination.NotificationSettings.route -> NotificationsScreen(
+                        showTopBar = isPortrait,
+                        onNavigateBack = onNavigateBack
+                    )
+
+                    Destination.Backup.route -> BackupScreen(
+                        showTopBar = isPortrait,
+                        onNavigateBack = onNavigateBack
+                    )
+
+                    Destination.About.route, Destination.Licenses.route -> AboutScreen(
+                        onNavigateToLicenses = {
+                            navigator.navigateToExtra(Destination.Licenses.route)
+                        },
+                        showTopBar = isPortrait || navigator.isContent(Destination.Licenses.route),
+                        onNavigateBack = onNavigateBack,
+                        isLicensesSelected = navigator.isContent(Destination.Licenses.route)
+                    )
+                }
+            }
+        },
+        extraPane = {
+            AnimatedPane {
+                //TODO: highlight "Open source licenses" while open
+                val content = navigator.currentDestination?.content ?: ""
+                when (content) {
+                    Destination.Licenses.route -> LicensesScreen(
+                        showTopBar = isPortrait,
+                        onNavigateBack = onNavigateBack
+                    )
+                }
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

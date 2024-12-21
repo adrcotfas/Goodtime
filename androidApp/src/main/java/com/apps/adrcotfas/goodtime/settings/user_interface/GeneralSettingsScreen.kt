@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,8 +26,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -45,6 +46,7 @@ import com.apps.adrcotfas.goodtime.ui.common.DropdownMenuPreference
 import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 import com.apps.adrcotfas.goodtime.ui.common.TextPreference
 import com.apps.adrcotfas.goodtime.ui.common.TimePicker
+import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import com.apps.adrcotfas.goodtime.utils.secondsOfDayToTimerFormat
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
@@ -56,7 +58,9 @@ import java.time.format.TextStyle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GeneralSettingsScreen(
-    viewModel: SettingsViewModel = koinViewModel(viewModelStoreOwner = LocalContext.current as ComponentActivity)
+    viewModel: SettingsViewModel = koinViewModel(viewModelStoreOwner = LocalContext.current as ComponentActivity),
+    onNavigateBack: () -> Boolean,
+    showTopBar: Boolean,
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -82,107 +86,116 @@ fun GeneralSettingsScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 64.dp)
-            .verticalScroll(rememberScrollState())
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        CompactPreferenceGroupTitle(text = "General")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val activity = context.findActivity()
-            TextPreference(title = "Language", value = context.getAppLanguage()) {
-                val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS)
-                intent.data = Uri.fromParts("package", activity?.packageName, null)
-                activity?.startActivity(intent)
-            }
-        }
-        TextPreference(
-            title = "Workday start",
-            subtitle = "Used for displaying the stats accordingly",
-            value = secondsOfDayToTimerFormat(
-                uiState.settings.workdayStart,
-                DateFormat.is24HourFormat(context)
-            ), onClick = {
-                viewModel.setShowWorkdayStartPicker(true)
-            })
-
-        Box(contentAlignment = Alignment.CenterEnd) {
-            DropdownMenuPreference(
-                title = "Start of the week",
-                value = DayOfWeek.of(uiState.settings.firstDayOfWeek)
-                    .getDisplayName(TextStyle.FULL, locale),
-                dropdownMenuOptions = firstDayOfWeekOptions.map {
-                    it.getDisplayName(
-                        TextStyle.FULL,
-                        locale
-                    )
-                },
-                onDropdownMenuItemSelected = {
-                    viewModel.setFirstDayOfWeek(firstDayOfWeekOptions[it].isoDayNumber)
-                }
+    Scaffold(
+        topBar = {
+            TopBar(
+                modifier = Modifier.alpha(if (showTopBar) 1f else 0f),
+                title = "General settings",
+                onNavigateBack = { onNavigateBack() }
             )
         }
-
-        DropdownMenuPreference(
-            title = "Theme",
-            //TODO: use localized strings instead
-            value = uiState.settings.uiSettings.themePreference.prettyName(),
-            dropdownMenuOptions = prettyNames<ThemePreference>(),
-            onDropdownMenuItemSelected = {
-                viewModel.setThemeOption(ThemePreference.entries[it])
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = paddingValues.calculateTopPadding())
+                .verticalScroll(rememberScrollState())
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val activity = context.findActivity()
+                TextPreference(title = "Language", value = context.getAppLanguage()) {
+                    val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS)
+                    intent.data = Uri.fromParts("package", activity?.packageName, null)
+                    activity?.startActivity(intent)
+                }
             }
-        )
+            TextPreference(
+                title = "Workday start",
+                subtitle = "Used for displaying the stats accordingly",
+                value = secondsOfDayToTimerFormat(
+                    uiState.settings.workdayStart,
+                    DateFormat.is24HourFormat(context)
+                ), onClick = {
+                    viewModel.setShowWorkdayStartPicker(true)
+                })
 
-        SubtleHorizontalDivider()
-        CompactPreferenceGroupTitle(text = "During work sessions")
-        CheckboxPreference(
-            title = "Fullscreen mode",
-            checked = uiState.settings.uiSettings.fullscreenMode
-        ) {
-            viewModel.setFullscreenMode(it)
-        }
-        CheckboxPreference(
-            title = "Keep the screen on",
-            checked = uiState.settings.uiSettings.keepScreenOn
-        ) {
-            viewModel.setKeepScreenOn(it)
-        }
-        CheckboxPreference(
-            title = "Screensaver mode",
-            checked = uiState.settings.uiSettings.screensaverMode,
-            clickable = uiState.settings.uiSettings.keepScreenOn
-        ) {
-            viewModel.setScreensaverMode(it)
-        }
-        CheckboxPreference(
-            title = "Do not disturb mode",
-            subtitle = if (isNotificationPolicyAccessGranted) null else "Click to grant permission",
-            checked = uiState.settings.uiSettings.dndDuringWork
-        ) {
-            if (isNotificationPolicyAccessGranted) {
-                viewModel.setDndDuringWork(it)
-            } else {
-                requestDndPolicyAccess(context.findActivity()!!)
+            Box(contentAlignment = Alignment.CenterEnd) {
+                DropdownMenuPreference(
+                    title = "Start of the week",
+                    value = DayOfWeek.of(uiState.settings.firstDayOfWeek)
+                        .getDisplayName(TextStyle.FULL, locale),
+                    dropdownMenuOptions = firstDayOfWeekOptions.map {
+                        it.getDisplayName(
+                            TextStyle.FULL,
+                            locale
+                        )
+                    },
+                    onDropdownMenuItemSelected = {
+                        viewModel.setFirstDayOfWeek(firstDayOfWeekOptions[it].isoDayNumber)
+                    }
+                )
+            }
+
+            DropdownMenuPreference(
+                title = "Theme",
+                //TODO: use localized strings instead
+                value = uiState.settings.uiSettings.themePreference.prettyName(),
+                dropdownMenuOptions = prettyNames<ThemePreference>(),
+                onDropdownMenuItemSelected = {
+                    viewModel.setThemeOption(ThemePreference.entries[it])
+                }
+            )
+
+            SubtleHorizontalDivider()
+            CompactPreferenceGroupTitle(text = "During work sessions")
+            CheckboxPreference(
+                title = "Fullscreen mode",
+                checked = uiState.settings.uiSettings.fullscreenMode
+            ) {
+                viewModel.setFullscreenMode(it)
+            }
+            CheckboxPreference(
+                title = "Keep the screen on",
+                checked = uiState.settings.uiSettings.keepScreenOn
+            ) {
+                viewModel.setKeepScreenOn(it)
+            }
+            CheckboxPreference(
+                title = "Screensaver mode",
+                checked = uiState.settings.uiSettings.screensaverMode,
+                clickable = uiState.settings.uiSettings.keepScreenOn
+            ) {
+                viewModel.setScreensaverMode(it)
+            }
+            CheckboxPreference(
+                title = "Do not disturb mode",
+                subtitle = if (isNotificationPolicyAccessGranted) null else "Click to grant permission",
+                checked = uiState.settings.uiSettings.dndDuringWork
+            ) {
+                if (isNotificationPolicyAccessGranted) {
+                    viewModel.setDndDuringWork(it)
+                } else {
+                    requestDndPolicyAccess(context.findActivity()!!)
+                }
             }
         }
-    }
-    if (uiState.showWorkdayStartPicker) {
-        val workdayStart = LocalTime.fromSecondOfDay(uiState.settings.workdayStart)
-        val timePickerState = rememberTimePickerState(
-            initialHour = workdayStart.hour,
-            initialMinute = workdayStart.minute,
-            is24Hour = DateFormat.is24HourFormat(context)
-        )
-        TimePicker(
-            onDismiss = { viewModel.setShowWorkdayStartPicker(false) },
-            onConfirm = {
-                viewModel.setWorkDayStart(timePickerState.toSecondOfDay())
-                viewModel.setShowWorkdayStartPicker(false)
-            },
-            timePickerState = timePickerState
-        )
+        if (uiState.showWorkdayStartPicker) {
+            val workdayStart = LocalTime.fromSecondOfDay(uiState.settings.workdayStart)
+            val timePickerState = rememberTimePickerState(
+                initialHour = workdayStart.hour,
+                initialMinute = workdayStart.minute,
+                is24Hour = DateFormat.is24HourFormat(context)
+            )
+            TimePicker(
+                onDismiss = { viewModel.setShowWorkdayStartPicker(false) },
+                onConfirm = {
+                    viewModel.setWorkDayStart(timePickerState.toSecondOfDay())
+                    viewModel.setShowWorkdayStartPicker(false)
+                },
+                timePickerState = timePickerState
+            )
+        }
     }
 }
 
