@@ -43,14 +43,14 @@ fun MainScreen(
 ) {
     InitTimerStyle(settingsViewModel)
 
-    val configuration = LocalConfiguration.current
+    val mainUiState by viewModel.uiState.collectAsStateWithLifecycle(MainUiState())
+    if (mainUiState.isLoading) return
 
     val timerUiState by viewModel.timerUiState.collectAsStateWithLifecycle(TimerUiState())
-    val mainUiState by viewModel.uiState.collectAsStateWithLifecycle(MainUiState())
-
     val timerStyle = mainUiState.timerStyle
     val label = timerUiState.label
 
+    val configuration = LocalConfiguration.current
     val dialControlState = rememberDialControlState(
         options = DialRegion.entries,
         config = DialConfig(size = configuration.screenWidth),

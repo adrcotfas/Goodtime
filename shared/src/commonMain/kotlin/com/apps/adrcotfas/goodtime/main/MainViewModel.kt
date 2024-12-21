@@ -50,6 +50,7 @@ data class TimerUiState(
 }
 
 data class MainUiState(
+    val isLoading: Boolean = false,
     val timerStyle: TimerStyleData = TimerStyleData(),
     val darkThemePreference: ThemePreference = ThemePreference.SYSTEM,
     val screensaverMode: Boolean = false,
@@ -91,10 +92,12 @@ class MainViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
             settingsRepo.settings.map { Pair(it.timerStyle, it.uiSettings) }.distinctUntilChanged()
                 .collect { (timerStyle, uiSettings) ->
                     _uiState.update {
                         it.copy(
+                            isLoading = false,
                             timerStyle = timerStyle,
                             darkThemePreference = uiSettings.themePreference,
                             screensaverMode = uiSettings.screensaverMode,
