@@ -41,10 +41,9 @@ fun MainScreen(
     viewModel: MainViewModel = koinViewModel(),
     settingsViewModel: SettingsViewModel = koinViewModel()
 ) {
-    InitTimerStyle(settingsViewModel)
-
     val mainUiState by viewModel.uiState.collectAsStateWithLifecycle(MainUiState())
     if (mainUiState.isLoading) return
+    InitTimerStyle(settingsViewModel)
 
     val timerUiState by viewModel.timerUiState.collectAsStateWithLifecycle(TimerUiState())
     val timerStyle = mainUiState.timerStyle

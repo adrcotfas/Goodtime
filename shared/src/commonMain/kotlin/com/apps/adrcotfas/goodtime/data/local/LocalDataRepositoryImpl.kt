@@ -201,7 +201,6 @@ internal class LocalDataRepositoryImpl(
     }
 
     override suspend fun deleteLabel(name: String) {
-        if (name.isEmpty()) return
         withContext(defaultDispatcher) {
             database.localLabelQueries.delete(name)
         }

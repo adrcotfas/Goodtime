@@ -49,12 +49,8 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
         }
     }
 
-    private fun isLoading() = uiState.value.isLoading
-
     fun onToggleProductivityReminderDay(dayOfWeek: DayOfWeek) {
-        if (isLoading()) return
         viewModelScope.launch {
-
             settingsRepository.updateReminderSettings {
                 val days = it.days
                 val alreadyEnabled = days.contains(dayOfWeek.isoDayNumber)

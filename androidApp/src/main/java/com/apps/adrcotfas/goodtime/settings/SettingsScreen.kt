@@ -1,7 +1,6 @@
 package com.apps.adrcotfas.goodtime.settings
 
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,8 +18,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
-import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,7 +27,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -46,10 +44,9 @@ import com.apps.adrcotfas.goodtime.settings.user_interface.GeneralSettingsScreen
 import com.apps.adrcotfas.goodtime.settings.user_interface.TimerStyleScreen
 import com.apps.adrcotfas.goodtime.ui.common.PreferenceWithIcon
 import com.apps.adrcotfas.goodtime.ui.common.TopBar
-import com.apps.adrcotfas.goodtime.ui.common.content
+import com.apps.adrcotfas.goodtime.ui.common.isContent
 import com.apps.adrcotfas.goodtime.ui.common.navigateToDetail
 import com.apps.adrcotfas.goodtime.ui.common.navigateToExtra
-import com.apps.adrcotfas.goodtime.ui.common.pane
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Bell
@@ -67,14 +64,14 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = koinViewModel(viewModelStoreOwner = LocalContext.current as ComponentActivity)
 ) {
     val context = LocalContext.current
-    val navigator = rememberListDetailPaneScaffoldNavigator<Any>()
+    val navigator = rememberListDetailPaneScaffoldNavigator<String>()
 
     val notificationPermissionState by viewModel.uiState.map { it.settings.notificationPermissionState }
         .collectAsStateWithLifecycle(initialValue = NotificationPermissionState.NOT_ASKED)
 
     val configuration = LocalConfiguration.current
     val isPortrait = configuration.isPortrait
-    val title = when (navigator.content) {
+    val title = when (navigator.currentDestination?.content) {
         Destination.GeneralSettings.route -> "General settings"
         Destination.TimerStyle.route -> "Timer style"
         Destination.NotificationSettings.route -> "Notifications"
@@ -99,7 +96,7 @@ fun SettingsScreen(
                 WindowInsets.statusBars
             ),
         topBar = {
-            if (isPortrait && navigator.pane != ThreePaneScaffoldRole.Secondary) {
+            if (isPortrait && navigator.currentDestination?.pane != ThreePaneScaffoldRole.Secondary) {
                 TopBar(
                     title = title,
                     onNavigateBack = {
@@ -122,94 +119,96 @@ fun SettingsScreen(
             }
         }
     ) { paddingValues ->
-        NavigableListDetailPaneScaffold(
-            navigator = navigator,
+        ListDetailPaneScaffold(
+            directive = navigator.scaffoldDirective,
+            value = navigator.scaffoldValue,
             listPane = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = paddingValues.calculateTopPadding())
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    ActionSection(
-                        notificationPermissionState = notificationPermissionState,
-                        onNotificationPermissionGranted = { granted ->
-                            viewModel.setNotificationPermissionGranted(granted)
-                        }
-                    )
-                    PreferenceWithIcon(
-                        title = "General settings",
-                        icon = {
-                            Icon(
-                                EvaIcons.Outline.Settings,
-                                contentDescription = "General settings"
-                            )
-                        },
-                        onClick = {
-                            navigator.navigateToDetail(Destination.GeneralSettings.route)
-                        },
-                        isSelected = navigator.content == Destination.GeneralSettings.route
-                    )
-                    PreferenceWithIcon(
-                        title = "Timer style",
-                        icon = {
-                            Icon(
-                                EvaIcons.Outline.ColorPalette,
-                                contentDescription = "Timer style"
-                            )
-                        },
-                        onClick = {
-                            navigator.navigateToDetail(Destination.TimerStyle.route)
-                        },
-                        isSelected = navigator.content == Destination.TimerStyle.route
-                    )
-                    PreferenceWithIcon(
-                        title = "Notifications",
-                        icon = {
-                            Icon(
-                                EvaIcons.Outline.Bell,
-                                contentDescription = "Notifications"
-                            )
-                        },
-                        onClick = {
-                            navigator.navigateToDetail(Destination.NotificationSettings.route)
-                        },
-                        isSelected = navigator.content == Destination.NotificationSettings.route
-                    )
-                    PreferenceWithIcon(
-                        title = "Backup and restore",
-                        icon = {
-                            Icon(
-                                EvaIcons.Outline.Save,
-                                contentDescription = "Backup and restore"
-                            )
-                        },
-                        onClick = {
-                            navigator.navigateToDetail(Destination.Backup.route)
-                        },
-                        isSelected = navigator.content == Destination.Backup.route
-                    )
+                AnimatedPane {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = paddingValues.calculateTopPadding())
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        ActionSection(
+                            notificationPermissionState = notificationPermissionState,
+                            onNotificationPermissionGranted = { granted ->
+                                viewModel.setNotificationPermissionGranted(granted)
+                            }
+                        )
+                        PreferenceWithIcon(
+                            title = "General settings",
+                            icon = {
+                                Icon(
+                                    EvaIcons.Outline.Settings,
+                                    contentDescription = "General settings"
+                                )
+                            },
+                            onClick = {
+                                navigator.navigateToDetail(Destination.GeneralSettings.route)
+                            },
+                            isSelected = navigator.isContent(Destination.GeneralSettings.route)
+                        )
+                        PreferenceWithIcon(
+                            title = "Timer style",
+                            icon = {
+                                Icon(
+                                    EvaIcons.Outline.ColorPalette,
+                                    contentDescription = "Timer style"
+                                )
+                            },
+                            onClick = {
+                                navigator.navigateToDetail(Destination.TimerStyle.route)
+                            },
+                            isSelected = navigator.isContent(Destination.TimerStyle.route)
+                        )
+                        PreferenceWithIcon(
+                            title = "Notifications",
+                            icon = {
+                                Icon(
+                                    EvaIcons.Outline.Bell,
+                                    contentDescription = "Notifications"
+                                )
+                            },
+                            onClick = {
+                                navigator.navigateToDetail(Destination.NotificationSettings.route)
+                            },
+                            isSelected = navigator.isContent(Destination.NotificationSettings.route)
+                        )
+                        PreferenceWithIcon(
+                            title = "Backup and restore",
+                            icon = {
+                                Icon(
+                                    EvaIcons.Outline.Save,
+                                    contentDescription = "Backup and restore"
+                                )
+                            },
+                            onClick = {
+                                navigator.navigateToDetail(Destination.Backup.route)
+                            },
+                            isSelected = navigator.isContent(Destination.Backup.route)
+                        )
 
-                    PreferenceWithIcon(
-                        title = "About and feedback",
-                        subtitle = "Goodtime Productivity ${context.getVersionName()}",
-                        icon = {
-                            Icon(
-                                EvaIcons.Outline.Info,
-                                contentDescription = "About and feedback"
-                            )
-                        },
-                        onClick = {
-                            navigator.navigateToDetail(Destination.About.route)
-                        },
-                        isSelected = navigator.content == Destination.About.route
-                    )
+                        PreferenceWithIcon(
+                            title = "About and feedback",
+                            subtitle = "Goodtime Productivity ${context.getVersionName()}",
+                            icon = {
+                                Icon(
+                                    EvaIcons.Outline.Info,
+                                    contentDescription = "About and feedback"
+                                )
+                            },
+                            onClick = {
+                                navigator.navigateToDetail(Destination.About.route)
+                            },
+                            isSelected = navigator.isContent(Destination.About.route)
+                        )
+                    }
                 }
             },
             detailPane = {
                 AnimatedPane {
-
-                    val content = navigator.content ?: ""
+                    val content = navigator.currentDestination?.content ?: ""
                     when (content) {
                         Destination.GeneralSettings.route -> GeneralSettingsScreen()
                         Destination.TimerStyle.route -> TimerStyleScreen()
@@ -225,7 +224,7 @@ fun SettingsScreen(
             extraPane = {
                 AnimatedPane {
                     //TODO: highlight "Open source licenses" while open
-                    val content = navigator.content ?: ""
+                    val content = navigator.currentDestination?.content ?: ""
                     when (content) {
                         Destination.TimerStyle.route -> TimerStyleScreen()
                         Destination.Licenses.route -> LicensesScreen()
