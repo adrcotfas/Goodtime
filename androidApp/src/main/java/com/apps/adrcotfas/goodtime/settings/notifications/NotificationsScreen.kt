@@ -44,8 +44,8 @@ fun NotificationsScreen(
 ) {
 
     val context = LocalContext.current
-    val settings by viewModel.settings.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val settings = uiState.settings
 
     val vibrationPlayer = koinInject<VibrationPlayer>()
     val torchManager = koinInject<TorchManager>()
@@ -53,7 +53,6 @@ fun NotificationsScreen(
     val workRingTone = toSoundData(settings.workFinishedSound)
     val breakRingTone = toSoundData(settings.breakFinishedSound)
     val candidateRingTone = uiState.notificationSoundCandidate?.let { toSoundData(it) }
-
 
     Column(
         modifier = Modifier

@@ -179,7 +179,7 @@ class TimerManager(
                 )
             }
             coroutineScope.launch {
-                settingsRepo.saveBreakBudgetData(
+                settingsRepo.setBreakBudgetData(
                     BreakBudgetData(
                         breakBudget = breakBudget,
                         breakBudgetStart = elapsedRealtime
@@ -482,7 +482,7 @@ class TimerManager(
         val newData = LongBreakData(newStreak, lastWorkEndTime)
         _timerData.update { it.copy(longBreakData = newData) }
         coroutineScope.launch {
-            settingsRepo.saveLongBreakData(newData)
+            settingsRepo.setLongBreakData(newData)
         }
         log.v { "Streak incremented: $newStreak" }
     }
@@ -491,7 +491,7 @@ class TimerManager(
         if (!didLastWorkSessionFinishRecently(millis)) {
             _timerData.update { it.copy(longBreakData = LongBreakData()) }
             coroutineScope.launch {
-                settingsRepo.saveLongBreakData(LongBreakData())
+                settingsRepo.setLongBreakData(LongBreakData())
             }
         }
         log.v { "Streak reset" }

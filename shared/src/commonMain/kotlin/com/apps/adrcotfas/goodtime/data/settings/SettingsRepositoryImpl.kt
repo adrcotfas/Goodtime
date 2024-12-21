@@ -26,6 +26,7 @@ class SettingsRepositoryImpl(
         val productivityReminderSettingsKey =
             stringPreferencesKey("productivityReminderSettingsKey")
         val uiSettingsKey = stringPreferencesKey("uiSettingsKey")
+        val timerStyleKey = stringPreferencesKey("timerStyleKey")
         val workdayStartKey = intPreferencesKey("workdayStartKey")
         val firstDayOfWeekKey = intPreferencesKey("firstDayOfWeekKey")
         val workFinishedSoundKey = stringPreferencesKey("workFinishedSoundKey")
@@ -59,17 +60,25 @@ class SettingsRepositoryImpl(
                 uiSettings = it[Keys.uiSettingsKey]?.let { u ->
                     Json.decodeFromString<UiSettings>(u)
                 } ?: UiSettings(),
+                timerStyle = it[Keys.timerStyleKey]?.let { t ->
+                    Json.decodeFromString<TimerStyleData>(t)
+                } ?: TimerStyleData(),
                 workdayStart = it[Keys.workdayStartKey] ?: AppSettings().workdayStart,
                 firstDayOfWeek = it[Keys.firstDayOfWeekKey] ?: AppSettings().firstDayOfWeek,
-                workFinishedSound = it[Keys.workFinishedSoundKey] ?: AppSettings().workFinishedSound,
-                breakFinishedSound = it[Keys.breakFinishedSoundKey] ?: AppSettings().breakFinishedSound,
+                workFinishedSound = it[Keys.workFinishedSoundKey]
+                    ?: AppSettings().workFinishedSound,
+                breakFinishedSound = it[Keys.breakFinishedSoundKey]
+                    ?: AppSettings().breakFinishedSound,
                 userSounds = it[Keys.userSoundsKey]?.let { u ->
                     Json.decodeFromString<Set<SoundData>>(u)
                 } ?: emptySet(),
-                vibrationStrength = it[Keys.vibrationStrengthKey] ?: AppSettings().vibrationStrength,
+                vibrationStrength = it[Keys.vibrationStrengthKey]
+                    ?: AppSettings().vibrationStrength,
                 enableTorch = it[Keys.enableTorchKey] ?: AppSettings().enableTorch,
-                overrideSoundProfile = it[Keys.overrideSoundProfile] ?: AppSettings().overrideSoundProfile,
-                insistentNotification = it[Keys.insistentNotificationKey] ?: AppSettings().insistentNotification,
+                overrideSoundProfile = it[Keys.overrideSoundProfile]
+                    ?: AppSettings().overrideSoundProfile,
+                insistentNotification = it[Keys.insistentNotificationKey]
+                    ?: AppSettings().insistentNotification,
                 autoStartWork = it[Keys.autoStartWorkKey] ?: AppSettings().autoStartWork,
                 autoStartBreak = it[Keys.autoStartBreakKey] ?: AppSettings().autoStartBreak,
                 labelName = it[Keys.labelNameKey] ?: AppSettings().labelName,
@@ -82,38 +91,64 @@ class SettingsRepositoryImpl(
                 notificationPermissionState = it[Keys.notificationPermissionStateKey]?.let { key ->
                     NotificationPermissionState.entries[key]
                 } ?: AppSettings().notificationPermissionState
-
             )
         }.catch {
             log.e("Error parsing settings", it)
             emit(AppSettings())
         }.distinctUntilChanged()
 
-    override suspend fun saveReminderSettings(
-        settings: ProductivityReminderSettings
+    override suspend fun updateReminderSettings(
+        transform: (ProductivityReminderSettings) -> ProductivityReminderSettings
     ) {
         dataStore.edit {
-            it[Keys.productivityReminderSettingsKey] = Json.encodeToString(settings)
+            val previous =
+                it[Keys.productivityReminderSettingsKey]?.let { p -> Json.decodeFromString(p) }
+                    ?: ProductivityReminderSettings()
+            val new = transform(previous)
+            it[Keys.productivityReminderSettingsKey] = Json.encodeToString(new)
         }
     }
 
-    override suspend fun saveUiSettings(settings: UiSettings) {
-        dataStore.edit { it[Keys.uiSettingsKey] = Json.encodeToString(settings) }
+    override suspend fun updateUiSettings(
+        transform: (UiSettings) -> UiSettings
+    ) {
+        dataStore.edit {
+            val previous = it[Keys.uiSettingsKey]?.let { u -> Json.decodeFromString(u) }
+                ?: UiSettings()
+            val new = transform(previous)
+            it[Keys.uiSettingsKey] = Json.encodeToString(new)
+        }
     }
 
-    override suspend fun saveWorkDayStart(secondOfDay: Int) {
+    override suspend fun updateTimerStyle(
+        transform: (TimerStyleData) -> TimerStyleData
+    ) {
+        dataStore.edit {
+            val previous = it[Keys.timerStyleKey]?.let { t ->
+                try {
+                    Json.decodeFromString(t)
+                } catch (e: Exception) {
+                    null
+                }
+            } ?: TimerStyleData()
+            val new = transform(previous)
+            it[Keys.timerStyleKey] = Json.encodeToString(new)
+        }
+    }
+
+    override suspend fun setWorkDayStart(secondOfDay: Int) {
         dataStore.edit { it[Keys.workdayStartKey] = secondOfDay }
     }
 
-    override suspend fun saveFirstDayOfWeek(dayOfWeek: Int) {
+    override suspend fun setFirstDayOfWeek(dayOfWeek: Int) {
         dataStore.edit { it[Keys.firstDayOfWeekKey] = dayOfWeek }
     }
 
-    override suspend fun saveWorkFinishedSound(sound: String?) {
+    override suspend fun setWorkFinishedSound(sound: String?) {
         dataStore.edit { it[Keys.workFinishedSoundKey] = sound ?: "" }
     }
 
-    override suspend fun saveBreakFinishedSound(sound: String?) {
+    override suspend fun setBreakFinishedSound(sound: String?) {
         dataStore.edit { it[Keys.breakFinishedSoundKey] = sound ?: "" }
     }
 
@@ -125,39 +160,39 @@ class SettingsRepositoryImpl(
         dataStore.remove(Keys.userSoundsKey, sound)
     }
 
-    override suspend fun saveVibrationStrength(strength: Int) {
+    override suspend fun setVibrationStrength(strength: Int) {
         dataStore.edit { it[Keys.vibrationStrengthKey] = strength }
     }
 
-    override suspend fun saveEnableTorch(enabled: Boolean) {
+    override suspend fun setEnableTorch(enabled: Boolean) {
         dataStore.edit { it[Keys.enableTorchKey] = enabled }
     }
 
-    override suspend fun saveOverrideSoundProfile(enabled: Boolean) {
+    override suspend fun setOverrideSoundProfile(enabled: Boolean) {
         dataStore.edit { it[Keys.overrideSoundProfile] = enabled }
     }
 
-    override suspend fun saveInsistentNotification(enabled: Boolean) {
+    override suspend fun setInsistentNotification(enabled: Boolean) {
         dataStore.edit { it[Keys.insistentNotificationKey] = enabled }
     }
 
-    override suspend fun saveAutoStartWork(enabled: Boolean) {
+    override suspend fun setAutoStartWork(enabled: Boolean) {
         dataStore.edit { it[Keys.autoStartWorkKey] = enabled }
     }
 
-    override suspend fun saveAutoStartBreak(enabled: Boolean) {
+    override suspend fun setAutoStartBreak(enabled: Boolean) {
         dataStore.edit { it[Keys.autoStartBreakKey] = enabled }
     }
 
-    override suspend fun saveLongBreakData(longBreakData: LongBreakData) {
+    override suspend fun setLongBreakData(longBreakData: LongBreakData) {
         dataStore.edit { it[Keys.longBreakDataKey] = Json.encodeToString(longBreakData) }
     }
 
-    override suspend fun saveBreakBudgetData(breakBudgetData: BreakBudgetData) {
+    override suspend fun setBreakBudgetData(breakBudgetData: BreakBudgetData) {
         dataStore.edit { it[Keys.breakBudgetDataKey] = Json.encodeToString(breakBudgetData) }
     }
 
-    override suspend fun saveNotificationPermissionState(state: NotificationPermissionState) {
+    override suspend fun setNotificationPermissionState(state: NotificationPermissionState) {
         dataStore.edit { it[Keys.notificationPermissionStateKey] = state.ordinal }
     }
 

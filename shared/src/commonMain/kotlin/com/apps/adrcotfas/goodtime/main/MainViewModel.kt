@@ -20,15 +20,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.math.floor
 
 data class TimerUiState(
     val isReady: Boolean = false,
@@ -50,7 +50,7 @@ data class TimerUiState(
 }
 
 data class MainUiState(
-    val timerStyle: TimerStyleData = TimerStyleData(minSize = TimerStyleData.INVALID_MIN_SIZE),
+    val timerStyle: TimerStyleData = TimerStyleData(),
     val darkThemePreference: ThemePreference = ThemePreference.SYSTEM,
     val screensaverMode: Boolean = false,
     val fullscreenMode: Boolean = false,
@@ -85,15 +85,17 @@ class MainViewModel(
     }.distinctUntilChanged()
 
     private val _uiState = MutableStateFlow(MainUiState())
-    val uiState = _uiState.asStateFlow()
+    val uiState = _uiState.onStart {
+        loadData()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MainUiState())
 
-    init {
+    private fun loadData() {
         viewModelScope.launch {
-            settingsRepo.settings.map { it.uiSettings }.distinctUntilChanged()
-                .collect { uiSettings ->
+            settingsRepo.settings.map { Pair(it.timerStyle, it.uiSettings) }.distinctUntilChanged()
+                .collect { (timerStyle, uiSettings) ->
                     _uiState.update {
                         it.copy(
-                            timerStyle = uiSettings.timerStyle,
+                            timerStyle = timerStyle,
                             darkThemePreference = uiSettings.themePreference,
                             screensaverMode = uiSettings.screensaverMode,
                             fullscreenMode = uiSettings.fullscreenMode,
@@ -108,7 +110,7 @@ class MainViewModel(
         timerManager.start(type)
     }
 
-    fun toggleTimer() : Boolean {
+    fun toggleTimer(): Boolean {
         val canToggle = timerManager.canToggle()
         if (canToggle) {
             timerManager.toggle()
@@ -154,113 +156,4 @@ class MainViewModel(
     fun next() {
         timerManager.next()
     }
-
-    fun initTimerStyle(maxSize: Float, screenWidth: Float) {
-        viewModelScope.launch {
-            val uiSettings = getUiSettings()
-            settingsRepo.saveUiSettings(
-                uiSettings.copy(
-                    timerStyle = uiSettings.timerStyle.copy(
-                        minSize = floor(maxSize / 1.5f),
-                        maxSize = maxSize,
-                        fontSize = floor(maxSize * 0.9f),
-                        currentScreenWidth = screenWidth
-                    )
-                )
-            )
-        }
-    }
-
-    fun setTimerWeight(weight: Int) {
-        viewModelScope.launch {
-            val uiSettings = getUiSettings()
-            settingsRepo.saveUiSettings(
-                uiSettings.copy(
-                    timerStyle = uiSettings.timerStyle.copy(
-                        fontWeight = weight
-                    )
-                )
-            )
-        }
-    }
-
-    fun setTimerSize(size: Float) {
-        viewModelScope.launch {
-            val uiSettings = getUiSettings()
-            settingsRepo.saveUiSettings(
-                uiSettings.copy(
-                    timerStyle = uiSettings.timerStyle.copy(
-                        fontSize = size
-                    )
-                )
-            )
-        }
-    }
-
-    fun setTimerMinutesOnly(enabled: Boolean) {
-        viewModelScope.launch {
-            val uiSettings = getUiSettings()
-            settingsRepo.saveUiSettings(
-                uiSettings.copy(
-                    timerStyle = uiSettings.timerStyle.copy(
-                        minutesOnly = enabled
-                    )
-                )
-            )
-        }
-    }
-
-    fun setTimerFont(fontIndex: Int) {
-        viewModelScope.launch {
-            val uiSettings = getUiSettings()
-            settingsRepo.saveUiSettings(
-                uiSettings.copy(
-                    timerStyle = uiSettings.timerStyle.copy(
-                        fontIndex = fontIndex
-                    )
-                )
-            )
-        }
-    }
-
-    fun setShowStatus(showStatus: Boolean) {
-        viewModelScope.launch {
-            val uiSettings = getUiSettings()
-            settingsRepo.saveUiSettings(
-                uiSettings.copy(
-                    timerStyle = uiSettings.timerStyle.copy(
-                        showStatus = showStatus
-                    )
-                )
-            )
-        }
-    }
-
-    fun setShowStreak(showStreak: Boolean) {
-        viewModelScope.launch {
-            val uiSettings = getUiSettings()
-            settingsRepo.saveUiSettings(
-                uiSettings.copy(
-                    timerStyle = uiSettings.timerStyle.copy(
-                        showStreak = showStreak
-                    )
-                )
-            )
-        }
-    }
-
-    fun setShowLabel(showLabel: Boolean) {
-        viewModelScope.launch {
-            val uiSettings = getUiSettings()
-            settingsRepo.saveUiSettings(
-                uiSettings.copy(
-                    timerStyle = uiSettings.timerStyle.copy(
-                        showLabel = showLabel
-                    )
-                )
-            )
-        }
-    }
-
-    private suspend fun getUiSettings() = settingsRepo.settings.first().uiSettings
 }

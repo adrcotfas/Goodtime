@@ -102,7 +102,7 @@ fun LabelsScreen(
                 WindowInsets.statusBars
             ),
         topBar = {
-            TopBar(text = "Labels", onNavigateBack = {
+            TopBar(title = "Labels", onNavigateBack = {
                 navController.navigate(Destination.Settings.route)
             })
             CenterAlignedTopAppBar(

@@ -137,7 +137,8 @@ class MainActivity : ComponentActivity(), KoinComponent {
 
                     NavigationScaffold(
                         showNavigation = showNavigation,
-                        onNavigate = navController::navigate
+                        onNavigate = navController::navigate,
+                        currentDestination = currentRoute,
                     ) {
                         NavigationHost(navController)
                     }

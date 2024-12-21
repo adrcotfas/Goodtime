@@ -10,6 +10,7 @@ data class AppSettings(
     private val version: Int = 1,
     val productivityReminderSettings: ProductivityReminderSettings = ProductivityReminderSettings(),
     val uiSettings: UiSettings = UiSettings(),
+    val timerStyle: TimerStyleData = TimerStyleData(),
 
     val workdayStart: Int = LocalTime(5, 0).toSecondOfDay(),
     val firstDayOfWeek: Int = DayOfWeek.MONDAY.isoDayNumber,
@@ -50,7 +51,6 @@ data class ProductivityReminderSettings(
 
 @Serializable
 data class UiSettings(
-    val timerStyle: TimerStyleData = TimerStyleData(),
     val themePreference: ThemePreference = ThemePreference.DARK,
     val fullscreenMode: Boolean = false,
     val keepScreenOn: Boolean = true,
@@ -88,7 +88,6 @@ data class TimerStyleData(
         }
     }
     companion object {
-        const val INVALID_MIN_SIZE = -1f
         const val MINUTES_ONLY_FONT_SIZE_FACTOR = 1.75f
     }
 }

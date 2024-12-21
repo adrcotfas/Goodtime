@@ -25,18 +25,23 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.bl.isWork
 import com.apps.adrcotfas.goodtime.common.isPortrait
+import com.apps.adrcotfas.goodtime.common.screenWidth
 import com.apps.adrcotfas.goodtime.main.dial_control.DialConfig
 import com.apps.adrcotfas.goodtime.main.dial_control.DialControl
 import com.apps.adrcotfas.goodtime.main.dial_control.DialControlButton
 import com.apps.adrcotfas.goodtime.main.dial_control.DialRegion
 import com.apps.adrcotfas.goodtime.main.dial_control.rememberDialControlState
+import com.apps.adrcotfas.goodtime.settings.SettingsViewModel
 import com.apps.adrcotfas.goodtime.settings.user_interface.InitTimerStyle
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
 @Composable
-fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
-    InitTimerStyle(viewModel)
+fun MainScreen(
+    viewModel: MainViewModel = koinViewModel(),
+    settingsViewModel: SettingsViewModel = koinViewModel()
+) {
+    InitTimerStyle(settingsViewModel)
 
     val configuration = LocalConfiguration.current
 
@@ -48,7 +53,7 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
 
     val dialControlState = rememberDialControlState(
         options = DialRegion.entries,
-        config = DialConfig(size = timerStyle.currentScreenWidth.dp),
+        config = DialConfig(size = configuration.screenWidth),
         onSelected = {
             when (it) {
                 DialRegion.TOP -> {
@@ -73,7 +78,7 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
     ScreensaverMode(
         screensaverMode = mainUiState.screensaverMode,
         isActive = timerUiState.isActive,
-        screenWidth = timerStyle.currentScreenWidth.dp,
+        screenWidth = configuration.screenWidth,
         yOffset = yOffset
     )
 
@@ -125,11 +130,11 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
             val modifier = Modifier.offset {
-            if (configuration.isPortrait) IntOffset(
-                0,
-                yOffset.value.roundToInt()
-            ) else IntOffset(yOffset.value.roundToInt(), 0)
-        }
+                if (configuration.isPortrait) IntOffset(
+                    0,
+                    yOffset.value.roundToInt()
+                ) else IntOffset(yOffset.value.roundToInt(), 0)
+            }
 
             MainTimerView(
                 modifier = alphaModifier.then(modifier),

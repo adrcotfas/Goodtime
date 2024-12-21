@@ -52,7 +52,7 @@ fun ArchivedLabelsScreen(
 
     Scaffold(
         topBar = {
-            TopBar(text = "Archived labels", onNavigateBack = onNavigateBack)
+            TopBar(title = "Archived labels", onNavigateBack = onNavigateBack)
         },
         content = {
             LazyColumn(Modifier.padding(it).fillMaxSize()) {

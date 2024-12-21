@@ -13,10 +13,6 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.apps.adrcotfas.goodtime.main.Destination
@@ -27,9 +23,9 @@ import com.apps.adrcotfas.goodtime.settings.permissions.getPermissionsState
 fun NavigationScaffold(
     showNavigation: Boolean,
     onNavigate: (route: String) -> Unit,
+    currentDestination: String?,
     content: @Composable () -> Unit
 ) {
-    var currentDestination by rememberSaveable { mutableStateOf(Destination.Main.route) }
     val permissionsState = getPermissionsState()
 
     val adaptiveInfo = currentWindowAdaptiveInfo()
@@ -72,7 +68,6 @@ fun NavigationScaffold(
                     icon = { Icon(icon!!, contentDescription = null) },
                     selected = isSelected,
                     onClick = {
-                        currentDestination = it.route
                         onNavigate(it.route)
                     }
                 )

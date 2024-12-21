@@ -90,51 +90,49 @@ fun MainTimerView(
 
     val isCountdown = domainLabel.profile.isCountdown
 
-    if (timerStyle.minSize != TimerStyleData.INVALID_MIN_SIZE) {
-        Column(
-            modifier = modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            CurrentStatusSection(
-                Modifier.hideUnless(timerUiState.isActive),
-                color = labelColor,
-                isBreak = isBreak,
-                isActive = timerUiState.isActive,
-                isPaused = timerUiState.isPaused,
-                isCountdown = isCountdown,
-                streak = timerUiState.longBreakData.streak,
-                sessionsBeforeLongBreak = timerUiState.sessionsBeforeLongBreak,
-                breakBudget = timerUiState.breakBudgetMinutes,
-                showStatus = timerStyle.showStatus,
-                showStreak = timerStyle.showStreak,
-                showBreakBudget = timerStyle.showBreakBudget
-            )
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        CurrentStatusSection(
+            Modifier.hideUnless(timerUiState.isActive),
+            color = labelColor,
+            isBreak = isBreak,
+            isActive = timerUiState.isActive,
+            isPaused = timerUiState.isPaused,
+            isCountdown = isCountdown,
+            streak = timerUiState.longBreakData.streak,
+            sessionsBeforeLongBreak = timerUiState.sessionsBeforeLongBreak,
+            breakBudget = timerUiState.breakBudgetMinutes,
+            showStatus = timerStyle.showStatus,
+            showStreak = timerStyle.showStreak,
+            showBreakBudget = timerStyle.showBreakBudget
+        )
 
-            TimerTextView(
-                modifier = gestureModifier,
-                state = state,
-                isPaused = timerUiState.isPaused,
-                timerStyle = timerStyle,
-                millis = timerUiState.baseTime,
-                color = labelColor,
-                onPress = {
-                    if (!timerUiState.isActive) {
-                        onStart()
-                    } else {
-                        if (!onToggle()) {
-                            Toast.makeText(context, "Cannot pause the break", Toast.LENGTH_SHORT)
-                                .show()
-                        }
+        TimerTextView(
+            modifier = gestureModifier,
+            state = state,
+            isPaused = timerUiState.isPaused,
+            timerStyle = timerStyle,
+            millis = timerUiState.baseTime,
+            color = labelColor,
+            onPress = {
+                if (!timerUiState.isActive) {
+                    onStart()
+                } else {
+                    if (!onToggle()) {
+                        Toast.makeText(context, "Cannot pause the break", Toast.LENGTH_SHORT)
+                            .show()
                     }
-                })
+                }
+            })
 
-            LabelSection(
-                showLabel = timerStyle.showLabel,
-                labelName = label.name,
-                color = labelColor
-            )
-        }
+        LabelSection(
+            showLabel = timerStyle.showLabel,
+            labelName = label.name,
+            color = labelColor
+        )
     }
 }
 

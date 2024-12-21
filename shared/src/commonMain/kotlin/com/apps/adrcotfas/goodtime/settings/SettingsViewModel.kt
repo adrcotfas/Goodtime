@@ -3,59 +3,65 @@ package com.apps.adrcotfas.goodtime.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apps.adrcotfas.goodtime.data.settings.AppSettings
-import com.apps.adrcotfas.goodtime.data.settings.ThemePreference
 import com.apps.adrcotfas.goodtime.data.settings.NotificationPermissionState
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
+import com.apps.adrcotfas.goodtime.data.settings.ThemePreference
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.isoDayNumber
+import kotlin.math.floor
 
 data class SettingsUiState(
+    val isLoading: Boolean = true,
+    val settings: AppSettings = AppSettings(),
     val showTimePicker: Boolean = false,
     val showWorkdayStartPicker: Boolean = false,
     val showSelectWorkSoundPicker: Boolean = false,
     val showSelectBreakSoundPicker: Boolean = false,
     val notificationSoundCandidate: String? = null,
-    val notificationPermissionState: NotificationPermissionState = NotificationPermissionState.NOT_ASKED
 )
 
 class SettingsViewModel(private val settingsRepository: SettingsRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
-    val uiState = _uiState.asStateFlow()
+    val uiState = _uiState.onStart {
+        loadData()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SettingsUiState())
 
-    init {
+    private fun loadData() {
         viewModelScope.launch {
-            settingsRepository.settings.map { it.notificationPermissionState }
-                .collect { permissionState ->
-                    _uiState.update { it.copy(notificationPermissionState = permissionState)}
+            _uiState.update { it.copy(isLoading = true) }
+            settingsRepository.settings.distinctUntilChanged().collect { settings ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        settings = settings
+                    )
                 }
+            }
         }
     }
 
-    val settings =
-        settingsRepository.settings.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            AppSettings()
-        )
-
+    private fun isLoading() = uiState.value.isLoading
 
     fun onToggleProductivityReminderDay(dayOfWeek: DayOfWeek) {
+        if (isLoading()) return
         viewModelScope.launch {
-            val days = settings.value.productivityReminderSettings.days
-            val alreadyEnabled = days.contains(dayOfWeek.isoDayNumber)
-            settingsRepository.saveReminderSettings(
-                settings.value.productivityReminderSettings.copy(
+
+            settingsRepository.updateReminderSettings {
+                val days = it.days
+                val alreadyEnabled = days.contains(dayOfWeek.isoDayNumber)
+                it.copy(
                     days = if (alreadyEnabled) days - dayOfWeek.isoDayNumber else days + dayOfWeek.isoDayNumber
                 )
-            )
+            }
         }
     }
 
@@ -65,48 +71,56 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
 
     fun setReminderTime(secondOfDay: Int) {
         viewModelScope.launch {
-            settingsRepository.saveReminderSettings(
-                settings.value.productivityReminderSettings.copy(secondOfDay = secondOfDay)
-            )
+            settingsRepository.updateReminderSettings {
+                it.copy(secondOfDay = secondOfDay)
+            }
         }
     }
 
     fun setThemeOption(themePreference: ThemePreference) {
         viewModelScope.launch {
-            settingsRepository.saveUiSettings(settings.value.uiSettings.copy(themePreference = themePreference))
+            settingsRepository.updateUiSettings {
+                it.copy(themePreference = themePreference)
+            }
         }
     }
 
     fun setFullscreenMode(enable: Boolean) {
         viewModelScope.launch {
-            settingsRepository.saveUiSettings(settings.value.uiSettings.copy(fullscreenMode = enable))
+            settingsRepository.updateUiSettings {
+                it.copy(fullscreenMode = enable)
+            }
         }
     }
 
     fun setKeepScreenOn(enable: Boolean) {
         viewModelScope.launch {
-            settingsRepository.saveUiSettings(settings.value.uiSettings.copy(keepScreenOn = enable))
-            if (!enable && settings.value.uiSettings.screensaverMode) {
-                settingsRepository.saveUiSettings(settings.value.uiSettings.copy(screensaverMode = false))
+            settingsRepository.updateUiSettings {
+                it.copy(keepScreenOn = enable)
+            }
+            if (!enable && uiState.value.settings.uiSettings.screensaverMode) {
+                setScreensaverMode(false)
             }
         }
     }
 
     fun setScreensaverMode(enable: Boolean) {
         viewModelScope.launch {
-            settingsRepository.saveUiSettings(settings.value.uiSettings.copy(screensaverMode = enable))
+            settingsRepository.updateUiSettings {
+                it.copy(screensaverMode = enable)
+            }
         }
     }
 
     fun setWorkDayStart(secondOfDay: Int) {
         viewModelScope.launch {
-            settingsRepository.saveWorkDayStart(secondOfDay)
+            settingsRepository.setWorkDayStart(secondOfDay)
         }
     }
 
     fun setFirstDayOfWeek(dayOfWeek: Int) {
         viewModelScope.launch {
-            settingsRepository.saveFirstDayOfWeek(dayOfWeek)
+            settingsRepository.setFirstDayOfWeek(dayOfWeek)
         }
     }
 
@@ -116,24 +130,25 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
 
     fun setVibrationStrength(vibrationStrength: Int) {
         viewModelScope.launch {
-            settingsRepository.saveVibrationStrength(vibrationStrength)
+            settingsRepository.setVibrationStrength(vibrationStrength)
         }
     }
 
     fun setEnableTorch(enable: Boolean) {
         viewModelScope.launch {
-            settingsRepository.saveEnableTorch(enable)
+            settingsRepository.setEnableTorch(enable)
         }
     }
 
     fun setInsistentNotification(enable: Boolean) {
         viewModelScope.launch {
-            settingsRepository.saveInsistentNotification(enable)
+            settingsRepository.setInsistentNotification(enable)
             if (enable) {
-                if (settings.value.autoStartWork) {
+                val settings = settingsRepository.settings.first()
+                if (settings.autoStartWork) {
                     setAutoStartWork(false)
                 }
-                if (settings.value.autoStartBreak) {
+                if (settings.autoStartBreak) {
                     setAutoStartBreak(false)
                 }
             }
@@ -142,9 +157,10 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
 
     fun setAutoStartWork(enable: Boolean) {
         viewModelScope.launch {
-            settingsRepository.saveAutoStartWork(enable)
+            settingsRepository.setAutoStartWork(enable)
             if (enable) {
-                if (settings.value.insistentNotification) {
+                val settings = settingsRepository.settings.first()
+                if (settings.insistentNotification) {
                     setInsistentNotification(false)
                 }
             }
@@ -153,9 +169,10 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
 
     fun setAutoStartBreak(enable: Boolean) {
         viewModelScope.launch {
-            settingsRepository.saveAutoStartBreak(enable)
+            settingsRepository.setAutoStartBreak(enable)
             if (enable) {
-                if (settings.value.insistentNotification) {
+                val settings = settingsRepository.settings.first()
+                if (settings.insistentNotification) {
                     setInsistentNotification(false)
                 }
             }
@@ -164,25 +181,27 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
 
     fun setDndDuringWork(enable: Boolean) {
         viewModelScope.launch {
-            settingsRepository.saveUiSettings(settings.value.uiSettings.copy(dndDuringWork = enable))
+            settingsRepository.updateUiSettings {
+                it.copy(dndDuringWork = enable)
+            }
         }
     }
 
     fun setWorkFinishedSound(ringtone: String) {
         viewModelScope.launch {
-            settingsRepository.saveWorkFinishedSound(ringtone)
+            settingsRepository.setWorkFinishedSound(ringtone)
         }
     }
 
     fun setBreakFinishedSound(ringtone: String) {
         viewModelScope.launch {
-            settingsRepository.saveBreakFinishedSound(ringtone)
+            settingsRepository.setBreakFinishedSound(ringtone)
         }
     }
 
     fun setOverrideSoundProfile(enabled: Boolean) {
         viewModelScope.launch {
-            settingsRepository.saveOverrideSoundProfile(enabled)
+            settingsRepository.setOverrideSoundProfile(enabled)
         }
     }
 
@@ -201,8 +220,80 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
 
     fun setNotificationPermissionGranted(granted: Boolean) {
         viewModelScope.launch {
-            val state = if (granted) NotificationPermissionState.GRANTED else NotificationPermissionState.DENIED
-            settingsRepository.saveNotificationPermissionState(state)
+            val state =
+                if (granted) NotificationPermissionState.GRANTED else NotificationPermissionState.DENIED
+            settingsRepository.setNotificationPermissionState(state)
+        }
+    }
+
+    fun initTimerStyle(maxSize: Float, screenWidth: Float) {
+        viewModelScope.launch {
+            settingsRepository.updateTimerStyle {
+                it.copy(
+                    minSize = floor(maxSize / 1.5f),
+                    maxSize = maxSize,
+                    fontSize = floor(maxSize * 0.9f),
+                    currentScreenWidth = screenWidth
+                )
+            }
+        }
+    }
+
+    fun setTimerWeight(weight: Int) {
+        viewModelScope.launch {
+            settingsRepository.updateTimerStyle {
+                it.copy(fontWeight = weight)
+            }
+        }
+    }
+
+    fun setTimerSize(size: Float) {
+        viewModelScope.launch {
+            settingsRepository.updateTimerStyle {
+                it.copy(
+                    fontSize = size
+                )
+            }
+        }
+    }
+
+    fun setTimerMinutesOnly(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.updateTimerStyle {
+                it.copy(minutesOnly = enabled)
+            }
+        }
+    }
+
+    fun setTimerFont(fontIndex: Int) {
+        viewModelScope.launch {
+            settingsRepository.updateTimerStyle {
+                it.copy(fontIndex = fontIndex)
+            }
+        }
+    }
+
+    fun setShowStatus(showStatus: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.updateTimerStyle {
+                it.copy(showStatus = showStatus)
+            }
+        }
+    }
+
+    fun setShowStreak(showStreak: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.updateTimerStyle {
+                it.copy(showStreak = showStreak)
+            }
+        }
+    }
+
+    fun setShowLabel(showLabel: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.updateTimerStyle {
+                it.copy(showLabel = showLabel)
+            }
         }
     }
 

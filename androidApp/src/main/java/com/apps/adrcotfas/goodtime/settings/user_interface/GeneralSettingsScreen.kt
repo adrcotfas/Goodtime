@@ -59,7 +59,6 @@ fun GeneralSettingsScreen(
     viewModel: SettingsViewModel = koinViewModel(viewModelStoreOwner = LocalContext.current as ComponentActivity)
 ) {
     val context = LocalContext.current
-    val settings by viewModel.settings.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val locale = context.resources.configuration.locales[0]
 
@@ -103,7 +102,7 @@ fun GeneralSettingsScreen(
             title = "Workday start",
             subtitle = "Used for displaying the stats accordingly",
             value = secondsOfDayToTimerFormat(
-                settings.workdayStart,
+                uiState.settings.workdayStart,
                 DateFormat.is24HourFormat(context)
             ), onClick = {
                 viewModel.setShowWorkdayStartPicker(true)
@@ -112,7 +111,7 @@ fun GeneralSettingsScreen(
         Box(contentAlignment = Alignment.CenterEnd) {
             DropdownMenuPreference(
                 title = "Start of the week",
-                value = DayOfWeek.of(settings.firstDayOfWeek)
+                value = DayOfWeek.of(uiState.settings.firstDayOfWeek)
                     .getDisplayName(TextStyle.FULL, locale),
                 dropdownMenuOptions = firstDayOfWeekOptions.map {
                     it.getDisplayName(
@@ -129,7 +128,7 @@ fun GeneralSettingsScreen(
         DropdownMenuPreference(
             title = "Theme",
             //TODO: use localized strings instead
-            value = settings.uiSettings.themePreference.prettyName(),
+            value = uiState.settings.uiSettings.themePreference.prettyName(),
             dropdownMenuOptions = prettyNames<ThemePreference>(),
             onDropdownMenuItemSelected = {
                 viewModel.setThemeOption(ThemePreference.entries[it])
@@ -140,27 +139,27 @@ fun GeneralSettingsScreen(
         CompactPreferenceGroupTitle(text = "During work sessions")
         CheckboxPreference(
             title = "Fullscreen mode",
-            checked = settings.uiSettings.fullscreenMode
+            checked = uiState.settings.uiSettings.fullscreenMode
         ) {
             viewModel.setFullscreenMode(it)
         }
         CheckboxPreference(
             title = "Keep the screen on",
-            checked = settings.uiSettings.keepScreenOn
+            checked = uiState.settings.uiSettings.keepScreenOn
         ) {
             viewModel.setKeepScreenOn(it)
         }
         CheckboxPreference(
             title = "Screensaver mode",
-            checked = settings.uiSettings.screensaverMode,
-            clickable = settings.uiSettings.keepScreenOn
+            checked = uiState.settings.uiSettings.screensaverMode,
+            clickable = uiState.settings.uiSettings.keepScreenOn
         ) {
             viewModel.setScreensaverMode(it)
         }
         CheckboxPreference(
             title = "Do not disturb mode",
             subtitle = if (isNotificationPolicyAccessGranted) null else "Click to grant permission",
-            checked = settings.uiSettings.dndDuringWork
+            checked = uiState.settings.uiSettings.dndDuringWork
         ) {
             if (isNotificationPolicyAccessGranted) {
                 viewModel.setDndDuringWork(it)
@@ -170,7 +169,7 @@ fun GeneralSettingsScreen(
         }
     }
     if (uiState.showWorkdayStartPicker) {
-        val workdayStart = LocalTime.fromSecondOfDay(settings.workdayStart)
+        val workdayStart = LocalTime.fromSecondOfDay(uiState.settings.workdayStart)
         val timePickerState = rememberTimePickerState(
             initialHour = workdayStart.hour,
             initialMinute = workdayStart.minute,

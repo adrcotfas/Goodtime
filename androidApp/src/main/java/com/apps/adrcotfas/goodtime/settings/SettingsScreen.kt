@@ -10,13 +10,13 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
@@ -30,6 +30,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -68,7 +69,7 @@ fun SettingsScreen(
     val context = LocalContext.current
     val navigator = rememberListDetailPaneScaffoldNavigator<Any>()
 
-    val notificationPermissionState by viewModel.uiState.map { it.notificationPermissionState }
+    val notificationPermissionState by viewModel.uiState.map { it.settings.notificationPermissionState }
         .collectAsStateWithLifecycle(initialValue = NotificationPermissionState.NOT_ASKED)
 
     val configuration = LocalConfiguration.current
@@ -100,19 +101,22 @@ fun SettingsScreen(
         topBar = {
             if (isPortrait && navigator.pane != ThreePaneScaffoldRole.Secondary) {
                 TopBar(
-                    text = title,
+                    title = title,
                     onNavigateBack = {
                         navigator.navigateBack()
                     }
                 )
             } else {
                 if (isPortrait) {
-                    CenterAlignedTopAppBar(
-                        title = { Text("Settings") }
+                    TopBar(
+                        title = "Settings",
                     )
                 } else {
                     TopAppBar(
-                        title = { Text("Settings") }
+                        title = { Text("Settings") },
+                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                            containerColor = Color.Transparent,
+                        ),
                     )
                 }
             }

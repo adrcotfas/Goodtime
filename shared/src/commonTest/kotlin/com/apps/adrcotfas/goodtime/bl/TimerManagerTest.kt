@@ -108,12 +108,12 @@ class TimerManagerTest {
     @Test
     fun `Init persistent data only once`() = runTest {
         val customLongBreakData = LongBreakData(10, 42)
-        settingsRepo.saveLongBreakData(customLongBreakData)
+        settingsRepo.setLongBreakData(customLongBreakData)
         timerManager.restart()
         assertEquals(timerManager.timerData.value.longBreakData, customLongBreakData)
 
         val customBreakBudgetData = BreakBudgetData(10.minutes, 42)
-        settingsRepo.saveBreakBudgetData(customBreakBudgetData)
+        settingsRepo.setBreakBudgetData(customBreakBudgetData)
         timerManager.restart()
         assertEquals(timerManager.timerData.value.breakBudgetData, customBreakBudgetData)
     }
@@ -549,7 +549,7 @@ class TimerManagerTest {
 
     @Test
     fun `Auto-start break`() = runTest {
-        settingsRepo.saveAutoStartBreak(true)
+        settingsRepo.setAutoStartBreak(true)
         timerManager.start(TimerType.WORK)
         val workDuration = DEFAULT_DURATION
         timeProvider.elapsedRealtime += workDuration
@@ -559,7 +559,7 @@ class TimerManagerTest {
 
     @Test
     fun `Work is next after work when break is disabled`() = runTest {
-        settingsRepo.saveAutoStartWork(true)
+        settingsRepo.setAutoStartWork(true)
         localDataRepo.updateDefaultLabel(
             defaultLabel.copy(
                 timerProfile = TimerProfile().copy(
@@ -666,7 +666,7 @@ class TimerManagerTest {
 
     @Test
     fun `Count-up then start a break with budget already there`() = runTest {
-        settingsRepo.saveBreakBudgetData(BreakBudgetData(10.minutes, 0))
+        settingsRepo.setBreakBudgetData(BreakBudgetData(10.minutes, 0))
         settingsRepo.activateLabelWithName(countUpLabel.name)
         timerManager.restart()
 
@@ -691,9 +691,9 @@ class TimerManagerTest {
         val breakBudget = 3.minutes
         val breakBudgetMillis = breakBudget.inWholeMilliseconds
 
-        settingsRepo.saveBreakBudgetData(BreakBudgetData(breakBudget, 0))
+        settingsRepo.setBreakBudgetData(BreakBudgetData(breakBudget, 0))
         settingsRepo.activateLabelWithName(countUpLabel.name)
-        settingsRepo.saveAutoStartWork(true)
+        settingsRepo.setAutoStartWork(true)
         timerManager.restart()
 
         timerManager.start()
@@ -717,9 +717,9 @@ class TimerManagerTest {
         val breakBudget = 3.minutes
         val oneMinute = 1.minutes.inWholeMilliseconds
 
-        settingsRepo.saveBreakBudgetData(BreakBudgetData(breakBudget, 0))
+        settingsRepo.setBreakBudgetData(BreakBudgetData(breakBudget, 0))
         settingsRepo.activateLabelWithName(countUpLabel.name)
-        settingsRepo.saveAutoStartWork(true)
+        settingsRepo.setAutoStartWork(true)
         timerManager.restart()
 
         timerManager.start()
