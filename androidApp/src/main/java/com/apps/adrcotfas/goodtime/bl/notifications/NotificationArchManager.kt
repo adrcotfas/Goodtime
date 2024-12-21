@@ -29,15 +29,13 @@ class NotificationArchManager(private val context: Context, private val activity
         createReminderChannel()
     }
 
-    //TODO: handle use case of changing a label while the timer is running; currently the notification will not update
     fun buildInProgressNotification(data: DomainTimerData): Notification {
         val isCountDown = data.getTimerProfile().isCountdown
         val baseTime = if (isCountDown) data.endTime else SystemClock.elapsedRealtime()
         val running = data.state != TimerState.PAUSED
         val timerType = data.type
-        val labelName = data.getLabelName()
 
-        val mainStateText = if (timerType == TimerType.WORK) {
+        val stateText = if (timerType == TimerType.WORK) {
             if (running) {
                 //TODO: extract strings
                 "Work session in progress"
@@ -47,8 +45,6 @@ class NotificationArchManager(private val context: Context, private val activity
         } else {
             "Break in progress"
         }
-        val labelText = if (data.isDefaultLabel()) "" else "$labelName: "
-        val stateText = "$labelText$mainStateText"
 
         val builder = NotificationCompat.Builder(context, MAIN_CHANNEL_ID).apply {
             setSmallIcon(SharedR.drawable.ic_status_goodtime)
@@ -114,7 +110,7 @@ class NotificationArchManager(private val context: Context, private val activity
                 title = nextActionTitle,
                 action = TimerService.Companion.Action.Skip
             )
-            if (data.label?.profile?.isBreakEnabled == true) {
+            if (data.label.profile.isBreakEnabled) {
                 builder.addAction(nextAction)
             }
         } else {
