@@ -208,38 +208,27 @@ fun SettingsScreen(
             },
             detailPane = {
                 AnimatedPane {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        val content = navigator.content ?: ""
-                        when (content) {
-                            Destination.GeneralSettings.route -> GeneralSettingsScreen()
-                            Destination.TimerStyle.route -> TimerStyleScreen()
-                            Destination.NotificationSettings.route -> NotificationsScreen()
-                            Destination.Backup.route -> BackupScreen()
-                            Destination.About.route, Destination.Licenses.route -> AboutScreen(
-                                onNavigateToLicenses = {
-                                    navigator.navigateToExtra(Destination.Licenses.route)
-                                })
-                        }
-                    }
 
+                    val content = navigator.content ?: ""
+                    when (content) {
+                        Destination.GeneralSettings.route -> GeneralSettingsScreen()
+                        Destination.TimerStyle.route -> TimerStyleScreen()
+                        Destination.NotificationSettings.route -> NotificationsScreen()
+                        Destination.Backup.route -> BackupScreen()
+                        Destination.About.route, Destination.Licenses.route -> AboutScreen(
+                            onNavigateToLicenses = {
+                                navigator.navigateToExtra(Destination.Licenses.route)
+                            })
+                    }
                 }
             },
             extraPane = {
                 AnimatedPane {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                    ) {
-                        val content = navigator.content ?: ""
-                        when (content) {
-                            Destination.TimerStyle.route -> TimerStyleScreen()
-                            Destination.Licenses.route -> LicensesScreen()
-                        }
+                    //TODO: highlight "Open source licenses" while open
+                    val content = navigator.content ?: ""
+                    when (content) {
+                        Destination.TimerStyle.route -> TimerStyleScreen()
+                        Destination.Licenses.route -> LicensesScreen()
                     }
                 }
             }
