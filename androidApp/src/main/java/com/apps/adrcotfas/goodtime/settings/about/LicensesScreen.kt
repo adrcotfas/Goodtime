@@ -22,7 +22,7 @@ fun LicensesScreen(
     Scaffold(
         topBar = {
             TopBar(
-                modifier = Modifier.alpha(if (showTopBar) 1f else 0f),
+                isVisible = showTopBar,
                 title = "Open Source licenses",
                 onNavigateBack = { onNavigateBack() }
             )

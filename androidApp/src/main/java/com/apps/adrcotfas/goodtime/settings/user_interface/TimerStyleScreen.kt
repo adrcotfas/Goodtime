@@ -66,7 +66,7 @@ fun TimerStyleScreen(
     Scaffold(
         topBar = {
             TopBar(
-                modifier = Modifier.alpha(if (showTopBar) 1f else 0f),
+                isVisible = showTopBar,
                 title = "Timer style",
                 onNavigateBack = { onNavigateBack() }
             )

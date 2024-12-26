@@ -89,7 +89,7 @@ fun GeneralSettingsScreen(
     Scaffold(
         topBar = {
             TopBar(
-                modifier = Modifier.alpha(if (showTopBar) 1f else 0f),
+                isVisible = showTopBar,
                 title = "General settings",
                 onNavigateBack = { onNavigateBack() }
             )
