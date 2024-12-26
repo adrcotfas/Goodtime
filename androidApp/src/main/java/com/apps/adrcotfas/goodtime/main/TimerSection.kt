@@ -107,7 +107,7 @@ fun MainTimerView(
             breakBudget = timerUiState.breakBudgetMinutes,
             showStatus = timerStyle.showStatus,
             showStreak = timerStyle.showStreak,
-            showBreakBudget = timerStyle.showBreakBudget
+            showBreakBudget = timerStyle.showBreakBudget && domainLabel.profile.isBreakEnabled
         )
 
         TimerTextView(
