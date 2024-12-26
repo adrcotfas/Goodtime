@@ -143,6 +143,7 @@ internal class LocalDataRepositoryImpl(
         name: String,
         newLabel: Label
     ) {
+        if(newLabel.name.isEmpty()) return
         withContext(defaultDispatcher) {
             database.localLabelQueries.updateLabel(
                 newName = newLabel.name,
