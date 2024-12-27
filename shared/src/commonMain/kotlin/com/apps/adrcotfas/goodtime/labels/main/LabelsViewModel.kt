@@ -62,7 +62,7 @@ class LabelsViewModel(
             it.copy(
                 defaultLabelDisplayName = defaultLabelName,
                 labelToEdit = labelToEdit,
-                newLabel = labelToEdit ?: it.newLabel,
+                newLabel = labelToEdit ?: Label.newLabelWithRandomColorIndex(lightPalette.lastIndex),
             )
         }
     }
