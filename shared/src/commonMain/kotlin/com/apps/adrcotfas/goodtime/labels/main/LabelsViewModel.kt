@@ -31,6 +31,9 @@ data class LabelsUiState(
 val LabelsUiState.existingLabelNames: List<String>
     get() = labels.map { label -> label.name }
 
+val LabelsUiState.archivedLabels: List<Label>
+    get() = labels.filter { it.isArchived }
+
 fun LabelsUiState.labelNameIsValid(): Boolean {
     val name = newLabel.name
     return name.isNotEmpty() && !existingLabelNames.map { labels -> labels.lowercase() }

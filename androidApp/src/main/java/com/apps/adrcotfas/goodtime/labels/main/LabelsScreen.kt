@@ -50,6 +50,8 @@ import com.apps.adrcotfas.goodtime.common.isPortrait
 import com.apps.adrcotfas.goodtime.data.model.isDefault
 import com.apps.adrcotfas.goodtime.labels.DeleteConfirmationDialog
 import com.apps.adrcotfas.goodtime.labels.add_edit.AddEditLabelScreen
+import com.apps.adrcotfas.goodtime.labels.archived.ARCHIVED_LABELS_SCREEN_DESTINATION_ID
+import com.apps.adrcotfas.goodtime.labels.archived.ArchivedLabelsScreen
 import com.apps.adrcotfas.goodtime.main.Destination
 import com.apps.adrcotfas.goodtime.ui.DraggableItem
 import com.apps.adrcotfas.goodtime.ui.common.navigateToDetail
@@ -68,7 +70,6 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun LabelsScreen(
-    navController: NavController,
     viewModel: LabelsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -128,9 +129,7 @@ fun LabelsScreen(
                             title = { Text("Labels") },
                             actions = {
                                 ArchivedLabelsButton(uiState.archivedLabelCount) {
-                                    navController.navigate(
-                                        Destination.ArchivedLabels.route
-                                    )
+                                    navigator.navigateToDetail(ARCHIVED_LABELS_SCREEN_DESTINATION_ID)
                                 }
                             },
                         )
@@ -159,7 +158,9 @@ fun LabelsScreen(
                             .fillMaxSize(),
                         contentPadding = paddingValues
                     ) {
-                        itemsIndexed(labels, key = { _, item -> "${item.id}_${item.name}" }) { index, label ->
+                        itemsIndexed(
+                            labels,
+                            key = { _, item -> "${item.id}_${item.name}" }) { index, label ->
                             DraggableItem(dragDropState, index) { isDragging ->
                                 LabelListItem(
                                     label = label,
@@ -211,20 +212,33 @@ fun LabelsScreen(
         detailPane = {
             AnimatedPane {
                 navigator.currentDestination?.content?.let {
-                    AddEditLabelScreen(
-                        labelName = it,
-                        onSave = {
-                            if (isPortrait) {
+                    if (it == ARCHIVED_LABELS_SCREEN_DESTINATION_ID) {
+                        ArchivedLabelsScreen(
+                            onNavigateBack = {
+                                if (isPortrait) {
+                                    navigator.navigateBack()
+                                } else {
+                                    navigator.navigateToDetail(uiState.activeLabelName)
+                                }
+                            },
+                            showTopBar = isPortrait
+                        )
+                    } else {
+                        AddEditLabelScreen(
+                            labelName = it,
+                            onSave = {
+                                if (isPortrait) {
+                                    navigator.navigateBack()
+                                } else {
+                                    navigator.navigateToDetail(uiState.activeLabelName)
+                                }
+                            },
+                            showNavigationIcon = isPortrait,
+                            onNavigateBack = {
                                 navigator.navigateBack()
-                            } else {
-                                navigator.navigateToDetail(uiState.activeLabelName)
                             }
-                        },
-                        showNavigationIcon = isPortrait,
-                        onNavigateBack = {
-                            navigator.navigateBack()
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }

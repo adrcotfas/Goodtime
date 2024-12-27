@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.labels.DeleteConfirmationDialog
+import com.apps.adrcotfas.goodtime.labels.main.LabelsViewModel
+import com.apps.adrcotfas.goodtime.labels.main.archivedLabels
 import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import com.apps.adrcotfas.goodtime.ui.localColorsPalette
 import compose.icons.EvaIcons
@@ -38,33 +40,49 @@ import compose.icons.evaicons.outline.Trash
 import compose.icons.evaicons.outline.Undo
 import org.koin.androidx.compose.koinViewModel
 
+const val ARCHIVED_LABELS_SCREEN_DESTINATION_ID = "goodtime.productivity.archivedLabels"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArchivedLabelsScreen(
     onNavigateBack: () -> Unit,
-    viewModel: ArchivedLabelsViewModel = koinViewModel()
+    viewModel: LabelsViewModel = koinViewModel(),
+    showTopBar: Boolean
 ) {
-    val labels by viewModel.archivedLabels.collectAsStateWithLifecycle(emptyList())
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val labels = uiState.archivedLabels
 
     var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
     var labelToDelete by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
-            TopBar(title = "Archived labels", onNavigateBack = onNavigateBack)
+            TopBar(
+                title = "Archived labels",
+                onNavigateBack = if (showTopBar) onNavigateBack else null,
+            )
         },
         content = {
-            LazyColumn(Modifier.padding(it).fillMaxSize()) {
+            LazyColumn(
+                Modifier
+                    .padding(it)
+                    .fillMaxSize()
+            ) {
                 items(labels, key = { label -> label.name }) { label ->
                     ArchivedLabelListItem(
                         Modifier.animateItem(),
                         label = label,
-                        onUnarchive = { viewModel.unarchiveLabel(label.name) },
+                        onUnarchive = { viewModel.setArchived(label.name, false) },
                         onDelete = {
                             labelToDelete = label.name
                             showDeleteConfirmationDialog = true
-                        })
+                        },
+                        onLastItemUnarchive = if (labels.size == 1) {
+                            onNavigateBack
+                        } else {
+                            null
+                        }
+                    )
                 }
             }
             if (showDeleteConfirmationDialog) {
@@ -85,7 +103,8 @@ fun ArchivedLabelListItem(
     modifier: Modifier,
     label: Label,
     onUnarchive: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onLastItemUnarchive: (() -> Unit)? = null
 ) {
     val labelName = label.name
 
@@ -123,6 +142,7 @@ fun ArchivedLabelListItem(
                     onClick = {
                         onUnarchive()
                         dropDownMenuExpanded = false
+                        onLastItemUnarchive?.invoke()
                     },
                     leadingIcon = {
                         Icon(

@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.apps.adrcotfas.goodtime.labels.archived.ArchivedLabelsScreen
 import com.apps.adrcotfas.goodtime.labels.main.LabelsScreen
 import com.apps.adrcotfas.goodtime.main.Destination
 import com.apps.adrcotfas.goodtime.main.MainScreen
@@ -23,15 +22,12 @@ private fun NavHostController.backTo(route: String): () -> Unit = {
 fun NavigationHost(
     navController: NavHostController
 ) {
-    val backToLabels = navController.backTo(Destination.Labels.route)
-
     NavHost(
         navController = navController,
         startDestination = Destination.Main.route
     ) {
         composable(Destination.Main.route) { MainScreen() }
-        composable(Destination.Labels.route) { LabelsScreen(navController) }
-        composable(Destination.ArchivedLabels.route) { ArchivedLabelsScreen({ backToLabels() }) }
+        composable(Destination.Labels.route) { LabelsScreen() }
         composable(Destination.Stats.route) { StatsScreen() }
         composable(Destination.Settings.route) { SettingsScreen() }
     }
