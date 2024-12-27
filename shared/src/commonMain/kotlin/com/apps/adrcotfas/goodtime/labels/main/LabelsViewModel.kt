@@ -100,6 +100,9 @@ class LabelsViewModel(
             if (isRenamingActiveLabel) {
                 settingsRepository.activateLabelWithName(label.name)
             }
+            _uiState.update {
+                it.copy(labelToEdit = label)
+            }
         }
     }
 

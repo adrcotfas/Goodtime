@@ -97,7 +97,7 @@ fun AddEditLabelScreen(
     val isEditMode = labelName.isNotEmpty()
     val context = LocalContext.current
 
-    LaunchedEffect(labelName) {
+    LaunchedEffect(labelName + uiState.labelToEdit.hashCode()) {
         val defaultLabelName = context.getString(R.string.label_default)
         viewModel.init(labelName, defaultLabelName)
     }
@@ -119,15 +119,32 @@ fun AddEditLabelScreen(
                 } else null,
                 icon = Icons.Default.Close,
                 actions = {
-                    SaveButton(
-                        labelName,
-                        label,
-                        uiState.labelNameIsValid(),
-                        isEditMode,
-                        viewModel::updateLabel,
-                        viewModel::addLabel,
-                        onSave
-                    )
+                    if(isDefaultLabel && !label.isSameAs(Label.defaultLabel())) {
+                        Button(modifier = Modifier
+                            .wrapContentSize()
+                            .heightIn(min = 32.dp)
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = MaterialTheme.colorScheme.primary.copy(
+                                    alpha = 0.12f
+                                )
+                            ),
+                            onClick = { viewModel.setNewLabel(Label.defaultLabel()) }) {
+                            Text("Reset to default")
+                        }
+                    }
+                    if(uiState.labelToEdit != label) {
+                        SaveButton(
+                            labelName,
+                            label,
+                            uiState.labelNameIsValid(),
+                            isEditMode,
+                            viewModel::updateLabel,
+                            viewModel::addLabel,
+                            onSave
+                        )
+
+                    }
                 }
             )
         }
@@ -177,14 +194,13 @@ fun AddEditLabelScreen(
                 }
                 AnimatedVisibility(visible = isDefaultLabel || !followDefault) {
                     Column {
-                        //TODO: add info button and tooltip explaining the difference
-                        TimerTypeRow(isCountDown = isCountDown) {
+                        TimerTypeRow(isCountDown = isCountDown, onCountDownEnabled = {
                             viewModel.setNewLabel(
                                 label.copy(
                                     timerProfile = label.timerProfile.copy(isCountdown = it)
                                 )
                             )
-                        }
+                        })
                         if (isCountDown) {
                             Column {
                                 EditableNumberListItem(
@@ -276,7 +292,7 @@ fun AddEditLabelScreen(
                                         toggleBreak()
                                     },
                                     headlineContent = {
-                                        Text("Enable break")
+                                        Text("Enable break budget")
                                     },
                                     trailingContent = {
                                         Checkbox(
@@ -288,6 +304,7 @@ fun AddEditLabelScreen(
                                 SliderRow(title = "Work/break ratio",
                                     min = 1,
                                     max = 5,
+                                    enabled = isBreakEnabled,
                                     value = label.timerProfile.workBreakRatio,
                                     onValueChange = {
                                         viewModel.setNewLabel(
@@ -302,20 +319,7 @@ fun AddEditLabelScreen(
                         }
                     }
                 }
-                if (isDefaultLabel && !label.isSameAs(Label.defaultLabel())) {
-                    Button(modifier = Modifier
-                        .wrapContentSize()
-                        .heightIn(min = 32.dp)
-                        .padding(horizontal = 16.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primary.copy(
-                                alpha = 0.12f
-                            )
-                        ),
-                        onClick = { viewModel.setNewLabel(Label.defaultLabel()) }) {
-                        Text("Reset to default")
-                    }
-                }
+
             }
         }
     }
@@ -352,7 +356,9 @@ private fun LabelNameRow(
 
         Box {
             BasicTextField(
-                modifier = internalModifier.fillMaxWidth().clearFocusOnKeyboardDismiss(),
+                modifier = internalModifier
+                    .fillMaxWidth()
+                    .clearFocusOnKeyboardDismiss(),
                 textStyle = MaterialTheme.typography.displaySmall.copy(
                     color = MaterialTheme.colorScheme.onSurface,
                     textDecoration = if (isDefaultLabel) null else TextDecoration.Underline
@@ -443,7 +449,7 @@ private fun LabelColorPickerItem(color: Color, isSelected: Boolean, onClick: () 
 private fun TimerTypeRow(isCountDown: Boolean, onCountDownEnabled: (Boolean) -> Unit) {
     Row(
         modifier = Modifier.padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         FilterChip(
             onClick = { onCountDownEnabled(true) },

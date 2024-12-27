@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.TextFormat
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -35,6 +36,7 @@ fun SliderRow(
     value: Int,
     min: Int = 1,
     max: Int,
+    enabled: Boolean = true,
     steps: Int = max - min - 1,
     showSteps: Boolean = false,
     onValueChange: (Int) -> Unit,
@@ -51,6 +53,8 @@ fun SliderRow(
     }
     val valueText = if (valueNames != null) valueNames[value] else value.toString()
 
+    val textColor = if (enabled) ListItemDefaults.colors().headlineColor else ListItemDefaults.colors().disabledHeadlineColor
+
     Column(modifier = Modifier
         .fillMaxWidth()
         .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
@@ -58,7 +62,8 @@ fun SliderRow(
         title?.let {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = textColor
             )
         }
         Row(
@@ -83,6 +88,7 @@ fun SliderRow(
                 onValueChange = {
                     onValueChange(it.roundToInt())
                 },
+                enabled = enabled,
                 onValueChangeFinished = onValueChangeFinished,
                 steps = steps,
                 valueRange = min.toFloat()..max.toFloat()
@@ -95,6 +101,7 @@ fun SliderRow(
                     maxLines = 1,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         textAlign = TextAlign.Center,
+                        color = textColor
                     )
                 )
             }
