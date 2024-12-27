@@ -13,7 +13,7 @@ val ThreePaneScaffoldNavigator<Any>.content: Any?
 val ThreePaneScaffoldNavigator<Any>.pane: ThreePaneScaffoldRole?
     get() = currentDestination?.pane
 
-fun <T> ThreePaneScaffoldNavigator<T>.navigateToDetail(destination: T) {
+fun <T> ThreePaneScaffoldNavigator<T>.navigateToDetail(destination: T?) {
     navigateTo(
         pane = ListDetailPaneScaffoldRole.Detail,
         content = destination

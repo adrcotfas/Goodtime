@@ -31,7 +31,7 @@ val LabelsUiState.unarchivedLabels: List<Label>
     get() = labels.filter { !it.isArchived }
 
 val LabelsUiState.labelNames: List<String>
-    get() = unarchivedLabels.map { it.name }
+    get() = labels.map { it.name }
 
 class LabelsViewModel(
     private val repo: LocalDataRepository,
@@ -55,7 +55,7 @@ class LabelsViewModel(
                             isLoading = false,
                             activeLabelName = activeLabelName,
                             labels = labels,
-                            archivedLabelCount = labels.filter { label -> label.isArchived }.size
+                            archivedLabelCount = labels.filter { label -> label.isArchived }.size,
                         )
                     }
                 }
@@ -118,7 +118,9 @@ class LabelsViewModel(
             val labelsToUpdate = _uiState.value.unarchivedLabels.mapIndexed { index, label ->
                 Pair(label.name, index.toLong())
             }
-            repo.bulkUpdateLabelOrderIndex(labelsToUpdate)
+            if (labelsToUpdate.size > 1) {
+                repo.bulkUpdateLabelOrderIndex(labelsToUpdate)
+            }
         }
     }
 
@@ -155,17 +157,9 @@ class LabelsViewModel(
         }
     }
 
-    fun updateLabelToEditName(labelName: String) {
-        _uiState.update {
-            it.copy(
-                labelToEditInitialName = labelName
-            )
-        }
-    }
-
     fun updateLabelToEdit(label: Label) {
         _uiState.update {
-            it.copy(labelToEdit = label)
+            it.copy(labelToEditInitialName = label.name, labelToEdit = label, labelNameIsValid = true)
         }
     }
 

@@ -225,7 +225,7 @@ fun StatusIndicator(
                 .background(backgroundColor)
                 .padding(5.dp)
         ) {
-            Crossfade(isBreak, label = "label icon") {
+            Crossfade(modifier = Modifier.align(Alignment.Center), targetState = isBreak, label = "label icon") {
                 if (it) {
                     Image(
                         colorFilter = ColorFilter.tint(color),

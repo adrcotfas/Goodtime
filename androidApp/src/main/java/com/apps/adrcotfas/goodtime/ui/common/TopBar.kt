@@ -14,13 +14,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
     isVisible: Boolean = true,
-    title: String,
+    title: String = "",
     onNavigateBack: (() -> Unit)? = null,
+    icon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
     actions: @Composable RowScope.() -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
@@ -31,7 +33,7 @@ fun TopBar(
             if (onNavigateBack != null) {
                 IconButton(onClick = onNavigateBack) {
                     Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
+                        icon,
                         contentDescription = "Navigate back"
                     )
                 }
