@@ -478,10 +478,10 @@ fun EditableNumberListItem(
     enabled: Boolean = true,
     onValueChange: (Int) -> Unit,
     enableSwitch: Boolean = false,
-    switchValue: Boolean = false,
+    switchValue: Boolean = true,
     onSwitchChange: (Boolean) -> Unit = {}
 ) {
-    var textFieldValue by remember(value) { mutableStateOf(TextFieldValue(value.toString())) }
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(value.toString())) }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val focusRequester = remember { FocusRequester() }
@@ -496,14 +496,14 @@ fun EditableNumberListItem(
         )
     }
 
-    val clickableModifier = if (enabled) Modifier.clickable {
+    val clickableModifier = if (enabled && switchValue) Modifier.clickable {
         focusRequester.requestFocus()
     } else Modifier
 
     val colors =
-        if (enabled) ListItemDefaults.colors() else ListItemDefaults.colors(headlineColor = ListItemDefaults.colors().disabledHeadlineColor)
+        if (enabled && switchValue) ListItemDefaults.colors() else ListItemDefaults.colors(headlineColor = ListItemDefaults.colors().disabledHeadlineColor)
     val strokeColor =
-        if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(
+        if (enabled && switchValue) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(
             0.38f
         )
 
@@ -514,13 +514,15 @@ fun EditableNumberListItem(
         trailingContent = {
             BasicTextField(
                 value = textFieldValue,
-                enabled = enabled,
+                enabled = enabled && switchValue,
                 interactionSource = interactionSource,
                 onValueChange = {
                     if (it.text.length <= 2 && it.text.all { char -> char.isDigit() }) {
                         val newValue = min(max(it.text.toIntOrNull() ?: 0, minValue), maxValue)
                         val empty = it.text.isEmpty()
-                        textFieldValue = it.copy(text = if (empty) "" else newValue.toString())
+                        val newText = if (empty) "" else newValue.toString()
+                        val newSelection = TextRange(newText.length)
+                        textFieldValue = it.copy(text = newText, selection = newSelection)
                         if (!empty) {
                             onValueChange(newValue)
                         }
