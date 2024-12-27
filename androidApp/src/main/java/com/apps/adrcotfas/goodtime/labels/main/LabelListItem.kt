@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Label
@@ -27,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.apps.adrcotfas.goodtime.R
@@ -41,6 +41,7 @@ import compose.icons.evaicons.outline.Copy
 import compose.icons.evaicons.outline.Edit
 import compose.icons.evaicons.outline.MoreVertical
 import compose.icons.evaicons.outline.Trash
+
 
 @Composable
 fun LabelListItem(
@@ -100,10 +101,13 @@ fun LabelListItem(
                 tint = MaterialTheme.localColorsPalette.colors[label.colorIndex.toInt()]
             )
             Text(
-                labelName,
+                modifier = Modifier.weight(1f),
+                text = labelName,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyLarge
             )
-            Spacer(modifier = Modifier.weight(1f))
+            //Spacer(modifier = Modifier.weight(1f))
 
             if (label.isDefault()) {
                 IconButton(onClick = {
@@ -115,7 +119,10 @@ fun LabelListItem(
                 var dropDownMenuExpanded by remember { mutableStateOf(false) }
                 Box {
                     IconButton(onClick = { dropDownMenuExpanded = true }) {
-                        Icon(EvaIcons.Outline.MoreVertical, contentDescription = "More about $labelName")
+                        Icon(
+                            EvaIcons.Outline.MoreVertical,
+                            contentDescription = "More about $labelName"
+                        )
                     }
                     DropdownMenu(
                         expanded = dropDownMenuExpanded,

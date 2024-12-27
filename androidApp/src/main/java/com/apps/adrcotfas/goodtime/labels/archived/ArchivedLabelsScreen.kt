@@ -89,8 +89,12 @@ fun ArchivedLabelsScreen(
                 DeleteConfirmationDialog(
                     labelToDeleteName = labelToDelete,
                     onConfirm = {
+                        val lastLabelDeleted = labels.size == 1
                         viewModel.deleteLabel(labelToDelete)
                         showDeleteConfirmationDialog = false
+                        if (lastLabelDeleted) {
+                            onNavigateBack()
+                        }
                     },
                     onDismiss = { showDeleteConfirmationDialog = false })
             }
