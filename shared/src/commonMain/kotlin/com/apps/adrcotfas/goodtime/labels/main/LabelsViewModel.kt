@@ -22,16 +22,24 @@ data class LabelsUiState(
     val labels: List<Label> = emptyList(),
     val activeLabelName: String = Label.DEFAULT_LABEL_NAME,
     val archivedLabelCount: Int = 0,
-    val labelToEditInitialName: String = "",
-    val labelToEdit: Label = Label.newLabelWithRandomColorIndex(lightPalette.lastIndex),
-    val labelNameIsValid: Boolean = true
+
+    val defaultLabelDisplayName: String = "",
+    val labelToEdit: Label? = null, // this does not change after initialization
+    val newLabel: Label = Label.newLabelWithRandomColorIndex(lightPalette.lastIndex),
 )
+
+val LabelsUiState.existingLabelNames: List<String>
+    get() = labels.map { label -> label.name }
+
+fun LabelsUiState.labelNameIsValid(): Boolean {
+    val name = newLabel.name
+    return name.isNotEmpty() && !existingLabelNames.map { labels -> labels.lowercase() }
+        .minus(labelToEdit?.name?.lowercase())
+        .contains(name.lowercase()) && name.lowercase() != defaultLabelDisplayName.lowercase()
+}
 
 val LabelsUiState.unarchivedLabels: List<Label>
     get() = labels.filter { !it.isArchived }
-
-val LabelsUiState.labelNames: List<String>
-    get() = labels.map { it.name }
 
 class LabelsViewModel(
     private val repo: LocalDataRepository,
@@ -42,6 +50,19 @@ class LabelsViewModel(
     val uiState = _uiState.onStart {
         loadData()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), LabelsUiState())
+
+    fun init(labelToEditName: String? = null, defaultLabelName: String) {
+        val labelToEdit = labelToEditName?.let { name ->
+            uiState.value.labels.find { label -> label.name == name }
+        }
+        _uiState.update {
+            it.copy(
+                defaultLabelDisplayName = defaultLabelName,
+                labelToEdit = labelToEdit,
+                newLabel = labelToEdit ?: it.newLabel,
+            )
+        }
+    }
 
     private fun loadData() {
         viewModelScope.launch {
@@ -157,24 +178,9 @@ class LabelsViewModel(
         }
     }
 
-    fun updateLabelToEdit(label: Label) {
+    fun setNewLabel(newLabel: Label) {
         _uiState.update {
-            it.copy(labelToEditInitialName = label.name, labelToEdit = label, labelNameIsValid = true)
-        }
-    }
-
-    fun updateLabelToEditName(
-        originalLabelName: String,
-        defaultLabelName: String,
-        newLabelName: String
-    ) {
-        _uiState.update { state ->
-            state.copy(
-                labelToEdit = state.labelToEdit.copy(name = newLabelName),
-                labelNameIsValid = newLabelName.isNotEmpty() && !state.labelNames.map { labels -> labels.lowercase() }
-                    .minus(originalLabelName.lowercase())
-                    .contains(newLabelName.lowercase()) && newLabelName.lowercase() != defaultLabelName.lowercase()
-            )
+            it.copy(newLabel = newLabel)
         }
     }
 }

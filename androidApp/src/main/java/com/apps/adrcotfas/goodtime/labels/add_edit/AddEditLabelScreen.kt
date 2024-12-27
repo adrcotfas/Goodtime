@@ -59,6 +59,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
@@ -74,9 +75,9 @@ import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.model.Label.Companion.LABEL_NAME_MAX_LENGTH
 import com.apps.adrcotfas.goodtime.data.model.isDefault
 import com.apps.adrcotfas.goodtime.labels.main.LabelsViewModel
+import com.apps.adrcotfas.goodtime.labels.main.labelNameIsValid
 import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import com.apps.adrcotfas.goodtime.ui.common.clearFocusOnKeyboardDismiss
-import com.apps.adrcotfas.goodtime.ui.lightPalette
 import com.apps.adrcotfas.goodtime.ui.localColorsPalette
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.max
@@ -92,28 +93,23 @@ fun AddEditLabelScreen(
     onSave: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    if (uiState.isLoading) return
 
     val isEditMode = labelName.isNotEmpty()
+    val context = LocalContext.current
+
     LaunchedEffect(labelName) {
-        if (isEditMode) {
-            uiState.labels.firstOrNull { it.name == labelName }?.let {
-                viewModel.updateLabelToEdit(it)
-            }
-        } else {
-            viewModel.updateLabelToEdit(Label.newLabelWithRandomColorIndex(lightPalette.lastIndex))
-        }
+        val defaultLabelName = context.getString(R.string.label_default)
+        viewModel.init(labelName, defaultLabelName)
     }
 
-    val labelToEdit = uiState.labelToEdit
-    val isDefaultLabel = labelToEdit.isDefault()
-    val defaultLabelName = stringResource(R.string.label_default)
-    val labelNameToDisplay = if (isDefaultLabel) defaultLabelName else labelToEdit.name
+    val label = uiState.newLabel
+    val isDefaultLabel = label.isDefault()
+    val labelNameToDisplay = if (isDefaultLabel) uiState.defaultLabelDisplayName else label.name
 
-    val followDefault = labelToEdit.useDefaultTimeProfile
-    val isCountDown = labelToEdit.timerProfile.isCountdown
-    val isBreakEnabled = labelToEdit.timerProfile.isBreakEnabled
-    val isLongBreakEnabled = labelToEdit.timerProfile.isLongBreakEnabled
+    val followDefault = label.useDefaultTimeProfile
+    val isCountDown = label.timerProfile.isCountdown
+    val isBreakEnabled = label.timerProfile.isBreakEnabled
+    val isLongBreakEnabled = label.timerProfile.isLongBreakEnabled
 
     Scaffold(
         topBar = {
@@ -125,8 +121,8 @@ fun AddEditLabelScreen(
                 actions = {
                     SaveButton(
                         labelName,
-                        labelToEdit,
-                        uiState.labelNameIsValid,
+                        label,
+                        uiState.labelNameIsValid(),
                         isEditMode,
                         viewModel::updateLabel,
                         viewModel::addLabel,
@@ -136,148 +132,189 @@ fun AddEditLabelScreen(
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = paddingValues.calculateTopPadding())
-                .verticalScroll(rememberScrollState())
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            LabelNameRow(
-                isDefaultLabel = isDefaultLabel,
-                isAddingNewLabel = !isEditMode,
-                labelName = labelNameToDisplay,
-                onValueChange = {
-                    val newLabelName = it.trim()
-                    viewModel.updateLabelToEditName(
-                        originalLabelName = labelName,
-                        defaultLabelName = defaultLabelName,
-                        newLabelName = newLabelName
-                    )
-                },
-                showError = !uiState.labelNameIsValid
-            )
-            ColorSelectRow(selectedIndex = labelToEdit.colorIndex.toInt()) {
-                viewModel.updateLabelToEdit(labelToEdit.copy(colorIndex = it.toLong()))
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (!isDefaultLabel) {
-                ListItem(
-                    modifier = Modifier.clickable {
-                        viewModel.updateLabelToEdit(labelToEdit.copy(useDefaultTimeProfile = !followDefault))
-                    },
-                    headlineContent = {
-                        Text("Follow default time profile")
-                    },
-                    trailingContent = {
-                        Switch(
-                            checked = followDefault,
-                            onCheckedChange = {
-                                viewModel.updateLabelToEdit(labelToEdit.copy(useDefaultTimeProfile = it))
-                            }
+        AnimatedVisibility(!uiState.isLoading) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding())
+                    .verticalScroll(rememberScrollState())
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                LabelNameRow(
+                    isDefaultLabel = isDefaultLabel,
+                    isAddingNewLabel = !isEditMode,
+                    labelName = labelNameToDisplay,
+                    onValueChange = {
+                        val newLabelName = it.trim()
+                        viewModel.setNewLabel(
+                            uiState.newLabel.copy(name = newLabelName)
                         )
-                    }
+                    },
+                    showError = !uiState.labelNameIsValid()
                 )
-            }
-            AnimatedVisibility(visible = isDefaultLabel || !followDefault) {
-                Column {
-                    //TODO: add info button and tooltip explaining the difference
-                    TimerTypeRow(isCountDown = isCountDown) {
-                        viewModel.updateLabelToEdit(
-                            labelToEdit.copy(
-                                timerProfile = labelToEdit.timerProfile.copy(isCountdown = it)
+                ColorSelectRow(selectedIndex = label.colorIndex.toInt()) {
+                    viewModel.setNewLabel(label.copy(colorIndex = it.toLong()))
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (!isDefaultLabel) {
+                    ListItem(
+                        modifier = Modifier.clickable {
+                            viewModel.setNewLabel(label.copy(useDefaultTimeProfile = !followDefault))
+                        },
+                        headlineContent = {
+                            Text("Follow default time profile")
+                        },
+                        trailingContent = {
+                            Switch(
+                                checked = followDefault,
+                                onCheckedChange = {
+                                    viewModel.setNewLabel(label.copy(useDefaultTimeProfile = it))
+                                }
                             )
-                        )
-                    }
+                        }
+                    )
+                }
+                AnimatedVisibility(visible = isDefaultLabel || !followDefault) {
                     Column {
-                        EditableNumberListItem(
-                            title = "Work duration",
-                            value = labelToEdit.timerProfile.workDuration,
-                            onValueChange = {
-                                viewModel.updateLabelToEdit(
-                                    labelToEdit.copy(
-                                        timerProfile = labelToEdit.timerProfile.copy(workDuration = it)
-                                    )
+                        //TODO: add info button and tooltip explaining the difference
+                        TimerTypeRow(isCountDown = isCountDown) {
+                            viewModel.setNewLabel(
+                                label.copy(
+                                    timerProfile = label.timerProfile.copy(isCountdown = it)
                                 )
-                            },
-                        )
-                        EditableNumberListItem(
-                            title = "Break duration",
-                            value = labelToEdit.timerProfile.breakDuration,
-                            onValueChange = {
-                                viewModel.updateLabelToEdit(
-                                    labelToEdit.copy(
-                                        timerProfile = labelToEdit.timerProfile.copy(breakDuration = it)
-                                    )
+                            )
+                        }
+                        if (isCountDown) {
+                            Column {
+                                EditableNumberListItem(
+                                    title = "Work duration",
+                                    value = label.timerProfile.workDuration,
+                                    onValueChange = {
+                                        viewModel.setNewLabel(
+                                            label.copy(
+                                                timerProfile = label.timerProfile.copy(workDuration = it)
+                                            )
+                                        )
+                                    },
                                 )
-                            },
-                            enableSwitch = true,
-                            switchValue = isBreakEnabled,
-                            onSwitchChange = {
-                                viewModel.updateLabelToEdit(
-                                    labelToEdit.copy(
-                                        timerProfile = labelToEdit.timerProfile.copy(isBreakEnabled = it)
-                                    )
+                                EditableNumberListItem(
+                                    title = "Break duration",
+                                    value = label.timerProfile.breakDuration,
+                                    onValueChange = {
+                                        viewModel.setNewLabel(
+                                            label.copy(
+                                                timerProfile = label.timerProfile.copy(breakDuration = it)
+                                            )
+                                        )
+                                    },
+                                    enableSwitch = true,
+                                    switchValue = isBreakEnabled,
+                                    onSwitchChange = {
+                                        viewModel.setNewLabel(
+                                            label.copy(
+                                                timerProfile = label.timerProfile.copy(
+                                                    isBreakEnabled = it
+                                                )
+                                            )
+                                        )
+                                    }
+                                )
+                                EditableNumberListItem(
+                                    title = "Long break duration",
+                                    value = label.timerProfile.longBreakDuration,
+                                    onValueChange = {
+                                        viewModel.setNewLabel(
+                                            label.copy(
+                                                timerProfile = label.timerProfile.copy(
+                                                    longBreakDuration = it
+                                                )
+                                            )
+                                        )
+                                    },
+                                    enabled = isBreakEnabled,
+                                    enableSwitch = true,
+                                    switchValue = isLongBreakEnabled,
+                                    onSwitchChange = {
+                                        viewModel.setNewLabel(
+                                            label.copy(
+                                                timerProfile = label.timerProfile.copy(
+                                                    isLongBreakEnabled = it
+                                                )
+                                            )
+                                        )
+                                    }
+                                )
+                                EditableNumberListItem(
+                                    title = "Sessions before long break",
+                                    value = label.timerProfile.sessionsBeforeLongBreak,
+                                    minValue = 2,
+                                    maxValue = 8,
+                                    enabled = isBreakEnabled && isLongBreakEnabled,
+                                    onValueChange = {
+                                        viewModel.setNewLabel(
+                                            label.copy(
+                                                timerProfile = label.timerProfile.copy(
+                                                    sessionsBeforeLongBreak = it
+                                                )
+                                            )
+                                        )
+                                    },
                                 )
                             }
-                        )
-                        EditableNumberListItem(
-                            title = "Long break duration",
-                            value = labelToEdit.timerProfile.longBreakDuration,
-                            onValueChange = {
-                                viewModel.updateLabelToEdit(
-                                    labelToEdit.copy(
-                                        timerProfile = labelToEdit.timerProfile.copy(
-                                            longBreakDuration = it
+                        } else {
+                            Column {
+                                val toggleBreak = {
+                                    viewModel.setNewLabel(
+                                        label.copy(
+                                            timerProfile = label.timerProfile.copy(isBreakEnabled = !isBreakEnabled)
                                         )
                                     )
-                                )
-                            },
-                            enabled = isBreakEnabled,
-                            enableSwitch = true,
-                            switchValue = isLongBreakEnabled,
-                            onSwitchChange = {
-                                viewModel.updateLabelToEdit(
-                                    labelToEdit.copy(
-                                        timerProfile = labelToEdit.timerProfile.copy(
-                                            isLongBreakEnabled = it
+                                }
+                                ListItem(
+                                    modifier = Modifier.clickable {
+                                        toggleBreak()
+                                    },
+                                    headlineContent = {
+                                        Text("Enable break")
+                                    },
+                                    trailingContent = {
+                                        Checkbox(
+                                            checked = isBreakEnabled,
+                                            onCheckedChange = { toggleBreak() }
                                         )
-                                    )
+                                    }
                                 )
+                                SliderRow(title = "Work/break ratio",
+                                    min = 1,
+                                    max = 5,
+                                    value = label.timerProfile.workBreakRatio,
+                                    onValueChange = {
+                                        viewModel.setNewLabel(
+                                            label.copy(
+                                                timerProfile = label.timerProfile.copy(
+                                                    workBreakRatio = it
+                                                )
+                                            )
+                                        )
+                                    })
                             }
-                        )
-                        EditableNumberListItem(
-                            title = "Sessions before long break",
-                            value = labelToEdit.timerProfile.sessionsBeforeLongBreak,
-                            minValue = 2,
-                            maxValue = 8,
-                            enabled = isBreakEnabled && isLongBreakEnabled,
-                            onValueChange = {
-                                viewModel.updateLabelToEdit(
-                                    labelToEdit.copy(
-                                        timerProfile = labelToEdit.timerProfile.copy(
-                                            sessionsBeforeLongBreak = it
-                                        )
-                                    )
-                                )
-                            },
-                        )
+                        }
                     }
                 }
-            }
-            AnimatedVisibility(isDefaultLabel && !labelToEdit.isSameAs(Label.defaultLabel())) {
-                Button(modifier = Modifier
-                    .wrapContentSize()
-                    .heightIn(min = 32.dp)
-                    .padding(horizontal = 16.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primary.copy(
-                            alpha = 0.12f
-                        )
-                    ),
-                    onClick = { viewModel.updateLabelToEdit(Label.defaultLabel()) }) {
-                    Text("Reset to default")
+                if (isDefaultLabel && !label.isSameAs(Label.defaultLabel())) {
+                    Button(modifier = Modifier
+                        .wrapContentSize()
+                        .heightIn(min = 32.dp)
+                        .padding(horizontal = 16.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primary.copy(
+                                alpha = 0.12f
+                            )
+                        ),
+                        onClick = { viewModel.setNewLabel(Label.defaultLabel()) }) {
+                        Text("Reset to default")
+                    }
                 }
             }
         }
@@ -315,7 +352,7 @@ private fun LabelNameRow(
 
         Box {
             BasicTextField(
-                modifier = internalModifier.fillMaxWidth(),
+                modifier = internalModifier.fillMaxWidth().clearFocusOnKeyboardDismiss(),
                 textStyle = MaterialTheme.typography.displaySmall.copy(
                     color = MaterialTheme.colorScheme.onSurface,
                     textDecoration = if (isDefaultLabel) null else TextDecoration.Underline
