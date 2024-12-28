@@ -7,7 +7,6 @@ import android.provider.Settings
 import android.text.format.DateFormat
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,9 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -40,11 +37,11 @@ import com.apps.adrcotfas.goodtime.data.settings.ThemePreference
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel.Companion.firstDayOfWeekOptions
 import com.apps.adrcotfas.goodtime.settings.toSecondOfDay
-import com.apps.adrcotfas.goodtime.ui.common.CheckboxPreference
+import com.apps.adrcotfas.goodtime.ui.common.CheckboxListItem
 import com.apps.adrcotfas.goodtime.ui.common.CompactPreferenceGroupTitle
-import com.apps.adrcotfas.goodtime.ui.common.DropdownMenuPreference
+import com.apps.adrcotfas.goodtime.ui.common.DropdownMenuListItem
+import com.apps.adrcotfas.goodtime.ui.common.BetterListItem
 import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
-import com.apps.adrcotfas.goodtime.ui.common.TextPreference
 import com.apps.adrcotfas.goodtime.ui.common.TimePicker
 import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import com.apps.adrcotfas.goodtime.utils.secondsOfDayToTimerFormat
@@ -104,40 +101,42 @@ fun GeneralSettingsScreen(
         ) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val activity = context.findActivity()
-                TextPreference(title = "Language", value = context.getAppLanguage()) {
-                    val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS)
-                    intent.data = Uri.fromParts("package", activity?.packageName, null)
-                    activity?.startActivity(intent)
-                }
-            }
-            TextPreference(
-                title = "Workday start",
-                subtitle = "Used for displaying the stats accordingly",
-                value = secondsOfDayToTimerFormat(
-                    uiState.settings.workdayStart,
-                    DateFormat.is24HourFormat(context)
-                ), onClick = {
-                    viewModel.setShowWorkdayStartPicker(true)
-                })
-
-            Box(contentAlignment = Alignment.CenterEnd) {
-                DropdownMenuPreference(
-                    title = "Start of the week",
-                    value = DayOfWeek.of(uiState.settings.firstDayOfWeek)
-                        .getDisplayName(TextStyle.FULL, locale),
-                    dropdownMenuOptions = firstDayOfWeekOptions.map {
-                        it.getDisplayName(
-                            TextStyle.FULL,
-                            locale
-                        )
-                    },
-                    onDropdownMenuItemSelected = {
-                        viewModel.setFirstDayOfWeek(firstDayOfWeekOptions[it].isoDayNumber)
+                BetterListItem(
+                    title = "Language",
+                    trailing = context.getAppLanguage(),
+                    onClick = {
+                        val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS)
+                        intent.data = Uri.fromParts("package", activity?.packageName, null)
+                        activity?.startActivity(intent)
                     }
                 )
             }
+            BetterListItem(
+                title = "Workday start",
+                trailing = secondsOfDayToTimerFormat(
+                    uiState.settings.workdayStart,
+                    DateFormat.is24HourFormat(context)
+                ),
+                onClick = {
+                    viewModel.setShowWorkdayStartPicker(true)
+                }
+            )
+            DropdownMenuListItem(
+                title = "Start of the week",
+                value = DayOfWeek.of(uiState.settings.firstDayOfWeek)
+                    .getDisplayName(TextStyle.FULL, locale),
+                dropdownMenuOptions = firstDayOfWeekOptions.map {
+                    it.getDisplayName(
+                        TextStyle.FULL,
+                        locale
+                    )
+                },
+                onDropdownMenuItemSelected = {
+                    viewModel.setFirstDayOfWeek(firstDayOfWeekOptions[it].isoDayNumber)
+                }
+            )
 
-            DropdownMenuPreference(
+            DropdownMenuListItem(
                 title = "Theme",
                 //TODO: use localized strings instead
                 value = uiState.settings.uiSettings.themePreference.prettyName(),
@@ -149,26 +148,26 @@ fun GeneralSettingsScreen(
 
             SubtleHorizontalDivider()
             CompactPreferenceGroupTitle(text = "During work sessions")
-            CheckboxPreference(
+            CheckboxListItem(
                 title = "Fullscreen mode",
                 checked = uiState.settings.uiSettings.fullscreenMode
             ) {
                 viewModel.setFullscreenMode(it)
             }
-            CheckboxPreference(
+            CheckboxListItem(
                 title = "Keep the screen on",
                 checked = uiState.settings.uiSettings.keepScreenOn
             ) {
                 viewModel.setKeepScreenOn(it)
             }
-            CheckboxPreference(
+            CheckboxListItem(
                 title = "Screensaver mode",
                 checked = uiState.settings.uiSettings.screensaverMode,
-                clickable = uiState.settings.uiSettings.keepScreenOn
+                enabled = uiState.settings.uiSettings.keepScreenOn
             ) {
                 viewModel.setScreensaverMode(it)
             }
-            CheckboxPreference(
+            CheckboxListItem(
                 title = "Do not disturb mode",
                 subtitle = if (isNotificationPolicyAccessGranted) null else "Click to grant permission",
                 checked = uiState.settings.uiSettings.dndDuringWork

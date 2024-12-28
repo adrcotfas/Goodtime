@@ -15,21 +15,19 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.bl.notifications.TorchManager
 import com.apps.adrcotfas.goodtime.bl.notifications.VibrationPlayer
 import com.apps.adrcotfas.goodtime.data.settings.SoundData
-import com.apps.adrcotfas.goodtime.labels.add_edit.SliderRow
-import com.apps.adrcotfas.goodtime.settings.ProductivityReminderSection
+import com.apps.adrcotfas.goodtime.settings.ProductivityReminderListItem
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel
 import com.apps.adrcotfas.goodtime.settings.toSecondOfDay
-import com.apps.adrcotfas.goodtime.ui.common.CheckboxPreference
+import com.apps.adrcotfas.goodtime.ui.common.BetterListItem
+import com.apps.adrcotfas.goodtime.ui.common.CheckboxListItem
 import com.apps.adrcotfas.goodtime.ui.common.CompactPreferenceGroupTitle
-import com.apps.adrcotfas.goodtime.ui.common.PreferenceGroupTitle
+import com.apps.adrcotfas.goodtime.ui.common.SliderListItem
 import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
-import com.apps.adrcotfas.goodtime.ui.common.TextPreference
 import com.apps.adrcotfas.goodtime.ui.common.TimePicker
 import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import kotlinx.datetime.DayOfWeek
@@ -74,9 +72,9 @@ fun NotificationsScreen(
                 .verticalScroll(rememberScrollState())
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            PreferenceGroupTitle(text = "Productivity Reminder")
+            CompactPreferenceGroupTitle(text = "Productivity Reminder")
             val reminderSettings = settings.productivityReminderSettings
-            ProductivityReminderSection(
+            ProductivityReminderListItem(
                 firstDayOfWeek = DayOfWeek(settings.firstDayOfWeek),
                 selectedDays = reminderSettings.days.map { DayOfWeek(it) }.toSet(),
                 reminderSecondOfDay = reminderSettings.secondOfDay,
@@ -85,19 +83,19 @@ fun NotificationsScreen(
             )
             SubtleHorizontalDivider()
             CompactPreferenceGroupTitle(text = "Notifications")
-            TextPreference(
+            BetterListItem(
                 title = "Work finished sound",
                 subtitle = notificationSoundName(workRingTone),
                 onClick = { viewModel.setShowSelectWorkSoundPicker(true) }
             )
 
-            TextPreference(
+            BetterListItem(
                 title = "Break finished sound",
                 subtitle = notificationSoundName(breakRingTone),
                 onClick = { viewModel.setShowSelectBreakSoundPicker(true) }
             )
 
-            CheckboxPreference(
+            CheckboxListItem(
                 title = "Override sound profile",
                 subtitle = "The notification sound behaves like an alarm",
                 checked = settings.overrideSoundProfile
@@ -106,21 +104,19 @@ fun NotificationsScreen(
             }
 
             var selectedStrength = settings.vibrationStrength
-            SliderRow(
+            SliderListItem(
                 title = "Vibration strength",
                 value = settings.vibrationStrength,
                 min = 0,
                 max = 5,
-                showSteps = true,
                 onValueChange = {
                     selectedStrength = it
                     viewModel.setVibrationStrength(it)
                 },
                 onValueChangeFinished = { vibrationPlayer.start(selectedStrength) },
-                showValue = false
             )
             if (isTorchAvailable) {
-                CheckboxPreference(
+                CheckboxListItem(
                     title = "Torch",
                     subtitle = "A visual notification for silent environments",
                     checked = settings.enableTorch
@@ -129,21 +125,21 @@ fun NotificationsScreen(
                 }
             }
 
-            CheckboxPreference(
+            CheckboxListItem(
                 title = "Insistent notification",
                 subtitle = "Repeat the notification until it's cancelled",
                 checked = settings.insistentNotification
             ) {
                 viewModel.setInsistentNotification(it)
             }
-            CheckboxPreference(
+            CheckboxListItem(
                 title = "Auto start work",
                 subtitle = "Start the work session after a break without user interaction",
                 checked = settings.autoStartWork
             ) {
                 viewModel.setAutoStartWork(it)
             }
-            CheckboxPreference(
+            CheckboxListItem(
                 title = "Auto start break",
                 subtitle = "Start the break session after a work session without user interaction",
                 checked = settings.autoStartBreak

@@ -26,20 +26,19 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.bl.DomainLabel
 import com.apps.adrcotfas.goodtime.bl.TimerState
 import com.apps.adrcotfas.goodtime.common.prettyName
 import com.apps.adrcotfas.goodtime.common.prettyNames
 import com.apps.adrcotfas.goodtime.data.model.Label
-import com.apps.adrcotfas.goodtime.labels.add_edit.SliderRow
 import com.apps.adrcotfas.goodtime.main.MainTimerView
 import com.apps.adrcotfas.goodtime.main.TimerUiState
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel
 import com.apps.adrcotfas.goodtime.ui.TimerFont
-import com.apps.adrcotfas.goodtime.ui.common.CheckboxPreference
-import com.apps.adrcotfas.goodtime.ui.common.DropdownMenuPreference
+import com.apps.adrcotfas.goodtime.ui.common.CheckboxListItem
+import com.apps.adrcotfas.goodtime.ui.common.DropdownMenuListItem
+import com.apps.adrcotfas.goodtime.ui.common.SliderListItem
 import com.apps.adrcotfas.goodtime.ui.common.SubtleVerticalDivider
 import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import com.apps.adrcotfas.goodtime.ui.lightPalette
@@ -90,7 +89,7 @@ fun TimerStyleScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    DropdownMenuPreference(
+                    DropdownMenuListItem(
                         modifier = Modifier.weight(0.5f),
                         title = "Font",
                         value = TimerFont.entries[timerStyle.fontIndex].prettyName(),
@@ -99,7 +98,7 @@ fun TimerStyleScreen(
                         viewModel.setTimerFont(it)
                     }
                     SubtleVerticalDivider()
-                    CheckboxPreference(
+                    CheckboxListItem(
                         modifier = Modifier.weight(0.5f),
                         title = "Minutes only",
                         checked = timerStyle.minutesOnly,
@@ -107,7 +106,7 @@ fun TimerStyleScreen(
                             viewModel.setTimerMinutesOnly(it)
                         })
                 }
-                SliderRow(
+                SliderListItem(
                     icon = { Icon(Icons.Default.FormatSize, contentDescription = null) },
                     min = timerStyle.minSize.toInt(),
                     max = timerStyle.maxSize.toInt(),
@@ -117,7 +116,7 @@ fun TimerStyleScreen(
                     },
                     showValue = false
                 )
-                SliderRow(
+                SliderListItem(
                     icon = { Icon(Icons.Default.FormatBold, contentDescription = null) },
                     min = timerFontWeights.first(),
                     max = timerFontWeights.last(),
@@ -135,7 +134,7 @@ fun TimerStyleScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    CheckboxPreference(
+                    CheckboxListItem(
                         modifier = Modifier.weight(0.33f),
                         title = "Status",
                         checked = timerStyle.showStatus,
@@ -144,7 +143,7 @@ fun TimerStyleScreen(
                         })
                     SubtleVerticalDivider()
                     //TODO: add info button to explain what a streak is in this context
-                    CheckboxPreference(
+                    CheckboxListItem(
                         modifier = Modifier.weight(0.33f),
                         title = "Streak",
                         checked = timerStyle.showStreak,
@@ -152,7 +151,7 @@ fun TimerStyleScreen(
                             viewModel.setShowStreak(it)
                         })
                     SubtleVerticalDivider()
-                    CheckboxPreference(
+                    CheckboxListItem(
                         modifier = Modifier.weight(0.33f),
                         title = "Label",
                         checked = timerStyle.showLabel,

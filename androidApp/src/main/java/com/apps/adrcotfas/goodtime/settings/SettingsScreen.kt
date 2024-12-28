@@ -35,7 +35,7 @@ import com.apps.adrcotfas.goodtime.settings.backup.BackupScreen
 import com.apps.adrcotfas.goodtime.settings.notifications.NotificationsScreen
 import com.apps.adrcotfas.goodtime.settings.user_interface.GeneralSettingsScreen
 import com.apps.adrcotfas.goodtime.settings.user_interface.TimerStyleScreen
-import com.apps.adrcotfas.goodtime.ui.common.PreferenceWithIcon
+import com.apps.adrcotfas.goodtime.ui.common.IconListItem
 import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import com.apps.adrcotfas.goodtime.ui.common.isContent
 import com.apps.adrcotfas.goodtime.ui.common.navigateToDetail
@@ -99,7 +99,7 @@ fun SettingsScreen(
                                 viewModel.setNotificationPermissionGranted(granted)
                             }
                         )
-                        PreferenceWithIcon(
+                        IconListItem(
                             title = "General settings",
                             icon = {
                                 Icon(
@@ -112,7 +112,7 @@ fun SettingsScreen(
                             },
                             isSelected = navigator.isContent(Destination.GeneralSettings.route)
                         )
-                        PreferenceWithIcon(
+                        IconListItem(
                             title = "Timer style",
                             icon = {
                                 Icon(
@@ -125,7 +125,7 @@ fun SettingsScreen(
                             },
                             isSelected = navigator.isContent(Destination.TimerStyle.route)
                         )
-                        PreferenceWithIcon(
+                        IconListItem(
                             title = "Notifications",
                             icon = {
                                 Icon(
@@ -138,7 +138,7 @@ fun SettingsScreen(
                             },
                             isSelected = navigator.isContent(Destination.NotificationSettings.route)
                         )
-                        PreferenceWithIcon(
+                        IconListItem(
                             title = "Backup and restore",
                             icon = {
                                 Icon(
@@ -152,7 +152,7 @@ fun SettingsScreen(
                             isSelected = navigator.isContent(Destination.Backup.route)
                         )
 
-                        PreferenceWithIcon(
+                        IconListItem(
                             title = "About and feedback",
                             subtitle = "Goodtime Productivity ${context.getVersionName()}",
                             icon = {

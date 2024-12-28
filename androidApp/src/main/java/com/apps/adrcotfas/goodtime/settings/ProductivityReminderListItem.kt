@@ -5,9 +5,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.FilledIconButton
@@ -21,13 +19,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.apps.adrcotfas.goodtime.ui.ApplicationTheme
-import com.apps.adrcotfas.goodtime.ui.common.TextPreference
+import com.apps.adrcotfas.goodtime.ui.common.BetterListItem
 import com.apps.adrcotfas.goodtime.utils.secondsOfDayToTimerFormat
 import kotlinx.datetime.DayOfWeek
 import java.time.format.TextStyle
 
 @Composable
-fun ProductivityReminderSection(
+fun ProductivityReminderListItem(
     firstDayOfWeek: DayOfWeek,
     selectedDays: Set<DayOfWeek>,
     reminderSecondOfDay: Int,
@@ -39,54 +37,51 @@ fun ProductivityReminderSection(
 
     val iconButtonColors = IconButtonDefaults.filledIconButtonColors()
     Column(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
     ) {
-        Text(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = "Days of the week",
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            val daysInOrder = rotateList(DayOfWeek.entries.toList(), firstDayOfWeek)
-            for (day in daysInOrder) {
-                FilledIconButton(
-                    colors =
-                    if (selectedDays.contains(day)) iconButtonColors.copy(
-                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
-                        contentColor = MaterialTheme.colorScheme.primary
-                    )
-                    else iconButtonColors.copy(
-                        containerColor = iconButtonColors.disabledContainerColor,
-                        contentColor = iconButtonColors.disabledContentColor
-                    ),
-                    onClick = { onSelectDay(day) }) {
-                    Text(
-                        text = day.getDisplayName(TextStyle.SHORT, locale),
-                        maxLines = 1,
-                        style = MaterialTheme.typography.bodySmall
-                    )
+        BetterListItem(
+            title = "Days of the week",
+            supporting = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val daysInOrder = rotateList(DayOfWeek.entries.toList(), firstDayOfWeek)
+                    for (day in daysInOrder) {
+                        FilledIconButton(
+                            colors =
+                            if (selectedDays.contains(day)) iconButtonColors.copy(
+                                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                                contentColor = MaterialTheme.colorScheme.primary
+                            )
+                            else iconButtonColors.copy(
+                                containerColor = iconButtonColors.disabledContainerColor,
+                                contentColor = iconButtonColors.disabledContentColor
+                            ),
+                            onClick = { onSelectDay(day) }) {
+                            Text(
+                                text = day.getDisplayName(TextStyle.SHORT, locale),
+                                maxLines = 1,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
                 }
             }
-        }
-        Spacer(modifier = Modifier.height(12.dp))
+        )
 
-        TextPreference(
+        BetterListItem(
             title = "Reminder time",
-            value = secondsOfDayToTimerFormat(
+            trailing = secondsOfDayToTimerFormat(
                 reminderSecondOfDay,
                 DateFormat.is24HourFormat(context)
             ),
-            clickable = selectedDays.isNotEmpty(),
+            enabled = selectedDays.isNotEmpty(),
             onClick = { onReminderTimeClick() }
         )
     }
@@ -101,7 +96,7 @@ private fun rotateList(list: List<DayOfWeek>, firstDayOfWeek: DayOfWeek): List<D
 @Composable
 fun ProductivityReminderSectionPreview() {
     ApplicationTheme {
-        ProductivityReminderSection(
+        ProductivityReminderListItem(
             firstDayOfWeek = DayOfWeek.MONDAY,
             selectedDays = setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY),
             reminderSecondOfDay = 10 * 60 * 60,

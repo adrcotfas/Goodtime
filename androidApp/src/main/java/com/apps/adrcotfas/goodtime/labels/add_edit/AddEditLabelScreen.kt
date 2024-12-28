@@ -77,6 +77,7 @@ import com.apps.adrcotfas.goodtime.data.model.Label.Companion.LABEL_NAME_MAX_LEN
 import com.apps.adrcotfas.goodtime.data.model.isDefault
 import com.apps.adrcotfas.goodtime.labels.main.LabelsViewModel
 import com.apps.adrcotfas.goodtime.labels.main.labelNameIsValid
+import com.apps.adrcotfas.goodtime.ui.common.SliderListItem
 import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import com.apps.adrcotfas.goodtime.ui.common.clearFocusOnKeyboardDismiss
 import com.apps.adrcotfas.goodtime.ui.localColorsPalette
@@ -303,11 +304,12 @@ fun AddEditLabelScreen(
                                         )
                                     }
                                 )
-                                SliderRow(title = "Work/break ratio",
+                                SliderListItem(title = "Work/break ratio",
                                     min = 1,
                                     max = 5,
                                     enabled = isBreakEnabled,
                                     value = label.timerProfile.workBreakRatio,
+                                    showValue = true,
                                     onValueChange = {
                                         viewModel.setNewLabel(
                                             label.copy(

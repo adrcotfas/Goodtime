@@ -12,10 +12,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import com.apps.adrcotfas.goodtime.ui.common.PreferenceWithIcon
+import com.apps.adrcotfas.goodtime.ui.common.IconListItem
 import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import compose.icons.EvaIcons
@@ -52,14 +51,14 @@ fun AboutScreen(
                 .verticalScroll(rememberScrollState())
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            PreferenceWithIcon(
+            IconListItem(
                 title = "Source code",
                 icon = { Icon(EvaIcons.Outline.Github, contentDescription = "GitHub") },
                 onClick = {
                     openUrl(context, REPO_URL)
                 }
             )
-            PreferenceWithIcon(
+            IconListItem(
                 title = "Open Source Licenses",
                 icon = {
                     Icon(
@@ -72,12 +71,12 @@ fun AboutScreen(
                 },
                 isSelected = isLicensesSelected)
             SubtleHorizontalDivider()
-            PreferenceWithIcon(
+            IconListItem(
                 title = "Feedback",
                 icon = { Icon(EvaIcons.Outline.Email, contentDescription = "Feedback") },
                 onClick = { sendFeedback(context) }
             )
-            PreferenceWithIcon(
+            IconListItem(
                 title = "Rate this app",
                 icon = { Icon(EvaIcons.Outline.Star, contentDescription = "Rate this app") },
                 onClick = {

@@ -17,14 +17,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.data.backup.RestoreActivityResultLauncherManager
 import com.apps.adrcotfas.goodtime.data.local.backup.BackupViewModel
-import com.apps.adrcotfas.goodtime.ui.common.CircularProgressPreference
+import com.apps.adrcotfas.goodtime.ui.common.CircularProgressListItem
 import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import org.koin.compose.koinInject
@@ -105,27 +104,27 @@ fun BackupScreen(
                 .verticalScroll(rememberScrollState())
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            CircularProgressPreference(
+            CircularProgressListItem(
                 title = "Export backup",
                 subtitle = "The file can be imported back",
                 showProgress = uiState.isBackupInProgress
             ) {
                 viewModel.backup()
             }
-            CircularProgressPreference(
+            CircularProgressListItem(
                 title = "Restore backup",
                 showProgress = uiState.isRestoreInProgress
             ) {
                 viewModel.restore()
             }
             SubtleHorizontalDivider()
-            CircularProgressPreference(
+            CircularProgressListItem(
                 title = "Export CSV",
                 showProgress = uiState.isCsvBackupInProgress
             ) {
                 viewModel.backupToCsv()
             }
-            CircularProgressPreference(
+            CircularProgressListItem(
                 title = "Export JSON",
                 showProgress = uiState.isJsonBackupInProgress
             ) {
