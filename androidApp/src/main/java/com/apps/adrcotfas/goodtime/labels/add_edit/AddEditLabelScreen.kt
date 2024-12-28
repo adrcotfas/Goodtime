@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -97,7 +98,7 @@ fun AddEditLabelScreen(
     val isEditMode = labelName.isNotEmpty()
     val context = LocalContext.current
 
-    LaunchedEffect(labelName + uiState.labelToEdit.hashCode()) {
+    LaunchedEffect(labelName) {
         val defaultLabelName = context.getString(R.string.label_default)
         viewModel.init(labelName, defaultLabelName)
     }
@@ -119,7 +120,7 @@ fun AddEditLabelScreen(
                 } else null,
                 icon = Icons.Default.Close,
                 actions = {
-                    if(isDefaultLabel && !label.isSameAs(Label.defaultLabel())) {
+                    if (isDefaultLabel && !label.isSameAs(Label.defaultLabel())) {
                         Button(modifier = Modifier
                             .wrapContentSize()
                             .heightIn(min = 32.dp)
@@ -133,7 +134,7 @@ fun AddEditLabelScreen(
                             Text("Reset to default")
                         }
                     }
-                    if(uiState.labelToEdit != label) {
+                    if (uiState.labelToEdit != label) {
                         SaveButton(
                             labelName,
                             label,
@@ -156,6 +157,7 @@ fun AddEditLabelScreen(
                     .padding(top = paddingValues.calculateTopPadding())
                     .verticalScroll(rememberScrollState())
                     .background(MaterialTheme.colorScheme.background)
+                    .imePadding()
             ) {
                 LabelNameRow(
                     isDefaultLabel = isDefaultLabel,
@@ -501,7 +503,9 @@ fun EditableNumberListItem(
     } else Modifier
 
     val colors =
-        if (enabled && switchValue) ListItemDefaults.colors() else ListItemDefaults.colors(headlineColor = ListItemDefaults.colors().disabledHeadlineColor)
+        if (enabled && switchValue) ListItemDefaults.colors() else ListItemDefaults.colors(
+            headlineColor = ListItemDefaults.colors().disabledHeadlineColor
+        )
     val strokeColor =
         if (enabled && switchValue) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(
             0.38f

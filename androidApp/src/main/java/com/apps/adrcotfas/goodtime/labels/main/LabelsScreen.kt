@@ -44,7 +44,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.common.isPortrait
 import com.apps.adrcotfas.goodtime.data.model.isDefault
@@ -52,7 +51,6 @@ import com.apps.adrcotfas.goodtime.labels.DeleteConfirmationDialog
 import com.apps.adrcotfas.goodtime.labels.add_edit.AddEditLabelScreen
 import com.apps.adrcotfas.goodtime.labels.archived.ARCHIVED_LABELS_SCREEN_DESTINATION_ID
 import com.apps.adrcotfas.goodtime.labels.archived.ArchivedLabelsScreen
-import com.apps.adrcotfas.goodtime.main.Destination
 import com.apps.adrcotfas.goodtime.ui.DraggableItem
 import com.apps.adrcotfas.goodtime.ui.common.navigateToDetail
 import com.apps.adrcotfas.goodtime.ui.dragContainer
