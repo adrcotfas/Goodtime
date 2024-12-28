@@ -195,7 +195,7 @@ fun AddEditLabelScreen(
                         }
                     )
                 }
-                AnimatedVisibility(visible = isDefaultLabel || !followDefault) {
+                if(isDefaultLabel || !followDefault) {
                     Column {
                         TimerTypeRow(isCountDown = isCountDown, onCountDownEnabled = {
                             viewModel.setNewLabel(
@@ -398,11 +398,7 @@ private fun LabelNameRow(
 @Composable
 private fun ColorSelectRow(selectedIndex: Int, onClick: (Int) -> Unit) {
     val colors = MaterialTheme.localColorsPalette.colors
-    val listState = rememberLazyListState()
-
-    LaunchedEffect(Unit) {
-        listState.scrollToItem(index = selectedIndex)
-    }
+    val listState = rememberLazyListState(selectedIndex)
 
     LazyRow(
         state = listState,
