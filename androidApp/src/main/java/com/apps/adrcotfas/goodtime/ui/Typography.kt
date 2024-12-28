@@ -20,28 +20,11 @@ fun timerFontWith(resId: Int, weight: Int): FontFamily {
     )
 }
 
-val timerFontWeights = listOf(100, 200, 300, 400)
+val timerFontWeights = listOf(100, 200, 300)
 val timerFontAzeretMap =
     timerFontWeights.associateWith { weight -> timerFontWith(R.font.azeret_mono, weight) }
-
-val timerFontRobotoMap =
-    timerFontWeights.associateWith { weight -> timerFontWith(R.font.roboto_mono, weight) }
 
 val timerTextAzeretStyle = TextStyle(
     fontFamily = timerFontAzeretMap[100],
     fontSize = 60.em
 )
-
-val timerTextRobotoStyle = TextStyle(
-    fontFamily = timerFontRobotoMap[100],
-    fontSize = 60.em
-)
-
-val timerTextStyles = mapOf(
-    TimerFont.AZERET.ordinal to timerFontAzeretMap,
-    TimerFont.ROBOTO.ordinal to timerFontRobotoMap
-)
-
-enum class TimerFont {
-    AZERET, ROBOTO
-}

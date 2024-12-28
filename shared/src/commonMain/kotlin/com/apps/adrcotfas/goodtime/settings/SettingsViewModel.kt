@@ -261,14 +261,6 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
         }
     }
 
-    fun setTimerFont(fontIndex: Int) {
-        viewModelScope.launch {
-            settingsRepository.updateTimerStyle {
-                it.copy(fontIndex = fontIndex)
-            }
-        }
-    }
-
     fun setShowStatus(showStatus: Boolean) {
         viewModelScope.launch {
             settingsRepository.updateTimerStyle {

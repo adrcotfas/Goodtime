@@ -195,7 +195,7 @@ fun AddEditLabelScreen(
                         }
                     )
                 }
-                if(isDefaultLabel || !followDefault) {
+                AnimatedVisibility(isDefaultLabel || !followDefault) {
                     Column {
                         TimerTypeRow(isCountDown = isCountDown, onCountDownEnabled = {
                             viewModel.setNewLabel(

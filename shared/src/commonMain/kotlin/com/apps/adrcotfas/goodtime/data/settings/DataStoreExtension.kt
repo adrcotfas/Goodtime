@@ -9,19 +9,25 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 suspend inline fun <reified T> DataStore<Preferences>.add(key: Preferences.Key<String>, value: T) {
+    val json = Json { ignoreUnknownKeys = true }
     val existingValues = data.map {
-        it[key]?.let { json -> Json.decodeFromString<MutableSet<T>>(json) } ?: mutableSetOf()
+        it[key]?.let { content -> json.decodeFromString<MutableSet<T>>(content) } ?: mutableSetOf()
     }.first()
 
     existingValues.add(value)
-    edit { it[key] = Json.encodeToString(existingValues) }
+    edit { it[key] = json.encodeToString(existingValues) }
 }
 
-suspend inline fun <reified T> DataStore<Preferences>.remove(key: Preferences.Key<String>, value: T) {
+suspend inline fun <reified T> DataStore<Preferences>.remove(
+    key: Preferences.Key<String>,
+    value: T
+) {
+    val json = Json { ignoreUnknownKeys = true }
+
     val existingValues = data.map {
-        it[key]?.let { json -> Json.decodeFromString<MutableSet<T>>(json) } ?: mutableSetOf()
+        it[key]?.let { content -> json.decodeFromString<MutableSet<T>>(content) } ?: mutableSetOf()
     }.first()
 
     existingValues.remove(value)
-    edit { it[key] = Json.encodeToString(existingValues) }
+    edit { it[key] = json.encodeToString(existingValues) }
 }

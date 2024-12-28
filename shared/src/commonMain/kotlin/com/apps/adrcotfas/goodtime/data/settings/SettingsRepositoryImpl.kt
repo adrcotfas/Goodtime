@@ -22,6 +22,8 @@ class SettingsRepositoryImpl(
     private val log: Logger
 ) : SettingsRepository {
 
+    private val json = Json { ignoreUnknownKeys = true }
+
     private object Keys {
         val productivityReminderSettingsKey =
             stringPreferencesKey("productivityReminderSettingsKey")
@@ -55,13 +57,13 @@ class SettingsRepositoryImpl(
         }.map {
             AppSettings(
                 productivityReminderSettings = it[Keys.productivityReminderSettingsKey]?.let { p ->
-                    Json.decodeFromString<ProductivityReminderSettings>(p)
+                    json.decodeFromString<ProductivityReminderSettings>(p)
                 } ?: ProductivityReminderSettings(),
                 uiSettings = it[Keys.uiSettingsKey]?.let { u ->
-                    Json.decodeFromString<UiSettings>(u)
+                    json.decodeFromString<UiSettings>(u)
                 } ?: UiSettings(),
                 timerStyle = it[Keys.timerStyleKey]?.let { t ->
-                    Json.decodeFromString<TimerStyleData>(t)
+                    json.decodeFromString<TimerStyleData>(t)
                 } ?: TimerStyleData(),
                 workdayStart = it[Keys.workdayStartKey] ?: AppSettings().workdayStart,
                 firstDayOfWeek = it[Keys.firstDayOfWeekKey] ?: AppSettings().firstDayOfWeek,
@@ -70,7 +72,7 @@ class SettingsRepositoryImpl(
                 breakFinishedSound = it[Keys.breakFinishedSoundKey]
                     ?: AppSettings().breakFinishedSound,
                 userSounds = it[Keys.userSoundsKey]?.let { u ->
-                    Json.decodeFromString<Set<SoundData>>(u)
+                    json.decodeFromString<Set<SoundData>>(u)
                 } ?: emptySet(),
                 vibrationStrength = it[Keys.vibrationStrengthKey]
                     ?: AppSettings().vibrationStrength,
@@ -83,10 +85,10 @@ class SettingsRepositoryImpl(
                 autoStartBreak = it[Keys.autoStartBreakKey] ?: AppSettings().autoStartBreak,
                 labelName = it[Keys.labelNameKey] ?: AppSettings().labelName,
                 longBreakData = it[Keys.longBreakDataKey]?.let { l ->
-                    Json.decodeFromString<LongBreakData>(l)
+                    json.decodeFromString<LongBreakData>(l)
                 } ?: LongBreakData(),
                 breakBudgetData = it[Keys.breakBudgetDataKey]?.let { b ->
-                    Json.decodeFromString<BreakBudgetData>(b)
+                    json.decodeFromString<BreakBudgetData>(b)
                 } ?: BreakBudgetData(),
                 notificationPermissionState = it[Keys.notificationPermissionStateKey]?.let { key ->
                     NotificationPermissionState.entries[key]
@@ -102,10 +104,10 @@ class SettingsRepositoryImpl(
     ) {
         dataStore.edit {
             val previous =
-                it[Keys.productivityReminderSettingsKey]?.let { p -> Json.decodeFromString(p) }
+                it[Keys.productivityReminderSettingsKey]?.let { p -> json.decodeFromString(p) }
                     ?: ProductivityReminderSettings()
             val new = transform(previous)
-            it[Keys.productivityReminderSettingsKey] = Json.encodeToString(new)
+            it[Keys.productivityReminderSettingsKey] = json.encodeToString(new)
         }
     }
 
@@ -113,10 +115,10 @@ class SettingsRepositoryImpl(
         transform: (UiSettings) -> UiSettings
     ) {
         dataStore.edit {
-            val previous = it[Keys.uiSettingsKey]?.let { u -> Json.decodeFromString(u) }
+            val previous = it[Keys.uiSettingsKey]?.let { u -> json.decodeFromString(u) }
                 ?: UiSettings()
             val new = transform(previous)
-            it[Keys.uiSettingsKey] = Json.encodeToString(new)
+            it[Keys.uiSettingsKey] = json.encodeToString(new)
         }
     }
 
@@ -126,13 +128,13 @@ class SettingsRepositoryImpl(
         dataStore.edit {
             val previous = it[Keys.timerStyleKey]?.let { t ->
                 try {
-                    Json.decodeFromString(t)
+                    json.decodeFromString(t)
                 } catch (e: Exception) {
                     null
                 }
             } ?: TimerStyleData()
             val new = transform(previous)
-            it[Keys.timerStyleKey] = Json.encodeToString(new)
+            it[Keys.timerStyleKey] = json.encodeToString(new)
         }
     }
 
@@ -185,11 +187,11 @@ class SettingsRepositoryImpl(
     }
 
     override suspend fun setLongBreakData(longBreakData: LongBreakData) {
-        dataStore.edit { it[Keys.longBreakDataKey] = Json.encodeToString(longBreakData) }
+        dataStore.edit { it[Keys.longBreakDataKey] = json.encodeToString(longBreakData) }
     }
 
     override suspend fun setBreakBudgetData(breakBudgetData: BreakBudgetData) {
-        dataStore.edit { it[Keys.breakBudgetDataKey] = Json.encodeToString(breakBudgetData) }
+        dataStore.edit { it[Keys.breakBudgetDataKey] = json.encodeToString(breakBudgetData) }
     }
 
     override suspend fun setNotificationPermissionState(state: NotificationPermissionState) {

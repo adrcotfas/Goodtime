@@ -158,6 +158,7 @@ fun IconListItem(
 
 @Composable
 fun SliderListItem(
+    modifier: Modifier = Modifier,
     title: String? = null,
     value: Int,
     icon: @Composable (() -> Unit)? = null,
@@ -170,6 +171,7 @@ fun SliderListItem(
     enabled: Boolean = true
 ) {
     ListItem(
+        modifier = modifier,
         colors = if (enabled) ListItemDefaults.enabledColors() else ListItemDefaults.disabledColors(),
         headlineContent = {
             if (title != null) {
@@ -194,8 +196,8 @@ fun SliderListItem(
                     steps = steps,
                     valueRange = min.toFloat()..max.toFloat()
                 )
-                Spacer(modifier = Modifier.width(16.dp))
                 if (showValue) {
+                    Spacer(modifier = Modifier.width(16.dp))
                     Text(
                         text = value.toString(),
                         style = MaterialTheme.typography.bodyLarge

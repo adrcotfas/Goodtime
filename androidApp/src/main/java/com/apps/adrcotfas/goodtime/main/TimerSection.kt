@@ -63,7 +63,7 @@ import com.apps.adrcotfas.goodtime.shared.R
 import com.apps.adrcotfas.goodtime.ui.ApplicationTheme
 import com.apps.adrcotfas.goodtime.ui.common.hideUnless
 import com.apps.adrcotfas.goodtime.ui.localColorsPalette
-import com.apps.adrcotfas.goodtime.ui.timerTextStyles
+import com.apps.adrcotfas.goodtime.ui.timerFontAzeretMap
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ShoppingBag
@@ -79,7 +79,7 @@ fun MainTimerView(
     timerStyle: TimerStyleData,
     domainLabel: DomainLabel,
     onStart: () -> Unit,
-    onToggle: () -> Boolean
+    onToggle: (() -> Boolean)? = null
 ) {
     val context = LocalContext.current
 
@@ -118,12 +118,14 @@ fun MainTimerView(
             millis = timerUiState.baseTime,
             color = labelColor,
             onPress = {
-                if (!timerUiState.isActive) {
-                    onStart()
-                } else {
-                    if (!onToggle()) {
-                        Toast.makeText(context, "Cannot pause the break", Toast.LENGTH_SHORT)
-                            .show()
+                onToggle?.let {
+                    if (!timerUiState.isActive) {
+                        onStart()
+                    } else {
+                        if (!onToggle()) {
+                            Toast.makeText(context, "Cannot pause the break", Toast.LENGTH_SHORT)
+                                .show()
+                        }
                     }
                 }
             })
@@ -154,9 +156,13 @@ fun CurrentStatusSection(
     val statusColor = color.copy(alpha = 0.75f)
     val statusBackgroundColor = color.copy(alpha = 0.15f)
 
+    val imageSize = with(LocalDensity.current) {
+        (MaterialTheme.typography.labelLarge.fontSize.value.sp.toDp() + 5.dp) * 2f
+    }
+
     Row(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxWidth().height(imageSize)
             .hideUnless(isActive),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
@@ -225,7 +231,11 @@ fun StatusIndicator(
                 .background(backgroundColor)
                 .padding(5.dp)
         ) {
-            Crossfade(modifier = Modifier.align(Alignment.Center), targetState = isBreak, label = "label icon") {
+            Crossfade(
+                modifier = Modifier.align(Alignment.Center),
+                targetState = isBreak,
+                label = "label icon"
+            ) {
                 if (it) {
                     Image(
                         colorFilter = ColorFilter.tint(color),
@@ -264,7 +274,7 @@ fun StreakIndicator(
             }
             Box(
                 modifier = Modifier
-                    .padding(4.dp)
+                    .padding(5.dp)
                     .size(imageSize)
                     .clip(MaterialTheme.shapes.extraSmall)
                     .background(backgroundColor)
@@ -301,7 +311,7 @@ fun BreakBudgetIndicator(
         }
         Box(
             modifier = Modifier
-                .padding(4.dp)
+                .padding(5.dp)
                 .height(imageSize)
                 .clip(MaterialTheme.shapes.extraSmall)
                 .background(backgroundColor)
@@ -372,7 +382,7 @@ fun TimerTextView(
     color: Color,
     timerStyle: TimerStyleData,
     isPaused: Boolean,
-    onPress: () -> Unit
+    onPress: (() -> Unit)? = null
 ) {
     val scale by animateFloatAsState(
         targetValue = if (state?.isPressed == true) 0.96f else 1f,
@@ -395,22 +405,25 @@ fun TimerTextView(
         }
     }
 
+    val clickableModifier = onPress?.let {
+        Modifier.clickable(
+            indication = null,
+            interactionSource = null,
+            onClick = {
+                onPress()
+            }
+        )
+    } ?: Modifier
     Text(
         modifier = Modifier
             .then(modifier)
             .padding(vertical = 8.dp)
             .graphicsLayer(scaleX = scale, scaleY = scale, alpha = alpha.value)
-            .clickable(
-                indication = null,
-                interactionSource = null,
-                onClick = {
-                    onPress()
-                }
-            ),
+            .then(clickableModifier),
         text = millis.formatMilliseconds(timerStyle.minutesOnly),
         style = TextStyle(
             fontSize = timerStyle.inUseFontSize().em,
-            fontFamily = timerTextStyles[timerStyle.fontIndex]!![timerStyle.fontWeight],
+            fontFamily = timerFontAzeretMap[timerStyle.fontWeight],
             color = color
         ),
     )

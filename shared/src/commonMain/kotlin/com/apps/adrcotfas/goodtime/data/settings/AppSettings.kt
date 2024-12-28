@@ -67,11 +67,10 @@ enum class ThemePreference {
 
 @Serializable
 data class TimerStyleData(
-    val fontIndex: Int = 0,
     val minSize: Float = 0f,         // in em
     val maxSize: Float = 0f,         // in em
     val fontSize: Float = 0f,        // in em
-    val fontWeight: Int = 100,
+    val fontWeight: Int = 200,
     val currentScreenWidth: Float = 0f, // in dp
     val minutesOnly: Boolean = false,
     val showStatus: Boolean = true,
