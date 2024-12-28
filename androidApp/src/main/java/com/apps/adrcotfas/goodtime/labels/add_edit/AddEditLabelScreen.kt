@@ -481,7 +481,7 @@ fun EditableNumberListItem(
     switchValue: Boolean = true,
     onSwitchChange: (Boolean) -> Unit = {}
 ) {
-    var textFieldValue by remember { mutableStateOf(TextFieldValue(value.toString())) }
+    var textFieldValue by remember(value) { mutableStateOf(TextFieldValue(value.toString())) }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val focusRequester = remember { FocusRequester() }
