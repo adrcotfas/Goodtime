@@ -146,6 +146,15 @@ fun GeneralSettingsScreen(
                 }
             )
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                CheckboxListItem(
+                    title = "Use Dynamic Color",
+                    checked = uiState.settings.uiSettings.useDynamicColor
+                ) {
+                    viewModel.setUseDynamicColor(it)
+                }
+            }
+
             SubtleHorizontalDivider()
             CompactPreferenceGroupTitle(text = "During work sessions")
             CheckboxListItem(

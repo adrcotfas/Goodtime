@@ -1,48 +1,31 @@
 package com.apps.adrcotfas.goodtime.ui
 
-val lightPalette = listOf(
-    "#C87D7D",
-    "#CC8A73",
-    "#CCA366",
-    "#CCBC8F",
-    "#CCC87A",
-    "#B7C37D",
-    "#9EB386",
-    "#55C088",
-    "#66A398",
-    "#66B2B8",
-    "#66A9C7",
-    "#5191C4",
-    "#7F84AE",
-    "#917FB0",
-    "#A675AD",
-    "#C3788E",
-    "#968B83",
-    "#C4C4C4",
-    "#B3B3B3",
-    "#7E7E7E"
+val palette = listOf(
+    "#dd583d",
+    "#e26b44",
+    "#db793a",
+    "#de9642",
+    "#e6ba57",
+    "#d8bd63",
+    "#bdc15b",
+    "#87ad5c",
+    "#4e9364",
+    "#479a8f",
+    "#5aaf81",
+    "#5399d0",
+    "#6b8bdd",
+    "#7577c4",
+    "#848bc0",
+    "#ae9dcc",
+    "#a47cb0",
+    "#aa61bb",
+    "#c35c7c",
+    "#d85c79",
+    "#d4847b",
+    "#99786c",
+    "#a5998c",
+    "#808080"
 )
 
-//TODO: adapt these
-val darkPalette = listOf(
-    "#C87D7D",
-    "#CC8A73",
-    "#CCA366",
-    "#CCBC8F",
-    "#CCC87A",
-    "#B7C37D",
-    "#9EB386",
-    "#55C088",
-    "#66A398",
-    "#66B2B8",
-    "#66A9C7",
-    "#5191C4",
-    "#7F84AE",
-    "#917FB0",
-    "#A675AD",
-    "#C3788E",
-    "#968B83",
-    "#C4C4C4",
-    "#B3B3B3",
-    "#7E7E7E"
-)
+val lightPalette = palette + "#efefef"
+val darkPalette = palette + "#2b2b2b"

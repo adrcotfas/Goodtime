@@ -107,7 +107,6 @@ fun LabelListItem(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyLarge
             )
-            //Spacer(modifier = Modifier.weight(1f))
 
             if (label.isDefault()) {
                 IconButton(onClick = {

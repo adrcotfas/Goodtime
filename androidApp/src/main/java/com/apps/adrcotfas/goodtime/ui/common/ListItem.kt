@@ -1,5 +1,6 @@
 package com.apps.adrcotfas.goodtime.ui.common
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.EditLocation
 import androidx.compose.material.icons.filled.TextFormat
 import androidx.compose.material3.Checkbox
@@ -31,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
@@ -252,13 +256,21 @@ fun DropdownMenuListItem(
             Box {
                 Text(text = value, style = MaterialTheme.typography.bodyMedium)
                 DropdownMenu(
+                    modifier = Modifier
+                        .crop(vertical = 8.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    shape = MaterialTheme.shapes.medium,
                     expanded = dropdownMenuExpanded,
                     onDismissRequest = { dropdownMenuExpanded = false }) {
                     dropdownMenuOptions.forEachIndexed { index, it ->
                         DropdownMenuItem(
+                            modifier = if(it == value) Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)) else Modifier,
                             text = {
                                 Text(
-                                    text = it
+                                    text = it,
+                                    style = if (it == value) MaterialTheme.typography.bodyMedium.copy(
+                                        color = MaterialTheme.colorScheme.primary
+                                    ) else MaterialTheme.typography.bodyMedium
                                 )
                             },
                             onClick = {

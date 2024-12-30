@@ -45,6 +45,7 @@ import com.apps.adrcotfas.goodtime.ui.common.SliderListItem
 import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import com.apps.adrcotfas.goodtime.ui.common.dashedBorder
 import com.apps.adrcotfas.goodtime.ui.lightPalette
+import com.apps.adrcotfas.goodtime.ui.palette
 import com.apps.adrcotfas.goodtime.ui.timerFontWeights
 import org.koin.androidx.compose.koinViewModel
 import kotlin.random.Random
@@ -80,7 +81,7 @@ fun TimerStyleScreen(
                 .verticalScroll(rememberScrollState())
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            var colorIndex by rememberSaveable { mutableIntStateOf(17) }
+            var colorIndex by rememberSaveable { mutableIntStateOf(24) }
             var baseTime by rememberSaveable { mutableLongStateOf(25.minutes.inWholeMilliseconds) }
             var sessionsBeforeLongBreak by rememberSaveable { mutableIntStateOf(4) }
             var streak by rememberSaveable { mutableIntStateOf(1) }
@@ -137,9 +138,9 @@ fun TimerStyleScreen(
                     )
                     IconButton(onClick = {
                         val oldColorIndex = colorIndex
-                        var newColorIndex = Random.nextInt(lightPalette.lastIndex)
+                        var newColorIndex = Random.nextInt(palette.lastIndex)
                         while (newColorIndex == oldColorIndex) {
-                            newColorIndex = Random.nextInt(lightPalette.lastIndex)
+                            newColorIndex = Random.nextInt(palette.lastIndex)
                         }
                         colorIndex = newColorIndex
                         baseTime = Random.nextLong(
@@ -170,7 +171,7 @@ fun TimerStyleScreen(
                     "nutrition",
                     "philosophy",
                     "calligraphy",
-                    "surrealism",
+                    "history of religions",
                     "meditation",
                     "guitar",
                     "drums",
@@ -178,7 +179,12 @@ fun TimerStyleScreen(
                     "thermodynamics",
                     "calculus",
                     "ecology",
-                    "nanophotonics"
+                    "nanophotonics",
+                    "biochemistry",
+                    "robotics",
+                    "cryptography",
+                    "machine learning",
+                    "quantum mechanics"
                 )
                 val timerUiState = TimerUiState(
                     baseTime = baseTime,
@@ -225,12 +231,12 @@ fun TimerStyleScreen(
                     onCheckedChange = {
                         viewModel.setShowLabel(it)
                     })
-//                CheckboxListItem(
-//                    title = "Minutes only",
-//                    checked = timerStyle.minutesOnly,
-//                    onCheckedChange = {
-//                        viewModel.setTimerMinutesOnly(it)
-//                    })
+                CheckboxListItem(
+                    title = "Hide seconds",
+                    checked = timerStyle.minutesOnly,
+                    onCheckedChange = {
+                        viewModel.setTimerMinutesOnly(it)
+                    })
             }
         }
     }

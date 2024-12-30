@@ -421,7 +421,7 @@ private fun ColorSelectRow(selectedIndex: Int, onClick: (Int) -> Unit) {
 private fun LabelColorPickerItem(color: Color, isSelected: Boolean, onClick: () -> Unit) {
     Box(
         modifier = Modifier
-            .size(42.dp)
+            .size(32.dp)
             .clip(CircleShape)
             .background(color)
             .clickable(onClick = onClick),
@@ -430,7 +430,7 @@ private fun LabelColorPickerItem(color: Color, isSelected: Boolean, onClick: () 
         if (isSelected) {
             Box(
                 modifier = Modifier
-                    .size(28.dp)
+                    .size(22.dp)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f)),
                 contentAlignment = Alignment.Center

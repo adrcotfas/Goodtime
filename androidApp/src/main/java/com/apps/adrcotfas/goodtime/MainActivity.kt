@@ -73,6 +73,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
             }
 
             val darkTheme = uiState.isDarkTheme(isSystemInDarkTheme())
+            val dynamicColor = uiState.dynamicColor
 
             toggleKeepScreenOn(isActive)
             if (notificationManager.isNotificationPolicyAccessGranted()) {
@@ -104,7 +105,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
                 onDispose {}
             }
 
-            ApplicationTheme(darkTheme = darkTheme) {
+            ApplicationTheme(darkTheme = darkTheme, dynamicColor = dynamicColor) {
                 val interactionSource = remember { MutableInteractionSource() }
                 Surface(
                     modifier = Modifier

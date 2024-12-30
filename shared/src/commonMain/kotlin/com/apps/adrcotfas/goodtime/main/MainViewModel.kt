@@ -53,6 +53,7 @@ data class MainUiState(
     val isLoading: Boolean = false,
     val timerStyle: TimerStyleData = TimerStyleData(),
     val darkThemePreference: ThemePreference = ThemePreference.SYSTEM,
+    val dynamicColor: Boolean = false,
     val screensaverMode: Boolean = false,
     val fullscreenMode: Boolean = false,
     val dndDuringWork: Boolean = false,
@@ -100,6 +101,7 @@ class MainViewModel(
                             isLoading = false,
                             timerStyle = timerStyle,
                             darkThemePreference = uiSettings.themePreference,
+                            dynamicColor = uiSettings.useDynamicColor,
                             screensaverMode = uiSettings.screensaverMode,
                             fullscreenMode = uiSettings.fullscreenMode,
                             dndDuringWork = uiSettings.dndDuringWork

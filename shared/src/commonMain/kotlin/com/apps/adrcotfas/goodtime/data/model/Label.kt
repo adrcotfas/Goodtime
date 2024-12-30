@@ -6,7 +6,7 @@ data class Label(
     //TODO: do I need the id here?
     val id: Long = 0,
     val name: String,
-    val colorIndex: Long = 17,
+    val colorIndex: Long = 24,
     val orderIndex: Long = Long.MAX_VALUE,
     val useDefaultTimeProfile: Boolean = true,
     /** the real profile to be used is determined by [useDefaultTimeProfile], if true, use the default profile **/
@@ -15,7 +15,7 @@ data class Label(
 ) {
     companion object {
         const val DEFAULT_LABEL_NAME = "PRODUCTIVITY_DEFAULT_LABEL"
-        const val DEFAULT_LABEL_COLOR_INDEX = 17L
+        const val DEFAULT_LABEL_COLOR_INDEX = 24L
         const val LABEL_NAME_MAX_LENGTH = 32
         fun defaultLabel() =
             Label(name = DEFAULT_LABEL_NAME, colorIndex = DEFAULT_LABEL_COLOR_INDEX, orderIndex = 0)

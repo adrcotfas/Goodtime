@@ -10,7 +10,7 @@ data class TimerProfile(
     /** Break duration in minutes */
     val isBreakEnabled: Boolean = true,
     val breakDuration: Int = DEFAULT_BREAK_DURATION,
-    val isLongBreakEnabled: Boolean = true,
+    val isLongBreakEnabled: Boolean = false,
     /** Long break duration in minutes */
     val longBreakDuration: Int = DEFAULT_LONG_BREAK_DURATION,
     /** Number of sessions before long break*/

@@ -52,6 +52,7 @@ data class ProductivityReminderSettings(
 @Serializable
 data class UiSettings(
     val themePreference: ThemePreference = ThemePreference.DARK,
+    val useDynamicColor: Boolean = false,
     val fullscreenMode: Boolean = false,
     val keepScreenOn: Boolean = true,
     val screensaverMode: Boolean = false,

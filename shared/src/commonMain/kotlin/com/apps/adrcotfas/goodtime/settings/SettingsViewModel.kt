@@ -81,6 +81,14 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
         }
     }
 
+    fun setUseDynamicColor(enable: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.updateUiSettings {
+                (it.copy(useDynamicColor = enable))
+            }
+        }
+    }
+
     fun setFullscreenMode(enable: Boolean) {
         viewModelScope.launch {
             settingsRepository.updateUiSettings {
@@ -203,7 +211,10 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
 
     fun setShowSelectWorkSoundPicker(show: Boolean) {
         _uiState.value =
-            _uiState.value.copy(showSelectWorkSoundPicker = show, notificationSoundCandidate = null)
+            _uiState.value.copy(
+                showSelectWorkSoundPicker = show,
+                notificationSoundCandidate = null
+            )
     }
 
     fun setShowSelectBreakSoundPicker(show: Boolean) {
