@@ -27,7 +27,7 @@ class UpgradeDialog : DialogFragment() {
     }
 
     private fun donateBitcoinOnClick() {
-        val url = "https://live.blockcypher.com/btc/address/bc1qte8xf2hvn85s7tl4atqk47r372ktv9d0mn7fu6/"
+        val url = "https://live.blockcypher.com/btc/address/bc1q0y78e0ylcfme8tc5eakhdp8akywpmhhrmcnmrt/"
         val i = Intent(Intent.ACTION_VIEW)
         i.data = Uri.parse(url)
         startActivity(i)
