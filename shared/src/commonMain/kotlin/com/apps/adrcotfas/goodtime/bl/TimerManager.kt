@@ -84,11 +84,18 @@ class TimerManager(
         }.distinctUntilChanged()
             .collect {
                 log.i { "new timerProfile: $it" }
+                val value = _timerData.value
+                val isActive = value.state.isActive
+                val isCountdown = value.label.isCountdown
                 _timerData.update { data ->
                     data.copy(
                         isReady = true,
                         label = it
                     )
+                }
+                if (isActive && isCountdown != it.isCountdown) {
+                    log.i { "restarting the timer because the profile type changed" }
+                    start()
                 }
             }
     }

@@ -61,7 +61,6 @@ import compose.icons.evaicons.outline.Archive
 import compose.icons.evaicons.outline.Plus
 import org.koin.androidx.compose.koinViewModel
 
-//TODO: what happens when switching to a different timerType label? Should we warn the user to stop the active timer first?
 //TODO: consider sub-labels?
 // not here but it can be part of the stats screen; the only precondition can be the name of the labels,
 // for example group together according to a prefix, e.g. "Work/Label1", "Work/Label2", "Work/Label3" etc.
