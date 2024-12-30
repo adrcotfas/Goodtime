@@ -140,6 +140,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
                         showNavigation = showNavigation,
                         onNavigate = navController::navigate,
                         currentDestination = currentRoute,
+                        dynamicColor = dynamicColor,
                     ) {
                         NavigationHost(navController)
                     }

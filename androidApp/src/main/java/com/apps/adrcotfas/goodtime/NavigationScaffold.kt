@@ -1,8 +1,5 @@
 package com.apps.adrcotfas.goodtime
 
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -13,7 +10,6 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.apps.adrcotfas.goodtime.main.Destination
 import com.apps.adrcotfas.goodtime.main.bottomNavigationItems
@@ -24,6 +20,7 @@ fun NavigationScaffold(
     showNavigation: Boolean,
     onNavigate: (route: String) -> Unit,
     currentDestination: String?,
+    dynamicColor: Boolean,
     content: @Composable () -> Unit
 ) {
     val permissionsState = getPermissionsState()
@@ -39,13 +36,15 @@ fun NavigationScaffold(
         }
     }
 
+    val colors =
+        if (dynamicColor) NavigationSuiteDefaults.colors() else NavigationSuiteDefaults.colors(
+            navigationBarContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            navigationRailContainerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        )
+
     NavigationSuiteScaffold(
         layoutType = customNavSuiteType,
-        modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
-        navigationSuiteColors = NavigationSuiteDefaults.colors(
-            navigationBarContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-            navigationRailContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest
-        ),
+        navigationSuiteColors = colors,
         navigationSuiteItems = {
             bottomNavigationItems.forEach {
                 val isSelected = it.route == currentDestination
