@@ -221,7 +221,7 @@ class TimerManagerTest {
         timerManager.finish()
         assertEquals(
             timerManager.timerData.value.endTime,
-            startTime + DEFAULT_DURATION + oneMinute,
+            timeProvider.elapsedRealtime,
             "the timer should end after 1 more minute"
         )
         assertEquals(
@@ -321,6 +321,7 @@ class TimerManagerTest {
                 endTime = DEFAULT_DURATION,
                 type = TimerType.WORK,
                 state = TimerState.FINISHED,
+                completedMinutes = DEFAULT_WORK_DURATION.toLong()
             ),
             "the timer should have finished"
         )
