@@ -474,6 +474,10 @@ class TimerManager(
         val startTimeMillis = data.startTime
         val endTimeInMillis = timeProvider.elapsedRealtime()
 
+        _timerData.update {
+            it.copy(completedMinutes = durationToSaveMinutes, endTime = endTimeInMillis)
+        }
+
         return Session.create(
             startTimeMillis,
             endTimeInMillis,

@@ -11,9 +11,15 @@ import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -32,9 +38,11 @@ import com.apps.adrcotfas.goodtime.main.dial_control.DialRegion
 import com.apps.adrcotfas.goodtime.main.dial_control.rememberDialControlState
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel
 import com.apps.adrcotfas.goodtime.settings.user_interface.InitTimerStyle
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     viewModel: MainViewModel = koinViewModel(),
@@ -45,6 +53,8 @@ fun MainScreen(
     InitTimerStyle(settingsViewModel)
 
     val timerUiState by viewModel.timerUiState.collectAsStateWithLifecycle(TimerUiState())
+    val historyUiState by viewModel.historyUiState.collectAsStateWithLifecycle(HistoryUiState())
+
     val timerStyle = mainUiState.timerStyle
     val label = timerUiState.label
 
@@ -153,6 +163,41 @@ fun MainScreen(
                         selected = region == dialControlState.selectedOption,
                         region = region
                     )
+                }
+            )
+        }
+    }
+
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    var showBottomSheet by remember { mutableStateOf(false) }
+
+    val hideSheet = {
+        scope.launch { sheetState.hide() }.invokeOnCompletion {
+            if (!sheetState.isVisible) {
+                showBottomSheet = false
+            }
+        }
+    }
+
+    if (timerUiState.isFinished) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                viewModel.resetTimer()
+                showBottomSheet = false
+            },
+            sheetState = sheetState
+        ) {
+            FinishedSessionContent(
+                timerUiState = timerUiState,
+                historyUiState = historyUiState,
+                onClose = { considerIdleTimeAsWork ->
+                    viewModel.resetTimer(considerIdleTimeAsWork)
+                    hideSheet()
+                },
+                onNext = { considerIdleTimeAsWork ->
+                    viewModel.next(considerIdleTimeAsWork)
+                    hideSheet()
                 }
             )
         }

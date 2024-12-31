@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.EditLocation
 import androidx.compose.material.icons.filled.TextFormat
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
@@ -26,6 +24,7 @@ import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -227,6 +226,31 @@ fun CheckboxListItem(
         subtitle = subtitle,
         trailing = {
             Checkbox(
+                checked = checked,
+                enabled = enabled,
+                onCheckedChange = onCheckedChange
+            )
+        },
+        enabled = enabled,
+        onClick = { onCheckedChange(!checked) }
+    )
+}
+
+@Composable
+fun SwitchListItem(
+    modifier: Modifier = Modifier,
+    title: String,
+    subtitle: String? = null,
+    checked: Boolean,
+    enabled: Boolean = true,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    BetterListItem(
+        modifier = modifier,
+        title = title,
+        subtitle = subtitle,
+        trailing = {
+            Switch(
                 checked = checked,
                 enabled = enabled,
                 onCheckedChange = onCheckedChange

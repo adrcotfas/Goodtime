@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import co.touchlab.kermit.Logger
+import com.apps.adrcotfas.goodtime.bl.isFinished
 import com.apps.adrcotfas.goodtime.bl.notifications.NotificationArchManager
 import com.apps.adrcotfas.goodtime.di.injectLogger
 import com.apps.adrcotfas.goodtime.main.Destination
@@ -65,6 +66,8 @@ class MainActivity : ComponentActivity(), KoinComponent {
             val workSessionIsInProgress by viewModel.timerUiState.map { it.workSessionIsInProgress() }
                 .collectAsStateWithLifecycle(false)
             val isActive by viewModel.timerUiState.map { it.isActive }
+                .collectAsStateWithLifecycle(false)
+            val isFinished  by viewModel.timerUiState.map { it.timerState.isFinished }
                 .collectAsStateWithLifecycle(false)
 
             val fullscreenMode = uiState.isMainScreen && uiState.fullscreenMode && isActive
@@ -130,6 +133,10 @@ class MainActivity : ComponentActivity(), KoinComponent {
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentRoute = navBackStackEntry?.destination?.route
+
+                    LaunchedEffect(isFinished && currentRoute != Destination.Main.route) {
+                        navController.navigate(Destination.Main.route)
+                    }
 
                     val isMainDestination =
                         bottomNavigationItems.find { it.route == currentRoute } != null

@@ -60,6 +60,13 @@ internal class LocalDataRepositoryImpl(
             .mapToList(defaultDispatcher)
     }
 
+    override fun selectSessionsAfter(timestamp: Long): Flow<List<Session>> {
+        return database.localSessionQueries
+            .selectAfter(timestamp, mapper = ::toExternalSessionMapper)
+            .asFlow()
+            .mapToList(defaultDispatcher)
+    }
+
     override fun selectSessionById(id: Long): Flow<Session> {
         return database.localSessionQueries
             .selectById(id, mapper = ::toExternalSessionMapper)

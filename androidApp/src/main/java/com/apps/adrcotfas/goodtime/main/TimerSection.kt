@@ -115,7 +115,7 @@ fun MainTimerView(
             state = state,
             isPaused = timerUiState.isPaused,
             timerStyle = timerStyle,
-            millis = timerUiState.baseTime,
+            millis = timerUiState.displayTime,
             color = labelColor,
             onPress = {
                 onToggle?.let {

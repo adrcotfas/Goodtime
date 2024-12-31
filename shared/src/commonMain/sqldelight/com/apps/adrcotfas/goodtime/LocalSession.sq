@@ -31,6 +31,10 @@ selectAll:
 SELECT *
 FROM localSession  ORDER BY endTimestamp DESC;
 
+selectAfter:
+SELECT *
+FROM localSession WHERE endTimestamp > ? ORDER BY endTimestamp DESC;
+
 selectById:
 SELECT *
 FROM localSession WHERE id = ?;

@@ -12,6 +12,7 @@ interface LocalDataRepository {
     suspend fun insertSession(session: Session)
     suspend fun updateSession(id: Long, newSession: Session)
     fun selectAllSessions(): Flow<List<Session>>
+    fun selectSessionsAfter(timestamp: Long): Flow<List<Session>>
     fun selectSessionById(id: Long): Flow<Session>
     fun selectByIsArchived(isArchived: Boolean): Flow<List<Session>>
     fun selectSessionsByLabel(label: String): Flow<List<Session>>

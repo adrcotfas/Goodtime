@@ -47,6 +47,7 @@ data class DomainTimerData(
     val state: TimerState = TimerState.RESET,
     val type: TimerType = TimerType.WORK,
     val timeSpentPaused: Long = 0, // millis spent in pause
+    val completedMinutes: Long = 0 // minutes
 ) {
     fun reset() = DomainTimerData(
         isReady = isReady,

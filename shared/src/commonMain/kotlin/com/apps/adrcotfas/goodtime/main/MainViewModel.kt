@@ -12,6 +12,7 @@ import com.apps.adrcotfas.goodtime.bl.getBaseTime
 import com.apps.adrcotfas.goodtime.bl.isActive
 import com.apps.adrcotfas.goodtime.bl.isBreak
 import com.apps.adrcotfas.goodtime.bl.isPaused
+import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
 import com.apps.adrcotfas.goodtime.data.settings.LongBreakData
 import com.apps.adrcotfas.goodtime.data.settings.SettingsRepository
 import com.apps.adrcotfas.goodtime.data.settings.ThemePreference
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -29,6 +31,15 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
+import kotlin.math.max
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
 
 data class TimerUiState(
     val isReady: Boolean = false,
@@ -36,6 +47,9 @@ data class TimerUiState(
     val baseTime: Long = 0,
     val timerState: TimerState = TimerState.RESET,
     val timerType: TimerType = TimerType.WORK,
+    val completedMinutes: Long = 0,
+    val timeSpentPaused: Long = 0,
+    val endTime: Long = 0,
     val sessionsBeforeLongBreak: Int = 0,
     val longBreakData: LongBreakData = LongBreakData(),
     val breakBudgetMinutes: Long = 0,
@@ -44,9 +58,12 @@ data class TimerUiState(
         return timerState.isActive && timerType == TimerType.WORK
     }
 
+    val displayTime = max(baseTime, 0)
+
     val isPaused = timerState.isPaused
     val isActive = timerState.isActive
     val isBreak = timerType.isBreak
+    val isFinished = timerState == TimerState.FINISHED
 }
 
 data class MainUiState(
@@ -65,16 +82,23 @@ data class MainUiState(
     }
 }
 
+data class HistoryUiState(
+    val todayWorkMinutes: Long = 0,
+    val todayBreakMinutes: Long = 0,
+    val todayInterruptedMinutes: Long = 0,
+)
+
 class MainViewModel(
     private val timerManager: TimerManager,
     private val timeProvider: TimeProvider,
     private val settingsRepo: SettingsRepository,
+    private val localDataRepo: LocalDataRepository
 ) : ViewModel() {
 
     val timerUiState: Flow<TimerUiState> = timerManager.timerData.flatMapLatest {
         when (it.state) {
             TimerState.RUNNING, TimerState.PAUSED -> flow {
-                while (it.state.isActive) {
+                while (true) {
                     emitUiState(it)
                     delay(1000)
                 }
@@ -90,6 +114,11 @@ class MainViewModel(
     val uiState = _uiState.onStart {
         loadData()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MainUiState())
+
+    private val _historyUiState = MutableStateFlow(HistoryUiState())
+    val historyUiState = _historyUiState.onStart {
+        loadHistoryState()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HistoryUiState())
 
     private fun loadData() {
         viewModelScope.launch {
@@ -111,6 +140,49 @@ class MainViewModel(
         }
     }
 
+    private fun toMillisOfToday(workdayStart: Int): Long {
+        val hour = workdayStart / 3600
+        val minute = (workdayStart % 3600) / 60
+        val second = workdayStart % 60
+
+        val instant = Instant.fromEpochMilliseconds(timeProvider.now())
+        val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+
+        val timeAtSecondOfDay = LocalDateTime(dateTime.date, LocalTime(hour, minute, second))
+        val instant2 = timeAtSecondOfDay.toInstant(TimeZone.currentSystemDefault())
+        return instant2.toEpochMilliseconds()
+    }
+
+    private fun loadHistoryState() {
+        viewModelScope.launch {
+            settingsRepo.settings.map { it.workdayStart }.distinctUntilChanged()
+                .map { toMillisOfToday(it) }.flatMapLatest {
+                    localDataRepo.selectAllSessions()
+                    localDataRepo.selectSessionsAfter(it)
+                }.collect { sessions ->
+                    val (todayWorkSessions, todayBreakSessions) =
+                        sessions.partition { session -> session.isWork }
+
+                    val todayWorkMinutes = todayWorkSessions.sumOf { it.duration }
+                    val todayBreakMinutes = todayBreakSessions.sumOf { it.duration }
+
+                    val todayInterruptedMinutes =
+                        todayWorkSessions.sumOf {
+                            (it.endTimestamp - it.startTimestamp).milliseconds.inWholeMilliseconds
+                            -it.duration.minutes.inWholeMilliseconds
+                        }
+
+                    _historyUiState.update {
+                        it.copy(
+                            todayWorkMinutes = todayWorkMinutes,
+                            todayBreakMinutes = todayBreakMinutes,
+                            todayInterruptedMinutes = todayInterruptedMinutes
+                        )
+                    }
+                }
+        }
+    }
+
     fun startTimer(type: TimerType = TimerType.WORK) {
         timerManager.start(type)
     }
@@ -123,8 +195,8 @@ class MainViewModel(
         } else return false
     }
 
-    fun resetTimer() {
-        timerManager.reset()
+    fun resetTimer(updateWorkTime: Boolean = false) {
+        timerManager.reset(updateWorkTime)
     }
 
     fun addOneMinute() {
@@ -147,6 +219,9 @@ class MainViewModel(
                 baseTime = it.getBaseTime(timeProvider),
                 timerState = it.state,
                 timerType = it.type,
+                completedMinutes = it.completedMinutes,
+                timeSpentPaused = it.timeSpentPaused,
+                endTime = it.endTime,
                 sessionsBeforeLongBreak = it.inUseSessionsBeforeLongBreak(),
                 longBreakData = it.longBreakData,
                 breakBudgetMinutes = it.getBreakBudget(timeProvider.elapsedRealtime()).inWholeMinutes
@@ -158,7 +233,7 @@ class MainViewModel(
         timerManager.skip()
     }
 
-    fun next() {
-        timerManager.next()
+    fun next(updateWorkTime: Boolean = false) {
+        timerManager.next(updateWorkTime)
     }
 }
