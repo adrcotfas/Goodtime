@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apps.adrcotfas.goodtime.bl.DomainLabel
 import com.apps.adrcotfas.goodtime.bl.DomainTimerData
+import com.apps.adrcotfas.goodtime.bl.FinishActionType
 import com.apps.adrcotfas.goodtime.bl.TimeProvider
 import com.apps.adrcotfas.goodtime.bl.TimerManager
 import com.apps.adrcotfas.goodtime.bl.TimerState
@@ -23,7 +24,6 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -38,8 +38,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlin.math.max
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.minutes
 
 data class TimerUiState(
     val isReady: Boolean = false,
@@ -165,12 +163,7 @@ class MainViewModel(
 
                     val todayWorkMinutes = todayWorkSessions.sumOf { it.duration }
                     val todayBreakMinutes = todayBreakSessions.sumOf { it.duration }
-
-                    val todayInterruptedMinutes =
-                        todayWorkSessions.sumOf {
-                            (it.endTimestamp - it.startTimestamp).milliseconds.inWholeMilliseconds
-                            -it.duration.minutes.inWholeMilliseconds
-                        }
+                    val todayInterruptedMinutes = todayWorkSessions.sumOf { it.interruptions }
 
                     _historyUiState.update {
                         it.copy(
@@ -195,8 +188,8 @@ class MainViewModel(
         } else return false
     }
 
-    fun resetTimer(updateWorkTime: Boolean = false) {
-        timerManager.reset(updateWorkTime)
+    fun resetTimer(updateWorkTime: Boolean = false, actionType: FinishActionType = FinishActionType.MANUAL_RESET) {
+        timerManager.reset(updateWorkTime, actionType)
     }
 
     fun addOneMinute() {

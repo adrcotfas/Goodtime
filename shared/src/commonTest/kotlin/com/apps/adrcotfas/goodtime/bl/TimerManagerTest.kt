@@ -56,7 +56,7 @@ class TimerManagerTest {
             defaultDispatcher = testDispatcher
         )
 
-        localDataRepo.insertLabel(Label.defaultLabel())
+        localDataRepo.updateDefaultLabel(defaultLabel)
         defaultLabel = defaultLabel.copy(id = localDataRepo.selectLastInsertLabelId()!!)
         localDataRepo.insertLabel(customLabel)
         customLabel = customLabel.copy(id = localDataRepo.selectLastInsertLabelId()!!)
@@ -236,8 +236,7 @@ class TimerManagerTest {
         localDataRepo.selectSessionById(localDataRepo.selectLastInsertSessionId()!!).test {
             val session = awaitItem()
             assertEquals(session.duration.minutes.inWholeMilliseconds, oneMinute)
-            assertEquals(session.startTimestamp, 0)
-            assertEquals(session.endTimestamp, oneMinute + oneMinute)
+            assertEquals(session.timestamp, oneMinute + oneMinute)
         }
     }
 
@@ -266,8 +265,7 @@ class TimerManagerTest {
         localDataRepo.selectSessionById(localDataRepo.selectLastInsertSessionId()!!).test {
             val session = awaitItem()
             assertEquals(session.duration.minutes.inWholeMilliseconds, elapsedTime)
-            assertEquals(session.startTimestamp, 0)
-            assertEquals(session.endTimestamp, elapsedTime)
+            assertEquals(session.timestamp, elapsedTime)
             assertEquals(session.isWork, true)
         }
         timeProvider.elapsedRealtime += elapsedTime
@@ -277,8 +275,7 @@ class TimerManagerTest {
         localDataRepo.selectSessionById(localDataRepo.selectLastInsertSessionId()!!).test {
             val session = awaitItem()
             assertEquals(session.duration.minutes.inWholeMilliseconds, elapsedTime)
-            assertEquals(session.startTimestamp, elapsedTime)
-            assertEquals(session.endTimestamp, elapsedTime + elapsedTime)
+            assertEquals(session.timestamp, elapsedTime + elapsedTime)
             assertEquals(session.isWork, false)
         }
     }
@@ -328,8 +325,7 @@ class TimerManagerTest {
         localDataRepo.selectSessionById(localDataRepo.selectLastInsertSessionId()!!).test {
             val session = awaitItem()
             assertEquals(session.duration.minutes.inWholeMilliseconds, DEFAULT_DURATION)
-            assertEquals(session.startTimestamp, 0)
-            assertEquals(session.endTimestamp, DEFAULT_DURATION)
+            assertEquals(session.timestamp, DEFAULT_DURATION)
         }
     }
 
@@ -359,8 +355,7 @@ class TimerManagerTest {
         localDataRepo.selectSessionById(localDataRepo.selectLastInsertSessionId()!!).test {
             val session = awaitItem()
             assertEquals(session.duration.minutes.inWholeMilliseconds, oneMinute)
-            assertEquals(session.startTimestamp, 0)
-            assertEquals(session.endTimestamp, oneMinute)
+            assertEquals(session.timestamp, oneMinute)
         }
     }
 
@@ -783,11 +778,11 @@ class TimerManagerTest {
 
     companion object {
         private const val CUSTOM_LABEL_NAME = "dummy"
-        private val dummyTimerProfile = TimerProfile().copy(isCountdown = false, workBreakRatio = 5)
+        private val dummyTimerProfile = TimerProfile().copy(isLongBreakEnabled = true, isCountdown = false, workBreakRatio = 5)
 
         private val DEFAULT_DURATION = DEFAULT_WORK_DURATION.minutes.inWholeMilliseconds
 
-        private var defaultLabel = Label.defaultLabel()
+        private var defaultLabel = Label.defaultLabel().copy(timerProfile = TimerProfile(isLongBreakEnabled = true))
         private var customLabel =
             Label.defaultLabel().copy(
                 name = CUSTOM_LABEL_NAME,

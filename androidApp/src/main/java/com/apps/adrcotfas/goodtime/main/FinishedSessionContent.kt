@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.apps.adrcotfas.goodtime.bl.TimeProvider
+import com.apps.adrcotfas.goodtime.bl.TimerManager.Companion.WIGGLE_ROOM_MILLIS
 import com.apps.adrcotfas.goodtime.bl.TimerType
 import com.apps.adrcotfas.goodtime.bl.isBreak
 import kotlinx.coroutines.delay
@@ -55,8 +56,8 @@ fun FinishedSessionContent(
     var elapsedRealtime by remember(lifecycleState) { mutableLongStateOf(timeProvider.elapsedRealtime()) }
     LaunchedEffect(Unit) {
         while (true) {
-            elapsedRealtime = timeProvider.elapsedRealtime()
             delay(1.minutes)
+            elapsedRealtime = timeProvider.elapsedRealtime()
         }
     }
     FinishedSessionContent(timerUiState, historyUiState, elapsedRealtime, onClose, onNext)
@@ -145,8 +146,8 @@ private fun CurrentSessionCard(
             }
             if (!timerUiState.isBreak) {
                 val idleMinutes =
-                    (elapsedRealtime - timerUiState.endTime).milliseconds.inWholeMinutes
-                if (idleMinutes > 1) {
+                    (elapsedRealtime - timerUiState.endTime + WIGGLE_ROOM_MILLIS).milliseconds.inWholeMinutes
+                if (idleMinutes > 0) {
                     Column {
                         Row(
                             modifier = Modifier
@@ -259,7 +260,7 @@ private fun Buttons(
             modifier = Modifier.weight(0.5f),
             onClick = onNext
         ) {
-            Text(text = if (isBreak) "Resume work" else "Start break")
+            Text(text = if (isBreak) "Start work" else "Start break")
         }
     }
 }

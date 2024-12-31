@@ -134,8 +134,10 @@ class MainActivity : ComponentActivity(), KoinComponent {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentRoute = navBackStackEntry?.destination?.route
 
-                    LaunchedEffect(isFinished && currentRoute != Destination.Main.route) {
-                        navController.navigate(Destination.Main.route)
+                    LaunchedEffect(isFinished) {
+                        if (isFinished && currentRoute != Destination.Main.route) {
+                            navController.navigate(Destination.Main.route)
+                        }
                     }
 
                     val isMainDestination =

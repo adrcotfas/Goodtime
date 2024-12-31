@@ -13,9 +13,9 @@ class ModelMappingsExtTest {
     fun `Convert local session to external and back`() {
         val localSession = LocalSession(
             id = 1,
-            startTimestamp = 1,
-            endTimestamp = 3.minutes.inWholeMilliseconds,
+            timestamp = 3.minutes.inWholeMilliseconds,
             duration = 3.minutes.toLong(DurationUnit.MINUTES),
+            interruptions = 0,
             labelName = "label",
             notes = "notes",
             isWork = true,
@@ -23,9 +23,9 @@ class ModelMappingsExtTest {
         )
         val session = toExternalSessionMapper(
             localSession.id,
-            localSession.startTimestamp,
-            localSession.endTimestamp,
+            localSession.timestamp,
             localSession.duration,
+            localSession.interruptions,
             localSession.labelName,
             localSession.notes,
             localSession.isWork,
@@ -37,9 +37,9 @@ class ModelMappingsExtTest {
     fun `Convert external session to local and back`() {
         val session = Session(
             id = 1,
-            startTimestamp = 1,
-            endTimestamp = 3.minutes.inWholeMilliseconds,
+            timestamp = 3.minutes.inWholeMilliseconds,
             duration = 3.minutes.toLong(DurationUnit.MINUTES),
+            interruptions = 0,
             label = "label",
             notes = "notes",
             isWork = false,
@@ -48,9 +48,9 @@ class ModelMappingsExtTest {
         val localSession = session.toLocal()
         assertEquals(session, toExternalSessionMapper(
             localSession.id,
-            localSession.startTimestamp,
-            localSession.endTimestamp,
+            localSession.timestamp,
             localSession.duration,
+            localSession.interruptions,
             localSession.labelName,
             localSession.notes,
             localSession.isWork,

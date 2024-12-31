@@ -2,9 +2,9 @@ import kotlin.Boolean;
 
 CREATE TABLE IF NOT EXISTS localSession (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    startTimestamp INTEGER NOT NULL,
-    endTimestamp INTEGER NOT NULL,
+    timestamp INTEGER NOT NULL,
     duration INTEGER NOT NULL,
+    interruptions INTEGER NOT NULL,
     labelName TEXT NOT NULL DEFAULT "PRODUCTIVITY_DEFAULT_LABEL",
     notes TEXT DEFAULT NULL,
     isWork INTEGER AS Boolean NOT NULL DEFAULT 1,
@@ -19,21 +19,21 @@ CREATE INDEX idx_profile ON localSession(labelName);
 CREATE INDEX idx_is_work ON localSession(isWork);
 
 insert:
-INSERT OR REPLACE INTO localSession(id, startTimestamp, endTimestamp, duration, labelName, notes, isWork, isArchived)
+INSERT OR REPLACE INTO localSession(id, timestamp, duration, interruptions, labelName, notes, isWork, isArchived)
 VALUES(NULL, ?, ?, ?, ?, ?, ?, ?);
 
 update:
 UPDATE localSession
-SET startTimestamp = :newStartTimestamp, endTimestamp = :newEndTimestamp, duration = :newDuration, labelName = :newLabel, notes = :newNotes
+SET timestamp = :newTimestamp, duration = :newDuration, interruptions = :newInterruptions, labelName = :newLabel, notes = :newNotes
 WHERE id = :id;
 
 selectAll:
 SELECT *
-FROM localSession  ORDER BY endTimestamp DESC;
+FROM localSession  ORDER BY timestamp DESC;
 
 selectAfter:
 SELECT *
-FROM localSession WHERE endTimestamp > ? ORDER BY endTimestamp DESC;
+FROM localSession WHERE timestamp > ? ORDER BY timestamp DESC;
 
 selectById:
 SELECT *
@@ -41,11 +41,11 @@ FROM localSession WHERE id = ?;
 
 selectByIsArchived:
 SELECT *
-FROM localSession WHERE isArchived IS ? ORDER BY endTimestamp DESC;
+FROM localSession WHERE isArchived IS ? ORDER BY timestamp DESC;
 
 selectByLabel:
 SELECT *
-FROM localSession WHERE labelName IS ? ORDER BY endTimestamp DESC;
+FROM localSession WHERE labelName IS ? ORDER BY timestamp DESC;
 
 selectLastInsertSessionId:
 SELECT last_insert_rowid();

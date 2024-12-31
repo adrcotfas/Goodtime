@@ -396,8 +396,10 @@ class TimerManager(
      *                       This is useful when the user missed the notification and continued working.
      * @see [finish]
      */
-    //TODO: implement logic for updateWorkTime
-    fun reset(updateWorkTime: Boolean = false) {
+    fun reset(
+        updateWorkTime: Boolean = false,
+        actionType: FinishActionType = FinishActionType.MANUAL_RESET
+    ) {
         val data = timerData.value
         if (data.state == TimerState.RESET) {
             log.w { "Trying to reset the timer when it is already reset" }
@@ -406,7 +408,9 @@ class TimerManager(
         log.i { "Reset: $data" }
         updateBreakBudgetIfNeeded()
 
-        handleFinishedSession(updateWorkTime, finishActionType = FinishActionType.MANUAL_RESET)
+        if (actionType != FinishActionType.MANUAL_DO_NOTHING) {
+            handleFinishedSession(updateWorkTime, finishActionType = actionType)
+        }
 
         listeners.forEach { it.onEvent(Event.Reset) }
         _timerData.update { it.reset() }
@@ -429,6 +433,7 @@ class TimerManager(
         val isWork = data.type.isWork
         val isFinished = data.state.isFinished
         val isCountDown = data.getTimerProfile().isCountdown
+        val longBreakEnabled = data.getTimerProfile().isLongBreakEnabled
 
         val session = createFinishedSession()
         session?.let {
@@ -442,7 +447,7 @@ class TimerManager(
             }
         }
 
-        if (isWork && isCountDown
+        if (isWork && isCountDown && longBreakEnabled
             && (finishActionType == FinishActionType.AUTO
                     || finishActionType == FinishActionType.MANUAL_SKIP)
         ) {
@@ -456,10 +461,11 @@ class TimerManager(
         val isWork = data.type == TimerType.WORK
 
         val totalDuration = timeProvider.elapsedRealtime() - data.startTime
+        val interruptions = data.timeSpentPaused
 
         val durationToSave = if (isWork) {
             val justWorkTime =
-                (totalDuration - data.timeSpentPaused + WIGGLE_ROOM_MILLIS).milliseconds
+                (totalDuration - interruptions + WIGGLE_ROOM_MILLIS).milliseconds
             justWorkTime
         } else {
             totalDuration.milliseconds
@@ -471,19 +477,20 @@ class TimerManager(
             return null
         }
 
-        val startTimeMillis = data.startTime
         val endTimeInMillis = timeProvider.elapsedRealtime()
 
         _timerData.update {
             it.copy(completedMinutes = durationToSaveMinutes, endTime = endTimeInMillis)
         }
 
+        val now = timeProvider.now()
+
         return Session.create(
-            startTimeMillis,
-            endTimeInMillis,
-            durationToSaveMinutes,
-            data.getLabelName(),
-            isWork
+            timestamp = now,
+            duration = durationToSaveMinutes,
+            interruptions = interruptions.milliseconds.inWholeMinutes,
+            label = data.getLabelName(),
+            isWork = isWork
         )
     }
 
@@ -511,7 +518,7 @@ class TimerManager(
     private fun shouldConsiderStreak(workEndTime: Long): Boolean {
         val data = timerData.value
         val timerProfile = data.label
-        if (!timerProfile.profile.isCountdown) return false
+        if (!timerProfile.profile.isCountdown || !timerProfile.profile.isLongBreakEnabled) return false
 
         val streakForLongBreakIsReached =
             (data.longBreakData.streakInUse(timerProfile.profile.sessionsBeforeLongBreak) == 0)
@@ -543,5 +550,6 @@ enum class FinishActionType {
     MANUAL_RESET,
     MANUAL_SKIP, // increment streak even if session is shorter than 1 minute
     MANUAL_NEXT,
+    MANUAL_DO_NOTHING,
     AUTO
 }

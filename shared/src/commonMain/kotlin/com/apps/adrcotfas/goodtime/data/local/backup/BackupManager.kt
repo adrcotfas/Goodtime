@@ -118,9 +118,9 @@ class BackupManager(
                     val labelName =
                         if (session.label == Label.DEFAULT_LABEL_NAME) "" else session.label
                     sink.writeUtf8(
-                        "${session.startTimestamp.formatToIso8601()}," +
-                                "${session.endTimestamp.formatToIso8601()}," +
+                                "${session.timestamp.formatToIso8601()}," +
                                 "${session.duration}," +
+                                "${session.interruptions}," +
                                 "${labelName}," +
                                 "${session.notes ?: ""}," +
                                 "${session.isWork}," +
@@ -140,9 +140,10 @@ class BackupManager(
                         val labelName =
                             if (session.label == Label.DEFAULT_LABEL_NAME) "" else session.label
                         sink.writeUtf8(
-                            "{\"start\":${session.startTimestamp.formatToIso8601()}," +
-                                    "\"end\":${session.endTimestamp.formatToIso8601()}," +
+                            "{" +
+                                    "\"timestamp\":${session.timestamp.formatToIso8601()}," +
                                     "\"duration\":${session.duration}," +
+                                    "\"interruptions\":${session.interruptions}," +
                                     "\"label\":\"${labelName}\"," +
                                     "\"notes\":\"${session.notes ?: ""}\"," +
                                     "\"work\":${session.isWork}," +

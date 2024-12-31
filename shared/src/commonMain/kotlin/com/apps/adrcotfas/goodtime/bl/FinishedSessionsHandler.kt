@@ -4,7 +4,6 @@ import co.touchlab.kermit.Logger
 import com.apps.adrcotfas.goodtime.data.local.LocalDataRepository
 import com.apps.adrcotfas.goodtime.data.model.Session
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class FinishedSessionsHandler(
@@ -19,12 +18,7 @@ class FinishedSessionsHandler(
                 val lastSessionId = repo.selectLastInsertSessionId()
                 log.v { "lastSessionId: $lastSessionId" }
                 if (lastSessionId != null) {
-                    val savedSession = repo.selectSessionById(lastSessionId).first()
-                    if (savedSession.startTimestamp == newSession.startTimestamp) {
-                        repo.updateSession(lastSessionId, newSession)
-                    } else {
-                        log.e{ "The last saved session timestamp does not match the updated one" }
-                    }
+                    repo.updateSession(lastSessionId, newSession)
                 }
             } catch (e: Exception) {
                 log.e { "Error updating work time at reset: $e" }

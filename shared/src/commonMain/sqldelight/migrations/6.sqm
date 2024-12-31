@@ -34,9 +34,9 @@ ALTER TABLE labelTmp RENAME TO localLabel;
 
 CREATE TABLE IF NOT EXISTS sessionTmp (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-        startTimestamp INTEGER NOT NULL,
-        endTimestamp INTEGER NOT NULL,
+        timestamp INTEGER NOT NULL,
         duration INTEGER NOT NULL,
+        interruptions INTEGER NOT NULL,
         labelName TEXT NOT NULL DEFAULT "PRODUCTIVITY_DEFAULT_LABEL",
         notes TEXT DEFAULT NULL,
         isWork INTEGER AS Boolean NOT NULL DEFAULT 1,
@@ -46,11 +46,11 @@ CREATE TABLE IF NOT EXISTS sessionTmp (
         ON DELETE SET DEFAULT
 );
 
-INSERT INTO sessionTmp(id, startTimestamp, endTimestamp, duration, labelName, isArchived)
+INSERT INTO sessionTmp(id, timestamp, duration, interruptions, labelName, isArchived)
 SELECT `id`,
-       (`timestamp` - (`duration` * 60 * 1000)),
        timestamp,
        `duration`,
+       0,
        COALESCE(`label`, "PRODUCTIVITY_DEFAULT_LABEL"),
        `archived`
 FROM Session;

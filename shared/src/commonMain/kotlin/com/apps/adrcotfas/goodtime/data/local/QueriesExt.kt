@@ -25,9 +25,9 @@ fun LocalLabelQueries.insert(label: LocalLabel) {
 
 fun LocalSessionQueries.insert(session: LocalSession) {
     insert(
-        startTimestamp = session.startTimestamp,
-        endTimestamp = session.endTimestamp,
+        timestamp = session.timestamp,
         duration = session.duration,
+        interruptions = session.interruptions,
         labelName = session.labelName,
         notes = session.notes,
         isWork = session.isWork,
@@ -37,9 +37,9 @@ fun LocalSessionQueries.insert(session: LocalSession) {
 
 fun LocalSessionQueries.update(id: Long, newSession: LocalSession) {
     update(
-        newStartTimestamp = newSession.startTimestamp,
-        newEndTimestamp = newSession.endTimestamp,
+        newTimestamp = newSession.timestamp,
         newDuration = newSession.duration,
+        newInterruptions = newSession.interruptions,
         newLabel = newSession.labelName,
         newNotes = newSession.notes,
         id = id

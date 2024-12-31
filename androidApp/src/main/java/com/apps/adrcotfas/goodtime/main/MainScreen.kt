@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +29,7 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.apps.adrcotfas.goodtime.bl.FinishActionType
 import com.apps.adrcotfas.goodtime.bl.isWork
 import com.apps.adrcotfas.goodtime.common.isPortrait
 import com.apps.adrcotfas.goodtime.common.screenWidth
@@ -170,7 +172,7 @@ fun MainScreen(
 
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var showBottomSheet by rememberSaveable(timerUiState.isFinished) { mutableStateOf(timerUiState.isFinished) }
 
     val hideSheet = {
         scope.launch { sheetState.hide() }.invokeOnCompletion {
@@ -180,10 +182,10 @@ fun MainScreen(
         }
     }
 
-    if (timerUiState.isFinished) {
+    if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = {
-                viewModel.resetTimer()
+                viewModel.resetTimer(actionType = FinishActionType.MANUAL_DO_NOTHING)
                 showBottomSheet = false
             },
             sheetState = sheetState
@@ -192,7 +194,11 @@ fun MainScreen(
                 timerUiState = timerUiState,
                 historyUiState = historyUiState,
                 onClose = { considerIdleTimeAsWork ->
-                    viewModel.resetTimer(considerIdleTimeAsWork)
+                    if (considerIdleTimeAsWork) {
+                        viewModel.resetTimer(updateWorkTime = true)
+                    } else {
+                        viewModel.resetTimer(actionType = FinishActionType.MANUAL_DO_NOTHING)
+                    }
                     hideSheet()
                 },
                 onNext = { considerIdleTimeAsWork ->

@@ -56,9 +56,9 @@ class LocalDataRepositoryTest {
         dataSource.updateSession(
             session.id, Session(
                 id = session.id,
-                startTimestamp = 10,
-                endTimestamp = 1.minutes.inWholeMilliseconds,
+                timestamp = 1.minutes.inWholeMilliseconds,
                 duration = 1.minutes.toLong(DurationUnit.MINUTES),
+                interruptions = 0,
                 label = LABEL_NAME,
                 notes = null,
                 isWork = true,
@@ -212,9 +212,9 @@ class LocalDataRepositoryTest {
 
         private var session = Session(
             id = 0,
-            startTimestamp = 0,
-            endTimestamp = DEFAULT_DURATION,
+            timestamp = DEFAULT_DURATION,
             duration = 25,
+            interruptions = 0,
             label = Label.DEFAULT_LABEL_NAME,
             notes = null,
             isWork = true,
