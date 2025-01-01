@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.data.local
 
 import app.cash.sqldelight.coroutines.asFlow
@@ -117,7 +134,7 @@ internal class LocalDataRepositoryImpl(
 
     override suspend fun insertLabelAndBulkRearrange(
         label: Label,
-        labelsToUpdate: List<Pair<String, Long>>
+        labelsToUpdate: List<Pair<String, Long>>,
     ) {
         withContext(defaultDispatcher) {
             database.transaction {
@@ -148,9 +165,9 @@ internal class LocalDataRepositoryImpl(
 
     override suspend fun updateLabel(
         name: String,
-        newLabel: Label
+        newLabel: Label,
     ) {
-        if(newLabel.name.isEmpty()) return
+        if (newLabel.name.isEmpty()) return
         withContext(defaultDispatcher) {
             database.localLabelQueries.updateLabel(
                 newName = newLabel.name,
@@ -164,7 +181,7 @@ internal class LocalDataRepositoryImpl(
                 newLongBreakDuration = newLabel.timerProfile.longBreakDuration,
                 newSessionsBeforeLongBreak = newLabel.timerProfile.sessionsBeforeLongBreak,
                 newWorkBreakRatio = newLabel.timerProfile.workBreakRatio,
-                name = name
+                name = name,
             )
         }
     }

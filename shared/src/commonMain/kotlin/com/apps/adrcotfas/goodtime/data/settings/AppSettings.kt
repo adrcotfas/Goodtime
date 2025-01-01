@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.data.settings
 
 import com.apps.adrcotfas.goodtime.data.model.Label
@@ -38,7 +55,7 @@ data class AppSettings(
 enum class NotificationPermissionState {
     NOT_ASKED,
     GRANTED,
-    DENIED
+    DENIED,
 }
 
 @Serializable
@@ -63,14 +80,14 @@ data class UiSettings(
 enum class ThemePreference {
     SYSTEM,
     LIGHT,
-    DARK
+    DARK,
 }
 
 @Serializable
 data class TimerStyleData(
-    val minSize: Float = 0f,         // in em
-    val maxSize: Float = 0f,         // in em
-    val fontSize: Float = 0f,        // in em
+    val minSize: Float = 0f, // in em
+    val maxSize: Float = 0f, // in em
+    val fontSize: Float = 0f, // in em
     val fontWeight: Int = 100,
     val currentScreenWidth: Float = 0f, // in dp
     val minutesOnly: Boolean = false,
@@ -92,10 +109,9 @@ data class TimerStyleData(
     }
 }
 
-
 @Serializable
 data class SoundData(
     val name: String = "",
     val uriString: String = "",
-    val isSilent: Boolean = false
+    val isSilent: Boolean = false,
 )

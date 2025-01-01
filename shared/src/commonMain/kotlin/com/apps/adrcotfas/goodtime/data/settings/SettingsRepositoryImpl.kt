@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.data.settings
 
 import androidx.datastore.core.DataStore
@@ -19,7 +36,7 @@ import kotlinx.serialization.json.Json
 
 class SettingsRepositoryImpl(
     private val dataStore: DataStore<Preferences>,
-    private val log: Logger
+    private val log: Logger,
 ) : SettingsRepository {
 
     private val json = Json { ignoreUnknownKeys = true }
@@ -92,7 +109,7 @@ class SettingsRepositoryImpl(
                 } ?: BreakBudgetData(),
                 notificationPermissionState = it[Keys.notificationPermissionStateKey]?.let { key ->
                     NotificationPermissionState.entries[key]
-                } ?: AppSettings().notificationPermissionState
+                } ?: AppSettings().notificationPermissionState,
             )
         }.catch {
             log.e("Error parsing settings", it)
@@ -100,7 +117,7 @@ class SettingsRepositoryImpl(
         }.distinctUntilChanged()
 
     override suspend fun updateReminderSettings(
-        transform: (ProductivityReminderSettings) -> ProductivityReminderSettings
+        transform: (ProductivityReminderSettings) -> ProductivityReminderSettings,
     ) {
         dataStore.edit {
             val previous =
@@ -112,7 +129,7 @@ class SettingsRepositoryImpl(
     }
 
     override suspend fun updateUiSettings(
-        transform: (UiSettings) -> UiSettings
+        transform: (UiSettings) -> UiSettings,
     ) {
         dataStore.edit {
             val previous = it[Keys.uiSettingsKey]?.let { u -> json.decodeFromString(u) }
@@ -123,7 +140,7 @@ class SettingsRepositoryImpl(
     }
 
     override suspend fun updateTimerStyle(
-        transform: (TimerStyleData) -> TimerStyleData
+        transform: (TimerStyleData) -> TimerStyleData,
     ) {
         dataStore.edit {
             val previous = it[Keys.timerStyleKey]?.let { t ->

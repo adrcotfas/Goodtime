@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.ui.common
 
 import androidx.compose.foundation.background
@@ -29,10 +46,10 @@ fun RadioGroupDialog(
     onDismiss: () -> Unit,
     initialIndex: Int,
     radioOptions: List<String>,
-    onItemSelected: (Int) -> Unit
+    onItemSelected: (Int) -> Unit,
 ) {
     Dialog(
-        onDismissRequest = onDismiss
+        onDismissRequest = onDismiss,
     ) {
         Surface(
             shape = MaterialTheme.shapes.extraLarge,
@@ -40,13 +57,13 @@ fun RadioGroupDialog(
             modifier = Modifier
                 .background(
                     shape = MaterialTheme.shapes.extraLarge,
-                    color = MaterialTheme.colorScheme.surface
+                    color = MaterialTheme.colorScheme.surface,
                 ),
         ) {
             val radioOptionsIndexes = radioOptions.indices.toList()
             val (selectedOption, onOptionSelected) = remember {
                 mutableIntStateOf(
-                    radioOptionsIndexes[initialIndex]
+                    radioOptionsIndexes[initialIndex],
                 )
             }
             Column(
@@ -55,14 +72,14 @@ fun RadioGroupDialog(
                         top = 24.dp,
                     )
                     .fillMaxWidth()
-                    .selectableGroup()
+                    .selectableGroup(),
             ) {
                 Text(
                     modifier = Modifier
                         .padding(start = 24.dp, bottom = 20.dp)
                         .fillMaxWidth(),
                     text = title,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
                 )
 
                 radioOptions.forEach { text ->
@@ -77,20 +94,20 @@ fun RadioGroupDialog(
                                     onItemSelected(selectedIndex)
                                     onDismiss()
                                 },
-                                role = Role.RadioButton
+                                role = Role.RadioButton,
                             )
                             .padding(horizontal = 24.dp)
                             .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         RadioButton(
                             selected = (selectedIndex == selectedOption),
-                            onClick = null
+                            onClick = null,
                         )
                         Text(
                             text = text,
                             style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(start = 16.dp)
+                            modifier = Modifier.padding(start = 16.dp),
                         )
                     }
                 }
@@ -98,7 +115,7 @@ fun RadioGroupDialog(
                     modifier = Modifier
                         .align(Alignment.End)
                         .padding(end = 8.dp, bottom = 4.dp),
-                    onClick = onDismiss
+                    onClick = onDismiss,
                 ) { Text(stringResource(id = android.R.string.cancel)) }
             }
         }

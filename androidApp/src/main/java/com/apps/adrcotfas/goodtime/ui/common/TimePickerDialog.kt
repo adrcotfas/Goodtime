@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.ui.common
 
 import androidx.compose.foundation.background
@@ -36,13 +53,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePicker(
     onConfirm: (TimePickerState) -> Unit,
     onDismiss: () -> Unit,
-    timePickerState: TimePickerState
+    timePickerState: TimePickerState,
 ) {
     var showDial by remember { mutableStateOf(true) }
     val toggleIcon = if (showDial) {
@@ -98,25 +114,25 @@ fun TimePickerDialog(
                 .height(IntrinsicSize.Min)
                 .background(
                     shape = MaterialTheme.shapes.extraLarge,
-                    color = MaterialTheme.colorScheme.surface
+                    color = MaterialTheme.colorScheme.surface,
                 ),
         ) {
             Column(
                 modifier = Modifier.padding(top = 24.dp, start = 8.dp, end = 8.dp, bottom = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 16.dp, bottom = 20.dp),
                     text = title,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
                 )
                 content()
                 Row(
                     modifier = Modifier
                         .height(40.dp)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
                 ) {
                     toggle()
                     Spacer(modifier = Modifier.weight(1f))
@@ -135,6 +151,6 @@ fun TimePickerDialogPreview() {
     TimePicker(
         onDismiss = {},
         onConfirm = {},
-        timePickerState = rememberTimePickerState()
+        timePickerState = rememberTimePickerState(),
     )
 }

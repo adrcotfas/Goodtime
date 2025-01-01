@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.bl.notifications
 
 import android.content.Context
@@ -25,7 +42,7 @@ data class SoundPlayerData(
     val workSoundUri: String,
     val breakSoundUri: String,
     val loop: Boolean,
-    val overrideSoundProfile: Boolean
+    val overrideSoundProfile: Boolean,
 )
 
 class SoundPlayer(
@@ -33,7 +50,7 @@ class SoundPlayer(
     readFromSettingsScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
     private val playerScope: CoroutineScope = CoroutineScope(Dispatchers.Default),
     private val settingsRepo: SettingsRepository,
-    private val logger: Logger
+    private val logger: Logger,
 ) {
     private var job: Job? = null
 
@@ -51,7 +68,7 @@ class SoundPlayer(
             setLoopingMethod =
                 Ringtone::class.java.getDeclaredMethod(
                     "setLooping",
-                    Boolean::class.javaPrimitiveType
+                    Boolean::class.javaPrimitiveType,
                 )
         } catch (e: NoSuchMethodException) {
             logger.e(e) { "Failed to get method setLooping" }
@@ -62,7 +79,7 @@ class SoundPlayer(
                     workSoundUri = settings.workFinishedSound,
                     breakSoundUri = settings.breakFinishedSound,
                     overrideSoundProfile = settings.overrideSoundProfile,
-                    loop = settings.insistentNotification
+                    loop = settings.insistentNotification,
                 )
             }
                 .collect {
@@ -85,7 +102,7 @@ class SoundPlayer(
     fun play(
         soundData: SoundData,
         loop: Boolean = false,
-        forceSound: Boolean = false
+        forceSound: Boolean = false,
     ) {
         playerScope.launch {
             job?.cancelAndJoin()
@@ -99,20 +116,27 @@ class SoundPlayer(
     private fun playInternal(
         soundData: SoundData,
         loop: Boolean,
-        forceSound: Boolean
+        forceSound: Boolean,
     ) {
         if (soundData.isSilent) return
         val uri = soundData.uriString.let {
-            if (it.isEmpty()) RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            else Uri.parse(it)
+            if (it.isEmpty()) {
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            } else {
+                Uri.parse(it)
+            }
         }
 
         audioManager = (context.getSystemService(Context.AUDIO_SERVICE) as AudioManager)
 
         val usage =
-            if (areHeadphonesPluggedIn(audioManager!!)) AudioAttributes.USAGE_MEDIA
-            else if (overrideSoundProfile || forceSound) AudioAttributes.USAGE_ALARM
-            else AudioAttributes.USAGE_NOTIFICATION
+            if (areHeadphonesPluggedIn(audioManager!!)) {
+                AudioAttributes.USAGE_MEDIA
+            } else if (overrideSoundProfile || forceSound) {
+                AudioAttributes.USAGE_ALARM
+            } else {
+                AudioAttributes.USAGE_NOTIFICATION
+            }
 
         ringtone = RingtoneManager.getRingtone(context, uri).apply {
             audioAttributes = AudioAttributes.Builder()
@@ -159,7 +183,7 @@ class SoundPlayer(
             AudioDeviceInfo.TYPE_WIRED_HEADSET,
             AudioDeviceInfo.TYPE_USB_DEVICE,
             AudioDeviceInfo.TYPE_USB_HEADSET,
-            AudioDeviceInfo.TYPE_BLUETOOTH_SCO
+            AudioDeviceInfo.TYPE_BLUETOOTH_SCO,
         )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             list.add(AudioDeviceInfo.TYPE_BLE_SPEAKER)

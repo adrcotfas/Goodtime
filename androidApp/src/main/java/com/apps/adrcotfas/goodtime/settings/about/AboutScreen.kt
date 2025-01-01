@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.settings.about
 
 import androidx.compose.foundation.background
@@ -32,7 +49,6 @@ fun AboutScreen(
     onNavigateBack: () -> Boolean,
     showTopBar: Boolean,
 ) {
-
     val context = LocalContext.current
 
     Scaffold(
@@ -40,48 +56,49 @@ fun AboutScreen(
             TopBar(
                 isVisible = showTopBar,
                 title = "About and feedback",
-                onNavigateBack = { onNavigateBack() }
+                onNavigateBack = { onNavigateBack() },
             )
-        }
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = paddingValues.calculateTopPadding())
                 .verticalScroll(rememberScrollState())
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.background),
         ) {
             IconListItem(
                 title = "Source code",
                 icon = { Icon(EvaIcons.Outline.Github, contentDescription = "GitHub") },
                 onClick = {
                     openUrl(context, REPO_URL)
-                }
+                },
             )
             IconListItem(
                 title = "Open Source Licenses",
                 icon = {
                     Icon(
                         EvaIcons.Outline.BookOpen,
-                        contentDescription = "Open Source Licenses"
+                        contentDescription = "Open Source Licenses",
                     )
                 },
                 onClick = {
                     onNavigateToLicenses()
                 },
-                isSelected = isLicensesSelected)
+                isSelected = isLicensesSelected,
+            )
             SubtleHorizontalDivider()
             IconListItem(
                 title = "Feedback",
                 icon = { Icon(EvaIcons.Outline.Email, contentDescription = "Feedback") },
-                onClick = { sendFeedback(context) }
+                onClick = { sendFeedback(context) },
             )
             IconListItem(
                 title = "Rate this app",
                 icon = { Icon(EvaIcons.Outline.Star, contentDescription = "Rate this app") },
                 onClick = {
                     openUrl(context, GOOGLE_PLAY_URL)
-                }
+                },
             )
         }
     }

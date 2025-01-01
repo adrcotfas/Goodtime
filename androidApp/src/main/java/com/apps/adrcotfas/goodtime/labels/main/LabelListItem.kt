@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.labels.main
 
 import android.annotation.SuppressLint
@@ -42,7 +59,6 @@ import compose.icons.evaicons.outline.Edit
 import compose.icons.evaicons.outline.MoreVertical
 import compose.icons.evaicons.outline.Trash
 
-
 @Composable
 fun LabelListItem(
     label: Label,
@@ -54,7 +70,7 @@ fun LabelListItem(
     onEdit: () -> Unit,
     onDuplicate: () -> Unit,
     onArchive: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val labelName =
@@ -67,24 +83,33 @@ fun LabelListItem(
                 .background(MaterialTheme.colorScheme.background)
                 .clickable { onActivate() }
                 .let {
-                    if (active) it.background(
-                        MaterialTheme.colorScheme.secondaryContainer.copy(
-                            alpha = 0.1f
+                    if (active) {
+                        it.background(
+                            MaterialTheme.colorScheme.secondaryContainer.copy(
+                                alpha = 0.1f,
+                            ),
                         )
-                    ) else it
+                    } else {
+                        it
+                    }
                 }
                 .let {
-                    if (isDragging) it.background(
-                        MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.05f)
-                    ) else it
+                    if (isDragging) {
+                        it.background(
+                            MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.05f),
+                        )
+                    } else {
+                        it
+                    }
                 }
-                .padding(4.dp)
+                .padding(4.dp),
         ) {
             Icon(
                 modifier = dragModifier.clickable(
                     interactionSource = interactionSource,
                     indication = null,
-                    onClick = {}),
+                    onClick = {},
+                ),
                 imageVector = Icons.Filled.DragIndicator,
                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                 contentDescription = "Drag indicator for $labelName",
@@ -94,18 +119,24 @@ fun LabelListItem(
                     .padding(8.dp),
                 imageVector = if (active) {
                     Icons.AutoMirrored.Filled.Label
-                } else Icons.AutoMirrored.Outlined.Label,
-                contentDescription = (if (active) {
-                    "Active label"
-                } else "Inactive label") + ": $labelName",
-                tint = MaterialTheme.localColorsPalette.colors[label.colorIndex.toInt()]
+                } else {
+                    Icons.AutoMirrored.Outlined.Label
+                },
+                contentDescription = (
+                    if (active) {
+                        "Active label"
+                    } else {
+                        "Inactive label"
+                    }
+                    ) + ": $labelName",
+                tint = MaterialTheme.localColorsPalette.colors[label.colorIndex.toInt()],
             )
             Text(
                 modifier = Modifier.weight(1f),
                 text = labelName,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
             )
 
             if (label.isDefault()) {
@@ -120,12 +151,13 @@ fun LabelListItem(
                     IconButton(onClick = { dropDownMenuExpanded = true }) {
                         Icon(
                             EvaIcons.Outline.MoreVertical,
-                            contentDescription = "More about $labelName"
+                            contentDescription = "More about $labelName",
                         )
                     }
                     DropdownMenu(
                         expanded = dropDownMenuExpanded,
-                        onDismissRequest = { dropDownMenuExpanded = false }) {
+                        onDismissRequest = { dropDownMenuExpanded = false },
+                    ) {
                         DropdownMenuItem(
                             text = { Text("Edit") },
                             onClick = {
@@ -134,7 +166,8 @@ fun LabelListItem(
                             },
                             leadingIcon = {
                                 Icon(EvaIcons.Outline.Edit, contentDescription = "Edit $labelName")
-                            })
+                            },
+                        )
                         DropdownMenuItem(
                             text = { Text("Duplicate") },
                             onClick = {
@@ -144,9 +177,9 @@ fun LabelListItem(
                             leadingIcon = {
                                 Icon(
                                     EvaIcons.Outline.Copy,
-                                    contentDescription = "Duplicate $labelName"
+                                    contentDescription = "Duplicate $labelName",
                                 )
-                            }
+                            },
                         )
                         DropdownMenuItem(
                             text = { Text("Archive") },
@@ -157,9 +190,10 @@ fun LabelListItem(
                             leadingIcon = {
                                 Icon(
                                     EvaIcons.Outline.Archive,
-                                    contentDescription = "Archive $labelName"
+                                    contentDescription = "Archive $labelName",
                                 )
-                            })
+                            },
+                        )
                         DropdownMenuItem(
                             text = { Text("Delete") },
                             onClick = {
@@ -169,14 +203,14 @@ fun LabelListItem(
                             leadingIcon = {
                                 Icon(
                                     EvaIcons.Outline.Trash,
-                                    contentDescription = "Delete $labelName"
+                                    contentDescription = "Delete $labelName",
                                 )
-                            })
+                            },
+                        )
                     }
                 }
             }
         }
-
     }
 }
 
@@ -187,7 +221,7 @@ fun LabelCardPreview() {
         label = Label(
             name = "Default",
             useDefaultTimeProfile = false,
-            timerProfile = TimerProfile(sessionsBeforeLongBreak = 4)
+            timerProfile = TimerProfile(sessionsBeforeLongBreak = 4),
         ),
         isActive = true,
         isDragging = false,
@@ -196,6 +230,6 @@ fun LabelCardPreview() {
         onEdit = {},
         onDuplicate = {},
         onArchive = {},
-        onDelete = {}
+        onDelete = {},
     )
 }

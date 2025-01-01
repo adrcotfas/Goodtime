@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.labels.main
 
 import androidx.activity.compose.BackHandler
@@ -48,7 +65,7 @@ import com.apps.adrcotfas.goodtime.R
 import com.apps.adrcotfas.goodtime.common.isPortrait
 import com.apps.adrcotfas.goodtime.data.model.isDefault
 import com.apps.adrcotfas.goodtime.labels.DeleteConfirmationDialog
-import com.apps.adrcotfas.goodtime.labels.add_edit.AddEditLabelScreen
+import com.apps.adrcotfas.goodtime.labels.addedit.AddEditLabelScreen
 import com.apps.adrcotfas.goodtime.labels.archived.ARCHIVED_LABELS_SCREEN_DESTINATION_ID
 import com.apps.adrcotfas.goodtime.labels.archived.ArchivedLabelsScreen
 import com.apps.adrcotfas.goodtime.ui.DraggableItem
@@ -61,13 +78,13 @@ import compose.icons.evaicons.outline.Archive
 import compose.icons.evaicons.outline.Plus
 import org.koin.androidx.compose.koinViewModel
 
-//TODO: consider sub-labels?
+// TODO: consider sub-labels?
 // not here but it can be part of the stats screen; the only precondition can be the name of the labels,
 // for example group together according to a prefix, e.g. "Work/Label1", "Work/Label2", "Work/Label3" etc.
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun LabelsScreen(
-    viewModel: LabelsViewModel = koinViewModel()
+    viewModel: LabelsViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     if (uiState.isLoading) return
@@ -119,7 +136,7 @@ fun LabelsScreen(
                 Scaffold(
                     modifier = Modifier
                         .windowInsetsPadding(
-                            WindowInsets.statusBars
+                            WindowInsets.statusBars,
                         ),
                     topBar = {
                         CenterAlignedTopAppBar(
@@ -135,29 +152,30 @@ fun LabelsScreen(
                         AnimatedVisibility(
                             enter = slideInVertically(initialOffsetY = { it * 2 }) + fadeIn(),
                             exit = slideOutVertically(targetOffsetY = { it * 2 }) + fadeOut(),
-                            visible = showFab
+                            visible = showFab,
                         ) {
                             LargeFloatingActionButton(
                                 shape = CircleShape,
                                 onClick = {
                                     navigator.navigateToDetail("")
-                                }
+                                },
                             ) {
                                 Icon(EvaIcons.Outline.Plus, "Localized description")
                             }
                         }
                     },
-                    floatingActionButtonPosition = FabPosition.Center
+                    floatingActionButtonPosition = FabPosition.Center,
                 ) { paddingValues ->
                     LazyColumn(
                         state = listState,
                         modifier = Modifier
                             .fillMaxSize(),
-                        contentPadding = paddingValues
+                        contentPadding = paddingValues,
                     ) {
                         itemsIndexed(
                             labels,
-                            key = { _, item -> "${item.id}_${item.name}" }) { index, label ->
+                            key = { _, item -> "${item.id}_${item.name}" },
+                        ) { index, label ->
                             DraggableItem(dragDropState, index) { isDragging ->
                                 LabelListItem(
                                     label = label,
@@ -166,7 +184,7 @@ fun LabelsScreen(
                                     dragModifier = Modifier.dragContainer(
                                         dragDropState = dragDropState,
                                         key = "${label.id}_${label.name}",
-                                        onDragFinished = { viewModel.rearrangeLabelsToDisk() }
+                                        onDragFinished = { viewModel.rearrangeLabelsToDisk() },
                                     ),
                                     onActivate = {
                                         if (activeLabelName != label.name) {
@@ -182,14 +200,14 @@ fun LabelsScreen(
                                     onDuplicate = {
                                         viewModel.duplicateLabel(
                                             if (label.isDefault()) defaultLabelName else label.name,
-                                            label.isDefault()
+                                            label.isDefault(),
                                         )
                                     },
                                     onArchive = { viewModel.setArchived(label.name, true) },
                                     onDelete = {
                                         labelToDelete = label.name
                                         showDeleteConfirmationDialog = true
-                                    }
+                                    },
                                 )
                             }
                         }
@@ -201,7 +219,8 @@ fun LabelsScreen(
                                 viewModel.deleteLabel(labelToDelete)
                                 showDeleteConfirmationDialog = false
                             },
-                            onDismiss = { showDeleteConfirmationDialog = false })
+                            onDismiss = { showDeleteConfirmationDialog = false },
+                        )
                     }
                 }
             }
@@ -218,7 +237,7 @@ fun LabelsScreen(
                                     navigator.navigateToDetail(uiState.activeLabelName)
                                 }
                             },
-                            showTopBar = isPortrait
+                            showTopBar = isPortrait,
                         )
                     } else {
                         AddEditLabelScreen(
@@ -233,12 +252,12 @@ fun LabelsScreen(
                             showNavigationIcon = isPortrait,
                             onNavigateBack = {
                                 navigator.navigateBack()
-                            }
+                            },
                         )
                     }
                 }
             }
-        }
+        },
     )
 }
 
@@ -251,14 +270,19 @@ fun ArchivedLabelsButton(count: Int, onClick: () -> Unit) {
                 Badge(
                     modifier = Modifier.padding(end = 8.dp),
                     containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
                 ) {
-                    Text(count.let {
-                        if (it > 9) "9+"
-                        else it.toString()
-                    })
+                    Text(
+                        count.let {
+                            if (it > 9) {
+                                "9+"
+                            } else {
+                                it.toString()
+                            }
+                        },
+                    )
                 }
-            }
+            },
         ) {
             IconButton(onClick = onClick) {
                 Icon(

@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.main
 
 import android.widget.Toast
@@ -57,8 +74,8 @@ import com.apps.adrcotfas.goodtime.bl.TimeUtils.formatMilliseconds
 import com.apps.adrcotfas.goodtime.bl.TimerType
 import com.apps.adrcotfas.goodtime.data.model.Label
 import com.apps.adrcotfas.goodtime.data.settings.TimerStyleData
-import com.apps.adrcotfas.goodtime.main.dial_control.DialControlState
-import com.apps.adrcotfas.goodtime.main.dial_control.DialRegion
+import com.apps.adrcotfas.goodtime.main.dialcontrol.DialControlState
+import com.apps.adrcotfas.goodtime.main.dialcontrol.DialRegion
 import com.apps.adrcotfas.goodtime.shared.R
 import com.apps.adrcotfas.goodtime.ui.ApplicationTheme
 import com.apps.adrcotfas.goodtime.ui.common.hideUnless
@@ -69,7 +86,7 @@ import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ShoppingBag
 import kotlinx.coroutines.delay
 
-//TODO add another status indicator for the break budget. imagine a bag with a number [ (bag) 3' ]
+// TODO add another status indicator for the break budget. imagine a bag with a number [ (bag) 3' ]
 @Composable
 fun MainTimerView(
     modifier: Modifier,
@@ -79,7 +96,7 @@ fun MainTimerView(
     timerStyle: TimerStyleData,
     domainLabel: DomainLabel,
     onStart: () -> Unit,
-    onToggle: (() -> Boolean)? = null
+    onToggle: (() -> Boolean)? = null,
 ) {
     val context = LocalContext.current
 
@@ -93,7 +110,7 @@ fun MainTimerView(
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         CurrentStatusSection(
             Modifier.hideUnless(timerUiState.isActive),
@@ -107,7 +124,7 @@ fun MainTimerView(
             breakBudget = timerUiState.breakBudgetMinutes,
             showStatus = timerStyle.showStatus,
             showStreak = timerStyle.showStreak,
-            showBreakBudget = timerStyle.showBreakBudget && domainLabel.profile.isBreakEnabled
+            showBreakBudget = timerStyle.showBreakBudget && domainLabel.profile.isBreakEnabled,
         )
 
         TimerTextView(
@@ -128,12 +145,13 @@ fun MainTimerView(
                         }
                     }
                 }
-            })
+            },
+        )
 
         LabelSection(
             showLabel = timerStyle.showLabel,
             labelName = label.name,
-            color = labelColor
+            color = labelColor,
         )
     }
 }
@@ -172,7 +190,7 @@ fun CurrentStatusSection(
             isPaused = isPaused,
             isBreak = isBreak,
             color = statusColor,
-            backgroundColor = statusBackgroundColor
+            backgroundColor = statusBackgroundColor,
         )
         StreakIndicator(
             showStreak = showStreak && isCountdown,
@@ -180,13 +198,13 @@ fun CurrentStatusSection(
             streak = streak,
             sessionsBeforeLongBreak = sessionsBeforeLongBreak,
             color = statusColor,
-            backgroundColor = statusBackgroundColor
+            backgroundColor = statusBackgroundColor,
         )
         BreakBudgetIndicator(
             showBreakBudget = showBreakBudget && !isCountdown,
             breakBudget = breakBudget,
             color = statusColor,
-            backgroundColor = statusBackgroundColor
+            backgroundColor = statusBackgroundColor,
         )
     }
 }
@@ -197,17 +215,18 @@ fun StatusIndicator(
     isPaused: Boolean,
     isBreak: Boolean,
     color: Color,
-    backgroundColor: Color
+    backgroundColor: Color,
 ) {
     val alpha = remember(isPaused) { Animatable(1f) }
     LaunchedEffect(isPaused) {
         if (!isPaused) {
             delay(500)
             alpha.animateTo(
-                targetValue = 0.3f, animationSpec = infiniteRepeatable(
+                targetValue = 0.3f,
+                animationSpec = infiniteRepeatable(
                     animation = tween(1000, easing = EaseInOut),
-                    repeatMode = RepeatMode.Reverse
-                )
+                    repeatMode = RepeatMode.Reverse,
+                ),
             )
         } else {
             alpha.animateTo(targetValue = 1f, animationSpec = tween(200))
@@ -217,7 +236,7 @@ fun StatusIndicator(
     AnimatedVisibility(
         showStatus,
         enter = fadeIn() + expandHorizontally(),
-        exit = fadeOut() + shrinkHorizontally()
+        exit = fadeOut() + shrinkHorizontally(),
     ) {
         val imageSize = with(LocalDensity.current) {
             MaterialTheme.typography.labelLarge.fontSize.value.sp.toDp() * 2f
@@ -229,12 +248,12 @@ fun StatusIndicator(
                 .size(imageSize)
                 .clip(MaterialTheme.shapes.extraSmall)
                 .background(backgroundColor)
-                .padding(5.dp)
+                .padding(5.dp),
         ) {
             Crossfade(
                 modifier = Modifier.align(Alignment.Center),
                 targetState = isBreak,
-                label = "label icon"
+                label = "label icon",
             ) {
                 if (it) {
                     Image(
@@ -261,13 +280,13 @@ fun StreakIndicator(
     streak: Int,
     sessionsBeforeLongBreak: Int,
     color: Color,
-    backgroundColor: Color
+    backgroundColor: Color,
 ) {
     if (sessionsBeforeLongBreak >= 2) {
         AnimatedVisibility(
             showStreak,
             enter = fadeIn() + expandHorizontally(),
-            exit = fadeOut() + shrinkHorizontally()
+            exit = fadeOut() + shrinkHorizontally(),
         ) {
             val imageSize = with(LocalDensity.current) {
                 MaterialTheme.typography.labelLarge.fontSize.value.sp.toDp() * 2f
@@ -277,7 +296,7 @@ fun StreakIndicator(
                     .padding(5.dp)
                     .size(imageSize)
                     .clip(MaterialTheme.shapes.extraSmall)
-                    .background(backgroundColor)
+                    .background(backgroundColor),
 
             ) {
                 val numerator = (streak % sessionsBeforeLongBreak).run {
@@ -287,7 +306,7 @@ fun StreakIndicator(
                     modifier = Modifier.align(Alignment.Center),
                     numerator = numerator,
                     denominator = sessionsBeforeLongBreak,
-                    color = color
+                    color = color,
                 )
             }
         }
@@ -299,12 +318,12 @@ fun BreakBudgetIndicator(
     showBreakBudget: Boolean,
     breakBudget: Long,
     color: Color,
-    backgroundColor: Color
+    backgroundColor: Color,
 ) {
     AnimatedVisibility(
         showBreakBudget,
         enter = fadeIn() + expandHorizontally(),
-        exit = fadeOut() + shrinkHorizontally()
+        exit = fadeOut() + shrinkHorizontally(),
     ) {
         val imageSize = with(LocalDensity.current) {
             MaterialTheme.typography.labelLarge.fontSize.value.sp.toDp() * 2f
@@ -315,25 +334,25 @@ fun BreakBudgetIndicator(
                 .height(imageSize)
                 .clip(MaterialTheme.shapes.extraSmall)
                 .background(backgroundColor)
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 8.dp),
         ) {
             Row(
                 modifier = Modifier.align(Alignment.Center),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
                     modifier = Modifier.size(imageSize * 0.65f),
                     imageVector = EvaIcons.Outline.ShoppingBag,
                     contentDescription = "Selected Color",
-                    tint = color
+                    tint = color,
                 )
                 Spacer(modifier = Modifier.size(4.dp))
                 Text(
                     text = "$breakBudget'",
                     style = MaterialTheme.typography.labelLarge.copy(
                         color = color,
-                        fontWeight = FontWeight.Bold
-                    )
+                        fontWeight = FontWeight.Bold,
+                    ),
                 )
             }
         }
@@ -352,8 +371,9 @@ fun FractionText(
 
     val baseStyle =
         MaterialTheme.typography.labelLarge.copy(
-            fontWeight = FontWeight.Bold, color = color,
-            letterSpacing = TextUnit(0.0f, TextUnitType.Sp)
+            fontWeight = FontWeight.Bold,
+            color = color,
+            letterSpacing = TextUnit(0.0f, TextUnitType.Sp),
         ).toSpanStyle()
 
     val annotatedString = buildAnnotatedString {
@@ -370,7 +390,7 @@ fun FractionText(
 
     Text(
         modifier = modifier.then(Modifier.padding(end = 1.dp)),
-        text = annotatedString
+        text = annotatedString,
     )
 }
 
@@ -382,12 +402,12 @@ fun TimerTextView(
     color: Color,
     timerStyle: TimerStyleData,
     isPaused: Boolean,
-    onPress: (() -> Unit)? = null
+    onPress: (() -> Unit)? = null,
 ) {
     val scale by animateFloatAsState(
         targetValue = if (state?.isPressed == true) 0.96f else 1f,
         animationSpec = tween(durationMillis = 100),
-        label = "timer scale"
+        label = "timer scale",
     )
 
     val alpha = remember { Animatable(1f) }
@@ -395,10 +415,11 @@ fun TimerTextView(
         if (isPaused) {
             delay(200)
             alpha.animateTo(
-                targetValue = 0.3f, animationSpec = infiniteRepeatable(
+                targetValue = 0.3f,
+                animationSpec = infiniteRepeatable(
                     animation = tween(1000, easing = EaseInOut),
-                    repeatMode = RepeatMode.Reverse
-                )
+                    repeatMode = RepeatMode.Reverse,
+                ),
             )
         } else {
             alpha.animateTo(targetValue = 1f, animationSpec = tween(200))
@@ -411,7 +432,7 @@ fun TimerTextView(
             interactionSource = null,
             onClick = {
                 onPress()
-            }
+            },
         )
     } ?: Modifier
     Text(
@@ -424,7 +445,7 @@ fun TimerTextView(
         style = TextStyle(
             fontSize = timerStyle.inUseFontSize().em,
             fontFamily = timerFontAzeretMap[timerStyle.fontWeight],
-            color = color
+            color = color,
         ),
     )
 }
@@ -439,15 +460,15 @@ fun LabelSection(showLabel: Boolean, labelName: String, color: Color) {
             .wrapContentSize()
             .clip(MaterialTheme.shapes.extraSmall)
             .background(backgroundColor)
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = 8.dp, vertical = 4.dp),
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = labelName,
             style = MaterialTheme.typography.labelLarge.copy(
                 color = color,
-                fontWeight = FontWeight.Normal
-            )
+                fontWeight = FontWeight.Normal,
+            ),
         )
     }
 }
@@ -467,7 +488,7 @@ fun CurrentStatusSectionPreview() {
             breakBudget = 30,
             showStatus = true,
             showStreak = true,
-            showBreakBudget = true
+            showBreakBudget = true,
         )
     }
 }
@@ -479,7 +500,7 @@ fun LabelSectionPreview() {
         LabelSection(
             showLabel = true,
             labelName = "Work",
-            color = MaterialTheme.localColorsPalette.colors[13]
+            color = MaterialTheme.localColorsPalette.colors[13],
         )
     }
 }

@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.bl.notifications
 
 import android.app.Notification
@@ -15,12 +32,11 @@ import com.apps.adrcotfas.goodtime.bl.DomainTimerData
 import com.apps.adrcotfas.goodtime.bl.TimerService
 import com.apps.adrcotfas.goodtime.bl.TimerState
 import com.apps.adrcotfas.goodtime.bl.TimerType
-import com.apps.adrcotfas.goodtime.bl.isBreak
 import com.apps.adrcotfas.goodtime.bl.isWork
 import com.apps.adrcotfas.goodtime.shared.R as SharedR
 
-//TODO: count-up should have a stop button action
-//TODO: add break icon to break notifications
+// TODO: count-up should have a stop button action
+// TODO: add break icon to break notifications
 class NotificationArchManager(private val context: Context, private val activityClass: Class<*>) {
 
     private val notificationManager: NotificationManager =
@@ -39,7 +55,7 @@ class NotificationArchManager(private val context: Context, private val activity
 
         val stateText = if (timerType.isWork) {
             if (running) {
-                //TODO: extract strings
+                // TODO: extract strings
                 "Work session in progress"
             } else {
                 "Work session paused"
@@ -63,8 +79,8 @@ class NotificationArchManager(private val context: Context, private val activity
                     base = baseTime,
                     running = running,
                     stateText = stateText,
-                    isCountDown = isCountDown
-                )
+                    isCountDown = isCountDown,
+                ),
             )
         }
         if (isCountDown) {
@@ -72,35 +88,35 @@ class NotificationArchManager(private val context: Context, private val activity
                 if (running) {
                     val pauseAction = createNotificationAction(
                         title = "Pause",
-                        action = TimerService.Companion.Action.Toggle
+                        action = TimerService.Companion.Action.Toggle,
                     )
                     builder.addAction(pauseAction)
                     val addOneMinuteAction = createNotificationAction(
                         title = "+1 min",
-                        action = TimerService.Companion.Action.AddOneMinute
+                        action = TimerService.Companion.Action.AddOneMinute,
                     )
                     builder.addAction(addOneMinuteAction)
                 } else {
                     val resumeAction = createNotificationAction(
                         title = "Resume",
-                        action = TimerService.Companion.Action.Toggle
+                        action = TimerService.Companion.Action.Toggle,
                     )
                     builder.addAction(resumeAction)
                     val stopAction = createNotificationAction(
                         title = "Stop",
-                        action = TimerService.Companion.Action.DoReset
+                        action = TimerService.Companion.Action.DoReset,
                     )
                     builder.addAction(stopAction)
                 }
             } else {
                 val stopAction = createNotificationAction(
                     title = "Stop",
-                    action = TimerService.Companion.Action.DoReset
+                    action = TimerService.Companion.Action.DoReset,
                 )
                 builder.addAction(stopAction)
                 val addOneMinuteAction = createNotificationAction(
                     title = "+1 min",
-                    action = TimerService.Companion.Action.AddOneMinute
+                    action = TimerService.Companion.Action.AddOneMinute,
                 )
                 builder.addAction(addOneMinuteAction)
             }
@@ -111,7 +127,7 @@ class NotificationArchManager(private val context: Context, private val activity
             }
             val nextAction = createNotificationAction(
                 title = nextActionTitle,
-                action = TimerService.Companion.Action.Skip
+                action = TimerService.Companion.Action.Skip,
             )
             if (data.label.profile.isBreakEnabled) {
                 builder.addAction(nextAction)
@@ -119,7 +135,7 @@ class NotificationArchManager(private val context: Context, private val activity
         } else {
             val stopAction = createNotificationAction(
                 title = "Stop",
-                action = TimerService.Companion.Action.DoReset
+                action = TimerService.Companion.Action.DoReset,
             )
             builder.addAction(stopAction)
         }
@@ -160,7 +176,7 @@ class NotificationArchManager(private val context: Context, private val activity
                 }
             val nextAction = createNotificationAction(
                 title = nextActionTitle,
-                action = TimerService.Companion.Action.Next
+                action = TimerService.Companion.Action.Next,
             )
             extender.addAction(nextAction)
             builder.addAction(nextAction)
@@ -225,7 +241,7 @@ class NotificationArchManager(private val context: Context, private val activity
     }
 
     private fun createOpenActivityIntent(
-        activityClass: Class<*>
+        activityClass: Class<*>,
     ): PendingIntent {
         val intent = Intent(context, activityClass)
         intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -233,14 +249,14 @@ class NotificationArchManager(private val context: Context, private val activity
             context,
             0,
             intent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_IMMUTABLE,
         )
     }
 
     private fun createNotificationAction(
         icon: IconCompat? = null,
         title: String,
-        action: TimerService.Companion.Action
+        action: TimerService.Companion.Action,
     ): NotificationCompat.Action {
         return NotificationCompat.Action.Builder(
             icon,
@@ -249,8 +265,8 @@ class NotificationArchManager(private val context: Context, private val activity
                 context,
                 0,
                 TimerService.createIntentWithAction(context, action),
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            ),
         ).build()
     }
 

@@ -1,4 +1,21 @@
-package com.apps.adrcotfas.goodtime.settings.user_interface
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.apps.adrcotfas.goodtime.settings.general
 
 import android.content.Intent
 import android.net.Uri
@@ -37,10 +54,10 @@ import com.apps.adrcotfas.goodtime.data.settings.ThemePreference
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel.Companion.firstDayOfWeekOptions
 import com.apps.adrcotfas.goodtime.settings.toSecondOfDay
+import com.apps.adrcotfas.goodtime.ui.common.BetterListItem
 import com.apps.adrcotfas.goodtime.ui.common.CheckboxListItem
 import com.apps.adrcotfas.goodtime.ui.common.CompactPreferenceGroupTitle
 import com.apps.adrcotfas.goodtime.ui.common.DropdownMenuListItem
-import com.apps.adrcotfas.goodtime.ui.common.BetterListItem
 import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 import com.apps.adrcotfas.goodtime.ui.common.TimePicker
 import com.apps.adrcotfas.goodtime.ui.common.TopBar
@@ -88,16 +105,16 @@ fun GeneralSettingsScreen(
             TopBar(
                 isVisible = showTopBar,
                 title = "General settings",
-                onNavigateBack = { onNavigateBack() }
+                onNavigateBack = { onNavigateBack() },
             )
-        }
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = paddingValues.calculateTopPadding())
                 .verticalScroll(rememberScrollState())
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.background),
         ) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val activity = context.findActivity()
@@ -108,18 +125,18 @@ fun GeneralSettingsScreen(
                         val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS)
                         intent.data = Uri.fromParts("package", activity?.packageName, null)
                         activity?.startActivity(intent)
-                    }
+                    },
                 )
             }
             BetterListItem(
                 title = "Workday start",
                 trailing = secondsOfDayToTimerFormat(
                     uiState.settings.workdayStart,
-                    DateFormat.is24HourFormat(context)
+                    DateFormat.is24HourFormat(context),
                 ),
                 onClick = {
                     viewModel.setShowWorkdayStartPicker(true)
-                }
+                },
             )
             DropdownMenuListItem(
                 title = "Start of the week",
@@ -128,28 +145,28 @@ fun GeneralSettingsScreen(
                 dropdownMenuOptions = firstDayOfWeekOptions.map {
                     it.getDisplayName(
                         TextStyle.FULL,
-                        locale
+                        locale,
                     )
                 },
                 onDropdownMenuItemSelected = {
                     viewModel.setFirstDayOfWeek(firstDayOfWeekOptions[it].isoDayNumber)
-                }
+                },
             )
 
             DropdownMenuListItem(
                 title = "Theme",
-                //TODO: use localized strings instead
+                // TODO: use localized strings instead
                 value = uiState.settings.uiSettings.themePreference.prettyName(),
                 dropdownMenuOptions = prettyNames<ThemePreference>(),
                 onDropdownMenuItemSelected = {
                     viewModel.setThemeOption(ThemePreference.entries[it])
-                }
+                },
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 CheckboxListItem(
                     title = "Use Dynamic Color",
-                    checked = uiState.settings.uiSettings.useDynamicColor
+                    checked = uiState.settings.uiSettings.useDynamicColor,
                 ) {
                     viewModel.setUseDynamicColor(it)
                 }
@@ -159,27 +176,27 @@ fun GeneralSettingsScreen(
             CompactPreferenceGroupTitle(text = "During work sessions")
             CheckboxListItem(
                 title = "Fullscreen mode",
-                checked = uiState.settings.uiSettings.fullscreenMode
+                checked = uiState.settings.uiSettings.fullscreenMode,
             ) {
                 viewModel.setFullscreenMode(it)
             }
             CheckboxListItem(
                 title = "Keep the screen on",
-                checked = uiState.settings.uiSettings.keepScreenOn
+                checked = uiState.settings.uiSettings.keepScreenOn,
             ) {
                 viewModel.setKeepScreenOn(it)
             }
             CheckboxListItem(
                 title = "Screensaver mode",
                 checked = uiState.settings.uiSettings.screensaverMode,
-                enabled = uiState.settings.uiSettings.keepScreenOn
+                enabled = uiState.settings.uiSettings.keepScreenOn,
             ) {
                 viewModel.setScreensaverMode(it)
             }
             CheckboxListItem(
                 title = "Do not disturb mode",
                 subtitle = if (isNotificationPolicyAccessGranted) null else "Click to grant permission",
-                checked = uiState.settings.uiSettings.dndDuringWork
+                checked = uiState.settings.uiSettings.dndDuringWork,
             ) {
                 if (isNotificationPolicyAccessGranted) {
                     viewModel.setDndDuringWork(it)
@@ -193,7 +210,7 @@ fun GeneralSettingsScreen(
             val timePickerState = rememberTimePickerState(
                 initialHour = workdayStart.hour,
                 initialMinute = workdayStart.minute,
-                is24Hour = DateFormat.is24HourFormat(context)
+                is24Hour = DateFormat.is24HourFormat(context),
             )
             TimePicker(
                 onDismiss = { viewModel.setShowWorkdayStartPicker(false) },
@@ -201,7 +218,7 @@ fun GeneralSettingsScreen(
                     viewModel.setWorkDayStart(timePickerState.toSecondOfDay())
                     viewModel.setShowWorkdayStartPicker(false)
                 },
-                timePickerState = timePickerState
+                timePickerState = timePickerState,
             )
         }
     }

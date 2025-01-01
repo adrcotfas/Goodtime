@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.bl.notifications
 
 import android.content.Context
@@ -16,7 +33,7 @@ import kotlinx.coroutines.launch
 
 data class TorchManagerData(
     val enabled: Boolean = false,
-    val loop: Boolean = false
+    val loop: Boolean = false,
 )
 
 /**
@@ -27,7 +44,7 @@ class TorchManager(
     readFromSettingsScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
     private val playerScope: CoroutineScope = CoroutineScope(Dispatchers.Default),
     private val settingsRepo: SettingsRepository,
-    private val logger: Logger
+    private val logger: Logger,
 ) {
     private val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private var cameraId: String? = null
@@ -48,7 +65,7 @@ class TorchManager(
             settingsRepo.settings.map {
                 TorchManagerData(
                     enabled = it.enableTorch,
-                    loop = it.insistentNotification
+                    loop = it.insistentNotification,
                 )
             }.collect {
                 data = it
@@ -65,7 +82,7 @@ class TorchManager(
                 try {
                     val pattern = listOf(100L, 50L, 100L)
                     if (data.loop) {
-                        while(isActive) {
+                        while (isActive) {
                             cameraManager.lightUp(pattern, it)
                             delay(1000)
                         }

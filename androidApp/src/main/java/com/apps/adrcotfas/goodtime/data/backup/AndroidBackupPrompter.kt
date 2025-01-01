@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.data.backup
 
 import android.content.Context
@@ -19,8 +36,8 @@ import java.nio.file.StandardCopyOption
 class RestoreActivityResultLauncherManager(
     private val context: Context,
     private val coroutineScope: CoroutineScope = CoroutineScope(
-        Dispatchers.IO
-    )
+        Dispatchers.IO,
+    ),
 ) {
     private var importActivityResultLauncher: ManagedActivityResultLauncher<String, Uri?>? = null
     private var importedFilePath: String? = null
@@ -44,7 +61,7 @@ class RestoreActivityResultLauncherManager(
                 Files.copy(
                     input,
                     Paths.get(importedFilePath!!),
-                    StandardCopyOption.REPLACE_EXISTING
+                    StandardCopyOption.REPLACE_EXISTING,
                 )
             }
 
@@ -74,8 +91,8 @@ class AndroidBackupPrompter(
                 FileProvider.getUriForFile(
                     context,
                     context.packageName + ".provider",
-                    fileToSharePath.toFile()
-                )
+                    fileToSharePath.toFile(),
+                ),
             )
             flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
         }
@@ -83,14 +100,14 @@ class AndroidBackupPrompter(
         activityProvider.activeActivity?.startActivity(
             Intent.createChooser(
                 intent,
-                "Backup"
-            )
+                "Backup",
+            ),
         ) ?: throw IllegalStateException("No activity found")
     }
 
     override suspend fun promptUserForRestore(
         importedFilePath: String,
-        callback: suspend () -> Unit
+        callback: suspend () -> Unit,
     ) {
         activityResultLauncherManager.launch(importedFilePath, callback)
     }

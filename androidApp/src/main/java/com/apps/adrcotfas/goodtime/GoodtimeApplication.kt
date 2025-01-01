@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime
 
 import android.app.Application
@@ -5,28 +22,28 @@ import android.content.Context
 import com.apps.adrcotfas.goodtime.bl.ALARM_MANAGER_HANDLER
 import com.apps.adrcotfas.goodtime.bl.AlarmManagerHandler
 import com.apps.adrcotfas.goodtime.bl.EventListener
-import com.apps.adrcotfas.goodtime.bl.notifications.NotificationArchManager
 import com.apps.adrcotfas.goodtime.bl.SOUND_AND_VIBRATION_PLAYER
-import com.apps.adrcotfas.goodtime.bl.notifications.SoundVibrationAndTorchPlayer
-import com.apps.adrcotfas.goodtime.bl.notifications.SoundPlayer
 import com.apps.adrcotfas.goodtime.bl.TIMER_SERVICE_HANDLER
 import com.apps.adrcotfas.goodtime.bl.TimeProvider
 import com.apps.adrcotfas.goodtime.bl.TimerServiceStarter
+import com.apps.adrcotfas.goodtime.bl.notifications.NotificationArchManager
+import com.apps.adrcotfas.goodtime.bl.notifications.SoundPlayer
+import com.apps.adrcotfas.goodtime.bl.notifications.SoundVibrationAndTorchPlayer
 import com.apps.adrcotfas.goodtime.bl.notifications.TorchManager
 import com.apps.adrcotfas.goodtime.bl.notifications.VibrationPlayer
-import com.apps.adrcotfas.goodtime.data.backup.RestoreActivityResultLauncherManager
 import com.apps.adrcotfas.goodtime.data.backup.AndroidBackupPrompter
+import com.apps.adrcotfas.goodtime.data.backup.RestoreActivityResultLauncherManager
 import com.apps.adrcotfas.goodtime.data.local.backup.BackupPrompter
 import com.apps.adrcotfas.goodtime.di.getWith
 import com.apps.adrcotfas.goodtime.di.insertKoin
-import com.apps.adrcotfas.goodtime.settings.SoundsViewModel
+import com.apps.adrcotfas.goodtime.settings.notifications.SoundsViewModel
 import com.apps.adrcotfas.goodtime.settings.reminders.ReminderHelper
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import org.koin.core.module.dsl.viewModel
 
 class GoodtimeApplication : Application() {
     private val applicationScope = MainScope()
@@ -47,7 +64,7 @@ class GoodtimeApplication : Application() {
                 single<NotificationArchManager> {
                     NotificationArchManager(
                         get<Context>(),
-                        MainActivity::class.java
+                        MainActivity::class.java,
                     )
                 }
                 single<EventListener>(named(EventListener.TIMER_SERVICE_HANDLER)) {
@@ -57,49 +74,49 @@ class GoodtimeApplication : Application() {
                     AlarmManagerHandler(
                         get<Context>(),
                         get<TimeProvider>(),
-                        getWith(AlarmManagerHandler::class.simpleName)
+                        getWith(AlarmManagerHandler::class.simpleName),
                     )
                 }
                 single<ReminderHelper> {
                     ReminderHelper(
                         get(),
                         get(),
-                        getWith(ReminderHelper::class.simpleName)
+                        getWith(ReminderHelper::class.simpleName),
                     )
                 }
                 viewModel<SoundsViewModel> {
                     SoundsViewModel(
-                        settingsRepository = get()
+                        settingsRepository = get(),
                     )
                 }
                 single {
                     SoundPlayer(
                         context = get(),
                         settingsRepo = get(),
-                        logger = getWith(SoundPlayer::class.simpleName)
+                        logger = getWith(SoundPlayer::class.simpleName),
                     )
                 }
                 single {
                     VibrationPlayer(
                         context = get(),
-                        settingsRepo = get()
+                        settingsRepo = get(),
                     )
                 }
                 single {
                     TorchManager(
                         context = get(),
                         settingsRepo = get(),
-                        logger = getWith(TorchManager::class.simpleName)
+                        logger = getWith(TorchManager::class.simpleName),
                     )
                 }
                 single<EventListener>(named(EventListener.SOUND_AND_VIBRATION_PLAYER)) {
                     SoundVibrationAndTorchPlayer(
                         soundPlayer = get(),
                         vibrationPlayer = get(),
-                        torchManager = get()
+                        torchManager = get(),
                     )
                 }
-            }
+            },
         )
         val reminderHelper = get<ReminderHelper>()
         applicationScope.launch {

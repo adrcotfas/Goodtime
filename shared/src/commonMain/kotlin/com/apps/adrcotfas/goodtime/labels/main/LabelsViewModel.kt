@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.labels.main
 
 import androidx.lifecycle.ViewModel
@@ -46,7 +63,7 @@ val LabelsUiState.unarchivedLabels: List<Label>
 
 class LabelsViewModel(
     private val repo: LocalDataRepository,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LabelsUiState())
@@ -134,9 +151,11 @@ class LabelsViewModel(
 
     fun rearrangeLabel(fromIndex: Int, toIndex: Int) {
         _uiState.update {
-            it.copy(labels = it.unarchivedLabels.toMutableList().apply {
-                add(toIndex, removeAt(fromIndex))
-            })
+            it.copy(
+                labels = it.unarchivedLabels.toMutableList().apply {
+                    add(toIndex, removeAt(fromIndex))
+                },
+            )
         }
     }
 
@@ -154,16 +173,18 @@ class LabelsViewModel(
     fun duplicateLabel(name: String, isDefault: Boolean = false) {
         viewModelScope.launch {
             _uiState.update { uiState ->
-                uiState.copy(labels = uiState.labels.toMutableList().apply {
-                    val index =
-                        indexOfFirst { it.name == if (isDefault) Label.DEFAULT_LABEL_NAME else name }
-                    if (index != -1) {
-                        val label = get(index)
-                        val newLabelName = generateUniqueNameForDuplicate(name, map { it.name })
-                        val newLabel = label.copy(name = newLabelName)
-                        insertLabelAt(newLabel, index + 1)
-                    }
-                })
+                uiState.copy(
+                    labels = uiState.labels.toMutableList().apply {
+                        val index =
+                            indexOfFirst { it.name == if (isDefault) Label.DEFAULT_LABEL_NAME else name }
+                        if (index != -1) {
+                            val label = get(index)
+                            val newLabelName = generateUniqueNameForDuplicate(name, map { it.name })
+                            val newLabel = label.copy(name = newLabelName)
+                            insertLabelAt(newLabel, index + 1)
+                        }
+                    },
+                )
             }
         }
     }
@@ -171,15 +192,17 @@ class LabelsViewModel(
     private fun insertLabelAt(label: Label, index: Int) {
         viewModelScope.launch {
             _uiState.update { state ->
-                state.copy(labels = state.labels.toMutableList().apply {
-                    add(index, label)
-                })
+                state.copy(
+                    labels = state.labels.toMutableList().apply {
+                        add(index, label)
+                    },
+                )
             }
             repo.insertLabelAndBulkRearrange(
                 label,
                 _uiState.value.unarchivedLabels.mapIndexed { index, label ->
                     Pair(label.name, index.toLong())
-                }
+                },
             )
         }
     }

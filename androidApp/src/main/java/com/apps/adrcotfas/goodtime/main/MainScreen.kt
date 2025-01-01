@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.main
 
 import androidx.compose.animation.AnimatedVisibility
@@ -33,13 +50,13 @@ import com.apps.adrcotfas.goodtime.bl.FinishActionType
 import com.apps.adrcotfas.goodtime.bl.isWork
 import com.apps.adrcotfas.goodtime.common.isPortrait
 import com.apps.adrcotfas.goodtime.common.screenWidth
-import com.apps.adrcotfas.goodtime.main.dial_control.DialConfig
-import com.apps.adrcotfas.goodtime.main.dial_control.DialControl
-import com.apps.adrcotfas.goodtime.main.dial_control.DialControlButton
-import com.apps.adrcotfas.goodtime.main.dial_control.DialRegion
-import com.apps.adrcotfas.goodtime.main.dial_control.rememberDialControlState
+import com.apps.adrcotfas.goodtime.main.dialcontrol.DialConfig
+import com.apps.adrcotfas.goodtime.main.dialcontrol.DialControl
+import com.apps.adrcotfas.goodtime.main.dialcontrol.DialControlButton
+import com.apps.adrcotfas.goodtime.main.dialcontrol.DialRegion
+import com.apps.adrcotfas.goodtime.main.dialcontrol.rememberDialControlState
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel
-import com.apps.adrcotfas.goodtime.settings.user_interface.InitTimerStyle
+import com.apps.adrcotfas.goodtime.settings.timerstyle.InitTimerStyle
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
@@ -48,7 +65,7 @@ import kotlin.math.roundToInt
 @Composable
 fun MainScreen(
     viewModel: MainViewModel = koinViewModel(),
-    settingsViewModel: SettingsViewModel = koinViewModel()
+    settingsViewModel: SettingsViewModel = koinViewModel(),
 ) {
     val mainUiState by viewModel.uiState.collectAsStateWithLifecycle(MainUiState())
     if (mainUiState.isLoading) return
@@ -81,7 +98,7 @@ fun MainScreen(
                 else -> {
                 }
             }
-        }
+        },
     )
 
     val yOffset = remember { Animatable(0f) }
@@ -89,7 +106,7 @@ fun MainScreen(
         screensaverMode = mainUiState.screensaverMode,
         isActive = timerUiState.isActive,
         screenWidth = configuration.screenWidth,
-        yOffset = yOffset
+        yOffset = yOffset,
     )
 
     val thereIsNoBreakBudget =
@@ -100,12 +117,20 @@ fun MainScreen(
         DialRegion.LEFT,
         if (!label.profile.isCountdown) {
             DialRegion.TOP
-        } else null,
-        if ((!label.profile.isCountdown &&
+        } else {
+            null
+        },
+        if ((
+                !label.profile.isCountdown &&
                     thereIsNoBreakBudget &&
-                    timerUiState.timerType.isWork)
-            || isCountUpWithoutBreaks
-        ) DialRegion.RIGHT else null
+                    timerUiState.timerType.isWork
+                ) ||
+            isCountUpWithoutBreaks
+        ) {
+            DialRegion.RIGHT
+        } else {
+            null
+        },
     )
 
     dialControlState.updateEnabledOptions(disabledOptions)
@@ -138,12 +163,15 @@ fun MainScreen(
 
     AnimatedVisibility(timerUiState.isReady, enter = fadeIn(), exit = fadeOut()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-
             val modifier = Modifier.offset {
-                if (configuration.isPortrait) IntOffset(
-                    0,
-                    yOffset.value.roundToInt()
-                ) else IntOffset(yOffset.value.roundToInt(), 0)
+                if (configuration.isPortrait) {
+                    IntOffset(
+                        0,
+                        yOffset.value.roundToInt(),
+                    )
+                } else {
+                    IntOffset(yOffset.value.roundToInt(), 0)
+                }
             }
 
             MainTimerView(
@@ -154,7 +182,7 @@ fun MainScreen(
                 timerStyle = timerStyle,
                 domainLabel = label,
                 onStart = viewModel::startTimer,
-                onToggle = viewModel::toggleTimer
+                onToggle = viewModel::toggleTimer,
             )
             DialControl(
                 modifier = modifier,
@@ -163,9 +191,9 @@ fun MainScreen(
                     DialControlButton(
                         disabled = dialControlState.isDisabled(region),
                         selected = region == dialControlState.selectedOption,
-                        region = region
+                        region = region,
                     )
-                }
+                },
             )
         }
     }
@@ -188,7 +216,7 @@ fun MainScreen(
                 viewModel.resetTimer(actionType = FinishActionType.MANUAL_DO_NOTHING)
                 showBottomSheet = false
             },
-            sheetState = sheetState
+            sheetState = sheetState,
         ) {
             FinishedSessionContent(
                 timerUiState = timerUiState,
@@ -204,7 +232,7 @@ fun MainScreen(
                 onNext = { considerIdleTimeAsWork ->
                     viewModel.next(considerIdleTimeAsWork)
                     hideSheet()
-                }
+                },
             )
         }
     }

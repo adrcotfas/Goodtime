@@ -15,11 +15,3 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.apps.adrcotfas.goodtime.bl
-
-val EventListener.Companion.TIMER_SERVICE_HANDLER: String
-    get() = "TimerServiceHandler"
-val EventListener.Companion.ALARM_MANAGER_HANDLER: String
-    get() = "AlarmManagerHandler"
-val EventListener.Companion.SOUND_AND_VIBRATION_PLAYER: String
-    get() = "SoundAndVibrationPlayer"

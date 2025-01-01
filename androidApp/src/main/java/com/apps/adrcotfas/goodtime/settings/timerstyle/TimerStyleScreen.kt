@@ -1,4 +1,21 @@
-package com.apps.adrcotfas.goodtime.settings.user_interface
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.apps.adrcotfas.goodtime.settings.timerstyle
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -51,7 +68,7 @@ import org.koin.androidx.compose.koinViewModel
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.minutes
 
-//TODO: Try to find a workaround until this is fixed: https://issuetracker.google.com/issues/372044241
+// TODO: Try to find a workaround until this is fixed: https://issuetracker.google.com/issues/372044241
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimerStyleScreen(
@@ -59,7 +76,6 @@ fun TimerStyleScreen(
     onNavigateBack: () -> Boolean,
     showTopBar: Boolean,
 ) {
-
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     if (uiState.isLoading) return
 
@@ -70,16 +86,16 @@ fun TimerStyleScreen(
             TopBar(
                 isVisible = showTopBar,
                 title = "Timer style",
-                onNavigateBack = { onNavigateBack() }
+                onNavigateBack = { onNavigateBack() },
             )
-        }
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = paddingValues.calculateTopPadding())
                 .verticalScroll(rememberScrollState())
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.background),
         ) {
             var colorIndex by rememberSaveable { mutableIntStateOf(24) }
             var baseTime by rememberSaveable { mutableLongStateOf(25.minutes.inWholeMilliseconds) }
@@ -97,7 +113,7 @@ fun TimerStyleScreen(
                     onValueChange = {
                         viewModel.setTimerSize(it.toFloat())
                     },
-                    showValue = false
+                    showValue = false,
                 )
                 SliderListItem(
                     modifier = Modifier.weight(0.5f),
@@ -109,7 +125,7 @@ fun TimerStyleScreen(
                     onValueChange = {
                         viewModel.setTimerWeight(it)
                     },
-                    showValue = false
+                    showValue = false,
                 )
             }
             Box(
@@ -118,7 +134,7 @@ fun TimerStyleScreen(
                     .padding(16.dp)
                     .dashedBorder(
                         color = MaterialTheme.colorScheme.onSurface,
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.medium,
                     ),
                 contentAlignment = Alignment.Center,
             ) {
@@ -128,7 +144,7 @@ fun TimerStyleScreen(
                         .padding(8.dp)
                         .align(Alignment.TopCenter),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         modifier = Modifier.padding(start = 16.dp),
@@ -145,7 +161,7 @@ fun TimerStyleScreen(
                         colorIndex = newColorIndex
                         baseTime = Random.nextLong(
                             1.minutes.inWholeMilliseconds,
-                            30.minutes.inWholeMilliseconds
+                            30.minutes.inWholeMilliseconds,
                         )
                         sessionsBeforeLongBreak = Random.nextInt(2, 8)
                         streak = Random.nextInt(1, sessionsBeforeLongBreak)
@@ -154,7 +170,7 @@ fun TimerStyleScreen(
                         Icon(
                             Icons.Default.Refresh,
                             contentDescription = "Refresh demo label",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.primary,
                         )
                     }
                 }
@@ -184,14 +200,14 @@ fun TimerStyleScreen(
                     "robotics",
                     "cryptography",
                     "machine learning",
-                    "quantum mechanics"
+                    "quantum mechanics",
                 )
                 val timerUiState = TimerUiState(
                     baseTime = baseTime,
                     timerState = TimerState.RUNNING,
                     timerType = timerType,
                     sessionsBeforeLongBreak = sessionsBeforeLongBreak,
-                    longBreakData = LongBreakData(streak = streak)
+                    longBreakData = LongBreakData(streak = streak),
                 )
                 assert(lightPalette.lastIndex == demoLabelNames.lastIndex)
 
@@ -203,8 +219,8 @@ fun TimerStyleScreen(
                     domainLabel = DomainLabel(
                         label = Label(
                             name = demoLabelNames[colorIndex],
-                            colorIndex = colorIndex.toLong()
-                        )
+                            colorIndex = colorIndex.toLong(),
+                        ),
                     ),
                     onStart = {},
                     onToggle = null,
@@ -217,26 +233,30 @@ fun TimerStyleScreen(
                     checked = timerStyle.showStatus,
                     onCheckedChange = {
                         viewModel.setShowStatus(it)
-                    })
+                    },
+                )
                 CheckboxListItem(
                     title = "Show current streak",
                     subtitle = "For countdown timers with long breaks enabled",
                     checked = timerStyle.showStreak,
                     onCheckedChange = {
                         viewModel.setShowStreak(it)
-                    })
+                    },
+                )
                 CheckboxListItem(
                     title = "Show label",
                     checked = timerStyle.showLabel,
                     onCheckedChange = {
                         viewModel.setShowLabel(it)
-                    })
+                    },
+                )
                 CheckboxListItem(
                     title = "Hide seconds",
                     checked = timerStyle.minutesOnly,
                     onCheckedChange = {
                         viewModel.setTimerMinutesOnly(it)
-                    })
+                    },
+                )
             }
         }
     }

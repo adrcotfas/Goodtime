@@ -9,4 +9,31 @@ plugins {
     alias(libs.plugins.kotlinx.serialization) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.mikepenz.aboutlibraries) apply false
+    alias(libs.plugins.spotless)
+}
+
+subprojects {
+    apply(plugin = rootProject.libs.plugins.spotless.get().pluginId)
+
+    configure<com.diffplug.gradle.spotless.SpotlessExtension> {
+        kotlin {
+            target("**/*.kt")
+            targetExclude("${layout.buildDirectory}/**/*.kt")
+            ktlint()
+            licenseHeaderFile(rootProject.file(".spotless/license.kt"))
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+        format("xml") {
+            target("**/*.xml")
+            targetExclude("**/build/**/*.xml")
+            licenseHeaderFile(rootProject.file(".spotless/license.xml"), "(<[^!?])")
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+        kotlinGradle {
+            target("*.gradle.kts")
+            ktlint()
+        }
+    }
 }

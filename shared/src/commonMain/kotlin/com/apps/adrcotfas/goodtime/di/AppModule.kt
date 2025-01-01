@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.di
 
 import androidx.datastore.core.DataStore
@@ -47,7 +64,7 @@ fun insertKoin(appModule: Module): KoinApplication {
             coreModule,
             localDataModule,
             timerManagerModule,
-            viewModelModule
+            viewModelModule,
         )
     }
 }
@@ -63,9 +80,9 @@ private val coreModule = module {
         Logger(
             config = StaticConfig(
                 logWriterList = listOf(platformLogWriter()),
-                minSeverity = if (isDebug()) Severity.Verbose else Severity.Info
+                minSeverity = if (isDebug()) Severity.Verbose else Severity.Info,
             ),
-            tag = "Goodtime".withPrefixIfDebug
+            tag = "Goodtime".withPrefixIfDebug,
         )
     factory { (tag: String?) -> if (tag != null) baseLogger.withTag(tag.withPrefixIfDebug) else baseLogger }
 
@@ -75,7 +92,7 @@ private val coreModule = module {
     single<SettingsRepository> {
         SettingsRepositoryImpl(
             get<DataStore<Preferences>>(named(SETTINGS_NAME)),
-            getWith(SettingsRepository::class.simpleName)
+            getWith(SettingsRepository::class.simpleName),
         )
     }
     single<TimeProvider> {
@@ -86,7 +103,7 @@ private val coreModule = module {
         FinishedSessionsHandler(
             get<CoroutineScope>(),
             get<LocalDataRepository>(),
-            getWith(FinishedSessionsHandler::class.simpleName)
+            getWith(FinishedSessionsHandler::class.simpleName),
         )
     }
 
@@ -99,7 +116,7 @@ private val coreModule = module {
             get<TimeProvider>(),
             get<BackupPrompter>(),
             get<LocalDataRepository>(),
-            getWith(BackupManager::class.simpleName)
+            getWith(BackupManager::class.simpleName),
         )
     }
 }

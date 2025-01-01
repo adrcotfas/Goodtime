@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.bl
 
 import co.touchlab.kermit.Logger
@@ -37,7 +54,7 @@ class TimerManager(
     private val timeProvider: TimeProvider,
     private val finishedSessionsHandler: FinishedSessionsHandler,
     private val log: Logger,
-    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
 ) {
 
     private var mainJob: Job? = null
@@ -77,7 +94,7 @@ class TimerManager(
                     } else {
                         DomainLabel(
                             label,
-                            if (label.useDefaultTimeProfile) defaultTimerProfile else label.timerProfile
+                            if (label.useDefaultTimeProfile) defaultTimerProfile else label.timerProfile,
                         )
                     }
                 }
@@ -90,7 +107,7 @@ class TimerManager(
                 _timerData.update { data ->
                     data.copy(
                         isReady = true,
-                        label = it
+                        label = it,
                     )
                 }
                 if (isActive && isCountdown != it.isCountdown) {
@@ -140,7 +157,7 @@ class TimerManager(
             },
             lastStartTime = elapsedRealTime,
             endTime = if (isPaused) {
-                //TODO: check correctness of timeAtPause for count-up sessions
+                // TODO: check correctness of timeAtPause for count-up sessions
                 elapsedRealTime + data.timeAtPause
             } else {
                 data.getEndTime(timerType, elapsedRealTime)
@@ -166,8 +183,8 @@ class TimerManager(
             it.onEvent(
                 Event.Start(
                     autoStarted = autoStarted,
-                    endTime = newTimerData.endTime
-                )
+                    endTime = newTimerData.endTime,
+                ),
             )
         }
     }
@@ -181,16 +198,16 @@ class TimerManager(
                 it.copy(
                     breakBudgetData = BreakBudgetData(
                         breakBudget = breakBudget,
-                        breakBudgetStart = elapsedRealtime
-                    )
+                        breakBudgetStart = elapsedRealtime,
+                    ),
                 )
             }
             coroutineScope.launch {
                 settingsRepo.setBreakBudgetData(
                     BreakBudgetData(
                         breakBudget = breakBudget,
-                        breakBudgetStart = elapsedRealtime
-                    )
+                        breakBudgetStart = elapsedRealtime,
+                    ),
                 )
             }
             return breakBudget
@@ -211,12 +228,14 @@ class TimerManager(
         val newEndTime = data.endTime + 1.minutes.inWholeMilliseconds
         val newRemainingTimeAtPause = if (data.state.isPaused) {
             data.timeAtPause + 1.minutes.inWholeMilliseconds
-        } else 0
+        } else {
+            0
+        }
 
         _timerData.update {
             it.copy(
                 endTime = newEndTime,
-                timeAtPause = newRemainingTimeAtPause
+                timeAtPause = newRemainingTimeAtPause,
             )
         }
         log.i { "Added one minute" }
@@ -245,7 +264,7 @@ class TimerManager(
                     elapsedRealtime - it.startTime - it.timeSpentPaused
                 },
                 lastPauseTime = elapsedRealtime,
-                state = TimerState.PAUSED
+                state = TimerState.PAUSED,
             )
         }
         log.i { "Paused: ${timerData.value}" }
@@ -266,7 +285,7 @@ class TimerManager(
                     it.endTime
                 },
                 state = TimerState.RUNNING,
-                timeAtPause = 0
+                timeAtPause = 0,
             )
         }
         log.i { "Resumed: ${timerData.value}" }
@@ -295,7 +314,7 @@ class TimerManager(
 
     fun next(
         updateWorkTime: Boolean = false,
-        finishActionType: FinishActionType = FinishActionType.MANUAL_NEXT
+        finishActionType: FinishActionType = FinishActionType.MANUAL_NEXT,
     ) {
         nextInternal(updateWorkTime, finishActionType)
     }
@@ -340,8 +359,8 @@ class TimerManager(
         }
         log.i { "Next: $nextType" }
 
-        val autoStarted = (nextType.isWork && settings.autoStartWork)
-                || (nextType.isBreak && settings.autoStartBreak)
+        val autoStarted = (nextType.isWork && settings.autoStartWork) ||
+            (nextType.isBreak && settings.autoStartBreak)
 
         start(nextType, autoStarted)
     }
@@ -373,15 +392,15 @@ class TimerManager(
         handleFinishedSession(finishActionType = FinishActionType.AUTO)
 
         val autoStart =
-            settings.autoStartWork && (type.isBreak || !timerProfile.profile.isBreakEnabled)
-                    || settings.autoStartBreak && type.isWork && timerProfile.profile.isBreakEnabled
+            settings.autoStartWork && (type.isBreak || !timerProfile.profile.isBreakEnabled) ||
+                settings.autoStartBreak && type.isWork && timerProfile.profile.isBreakEnabled
         log.i { "AutoStart: $autoStart" }
         listeners.forEach {
             it.onEvent(
                 Event.Finished(
                     type = type,
-                    autostartNextSession = autoStart
-                )
+                    autostartNextSession = autoStart,
+                ),
             )
         }
         if (autoStart) {
@@ -398,7 +417,7 @@ class TimerManager(
      */
     fun reset(
         updateWorkTime: Boolean = false,
-        actionType: FinishActionType = FinishActionType.MANUAL_RESET
+        actionType: FinishActionType = FinishActionType.MANUAL_RESET,
     ) {
         val data = timerData.value
         if (data.state == TimerState.RESET) {
@@ -416,7 +435,7 @@ class TimerManager(
         _timerData.update { it.reset() }
     }
 
-    //TODO: test with a long paused work session too
+    // TODO: test with a long paused work session too
     private fun handlePersistentDataAtStart() {
         if (timerData.value.type == TimerType.WORK) {
             // filter out the case when some time passes since the last work session
@@ -427,7 +446,7 @@ class TimerManager(
 
     private fun handleFinishedSession(
         updateWorkTime: Boolean = false,
-        finishActionType: FinishActionType
+        finishActionType: FinishActionType,
     ) {
         val data = timerData.value
         val isWork = data.type.isWork
@@ -440,16 +459,20 @@ class TimerManager(
             if (isFinished && updateWorkTime) {
                 finishedSessionsHandler.updateSession(it)
                 return
-            } else if (!isFinished || (isFinished
-                        && (finishActionType != FinishActionType.MANUAL_NEXT))
+            } else if (!isFinished || (
+                    isFinished &&
+                        (finishActionType != FinishActionType.MANUAL_NEXT)
+                    )
             ) {
                 finishedSessionsHandler.saveSession(it)
             }
         }
 
-        if (isWork && isCountDown && longBreakEnabled
-            && (finishActionType == FinishActionType.AUTO
-                    || finishActionType == FinishActionType.MANUAL_SKIP)
+        if (isWork && isCountDown && longBreakEnabled &&
+            (
+                finishActionType == FinishActionType.AUTO ||
+                    finishActionType == FinishActionType.MANUAL_SKIP
+                )
         ) {
             incrementStreak()
         }
@@ -490,7 +513,7 @@ class TimerManager(
             duration = durationToSaveMinutes,
             interruptions = interruptions.milliseconds.inWholeMinutes,
             label = data.getLabelName(),
-            isWork = isWork
+            isWork = isWork,
         )
     }
 
@@ -523,7 +546,7 @@ class TimerManager(
         val streakForLongBreakIsReached =
             (data.longBreakData.streakInUse(timerProfile.profile.sessionsBeforeLongBreak) == 0)
         return streakForLongBreakIsReached && didLastWorkSessionFinishRecently(
-            workEndTime
+            workEndTime,
         )
     }
 
@@ -533,11 +556,11 @@ class TimerManager(
         if (!timerProfile.profile.isCountdown) return false
 
         val maxIdleTime = timerProfile.profile.workDuration.minutes.inWholeMilliseconds +
-                timerProfile.profile.longBreakDuration.minutes.inWholeMilliseconds +
-                15.minutes.inWholeMilliseconds
+            timerProfile.profile.longBreakDuration.minutes.inWholeMilliseconds +
+            15.minutes.inWholeMilliseconds
         return data.longBreakData.lastWorkEndTime != 0L && max(
             0,
-            workEndTime - data.longBreakData.lastWorkEndTime
+            workEndTime - data.longBreakData.lastWorkEndTime,
         ) < maxIdleTime
     }
 
@@ -551,5 +574,5 @@ enum class FinishActionType {
     MANUAL_SKIP, // increment streak even if session is shorter than 1 minute
     MANUAL_NEXT,
     MANUAL_DO_NOTHING,
-    AUTO
+    AUTO,
 }

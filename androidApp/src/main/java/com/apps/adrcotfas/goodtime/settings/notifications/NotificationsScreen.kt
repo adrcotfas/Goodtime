@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.settings.notifications
 
 import android.text.format.DateFormat
@@ -20,7 +37,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apps.adrcotfas.goodtime.bl.notifications.TorchManager
 import com.apps.adrcotfas.goodtime.bl.notifications.VibrationPlayer
 import com.apps.adrcotfas.goodtime.data.settings.SoundData
-import com.apps.adrcotfas.goodtime.settings.ProductivityReminderListItem
 import com.apps.adrcotfas.goodtime.settings.SettingsViewModel
 import com.apps.adrcotfas.goodtime.settings.toSecondOfDay
 import com.apps.adrcotfas.goodtime.ui.common.BetterListItem
@@ -44,7 +60,6 @@ fun NotificationsScreen(
     onNavigateBack: () -> Boolean,
     showTopBar: Boolean,
 ) {
-
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val settings = uiState.settings
@@ -61,16 +76,16 @@ fun NotificationsScreen(
             TopBar(
                 isVisible = showTopBar,
                 title = "Notifications",
-                onNavigateBack = { onNavigateBack() }
+                onNavigateBack = { onNavigateBack() },
             )
-        }
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = paddingValues.calculateTopPadding())
                 .verticalScroll(rememberScrollState())
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.background),
         ) {
             CompactPreferenceGroupTitle(text = "Productivity Reminder")
             val reminderSettings = settings.productivityReminderSettings
@@ -79,26 +94,26 @@ fun NotificationsScreen(
                 selectedDays = reminderSettings.days.map { DayOfWeek(it) }.toSet(),
                 reminderSecondOfDay = reminderSettings.secondOfDay,
                 onSelectDay = viewModel::onToggleProductivityReminderDay,
-                onReminderTimeClick = { viewModel.setShowTimePicker(true) }
+                onReminderTimeClick = { viewModel.setShowTimePicker(true) },
             )
             SubtleHorizontalDivider()
             CompactPreferenceGroupTitle(text = "Notifications")
             BetterListItem(
                 title = "Work finished sound",
                 subtitle = notificationSoundName(workRingTone),
-                onClick = { viewModel.setShowSelectWorkSoundPicker(true) }
+                onClick = { viewModel.setShowSelectWorkSoundPicker(true) },
             )
 
             BetterListItem(
                 title = "Break finished sound",
                 subtitle = notificationSoundName(breakRingTone),
-                onClick = { viewModel.setShowSelectBreakSoundPicker(true) }
+                onClick = { viewModel.setShowSelectBreakSoundPicker(true) },
             )
 
             CheckboxListItem(
                 title = "Override sound profile",
                 subtitle = "The notification sound behaves like an alarm",
-                checked = settings.overrideSoundProfile
+                checked = settings.overrideSoundProfile,
             ) {
                 viewModel.setOverrideSoundProfile(it)
             }
@@ -119,7 +134,7 @@ fun NotificationsScreen(
                 CheckboxListItem(
                     title = "Torch",
                     subtitle = "A visual notification for silent environments",
-                    checked = settings.enableTorch
+                    checked = settings.enableTorch,
                 ) {
                     viewModel.setEnableTorch(it)
                 }
@@ -128,21 +143,21 @@ fun NotificationsScreen(
             CheckboxListItem(
                 title = "Insistent notification",
                 subtitle = "Repeat the notification until it's cancelled",
-                checked = settings.insistentNotification
+                checked = settings.insistentNotification,
             ) {
                 viewModel.setInsistentNotification(it)
             }
             CheckboxListItem(
                 title = "Auto start work",
                 subtitle = "Start the work session after a break without user interaction",
-                checked = settings.autoStartWork
+                checked = settings.autoStartWork,
             ) {
                 viewModel.setAutoStartWork(it)
             }
             CheckboxListItem(
                 title = "Auto start break",
                 subtitle = "Start the break session after a work session without user interaction",
-                checked = settings.autoStartBreak
+                checked = settings.autoStartBreak,
             ) {
                 viewModel.setAutoStartBreak(it)
             }
@@ -156,7 +171,7 @@ fun NotificationsScreen(
                     viewModel.setNotificationSoundCandidate(Json.encodeToString(it))
                 },
                 onSave = { viewModel.setWorkFinishedSound(Json.encodeToString(it)) },
-                onDismiss = { viewModel.setShowSelectWorkSoundPicker(false) }
+                onDismiss = { viewModel.setShowSelectWorkSoundPicker(false) },
             )
         }
         if (uiState.showSelectBreakSoundPicker) {
@@ -167,7 +182,7 @@ fun NotificationsScreen(
                     viewModel.setNotificationSoundCandidate(Json.encodeToString(it))
                 },
                 onSave = { viewModel.setBreakFinishedSound(Json.encodeToString(it)) },
-                onDismiss = { viewModel.setShowSelectBreakSoundPicker(false) }
+                onDismiss = { viewModel.setShowSelectBreakSoundPicker(false) },
             )
         }
         if (uiState.showTimePicker) {
@@ -176,7 +191,7 @@ fun NotificationsScreen(
             val timePickerState = rememberTimePickerState(
                 initialHour = reminderTime.hour,
                 initialMinute = reminderTime.minute,
-                is24Hour = DateFormat.is24HourFormat(context)
+                is24Hour = DateFormat.is24HourFormat(context),
             )
             TimePicker(
                 onDismiss = { viewModel.setShowTimePicker(false) },
@@ -184,7 +199,7 @@ fun NotificationsScreen(
                     viewModel.setReminderTime(timePickerState.toSecondOfDay())
                     viewModel.setShowTimePicker(false)
                 },
-                timePickerState = timePickerState
+                timePickerState = timePickerState,
             )
         }
     }
@@ -192,6 +207,10 @@ fun NotificationsScreen(
 
 @Composable
 private fun notificationSoundName(it: SoundData) =
-    if (it.isSilent) "Silent"
-    else if (it.name.isEmpty()) "Default notification sound"
-    else it.name
+    if (it.isSilent) {
+        "Silent"
+    } else if (it.name.isEmpty()) {
+        "Default notification sound"
+    } else {
+        it.name
+    }

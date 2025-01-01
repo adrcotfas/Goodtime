@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.data.local
 
 import com.apps.adrcotfas.goodtime.data.local.DatabaseExt.invoke
@@ -41,12 +58,12 @@ class LocalDataRepositoryTest {
         val sessions = dataSource.selectAllSessions().first()
         assertNotNull(
             sessions.find { it == session },
-            "Could not find session"
+            "Could not find session",
         )
         val labels = dataSource.selectAllLabels().first()
         assertNotNull(
             labels.find { it == label },
-            "Could not find label"
+            "Could not find label",
         )
     }
 
@@ -54,7 +71,8 @@ class LocalDataRepositoryTest {
     fun `Verify foreign key cascade on label change`() = runTest {
         val session = dataSource.selectAllSessions().first().first()
         dataSource.updateSession(
-            session.id, Session(
+            session.id,
+            Session(
                 id = session.id,
                 timestamp = 1.minutes.inWholeMilliseconds,
                 duration = 1.minutes.toLong(DurationUnit.MINUTES),
@@ -62,13 +80,14 @@ class LocalDataRepositoryTest {
                 label = LABEL_NAME,
                 notes = null,
                 isWork = true,
-                isArchived = false
-            )
+                isArchived = false,
+            ),
         )
         assertTrue(
             dataSource.selectAllSessions().first().first().run {
                 this.label == LABEL_NAME && !this.isArchived
-            }, "Cascade update of Session's label failed after updateSession"
+            },
+            "Cascade update of Session's label failed after updateSession",
         )
 
         val newLabelName = "new"
@@ -76,20 +95,21 @@ class LocalDataRepositoryTest {
         assertEquals(
             newLabelName,
             dataSource.selectAllSessions().first().first().label,
-            "Cascade update of Session's label failed after updateLabelName"
+            "Cascade update of Session's label failed after updateLabelName",
         )
 
         dataSource.updateLabelIsArchived(newLabelName, newIsArchived = true)
         assertEquals(
             true,
             dataSource.selectAllSessions().first().first().isArchived,
-            "Cascade update of Session's label failed after updateLabelIsArchived"
+            "Cascade update of Session's label failed after updateLabelIsArchived",
         )
         dataSource.deleteAllLabels()
         assertTrue(
             dataSource.selectAllSessions().first().first().run {
                 this.label == Label.DEFAULT_LABEL_NAME && !this.isArchived
-            }, "Cascade update of Session's label failed after deleteAllLabels"
+            },
+            "Cascade update of Session's label failed after deleteAllLabels",
         )
     }
 
@@ -101,12 +121,12 @@ class LocalDataRepositoryTest {
         val allSessions = dataSource.selectAllSessions().first()
         dataSource.updateSession(
             allSessions.first().id,
-            allSessions.first().copy(label = LABEL_NAME)
+            allSessions.first().copy(label = LABEL_NAME),
         )
         assertEquals(
             1,
             dataSource.selectSessionsByLabel(LABEL_NAME).first().size,
-            "updateSession failed"
+            "updateSession failed",
         )
     }
 
@@ -138,7 +158,7 @@ class LocalDataRepositoryTest {
         val thirdId = dataSource.selectLastInsertSessionId()
         assertTrue(
             thirdId == secondId!! + 1 && secondId == firstId + 1,
-            "selectLastInsertSessionId autoincrement failed"
+            "selectLastInsertSessionId autoincrement failed",
         )
     }
 
@@ -152,8 +172,8 @@ class LocalDataRepositoryTest {
             label.copy(
                 colorIndex = expectedColorIndex,
                 orderIndex = expectedOrderIndex,
-                useDefaultTimeProfile = expectedFollowDefaultTimeProfile
-            )
+                useDefaultTimeProfile = expectedFollowDefaultTimeProfile,
+            ),
         )
         dataSource.updateLabelOrderIndex(LABEL_NAME, expectedOrderIndex)
 
@@ -165,7 +185,7 @@ class LocalDataRepositoryTest {
         assertEquals(
             expectedFollowDefaultTimeProfile,
             label.useDefaultTimeProfile,
-            "updateShouldFollowDefaultTimeProfile failed"
+            "updateShouldFollowDefaultTimeProfile failed",
         )
     }
 
@@ -186,7 +206,7 @@ class LocalDataRepositoryTest {
         val labels = dataSource.selectAllLabels().first()
         assertNotNull(
             labels.firstOrNull { it.name == Label.DEFAULT_LABEL_NAME },
-            "default label should always be present"
+            "default label should always be present",
         )
 
         val labelToDeleteName = "ceva"
@@ -205,7 +225,7 @@ class LocalDataRepositoryTest {
             orderIndex = 0,
             useDefaultTimeProfile = false,
             timerProfile = TimerProfile(),
-            isArchived = false
+            isArchived = false,
         )
 
         private val DEFAULT_DURATION = DEFAULT_WORK_DURATION.minutes.inWholeMilliseconds
@@ -218,7 +238,7 @@ class LocalDataRepositoryTest {
             label = Label.DEFAULT_LABEL_NAME,
             notes = null,
             isWork = true,
-            isArchived = false
+            isArchived = false,
         )
     }
 }

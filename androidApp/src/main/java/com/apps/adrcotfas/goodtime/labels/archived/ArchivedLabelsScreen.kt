@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.labels.archived
 
 import androidx.compose.foundation.background
@@ -47,7 +64,7 @@ const val ARCHIVED_LABELS_SCREEN_DESTINATION_ID = "goodtime.productivity.archive
 fun ArchivedLabelsScreen(
     onNavigateBack: () -> Unit,
     viewModel: LabelsViewModel = koinViewModel(),
-    showTopBar: Boolean
+    showTopBar: Boolean,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val labels = uiState.archivedLabels
@@ -66,7 +83,7 @@ fun ArchivedLabelsScreen(
             LazyColumn(
                 Modifier
                     .padding(it)
-                    .fillMaxSize()
+                    .fillMaxSize(),
             ) {
                 items(labels, key = { label -> label.name }) { label ->
                     ArchivedLabelListItem(
@@ -81,7 +98,7 @@ fun ArchivedLabelsScreen(
                             onNavigateBack
                         } else {
                             null
-                        }
+                        },
                     )
                 }
             }
@@ -96,9 +113,10 @@ fun ArchivedLabelsScreen(
                             onNavigateBack()
                         }
                     },
-                    onDismiss = { showDeleteConfirmationDialog = false })
+                    onDismiss = { showDeleteConfirmationDialog = false },
+                )
             }
-        }
+        },
     )
 }
 
@@ -108,27 +126,27 @@ fun ArchivedLabelListItem(
     label: Label,
     onUnarchive: () -> Unit,
     onDelete: () -> Unit,
-    onLastItemUnarchive: (() -> Unit)? = null
+    onLastItemUnarchive: (() -> Unit)? = null,
 ) {
     val labelName = label.name
 
-    //TODO: add empty state illustration
+    // TODO: add empty state illustration
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .background(MaterialTheme.colorScheme.background)
-            .padding(4.dp)
+            .padding(4.dp),
     ) {
         Icon(
             modifier = Modifier
                 .padding(8.dp),
             imageVector = Icons.AutoMirrored.Outlined.Label,
             contentDescription = null,
-            tint = MaterialTheme.localColorsPalette.colors[label.colorIndex.toInt()]
+            tint = MaterialTheme.localColorsPalette.colors[label.colorIndex.toInt()],
         )
         Text(
             text = label.name,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
         )
         Spacer(modifier = Modifier.weight(1f))
 
@@ -140,7 +158,8 @@ fun ArchivedLabelListItem(
 
             DropdownMenu(
                 expanded = dropDownMenuExpanded,
-                onDismissRequest = { dropDownMenuExpanded = false }) {
+                onDismissRequest = { dropDownMenuExpanded = false },
+            ) {
                 DropdownMenuItem(
                     text = { Text("Unarchive") },
                     onClick = {
@@ -151,9 +170,10 @@ fun ArchivedLabelListItem(
                     leadingIcon = {
                         Icon(
                             EvaIcons.Outline.Undo,
-                            contentDescription = "Unarchive $labelName"
+                            contentDescription = "Unarchive $labelName",
                         )
-                    })
+                    },
+                )
                 DropdownMenuItem(
                     text = { Text("Delete") },
                     onClick = {
@@ -163,9 +183,10 @@ fun ArchivedLabelListItem(
                     leadingIcon = {
                         Icon(
                             EvaIcons.Outline.Trash,
-                            contentDescription = "Delete $labelName"
+                            contentDescription = "Delete $labelName",
                         )
-                    })
+                    },
+                )
             }
         }
     }

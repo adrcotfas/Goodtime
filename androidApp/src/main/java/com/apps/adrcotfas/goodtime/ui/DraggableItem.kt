@@ -1,5 +1,21 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.ui
-
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
@@ -32,14 +48,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun rememberDragDropState(
     lazyListState: LazyListState,
-    onMove: (Int, Int) -> Unit
+    onMove: (Int, Int) -> Unit,
 ): DragDropState {
     val scope = rememberCoroutineScope()
     val state = remember(lazyListState) {
         DragDropState(
             state = lazyListState,
             onMove = onMove,
-            scope = scope
+            scope = scope,
         )
     }
     LaunchedEffect(state) {
@@ -54,7 +70,7 @@ fun rememberDragDropState(
 class DragDropState internal constructor(
     private val state: LazyListState,
     private val scope: CoroutineScope,
-    private val onMove: (Int, Int) -> Unit
+    private val onMove: (Int, Int) -> Unit,
 ) {
     var draggingItemIndex by mutableStateOf<Int?>(null)
         private set
@@ -80,8 +96,10 @@ class DragDropState internal constructor(
     internal fun onDragStartWithKey(key: Any) {
         draggingItemIndex = state.layoutInfo.visibleItemsInfo.firstOrNull { it.key == key }?.index
         draggingItemInitialOffset =
-            state.layoutInfo.visibleItemsInfo[draggingItemIndex?.minus(state.firstVisibleItemIndex)
-                ?: 0].offset
+            state.layoutInfo.visibleItemsInfo[
+                draggingItemIndex?.minus(state.firstVisibleItemIndex)
+                    ?: 0,
+            ].offset
     }
 
     internal fun onDragInterrupted() {
@@ -94,8 +112,8 @@ class DragDropState internal constructor(
                     0f,
                     spring(
                         stiffness = Spring.StiffnessMediumLow,
-                        visibilityThreshold = 1f
-                    )
+                        visibilityThreshold = 1f,
+                    ),
                 )
                 previousIndexOfDraggedItem = null
             }
@@ -115,7 +133,7 @@ class DragDropState internal constructor(
 
         val targetItem = state.layoutInfo.visibleItemsInfo.find { item ->
             middleOffset.toInt() in item.offset..item.offsetEnd &&
-                    draggingItem.index != item.index
+                draggingItem.index != item.index
         }
         if (targetItem != null) {
             if (draggingItem.index == state.firstVisibleItemIndex ||
@@ -123,7 +141,7 @@ class DragDropState internal constructor(
             ) {
                 state.requestScrollToItem(
                     state.firstVisibleItemIndex,
-                    state.firstVisibleItemScrollOffset
+                    state.firstVisibleItemScrollOffset,
                 )
             }
             onMove.invoke(draggingItem.index, targetItem.index)
@@ -151,7 +169,7 @@ class DragDropState internal constructor(
 fun Modifier.dragContainer(
     dragDropState: DragDropState,
     key: Any,
-    onDragFinished: () -> Unit
+    onDragFinished: () -> Unit,
 ): Modifier {
     return pointerInput(dragDropState) {
         detectDragGestures(
@@ -167,7 +185,7 @@ fun Modifier.dragContainer(
             onDragCancel = {
                 dragDropState.onDragInterrupted()
                 onDragFinished()
-            }
+            },
         )
     }
 }
@@ -177,7 +195,7 @@ fun LazyItemScope.DraggableItem(
     dragDropState: DragDropState,
     index: Int,
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.(isDragging: Boolean) -> Unit
+    content: @Composable ColumnScope.(isDragging: Boolean) -> Unit,
 ) {
     val dragging = index == dragDropState.draggingItemIndex
     val draggingModifier = if (dragging) {
@@ -196,7 +214,7 @@ fun LazyItemScope.DraggableItem(
         Modifier.animateItem(
             placementSpec = spring(stiffness = Spring.StiffnessMediumLow),
             fadeInSpec = spring(stiffness = Spring.StiffnessMediumLow),
-            fadeOutSpec = spring(stiffness = Spring.StiffnessMediumLow)
+            fadeOutSpec = spring(stiffness = Spring.StiffnessMediumLow),
         )
     }
     Column(modifier = modifier.then(draggingModifier)) {

@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.settings.permissions
 
 import androidx.compose.foundation.clickable
@@ -21,18 +38,19 @@ fun AskForPermissionCard(cta: String, description: String, onClick: () -> Unit) 
     Card(
         colors = CardDefaults.cardColors().copy(
             containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.38f),
-            contentColor = MaterialTheme.colorScheme.onSurface
+            contentColor = MaterialTheme.colorScheme.onSurface,
         ),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable {
                 onClick()
-            }
+            },
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically) {
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Text(
                 modifier = Modifier.padding(12.dp).weight(1f),
                 text = description,
@@ -40,7 +58,7 @@ fun AskForPermissionCard(cta: String, description: String, onClick: () -> Unit) 
             )
             TextButton(
                 onClick = onClick,
-                modifier = Modifier.padding(horizontal = 4.dp)
+                modifier = Modifier.padding(horizontal = 4.dp),
             ) {
                 Text(text = cta)
             }
@@ -54,6 +72,6 @@ fun AskForPermissionCardPreview() {
     AskForPermissionCard(
         cta = "Allow",
         description = "Allow this app to run in the background",
-        onClick = {}
+        onClick = {},
     )
 }

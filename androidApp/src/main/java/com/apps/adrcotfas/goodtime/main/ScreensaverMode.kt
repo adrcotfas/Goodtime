@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.main
 
 import androidx.compose.animation.core.Animatable
@@ -25,7 +42,7 @@ fun ScreensaverMode(
     screensaverMode: Boolean,
     isActive: Boolean,
     screenWidth: Dp,
-    yOffset: Animatable<Float, AnimationVector1D>
+    yOffset: Animatable<Float, AnimationVector1D>,
 ) {
     val coroutineScope = rememberCoroutineScope()
     var animationJob: Job? by remember { mutableStateOf(null) }
@@ -41,7 +58,7 @@ fun ScreensaverMode(
                         Random.nextInt(from = -max.value.toInt(), until = max.value.toInt())
                     yOffset.animateTo(
                         newOffset.toFloat(),
-                        animationSpec = tween(durationMillis = 2000, easing = EaseInOut)
+                        animationSpec = tween(durationMillis = 2000, easing = EaseInOut),
                     )
                 }
             }
@@ -49,7 +66,7 @@ fun ScreensaverMode(
             animationJob?.cancel()
             yOffset.animateTo(
                 0f,
-                animationSpec = tween(durationMillis = 150, easing = EaseInOut)
+                animationSpec = tween(durationMillis = 150, easing = EaseInOut),
             )
         }
     }

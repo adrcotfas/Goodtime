@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.data.model
 
 import com.apps.adrcotfas.goodtime.LocalLabel
@@ -19,7 +36,7 @@ class ModelMappingsExtTest {
             labelName = "label",
             notes = "notes",
             isWork = true,
-            isArchived = true
+            isArchived = true,
         )
         val session = toExternalSessionMapper(
             localSession.id,
@@ -29,7 +46,8 @@ class ModelMappingsExtTest {
             localSession.labelName,
             localSession.notes,
             localSession.isWork,
-            localSession.isArchived)
+            localSession.isArchived,
+        )
         assertEquals(localSession, session.toLocal())
     }
 
@@ -43,18 +61,22 @@ class ModelMappingsExtTest {
             label = "label",
             notes = "notes",
             isWork = false,
-            isArchived = true
+            isArchived = true,
         )
         val localSession = session.toLocal()
-        assertEquals(session, toExternalSessionMapper(
-            localSession.id,
-            localSession.timestamp,
-            localSession.duration,
-            localSession.interruptions,
-            localSession.labelName,
-            localSession.notes,
-            localSession.isWork,
-            localSession.isArchived))
+        assertEquals(
+            session,
+            toExternalSessionMapper(
+                localSession.id,
+                localSession.timestamp,
+                localSession.duration,
+                localSession.interruptions,
+                localSession.labelName,
+                localSession.notes,
+                localSession.isWork,
+                localSession.isArchived,
+            ),
+        )
     }
 
     @Test
@@ -73,7 +95,7 @@ class ModelMappingsExtTest {
             longBreakDuration = 5,
             sessionsBeforeLongBreak = 6,
             workBreakRatio = 7,
-            isArchived = true
+            isArchived = true,
         )
         val label = toExternalLabelMapper(
             localLabel.id,
@@ -89,7 +111,7 @@ class ModelMappingsExtTest {
             localLabel.longBreakDuration,
             localLabel.sessionsBeforeLongBreak,
             localLabel.workBreakRatio,
-            localLabel.isArchived
+            localLabel.isArchived,
         )
         assertEquals(localLabel, label.toLocal())
     }
@@ -110,27 +132,29 @@ class ModelMappingsExtTest {
                 isLongBreakEnabled = false,
                 longBreakDuration = 5,
                 sessionsBeforeLongBreak = 6,
-                workBreakRatio = 7
+                workBreakRatio = 7,
             ),
-            isArchived = true
+            isArchived = true,
         )
         val localLabel = label.toLocal()
-        assertEquals(label, toExternalLabelMapper(
-            localLabel.id,
-            localLabel.name,
-            localLabel.colorIndex,
-            localLabel.orderIndex,
-            localLabel.useDefaultTimeProfile,
-            localLabel.isCountdown,
-            localLabel.workDuration,
-            localLabel.isBreakEnabled,
-            localLabel.breakDuration,
-            localLabel.isLongBreakEnabled,
-            localLabel.longBreakDuration,
-            localLabel.sessionsBeforeLongBreak,
-            localLabel.workBreakRatio,
-            localLabel.isArchived
-        ))
-
+        assertEquals(
+            label,
+            toExternalLabelMapper(
+                localLabel.id,
+                localLabel.name,
+                localLabel.colorIndex,
+                localLabel.orderIndex,
+                localLabel.useDefaultTimeProfile,
+                localLabel.isCountdown,
+                localLabel.workDuration,
+                localLabel.isBreakEnabled,
+                localLabel.breakDuration,
+                localLabel.isLongBreakEnabled,
+                localLabel.longBreakDuration,
+                localLabel.sessionsBeforeLongBreak,
+                localLabel.workBreakRatio,
+                localLabel.isArchived,
+            ),
+        )
     }
 }

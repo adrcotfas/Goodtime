@@ -1,4 +1,21 @@
-package com.apps.adrcotfas.goodtime.labels.add_edit
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.apps.adrcotfas.goodtime.labels.addedit
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -92,7 +109,7 @@ fun AddEditLabelScreen(
     labelName: String,
     showNavigationIcon: Boolean,
     onNavigateBack: () -> Unit,
-    onSave: () -> Unit
+    onSave: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -118,20 +135,24 @@ fun AddEditLabelScreen(
             TopBar(
                 onNavigateBack = if (showNavigationIcon) {
                     onNavigateBack
-                } else null,
+                } else {
+                    null
+                },
                 icon = Icons.Default.Close,
                 actions = {
                     if (isDefaultLabel && !label.isSameAs(Label.defaultLabel())) {
-                        Button(modifier = Modifier
-                            .wrapContentSize()
-                            .heightIn(min = 32.dp)
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        Button(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .heightIn(min = 32.dp)
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
                             colors = ButtonDefaults.outlinedButtonColors(
                                 containerColor = MaterialTheme.colorScheme.primary.copy(
-                                    alpha = 0.12f
-                                )
+                                    alpha = 0.12f,
+                                ),
                             ),
-                            onClick = { viewModel.setNewLabel(Label.defaultLabel()) }) {
+                            onClick = { viewModel.setNewLabel(Label.defaultLabel()) },
+                        ) {
                             Text("Reset to default")
                         }
                     }
@@ -143,13 +164,12 @@ fun AddEditLabelScreen(
                             isEditMode,
                             viewModel::updateLabel,
                             viewModel::addLabel,
-                            onSave
+                            onSave,
                         )
-
                     }
-                }
+                },
             )
-        }
+        },
     ) { paddingValues ->
         AnimatedVisibility(!uiState.isLoading) {
             Column(
@@ -158,7 +178,7 @@ fun AddEditLabelScreen(
                     .padding(top = paddingValues.calculateTopPadding())
                     .verticalScroll(rememberScrollState())
                     .background(MaterialTheme.colorScheme.background)
-                    .imePadding()
+                    .imePadding(),
             ) {
                 LabelNameRow(
                     isDefaultLabel = isDefaultLabel,
@@ -167,10 +187,10 @@ fun AddEditLabelScreen(
                     onValueChange = {
                         val newLabelName = it.trim()
                         viewModel.setNewLabel(
-                            uiState.newLabel.copy(name = newLabelName)
+                            uiState.newLabel.copy(name = newLabelName),
                         )
                     },
-                    showError = !uiState.labelNameIsValid()
+                    showError = !uiState.labelNameIsValid(),
                 )
                 ColorSelectRow(selectedIndex = label.colorIndex.toInt()) {
                     viewModel.setNewLabel(label.copy(colorIndex = it.toLong()))
@@ -190,9 +210,9 @@ fun AddEditLabelScreen(
                                 checked = followDefault,
                                 onCheckedChange = {
                                     viewModel.setNewLabel(label.copy(useDefaultTimeProfile = it))
-                                }
+                                },
                             )
-                        }
+                        },
                     )
                 }
                 AnimatedVisibility(isDefaultLabel || !followDefault) {
@@ -200,8 +220,8 @@ fun AddEditLabelScreen(
                         TimerTypeRow(isCountDown = isCountDown, onCountDownEnabled = {
                             viewModel.setNewLabel(
                                 label.copy(
-                                    timerProfile = label.timerProfile.copy(isCountdown = it)
-                                )
+                                    timerProfile = label.timerProfile.copy(isCountdown = it),
+                                ),
                             )
                         })
                         if (isCountDown) {
@@ -212,8 +232,8 @@ fun AddEditLabelScreen(
                                     onValueChange = {
                                         viewModel.setNewLabel(
                                             label.copy(
-                                                timerProfile = label.timerProfile.copy(workDuration = it)
-                                            )
+                                                timerProfile = label.timerProfile.copy(workDuration = it),
+                                            ),
                                         )
                                     },
                                 )
@@ -223,8 +243,8 @@ fun AddEditLabelScreen(
                                     onValueChange = {
                                         viewModel.setNewLabel(
                                             label.copy(
-                                                timerProfile = label.timerProfile.copy(breakDuration = it)
-                                            )
+                                                timerProfile = label.timerProfile.copy(breakDuration = it),
+                                            ),
                                         )
                                     },
                                     enableSwitch = true,
@@ -233,11 +253,11 @@ fun AddEditLabelScreen(
                                         viewModel.setNewLabel(
                                             label.copy(
                                                 timerProfile = label.timerProfile.copy(
-                                                    isBreakEnabled = it
-                                                )
-                                            )
+                                                    isBreakEnabled = it,
+                                                ),
+                                            ),
                                         )
-                                    }
+                                    },
                                 )
                                 EditableNumberListItem(
                                     title = "Long break duration",
@@ -246,9 +266,9 @@ fun AddEditLabelScreen(
                                         viewModel.setNewLabel(
                                             label.copy(
                                                 timerProfile = label.timerProfile.copy(
-                                                    longBreakDuration = it
-                                                )
-                                            )
+                                                    longBreakDuration = it,
+                                                ),
+                                            ),
                                         )
                                     },
                                     enabled = isBreakEnabled,
@@ -258,11 +278,11 @@ fun AddEditLabelScreen(
                                         viewModel.setNewLabel(
                                             label.copy(
                                                 timerProfile = label.timerProfile.copy(
-                                                    isLongBreakEnabled = it
-                                                )
-                                            )
+                                                    isLongBreakEnabled = it,
+                                                ),
+                                            ),
                                         )
-                                    }
+                                    },
                                 )
                                 EditableNumberListItem(
                                     title = "Sessions before long break",
@@ -274,9 +294,9 @@ fun AddEditLabelScreen(
                                         viewModel.setNewLabel(
                                             label.copy(
                                                 timerProfile = label.timerProfile.copy(
-                                                    sessionsBeforeLongBreak = it
-                                                )
-                                            )
+                                                    sessionsBeforeLongBreak = it,
+                                                ),
+                                            ),
                                         )
                                     },
                                 )
@@ -286,8 +306,8 @@ fun AddEditLabelScreen(
                                 val toggleBreak = {
                                     viewModel.setNewLabel(
                                         label.copy(
-                                            timerProfile = label.timerProfile.copy(isBreakEnabled = !isBreakEnabled)
-                                        )
+                                            timerProfile = label.timerProfile.copy(isBreakEnabled = !isBreakEnabled),
+                                        ),
                                     )
                                 }
                                 ListItem(
@@ -300,11 +320,12 @@ fun AddEditLabelScreen(
                                     trailingContent = {
                                         Checkbox(
                                             checked = isBreakEnabled,
-                                            onCheckedChange = { toggleBreak() }
+                                            onCheckedChange = { toggleBreak() },
                                         )
-                                    }
+                                    },
                                 )
-                                SliderListItem(title = "Work/break ratio",
+                                SliderListItem(
+                                    title = "Work/break ratio",
                                     min = 1,
                                     max = 5,
                                     enabled = isBreakEnabled,
@@ -314,16 +335,16 @@ fun AddEditLabelScreen(
                                         viewModel.setNewLabel(
                                             label.copy(
                                                 timerProfile = label.timerProfile.copy(
-                                                    workBreakRatio = it
-                                                )
-                                            )
+                                                    workBreakRatio = it,
+                                                ),
+                                            ),
                                         )
-                                    })
+                                    },
+                                )
                             }
                         }
                     }
                 }
-
             }
         }
     }
@@ -337,7 +358,6 @@ private fun LabelNameRow(
     onValueChange: (String) -> Unit,
     showError: Boolean,
 ) {
-
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(labelName) {
         if (isAddingNewLabel) {
@@ -352,11 +372,14 @@ private fun LabelNameRow(
     Column(
         modifier = Modifier
             .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-            .animateContentSize()
+            .animateContentSize(),
     ) {
         val internalModifier =
-            if (isAddingNewLabel) Modifier.focusRequester(focusRequester) else
+            if (isAddingNewLabel) {
+                Modifier.focusRequester(focusRequester)
+            } else {
                 Modifier
+            }
 
         Box {
             BasicTextField(
@@ -365,7 +388,7 @@ private fun LabelNameRow(
                     .clearFocusOnKeyboardDismiss(),
                 textStyle = MaterialTheme.typography.displaySmall.copy(
                     color = MaterialTheme.colorScheme.onSurface,
-                    textDecoration = if (isDefaultLabel) null else TextDecoration.Underline
+                    textDecoration = if (isDefaultLabel) null else TextDecoration.Underline,
                 ),
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                 readOnly = isDefaultLabel,
@@ -381,7 +404,7 @@ private fun LabelNameRow(
                 Text(
                     text = if (isDefaultLabel) stringResource(R.string.label_default) else "Add label name",
                     style = MaterialTheme.typography.displaySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -389,7 +412,7 @@ private fun LabelNameRow(
             Text(
                 text = "Label name already exists",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error
+                color = MaterialTheme.colorScheme.error,
             )
         }
     }
@@ -403,7 +426,7 @@ private fun ColorSelectRow(selectedIndex: Int, onClick: (Int) -> Unit) {
     LazyRow(
         state = listState,
         contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         itemsIndexed(colors) { index, color ->
             LabelColorPickerItem(
@@ -411,7 +434,7 @@ private fun ColorSelectRow(selectedIndex: Int, onClick: (Int) -> Unit) {
                 isSelected = index == selectedIndex,
                 onClick = {
                     onClick(index)
-                }
+                },
             )
         }
     }
@@ -425,7 +448,7 @@ private fun LabelColorPickerItem(color: Color, isSelected: Boolean, onClick: () 
             .clip(CircleShape)
             .background(color)
             .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         if (isSelected) {
             Box(
@@ -433,12 +456,12 @@ private fun LabelColorPickerItem(color: Color, isSelected: Boolean, onClick: () 
                     .size(22.dp)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f)),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = "Selected Color",
-                    tint = MaterialTheme.colorScheme.onBackground
+                    tint = MaterialTheme.colorScheme.onBackground,
                 )
             }
         }
@@ -449,7 +472,7 @@ private fun LabelColorPickerItem(color: Color, isSelected: Boolean, onClick: () 
 private fun TimerTypeRow(isCountDown: Boolean, onCountDownEnabled: (Boolean) -> Unit) {
     Row(
         modifier = Modifier.padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         FilterChip(
             onClick = { onCountDownEnabled(true) },
@@ -479,7 +502,7 @@ fun EditableNumberListItem(
     onValueChange: (Int) -> Unit,
     enableSwitch: Boolean = false,
     switchValue: Boolean = true,
-    onSwitchChange: (Boolean) -> Unit = {}
+    onSwitchChange: (Boolean) -> Unit = {},
 ) {
     var textFieldValue by remember(value) { mutableStateOf(TextFieldValue(value.toString())) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -491,23 +514,35 @@ fun EditableNumberListItem(
         textFieldValue = textFieldValue.copy(
             selection = TextRange(
                 start = 0,
-                end = endRange
-            )
+                end = endRange,
+            ),
         )
     }
 
-    val clickableModifier = if (enabled && switchValue) Modifier.clickable {
-        focusRequester.requestFocus()
-    } else Modifier
+    val clickableModifier = if (enabled && switchValue) {
+        Modifier.clickable {
+            focusRequester.requestFocus()
+        }
+    } else {
+        Modifier
+    }
 
     val colors =
-        if (enabled && switchValue) ListItemDefaults.colors() else ListItemDefaults.colors(
-            headlineColor = ListItemDefaults.colors().disabledHeadlineColor
-        )
+        if (enabled && switchValue) {
+            ListItemDefaults.colors()
+        } else {
+            ListItemDefaults.colors(
+                headlineColor = ListItemDefaults.colors().disabledHeadlineColor,
+            )
+        }
     val strokeColor =
-        if (enabled && switchValue) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(
-            0.38f
-        )
+        if (enabled && switchValue) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.onSurface.copy(
+                0.38f,
+            )
+        }
 
     ListItem(
         modifier = clickableModifier,
@@ -534,11 +569,11 @@ fun EditableNumberListItem(
                 singleLine = true,
                 textStyle = MaterialTheme.typography.titleLarge.copy(
                     textAlign = TextAlign.Center,
-                    color = colors.headlineColor
+                    color = colors.headlineColor,
                 ),
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Done,
                 ),
                 modifier = Modifier
                     .widthIn(min = 32.dp, max = 64.dp)
@@ -548,21 +583,21 @@ fun EditableNumberListItem(
                     .focusRequester(focusRequester)
                     .clearFocusOnKeyboardDismiss {
                         textFieldValue = textFieldValue.copy(
-                            text = value.toString()
+                            text = value.toString(),
                         )
-                    }
+                    },
             )
         },
         leadingContent = {
             if (enableSwitch) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Checkbox(
                         checked = switchValue,
                         enabled = enabled,
-                        onCheckedChange = onSwitchChange
+                        onCheckedChange = onSwitchChange,
                     )
                     VerticalDivider(modifier = Modifier.height(32.dp), color = colors.headlineColor)
                 }
@@ -579,7 +614,7 @@ fun SaveButton(
     isEditMode: Boolean,
     onUpdate: (String, Label) -> Unit,
     onAdd: (Label) -> Unit,
-    onSave: () -> Unit
+    onSave: () -> Unit,
 ) {
     Button(
         modifier = Modifier
@@ -593,7 +628,8 @@ fun SaveButton(
                 onAdd(labelToEdit)
             }
             onSave()
-        }) {
+        },
+    ) {
         Text("Save")
     }
 }

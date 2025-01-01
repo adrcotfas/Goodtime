@@ -16,7 +16,3 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -->
-<paths>
-    <!--    The location where the database file is copied before exporting it-->
-    <files-path name="tmp" path="tmp/" />
-</paths>

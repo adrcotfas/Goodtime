@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.data.local.backup
 
 import androidx.lifecycle.ViewModel
@@ -15,12 +32,12 @@ data class BackupUiState(
     val isJsonBackupInProgress: Boolean = false,
     val isRestoreInProgress: Boolean = false,
     val backupResult: Boolean? = null,
-    val restoreResult: Boolean? = null
+    val restoreResult: Boolean? = null,
 )
 
 class BackupViewModel(
     private val backupManager: BackupManager,
-    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BackupUiState())
@@ -33,7 +50,7 @@ class BackupViewModel(
                 _uiState.update {
                     val backupResult = if (!success) false else null
                     it.copy(
-                        backupResult = backupResult
+                        backupResult = backupResult,
                     )
                 }
             }
@@ -47,7 +64,7 @@ class BackupViewModel(
                 _uiState.update {
                     val backupResult = if (!success) false else null
                     it.copy(
-                        backupResult = backupResult
+                        backupResult = backupResult,
                     )
                 }
             }
@@ -61,7 +78,7 @@ class BackupViewModel(
                 _uiState.update {
                     val backupResult = if (!success) false else null
                     it.copy(
-                        backupResult = backupResult
+                        backupResult = backupResult,
                     )
                 }
             }
@@ -75,7 +92,7 @@ class BackupViewModel(
                 _uiState.update {
                     it.copy(
                         isRestoreInProgress = false,
-                        restoreResult = success
+                        restoreResult = success,
                     )
                 }
             }
@@ -89,7 +106,7 @@ class BackupViewModel(
             isBackupInProgress = false,
             isRestoreInProgress = false,
             isCsvBackupInProgress = false,
-            isJsonBackupInProgress = false
+            isJsonBackupInProgress = false,
         )
     }
 }

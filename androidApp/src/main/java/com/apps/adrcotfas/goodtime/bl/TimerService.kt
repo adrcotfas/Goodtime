@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.bl
 
 import android.app.Service
@@ -10,7 +27,7 @@ import com.apps.adrcotfas.goodtime.di.injectLogger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-//TODO: fix the following:
+// TODO: fix the following:
 // wait for session to finish,
 // close the app and then tap continue from the notification => nothing happens
 class TimerService : Service(), KoinComponent {
@@ -29,12 +46,12 @@ class TimerService : Service(), KoinComponent {
                 notificationManager.clearFinishedNotification()
                 startForeground(
                     NotificationArchManager.IN_PROGRESS_NOTIFICATION_ID,
-                    notificationManager.buildInProgressNotification(data)
+                    notificationManager.buildInProgressNotification(data),
                 )
             }
 
             Action.Reset.name -> {
-                //TODO: test on minimum SDK version too
+                // TODO: test on minimum SDK version too
                 notificationManager.clearFinishedNotification()
                 stopForeground(STOP_FOREGROUND_REMOVE)
                 stopSelf()
@@ -79,7 +96,7 @@ class TimerService : Service(), KoinComponent {
             AddOneMinute,
             Skip,
             Next,
-            DoReset
+            DoReset,
         }
 
         private const val EXTRA_FINISHED_AUTOSTART = "EXTRA_FINISHED_AUTOSTART"
@@ -94,6 +111,5 @@ class TimerService : Service(), KoinComponent {
                 putExtra(EXTRA_FINISHED_AUTOSTART, autostart)
             }
         }
-
     }
 }

@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.settings.notifications
 
 import android.content.Context
@@ -44,7 +61,6 @@ import com.apps.adrcotfas.goodtime.bl.notifications.SoundPlayer
 import com.apps.adrcotfas.goodtime.common.findActivity
 import com.apps.adrcotfas.goodtime.common.getFileName
 import com.apps.adrcotfas.goodtime.data.settings.SoundData
-import com.apps.adrcotfas.goodtime.settings.SoundsViewModel
 import com.apps.adrcotfas.goodtime.ui.common.PreferenceGroupTitle
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
@@ -65,7 +81,7 @@ fun NotificationSoundPickerDialog(
     selectedItem: SoundData,
     onSelected: (SoundData) -> Unit,
     onSave: (SoundData) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -81,14 +97,14 @@ fun NotificationSoundPickerDialog(
                     type = "audio/*"
                 }
             }
-        }
+        },
     ) { uri ->
         if (uri != null) {
             context.getFileName(uri)?.let {
                 val soundData = SoundData(name = it, uriString = uri.toString())
                 context.contentResolver.takePersistableUriPermission(
                     uri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION,
                 )
                 viewModel.saveUserSound(soundData)
                 onSelected(soundData)
@@ -131,7 +147,7 @@ fun NotificationSoundPickerDialog(
                 soundPlayer.stop()
             }
             onDismiss()
-        }
+        },
     )
 }
 
@@ -145,9 +161,8 @@ private fun NotificationSoundPickerDialogContent(
     onSave: (SoundData) -> Unit,
     onDismiss: () -> Unit,
     onAddSoundClick: () -> Unit,
-    onRemoveUserSound: (SoundData) -> Unit
+    onRemoveUserSound: (SoundData) -> Unit,
 ) {
-
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = MaterialTheme.shapes.extraLarge,
@@ -155,26 +170,26 @@ private fun NotificationSoundPickerDialogContent(
             modifier = Modifier
                 .background(
                     shape = MaterialTheme.shapes.extraLarge,
-                    color = MaterialTheme.colorScheme.surface
+                    color = MaterialTheme.colorScheme.surface,
                 ),
         ) {
             Column(
                 modifier = Modifier
                     .padding(top = 24.dp)
                     .fillMaxHeight(0.75f),
-                verticalArrangement = Arrangement.Top
+                verticalArrangement = Arrangement.Top,
             ) {
                 Text(
                     modifier = Modifier
                         .padding(start = 24.dp)
                         .fillMaxWidth(),
                     text = title,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
                 )
 
                 LazyColumn(modifier = Modifier.weight(1f)) {
                     item(key = "user sounds") {
-                        PreferenceGroupTitle(modifier = Modifier.animateItem(),  text = "Your sounds")
+                        PreferenceGroupTitle(modifier = Modifier.animateItem(), text = "Your sounds")
                     }
                     items(userItems.toList(), key = { "user" + it.uriString }) { item ->
                         val isSelected = selectedItem == item
@@ -183,7 +198,7 @@ private fun NotificationSoundPickerDialogContent(
                             name = item.name,
                             isSelected = isSelected,
                             isCustomSound = true,
-                            onRemove = { onRemoveUserSound(item) }
+                            onRemove = { onRemoveUserSound(item) },
                         ) {
                             onSelected(item)
                         }
@@ -199,7 +214,7 @@ private fun NotificationSoundPickerDialogContent(
                             modifier = Modifier.animateItem(),
                             name = "Silent",
                             isSilent = true,
-                            isSelected = selectedItem.uriString == Uri.EMPTY.toString()
+                            isSelected = selectedItem.uriString == Uri.EMPTY.toString(),
                         ) {
                             onSelected(SoundData(isSilent = true))
                         }
@@ -209,7 +224,7 @@ private fun NotificationSoundPickerDialogContent(
                         NotificationSoundItem(
                             modifier = Modifier.animateItem(),
                             name = item.name,
-                            isSelected = isSelected
+                            isSelected = isSelected,
                         ) {
                             onSelected(item)
                         }
@@ -237,11 +252,15 @@ fun NotificationSoundItem(
         modifier = modifier
             .fillMaxWidth()
             .let {
-                if (isSelected) it.background(
-                    MaterialTheme.colorScheme.inverseSurface.copy(
-                        alpha = 0.1f
+                if (isSelected) {
+                    it.background(
+                        MaterialTheme.colorScheme.inverseSurface.copy(
+                            alpha = 0.1f,
+                        ),
                     )
-                ) else it
+                } else {
+                    it
+                }
             }
             .combinedClickable(onClick = {
                 onSelected()
@@ -251,34 +270,40 @@ fun NotificationSoundItem(
                 }
             })
             .padding(horizontal = 24.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (onRemove != null) {
             DropdownMenu(
                 expanded = dropDownMenuExpanded,
-                onDismissRequest = { dropDownMenuExpanded = false }) {
+                onDismissRequest = { dropDownMenuExpanded = false },
+            ) {
                 DropdownMenuItem(
                     text = { Text("Remove") },
                     onClick = {
                         onRemove()
                         dropDownMenuExpanded = false
-                    })
+                    },
+                )
             }
         }
 
         Icon(
             imageVector =
-            if (isCustomSound) EvaIcons.Fill.Music
-            else if (isSilent) EvaIcons.Outline.BellOff
-            else EvaIcons.Outline.Bell,
+            if (isCustomSound) {
+                EvaIcons.Fill.Music
+            } else if (isSilent) {
+                EvaIcons.Outline.BellOff
+            } else {
+                EvaIcons.Outline.Bell
+            },
             contentDescription = null,
             modifier = Modifier.padding(end = 16.dp),
-            tint = MaterialTheme.colorScheme.primary
+            tint = MaterialTheme.colorScheme.primary,
         )
         Text(
             text = name,
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
 
         if (isSelected) {
@@ -286,7 +311,7 @@ fun NotificationSoundItem(
                 imageVector =
                 EvaIcons.Outline.CheckmarkCircle2,
                 tint = MaterialTheme.colorScheme.primary,
-                contentDescription = null
+                contentDescription = null,
             )
         }
     }
@@ -299,38 +324,37 @@ fun AddCustomSoundButton(modifier: Modifier = Modifier, onAddUserSound: () -> Un
             .fillMaxWidth()
             .clickable { onAddUserSound() }
             .padding(horizontal = 24.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             imageVector = EvaIcons.Outline.Plus,
             contentDescription = null,
             modifier = Modifier.padding(end = 16.dp),
-            tint = MaterialTheme.colorScheme.primary
+            tint = MaterialTheme.colorScheme.primary,
         )
         Text(
             text = "Add custom sound",
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
     }
 }
-
 
 @Composable
 private fun ButtonsRow(
     onSave: (SoundData) -> Unit,
     onDismiss: () -> Unit,
-    selectedItem: SoundData
+    selectedItem: SoundData,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         TextButton(
             modifier = Modifier
                 .padding(end = 8.dp, bottom = 4.dp),
-            onClick = onDismiss
+            onClick = onDismiss,
         ) { Text(stringResource(id = android.R.string.cancel)) }
 
         TextButton(
@@ -339,7 +363,7 @@ private fun ButtonsRow(
             onClick = {
                 onSave(selectedItem)
                 onDismiss()
-            }
+            },
         ) { Text(stringResource(id = android.R.string.ok)) }
     }
 }
@@ -364,6 +388,6 @@ fun NotificationSoundPickerDialogPreview() {
             SoundData("Mallet", "Mallet"),
             SoundData("Music Box", "Music Box"),
         ),
-        onRemoveUserSound = {}
+        onRemoveUserSound = {},
     )
 }

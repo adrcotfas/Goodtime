@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.ui.common
 
 import androidx.compose.foundation.layout.RowScope
@@ -24,7 +41,7 @@ fun TopBar(
     onNavigateBack: (() -> Unit)? = null,
     icon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
     actions: @Composable RowScope.() -> Unit = {},
-    scrollBehavior: TopAppBarScrollBehavior? = null
+    scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
     CenterAlignedTopAppBar(
         modifier = Modifier.alpha(if (isVisible) 1f else 0f),
@@ -34,7 +51,7 @@ fun TopBar(
                 IconButton(onClick = onNavigateBack) {
                     Icon(
                         icon,
-                        contentDescription = "Navigate back"
+                        contentDescription = "Navigate back",
                     )
                 }
             }
@@ -43,6 +60,6 @@ fun TopBar(
             containerColor = Color.Transparent,
         ),
         actions = actions,
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
     )
 }

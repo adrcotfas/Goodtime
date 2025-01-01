@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.ui.common
 
 import androidx.compose.foundation.background
@@ -38,13 +55,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
-
 @Composable
 private fun ListItemDefaults.enabledColors(): ListItemColors {
     val secondaryColor = colors().headlineColor.copy(alpha = 0.75f)
     return colors(
         supportingColor = secondaryColor,
-        trailingIconColor = secondaryColor
+        trailingIconColor = secondaryColor,
     )
 }
 
@@ -54,7 +70,7 @@ private fun ListItemDefaults.disabledColors(): ListItemColors {
     return colors(
         headlineColor = disabledColor,
         supportingColor = disabledColor,
-        trailingIconColor = disabledColor
+        trailingIconColor = disabledColor,
     )
 }
 
@@ -70,7 +86,7 @@ fun BetterListItem(
     subtitle: String? = null,
     trailing: String,
     onClick: () -> Unit,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     BetterListItem(
         modifier = modifier,
@@ -83,7 +99,7 @@ fun BetterListItem(
             )
         },
         onClick = onClick,
-        enabled = enabled
+        enabled = enabled,
     )
 }
 
@@ -94,13 +110,17 @@ fun BetterListItem(
     subtitle: String? = null,
     trailing: @Composable (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     val internalModifier = modifier.padding(vertical = 4.dp)
     ListItem(
-        modifier = if (enabled && onClick != null) Modifier
-            .clickable(onClick = onClick)
-            .then(internalModifier) else internalModifier,
+        modifier = if (enabled && onClick != null) {
+            Modifier
+                .clickable(onClick = onClick)
+                .then(internalModifier)
+        } else {
+            internalModifier
+        },
         colors = if (enabled) ListItemDefaults.enabledColors() else ListItemDefaults.disabledColors(),
         headlineContent = { Text(text = title) },
         supportingContent = {
@@ -111,7 +131,7 @@ fun BetterListItem(
                 )
             }
         },
-        trailingContent = trailing
+        trailingContent = trailing,
     )
 }
 
@@ -120,13 +140,17 @@ fun BetterListItem(
     title: String,
     supporting: @Composable (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     val modifier = Modifier.padding(vertical = 4.dp)
     ListItem(
-        modifier = if (enabled && onClick != null) Modifier
-            .clickable(onClick = onClick)
-            .then(modifier) else modifier,
+        modifier = if (enabled && onClick != null) {
+            Modifier
+                .clickable(onClick = onClick)
+                .then(modifier)
+        } else {
+            modifier
+        },
         colors = if (enabled) ListItemDefaults.enabledColors() else ListItemDefaults.disabledColors(),
         headlineContent = { Text(text = title) },
         supportingContent = supporting,
@@ -139,7 +163,7 @@ fun IconListItem(
     subtitle: String? = null,
     icon: @Composable () -> Unit,
     isSelected: Boolean = false,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val modifier = Modifier.padding(vertical = 4.dp)
 
@@ -171,7 +195,7 @@ fun SliderListItem(
     onValueChange: (Int) -> Unit,
     onValueChangeFinished: () -> Unit = { },
     showValue: Boolean = false,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     ListItem(
         modifier = modifier,
@@ -186,7 +210,7 @@ fun SliderListItem(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Slider(
                     modifier = Modifier.weight(1f),
@@ -197,13 +221,13 @@ fun SliderListItem(
                     enabled = enabled,
                     onValueChangeFinished = onValueChangeFinished,
                     steps = steps,
-                    valueRange = min.toFloat()..max.toFloat()
+                    valueRange = min.toFloat()..max.toFloat(),
                 )
                 if (showValue) {
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
                         text = value.toString(),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                 }
             }
@@ -218,7 +242,7 @@ fun CheckboxListItem(
     subtitle: String? = null,
     checked: Boolean,
     enabled: Boolean = true,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     BetterListItem(
         modifier = modifier,
@@ -228,11 +252,11 @@ fun CheckboxListItem(
             Checkbox(
                 checked = checked,
                 enabled = enabled,
-                onCheckedChange = onCheckedChange
+                onCheckedChange = onCheckedChange,
             )
         },
         enabled = enabled,
-        onClick = { onCheckedChange(!checked) }
+        onClick = { onCheckedChange(!checked) },
     )
 }
 
@@ -243,7 +267,7 @@ fun SwitchListItem(
     subtitle: String? = null,
     checked: Boolean,
     enabled: Boolean = true,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     BetterListItem(
         modifier = modifier,
@@ -253,11 +277,11 @@ fun SwitchListItem(
             Switch(
                 checked = checked,
                 enabled = enabled,
-                onCheckedChange = onCheckedChange
+                onCheckedChange = onCheckedChange,
             )
         },
         enabled = enabled,
-        onClick = { onCheckedChange(!checked) }
+        onClick = { onCheckedChange(!checked) },
     )
 }
 
@@ -269,7 +293,7 @@ fun DropdownMenuListItem(
     value: String,
     enabled: Boolean = true,
     dropdownMenuOptions: List<String>,
-    onDropdownMenuItemSelected: (Int) -> Unit
+    onDropdownMenuItemSelected: (Int) -> Unit,
 ) {
     var dropdownMenuExpanded by remember { mutableStateOf(false) }
     BetterListItem(
@@ -285,29 +309,34 @@ fun DropdownMenuListItem(
                         .clip(RoundedCornerShape(8.dp)),
                     shape = MaterialTheme.shapes.medium,
                     expanded = dropdownMenuExpanded,
-                    onDismissRequest = { dropdownMenuExpanded = false }) {
+                    onDismissRequest = { dropdownMenuExpanded = false },
+                ) {
                     dropdownMenuOptions.forEachIndexed { index, it ->
                         DropdownMenuItem(
-                            modifier = if(it == value) Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)) else Modifier,
+                            modifier = if (it == value) Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)) else Modifier,
                             text = {
                                 Text(
                                     text = it,
-                                    style = if (it == value) MaterialTheme.typography.bodyMedium.copy(
-                                        color = MaterialTheme.colorScheme.primary
-                                    ) else MaterialTheme.typography.bodyMedium
+                                    style = if (it == value) {
+                                        MaterialTheme.typography.bodyMedium.copy(
+                                            color = MaterialTheme.colorScheme.primary,
+                                        )
+                                    } else {
+                                        MaterialTheme.typography.bodyMedium
+                                    },
                                 )
                             },
                             onClick = {
                                 onDropdownMenuItemSelected(index)
                                 dropdownMenuExpanded = false
-                            }
+                            },
                         )
                     }
                 }
             }
         },
         onClick = { dropdownMenuExpanded = true },
-        enabled = enabled
+        enabled = enabled,
     )
 }
 
@@ -317,24 +346,24 @@ fun CircularProgressListItem(
     subtitle: String? = null,
     showProgress: Boolean,
     enabled: Boolean = true,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     BetterListItem(
         title = title,
         subtitle = subtitle,
         trailing = {
             Box(
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(32.dp),
             ) {
                 if (showProgress) {
                     CircularProgressIndicator(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
                     )
                 }
             }
         },
         onClick = onClick,
-        enabled = enabled
+        enabled = enabled,
     )
 }
 
@@ -350,6 +379,6 @@ fun SliderListItemPreview() {
         max = 5,
         showValue = false,
         onValueChange = {},
-        onValueChangeFinished = {}
+        onValueChangeFinished = {},
     )
 }

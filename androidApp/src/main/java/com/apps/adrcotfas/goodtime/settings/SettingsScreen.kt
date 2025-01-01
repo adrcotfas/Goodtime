@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.settings
 
 import androidx.activity.ComponentActivity
@@ -32,9 +49,9 @@ import com.apps.adrcotfas.goodtime.main.Destination
 import com.apps.adrcotfas.goodtime.settings.about.AboutScreen
 import com.apps.adrcotfas.goodtime.settings.about.LicensesScreen
 import com.apps.adrcotfas.goodtime.settings.backup.BackupScreen
+import com.apps.adrcotfas.goodtime.settings.general.GeneralSettingsScreen
 import com.apps.adrcotfas.goodtime.settings.notifications.NotificationsScreen
-import com.apps.adrcotfas.goodtime.settings.user_interface.GeneralSettingsScreen
-import com.apps.adrcotfas.goodtime.settings.user_interface.TimerStyleScreen
+import com.apps.adrcotfas.goodtime.settings.timerstyle.TimerStyleScreen
 import com.apps.adrcotfas.goodtime.ui.common.IconListItem
 import com.apps.adrcotfas.goodtime.ui.common.TopBar
 import com.apps.adrcotfas.goodtime.ui.common.isContent
@@ -54,7 +71,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel = koinViewModel(viewModelStoreOwner = LocalContext.current as ComponentActivity)
+    viewModel: SettingsViewModel = koinViewModel(viewModelStoreOwner = LocalContext.current as ComponentActivity),
 ) {
     val context = LocalContext.current
     val navigator = rememberListDetailPaneScaffoldNavigator<String>()
@@ -85,71 +102,71 @@ fun SettingsScreen(
                 Scaffold(
                     topBar = {
                         TopBar(title = "Settings")
-                    }
+                    },
                 ) { paddingValues ->
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(top = paddingValues.calculateTopPadding())
-                            .verticalScroll(rememberScrollState())
+                            .verticalScroll(rememberScrollState()),
                     ) {
                         ActionSection(
                             notificationPermissionState = notificationPermissionState,
                             onNotificationPermissionGranted = { granted ->
                                 viewModel.setNotificationPermissionGranted(granted)
-                            }
+                            },
                         )
                         IconListItem(
                             title = "General settings",
                             icon = {
                                 Icon(
                                     EvaIcons.Outline.Settings,
-                                    contentDescription = "General settings"
+                                    contentDescription = "General settings",
                                 )
                             },
                             onClick = {
                                 navigator.navigateToDetail(Destination.GeneralSettings.route)
                             },
-                            isSelected = navigator.isContent(Destination.GeneralSettings.route)
+                            isSelected = navigator.isContent(Destination.GeneralSettings.route),
                         )
                         IconListItem(
                             title = "Timer style",
                             icon = {
                                 Icon(
                                     EvaIcons.Outline.ColorPalette,
-                                    contentDescription = "Timer style"
+                                    contentDescription = "Timer style",
                                 )
                             },
                             onClick = {
                                 navigator.navigateToDetail(Destination.TimerStyle.route)
                             },
-                            isSelected = navigator.isContent(Destination.TimerStyle.route)
+                            isSelected = navigator.isContent(Destination.TimerStyle.route),
                         )
                         IconListItem(
                             title = "Notifications",
                             icon = {
                                 Icon(
                                     EvaIcons.Outline.Bell,
-                                    contentDescription = "Notifications"
+                                    contentDescription = "Notifications",
                                 )
                             },
                             onClick = {
                                 navigator.navigateToDetail(Destination.NotificationSettings.route)
                             },
-                            isSelected = navigator.isContent(Destination.NotificationSettings.route)
+                            isSelected = navigator.isContent(Destination.NotificationSettings.route),
                         )
                         IconListItem(
                             title = "Backup and restore",
                             icon = {
                                 Icon(
                                     EvaIcons.Outline.Save,
-                                    contentDescription = "Backup and restore"
+                                    contentDescription = "Backup and restore",
                                 )
                             },
                             onClick = {
                                 navigator.navigateToDetail(Destination.Backup.route)
                             },
-                            isSelected = navigator.isContent(Destination.Backup.route)
+                            isSelected = navigator.isContent(Destination.Backup.route),
                         )
 
                         IconListItem(
@@ -158,16 +175,15 @@ fun SettingsScreen(
                             icon = {
                                 Icon(
                                     EvaIcons.Outline.Info,
-                                    contentDescription = "About and feedback"
+                                    contentDescription = "About and feedback",
                                 )
                             },
                             onClick = {
                                 navigator.navigateToDetail(Destination.About.route)
                             },
-                            isSelected = navigator.isContent(Destination.About.route)
+                            isSelected = navigator.isContent(Destination.About.route),
                         )
                     }
-
                 }
             }
         },
@@ -177,22 +193,22 @@ fun SettingsScreen(
                 when (content) {
                     Destination.GeneralSettings.route -> GeneralSettingsScreen(
                         showTopBar = isPortrait,
-                        onNavigateBack = onNavigateBack
+                        onNavigateBack = onNavigateBack,
                     )
 
                     Destination.TimerStyle.route -> TimerStyleScreen(
                         showTopBar = isPortrait,
-                        onNavigateBack = onNavigateBack
+                        onNavigateBack = onNavigateBack,
                     )
 
                     Destination.NotificationSettings.route -> NotificationsScreen(
                         showTopBar = isPortrait,
-                        onNavigateBack = onNavigateBack
+                        onNavigateBack = onNavigateBack,
                     )
 
                     Destination.Backup.route -> BackupScreen(
                         showTopBar = isPortrait,
-                        onNavigateBack = onNavigateBack
+                        onNavigateBack = onNavigateBack,
                     )
 
                     Destination.About.route, Destination.Licenses.route -> AboutScreen(
@@ -201,23 +217,23 @@ fun SettingsScreen(
                         },
                         showTopBar = isPortrait || navigator.isContent(Destination.Licenses.route),
                         onNavigateBack = onNavigateBack,
-                        isLicensesSelected = navigator.isContent(Destination.Licenses.route)
+                        isLicensesSelected = navigator.isContent(Destination.Licenses.route),
                     )
                 }
             }
         },
         extraPane = {
             AnimatedPane {
-                //TODO: highlight "Open source licenses" while open
+                // TODO: highlight "Open source licenses" while open
                 val content = navigator.currentDestination?.content ?: ""
                 when (content) {
                     Destination.Licenses.route -> LicensesScreen(
                         showTopBar = isPortrait,
-                        onNavigateBack = onNavigateBack
+                        onNavigateBack = onNavigateBack,
                     )
                 }
             }
-        }
+        },
     )
 }
 

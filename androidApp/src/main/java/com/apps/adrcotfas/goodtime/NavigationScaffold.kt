@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime
 
 import androidx.compose.material3.Badge
@@ -21,7 +38,7 @@ fun NavigationScaffold(
     onNavigate: (route: String) -> Unit,
     currentDestination: String?,
     dynamicColor: Boolean,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val permissionsState = getPermissionsState()
 
@@ -37,10 +54,14 @@ fun NavigationScaffold(
     }
 
     val colors =
-        if (dynamicColor) NavigationSuiteDefaults.colors() else NavigationSuiteDefaults.colors(
-            navigationBarContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            navigationRailContainerColor = MaterialTheme.colorScheme.surfaceContainerLow
-        )
+        if (dynamicColor) {
+            NavigationSuiteDefaults.colors()
+        } else {
+            NavigationSuiteDefaults.colors(
+                navigationBarContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                navigationRailContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            )
+        }
 
     NavigationSuiteScaffold(
         layoutType = customNavSuiteType,
@@ -53,12 +74,12 @@ fun NavigationScaffold(
                     badge = {
                         val count = listOf(
                             permissionsState.shouldAskForNotificationPermission,
-                            permissionsState.shouldAskForBatteryOptimizationRemoval
+                            permissionsState.shouldAskForBatteryOptimizationRemoval,
                         ).count { state -> state }
                         if (it.label == Destination.Settings.label && count > 0) {
                             Badge(
                                 containerColor = MaterialTheme.colorScheme.secondary,
-                                contentColor = MaterialTheme.colorScheme.onSecondary
+                                contentColor = MaterialTheme.colorScheme.onSecondary,
                             ) {
                                 Text(text = count.toString())
                             }
@@ -68,10 +89,10 @@ fun NavigationScaffold(
                     selected = isSelected,
                     onClick = {
                         onNavigate(it.route)
-                    }
+                    },
                 )
             }
-        }
+        },
     ) {
         content()
     }

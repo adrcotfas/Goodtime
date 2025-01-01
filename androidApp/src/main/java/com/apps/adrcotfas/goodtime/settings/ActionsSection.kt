@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.settings
 
 import android.Manifest
@@ -27,7 +44,6 @@ import com.apps.adrcotfas.goodtime.ui.common.SubtleHorizontalDivider
 
 @Composable
 fun ActionSection(notificationPermissionState: NotificationPermissionState, onNotificationPermissionGranted: (Boolean) -> Unit) {
-
     val context = LocalContext.current
     val notificationPermissionLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { granted ->
@@ -42,14 +58,14 @@ fun ActionSection(notificationPermissionState: NotificationPermissionState, onNo
                 text = "Action required",
                 paddingValues = PaddingValues(
                     horizontal = 16.dp,
-                    vertical = 8.dp
-                )
+                    vertical = 8.dp,
+                ),
             )
             AnimatedVisibility(permissionsState.shouldAskForBatteryOptimizationRemoval) {
                 AskForPermissionCard(
                     cta = "Allow",
                     description = "Allow this app to run in the background",
-                    onClick = { context.askForDisableBatteryOptimization() }
+                    onClick = { context.askForDisableBatteryOptimization() },
                 )
             }
 
@@ -60,7 +76,7 @@ fun ActionSection(notificationPermissionState: NotificationPermissionState, onNo
                     onClick = {
                         if (notificationPermissionState == NotificationPermissionState.DENIED && !shouldShowRequestPermissionRationale(
                                 context.findActivity()!!,
-                                Manifest.permission.POST_NOTIFICATIONS
+                                Manifest.permission.POST_NOTIFICATIONS,
                             )
                         ) {
                             navigateToNotificationSettings(context)
@@ -69,7 +85,7 @@ fun ActionSection(notificationPermissionState: NotificationPermissionState, onNo
                         } else {
                             navigateToNotificationSettings(context)
                         }
-                    }
+                    },
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))

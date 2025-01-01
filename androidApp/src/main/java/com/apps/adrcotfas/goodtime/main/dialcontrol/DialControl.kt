@@ -1,4 +1,21 @@
-package com.apps.adrcotfas.goodtime.main.dial_control
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.apps.adrcotfas.goodtime.main.dialcontrol
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -33,7 +50,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.apps.adrcotfas.goodtime.main.dial_control.DialControlState.Companion.calculateStartAngle
+import com.apps.adrcotfas.goodtime.main.dialcontrol.DialControlState.Companion.calculateStartAngle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
@@ -58,8 +75,8 @@ object DialControlDefaults {
                 .size(state.config.indicatorSize)
                 .background(
                     color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = CircleShape
-                )
+                    shape = CircleShape,
+                ),
         )
     }
 }
@@ -67,7 +84,7 @@ object DialControlDefaults {
 data class DialConfig(
     val size: Dp = 0.dp,
     val indicatorSize: Dp = 24.dp,
-    val cutoffFraction: Float = 0.4f
+    val cutoffFraction: Float = 0.4f,
 )
 
 @Composable
@@ -84,7 +101,7 @@ fun <T> rememberDialControlState(
             onSelected = onSelected,
             config = config,
             density = density,
-            coroutineScope = coroutineScope
+            coroutineScope = coroutineScope,
         )
     }
 }
@@ -96,7 +113,7 @@ fun <T> DialControl(
     dialContent: @Composable (T) -> Unit,
     indicator: @Composable (DialControlState<T>) -> Unit = {
         DialControlDefaults.Indicator(state)
-    }
+    },
 ) {
     val hapticFeedback = LocalHapticFeedback.current
     LaunchedEffect(state) {
@@ -115,7 +132,6 @@ fun <T> DialControl(
             }
     }
 
-
     Box {
         AnimatedVisibility(
             visible = state.isDragging,
@@ -123,7 +139,7 @@ fun <T> DialControl(
             exit = fadeOut(),
             modifier = Modifier
                 .size(state.config.size)
-                .align(Alignment.Center)
+                .align(Alignment.Center),
         ) {
             CircleDial(
                 modifier = modifier,
@@ -153,8 +169,8 @@ private fun <T> CircleDial(
                     if (option == state.selectedOption) 1f else 0f,
                     animationSpec = spring(
                         dampingRatio = Spring.DampingRatioLowBouncy,
-                        stiffness = Spring.StiffnessMediumLow
-                    )
+                        stiffness = Spring.StiffnessMediumLow,
+                    ),
                 )
             }
         }
@@ -165,7 +181,7 @@ private fun <T> CircleDial(
         Box(
             modifier = Modifier
                 .fillMaxSize(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             if (state.selectedOption == null) {
                 indicator()
@@ -174,16 +190,17 @@ private fun <T> CircleDial(
 
         state.options.forEachIndexed { index, option ->
             key(option) {
-                Box(modifier = Modifier
-                    .graphicsLayer {
-                        val startAngle =
-                            calculateStartAngle(index = index, count = state.options.size)
-                        val radians = (startAngle + sweep / 2) * Math.PI / 180
-                        val radius =
-                            (state.config.size.toPx() / 2) * (state.config.cutoffFraction + (1f - state.config.cutoffFraction) / 2)
-                        translationX = (radius * cos(radians)).toFloat()
-                        translationY = (radius * sin(radians)).toFloat()
-                    }
+                Box(
+                    modifier = Modifier
+                        .graphicsLayer {
+                            val startAngle =
+                                calculateStartAngle(index = index, count = state.options.size)
+                            val radians = (startAngle + sweep / 2) * Math.PI / 180
+                            val radius =
+                                (state.config.size.toPx() / 2) * (state.config.cutoffFraction + (1f - state.config.cutoffFraction) / 2)
+                            translationX = (radius * cos(radians)).toFloat()
+                            translationY = (radius * sin(radians)).toFloat()
+                        },
                 ) {
                     optionContent(option)
                 }
@@ -196,6 +213,5 @@ enum class DialRegion(val icon: ImageVector? = null, val label: String? = null) 
     TOP(icon = Icons.Filled.PlusOne, label = "+1 min"),
     RIGHT(icon = Icons.AutoMirrored.Filled.ArrowForwardIos, label = "Skip"),
     BOTTOM(icon = Icons.Filled.Close, "Stop"),
-    LEFT(null)
+    LEFT(null),
 }
-

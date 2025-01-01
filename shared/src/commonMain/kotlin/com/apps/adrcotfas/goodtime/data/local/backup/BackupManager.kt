@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.data.local.backup
 
 import app.cash.sqldelight.db.SqlDriver
@@ -34,7 +51,7 @@ class BackupManager(
     private val backupPrompter: BackupPrompter,
     private val localDataRepository: LocalDataRepository,
     private val logger: Logger,
-    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : KoinComponent {
 
     private val importedTemporaryFileName = "$filesDirPath/last-import"
@@ -46,7 +63,7 @@ class BackupManager(
     suspend fun backup(onComplete: (Boolean) -> Unit) {
         try {
             val tmpFilePath =
-                "${filesDirPath}/${DB_BACKUP_PREFIX}${timeProvider.now().formatForBackupFileName()}"
+                "$filesDirPath/${DB_BACKUP_PREFIX}${timeProvider.now().formatForBackupFileName()}"
             createBackup(tmpFilePath)
             backupPrompter.promptUserForBackup(BackupType.DB, tmpFilePath.toPath())
             onComplete(true)
@@ -59,7 +76,7 @@ class BackupManager(
     suspend fun backupToCsv(onComplete: (Boolean) -> Unit) {
         try {
             val tmpFilePath =
-                "${filesDirPath}/${PREFIX}${timeProvider.now().formatForBackupFileName()}.csv"
+                "$filesDirPath/${PREFIX}${timeProvider.now().formatForBackupFileName()}.csv"
             createCsvBackup(tmpFilePath)
             backupPrompter.promptUserForBackup(BackupType.CSV, tmpFilePath.toPath())
             onComplete(true)
@@ -72,7 +89,7 @@ class BackupManager(
     suspend fun backupToJson(onComplete: (Boolean) -> Unit) {
         try {
             val tmpFilePath =
-                "${filesDirPath}/${PREFIX}${timeProvider.now().formatForBackupFileName()}.json"
+                "$filesDirPath/${PREFIX}${timeProvider.now().formatForBackupFileName()}.json"
             createJsonBackup(tmpFilePath)
             backupPrompter.promptUserForBackup(BackupType.JSON, tmpFilePath.toPath())
             onComplete(true)
@@ -118,13 +135,13 @@ class BackupManager(
                     val labelName =
                         if (session.label == Label.DEFAULT_LABEL_NAME) "" else session.label
                     sink.writeUtf8(
-                                "${session.timestamp.formatToIso8601()}," +
-                                "${session.duration}," +
-                                "${session.interruptions}," +
-                                "${labelName}," +
-                                "${session.notes ?: ""}," +
-                                "${session.isWork}," +
-                                "${session.isArchived}\n"
+                        "${session.timestamp.formatToIso8601()}," +
+                            "${session.duration}," +
+                            "${session.interruptions}," +
+                            "$labelName," +
+                            "${session.notes ?: ""}," +
+                            "${session.isWork}," +
+                            "${session.isArchived}\n",
                     )
                 }
             }
@@ -141,13 +158,13 @@ class BackupManager(
                             if (session.label == Label.DEFAULT_LABEL_NAME) "" else session.label
                         sink.writeUtf8(
                             "{" +
-                                    "\"timestamp\":${session.timestamp.formatToIso8601()}," +
-                                    "\"duration\":${session.duration}," +
-                                    "\"interruptions\":${session.interruptions}," +
-                                    "\"label\":\"${labelName}\"," +
-                                    "\"notes\":\"${session.notes ?: ""}\"," +
-                                    "\"work\":${session.isWork}," +
-                                    "\"archived\":${session.isArchived}}"
+                                "\"timestamp\":${session.timestamp.formatToIso8601()}," +
+                                "\"duration\":${session.duration}," +
+                                "\"interruptions\":${session.interruptions}," +
+                                "\"label\":\"${labelName}\"," +
+                                "\"notes\":\"${session.notes ?: ""}\"," +
+                                "\"work\":${session.isWork}," +
+                                "\"archived\":${session.isArchived}}",
                         )
                         if (index < localDataRepository.selectAllSessions().first().size - 1) {
                             sink.writeUtf8(",\n")
@@ -183,7 +200,6 @@ class BackupManager(
             return if (count < header.size) false else buffer.contentEquals(header)
         }
     }
-
 
     companion object {
         private const val PREFIX = "Goodtime-Productivity-"

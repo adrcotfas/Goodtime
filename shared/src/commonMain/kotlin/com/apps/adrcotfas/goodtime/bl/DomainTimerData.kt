@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.bl
 
 import com.apps.adrcotfas.goodtime.data.model.Label
@@ -10,10 +27,9 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 
-
 data class DomainLabel(
     val label: Label = Label.defaultLabel(),
-    val profile: TimerProfile = TimerProfile()
+    val profile: TimerProfile = TimerProfile(),
 ) {
     fun getLabelName() = label.name
     val isCountdown = profile.isCountdown
@@ -47,13 +63,13 @@ data class DomainTimerData(
     val state: TimerState = TimerState.RESET,
     val type: TimerType = TimerType.WORK,
     val timeSpentPaused: Long = 0, // millis spent in pause
-    val completedMinutes: Long = 0 // minutes
+    val completedMinutes: Long = 0, // minutes
 ) {
     fun reset() = DomainTimerData(
         isReady = isReady,
         label = label,
         longBreakData = longBreakData,
-        breakBudgetData = breakBudgetData
+        breakBudgetData = breakBudgetData,
     )
 
     fun getTimerProfile(): TimerProfile {
@@ -68,7 +84,9 @@ data class DomainTimerData(
         val profile = label.profile
         return if (profile.isCountdown && profile.isBreakEnabled && profile.isLongBreakEnabled) {
             profile.sessionsBeforeLongBreak
-        } else 0
+        } else {
+            0
+        }
     }
 
     fun getEndTime(timerType: TimerType, elapsedRealtime: Long): Long {
@@ -91,8 +109,12 @@ data class DomainTimerData(
                 TimerState.RUNNING -> {
                     val breakBudgetMillis = breakBudgetData.breakBudget
                     val workBreakRatio = label.profile.workBreakRatio
-                    (((elapsedRealtime - lastStartTime).milliseconds
-                            / workBreakRatio) + breakBudgetMillis).let {
+                    (
+                        (
+                            (elapsedRealtime - lastStartTime).milliseconds /
+                                workBreakRatio
+                            ) + breakBudgetMillis
+                        ).let {
                         if (it.isNegative()) 0.minutes else it
                     }
                 }
@@ -146,6 +168,9 @@ fun DomainTimerData.getBaseTime(timerProvider: TimeProvider): Long {
         return timeAtPause
     }
 
-    return if (countdown || (!countdown && type.isBreak)) endTime - timerProvider.elapsedRealtime()
-    else timerProvider.elapsedRealtime() - startTime - timeSpentPaused
+    return if (countdown || (!countdown && type.isBreak)) {
+        endTime - timerProvider.elapsedRealtime()
+    } else {
+        timerProvider.elapsedRealtime() - startTime - timeSpentPaused
+    }
 }

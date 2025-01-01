@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.main
 
 import androidx.lifecycle.ViewModel
@@ -76,7 +93,7 @@ data class MainUiState(
 ) {
     fun isDarkTheme(isSystemInDarkTheme: Boolean): Boolean {
         return darkThemePreference == ThemePreference.DARK ||
-                (darkThemePreference == ThemePreference.SYSTEM && isSystemInDarkTheme)
+            (darkThemePreference == ThemePreference.SYSTEM && isSystemInDarkTheme)
     }
 }
 
@@ -90,7 +107,7 @@ class MainViewModel(
     private val timerManager: TimerManager,
     private val timeProvider: TimeProvider,
     private val settingsRepo: SettingsRepository,
-    private val localDataRepo: LocalDataRepository
+    private val localDataRepo: LocalDataRepository,
 ) : ViewModel() {
 
     val timerUiState: Flow<TimerUiState> = timerManager.timerData.flatMapLatest {
@@ -131,7 +148,7 @@ class MainViewModel(
                             dynamicColor = uiSettings.useDynamicColor,
                             screensaverMode = uiSettings.screensaverMode,
                             fullscreenMode = uiSettings.fullscreenMode,
-                            dndDuringWork = uiSettings.dndDuringWork
+                            dndDuringWork = uiSettings.dndDuringWork,
                         )
                     }
                 }
@@ -169,7 +186,7 @@ class MainViewModel(
                         it.copy(
                             todayWorkMinutes = todayWorkMinutes,
                             todayBreakMinutes = todayBreakMinutes,
-                            todayInterruptedMinutes = todayInterruptedMinutes
+                            todayInterruptedMinutes = todayInterruptedMinutes,
                         )
                     }
                 }
@@ -185,7 +202,9 @@ class MainViewModel(
         if (canToggle) {
             timerManager.toggle()
             return true
-        } else return false
+        } else {
+            return false
+        }
     }
 
     fun resetTimer(updateWorkTime: Boolean = false, actionType: FinishActionType = FinishActionType.MANUAL_RESET) {
@@ -203,7 +222,7 @@ class MainViewModel(
     }
 
     private suspend fun FlowCollector<TimerUiState>.emitUiState(
-        it: DomainTimerData
+        it: DomainTimerData,
     ) {
         emit(
             TimerUiState(
@@ -217,8 +236,8 @@ class MainViewModel(
                 endTime = it.endTime,
                 sessionsBeforeLongBreak = it.inUseSessionsBeforeLongBreak(),
                 longBreakData = it.longBreakData,
-                breakBudgetMinutes = it.getBreakBudget(timeProvider.elapsedRealtime()).inWholeMinutes
-            )
+                breakBudgetMinutes = it.getBreakBudget(timeProvider.elapsedRealtime()).inWholeMinutes,
+            ),
         )
     }
 

@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.bl
 
 import app.cash.turbine.test
@@ -53,7 +70,7 @@ class TimerManagerTest {
         timeProvider.elapsedRealtime = 0L
         localDataRepo = LocalDataRepositoryImpl(
             Database(driver = testDbConnection()),
-            defaultDispatcher = testDispatcher
+            defaultDispatcher = testDispatcher,
         )
 
         localDataRepo.updateDefaultLabel(defaultLabel)
@@ -67,7 +84,7 @@ class TimerManagerTest {
         finishedSessionsHandler = FinishedSessionsHandler(
             coroutineScope = testScope,
             repo = localDataRepo,
-            log = logger
+            log = logger,
         )
 
         timerManager = TimerManager(
@@ -101,7 +118,7 @@ class TimerManagerTest {
         assertEquals(
             timerManager.timerData.value.getTimerProfile(),
             newTimerProfile,
-            "Modifying the label did not trigger an update"
+            "Modifying the label did not trigger an update",
         )
     }
 
@@ -132,7 +149,7 @@ class TimerManagerTest {
                 endTime = startTime + DEFAULT_DURATION,
                 type = TimerType.WORK,
                 state = TimerState.RUNNING,
-            )
+            ),
         )
         val elapsedTime = 1.minutes.inWholeMilliseconds
         timeProvider.elapsedRealtime += elapsedTime
@@ -140,7 +157,7 @@ class TimerManagerTest {
         assertEquals(
             timerManager.timerData.value.timeAtPause,
             DEFAULT_DURATION - elapsedTime,
-            "remaining time should be one minute less"
+            "remaining time should be one minute less",
         )
         timeProvider.elapsedRealtime += elapsedTime
         val endTime =
@@ -149,7 +166,7 @@ class TimerManagerTest {
         assertEquals(
             timerManager.timerData.value.endTime,
             endTime,
-            "the timer should end after 2 more minutes"
+            "the timer should end after 2 more minutes",
         )
     }
 
@@ -168,7 +185,7 @@ class TimerManagerTest {
                 type = TimerType.WORK,
                 state = TimerState.RUNNING,
             ),
-            "the timer should have started"
+            "the timer should have started",
         )
         timerManager.addOneMinute()
         assertEquals(
@@ -182,7 +199,7 @@ class TimerManagerTest {
                 type = TimerType.WORK,
                 state = TimerState.RUNNING,
             ),
-            "the timer should have been prolonged by one minute"
+            "the timer should have been prolonged by one minute",
         )
     }
 
@@ -201,7 +218,7 @@ class TimerManagerTest {
                 type = TimerType.WORK,
                 state = TimerState.RUNNING,
             ),
-            "the timer should have started"
+            "the timer should have started",
         )
         val oneMinute = 1.minutes.inWholeMilliseconds
         timeProvider.elapsedRealtime += oneMinute
@@ -209,20 +226,20 @@ class TimerManagerTest {
         assertEquals(
             timerManager.timerData.value.timeAtPause,
             DEFAULT_DURATION - oneMinute,
-            "remaining time should be one minute less"
+            "remaining time should be one minute less",
         )
         timeProvider.elapsedRealtime += oneMinute
         timerManager.addOneMinute()
         assertEquals(
             timerManager.timerData.value.timeAtPause,
             DEFAULT_DURATION - oneMinute + 1.minutes.inWholeMilliseconds,
-            "remaining time should be one minute more"
+            "remaining time should be one minute more",
         )
         timerManager.finish()
         assertEquals(
             timerManager.timerData.value.endTime,
             timeProvider.elapsedRealtime,
-            "the timer should end after 1 more minute"
+            "the timer should end after 1 more minute",
         )
         assertEquals(
             fakeEventListener.events,
@@ -230,8 +247,8 @@ class TimerManagerTest {
                 Event.Start(endTime = startTime + DEFAULT_DURATION),
                 Event.Pause,
                 Event.AddOneMinute(endTime = startTime + DEFAULT_DURATION + oneMinute),
-                Event.Finished(type = TimerType.WORK)
-            )
+                Event.Finished(type = TimerType.WORK),
+            ),
         )
         localDataRepo.selectSessionById(localDataRepo.selectLastInsertSessionId()!!).test {
             val session = awaitItem()
@@ -255,7 +272,7 @@ class TimerManagerTest {
                 type = TimerType.WORK,
                 state = TimerState.RUNNING,
             ),
-            "the timer should have started"
+            "the timer should have started",
         )
         val elapsedTime = 1.minutes.inWholeMilliseconds
         timeProvider.elapsedRealtime += elapsedTime
@@ -291,8 +308,8 @@ class TimerManagerTest {
             fakeEventListener.events,
             listOf(
                 Event.Start(endTime = endTime),
-                Event.Start(endTime = timeProvider.elapsedRealtime + TimerProfile.DEFAULT_BREAK_DURATION.minutes.inWholeMilliseconds)
-            )
+                Event.Start(endTime = timeProvider.elapsedRealtime + TimerProfile.DEFAULT_BREAK_DURATION.minutes.inWholeMilliseconds),
+            ),
         )
         localDataRepo.selectAllSessions().test {
             assertTrue(awaitItem().isEmpty())
@@ -311,16 +328,16 @@ class TimerManagerTest {
                 label = DomainLabel(defaultLabel, defaultLabel.timerProfile),
                 longBreakData = LongBreakData(
                     streak = 1,
-                    lastWorkEndTime = DEFAULT_DURATION
+                    lastWorkEndTime = DEFAULT_DURATION,
                 ),
                 startTime = 0,
                 lastStartTime = 0,
                 endTime = DEFAULT_DURATION,
                 type = TimerType.WORK,
                 state = TimerState.FINISHED,
-                completedMinutes = DEFAULT_WORK_DURATION.toLong()
+                completedMinutes = DEFAULT_WORK_DURATION.toLong(),
             ),
-            "the timer should have finished"
+            "the timer should have finished",
         )
         localDataRepo.selectSessionById(localDataRepo.selectLastInsertSessionId()!!).test {
             val session = awaitItem()
@@ -343,14 +360,14 @@ class TimerManagerTest {
                 label = DomainLabel(defaultLabel, defaultLabel.timerProfile),
                 longBreakData = LongBreakData(
                     streak = 0,
-                    lastWorkEndTime = 0
-                )
+                    lastWorkEndTime = 0,
+                ),
             ),
-            "the timer should have been reset"
+            "the timer should have been reset",
         )
         assertEquals(
             fakeEventListener.events,
-            listOf(Event.Start(endTime = endTime), Event.Reset)
+            listOf(Event.Start(endTime = endTime), Event.Reset),
         )
         localDataRepo.selectSessionById(localDataRepo.selectLastInsertSessionId()!!).test {
             val session = awaitItem()
@@ -373,14 +390,14 @@ class TimerManagerTest {
                 label = DomainLabel(defaultLabel, defaultLabel.timerProfile),
                 longBreakData = LongBreakData(
                     streak = 0,
-                    lastWorkEndTime = 0
-                )
+                    lastWorkEndTime = 0,
+                ),
             ),
-            "the timer should have been reset"
+            "the timer should have been reset",
         )
         assertEquals(
             fakeEventListener.events,
-            listOf(Event.Start(endTime = endTime), Event.Reset)
+            listOf(Event.Start(endTime = endTime), Event.Reset),
         )
         localDataRepo.selectAllSessions().test {
             assertTrue(awaitItem().isEmpty())
@@ -422,7 +439,6 @@ class TimerManagerTest {
         timerManager.finish()
         assertEquals(timerManager.timerData.value.longBreakData.streak, 1)
     }
-
 
     @Test
     fun `Long break after 4 work sessions with finish and next`() = runTest {
@@ -487,7 +503,7 @@ class TimerManagerTest {
             timerManager.timerData.value.label.profile.sessionsBeforeLongBreak
         assertEquals(
             timerManager.timerData.value.longBreakData.streakInUse(sessionsBeforeLongBreak),
-            0
+            0,
         )
         timerManager.start(TimerType.WORK)
         val twoMinutes = 2.minutes.inWholeMilliseconds
@@ -496,7 +512,7 @@ class TimerManagerTest {
         assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
         assertEquals(
             timerManager.timerData.value.longBreakData.streakInUse(sessionsBeforeLongBreak),
-            1
+            1,
         )
         timerManager.skip()
         assertEquals(timerManager.timerData.value.type, TimerType.WORK)
@@ -505,7 +521,7 @@ class TimerManagerTest {
         assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
         assertEquals(
             timerManager.timerData.value.longBreakData.streakInUse(sessionsBeforeLongBreak),
-            2
+            2,
         )
         timerManager.skip()
         assertEquals(timerManager.timerData.value.type, TimerType.WORK)
@@ -514,7 +530,7 @@ class TimerManagerTest {
         assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
         assertEquals(
             timerManager.timerData.value.longBreakData.streakInUse(sessionsBeforeLongBreak),
-            3
+            3,
         )
         timerManager.reset()
         val oneHour = 1.hours.inWholeMilliseconds
@@ -524,7 +540,7 @@ class TimerManagerTest {
         timerManager.skip()
         assertEquals(
             timerManager.timerData.value.longBreakData.streakInUse(sessionsBeforeLongBreak),
-            1
+            1,
         )
         assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
     }
@@ -559,9 +575,9 @@ class TimerManagerTest {
         localDataRepo.updateDefaultLabel(
             defaultLabel.copy(
                 timerProfile = TimerProfile().copy(
-                    isBreakEnabled = false
-                )
-            )
+                    isBreakEnabled = false,
+                ),
+            ),
         )
         timerManager.start(TimerType.WORK)
         val workDuration = DEFAULT_WORK_DURATION.minutes.inWholeMilliseconds
@@ -584,16 +600,18 @@ class TimerManagerTest {
         timerManager.next()
         assertEquals(
             timerManager.timerData.value.getBreakBudget(
-                timeProvider.elapsedRealtime
-            ).inWholeMinutes, expectedBreakBudget
+                timeProvider.elapsedRealtime,
+            ).inWholeMinutes,
+            expectedBreakBudget,
         )
         assertEquals(timerManager.timerData.value.type, TimerType.BREAK)
         timeProvider.elapsedRealtime += expectedBreakBudget.minutes.inWholeMilliseconds
         timerManager.next()
         assertEquals(
             timerManager.timerData.value.getBreakBudget(
-                timeProvider.elapsedRealtime
-            ).inWholeMinutes, 0
+                timeProvider.elapsedRealtime,
+            ).inWholeMinutes,
+            0,
         )
         assertEquals(timerManager.timerData.value.type, TimerType.WORK)
     }
@@ -613,8 +631,9 @@ class TimerManagerTest {
             timerManager.reset()
             assertEquals(
                 timerManager.timerData.value.getBreakBudget(
-                    timeProvider.elapsedRealtime
-                ).inWholeMinutes, expectedBreakBudget
+                    timeProvider.elapsedRealtime,
+                ).inWholeMinutes,
+                expectedBreakBudget,
             )
 
             val idleTime = 3.minutes.inWholeMilliseconds
@@ -624,10 +643,10 @@ class TimerManagerTest {
             expectedBreakBudget -= idleTime.milliseconds.inWholeMinutes.toInt()
             assertEquals(
                 timerManager.timerData.value.getBreakBudget(
-                    timeProvider.elapsedRealtime
+                    timeProvider.elapsedRealtime,
                 ).inWholeMinutes,
                 expectedBreakBudget,
-                "The break budget should have decreased while idling"
+                "The break budget should have decreased while idling",
             )
 
             timerManager.start(TimerType.WORK)
@@ -641,10 +660,10 @@ class TimerManagerTest {
             val breakBudgetAtTheEnd = expectedBreakBudget + extraBreakBudget
             assertEquals(
                 timerManager.timerData.value.getBreakBudget(
-                    timeProvider.elapsedRealtime
+                    timeProvider.elapsedRealtime,
                 ).inWholeMinutes,
                 breakBudgetAtTheEnd,
-                "The previous unused break budget should have been added to the total"
+                "The previous unused break budget should have been added to the total",
             )
             timerManager.start(TimerType.WORK)
             timeProvider.elapsedRealtime += idleTime
@@ -653,10 +672,10 @@ class TimerManagerTest {
 
             assertEquals(
                 timerManager.timerData.value.getBreakBudget(
-                    timeProvider.elapsedRealtime
+                    timeProvider.elapsedRealtime,
                 ).inWholeMinutes,
                 breakBudgetAtTheEnd - idleTime.milliseconds.inWholeMinutes.toInt(),
-                "The break budget should have decreased while idling"
+                "The break budget should have decreased while idling",
             )
         }
 
@@ -671,14 +690,14 @@ class TimerManagerTest {
 
         assertEquals(
             timerManager.timerData.value.endTime,
-            timerManager.timerData.value.breakBudgetData.breakBudget.inWholeMilliseconds
+            timerManager.timerData.value.breakBudgetData.breakBudget.inWholeMilliseconds,
         )
         assertEquals(
             listOf(
                 Event.Start(endTime = 0),
-                Event.Start(endTime = 10.minutes.inWholeMilliseconds)
+                Event.Start(endTime = 10.minutes.inWholeMilliseconds),
             ),
-            fakeEventListener.events
+            fakeEventListener.events,
         )
     }
 
@@ -704,7 +723,8 @@ class TimerManagerTest {
                 Event.Start(endTime = breakBudgetMillis),
                 Event.Finished(type = TimerType.BREAK, autostartNextSession = true),
                 Event.Start(endTime = 0, autoStarted = true),
-            ), actual = fakeEventListener.events
+            ),
+            actual = fakeEventListener.events,
         )
     }
 
@@ -724,19 +744,19 @@ class TimerManagerTest {
         testScope.advanceTimeBy(oneMinute)
         assertEquals(
             timerManager.timerData.value.getBreakBudget(timeProvider.elapsedRealtime),
-            breakBudget - 1.minutes
+            breakBudget - 1.minutes,
         )
         timeProvider.elapsedRealtime += oneMinute
         testScope.advanceTimeBy(oneMinute)
         assertEquals(
             timerManager.timerData.value.getBreakBudget(timeProvider.elapsedRealtime),
-            breakBudget - 2.minutes
+            breakBudget - 2.minutes,
         )
         timeProvider.elapsedRealtime += oneMinute
         testScope.advanceTimeBy(oneMinute)
         assertEquals(
             timerManager.timerData.value.getBreakBudget(timeProvider.elapsedRealtime),
-            breakBudget - 3.minutes
+            breakBudget - 3.minutes,
         )
     }
 
@@ -752,14 +772,15 @@ class TimerManagerTest {
         val expectedBreakBudget =
             workTime.milliseconds / countUpLabel.timerProfile.workBreakRatio
         assertEquals(
-            timerManager.timerData.value.getBreakBudget(timeProvider.elapsedRealtime), expectedBreakBudget
+            timerManager.timerData.value.getBreakBudget(timeProvider.elapsedRealtime),
+            expectedBreakBudget,
         )
         timerManager.reset()
 
         val newWorkBreakRatio = 1
         localDataRepo.updateLabel(
             countUpLabel.name,
-            countUpLabel.copy(timerProfile = countUpLabel.timerProfile.copy(workBreakRatio = newWorkBreakRatio))
+            countUpLabel.copy(timerProfile = countUpLabel.timerProfile.copy(workBreakRatio = newWorkBreakRatio)),
         )
         timerManager.start()
         timeProvider.elapsedRealtime += workTime
@@ -772,7 +793,7 @@ class TimerManagerTest {
         assertEquals(
             timerManager.timerData.value.breakBudgetData.breakBudget,
             expectedBreakBudget + extraBreakBudget,
-            "The break budget should have been recalculated"
+            "The break budget should have been recalculated",
         )
     }
 
@@ -787,13 +808,13 @@ class TimerManagerTest {
             Label.defaultLabel().copy(
                 name = CUSTOM_LABEL_NAME,
                 timerProfile = dummyTimerProfile,
-                useDefaultTimeProfile = false
+                useDefaultTimeProfile = false,
             )
 
         private val countUpLabel = Label(
             name = "flow",
             useDefaultTimeProfile = false,
-            timerProfile = TimerProfile(isCountdown = false, workBreakRatio = 3)
+            timerProfile = TimerProfile(isCountdown = false, workBreakRatio = 3),
         )
     }
 }

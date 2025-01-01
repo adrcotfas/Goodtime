@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.settings
 
 import androidx.lifecycle.ViewModel
@@ -42,7 +59,7 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        settings = settings
+                        settings = settings,
                     )
                 }
             }
@@ -55,7 +72,7 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
                 val days = it.days
                 val alreadyEnabled = days.contains(dayOfWeek.isoDayNumber)
                 it.copy(
-                    days = if (alreadyEnabled) days - dayOfWeek.isoDayNumber else days + dayOfWeek.isoDayNumber
+                    days = if (alreadyEnabled) days - dayOfWeek.isoDayNumber else days + dayOfWeek.isoDayNumber,
                 )
             }
         }
@@ -213,7 +230,7 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
         _uiState.value =
             _uiState.value.copy(
                 showSelectWorkSoundPicker = show,
-                notificationSoundCandidate = null
+                notificationSoundCandidate = null,
             )
     }
 
@@ -240,7 +257,7 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
                     minSize = floor(maxSize / 1.5f),
                     maxSize = maxSize,
                     fontSize = floor(maxSize * 0.9f),
-                    currentScreenWidth = screenWidth
+                    currentScreenWidth = screenWidth,
                 )
             }
         }
@@ -258,7 +275,7 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
         viewModelScope.launch {
             settingsRepository.updateTimerStyle {
                 it.copy(
-                    fontSize = size
+                    fontSize = size,
                 )
             }
         }
@@ -301,7 +318,7 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
             DayOfWeek.MONDAY,
             DayOfWeek.FRIDAY,
             DayOfWeek.SATURDAY,
-            DayOfWeek.SUNDAY
+            DayOfWeek.SUNDAY,
         )
     }
 }

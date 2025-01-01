@@ -1,3 +1,20 @@
+/**
+ *     Goodtime Productivity
+ *     Copyright (C) 2025 Adrian Cotfas
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.apps.adrcotfas.goodtime.settings.backup
 
 import android.widget.Toast
@@ -47,7 +64,7 @@ fun BackupScreen(
             uri?.let {
                 activityResultLauncherManager.importCallback(it)
             }
-        }
+        },
     )
 
     LaunchedEffect(lifecycleState) {
@@ -71,7 +88,7 @@ fun BackupScreen(
             Toast.makeText(
                 context,
                 if (it) "Backup completed successfully" else "Backup failed. Please try again",
-                Toast.LENGTH_SHORT
+                Toast.LENGTH_SHORT,
             ).show()
             viewModel.clearBackupError()
         }
@@ -82,7 +99,7 @@ fun BackupScreen(
             Toast.makeText(
                 context,
                 if (it) "Restore completed successfully" else "Restore failed. Please try again",
-                Toast.LENGTH_SHORT
+                Toast.LENGTH_SHORT,
             ).show()
             viewModel.clearRestoreError()
         }
@@ -93,40 +110,40 @@ fun BackupScreen(
             TopBar(
                 isVisible = showTopBar,
                 title = "Backup and restore",
-                onNavigateBack = { onNavigateBack() }
+                onNavigateBack = { onNavigateBack() },
             )
-        }
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = paddingValues.calculateTopPadding())
                 .verticalScroll(rememberScrollState())
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.background),
         ) {
             CircularProgressListItem(
                 title = "Export backup",
                 subtitle = "The file can be imported back",
-                showProgress = uiState.isBackupInProgress
+                showProgress = uiState.isBackupInProgress,
             ) {
                 viewModel.backup()
             }
             CircularProgressListItem(
                 title = "Restore backup",
-                showProgress = uiState.isRestoreInProgress
+                showProgress = uiState.isRestoreInProgress,
             ) {
                 viewModel.restore()
             }
             SubtleHorizontalDivider()
             CircularProgressListItem(
                 title = "Export CSV",
-                showProgress = uiState.isCsvBackupInProgress
+                showProgress = uiState.isCsvBackupInProgress,
             ) {
                 viewModel.backupToCsv()
             }
             CircularProgressListItem(
                 title = "Export JSON",
-                showProgress = uiState.isJsonBackupInProgress
+                showProgress = uiState.isJsonBackupInProgress,
             ) {
                 viewModel.backupToJson()
             }
