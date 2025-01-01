@@ -16,6 +16,9 @@ jobs:
       - run:
           name: Check Android
           command: ./gradlew :shared:check
+      - run:
+          name: Check Spotless
+          command: ./gradlew spotlessCheck
       - android/save-gradle-cache
       - android/save-build-cache
 
