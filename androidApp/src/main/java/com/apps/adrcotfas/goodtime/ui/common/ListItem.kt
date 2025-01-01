@@ -144,7 +144,7 @@ fun IconListItem(
     val modifier = Modifier.padding(vertical = 4.dp)
 
     ListItem(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = Modifier.clickable(onClick = onClick).then(modifier),
         colors = if (isSelected) ListItemDefaults.selectedColors() else ListItemDefaults.enabledColors(),
         headlineContent = { Text(text = title) },
         supportingContent = {

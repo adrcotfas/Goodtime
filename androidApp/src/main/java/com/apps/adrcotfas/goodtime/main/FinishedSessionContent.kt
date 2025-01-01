@@ -7,9 +7,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -76,9 +77,8 @@ fun FinishedSessionContent(
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .heightIn(min = 200.dp)
             .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val isBreak = timerUiState.timerType.isBreak
@@ -97,7 +97,6 @@ fun FinishedSessionContent(
             historyUiState
         )
         Spacer(modifier = Modifier.height(16.dp))
-
         Buttons({ onClose(addIdleMinutes) }, { onNext(addIdleMinutes) }, isBreak)
     }
 }
@@ -109,70 +108,90 @@ private fun CurrentSessionCard(
     addIdleMinutes: Boolean,
     onAddIdleMinutesChanged: (Boolean) -> Unit
 ) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+    val isBreak = timerUiState.isBreak
+    val idleMinutes =
+        (elapsedRealtime - timerUiState.endTime + WIGGLE_ROOM_MILLIS).milliseconds.inWholeMinutes
+
+    Card(modifier = Modifier.wrapContentSize()) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
-                .animateContentSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .animateContentSize()
+                .padding(16.dp),
         ) {
-            Text("This session", style = MaterialTheme.typography.labelSmall.copy(MaterialTheme.colorScheme.primary))
+            Text(
+                "This session",
+                style = MaterialTheme.typography.titleSmall.copy(MaterialTheme.colorScheme.primary)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(32.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Elapsed time")
-                Text(
-                    "${timerUiState.completedMinutes} minutes",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
-                )
-            }
-            val interruptions = timerUiState.timeSpentPaused.milliseconds.inWholeMinutes
-            if (interruptions > 0) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier.wrapContentHeight(),
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    horizontalAlignment = Alignment.Start
                 ) {
-                    Text("Interruptions")
                     Text(
-                        "$interruptions minutes",
+                        if (isBreak) "Break" else "Work",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                    Text(
+                        "${timerUiState.completedMinutes} min",
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
                     )
                 }
-            }
-            if (!timerUiState.isBreak) {
-                val idleMinutes =
-                    (elapsedRealtime - timerUiState.endTime + WIGGLE_ROOM_MILLIS).milliseconds.inWholeMinutes
-                if (idleMinutes > 0) {
-                    Column {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+
+                if (!isBreak) {
+                    val interruptions = timerUiState.timeSpentPaused.milliseconds.inWholeMinutes
+                    if (interruptions > 0) {
+                        Column(
+                            modifier = Modifier.wrapContentHeight(),
+                            verticalArrangement = Arrangement.SpaceBetween,
+                            horizontalAlignment = Alignment.Start
                         ) {
-                            Text("Idle time")
+                            Text("Interruptions", style = MaterialTheme.typography.labelSmall)
                             Text(
-                                "$idleMinutes minutes",
+                                "$interruptions min",
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
                             )
                         }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                    }
+
+                    if (idleMinutes > 0) {
+                        Column(
+                            modifier = Modifier.wrapContentHeight(),
+                            verticalArrangement = Arrangement.SpaceBetween,
+                            horizontalAlignment = Alignment.Start
                         ) {
-                            Text("Consider idle time as extra work.")
-                            Switch(
-                                checked = addIdleMinutes,
-                                onCheckedChange = onAddIdleMinutesChanged
+                            Text("Idle", style = MaterialTheme.typography.labelSmall)
+                            Text(
+                                "$idleMinutes min",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
                             )
                         }
                     }
+                }
+            }
+            if (!isBreak && idleMinutes > 0) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Switch(
+                        checked = addIdleMinutes,
+                        onCheckedChange = onAddIdleMinutesChanged
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        "Consider idle time as extra work",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
         }
@@ -182,50 +201,69 @@ private fun CurrentSessionCard(
 @Composable
 fun HistoryCard(historyUiState: HistoryUiState) {
     if (historyUiState.todayWorkMinutes > 0 || historyUiState.todayBreakMinutes > 0) {
-        Card(modifier = Modifier.fillMaxWidth()) {
+        Card(modifier = Modifier
+            .wrapContentSize()
+            .padding()) {
             Column(
                 modifier = Modifier
                     .padding(16.dp)
                     .animateContentSize(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("Today", style = MaterialTheme.typography.labelSmall.copy(MaterialTheme.colorScheme.primary))
+                Text(
+                    "Today",
+                    style = MaterialTheme.typography.titleSmall.copy(MaterialTheme.colorScheme.primary)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.spacedBy(32.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Work")
-                    Text(
-                        "${historyUiState.todayWorkMinutes} minutes",
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Break")
-                    Text(
-                        "${historyUiState.todayBreakMinutes} minutes",
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
-                    )
-                }
-                if (historyUiState.todayInterruptedMinutes > 0) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier.wrapContentHeight(),
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        horizontalAlignment = Alignment.Start
                     ) {
-                        Text("Interruptions")
                         Text(
-                            "${historyUiState.todayInterruptedMinutes} minutes",
+                            "Work",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                        Text(
+                            "${historyUiState.todayWorkMinutes} min",
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
                         )
+                    }
+                    Column(
+                        modifier = Modifier.wrapContentHeight(),
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            "Break",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                        Text(
+                            "${historyUiState.todayBreakMinutes} min",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
+                        )
+                    }
+                    if (historyUiState.todayInterruptedMinutes > 0) {
+                        Column(
+                            modifier = Modifier.wrapContentHeight(),
+                            verticalArrangement = Arrangement.SpaceBetween,
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text(
+                                "Interruptions",
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                            Text(
+                                "${historyUiState.todayInterruptedMinutes} min",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
+                            )
+                        }
+
                     }
                 }
             }
