@@ -15,6 +15,8 @@ import com.apps.adrcotfas.goodtime.bl.DomainTimerData
 import com.apps.adrcotfas.goodtime.bl.TimerService
 import com.apps.adrcotfas.goodtime.bl.TimerState
 import com.apps.adrcotfas.goodtime.bl.TimerType
+import com.apps.adrcotfas.goodtime.bl.isBreak
+import com.apps.adrcotfas.goodtime.bl.isWork
 import com.apps.adrcotfas.goodtime.shared.R as SharedR
 
 //TODO: count-up should have a stop button action
@@ -35,7 +37,7 @@ class NotificationArchManager(private val context: Context, private val activity
         val running = data.state != TimerState.PAUSED
         val timerType = data.type
 
-        val stateText = if (timerType == TimerType.WORK) {
+        val stateText = if (timerType.isWork) {
             if (running) {
                 //TODO: extract strings
                 "Work session in progress"
@@ -46,8 +48,9 @@ class NotificationArchManager(private val context: Context, private val activity
             "Break in progress"
         }
 
+        val icon = if (timerType.isWork) SharedR.drawable.ic_status_goodtime else SharedR.drawable.ic_break
         val builder = NotificationCompat.Builder(context, MAIN_CHANNEL_ID).apply {
-            setSmallIcon(SharedR.drawable.ic_status_goodtime)
+            setSmallIcon(icon)
             setCategory(NotificationCompat.CATEGORY_PROGRESS)
             setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             setContentIntent(createOpenActivityIntent(activityClass))
